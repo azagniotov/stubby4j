@@ -1,5 +1,12 @@
 *.class
-
+*.log
+*.swp
+target/*
+build/*
+out/*
+.idea/*
+.DS_Store
+Thumbs.db
 # Package Files #
 *.jar
 *.war
