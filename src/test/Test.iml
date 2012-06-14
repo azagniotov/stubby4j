@@ -7,6 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.10" level="project" />
+    <orderEntry type="module" module-name="Main" />
+    <orderEntry type="library" name="Maven: junit:junit:4.8.2" level="project" />
   </component>
 </module>
 
