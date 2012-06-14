@@ -1,5 +1,8 @@
 package org.stubby.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,6 +14,8 @@ import java.sql.Statement;
  * @since 6/12/12, 4:45 PM
  */
 public class Repository {
+
+   private final static Logger logger = LoggerFactory.getLogger(Repository.class);
 
    private static Connection dbConnection = null;
 
@@ -35,6 +40,7 @@ public class Repository {
       final String options = "DB_CLOSE_DELAY=-1\\;SET DEFAULT_TABLE_TYPE=MEMORY;";
       if (dbConnection == null) {
          dbConnection = DriverManager.getConnection(url + init + options, "sa", "");
+         logger.info("Opened DB connection at " + url);
       }
    }
 

@@ -1,5 +1,7 @@
 package org.stubby.yaml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Node;
 
@@ -16,6 +18,8 @@ import java.nio.charset.Charset;
  */
 public final class YamlConsumer {
 
+   private final static Logger logger = LoggerFactory.getLogger(YamlConsumer.class);
+
    private YamlConsumer() {
 
    }
@@ -24,6 +28,7 @@ public final class YamlConsumer {
       final String filename = yamlFile.getName().toLowerCase();
       if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
          final Reader reader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
+         logger.info("Loaded YAML " + filename);
          return new Yaml().compose(reader);
       }
       return null;
