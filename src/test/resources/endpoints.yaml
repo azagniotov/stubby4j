@@ -1,0 +1,15 @@
+endpoints:
+
+   endpoint:
+      request:
+         method: GET
+         url: /invoice/123
+      response:
+         value: This is a response for 123
+
+   endpoint:
+      request:
+         method: GET
+         url: /invoice/567
+      response:
+         value: This is a response for 567

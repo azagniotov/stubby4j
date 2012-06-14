@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:8.1.4.v20120524" level="project" />
+    <orderEntry type="library" name="Maven: com.h2database:h2:1.3.167" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.0" level="project" />
+  </component>
+</module>
+
