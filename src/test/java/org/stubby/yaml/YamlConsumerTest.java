@@ -14,11 +14,6 @@ import java.net.URL;
 public class YamlConsumerTest {
 
    @Test
-   public void sanityCheck() throws Exception {
-      Assert.assertTrue(true);
-   }
-
-   @Test
    public void testReadYaml() throws Exception {
       final URL url = this.getClass().getResource("/endpoints.yaml");
       final File yaml = new File(url.getFile());

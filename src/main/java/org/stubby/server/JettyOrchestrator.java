@@ -19,11 +19,14 @@ import org.stubby.servlets.client.ConsumerServlet;
  */
 public final class JettyOrchestrator {
 
-   private static final int DEFAULT_ADMIN_PORT = 8889;
-   private static final int DEFAULT_CLIENT_PORT = 8882;
+   protected static final int DEFAULT_ADMIN_PORT = 8889;
+   protected static final int DEFAULT_CLIENT_PORT = 8882;
 
-   private static final String ADMIN_CONNECTOR_NAME = "adminConnector";
-   private static final String CLIENT_CONNECTOR_NAME = "clientConnector";
+   protected static final String ADMIN_CONNECTOR_NAME = "adminConnector";
+   protected static final String CLIENT_CONNECTOR_NAME = "clientConnector";
+
+   protected static final String GLOBAL_CONTEXT_PATH = "/*";
+   protected static final String ADMIN_PING_CONTEXT_PATH = "/ping";
 
    private JettyOrchestrator() {
 
@@ -65,38 +68,42 @@ public final class JettyOrchestrator {
       return contextHandlerCollection;
    }
 
-   private static ContextHandler createAdminContextHandler(final Repository repository) {
+   protected static ContextHandler createAdminContextHandler(final Repository repository) {
 
       final ServletContextHandler adminContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
       adminContextHandler.setContextPath("/");
       adminContextHandler.setConnectorNames(new String[]{ADMIN_CONNECTOR_NAME});
 
-      adminContextHandler.addServlet(new ServletHolder(new WelcomeServlet()), "/*");
-      adminContextHandler.addServlet(new ServletHolder(new PingServlet(repository)), "/ping");
+      final ServletHolder welcomeHolder = new ServletHolder(WelcomeServlet.class.getSimpleName(), new WelcomeServlet());
+      adminContextHandler.addServlet(welcomeHolder, GLOBAL_CONTEXT_PATH);
+
+      final ServletHolder pingHolder = new ServletHolder(PingServlet.class.getSimpleName(), new PingServlet(repository));
+      adminContextHandler.addServlet(pingHolder, ADMIN_PING_CONTEXT_PATH);
 
       return adminContextHandler;
    }
 
-   private static ContextHandler createClientContextHandler(final Repository repository) {
+   protected static ContextHandler createClientContextHandler(final Repository repository) {
 
       final ServletContextHandler clientContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
       clientContextHandler.setContextPath("/");
       clientContextHandler.setConnectorNames(new String[]{CLIENT_CONNECTOR_NAME});
 
-      clientContextHandler.addServlet(new ServletHolder(new ConsumerServlet(repository)), "/*");
+      final ServletHolder servletHolder = new ServletHolder(ConsumerServlet.class.getSimpleName(), new ConsumerServlet(repository));
+      clientContextHandler.addServlet(servletHolder, GLOBAL_CONTEXT_PATH);
 
       return clientContextHandler;
    }
 
-   private static int getClientPort(final String[] commandLineArgs) {
+   protected static int getClientPort(final String[] commandLineArgs) {
       if (commandLineArgs.length == 2 || commandLineArgs.length == 3) {
          return Integer.parseInt(commandLineArgs[1]);
       }
       return DEFAULT_CLIENT_PORT;
    }
 
-   private static int getAdminPort(final String[] commandLineArgs) {
+   protected static int getAdminPort(final String[] commandLineArgs) {
       if (commandLineArgs.length == 3) {
          return Integer.parseInt(commandLineArgs[2]);
       }

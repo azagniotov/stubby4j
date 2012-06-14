@@ -10,7 +10,7 @@ import java.sql.Statement;
  * @author Alexander Zagniotov
  * @since 6/12/12, 4:45 PM
  */
-public final class Repository {
+public class Repository {
 
    private static Connection dbConnection = null;
 
@@ -38,12 +38,12 @@ public final class Repository {
       }
    }
 
-   public String executeQueryWithParams(final String... params) {
+   public final String executeQueryWithParams(final String... params) {
       final String query = String.format(Queries.SELECT_FROM_PERSON_WHERE, (Object[]) params);
       return executeQuery(query);
    }
 
-   public String executeQuery(final String rawSQL) {
+   public final String executeQuery(final String rawSQL) {
 
       final StringBuilder builder = new StringBuilder();
 
