@@ -1,0 +1,15 @@
+httplifecycle:
+   request:
+      method: GET
+      url: /invoice/123
+   response:
+      status: 200
+      body: This is a response for 123
+
+httplifecycle:
+   request:
+      method: GET
+      url: /invoice/567
+   response:
+      body: This is a response for 567
+      status: 503

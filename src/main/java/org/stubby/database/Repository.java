@@ -2,12 +2,14 @@ package org.stubby.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 /**
  * @author Alexander Zagniotov
@@ -18,8 +20,10 @@ public class Repository {
    private final static Logger logger = LoggerFactory.getLogger(Repository.class);
 
    private static Connection dbConnection = null;
+   private final List<StubHttpLifecycle> httpLifecycles;
 
-   public Repository() throws ClassNotFoundException, SQLException {
+   public Repository(final List<StubHttpLifecycle> httpLifecycles) throws ClassNotFoundException, SQLException {
+      this.httpLifecycles = httpLifecycles;
       initConnection();
       createEndpointTable();
    }

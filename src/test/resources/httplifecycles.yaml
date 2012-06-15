@@ -1,0 +1,26 @@
+httplifecycle:
+   request:
+      method: GET
+      headers:
+         content-type: application/json
+      url: /invoice/123
+
+   response:
+      headers:
+         content-type: application/text
+      status: 200
+      body: This is a response for 123
+
+httplifecycle:
+   request:
+      method: GET
+      url: /invoice/567
+      headers:
+         content-type: application/alex
+         pragma: no-cache
+
+   response:
+      body: This is a response for 567
+      status: 503
+      headers:
+         content-type: application/momo

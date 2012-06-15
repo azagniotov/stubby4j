@@ -15,7 +15,6 @@ import org.stubby.servlets.client.ConsumerServlet;
  * @since 6/13/12, 10:32 PM
  */
 public class JettyOrchestratorTest {
-
    @Test
    public void testClientPortNumber_whenArgsAreEmpty() throws Exception {
       final String[] someArgs = new String[]{};

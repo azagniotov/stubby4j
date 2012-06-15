@@ -4,10 +4,11 @@ import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.Repository;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.yaml.YamlConsumer;
-import org.yaml.snakeyaml.nodes.Node;
+import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.List;
 
 public final class Stubby4JRunner {
 
@@ -28,8 +29,8 @@ public final class Stubby4JRunner {
 
    private static Repository startDatabase(final String yamlConfigFilename) {
       try {
-         final Node yamlConfig = YamlConsumer.readYaml(yamlConfigFilename);
-         final Repository repository = new Repository();
+         final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlConfigFilename);
+         final Repository repository = new Repository(httpLifecycles);
          return repository;
       } catch (ClassNotFoundException e) {
          e.printStackTrace();

@@ -1,7 +1,10 @@
 package org.stubby.yaml.stubs;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -9,13 +12,31 @@ import java.util.List;
  */
 public final class StubResponse {
 
-   private final String status;
-   private final String body;
-   private final List<StubHeader> headers = new LinkedList<StubHeader>();
+   private String status = null;
+   private String body = null;
+   private Map<String, String> headers = new HashMap<String, String>();
 
-   public StubResponse(final String status, final String body) {
-      this.status = status;
-      this.body = body;
+   public StubResponse() {
+
+   }
+
+   public static boolean isFieldCorrespondsToYamlNode(final String fieldName) {
+      for (Field field : StubResponse.class.getDeclaredFields()) {
+         final String reflectedFieldName = field.getName().toLowerCase();
+         if (!fieldName.equals("headers") && reflectedFieldName.equals(fieldName)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   public void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
+      for (Method method : this.getClass().getDeclaredMethods()) {
+         if (method.getName().toLowerCase().equals("set" + fieldName)) {
+            method.invoke(this, value);
+            break;
+         }
+      }
    }
 
    public String getStatus() {
@@ -26,12 +47,16 @@ public final class StubResponse {
       return body;
    }
 
-   public List<StubHeader> getHeaders() {
-      return headers;
+   public void setStatus(final String status) {
+      this.status = status;
    }
 
-   public void addHeader(final StubHeader header) {
-      headers.add(header);
+   public void setBody(final String body) {
+      this.body = body;
+   }
+
+   public void addHeader(final String param, final String value) {
+      headers.put(param, value);
    }
 
    @Override
@@ -54,5 +79,14 @@ public final class StubResponse {
       result = 31 * result + body.hashCode();
       result = 31 * result + headers.hashCode();
       return result;
+   }
+
+   @Override
+   public String toString() {
+      return "StubResponse{" +
+            "status='" + status + '\'' +
+            ", body='" + body + '\'' +
+            ", headers=" + headers +
+            '}';
    }
 }
