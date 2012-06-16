@@ -1,6 +1,5 @@
 package org.stubby.servlets.admin;
 
-import org.stubby.database.Queries;
 import org.stubby.database.Repository;
 
 import javax.servlet.ServletException;
@@ -27,10 +26,6 @@ public final class PingServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       response.setContentType("text/plain;charset=utf-8");
       response.setStatus(HttpServletResponse.SC_OK);
-
-      final String pong = "Pong!\n\n";
-      final String queryResult = repository.executeQuery(Queries.SELECT_ALL_FROM_PERSON);
-
-      response.getWriter().println(pong + queryResult);
+      response.getWriter().println("Pong!\n\n" + repository.getHealthCheck());
    }
 }

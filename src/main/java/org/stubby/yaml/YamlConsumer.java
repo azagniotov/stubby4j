@@ -5,17 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -29,7 +24,7 @@ import java.util.List;
 public final class YamlConsumer {
 
    private static final Logger logger = LoggerFactory.getLogger(YamlConsumer.class);
-   private static final List<String> skippableNodeNames;
+   private static final List<String> nodesWithoutSiblingValues;
 
    static {
       final List<String> list =
@@ -37,70 +32,63 @@ public final class YamlConsumer {
                   YamlParentNodes.REQUEST.desc(),
                   YamlParentNodes.RESPONSE.desc(),
                   YamlParentNodes.HEADERS.desc());
-      skippableNodeNames = new LinkedList<String>(list);
+      nodesWithoutSiblingValues = new LinkedList<String>(list);
    }
 
    private YamlConsumer() {
 
    }
 
-   public static List<StubHttpLifecycle> readYaml(final File yamlFile) throws FileNotFoundException {
+   public static List<StubHttpLifecycle> readYaml(final File yamlFile) throws IOException {
       final String filename = yamlFile.getName().toLowerCase();
       if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
-         final Reader reader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
+         final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
+         final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
          logger.info("Loaded YAML " + filename);
 
-         final Node rootNode = new Yaml().compose(reader);
-         final List<StubHttpLifecycle> stubHttpLifecycle = transformYamlNode(rootNode, null);
-
-         return stubHttpLifecycle;
+         return transformYamlNode(bufferedReader, null);
       }
       return new LinkedList<StubHttpLifecycle>();
    }
 
-   public static List<StubHttpLifecycle> readYaml(final String yamlConfigFilename) throws FileNotFoundException {
+   public static List<StubHttpLifecycle> readYaml(final String yamlConfigFilename) throws IOException {
       final File yamlFile = new File(yamlConfigFilename);
       return readYaml(yamlFile);
    }
 
-   protected static List<StubHttpLifecycle> transformYamlNode(final Node rootNode, StubHttpLifecycle parentStub) {
+   protected static List<StubHttpLifecycle> transformYamlNode(final BufferedReader bufferedReader, StubHttpLifecycle parentStub) throws IOException {
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
 
-      if (rootNode instanceof MappingNode) {
-         final MappingNode mappingNode = (MappingNode) rootNode;
+      String yamlLine;
+      while ((yamlLine = bufferedReader.readLine()) != null) {
+         yamlLine = yamlLine.trim();
+         if (yamlLine.isEmpty()) {
+            continue;
+         }
 
-         for (final NodeTuple tuple : mappingNode.getValue()) {
+         final int indexOfColumn = yamlLine.indexOf(":");
+         final String nodeKey = yamlLine.substring(0, indexOfColumn).toLowerCase().trim();
+         final String nodeValue = yamlLine.substring(indexOfColumn + 1, yamlLine.length()).trim();
 
-            if (tuple.getKeyNode() instanceof ScalarNode) {
+         if (nodeKey.equals(YamlParentNodes.HTTPLIFECYCLE.desc())) {
+            parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
+            httpLifecycles.add(parentStub);
 
-               final ScalarNode keyScalarNode = (ScalarNode) tuple.getKeyNode();
-               final String nodeName = keyScalarNode.getValue().toLowerCase();
+         } else if (nodeKey.equals(YamlParentNodes.REQUEST.desc())) {
+            parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
 
-               if (nodeName.equals(YamlParentNodes.HTTPLIFECYCLE.desc())) {
-                  parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
-                  httpLifecycles.add(parentStub);
+         } else if (nodeKey.equals(YamlParentNodes.RESPONSE.desc())) {
+            parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
 
-               } else if (nodeName.equals(YamlParentNodes.REQUEST.desc())) {
-                  parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
-
-               } else if (nodeName.equals(YamlParentNodes.RESPONSE.desc())) {
-                  parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
-               }
-
-               if (skippableNodeNames.contains(nodeName)) {
-                  transformYamlNode(tuple.getValueNode(), parentStub);
-               } else {
-                  final ScalarNode valueScalarNode = (ScalarNode) tuple.getValueNode();
-                  bindYamlValueToPojo(valueScalarNode, nodeName, parentStub);
-               }
-            }
+         } else if (!nodesWithoutSiblingValues.contains(nodeKey))  {
+            bindYamlValueToPojo(nodeKey, nodeValue, parentStub);
          }
       }
+      bufferedReader.close();
       return httpLifecycles;
    }
 
-   private static void bindYamlValueToPojo(final ScalarNode valueScalarNode, final String nodeName, final StubHttpLifecycle parentStub) {
-      final String nodeValue = valueScalarNode.getValue();
+   private static void bindYamlValueToPojo(final String nodeName, final String nodeValue, final StubHttpLifecycle parentStub) {
 
       if (StubRequest.isFieldCorrespondsToYamlNode(nodeName)) {
          setYamlValueToFieldProperty(parentStub, nodeName, nodeValue, YamlParentNodes.REQUEST);

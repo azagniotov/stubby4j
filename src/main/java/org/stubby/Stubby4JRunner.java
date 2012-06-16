@@ -7,6 +7,7 @@ import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,8 +31,7 @@ public final class Stubby4JRunner {
    private static Repository startDatabase(final String yamlConfigFilename) {
       try {
          final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlConfigFilename);
-         final Repository repository = new Repository(httpLifecycles);
-         return repository;
+         return new Repository(httpLifecycles);
       } catch (ClassNotFoundException e) {
          e.printStackTrace();
          System.exit(1);
@@ -39,6 +39,9 @@ public final class Stubby4JRunner {
          e.printStackTrace();
          System.exit(1);
       } catch (FileNotFoundException e) {
+         e.printStackTrace();
+         System.exit(1);
+      } catch (IOException e) {
          e.printStackTrace();
          System.exit(1);
       }
