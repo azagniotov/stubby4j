@@ -1,7 +1,5 @@
 package org.stubby.yaml;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -16,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Alexander Zagniotov
@@ -23,7 +22,7 @@ import java.util.List;
  */
 public final class YamlConsumer {
 
-   private static final Logger logger = LoggerFactory.getLogger(YamlConsumer.class);
+   private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
    private static final List<String> nodesWithoutSiblingValues;
 
    static {
@@ -80,7 +79,7 @@ public final class YamlConsumer {
          } else if (nodeKey.equals(YamlParentNodes.RESPONSE.desc())) {
             parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
 
-         } else if (!nodesWithoutSiblingValues.contains(nodeKey))  {
+         } else if (!nodesWithoutSiblingValues.contains(nodeKey)) {
             bindYamlValueToPojo(nodeKey, nodeValue, parentStub);
          }
       }

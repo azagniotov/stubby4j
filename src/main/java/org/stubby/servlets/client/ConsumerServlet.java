@@ -28,7 +28,6 @@ public final class ConsumerServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       response.setContentType("text/plain;charset=utf-8");
-      response.setStatus(HttpServletResponse.SC_OK);
 
       final String pathInfo = request.getPathInfo();
       final String method = request.getMethod();
@@ -38,18 +37,13 @@ public final class ConsumerServlet extends HttpServlet {
          response.getWriter().println("Oh oh :( \n\nBad request, path info or method are missing");
          return;
       }
-      try {
-         final Map<String, String> responseBody = repository.findResponseFor(method, pathInfo);
-         if (responseBody.size() == 1) {
-            response.getWriter().println(responseBody.get("crap"));
-            return;
-         }
-         response.setStatus(Integer.parseInt(responseBody.get("status")));
-         response.getWriter().println(responseBody.get("body"));
+      final Map<String, String> responseBody = repository.findResponseFor(method, pathInfo);
+      if (responseBody.size() == 1) {
+         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+         response.getWriter().println(responseBody.get("null"));
          return;
-      } catch (SQLException e) {
-         e.printStackTrace();
       }
-      response.getWriter().println("Not implemented");
+      response.setStatus(Integer.parseInt(responseBody.get("STATUS")));
+      response.getWriter().println(responseBody.get("BODY"));
    }
 }

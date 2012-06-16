@@ -8,12 +8,12 @@ import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public final class Stubby4JRunner {
 
    public static void main(String[] args) {
+
       if (CommandLineIntepreter.isHelp(args)) {
          CommandLineIntepreter.printDefaultCommandSample(Stubby4JRunner.class);
       } else {
@@ -32,12 +32,6 @@ public final class Stubby4JRunner {
       try {
          final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlConfigFilename);
          return new Repository(httpLifecycles);
-      } catch (ClassNotFoundException e) {
-         e.printStackTrace();
-         System.exit(1);
-      } catch (SQLException e) {
-         e.printStackTrace();
-         System.exit(1);
       } catch (FileNotFoundException e) {
          e.printStackTrace();
          System.exit(1);

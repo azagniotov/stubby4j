@@ -8,12 +8,13 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stubby.database.Repository;
 import org.stubby.servlets.admin.PingServlet;
 import org.stubby.servlets.admin.WelcomeServlet;
 import org.stubby.servlets.client.ConsumerServlet;
+
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 
 /**
@@ -22,7 +23,7 @@ import org.stubby.servlets.client.ConsumerServlet;
  */
 public final class JettyOrchestrator {
 
-   private final static Logger logger = LoggerFactory.getLogger(JettyOrchestrator.class);
+   private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
    protected static final int DEFAULT_ADMIN_PORT = 8889;
    protected static final int DEFAULT_CLIENT_PORT = 8882;
@@ -56,7 +57,7 @@ public final class JettyOrchestrator {
 
       final SelectChannelConnector clientChannel = new SelectChannelConnector();
       clientChannel.setPort(getClientPort(commandLineArgs));
-      logger.info("Stubby4j client was set on port " + clientChannel.getPort());
+      logger.info("Stubby4j client was set to listen on port " + clientChannel.getPort());
 
       clientChannel.setMaxIdleTime(30000);
       clientChannel.setRequestHeaderSize(8192);
@@ -64,7 +65,7 @@ public final class JettyOrchestrator {
 
       final SelectChannelConnector adminChannel = new SelectChannelConnector();
       adminChannel.setPort(getAdminPort(commandLineArgs));
-      logger.info("Stubby4j admin was set on port " + adminChannel.getPort());
+      logger.info("Stubby4j admin was set to listen on port " + adminChannel.getPort());
 
       adminChannel.setName(adminConnectorName);
 

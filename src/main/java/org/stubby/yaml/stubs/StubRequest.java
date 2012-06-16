@@ -68,6 +68,10 @@ public final class StubRequest {
       headers.put(param, value);
    }
 
+   public Map<String, String> getHeaders() {
+      return headers;
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) return true;
