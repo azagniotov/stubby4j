@@ -4,7 +4,7 @@ A Java-based stub HTTP server.
 
 Why use stubby4j?
 =================
-1. You want to simulate responses from real server and don't care to go over the network
+1. You want to simulate responses from real server and don't care (or cannot) to go over the network
 2. You want to verify that your code makes HTTP requests with all the required parameters and/or headers
 3. You want to verify that your code correctly handles HTTP error codes
 4. You want to trigger response from the server based on the request parameters

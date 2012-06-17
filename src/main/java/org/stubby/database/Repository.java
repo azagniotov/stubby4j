@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,87 +61,67 @@ public class Repository {
          statement.execute(Queries.CREATE_RESPONSE_HEADERS_TBL);
          dbConnection.commit();
       } catch (SQLException e) {
-         if (dbConnection != null) {
-            try {
-               dbConnection.rollback();
-               System.err.print("Transaction is being rolled back when trying to insert table data: " + e.getMessage());
-               System.exit(1);
-            } catch (SQLException ex) {
-               System.err.print("Could not rollback the transaction: " + ex.getMessage());
-               System.exit(1);
-            }
-         }
+         runRollback(e);
       } finally {
-         try {
-            if (statement != null) {
-               statement.close();
-            }
-            if (dbConnection != null) {
-               dbConnection.setAutoCommit(true);
-            }
-         } catch (SQLException e) {
-            e.printStackTrace();
-         }
+         runFinally(Arrays.asList(statement));
       }
    }
 
    private void insertTableData(final List<StubHttpLifecycle> httpLifecycles) {
-
-      PreparedStatement requestStatement = null;
-      PreparedStatement responseStatement = null;
-      PreparedStatement requestHeadStatement = null;
-      PreparedStatement responseHeadStatement = null;
-
+      final Map<String, Statement> statmnts = new HashMap<String, Statement>();
       try {
-         requestStatement = dbConnection.prepareStatement(Queries.INSERT_INTO_REQUEST_PREP_QRY);
-         requestHeadStatement = dbConnection.prepareStatement(Queries.INSERT_INTO_REQUEST_HEAD_PREP_QRY);
-         responseStatement = dbConnection.prepareStatement(Queries.INSERT_INTO_RESPONSE_PREP_QRY);
-         responseHeadStatement = dbConnection.prepareStatement(Queries.INSERT_INTO_RESPONSE_HEAD_PREP_QRY);
+         statmnts.put("request", dbConnection.prepareStatement(Queries.INSERT_INTO_REQUEST_PREP_QRY));
+         statmnts.put("requestHeaders", dbConnection.prepareStatement(Queries.INSERT_INTO_REQUEST_HEAD_PREP_QRY));
+         statmnts.put("response", dbConnection.prepareStatement(Queries.INSERT_INTO_RESPONSE_PREP_QRY));
+         statmnts.put("responseHeaders", dbConnection.prepareStatement(Queries.INSERT_INTO_RESPONSE_HEAD_PREP_QRY));
 
-         int requestHeaderCount = 0;
-         int responseHeaderCount = 0;
+         int requestHeaderCount = 0, responseHeaderCount = 0;
 
          dbConnection.setAutoCommit(false);
          for (int idx = 0; idx < httpLifecycles.size(); idx++) {
             final StubHttpLifecycle httpLifecycle = httpLifecycles.get(idx);
-            insertRequestData(idx, requestStatement, httpLifecycle.getRequest());
-            requestHeaderCount = insertHeadersData(requestHeaderCount, idx, requestHeadStatement, httpLifecycle.getRequest().getHeaders());
-            insertResponseData(idx, responseStatement, httpLifecycle.getResponse());
-            responseHeaderCount = insertHeadersData(responseHeaderCount, idx, responseHeadStatement, httpLifecycle.getResponse().getHeaders());
+            final StubRequest request = httpLifecycle.getRequest();
+            final StubResponse response = httpLifecycle.getResponse();
+
+            insertRequestData(idx, (PreparedStatement) statmnts.get("request"), request);
+            requestHeaderCount = insertHeadersData(requestHeaderCount, idx, (PreparedStatement) statmnts.get("requestHeaders"), request.getHeaders());
+            insertResponseData(idx, (PreparedStatement) statmnts.get("response"), response);
+            responseHeaderCount = insertHeadersData(responseHeaderCount, idx, (PreparedStatement) statmnts.get("responseHeaders"), response.getHeaders());
          }
          dbConnection.commit();
 
       } catch (SQLException e) {
-         if (dbConnection != null) {
-            try {
-               dbConnection.rollback();
-               System.err.print("Transaction is being rolled back when trying to insert table data: " + e.getMessage());
-               System.exit(1);
-            } catch (SQLException ex) {
-               System.err.print("Could not rollback the transaction: " + ex.getMessage());
-               System.exit(1);
-            }
-         }
+         runRollback(e);
       } finally {
+         runFinally(statmnts.values());
+      }
+   }
+
+   private void runRollback(final SQLException e) {
+      if (dbConnection != null) {
          try {
-            if (requestStatement != null) {
-               requestStatement.close();
-            }
-            if (responseStatement != null) {
-               responseStatement.close();
-            }
-            if (requestHeadStatement != null) {
-               requestHeadStatement.close();
-            }
-            if (responseHeadStatement != null) {
-               responseHeadStatement.close();
-            }
-            if (dbConnection != null) {
-               dbConnection.setAutoCommit(true);
-            }
-         } catch (SQLException e) {
-            e.printStackTrace();
+            dbConnection.rollback();
+            System.err.print("Transaction is being rolled back when trying to insert table data: " + e.getMessage());
+            System.exit(1);
+         } catch (SQLException ex) {
+            System.err.print("Could not rollback the transaction: " + ex.getMessage());
+            System.exit(1);
          }
+      }
+   }
+
+   private void runFinally(final Collection<Statement> statements) {
+      try {
+         for (final Statement statement : statements) {
+            if (statement != null) {
+               statement.close();
+            }
+         }
+         if (dbConnection != null) {
+            dbConnection.setAutoCommit(true);
+         }
+      } catch (SQLException e) {
+         e.printStackTrace();
       }
    }
 

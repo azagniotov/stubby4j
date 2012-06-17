@@ -14,7 +14,7 @@ final class Formatter {
       final StringBuilder builder = new StringBuilder();
       try {
          final String template = columnNames.length == 4 ? "%-2s | %-18s | %-18s | %-18s" : "%-2s | %-18s | %-18s";
-         builder.append(tableName).append("\n").append(String.format(template, columnNames)).append("\n");
+         builder.append(tableName).append("\n").append(String.format(template, (Object[]) columnNames)).append("\n");
 
          while (resultSet.next()) {
 
@@ -24,7 +24,7 @@ final class Formatter {
                params[idx] = columnValue;
             }
 
-            builder.append(String.format(template, params));
+            builder.append(String.format(template, (Object[]) params));
             builder.append("\n");
          }
 
