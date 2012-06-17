@@ -6,7 +6,7 @@ Why use stubby4j?
 =================
 1. You want to simulate responses from real server and don't care to go over the network
 2. You want to verify that your code makes HTTP requests with all the required parameters and/or headers
-3. You want to verify that you code correctly handles HTTP error codes
+3. You want to verify that your code correctly handles HTTP error codes
 4. You want to trigger response from the server based on the request parameters
 5. You want support for GET/POST/PUT/DELETE HTTP methods
 6. You want to trigger multiple responses based on multiple requests on the same URI
@@ -56,8 +56,10 @@ httplifecycle:
 ```
 The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
 Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
-respective children nodes as per above example. Please keep in mind, you MUST ensure that the provided response
-body is on one line.
+respective children nodes as per above example. 
+
+Please keep in mind, you MUST ensure that the provided `response` body is on one line. In other words, no line
+breaks.
 
 Usage
 =====
