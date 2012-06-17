@@ -87,4 +87,8 @@ public final class CommandLineIntepreter {
 
       return params;
    }
+
+   public static boolean hasYaml() {
+      return line.hasOption("config");
+   }
 }

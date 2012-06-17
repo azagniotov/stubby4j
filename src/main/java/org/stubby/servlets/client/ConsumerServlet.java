@@ -39,7 +39,7 @@ public final class ConsumerServlet extends HttpServlet {
       }
       final Map<String, String> responseBody = repository.findResponseFor(method, pathInfo);
       if (responseBody.size() == 1) {
-         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+         response.setStatus(HttpServletResponse.SC_OK);
          response.getWriter().println(responseBody.get("null"));
          return;
       }

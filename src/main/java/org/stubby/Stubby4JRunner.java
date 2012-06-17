@@ -19,11 +19,10 @@ public final class Stubby4JRunner {
 
       if (CommandLineIntepreter.isHelp()) {
          CommandLineIntepreter.printHelp(Stubby4JRunner.class);
+      } else if (!CommandLineIntepreter.hasYaml()) {
+         throw new Exception("Command line option '-f' or '--config' with YAML configuration file was not provided.\nPlease run again with option '--help'");
       } else {
          final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
-         if (!params.containsKey("config")) {
-            throw new Exception("Command line option '-f' or '--config' with YAML configuration file was not provided.\nPlease run again with option '--help'");
-         }
          final Repository repository = startDatabase(params.get("config"));
          try {
             JettyOrchestrator.startJetty(repository, params);
