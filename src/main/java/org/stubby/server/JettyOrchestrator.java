@@ -13,7 +13,7 @@ import org.stubby.servlets.admin.PingServlet;
 import org.stubby.servlets.admin.WelcomeServlet;
 import org.stubby.servlets.client.ConsumerServlet;
 
-import java.util.logging.LogManager;
+import java.util.Map;
 import java.util.logging.Logger;
 
 
@@ -38,7 +38,7 @@ public final class JettyOrchestrator {
 
    }
 
-   public static void startJetty(final Repository repository, final String[] commandLineArgs) throws Exception {
+   public static void startJetty(final Repository repository, final Map<String, String> commandLineArgs) throws Exception {
       final Server server = new Server();
 
       final Connector[] connectors = buildConnectorList(CLIENT_CONNECTOR_NAME, ADMIN_CONNECTOR_NAME, commandLineArgs);
@@ -52,7 +52,7 @@ public final class JettyOrchestrator {
 
    }
 
-   private static Connector[] buildConnectorList(final String clientConnectorName, final String adminConnectorName, final String[] commandLineArgs) {
+   private static Connector[] buildConnectorList(final String clientConnectorName, final String adminConnectorName, final Map<String, String> commandLineArgs) {
 
 
       final SelectChannelConnector clientChannel = new SelectChannelConnector();
@@ -68,6 +68,12 @@ public final class JettyOrchestrator {
       logger.info("Stubby4j admin was set to listen on port " + adminChannel.getPort());
 
       adminChannel.setName(adminConnectorName);
+
+      if (commandLineArgs.containsKey("address")) {
+         adminChannel.setHost(commandLineArgs.get("address"));
+         clientChannel.setHost(commandLineArgs.get("address"));
+         logger.info("Stubby4j client and admin were set to run on host " + adminChannel.getHost());
+      }
 
       return new Connector[]{clientChannel, adminChannel};
    }
@@ -107,16 +113,16 @@ public final class JettyOrchestrator {
       return clientContextHandler;
    }
 
-   protected static int getClientPort(final String[] commandLineArgs) {
-      if (commandLineArgs.length == 2 || commandLineArgs.length == 3) {
-         return Integer.parseInt(commandLineArgs[1]);
+   protected static int getClientPort(final Map<String, String> commandLineArgs) {
+      if (commandLineArgs.containsKey("clientport")) {
+         return Integer.parseInt(commandLineArgs.get("clientport"));
       }
       return DEFAULT_CLIENT_PORT;
    }
 
-   protected static int getAdminPort(final String[] commandLineArgs) {
-      if (commandLineArgs.length == 3) {
-         return Integer.parseInt(commandLineArgs[2]);
+   protected static int getAdminPort(final Map<String, String> commandLineArgs) {
+      if (commandLineArgs.containsKey("adminport")) {
+         return Integer.parseInt(commandLineArgs.get("adminport"));
       }
       return DEFAULT_ADMIN_PORT;
    }

@@ -9,18 +9,24 @@ import org.stubby.yaml.stubs.StubHttpLifecycle;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public final class Stubby4JRunner {
 
-   public static void main(String[] args) {
+   public static void main(final String[] args) throws Exception {
 
-      if (CommandLineIntepreter.isHelp(args)) {
-         CommandLineIntepreter.printDefaultCommandSample(Stubby4JRunner.class);
+      CommandLineIntepreter.parseCommandLine(args);
+
+      if (CommandLineIntepreter.isHelp()) {
+         CommandLineIntepreter.printHelp(Stubby4JRunner.class);
       } else {
-         final String pathToYamlFile = args[0];
-         final Repository repository = startDatabase(pathToYamlFile);
+         final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
+         if (!params.containsKey("config")) {
+            throw new Exception("Command line option '-f' or '--config' with YAML configuration file was not provided.\nPlease run again with option '--help'");
+         }
+         final Repository repository = startDatabase(params.get("config"));
          try {
-            JettyOrchestrator.startJetty(repository, args);
+            JettyOrchestrator.startJetty(repository, params);
          } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

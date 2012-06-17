@@ -10,9 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -130,6 +128,12 @@ public class Repository {
             if (responseStatement != null) {
                responseStatement.close();
             }
+            if (requestHeadStatement != null) {
+               requestHeadStatement.close();
+            }
+            if (responseHeadStatement != null) {
+               responseHeadStatement.close();
+            }
             if (dbConnection != null) {
                dbConnection.setAutoCommit(true);
             }
@@ -190,53 +194,36 @@ public class Repository {
 
    public final String getHealthCheck() {
       try {
+         final Statement statement = dbConnection.createStatement();
          final boolean isDbClosed = dbConnection.isClosed();
          final String catalog = dbConnection.getCatalog();
-         final String requestQueryResult = executeStatusQuery(
-               Queries.SELECT_ALL_FROM_REQUEST,
-               TBL_NAME_REQ, TBL_COLUMN_ID, TBL_COLUMN_URL, TBL_COLUMN_METHOD, TBL_COLUMN_POSTBODY);
 
-         final String requestHeadersQueryResult = executeStatusQuery(
-               Queries.SELECT_ALL_FROM_REQUEST_HEADERS,
-               TBL_NAME_REQ_HEADERS, TBL_COLUMN_ID, TBL_COLUMN_REQUEST_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE);
+         final ResultSet requestSet = statement.executeQuery(Queries.SELECT_ALL_FROM_REQUEST);
+         final String[] reqColumns = {TBL_COLUMN_ID, TBL_COLUMN_URL, TBL_COLUMN_METHOD, TBL_COLUMN_POSTBODY};
+         final String requestResult = Formatter.formatHealthCheckResults(requestSet, TBL_NAME_REQ, reqColumns);
 
-         final String responseQueryResult = executeStatusQuery(
-               Queries.SELECT_ALL_FROM_RESPONSE,
-               TBL_NAME_RES, TBL_COLUMN_ID, TBL_COLUMN_STATUS, TBL_COLUMN_BODY);
+         final ResultSet requestHeadersSet = statement.executeQuery(Queries.SELECT_ALL_FROM_REQUEST_HEADERS);
+         final String[] reqHeadColumns = {TBL_COLUMN_ID, TBL_COLUMN_REQUEST_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE};
+         final String requestHeaderResult = Formatter.formatHealthCheckResults(requestHeadersSet, TBL_NAME_REQ_HEADERS, reqHeadColumns);
 
-         final String responseHeadersQueryResult = executeStatusQuery(
-               Queries.SELECT_ALL_FROM_RESPONSE_HEADERS,
-               TBL_NAME_RES_HEADERS, TBL_COLUMN_ID, TBL_COLUMN_RESPONSE_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE);
+         final ResultSet responseSet = statement.executeQuery(Queries.SELECT_ALL_FROM_RESPONSE);
+         final String[] resColumns = {TBL_COLUMN_ID, TBL_COLUMN_STATUS, TBL_COLUMN_BODY};
+         final String responseResult = Formatter.formatHealthCheckResults(responseSet, TBL_NAME_RES, resColumns);
 
-         return composeStatusMessage(isDbClosed, catalog,
-               requestQueryResult,
-               requestHeadersQueryResult,
-               responseQueryResult,
-               responseHeadersQueryResult);
+         final ResultSet responseHeadersSet = statement.executeQuery(Queries.SELECT_ALL_FROM_RESPONSE_HEADERS);
+         final String[] resHeadColumns = {TBL_COLUMN_ID, TBL_COLUMN_RESPONSE_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE};
+         final String responseHeadersResult = Formatter.formatHealthCheckResults(responseHeadersSet, TBL_NAME_RES_HEADERS, resHeadColumns);
+
+         statement.close();
+
+         final String[] results = {requestResult, requestHeaderResult, responseResult, responseHeadersResult};
+         return Formatter.aggregateResultsIntoOneMessage(isDbClosed, catalog, results);
 
       } catch (SQLException e) {
          System.err.print("Could not get system status: " + e.getMessage());
       }
 
       return "Could not get system status, got DB error ..";
-   }
-
-   private final String composeStatusMessage(final boolean dbClosed, final String catalog, final String... queryResults) {
-      final StringBuilder statusBuilder = new StringBuilder();
-
-      statusBuilder.append("Is database connection opened: ");
-      statusBuilder.append((dbClosed ? "NO" : "YES"));
-      statusBuilder.append("\n");
-      statusBuilder.append("Default database name: ");
-      statusBuilder.append(catalog);
-      statusBuilder.append("\n\n");
-
-      for (String result : queryResults) {
-         statusBuilder.append(result);
-         statusBuilder.append("\n\n\n");
-      }
-
-      return statusBuilder.toString();
    }
 
    public final Map<String, String> findResponseFor(final String method, final String pathInfo) {
@@ -259,39 +246,5 @@ public class Repository {
          System.err.print("Could not load response for a given request: " + e.getMessage());
       }
       return responseValues;
-   }
-
-   private final String executeStatusQuery(final String rawSQL, final String tableName, String... columnNames) {
-
-      final StringBuilder builder = new StringBuilder();
-
-      try {
-
-         final Statement statement = dbConnection.createStatement();
-         final ResultSet resultSet = statement.executeQuery(rawSQL);
-         final String template = columnNames.length == 4 ? "%-2s | %-18s | %-18s | %-18s" : "%-2s | %-18s | %-18s";
-
-         builder.append(tableName).append("\n").append(String.format(template, columnNames)).append("\n");
-
-         while (resultSet.next()) {
-            final String[] params = new String[columnNames.length];
-
-            for (int idx = 0; idx < columnNames.length; idx++) {
-               final String columnValue = resultSet.getString(columnNames[idx]);
-               params[idx] = columnValue;
-            }
-
-            builder.append(String.format(template, params));
-            builder.append("\n");
-         }
-         statement.close();
-
-         if (!builder.toString().isEmpty()) {
-            return builder.toString();
-         }
-      } catch (SQLException e) {
-         e.printStackTrace();
-      }
-      return String.format("ERR: Could not get system status for query [%s]", rawSQL);
    }
 }
