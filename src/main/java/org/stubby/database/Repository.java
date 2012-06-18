@@ -1,3 +1,22 @@
+/*
+A Java-based HTTP stub server
+
+Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.stubby.database;
 
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -208,15 +227,23 @@ public class Repository {
       return "Could not get system status, got DB error ..";
    }
 
-   public final Map<String, String> findResponseFor(final String method, final String pathInfo) {
+   public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
 
       final Map<String, String> responseValues = new HashMap<String, String>();
-      responseValues.put("null", "No data found for " + method + " " + pathInfo);
+      responseValues.put("null", "No data found for " + method + " request at URI " + requestPathinfo);
 
       try {
-         final PreparedStatement requestPreparedStatement = dbConnection.prepareStatement(Queries.SELECT_RESPONSE_FOR_REQUEST_PREP_QRY);
-         requestPreparedStatement.setString(1, method);
-         requestPreparedStatement.setString(2, pathInfo);
+
+         final String query = (method.toLowerCase().equals("get") ?
+               Queries.SELECT_RESPONSE_FOR_GET_REQUEST_PREP_QRY :
+               Queries.SELECT_RESPONSE_FOR_POST_REQUEST_PREP_QRY);
+
+         final PreparedStatement requestPreparedStatement = dbConnection.prepareStatement(query);
+         requestPreparedStatement.setString(1, requestPathinfo);
+
+         if (method.toLowerCase().equals("post")) {
+            requestPreparedStatement.setString(2, postBody);
+         }
 
          final ResultSet responseSelectResultSet = requestPreparedStatement.executeQuery();
          while (responseSelectResultSet.next()) {

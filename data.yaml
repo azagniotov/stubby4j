@@ -40,14 +40,15 @@ httplifecycle:
       
 httplifecycle:
    request:
-      method: GET
+      method: POST
       url: /invoice/45
       headers:
          content-type: application/alex
          pragma: no-cache
+      postBody: test-test
 
    response:
-      body: This is a response for 45
-      status: 400
+      body: {"message":"This is a response for 45"}
+      status: 200
       headers:
-         content-type: application/momo
+         content-type: application/json

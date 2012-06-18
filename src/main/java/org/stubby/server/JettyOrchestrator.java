@@ -1,3 +1,22 @@
+/*
+A Java-based HTTP stub server
+
+Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.stubby.server;
 
 import org.eclipse.jetty.server.Connector;
@@ -8,6 +27,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.Repository;
 import org.stubby.servlets.admin.PingServlet;
 import org.stubby.servlets.admin.WelcomeServlet;
@@ -69,9 +89,9 @@ public final class JettyOrchestrator {
 
       adminChannel.setName(adminConnectorName);
 
-      if (commandLineArgs.containsKey("address")) {
-         adminChannel.setHost(commandLineArgs.get("address"));
-         clientChannel.setHost(commandLineArgs.get("address"));
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
+         adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+         clientChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
          logger.info("Stubby4j client and admin were set to run on host " + adminChannel.getHost());
       }
 
@@ -114,15 +134,15 @@ public final class JettyOrchestrator {
    }
 
    protected static int getClientPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey("clientport")) {
-         return Integer.parseInt(commandLineArgs.get("clientport"));
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
       }
       return DEFAULT_CLIENT_PORT;
    }
 
    protected static int getAdminPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey("adminport")) {
-         return Integer.parseInt(commandLineArgs.get("adminport"));
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
       }
       return DEFAULT_ADMIN_PORT;
    }
