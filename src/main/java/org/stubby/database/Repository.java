@@ -230,7 +230,8 @@ public class Repository {
    public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
 
       final Map<String, String> responseValues = new HashMap<String, String>();
-      responseValues.put("null", "No data found for " + method + " request at URI " + requestPathinfo);
+      final String postMessage = (postBody != null ? " for post data: " + postBody : "");
+      responseValues.put("null", "No data found for " + method + " request at URI " + requestPathinfo + postMessage);
 
       try {
 

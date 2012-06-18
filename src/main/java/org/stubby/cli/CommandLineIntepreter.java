@@ -44,13 +44,13 @@ public final class CommandLineIntepreter {
    public static final String OPTION_ADDRESS = "address";
    public static final String OPTION_CLIENTPORT = "clientport";
    public static final String OPTION_ADMINPORT = "adminport";
-   private static final String OPTION_CONFIG = "config";
+   public static final String OPTION_CONFIG = "config";
    private static final String OPTION_HELP = "help";
 
    static {
-      options.addOption("a", OPTION_ADDRESS, true, "Stub server address");
-      options.addOption("c", OPTION_CLIENTPORT, true, "Port that HTTP request consumer runs on");
-      options.addOption("m", OPTION_ADMINPORT, true, "Port that stubby4j admin runs on");
+      options.addOption("a", OPTION_ADDRESS, true, "Host address that stubby4j should run on");
+      options.addOption("c", OPTION_CLIENTPORT, true, "Port for incoming client requests");
+      options.addOption("m", OPTION_ADMINPORT, true, "Port for admin status check requests");
       options.addOption("f", OPTION_CONFIG, true, "YAML file with request/response configuration");
       options.addOption("h", OPTION_HELP, false, "This help message");
    }

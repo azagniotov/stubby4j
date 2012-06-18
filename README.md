@@ -64,13 +64,14 @@ breaks.
 Usage
 =====
 ```
-java -jar stubby4j-1.0.0-SNAPSHOT.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
+java -jar stubby4j-x.x.x-SNAPSHOT.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
 
- -a,--address <arg>      Stub server address
- -c,--clientport <arg>   Port that HTTP request consumer runs on
+ -a,--address <arg>      Host address that stubby4j should run on. Default is localhost
+ -c,--clientport <arg>   Port for incoming client requests
  -f,--config <arg>       YAML file with request/response configuration
  -h,--help               This help message
- -m,--adminport <arg>    Port that stubby4j admin runs on
+ -m,--adminport <arg>    Port for admin status check requests
 ```
 
 By default client (the request consumer) is running on port 8882, while admin (system status) is running on port 8889
+For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
