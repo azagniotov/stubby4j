@@ -50,8 +50,8 @@ public class Repository {
    private final static String TBL_NAME_REQ_HEADERS = String.format("%s_HEADERS", TBL_NAME_REQ);
    private final static String TBL_NAME_RES_HEADERS = String.format("%s_HEADERS", TBL_NAME_RES);
    private final static String TBL_COLUMN_ID = "ID";
-   private final static String TBL_COLUMN_STATUS = "STATUS";
-   private final static String TBL_COLUMN_BODY = "BODY";
+   public final static String TBL_COLUMN_STATUS = "STATUS";
+   public final static String TBL_COLUMN_BODY = "BODY";
    private final static String TBL_COLUMN_POSTBODY = "POSTBODY";
    private final static String TBL_COLUMN_URL = "URL";
    private final static String TBL_COLUMN_METHOD = "METHOD";
@@ -59,6 +59,7 @@ public class Repository {
    private final static String TBL_COLUMN_REQUEST_ID = "REQUEST_ID";
    private static final String TBL_COLUMN_PARAM = "PARAM";
    private static final String TBL_COLUMN_VALUE = "VALUE";
+   public final static String NOCONTENT_MSG_KEY = "DEFAULT";
 
    private static Connection dbConnection = null;
 
@@ -229,9 +230,9 @@ public class Repository {
 
    public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
 
-      final Map<String, String> responseValues = new HashMap<String, String>();
+      Map<String, String> responseValues = new HashMap<String, String>();
       final String postMessage = (postBody != null ? " for post data: " + postBody : "");
-      responseValues.put("null", "No data found for " + method + " request at URI " + requestPathinfo + postMessage);
+      responseValues.put(NOCONTENT_MSG_KEY, "No data found for " + method + " request at URI " + requestPathinfo + postMessage);
 
       try {
 
@@ -239,22 +240,40 @@ public class Repository {
                Queries.SELECT_RESPONSE_FOR_GET_REQUEST_PREP_QRY :
                Queries.SELECT_RESPONSE_FOR_POST_REQUEST_PREP_QRY);
 
-         final PreparedStatement requestPreparedStatement = dbConnection.prepareStatement(query);
-         requestPreparedStatement.setString(1, requestPathinfo);
+         final PreparedStatement responseStatement = dbConnection.prepareStatement(query);
+         responseStatement.setString(1, requestPathinfo);
 
          if (method.toLowerCase().equals("post")) {
-            requestPreparedStatement.setString(2, postBody);
+            responseStatement.setString(2, postBody);
          }
 
-         final ResultSet responseSelectResultSet = requestPreparedStatement.executeQuery();
-         while (responseSelectResultSet.next()) {
-            responseValues.put(TBL_COLUMN_STATUS, responseSelectResultSet.getString(TBL_COLUMN_STATUS));
-            responseValues.put(TBL_COLUMN_BODY, responseSelectResultSet.getString(TBL_COLUMN_BODY));
+         final ResultSet responseResultSet = responseStatement.executeQuery();
+         while (responseResultSet.next()) {
+            responseValues.put(TBL_COLUMN_STATUS, responseResultSet.getString(TBL_COLUMN_STATUS));
+            responseValues.put(TBL_COLUMN_BODY, responseResultSet.getString(TBL_COLUMN_BODY));
+
+            final int responseID = responseResultSet.getInt(TBL_COLUMN_ID);
+            responseValues = getResponseHeaders(responseValues, responseID);
          }
-         requestPreparedStatement.close();
+         responseStatement.close();
       } catch (SQLException e) {
+         e.printStackTrace();
          System.err.print("Could not load response for a given request: " + e.getMessage());
       }
+      return responseValues;
+   }
+
+   private Map<String, String> getResponseHeaders(final Map<String, String> responseValues, final int responseID) throws SQLException {
+      final PreparedStatement responseHeadersStatement = dbConnection.prepareStatement(Queries.SELECT_RESPONSE_HEADERS_BY_RESPID_PREP_QRY);
+      responseHeadersStatement.setInt(1, responseID);
+      final ResultSet responseHeadersResultSet = responseHeadersStatement.executeQuery();
+
+      while (responseHeadersResultSet.next()) {
+         responseValues.put(
+               responseHeadersResultSet.getString(TBL_COLUMN_PARAM),
+               responseHeadersResultSet.getString(TBL_COLUMN_VALUE));
+      }
+
       return responseValues;
    }
 }

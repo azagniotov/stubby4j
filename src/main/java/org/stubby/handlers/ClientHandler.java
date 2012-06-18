@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -37,8 +39,8 @@ public final class ClientHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      response.setContentType("text/plain;charset=utf-8");
       response.setHeader("Server", serverNameHeader);
+      response.setCharacterEncoding("UTF-8");
 
       String postBody = null;
       if (request.getMethod().toLowerCase().equals("post")) {
@@ -47,6 +49,7 @@ public final class ClientHandler extends AbstractHandler {
          // the entire stream, from beginning to (illogical) next beginning.
          postBody = new Scanner(postBodyInputStream, "UTF-8").useDelimiter("\\A").next();
          if (postBody == null || postBody.isEmpty()) {
+            response.setContentType("text/plain;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Oh oh :( \n\nBad request, POST body is missing");
             return;
@@ -56,11 +59,27 @@ public final class ClientHandler extends AbstractHandler {
       final Map<String, String> responseBody = repository.retrieveResponseFor(request.getPathInfo(), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
          response.setStatus(HttpServletResponse.SC_OK);
-         response.getWriter().println(responseBody.get("null"));
+         response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
          return;
       }
 
-      response.setStatus(Integer.parseInt(responseBody.get("STATUS")));
-      response.getWriter().println(responseBody.get("BODY"));
+      setResponseHeaders(responseBody, response);
+      response.setStatus(Integer.parseInt(responseBody.get(Repository.TBL_COLUMN_STATUS)));
+      response.getWriter().println(responseBody.get(Repository.TBL_COLUMN_BODY));
+   }
+
+   private void setResponseHeaders(final Map<String, String> responseBody, final HttpServletResponse response) {
+
+      final List<String> nonHeaderProperties = Arrays.asList(
+            Repository.TBL_COLUMN_BODY,
+            Repository.NOCONTENT_MSG_KEY,
+            Repository.TBL_COLUMN_STATUS);
+
+      for (Map.Entry<String, String> entry : responseBody.entrySet()) {
+         if (nonHeaderProperties.contains(entry.getKey())) {
+            continue;
+         }
+         response.setHeader(entry.getKey(), entry.getValue());
+      }
    }
 }

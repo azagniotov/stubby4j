@@ -76,3 +76,7 @@ java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
 By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
 
 For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
+
+Roadmap
+=======
+1. To take into account request headers when fetching responses
