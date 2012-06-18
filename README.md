@@ -13,7 +13,7 @@ Why use stubby4j?
 7. You want to easily configure HTTP request and response stubs
 8. You don't want to spend time coding for the above requirements and just want to concentrate on the task at hand
 
-All this goodness in just under 2.5MB
+All this goodness in just under 2.4MB
 
 Why "stubby"?
 =============
@@ -64,7 +64,7 @@ breaks.
 Usage
 =====
 ```
-java -jar stubby4j-x.x.x-SNAPSHOT.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
+java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
 
  -a,--address <arg>      Host address that stubby4j should run on. Default is localhost
  -c,--clientport <arg>   Port for incoming client requests
@@ -73,5 +73,6 @@ java -jar stubby4j-x.x.x-SNAPSHOT.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m 
  -m,--adminport <arg>    Port for admin status check requests
 ```
 
-By default client (the request consumer) is running on port 8882, while admin (system status) is running on port 8889
+By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
+
 For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
