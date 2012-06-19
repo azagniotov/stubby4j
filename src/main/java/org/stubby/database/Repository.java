@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -208,7 +207,7 @@ public class Repository {
 
          for (final String query : queries) {
             final ResultSet resultSet = statement.executeQuery(query);
-            data.add(convertResultSetToMap(resultSet));
+            data.add(ResultSetConverter.convertResultSetToMap(resultSet));
          }
          statement.close();
 
@@ -219,24 +218,6 @@ public class Repository {
       }
 
       return data;
-   }
-
-   private List<Map<String, Object>> convertResultSetToMap(final ResultSet resultSet) throws SQLException {
-      List<Map<String, Object>> rows = new LinkedList<Map<String, Object>>();
-      while (resultSet.next()) {
-         rows.add(handleRow(resultSet));
-      }
-      return rows;
-   }
-
-   private Map<String, Object> handleRow(final ResultSet resultSet) throws SQLException {
-      final Map<String, Object> map = new HashMap<String, Object>();
-      final ResultSetMetaData metadata = resultSet.getMetaData();
-      final int cols = metadata.getColumnCount();
-      for (int i = 1; i <= cols; i++) {
-         map.put(metadata.getColumnName(i), resultSet.getObject(i));
-      }
-      return map;
    }
 
    public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {

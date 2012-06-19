@@ -8,9 +8,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author Alexander Zagniotov
@@ -42,7 +44,7 @@ public final class AdminHandler extends AbstractHandler {
 
       if (request.getPathInfo().equals("/ping")) {
          response.setContentType("text/html;charset=utf-8");
-         response.getWriter().println("Pong!\n\n" + getConfigDataPresentation());
+         response.getWriter().println(getConfigDataPresentation());
          return;
       }
 
@@ -58,19 +60,17 @@ public final class AdminHandler extends AbstractHandler {
       final List<Map<String, Object>> responseData = data.get(2);
       final List<Map<String, Object>> responseHeaderData = data.get(3);
 
+      final String adminHandlerCssPath = String.format("/%s.css", this.getClass().getSimpleName());
+      final InputStream postBodyInputStream = this.getClass().getResourceAsStream(adminHandlerCssPath);
+      // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
+      // the entire stream, from beginning to (illogical) next beginning.
+      final String adminCss = new Scanner(postBodyInputStream, "UTF-8").useDelimiter("\\A").next();
+
       final StringBuilder builder = new StringBuilder();
-      builder.append("<html><head><title>Pong!</title>" +
-            "<style type='text/css'>" +
-            "table {color: #333333; font-family: 'Arial',sans-serif; font-size: 0.9em; line-height: 1.58;}" +
-            "table { border: 1px solid #BBBBBB; border-collapse: collapse; border-spacing: 0; margin: 0 0 0.8em;}" +
-            "table thead th { border: 1px solid #4D90FE; }" +
-            "table th, table td {padding: 3px 8px;}" +
-            "th {background-color: #6199DF; color: #FFFFFF; font-weight: bold;}" +
-            "td {float: none !important; font-weight: normal; text-align: left; vertical-align: middle; }" +
-            "table td {border: 1px solid #BBBBBB; vertical-align: top;}" +
-            "code { color: #007000; font: 1em/1.5 'Droid Sans Mono',monospace;}" +
-            "</style>" +
-            "</head><body>");
+      builder.append("<html><head><title>Pong!</title>");
+      builder.append(String.format("<style type='text/css'>%s</style>", adminCss));
+      builder.append("</head><body>");
+      builder.append("<h2>Pong!</h2>");
       builder.append(String.format("<p>Have total of %s requests:</p>", requestData.size()));
 
       for (int idx = 0; idx < requestData.size(); idx++) {
