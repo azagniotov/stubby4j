@@ -56,11 +56,6 @@
          <version>1.2</version>
       </dependency>
       <dependency>
-         <groupId>commons-dbutils</groupId>
-         <artifactId>commons-dbutils</artifactId>
-         <version>1.4</version>
-      </dependency>
-      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <version>4.8.2</version>

@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.database;
 
-import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -28,6 +27,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -36,8 +36,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -210,8 +208,7 @@ public class Repository {
 
          for (final String query : queries) {
             final ResultSet resultSet = statement.executeQuery(query);
-            final MapListHandler mapListHandler = new MapListHandler();
-            data.add(mapListHandler.handle(resultSet));
+            data.add(convertResultSetToMap(resultSet));
          }
          statement.close();
 
@@ -222,6 +219,24 @@ public class Repository {
       }
 
       return data;
+   }
+
+   private List<Map<String, Object>> convertResultSetToMap(final ResultSet resultSet) throws SQLException {
+      List<Map<String, Object>> rows = new LinkedList<Map<String, Object>>();
+      while (resultSet.next()) {
+         rows.add(handleRow(resultSet));
+      }
+      return rows;
+   }
+
+   private Map<String, Object> handleRow(final ResultSet resultSet) throws SQLException {
+      final Map<String, Object> map = new HashMap<String, Object>();
+      final ResultSetMetaData metadata = resultSet.getMetaData();
+      final int cols = metadata.getColumnCount();
+      for (int i = 1; i <= cols; i++) {
+         map.put(metadata.getColumnName(i), resultSet.getObject(i));
+      }
+      return map;
    }
 
    public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
