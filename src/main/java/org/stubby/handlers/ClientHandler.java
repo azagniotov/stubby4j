@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -40,6 +41,7 @@ public final class ClientHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
       response.setHeader("Server", serverNameHeader);
+      response.setHeader("Date", new Date().toString());
       response.setCharacterEncoding("UTF-8");
 
       String postBody = null;

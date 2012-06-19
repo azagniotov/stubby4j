@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.database;
 
+import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -32,8 +33,11 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
@@ -194,38 +198,30 @@ public class Repository {
       }
    }
 
-   public final String getHealthCheck() {
+   public final List<List<Map<String, Object>>> getHttpConfigData() {
+      final List<List<Map<String, Object>>> data = new LinkedList<List<Map<String, Object>>>();
       try {
          final Statement statement = dbConnection.createStatement();
-         final boolean isDbClosed = dbConnection.isClosed();
-         final String catalog = dbConnection.getCatalog();
 
-         final ResultSet requestSet = statement.executeQuery(Queries.SELECT_ALL_FROM_REQUEST);
-         final String[] reqColumns = {TBL_COLUMN_ID, TBL_COLUMN_URL, TBL_COLUMN_METHOD, TBL_COLUMN_POSTBODY};
-         final String requestResult = Formatter.formatHealthCheckResults(requestSet, TBL_NAME_REQ, reqColumns);
+         final String[] queries = {Queries.SELECT_ALL_FROM_REQUEST,
+               Queries.SELECT_ALL_FROM_REQUEST_HEADERS,
+               Queries.SELECT_ALL_FROM_RESPONSE,
+               Queries.SELECT_ALL_FROM_RESPONSE_HEADERS};
 
-         final ResultSet requestHeadersSet = statement.executeQuery(Queries.SELECT_ALL_FROM_REQUEST_HEADERS);
-         final String[] reqHeadColumns = {TBL_COLUMN_ID, TBL_COLUMN_REQUEST_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE};
-         final String requestHeaderResult = Formatter.formatHealthCheckResults(requestHeadersSet, TBL_NAME_REQ_HEADERS, reqHeadColumns);
-
-         final ResultSet responseSet = statement.executeQuery(Queries.SELECT_ALL_FROM_RESPONSE);
-         final String[] resColumns = {TBL_COLUMN_ID, TBL_COLUMN_STATUS, TBL_COLUMN_BODY};
-         final String responseResult = Formatter.formatHealthCheckResults(responseSet, TBL_NAME_RES, resColumns);
-
-         final ResultSet responseHeadersSet = statement.executeQuery(Queries.SELECT_ALL_FROM_RESPONSE_HEADERS);
-         final String[] resHeadColumns = {TBL_COLUMN_ID, TBL_COLUMN_RESPONSE_ID, TBL_COLUMN_PARAM, TBL_COLUMN_VALUE};
-         final String responseHeadersResult = Formatter.formatHealthCheckResults(responseHeadersSet, TBL_NAME_RES_HEADERS, resHeadColumns);
-
+         for (final String query : queries) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            final MapListHandler mapListHandler = new MapListHandler();
+            data.add(mapListHandler.handle(resultSet));
+         }
          statement.close();
 
-         final String[] results = {requestResult, requestHeaderResult, responseResult, responseHeadersResult};
-         return Formatter.aggregateResultsIntoOneMessage(isDbClosed, catalog, results);
+         return data;
 
       } catch (SQLException e) {
          System.err.print("Could not get system status: " + e.getMessage());
       }
 
-      return "Could not get system status, got DB error ..";
+      return data;
    }
 
    public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
@@ -236,18 +232,10 @@ public class Repository {
 
       try {
 
-         final String query = (method.toLowerCase().equals("get") ?
-               Queries.SELECT_RESPONSE_FOR_GET_REQUEST_PREP_QRY :
-               Queries.SELECT_RESPONSE_FOR_POST_REQUEST_PREP_QRY);
-
-         final PreparedStatement responseStatement = dbConnection.prepareStatement(query);
-         responseStatement.setString(1, requestPathinfo);
-
-         if (method.toLowerCase().equals("post")) {
-            responseStatement.setString(2, postBody);
-         }
-
+         final String query = identifyQueryByHttpMethod(method);
+         final PreparedStatement responseStatement = buildPreparedstatement(requestPathinfo, method, postBody, query);
          final ResultSet responseResultSet = responseStatement.executeQuery();
+
          while (responseResultSet.next()) {
             responseValues.put(TBL_COLUMN_STATUS, responseResultSet.getString(TBL_COLUMN_STATUS));
             responseValues.put(TBL_COLUMN_BODY, responseResultSet.getString(TBL_COLUMN_BODY));
@@ -261,6 +249,21 @@ public class Repository {
          System.err.print("Could not load response for a given request: " + e.getMessage());
       }
       return responseValues;
+   }
+
+   private String identifyQueryByHttpMethod(final String method) {
+      return (method.toLowerCase().equals("get") ?
+            Queries.SELECT_RESPONSE_FOR_GET_REQUEST_PREP_QRY :
+            Queries.SELECT_RESPONSE_FOR_POST_REQUEST_PREP_QRY);
+   }
+
+   private PreparedStatement buildPreparedstatement(final String requestPathinfo, final String method, final String postBody, final String query) throws SQLException {
+      final PreparedStatement responseStatement = dbConnection.prepareStatement(query);
+      responseStatement.setString(1, requestPathinfo);
+      if (method.toLowerCase().equals("post")) {
+         responseStatement.setString(2, postBody);
+      }
+      return responseStatement;
    }
 
    private Map<String, String> getResponseHeaders(final Map<String, String> responseValues, final int responseID) throws SQLException {

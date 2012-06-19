@@ -91,6 +91,12 @@ final class Queries {
                "JOIN ENDPOINTS.REQUEST REQ ON REQ.ID = RES.ID " +
                "WHERE REQ.METHOD = 'POST' AND REQ.URL = ? AND REQ.POSTBODY = ?";
 
+   static final String SELECT_ALL_REQUEST_AND_RESPONSES =
+         "SELECT REQ.URL, REQ.METHOD, REQ.POSTBODY, RES " +
+               "FROM ENDPOINTS.RESPONSE RES " +
+               "JOIN ENDPOINTS.REQUEST REQ ON REQ.ID = RES.ID " +
+               "WHERE REQ.METHOD = 'POST' AND REQ.URL = ? AND REQ.POSTBODY = ?";
+
    private Queries() {
 
    }

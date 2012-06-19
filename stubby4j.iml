@@ -25,6 +25,7 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.1.v20120215" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.3.167" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-dbutils:commons-dbutils:1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.0" level="project" />
   </component>
