@@ -44,6 +44,8 @@ public final class YamlConsumer {
    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
    private static final List<String> nodesWithoutSiblingValues;
 
+   public static String loadedConfig;
+
    static {
       final List<String> list =
             Arrays.asList(YamlParentNodes.HTTPLIFECYCLE.desc(),
@@ -60,6 +62,7 @@ public final class YamlConsumer {
    public static List<StubHttpLifecycle> readYaml(final File yamlFile) throws IOException {
       final String filename = yamlFile.getName().toLowerCase();
       if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
+         loadedConfig = yamlFile.getAbsolutePath();
          final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
          final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
          logger.info("Loaded YAML " + filename);

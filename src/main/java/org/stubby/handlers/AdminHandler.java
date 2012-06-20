@@ -3,6 +3,8 @@ package org.stubby.handlers;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.Repository;
+import org.stubby.server.JettyOrchestrator;
+import org.stubby.yaml.YamlConsumer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,9 +25,9 @@ public final class AdminHandler extends AbstractHandler {
    private final static long serialVersionUID = 159L;
 
    private static final String HTML_TAG_TABLE_OPEN = "<table width='95%' border='0'>";
-   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='100px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
+   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
    private static final String HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE = "<tr><th colspan='2' align='left'>%s</th></tr>";
-   private static final String HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE = "<tr><th width='100px' valign='top' align='left'>%s</th><th align='left'>%s</th></tr>";
+   private static final String HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE = "<tr><th width='120px' valign='top' align='left'>%s</th><th align='left'>%s</th></tr>";
    private static final String HTML_TAG_TABLE_CLOSE = "</table>";
 
    public static final String CONTENT_TYPE_HTML_CHARSET_UTF_8 = "text/html;charset=utf-8";
@@ -67,7 +69,9 @@ public final class AdminHandler extends AbstractHandler {
       final List<Map<String, Object>> responseHeaderData = data.get(3);
 
       final StringBuilder builder = new StringBuilder();
+
       builder.append(buildRequestCounterHtmlTable(requestData));
+      builder.append(buildSystemStatusHtmlTable("System Status"));
 
       for (int idx = 0; idx < requestData.size(); idx++) {
          final Map<String, Object> requestHeaders = (requestHeaderData.size() > 0 ? requestHeaderData.get(idx) : null);
@@ -78,6 +82,20 @@ public final class AdminHandler extends AbstractHandler {
       }
 
       return populateMainHtmlTemplate("Pong!", requestData.size(), builder.toString());
+   }
+
+   private String buildSystemStatusHtmlTable(final String systemStatus) {
+      final StringBuilder builder = new StringBuilder();
+      builder.append(HTML_TAG_TABLE_OPEN);
+      builder.append(String.format(HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE, systemStatus));
+
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", JettyOrchestrator.currentClientPort));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", JettyOrchestrator.currentAdminPort));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", JettyOrchestrator.currentHost));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.loadedConfig));
+
+      builder.append(HTML_TAG_TABLE_CLOSE);
+      return builder.toString();
    }
 
    private final String populateDefaultHtmlTemplate(final String contextPath) {
@@ -111,11 +129,18 @@ public final class AdminHandler extends AbstractHandler {
 
       for (int idx = 0; idx < requestData.size(); idx++) {
          final Map<String, Object> rowData = requestData.get(idx);
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, rowData.get(Repository.TBL_COLUMN_URL), rowData.get(Repository.TBL_COLUMN_COUNTER)));
+         final String urlAsHyperLink = linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, urlAsHyperLink, rowData.get(Repository.TBL_COLUMN_COUNTER)));
       }
       builder.append(HTML_TAG_TABLE_CLOSE);
       return builder.toString();
    }
+
+   private String linkifyRequestUrl(final Object url) {
+      return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>",
+            JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, url, url);
+   }
+
 
    private String buildHtmlTable(final String tableName, final Map<String, Object> rowData, final String rowHeaderData) {
       final StringBuilder builder = new StringBuilder();
@@ -125,7 +150,13 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, Repository.TBL_COLUMN_HEADERS, rowHeaderData));
       for (final Map.Entry<String, Object> columnData : rowData.entrySet()) {
          if (!columnData.getKey().equals(Repository.TBL_COLUMN_ID)) {
-            builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), columnData.getValue()));
+
+            Object value = columnData.getValue();
+            if (columnData.getKey().equals(Repository.TBL_COLUMN_URL)) {
+               value = linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
+            }
+
+            builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), value));
          }
       }
       builder.append(HTML_TAG_TABLE_CLOSE);

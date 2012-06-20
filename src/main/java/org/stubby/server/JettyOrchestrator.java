@@ -51,6 +51,10 @@ public final class JettyOrchestrator {
    protected static final String GLOBAL_CONTEXT_PATH = "/*";
    protected static final String ADMIN_PING_CONTEXT_PATH = "/ping";
 
+   public static int currentClientPort = DEFAULT_CLIENT_PORT;
+   public static int currentAdminPort = DEFAULT_ADMIN_PORT;
+   public static String currentHost = "localhost";
+
    private JettyOrchestrator() {
 
    }
@@ -90,6 +94,7 @@ public final class JettyOrchestrator {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
          adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
          clientChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+         currentHost = adminChannel.getHost();
          logger.info("Stubby4j client and admin were set to run on host " + adminChannel.getHost());
       }
 
@@ -120,14 +125,16 @@ public final class JettyOrchestrator {
 
    protected static int getClientPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         currentClientPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         return currentClientPort;
       }
       return DEFAULT_CLIENT_PORT;
    }
 
    protected static int getAdminPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
+         currentAdminPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
+         return currentAdminPort;
       }
       return DEFAULT_ADMIN_PORT;
    }
