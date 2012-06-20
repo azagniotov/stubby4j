@@ -30,6 +30,7 @@ final class Queries {
                "(ID INT PRIMARY KEY, " +
                "URL VARCHAR(255) DEFAULT NULL, " +
                "METHOD VARCHAR(255) DEFAULT NULL, " +
+               "COUNTER INT(32) DEFAULT 0, " +
                "POSTBODY TEXT DEFAULT NULL) NOT PERSISTENT";
 
    static final String CREATE_REQUEST_HEADERS_TBL =
@@ -91,11 +92,8 @@ final class Queries {
                "JOIN ENDPOINTS.REQUEST REQ ON REQ.ID = RES.ID " +
                "WHERE REQ.METHOD = 'POST' AND REQ.URL = ? AND REQ.POSTBODY = ?";
 
-   static final String SELECT_ALL_REQUEST_AND_RESPONSES =
-         "SELECT REQ.URL, REQ.METHOD, REQ.POSTBODY, RES " +
-               "FROM ENDPOINTS.RESPONSE RES " +
-               "JOIN ENDPOINTS.REQUEST REQ ON REQ.ID = RES.ID " +
-               "WHERE REQ.METHOD = 'POST' AND REQ.URL = ? AND REQ.POSTBODY = ?";
+   static final String UPDATE_REQUEST_COUNTER =
+         "UPDATE ENDPOINTS.REQUEST SET COUNTER = COUNTER + 1 WHERE ID = ?";
 
    private Queries() {
 

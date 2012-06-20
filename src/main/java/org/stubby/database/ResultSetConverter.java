@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Alexander Zagniotov
@@ -27,11 +28,11 @@ final class ResultSetConverter {
    }
 
    private static Map<String, Object> handleRow(final ResultSet resultSet) throws SQLException {
-      final Map<String, Object> map = new HashMap<String, Object>();
+      final Map<String, Object> map = new TreeMap<String, Object>();
       final ResultSetMetaData metadata = resultSet.getMetaData();
       final int cols = metadata.getColumnCount();
       for (int i = 1; i <= cols; i++) {
-         map.put(metadata.getColumnName(i), resultSet.getObject(i));
+         map.put(metadata.getColumnName(i), resultSet.getString(i));
       }
       return map;
    }

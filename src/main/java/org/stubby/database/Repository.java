@@ -48,13 +48,15 @@ public class Repository {
    private final static String DB_NAME = "ENDPOINTS";
    private final static String TBL_NAME_REQ = String.format("%s.REQUEST", DB_NAME);
    private final static String TBL_NAME_RES = String.format("%s.RESPONSE", DB_NAME);
-   private final static String TBL_NAME_REQ_HEADERS = String.format("%s_HEADERS", TBL_NAME_REQ);
-   private final static String TBL_NAME_RES_HEADERS = String.format("%s_HEADERS", TBL_NAME_RES);
-   private final static String TBL_COLUMN_ID = "ID";
+   public final static String TBL_COLUMN_HEADERS = "HEADERS";
+   private final static String TBL_NAME_REQ_HEADERS = String.format("%s_%s", TBL_NAME_REQ, TBL_COLUMN_HEADERS);
+   private final static String TBL_NAME_RES_HEADERS = String.format("%s_%s", TBL_NAME_RES, TBL_COLUMN_HEADERS);
+   public final static String TBL_COLUMN_ID = "ID";
    public final static String TBL_COLUMN_STATUS = "STATUS";
    public final static String TBL_COLUMN_BODY = "BODY";
    private final static String TBL_COLUMN_POSTBODY = "POSTBODY";
-   private final static String TBL_COLUMN_URL = "URL";
+   public final static String TBL_COLUMN_URL = "URL";
+   public final static String TBL_COLUMN_COUNTER = "COUNTER";
    private final static String TBL_COLUMN_METHOD = "METHOD";
    private final static String TBL_COLUMN_RESPONSE_ID = "RESPONSE_ID";
    private final static String TBL_COLUMN_REQUEST_ID = "REQUEST_ID";
@@ -238,6 +240,8 @@ public class Repository {
 
             final int responseID = responseResultSet.getInt(TBL_COLUMN_ID);
             responseValues = getResponseHeaders(responseValues, responseID);
+
+            updateRequestCounter(responseID);
          }
          responseStatement.close();
       } catch (SQLException e) {
@@ -245,6 +249,12 @@ public class Repository {
          System.err.print("Could not load response for a given request: " + e.getMessage());
       }
       return responseValues;
+   }
+
+   private void updateRequestCounter(final int responseID) throws SQLException {
+      final PreparedStatement responseStatement = dbConnection.prepareStatement(Queries.UPDATE_REQUEST_COUNTER);
+      responseStatement.setInt(1, responseID);
+      responseStatement.executeUpdate();
    }
 
    private String identifyQueryByHttpMethod(final String method) {

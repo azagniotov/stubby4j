@@ -21,6 +21,11 @@ import java.util.Scanner;
 public final class AdminHandler extends AbstractHandler {
 
    private final static long serialVersionUID = 159L;
+   private static final String HTML_TAG_TABLE_OPEN = "<table width='95%' border='0'>";
+   private static final String HTML_TAG_TABLE_CLOSE = "</table>";
+   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='100px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
+   private static final String HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE = "<tr><th colspan='2' align='left'>%s</th></tr>";
+   private static final String HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE = "<tr><th width='100px' valign='top' align='left'>%s</th><th align='left'>%s</th></tr>";
    private final Repository repository;
    private static String serverNameHeader = null;
 
@@ -60,47 +65,72 @@ public final class AdminHandler extends AbstractHandler {
       final List<Map<String, Object>> responseData = data.get(2);
       final List<Map<String, Object>> responseHeaderData = data.get(3);
 
+      final StringBuilder builder = new StringBuilder();
+      builder.append(buildRequestCounterHtmlTable(requestData));
+
+      for (int idx = 0; idx < requestData.size(); idx++) {
+         final Map<String, Object> requestHeaders = (requestHeaderData.size() > 0 ? requestHeaderData.get(idx) : null);
+         builder.append(buildHtmlTable("Request", requestData.get(idx), constructTableRowWithHeadersData(requestHeaders)));
+         final Map<String, Object> responseHeaders = (responseHeaderData.size() > 0 ? responseHeaderData.get(idx) : null);
+         builder.append(buildHtmlTable("Response", responseData.get(idx), constructTableRowWithHeadersData(responseHeaders)));
+         builder.append("<br /><br />");
+      }
+      final String adminCss = getAdminHandlerCssAsResource();
+
+      return buildHtml("Pong!", adminCss, requestData.size(), builder.toString());
+   }
+
+   private final String buildHtml(final String title, final String adminCss, final int totalRequests, final String pageBody) {
+
+      final StringBuilder builder = new StringBuilder();
+      builder.append(String.format("<html><head><title>%s</title>", title));
+      builder.append(String.format("<style type='text/css'>%s</style>", adminCss));
+      builder.append("</head><body>");
+      builder.append(String.format("<h2>%s</h2>", title));
+      builder.append(String.format("<p>Have total of %s requests:</p>", totalRequests));
+      builder.append(String.format("%s", pageBody));
+      builder.append("</body></html>");
+
+      return builder.toString();
+   }
+
+   private final String getAdminHandlerCssAsResource() {
       final String adminHandlerCssPath = String.format("/%s.css", this.getClass().getSimpleName());
       final InputStream postBodyInputStream = this.getClass().getResourceAsStream(adminHandlerCssPath);
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
-      final String adminCss = new Scanner(postBodyInputStream, "UTF-8").useDelimiter("\\A").next();
+      return new Scanner(postBodyInputStream, "UTF-8").useDelimiter("\\A").next();
+   }
 
+   private String buildRequestCounterHtmlTable(final List<Map<String, Object>> requestData) {
       final StringBuilder builder = new StringBuilder();
-      builder.append("<html><head><title>Pong!</title>");
-      builder.append(String.format("<style type='text/css'>%s</style>", adminCss));
-      builder.append("</head><body>");
-      builder.append("<h2>Pong!</h2>");
-      builder.append(String.format("<p>Have total of %s requests:</p>", requestData.size()));
+      builder.append(HTML_TAG_TABLE_OPEN);
+      builder.append(String.format(HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE, Repository.TBL_COLUMN_URL, Repository.TBL_COLUMN_COUNTER));
 
       for (int idx = 0; idx < requestData.size(); idx++) {
-         final Map<String, Object> requestHeaders = (requestHeaderData.size() > 0 ? requestHeaderData.get(idx) : null);
-         builder.append(buildSomething("Request", requestData.get(idx), constructHeaders(requestHeaders)));
-         final Map<String, Object> responseHeaders = (responseHeaderData.size() > 0 ? responseHeaderData.get(idx) : null);
-         builder.append(buildSomething("Response", responseData.get(idx), constructHeaders(responseHeaders)));
-         builder.append("<br /><br />");
+         final Map<String, Object> rowData = requestData.get(idx);
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, rowData.get(Repository.TBL_COLUMN_URL), rowData.get(Repository.TBL_COLUMN_COUNTER)));
       }
-      builder.append("</body></html>");
+      builder.append(HTML_TAG_TABLE_CLOSE);
       return builder.toString();
    }
 
-   private String buildSomething(final String tableName, final Map<String, Object> rowData, final String rowHeaderData) {
+   private String buildHtmlTable(final String tableName, final Map<String, Object> rowData, final String rowHeaderData) {
       final StringBuilder builder = new StringBuilder();
-      builder.append("<table width='95%' border='0'>");
-      builder.append(String.format("<tr><th colspan='2' align='left'>%s</th></tr>", tableName));
+      builder.append(HTML_TAG_TABLE_OPEN);
+      builder.append(String.format(HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE, tableName));
 
-      final String template = "<tr><td width='100px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
-      builder.append(String.format(template, "HEADERS", rowHeaderData));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, Repository.TBL_COLUMN_HEADERS, rowHeaderData));
       for (final Map.Entry<String, Object> columnData : rowData.entrySet()) {
-         if (!columnData.getKey().equals("ID")) {
-            builder.append(String.format(template, columnData.getKey(), columnData.getValue()));
+         if (!columnData.getKey().equals(Repository.TBL_COLUMN_ID)) {
+            builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), columnData.getValue()));
          }
       }
-      builder.append("</table>");
+      builder.append(HTML_TAG_TABLE_CLOSE);
       return builder.toString();
    }
 
-   private String constructHeaders(final Map<String, Object> headerData) {
+   private String constructTableRowWithHeadersData(final Map<String, Object> headerData) {
       final StringBuilder builder = new StringBuilder();
 
       if (headerData == null) {
@@ -110,7 +140,7 @@ public final class AdminHandler extends AbstractHandler {
       final List<Object> params = new LinkedList<Object>();
       for (final Map.Entry<String, Object> columnData : headerData.entrySet()) {
 
-         if (!columnData.getKey().endsWith("ID")) {
+         if (!columnData.getKey().endsWith(Repository.TBL_COLUMN_ID)) {
             params.add(columnData.getValue());
 
             if (params.size() == 2) {
