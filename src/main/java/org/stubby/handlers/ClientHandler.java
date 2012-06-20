@@ -60,7 +60,7 @@ public final class ClientHandler extends AbstractHandler {
 
       final Map<String, String> responseBody = repository.retrieveResponseFor(request.getPathInfo(), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
-         response.setStatus(HttpServletResponse.SC_OK);
+         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
          response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
          return;
       }

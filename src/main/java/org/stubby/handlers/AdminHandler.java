@@ -21,11 +21,14 @@ import java.util.Scanner;
 public final class AdminHandler extends AbstractHandler {
 
    private final static long serialVersionUID = 159L;
+
    private static final String HTML_TAG_TABLE_OPEN = "<table width='95%' border='0'>";
-   private static final String HTML_TAG_TABLE_CLOSE = "</table>";
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='100px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
    private static final String HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE = "<tr><th colspan='2' align='left'>%s</th></tr>";
    private static final String HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE = "<tr><th width='100px' valign='top' align='left'>%s</th><th align='left'>%s</th></tr>";
+   private static final String HTML_TAG_TABLE_CLOSE = "</table>";
+
+   public static final String CONTENT_TYPE_HTML_CHARSET_UTF_8 = "text/html;charset=utf-8";
    private final Repository repository;
    private static String serverNameHeader = null;
 
@@ -43,19 +46,17 @@ public final class AdminHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      response.setContentType("text/html;charset=utf-8");
+      response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);
       response.setStatus(HttpServletResponse.SC_OK);
       response.setHeader("Server", serverNameHeader);
 
       if (request.getPathInfo().equals("/ping")) {
-         response.setContentType("text/html;charset=utf-8");
+         response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);
          response.getWriter().println(getConfigDataPresentation());
          return;
       }
 
-      final String welcomeMessage = "Hello :) Are you lost?<br /><br />If you meant to ping, then ";
-      final String doPingLink = "<a href='" + request.getContextPath() + "/ping'>do ping</a>.";
-      response.getWriter().println(welcomeMessage + doPingLink);
+      response.getWriter().println(populateDefaultHtmlTemplate(request.getContextPath()));
    }
 
    private String getConfigDataPresentation() {
@@ -75,27 +76,28 @@ public final class AdminHandler extends AbstractHandler {
          builder.append(buildHtmlTable("Response", responseData.get(idx), constructTableRowWithHeadersData(responseHeaders)));
          builder.append("<br /><br />");
       }
-      final String adminCss = getAdminHandlerCssAsResource();
 
-      return buildHtml("Pong!", adminCss, requestData.size(), builder.toString());
+      return populateMainHtmlTemplate("Pong!", requestData.size(), builder.toString());
    }
 
-   private final String buildHtml(final String title, final String adminCss, final int totalRequests, final String pageBody) {
+   private final String populateDefaultHtmlTemplate(final String contextPath) {
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(String.format("<html><head><title>%s</title>", title));
-      builder.append(String.format("<style type='text/css'>%s</style>", adminCss));
-      builder.append("</head><body>");
-      builder.append(String.format("<h2>%s</h2>", title));
-      builder.append(String.format("<p>Have total of %s requests:</p>", totalRequests));
-      builder.append(String.format("%s", pageBody));
-      builder.append("</body></html>");
+      builder.append(String.format(getAdminHandlerTemplateResource("Default"), contextPath));
 
       return builder.toString();
    }
 
-   private final String getAdminHandlerCssAsResource() {
-      final String adminHandlerCssPath = String.format("/%s.css", this.getClass().getSimpleName());
+   private final String populateMainHtmlTemplate(final String title, final int totalRequests, final String pageBody) {
+
+      final StringBuilder builder = new StringBuilder();
+      builder.append(String.format(getAdminHandlerTemplateResource(""), title, title, totalRequests, pageBody));
+
+      return builder.toString();
+   }
+
+   private final String getAdminHandlerTemplateResource(final String templateSuffix) {
+      final String adminHandlerCssPath = String.format("/%s%s.html", this.getClass().getSimpleName(), templateSuffix);
       final InputStream postBodyInputStream = this.getClass().getResourceAsStream(adminHandlerCssPath);
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
