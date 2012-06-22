@@ -25,10 +25,10 @@ import org.stubby.yaml.YamlParentNodes;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
  */
-public final class StubHttpLifecycle {
+public class StubHttpLifecycle {
 
-   private final StubRequest request;
-   private final StubResponse response;
+   private StubRequest request;
+   private StubResponse response;
    private YamlParentNodes currentlyPopulated = YamlParentNodes.REQUEST;
 
    public StubHttpLifecycle(final StubRequest request, final StubResponse response) {
@@ -44,11 +44,11 @@ public final class StubHttpLifecycle {
       return response;
    }
 
-   public YamlParentNodes getCurrentlyPopulated() {
+   public final YamlParentNodes getCurrentlyPopulated() {
       return currentlyPopulated;
    }
 
-   public void setCurrentlyPopulated(final YamlParentNodes currentlyPopulated) {
+   public final void setCurrentlyPopulated(final YamlParentNodes currentlyPopulated) {
       this.currentlyPopulated = currentlyPopulated;
    }
 

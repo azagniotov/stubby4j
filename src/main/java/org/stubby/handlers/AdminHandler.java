@@ -22,8 +22,6 @@ import java.util.Scanner;
  */
 public final class AdminHandler extends AbstractHandler {
 
-   private final static long serialVersionUID = 159L;
-
    private static final String HTML_TAG_TABLE_OPEN = "<table width='95%' border='0'>";
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
    private static final String HTML_TAG_TR_WITH_COLSPAN_PARAMETIZED_TEMPLATE = "<tr><th colspan='2' align='left'>%s</th></tr>";
@@ -58,7 +56,8 @@ public final class AdminHandler extends AbstractHandler {
          return;
       }
 
-      response.getWriter().println(populateDefaultHtmlTemplate(request.getContextPath()));
+      final String adminHandlerHtml = populateDefaultHtmlTemplate(request.getContextPath());
+      response.getWriter().println(adminHandlerHtml);
    }
 
    private String getConfigDataPresentation() {
@@ -98,7 +97,7 @@ public final class AdminHandler extends AbstractHandler {
       return builder.toString();
    }
 
-   private final String populateDefaultHtmlTemplate(final String contextPath) {
+   private String populateDefaultHtmlTemplate(final String contextPath) {
 
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(getAdminHandlerTemplateResource("Default"), contextPath));
@@ -106,7 +105,7 @@ public final class AdminHandler extends AbstractHandler {
       return builder.toString();
    }
 
-   private final String populateMainHtmlTemplate(final String title, final int totalRequests, final String pageBody) {
+   private String populateMainHtmlTemplate(final String title, final int totalRequests, final String pageBody) {
 
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(getAdminHandlerTemplateResource(""), title, title, totalRequests, pageBody));
@@ -114,7 +113,7 @@ public final class AdminHandler extends AbstractHandler {
       return builder.toString();
    }
 
-   private final String getAdminHandlerTemplateResource(final String templateSuffix) {
+   private String getAdminHandlerTemplateResource(final String templateSuffix) {
       final String adminHandlerCssPath = String.format("/%s%s.html", this.getClass().getSimpleName(), templateSuffix);
       final InputStream postBodyInputStream = this.getClass().getResourceAsStream(adminHandlerCssPath);
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
@@ -127,8 +126,7 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(HTML_TAG_TABLE_OPEN);
       builder.append(String.format(HTML_TAG_TR_NO_CODE_TAG_PARAMETIZED_TEMPLATE, Repository.TBL_COLUMN_URL, Repository.TBL_COLUMN_COUNTER));
 
-      for (int idx = 0; idx < requestData.size(); idx++) {
-         final Map<String, Object> rowData = requestData.get(idx);
+      for (final Map<String, Object> rowData : requestData) {
          final String urlAsHyperLink = linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
          builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, urlAsHyperLink, rowData.get(Repository.TBL_COLUMN_COUNTER)));
       }

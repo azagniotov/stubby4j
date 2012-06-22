@@ -4,15 +4,31 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.net.URL;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Alexander Zagniotov
  * @since 6/11/12, 10:29 PM
  */
 public class YamlConsumerTest {
+
+   @Test(expected = StringIndexOutOfBoundsException.class)
+   public void testLoadedConfigFilenameWithoutColumn() throws Exception {
+
+      final String yamlLine = "This is a line without column";
+
+      BufferedReader mockBufferedReader = mock(BufferedReader.class);
+      StubHttpLifecycle mockStubHttpLifecycle = mock(StubHttpLifecycle.class);
+
+      when(mockBufferedReader.readLine()).thenReturn(yamlLine);
+
+      YamlConsumer.transformYamlNode(mockBufferedReader, mockStubHttpLifecycle);
+   }
 
    @Test
    public void testReadYamlNoHeaders() throws Exception {

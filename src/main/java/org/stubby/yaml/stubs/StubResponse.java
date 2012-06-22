@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
  */
-public final class StubResponse {
+public class StubResponse {
 
    private String status = null;
    private String body = null;
@@ -49,7 +49,7 @@ public final class StubResponse {
       return false;
    }
 
-   public void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
+   public final void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
       for (Method method : this.getClass().getDeclaredMethods()) {
          if (method.getName().toLowerCase().equals("set" + fieldName)) {
             method.invoke(this, value);
@@ -58,27 +58,27 @@ public final class StubResponse {
       }
    }
 
-   public String getStatus() {
+   public final String getStatus() {
       return status;
    }
 
-   public String getBody() {
+   public final String getBody() {
       return body;
    }
 
-   public void setStatus(final String status) {
+   public final void setStatus(final String status) {
       this.status = status;
    }
 
-   public void setBody(final String body) {
+   public final void setBody(final String body) {
       this.body = body;
    }
 
-   public void addHeader(final String param, final String value) {
+   public final void addHeader(final String param, final String value) {
       headers.put(param, value);
    }
 
-   public Map<String, String> getHeaders() {
+   public final Map<String, String> getHeaders() {
       return headers;
    }
 

@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
  */
-public final class StubRequest {
+public class StubRequest {
 
    private String url = null;
    private String method = null;
@@ -50,7 +50,7 @@ public final class StubRequest {
       return false;
    }
 
-   public void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
+   public final void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
       for (Method method : this.getClass().getDeclaredMethods()) {
          if (method.getName().toLowerCase().equals("set" + fieldName)) {
             method.invoke(this, value);
@@ -59,15 +59,15 @@ public final class StubRequest {
       }
    }
 
-   public String getUrl() {
+   public final String getUrl() {
       return url;
    }
 
-   public String getMethod() {
+   public final String getMethod() {
       return method.toUpperCase();
    }
 
-   public String getPostBody() {
+   public final String getPostBody() {
       return postBody;
    }
 
@@ -75,19 +75,19 @@ public final class StubRequest {
       this.url = url;
    }
 
-   public void setMethod(final String method) {
+   public final void setMethod(final String method) {
       this.method = method;
    }
 
-   public void setPostBody(final String postBody) {
+   public final void setPostBody(final String postBody) {
       this.postBody = postBody;
    }
 
-   public void addHeader(final String param, final String value) {
+   public final void addHeader(final String param, final String value) {
       headers.put(param, value);
    }
 
-   public Map<String, String> getHeaders() {
+   public final Map<String, String> getHeaders() {
       return headers;
    }
 
