@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby;
 
+import org.apache.commons.cli.ParseException;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.Repository;
 import org.stubby.server.JettyOrchestrator;
@@ -32,7 +33,12 @@ public final class Stubby4JRunner {
 
    public static void main(final String[] args) {
 
-      CommandLineIntepreter.parseCommandLine(args);
+      try {
+         CommandLineIntepreter.parseCommandLine(args);
+      } catch (ParseException e) {
+         e.printStackTrace();
+         System.exit(1);
+      }
       if (CommandLineIntepreter.isHelp()) {
          CommandLineIntepreter.printHelp(Stubby4JRunner.class);
 

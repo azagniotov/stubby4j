@@ -59,13 +59,8 @@ public final class CommandLineIntepreter {
 
    }
 
-   public static void parseCommandLine(final String[] args) {
-      try {
-         line = parser.parse(options, args);
-      } catch (ParseException e) {
-         e.printStackTrace();
-         System.exit(1);
-      }
+   public static void parseCommandLine(final String[] args) throws ParseException {
+      line = parser.parse(options, args);
    }
 
    private static String getCurrentJarLocation(final Class theclass) {
