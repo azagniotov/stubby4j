@@ -24,7 +24,7 @@ final class HandlerUtils {
             JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, url, url);
    }
 
-   public static String populateHtmlTemplate(final String templateName, final Object... params) {
+   static String populateHtmlTemplate(final String templateName, final Object... params) {
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(getHtmlResourceByName(templateName), params));
       return builder.toString();
