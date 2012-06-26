@@ -58,7 +58,7 @@ public final class ClientHandler extends AbstractHandler {
          }
       }
 
-      final Map<String, String> responseBody = repository.retrieveResponseFor(request.getPathInfo(), request.getMethod(), postBody);
+      final Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
          response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
@@ -68,6 +68,13 @@ public final class ClientHandler extends AbstractHandler {
       setResponseHeaders(responseBody, response);
       response.setStatus(Integer.parseInt(responseBody.get(Repository.TBL_COLUMN_STATUS)));
       response.getWriter().println(responseBody.get(Repository.TBL_COLUMN_BODY));
+   }
+
+   private String constructFullURI(final HttpServletRequest request) {
+      final String pathInfo = request.getPathInfo();
+      final String queryStr = request.getQueryString();
+      final String queryString = (queryStr == null || queryStr.equals("")) ? "" : String.format("?%s", request.getQueryString());
+      return String.format("%s%s", pathInfo, queryString);
    }
 
    private void setResponseHeaders(final Map<String, String> responseBody, final HttpServletResponse response) {
