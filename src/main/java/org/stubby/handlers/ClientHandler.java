@@ -8,12 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * @author Alexander Zagniotov
@@ -46,10 +44,8 @@ public final class ClientHandler extends AbstractHandler {
 
       String postBody = null;
       if (request.getMethod().toLowerCase().equals("post")) {
-         final InputStream postBodyInputStream = request.getInputStream();
-         // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
-         // the entire stream, from beginning to (illogical) next beginning.
-         postBody = new Scanner(postBodyInputStream, "UTF-8").useDelimiter("\\A").next();
+
+         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
          if (postBody == null || postBody.isEmpty()) {
             response.setContentType("text/plain;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
