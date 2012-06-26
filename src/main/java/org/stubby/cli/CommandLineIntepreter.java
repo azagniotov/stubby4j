@@ -45,6 +45,9 @@ public final class CommandLineIntepreter {
    public static final String OPTION_CLIENTPORT = "clientport";
    public static final String OPTION_ADMINPORT = "adminport";
    public static final String OPTION_CONFIG = "config";
+
+   private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG};
+
    private static final String OPTION_HELP = "help";
 
    static {
@@ -93,22 +96,11 @@ public final class CommandLineIntepreter {
    public static Map<String, String> getCommandlineParams() {
 
       final Map<String, String> params = new HashMap<String, String>();
-      if (line.hasOption(OPTION_ADDRESS)) {
-         params.put(OPTION_ADDRESS, line.getOptionValue(OPTION_ADDRESS));
+      for (final String option : OPTIONS) {
+         if (line.hasOption(option)) {
+            params.put(option, line.getOptionValue(option));
+         }
       }
-
-      if (line.hasOption(OPTION_CLIENTPORT)) {
-         params.put(OPTION_CLIENTPORT, line.getOptionValue(OPTION_CLIENTPORT));
-      }
-
-      if (line.hasOption(OPTION_ADMINPORT)) {
-         params.put(OPTION_ADMINPORT, line.getOptionValue(OPTION_ADMINPORT));
-      }
-
-      if (line.hasOption(OPTION_CONFIG)) {
-         params.put(OPTION_CONFIG, line.getOptionValue(OPTION_CONFIG));
-      }
-
       return params;
    }
 }

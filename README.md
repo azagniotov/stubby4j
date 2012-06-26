@@ -22,13 +22,13 @@ A Java-based stub HTTP server.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ##### All this goodness in just under 2.4MB
-______________________
+_______________________________________________
 
 
 ## Why "stubby"?
 
 It is a stub HTTP server after all, hence "stubby". Also, in Australian slang "stubby" means beer bottle
-_______________________
+________________________________________________
 
 ## YAML Configuration
 
@@ -71,7 +71,7 @@ respective children nodes as per above example.
 
 Please keep in mind, you MUST ensure that the provided `response` body is on one line. In other words, no line
 breaks.
-_______________
+________________________________________________
 
 Usage
 =====
@@ -89,7 +89,7 @@ java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
 By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
 
 For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
-__________________________
+________________________________________________
 
 DEPENDENCIES
 =============

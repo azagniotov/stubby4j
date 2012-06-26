@@ -231,7 +231,7 @@ public class Repository {
       try {
 
          final String query = identifyQueryByHttpMethod(method);
-         final PreparedStatement responseStatement = buildPreparedstatement(requestPathinfo, method, postBody, query);
+         final PreparedStatement responseStatement = buildHttpResponsePreparedstatement(requestPathinfo, method, postBody, query);
          final ResultSet responseResultSet = responseStatement.executeQuery();
 
          while (responseResultSet.next()) {
@@ -263,7 +263,7 @@ public class Repository {
             Queries.SELECT_RESPONSE_FOR_POST_REQUEST_PREP_QRY);
    }
 
-   private PreparedStatement buildPreparedstatement(final String requestPathinfo, final String method, final String postBody, final String query) throws SQLException {
+   private PreparedStatement buildHttpResponsePreparedstatement(final String requestPathinfo, final String method, final String postBody, final String query) throws SQLException {
       final PreparedStatement responseStatement = dbConnection.prepareStatement(query);
       responseStatement.setString(1, requestPathinfo);
       if (method.toLowerCase().equals("post")) {

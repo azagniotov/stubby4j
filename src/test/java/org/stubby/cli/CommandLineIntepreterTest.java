@@ -5,6 +5,8 @@ import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
+import java.util.Map;
+
 /**
  * @author Alexander Zagniotov
  * @since 6/24/12, 2:32 AM
@@ -50,5 +52,26 @@ public class CommandLineIntepreterTest {
       CommandLineIntepreter.parseCommandLine(new String[]{"--help"});
       final boolean isHelp = CommandLineIntepreter.isHelp();
       Assert.assertEquals(true, isHelp);
+   }
+
+   @Test
+   public void shouldReturnEmptyCommandlineParamsWhenHelpPresent() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{"--help"});
+      final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
+      Assert.assertEquals(0, params.size());
+   }
+
+   @Test
+   public void shouldReturnEmptyCommandlineParams() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{});
+      final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
+      Assert.assertEquals(0, params.size());
+   }
+
+   @Test
+   public void shouldReturnCommandlineParams() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{"--config", "somefilename.yaml", "-c", "12345", "--adminport", "567"});
+      final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
+      Assert.assertEquals(3, params.size());
    }
 }
