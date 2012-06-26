@@ -1,8 +1,6 @@
-stubby4j
-========
+# stubby4j
 
 A Java-based stub HTTP server.
-
 
 ### Why would a developer use stubby4j?
 
@@ -25,12 +23,14 @@ A Java-based stub HTTP server.
 _______________________________________________
 
 
-## Why "stubby"?
+Why "stubby"?
+=============
 
 It is a stub HTTP server after all, hence "stubby". Also, in Australian slang "stubby" means beer bottle
 ________________________________________________
 
-## YAML Configuration
+YAML Configuration
+==================
 
 When creating request/response data for the stub server, it must be in the following format:
 
