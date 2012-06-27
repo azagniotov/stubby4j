@@ -110,6 +110,8 @@ public final class AdminHandler extends AbstractHandler {
             Object value = columnData.getValue();
             if (columnData.getKey().equals(Repository.TBL_COLUMN_URL)) {
                value = HandlerUtils.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
+            } else if (value != null) {
+               value = HandlerUtils.escapeHtmlEntities(value.toString());
             }
 
             builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), value));

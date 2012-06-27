@@ -23,6 +23,10 @@ final class HandlerUtils {
       return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
    }
 
+   static String escapeHtmlEntities(final String toBeEscaped) {
+      return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+   }
+
    static String linkifyRequestUrl(final Object url) {
       return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>",
             JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, url, url);
