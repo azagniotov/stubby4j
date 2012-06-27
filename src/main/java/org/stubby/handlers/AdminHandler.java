@@ -24,13 +24,9 @@ public final class AdminHandler extends AbstractHandler {
    public static final String CONTENT_TYPE_HTML_CHARSET_UTF_8 = "text/html;charset=utf-8";
 
    private final Repository repository;
-   private static String serverNameHeader = null;
 
    public AdminHandler(final Repository repository) {
       this.repository = repository;
-      final String implementationVersion = getClass().getPackage().getImplementationVersion();
-      final String implementationTitle = getClass().getPackage().getImplementationTitle();
-      serverNameHeader = String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
    }
 
    @Override
@@ -42,7 +38,7 @@ public final class AdminHandler extends AbstractHandler {
       baseRequest.setHandled(true);
       response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);
       response.setStatus(HttpServletResponse.SC_OK);
-      response.setHeader("Server", serverNameHeader);
+      response.setHeader("Server", HandlerUtils.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
          response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);

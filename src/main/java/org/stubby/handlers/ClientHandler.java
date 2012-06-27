@@ -20,15 +20,10 @@ import java.util.Map;
 public final class ClientHandler extends AbstractHandler {
 
    private final static long serialVersionUID = 159L;
-   private static String serverNameHeader = null;
-
    private final Repository repository;
 
    public ClientHandler(final Repository repository) {
       this.repository = repository;
-      final String implementationVersion = getClass().getPackage().getImplementationVersion();
-      final String implementationTitle = getClass().getPackage().getImplementationTitle();
-      serverNameHeader = String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
    }
 
    @Override
@@ -38,7 +33,7 @@ public final class ClientHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      response.setHeader("Server", serverNameHeader);
+      response.setHeader("Server", HandlerUtils.constructHeaderServerName());
       response.setHeader("Date", new Date().toString());
       response.setCharacterEncoding("UTF-8");
 

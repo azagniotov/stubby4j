@@ -48,9 +48,6 @@ public final class JettyOrchestrator {
    protected static final String ADMIN_CONNECTOR_NAME = "adminConnector";
    protected static final String CLIENT_CONNECTOR_NAME = "clientConnector";
 
-   protected static final String GLOBAL_CONTEXT_PATH = "/*";
-   protected static final String ADMIN_PING_CONTEXT_PATH = "/ping";
-
    public static int currentClientPort = DEFAULT_CLIENT_PORT;
    public static int currentAdminPort = DEFAULT_ADMIN_PORT;
    public static String currentHost = "localhost";

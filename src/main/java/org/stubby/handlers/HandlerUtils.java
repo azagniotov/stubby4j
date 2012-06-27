@@ -17,6 +17,12 @@ final class HandlerUtils {
       return inputStreamToString(postBodyInputStream);
    }
 
+   static String constructHeaderServerName() {
+      final String implementationVersion = HandlerUtils.class.getPackage().getImplementationVersion();
+      final String implementationTitle = HandlerUtils.class.getPackage().getImplementationTitle();
+      return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+   }
+
    static String inputStreamToString(final InputStream inputStream) {
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
