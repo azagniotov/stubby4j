@@ -1,5 +1,8 @@
 package org.stubby.handlers;
 
+import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.Repository;
@@ -21,7 +24,6 @@ import java.util.Map;
 public final class AdminHandler extends AbstractHandler {
 
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
-   public static final String CONTENT_TYPE_HTML_CHARSET_UTF_8 = "text/html;charset=utf-8";
 
    private final Repository repository;
 
@@ -36,12 +38,12 @@ public final class AdminHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);
-      response.setStatus(HttpServletResponse.SC_OK);
-      response.setHeader("Server", HandlerUtils.constructHeaderServerName());
+      response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
-         response.setContentType(CONTENT_TYPE_HTML_CHARSET_UTF_8);
+         response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
          response.getWriter().println(getConfigDataPresentation());
          return;
       }

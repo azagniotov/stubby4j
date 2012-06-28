@@ -1,5 +1,8 @@
 package org.stubby.handlers;
 
+import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.Repository;
@@ -19,7 +22,6 @@ import java.util.Map;
  */
 public final class ClientHandler extends AbstractHandler {
 
-   private final static long serialVersionUID = 159L;
    private final Repository repository;
 
    public ClientHandler(final Repository repository) {
@@ -33,17 +35,15 @@ public final class ClientHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      response.setHeader("Server", HandlerUtils.constructHeaderServerName());
-      response.setHeader("Date", new Date().toString());
-      response.setCharacterEncoding("UTF-8");
+      setResponseMainHeaders(response);
 
       String postBody = null;
       if (request.getMethod().toLowerCase().equals("post")) {
 
          postBody = HandlerUtils.inputStreamToString(request.getInputStream());
          if (postBody == null || postBody.isEmpty()) {
-            response.setContentType("text/plain;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+            response.setStatus(HttpStatus.BAD_REQUEST_400);
             response.getWriter().println("Oh oh :( \n\nBad request, POST body is missing");
             return;
          }
@@ -51,12 +51,12 @@ public final class ClientHandler extends AbstractHandler {
 
       final Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
-         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+         response.setStatus(HttpStatus.NOT_FOUND_404);
          response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
          return;
       }
 
-      setResponseHeaders(responseBody, response);
+      setStubResponseHeaders(responseBody, response);
       response.setStatus(Integer.parseInt(responseBody.get(Repository.TBL_COLUMN_STATUS)));
       response.getWriter().println(responseBody.get(Repository.TBL_COLUMN_BODY));
    }
@@ -68,12 +68,22 @@ public final class ClientHandler extends AbstractHandler {
       return String.format("%s%s", pathInfo, queryString);
    }
 
-   private void setResponseHeaders(final Map<String, String> responseBody, final HttpServletResponse response) {
+   private void setResponseMainHeaders(final HttpServletResponse response) {
+      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeaders.DATE, new Date().toString());
+      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeaders.EXPIRES, 0);
+   }
+
+   private void setStubResponseHeaders(final Map<String, String> responseBody, final HttpServletResponse response) {
 
       final List<String> nonHeaderProperties = Arrays.asList(
             Repository.TBL_COLUMN_BODY,
             Repository.NOCONTENT_MSG_KEY,
             Repository.TBL_COLUMN_STATUS);
+
+      response.setCharacterEncoding("UTF-8");
 
       for (Map.Entry<String, String> entry : responseBody.entrySet()) {
          if (nonHeaderProperties.contains(entry.getKey())) {
