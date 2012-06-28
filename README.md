@@ -1,6 +1,6 @@
 # stubby4j
 
-A Java-based stub HTTP server.
+A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL) database.
 
 ### Why would a developer use stubby4j?
 
@@ -19,7 +19,7 @@ A Java-based stub HTTP server.
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 2.4MB
+##### All this goodness in just under 1.8MB
 _______________________________________________
 
 

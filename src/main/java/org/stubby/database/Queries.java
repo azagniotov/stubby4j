@@ -26,32 +26,32 @@ package org.stubby.database;
 final class Queries {
 
    static final String CREATE_REQUEST_TBL =
-         "CREATE TABLE ENDPOINTS.REQUEST " +
-               "(ID INT PRIMARY KEY, " +
+         "CREATE MEMORY TABLE ENDPOINTS.REQUEST " +
+               "(ID INTEGER PRIMARY KEY, " +
                "URL VARCHAR(255) DEFAULT NULL, " +
                "METHOD VARCHAR(255) DEFAULT NULL, " +
-               "COUNTER INT(32) DEFAULT 0, " +
-               "POSTBODY TEXT DEFAULT NULL) NOT PERSISTENT";
+               "COUNTER INTEGER DEFAULT 0, " +
+               "POSTBODY LONGVARCHAR DEFAULT NULL)";
 
    static final String CREATE_REQUEST_HEADERS_TBL =
-         "CREATE TABLE ENDPOINTS.REQUEST_HEADERS " +
-               "(ID INT PRIMARY KEY, " +
-               "REQUEST_ID INT(32) NOT NULL, " +
+         "CREATE MEMORY TABLE ENDPOINTS.REQUEST_HEADERS " +
+               "(ID INTEGER PRIMARY KEY, " +
+               "REQUEST_ID INTEGER NOT NULL, " +
                "PARAM VARCHAR(255) DEFAULT NULL, " +
-               "VALUE VARCHAR(255) DEFAULT NULL) NOT PERSISTENT";
+               "VALUE VARCHAR(255) DEFAULT NULL)";
 
    static final String CREATE_RESPONSE_TBL =
-         "CREATE TABLE ENDPOINTS.RESPONSE " +
-               "(ID INT PRIMARY KEY, " +
+         "CREATE MEMORY TABLE ENDPOINTS.RESPONSE " +
+               "(ID INTEGER PRIMARY KEY, " +
                "STATUS VARCHAR(255) DEFAULT NULL, " +
-               "BODY TEXT DEFAULT NULL) NOT PERSISTENT";
+               "BODY LONGVARCHAR DEFAULT NULL)";
 
    static final String CREATE_RESPONSE_HEADERS_TBL =
-         "CREATE TABLE ENDPOINTS.RESPONSE_HEADERS " +
-               "(ID INT PRIMARY KEY, " +
-               "RESPONSE_ID INT(32) NOT NULL, " +
+         "CREATE MEMORY TABLE ENDPOINTS.RESPONSE_HEADERS " +
+               "(ID INTEGER PRIMARY KEY, " +
+               "RESPONSE_ID INTEGER NOT NULL, " +
                "PARAM VARCHAR(255) DEFAULT NULL, " +
-               "VALUE VARCHAR(255) DEFAULT NULL) NOT PERSISTENT";
+               "VALUE VARCHAR(255) DEFAULT NULL)";
 
    static final String INSERT_INTO_REQUEST_PREP_QRY =
          "INSERT INTO ENDPOINTS.REQUEST (ID, URL, METHOD, POSTBODY) VALUES (?, ?, ?, ?)";

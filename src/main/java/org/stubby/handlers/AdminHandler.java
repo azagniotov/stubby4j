@@ -68,7 +68,6 @@ public final class AdminHandler extends AbstractHandler {
          builder.append(buildPageBodyHtml(requestCounterHtml, "Request", requestData.get(idx), constructTableRowWithHeadersData(requestHeaders)));
          final Map<String, Object> responseHeaders = (responseHeaderData.size() > 0 ? responseHeaderData.get(idx) : null);
          builder.append(buildPageBodyHtml(requestCounterHtml, "Response", responseData.get(idx), constructTableRowWithHeadersData(responseHeaders)));
-         builder.append("<br /><br />");
       }
 
       return HandlerUtils.populateHtmlTemplate("ping", requestData.size(), builder.toString());

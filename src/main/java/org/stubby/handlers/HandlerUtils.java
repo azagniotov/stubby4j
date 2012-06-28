@@ -1,5 +1,6 @@
 package org.stubby.handlers;
 
+import org.stubby.exception.Stubby4JException;
 import org.stubby.server.JettyOrchestrator;
 
 import java.io.InputStream;
@@ -12,14 +13,20 @@ import java.util.Scanner;
 final class HandlerUtils {
 
    static String getHtmlResourceByName(final String templateSuffix) {
-      final String adminHandlerCssPath = String.format("/html/%s.html", templateSuffix);
-      final InputStream postBodyInputStream = HandlerUtils.class.getResourceAsStream(adminHandlerCssPath);
+      final String htmlTemplatePath = String.format("/html/%s.html", templateSuffix);
+      final InputStream postBodyInputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
+      if (postBodyInputStream == null) {
+         throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
+      }
       return inputStreamToString(postBodyInputStream);
    }
 
    static String constructHeaderServerName() {
-      final String implementationVersion = HandlerUtils.class.getPackage().getImplementationVersion();
-      final String implementationTitle = HandlerUtils.class.getPackage().getImplementationTitle();
+      final Package pkg = HandlerUtils.class.getPackage();
+      final String implementationVersion = pkg.getImplementationVersion() == null ?
+            "x.x.x" : pkg.getImplementationVersion();
+      final String implementationTitle = pkg.getImplementationTitle() == null ?
+            "Java-based HTTP stub server" : pkg.getImplementationTitle();
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
    }
 
@@ -33,9 +40,9 @@ final class HandlerUtils {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
    }
 
-   static String linkifyRequestUrl(final Object url) {
+   static String linkifyRequestUrl(final Object uri) {
       return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>",
-            JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, url, url);
+            JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, uri, uri);
    }
 
    static String populateHtmlTemplate(final String templateName, final Object... params) {

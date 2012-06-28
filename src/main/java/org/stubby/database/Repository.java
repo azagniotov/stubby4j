@@ -78,10 +78,12 @@ public class Repository {
       try {
          dbConnection.setAutoCommit(false);
          statement = dbConnection.createStatement();
+         statement.execute(String.format("CREATE SCHEMA %s AUTHORIZATION DBA", DB_NAME));
          statement.execute(Queries.CREATE_REQUEST_TBL);
          statement.execute(Queries.CREATE_REQUEST_HEADERS_TBL);
          statement.execute(Queries.CREATE_RESPONSE_TBL);
          statement.execute(Queries.CREATE_RESPONSE_HEADERS_TBL);
+         statement.execute(String.format("SET SCHEMA %s", DB_NAME));
          dbConnection.commit();
       } catch (SQLException e) {
          runRollback(e);
@@ -180,12 +182,8 @@ public class Repository {
 
       if (dbConnection == null) {
          try {
-            Class.forName("org.h2.Driver");
-
-            final String url = "jdbc:h2:mem:endpoints;";
-            final String init = "INIT=CREATE SCHEMA IF NOT EXISTS ENDPOINTS\\;SET SCHEMA ENDPOINTS;";
-            final String options = "DB_CLOSE_DELAY=-1\\;SET DEFAULT_TABLE_TYPE=MEMORY;";
-            dbConnection = DriverManager.getConnection(url + init + options, "sa", "");
+            Class.forName("org.hsqldb.jdbcDriver");
+            dbConnection = DriverManager.getConnection("jdbc:hsqldb:mem:endpoints", "sa", "");
          } catch (SQLException e) {
             System.err.print("Could not load get DB connection: " + e.getMessage());
             System.exit(1);
