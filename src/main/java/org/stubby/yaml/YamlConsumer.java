@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,18 +41,8 @@ import java.util.logging.Logger;
 public final class YamlConsumer {
 
    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-   private static final List<String> nodesWithoutSiblingValues;
 
    public static String loadedConfig;
-
-   static {
-      final List<String> list =
-            Arrays.asList(YamlParentNodes.HTTPLIFECYCLE.desc(),
-                  YamlParentNodes.REQUEST.desc(),
-                  YamlParentNodes.RESPONSE.desc(),
-                  YamlParentNodes.HEADERS.desc());
-      nodesWithoutSiblingValues = new LinkedList<String>(list);
-   }
 
    private YamlConsumer() {
 
@@ -87,22 +76,31 @@ public final class YamlConsumer {
             continue;
          }
 
-         final int indexOfColumn = yamlLine.indexOf(":");
-         final String nodeKey = yamlLine.substring(0, indexOfColumn).toLowerCase().trim();
-         final String nodeValue = yamlLine.substring(indexOfColumn + 1, yamlLine.length()).trim();
+         final String[] keyAndValue = yamlLine.split(":", 2);
+         final String nodeKey = keyAndValue[0].toLowerCase().trim();
 
-         if (nodeKey.equals(YamlParentNodes.HTTPLIFECYCLE.desc())) {
-            parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
-            httpLifecycles.add(parentStub);
+         switch (YamlParentNodes.getFor(nodeKey)) {
 
-         } else if (nodeKey.equals(YamlParentNodes.REQUEST.desc())) {
-            parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
+            case HTTPLIFECYCLE:
+               parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
+               httpLifecycles.add(parentStub);
+               break;
 
-         } else if (nodeKey.equals(YamlParentNodes.RESPONSE.desc())) {
-            parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
+            case REQUEST:
+               parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
+               break;
 
-         } else if (!nodesWithoutSiblingValues.contains(nodeKey)) {
-            bindYamlValueToPojo(nodeKey, nodeValue, parentStub);
+            case RESPONSE:
+               parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
+               break;
+
+            case HEADERS:
+               break;
+
+            default:
+               final String nodeValue = (keyAndValue.length == 2 ? keyAndValue[1].trim() : "");
+               bindYamlValueToPojo(nodeKey, nodeValue, parentStub);
+               break;
          }
       }
       bufferedReader.close();

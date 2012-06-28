@@ -27,7 +27,8 @@ public enum YamlParentNodes {
    REQUEST("request"),
    RESPONSE("response"),
    HEADERS("headers"),
-   HTTPLIFECYCLE("httplifecycle");
+   HTTPLIFECYCLE("httplifecycle"),
+   NULL("");
 
    private final String description;
 
@@ -37,5 +38,15 @@ public enum YamlParentNodes {
 
    public String desc() {
       return description.toLowerCase();
+   }
+
+   public static YamlParentNodes getFor(final String value) {
+      for (final YamlParentNodes enumNode : YamlParentNodes.values()) {
+         if (enumNode.desc().equals(value)) {
+            return enumNode;
+         }
+      }
+
+      return YamlParentNodes.NULL;
    }
 }
