@@ -1,6 +1,6 @@
 # stubby4j
 
-A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL) database.
+A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL database).
 
 ### Why would a developer use stubby4j?
 
