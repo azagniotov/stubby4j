@@ -102,5 +102,5 @@ The following dependencies embedded within stubby4j:
 4. jetty-http-8.1.1.v20120215.jar 
 5. jetty-io-8.1.1.v20120215.jar 
 6. jetty-util-8.1.1.v20120215.jar 
-7. h2-1.3.167.jar 
+7. hsqldb-1.8.0.10.jar
 8. commons-cli-1.2.jar
