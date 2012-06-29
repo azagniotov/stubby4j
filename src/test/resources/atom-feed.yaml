@@ -19,3 +19,16 @@ httplifecycle:
          content-type: application/json
       status: 200
       body: {"id" : "1", "description" : "milk"}
+
+
+httplifecycle:
+   request:
+      method: POST
+      url: /item/1
+      postBody: post body
+
+   response:
+      headers:
+         content-type: text/plain
+      status: 200
+      body: Got post response

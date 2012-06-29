@@ -22,10 +22,17 @@ public class Stubby4JRunnerTest {
    }
 
    @Test
-   public void sanityCheck() throws Exception {
+   public void shouldDoGetOnURI() throws Exception {
       final Map<String, String> result = Stubby4JRunner.doGetOnURI("/item/1");
-      Assert.assertEquals("200", result.get("status"));
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get("response"));
+      Assert.assertEquals("200", result.get(Stubby4JRunner.KEY_STATUS));
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4JRunner.KEY_RESPONSE));
+   }
+
+   @Test
+   public void shouldDoPostOnURI() throws Exception {
+      final Map<String, String> result = Stubby4JRunner.doPostOnURI("/item/1", "post body");
+      Assert.assertEquals("200", result.get(Stubby4JRunner.KEY_STATUS));
+      Assert.assertEquals("Got post response", result.get(Stubby4JRunner.KEY_RESPONSE));
    }
 
    @AfterClass
