@@ -1,16 +1,12 @@
 package org.stubby;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.stubby.server.JettyOrchestrator;
 
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -27,12 +23,9 @@ public class Stubby4JRunnerTest {
 
    @Test
    public void sanityCheck() throws Exception {
-      final String url = String.format("http://%s:%s/atomfeed/1", JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort);
-      final URL atomFeed = new URL(url);
-      final URLConnection con = atomFeed.openConnection();
-      final InputStream inputStream = con.getInputStream();
-
-      Assert.assertNotNull(inputStream);
+      final Map<String, String> result = Stubby4JRunner.doGetOnURI("/item/1");
+      Assert.assertEquals("200", result.get("status"));
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get("response"));
    }
 
    @AfterClass

@@ -79,11 +79,7 @@ public final class JettyOrchestrator {
    }
 
    public static void stopJetty() throws Exception {
-
-      currentClientPort = DEFAULT_CLIENT_PORT;
-      currentAdminPort = DEFAULT_ADMIN_PORT;
-      currentHost = "localhost";
-
+      resetPortsAndHost();
       new Thread() {
          public void run() {
             try {
@@ -99,14 +95,12 @@ public final class JettyOrchestrator {
             }
          }
       }.start();
+   }
 
-      Socket s = new Socket(InetAddress.getLocalHost(), currentClientPort);
-      OutputStream out = s.getOutputStream();
-      System.out.println("*** Sending Jetty stop request..");
-      out.write(("\r\n").getBytes());
-      out.flush();
-      s.close();
-
+   private static void resetPortsAndHost() {
+      JettyOrchestrator.currentClientPort = DEFAULT_CLIENT_PORT;
+      JettyOrchestrator.currentAdminPort = DEFAULT_ADMIN_PORT;
+      JettyOrchestrator.currentHost = "localhost";
    }
 
    private static Connector[] buildConnectorList(final String clientConnectorName, final String adminConnectorName, final Map<String, String> commandLineArgs) {

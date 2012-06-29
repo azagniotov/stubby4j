@@ -78,12 +78,12 @@ public class Repository {
       try {
          dbConnection.setAutoCommit(false);
          statement = dbConnection.createStatement();
-         statement.execute(String.format("CREATE SCHEMA %s AUTHORIZATION DBA", DB_NAME));
+         statement.execute(String.format(Queries.CREATE_SCHEMA, DB_NAME));
          statement.execute(Queries.CREATE_REQUEST_TBL);
          statement.execute(Queries.CREATE_REQUEST_HEADERS_TBL);
          statement.execute(Queries.CREATE_RESPONSE_TBL);
          statement.execute(Queries.CREATE_RESPONSE_HEADERS_TBL);
-         statement.execute(String.format("SET SCHEMA %s", DB_NAME));
+         statement.execute(String.format(Queries.SET_SCHEMA, DB_NAME));
          dbConnection.commit();
       } catch (SQLException e) {
          runRollback(e);
@@ -290,7 +290,7 @@ public class Repository {
       try {
          dbConnection.setAutoCommit(false);
          statement = dbConnection.createStatement();
-         statement.execute(String.format("DROP SCHEMA %s CASCADE", DB_NAME));
+         statement.execute(String.format(Queries.DROP_SCHEMA, DB_NAME));
          dbConnection.commit();
       } catch (SQLException e) {
          runRollback(e);

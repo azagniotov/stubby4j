@@ -27,12 +27,28 @@ import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public final class Stubby4JRunner {
 
+
+   public static Map<String, String> doGetOnURI(final String uri) throws Exception {
+      final Map<String, String> results = new HashMap<String, String>();
+
+      final String urlString = String.format("http://%s:%s%s", JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, uri);
+      final URL url = new URL(urlString);
+      final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+      final Integer responseCode = con.getResponseCode();
+      final String response = new Scanner(con.getInputStream(), "UTF-8").useDelimiter("\\A").next();
+      results.put("status", responseCode.toString());
+      results.put("response", response.trim());
+      return results;
+   }
 
    public static void startStubby4J(final InputStream yamlInputStream) throws Exception {
       startStubby4J(yamlInputStream, JettyOrchestrator.currentClientPort, JettyOrchestrator.currentAdminPort);

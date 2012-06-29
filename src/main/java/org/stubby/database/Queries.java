@@ -95,6 +95,12 @@ final class Queries {
    static final String UPDATE_REQUEST_COUNTER =
          "UPDATE ENDPOINTS.REQUEST SET COUNTER = COUNTER + 1 WHERE ID = ?";
 
+   static final String DROP_SCHEMA = "DROP SCHEMA %s CASCADE";
+
+   static final String SET_SCHEMA = "SET SCHEMA %s";
+
+   static final String CREATE_SCHEMA = "CREATE SCHEMA %s AUTHORIZATION DBA";
+
    private Queries() {
 
    }
