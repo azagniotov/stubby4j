@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
@@ -59,6 +60,11 @@ public final class YamlConsumer {
          return transformYamlNode(bufferedReader, null);
       }
       return new LinkedList<StubHttpLifecycle>();
+   }
+
+   public static List<StubHttpLifecycle> readYaml(final InputStream yamlInputStream) throws IOException {
+      final InputStreamReader inputStreamReader = new InputStreamReader(yamlInputStream, Charset.forName("UTF-8"));
+      return transformYamlNode(new BufferedReader(inputStreamReader), null);
    }
 
    public static List<StubHttpLifecycle> readYaml(final String yamlConfigFilename) throws IOException {

@@ -73,8 +73,8 @@ Please keep in mind, you MUST ensure that the provided `response` body is on one
 breaks.
 ________________________________________________
 
-Usage
-=====
+Commandline Usage
+=================
 
 ```
 java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
@@ -89,6 +89,44 @@ java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
 By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
 
 For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
+
+________________________________________________
+
+Starting stubby4j programmatically
+==================================
+```
+@BeforeClass
+public static void beforeClass() throws Exception {
+   final URL url = UtilsTest.class.getResource("/config.yaml");
+   Stubby4JRunner.startStubby4J(url.openStream());
+}
+.
+.
+.
+@AfterClass
+public static void afterClass() throws Exception {
+   Stubby4JRunner.stopStubby4J();
+}
+```
+
+OR
+
+```
+@BeforeClass
+public static void beforeClass() throws Exception {
+   int clientPort = 8888;
+   int adminPort = 9999;
+   final URL url = Stubby4JRunnerTest.class.getResource("/config.yaml");
+   Stubby4JRunner.startStubby4J(url.openStream(), clientPort, adminPort);
+}
+.
+.
+.
+@AfterClass
+public static void afterClass() throws Exception {
+   Stubby4JRunner.stopStubby4J();
+}
+```
 ________________________________________________
 
 DEPENDENCIES

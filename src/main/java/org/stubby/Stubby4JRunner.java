@@ -26,10 +26,29 @@ import org.stubby.server.JettyOrchestrator;
 import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class Stubby4JRunner {
+
+
+   public static void startStubby4J(final InputStream yamlInputStream) throws Exception {
+      startStubby4J(yamlInputStream, JettyOrchestrator.currentClientPort, JettyOrchestrator.currentAdminPort);
+   }
+
+   public static void stopStubby4J() throws Exception {
+      JettyOrchestrator.stopJetty();
+   }
+
+   public static void startStubby4J(final InputStream yamlInputStream, final int clientPort, final int adminPort) throws Exception {
+      final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlInputStream);
+      final Map<String, String> params = new HashMap<String, String>();
+      params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
+      params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
+      JettyOrchestrator.startJetty(new Repository(httpLifecycles), params);
+   }
 
    public static void main(final String[] args) {
 

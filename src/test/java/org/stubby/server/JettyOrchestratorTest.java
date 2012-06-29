@@ -1,6 +1,8 @@
 package org.stubby.server;
 
 import junit.framework.Assert;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stubby.cli.CommandLineIntepreter;
 
@@ -12,6 +14,12 @@ import java.util.Map;
  * @since 6/24/12, 1:23 AM
  */
 public class JettyOrchestratorTest {
+
+   @AfterClass
+   public static void afterClass() throws Exception {
+      JettyOrchestrator.currentClientPort = JettyOrchestrator.DEFAULT_CLIENT_PORT;
+      JettyOrchestrator.currentAdminPort = JettyOrchestrator.DEFAULT_ADMIN_PORT;
+   }
 
    @Test
    public void shouldReturnDefaultClientPort() throws Exception {

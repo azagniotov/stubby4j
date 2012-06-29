@@ -126,7 +126,8 @@ public class Repository {
       if (dbConnection != null) {
          try {
             dbConnection.rollback();
-            System.err.print("Transaction is being rolled back when trying to insert table data: " + e.getMessage());
+            System.err.print("Transaction is being rolled back: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
          } catch (SQLException ex) {
             System.err.print("Could not rollback the transaction: " + ex.getMessage());
@@ -282,5 +283,19 @@ public class Repository {
       }
 
       return responseValues;
+   }
+
+   public void dropSchema() {
+      Statement statement = null;
+      try {
+         dbConnection.setAutoCommit(false);
+         statement = dbConnection.createStatement();
+         statement.execute(String.format("DROP SCHEMA %s CASCADE", DB_NAME));
+         dbConnection.commit();
+      } catch (SQLException e) {
+         runRollback(e);
+      } finally {
+         runFinally(Arrays.asList(statement));
+      }
    }
 }
