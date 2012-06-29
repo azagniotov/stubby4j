@@ -100,13 +100,6 @@ public static void beforeClass() throws Exception {
    final URL url = UtilsTest.class.getResource("/config.yaml");
    Stubby4JRunner.startStubby4J(url.openStream());
 }
-.
-.
-.
-@AfterClass
-public static void afterClass() throws Exception {
-   Stubby4JRunner.stopStubby4J();
-}
 ```
 
 OR
@@ -118,6 +111,13 @@ public static void beforeClass() throws Exception {
    int adminPort = 9999;
    final URL url = Stubby4JRunnerTest.class.getResource("/config.yaml");
    Stubby4JRunner.startStubby4J(url.openStream(), clientPort, adminPort);
+}
+
+@Test
+public void sanityCheck() throws Exception {
+   final Map<String, String> result = Stubby4JRunner.doGetOnURI("/item/1");
+   Assert.assertEquals("200", result.get("status"));
+   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get("response"));
 }
 .
 .
