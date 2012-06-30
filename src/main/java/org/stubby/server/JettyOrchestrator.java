@@ -30,9 +30,6 @@ import org.stubby.database.Repository;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.handlers.ClientHandler;
 
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -51,41 +48,37 @@ public final class JettyOrchestrator {
    protected static final String ADMIN_CONNECTOR_NAME = "adminConnector";
    protected static final String CLIENT_CONNECTOR_NAME = "clientConnector";
 
-   public static int currentClientPort = DEFAULT_CLIENT_PORT;
-   public static int currentAdminPort = DEFAULT_ADMIN_PORT;
-   public static String currentHost = "localhost";
+   public static int CURRENT_CLIENT_PORT = DEFAULT_CLIENT_PORT;
+   public static int CURRENT_ADMIN_PORT = DEFAULT_ADMIN_PORT;
+   public static String CURRENT_HOST = "localhost";
 
-   private static Server server;
-   private static Repository repository;
+   private Server server;
+   private Repository repository;
 
-   private JettyOrchestrator() {
-
+   public JettyOrchestrator(final Repository repository) {
+      server = new Server();
+      this.repository = repository;
    }
 
-   public static void startJetty(final Repository repository, final Map<String, String> commandLineArgs) throws Exception {
-      server = new Server();
-      JettyOrchestrator.repository = repository;
+   public void startJetty(final Map<String, String> commandLineArgs) throws Exception {
 
       final Connector[] connectors = buildConnectorList(CLIENT_CONNECTOR_NAME, ADMIN_CONNECTOR_NAME, commandLineArgs);
-      server.setConnectors(connectors);
-
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]{createClientContextHandler(), createAdminContextHandler()});
+
+      server.setConnectors(connectors);
       server.setHandler(handlers);
       server.setStopAtShutdown(true);
-
       server.start();
-      //server.join();
    }
 
-   public static void stopJetty() throws Exception {
-      resetPortsAndHost();
+   public void stopJetty() throws Exception {
       new Thread() {
          public void run() {
             try {
                logger.info("Shutting down the server...");
 
-               if (server != null && server.isRunning()) {
+               if (server != null && !server.isStopped()) {
                   repository.dropSchema();
                   server.stop();
                }
@@ -97,14 +90,7 @@ public final class JettyOrchestrator {
       }.start();
    }
 
-   private static void resetPortsAndHost() {
-      JettyOrchestrator.currentClientPort = DEFAULT_CLIENT_PORT;
-      JettyOrchestrator.currentAdminPort = DEFAULT_ADMIN_PORT;
-      JettyOrchestrator.currentHost = "localhost";
-   }
-
-   private static Connector[] buildConnectorList(final String clientConnectorName, final String adminConnectorName, final Map<String, String> commandLineArgs) {
-
+   private Connector[] buildConnectorList(final String clientConnectorName, final String adminConnectorName, final Map<String, String> commandLineArgs) {
 
       final SelectChannelConnector clientChannel = new SelectChannelConnector();
       clientChannel.setPort(getClientPort(commandLineArgs));
@@ -123,14 +109,14 @@ public final class JettyOrchestrator {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
          adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
          clientChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
-         currentHost = adminChannel.getHost();
+         CURRENT_HOST = adminChannel.getHost();
          logger.info("Stubby4j client and admin were set to run on host " + adminChannel.getHost());
       }
 
       return new Connector[]{clientChannel, adminChannel};
    }
 
-   protected static ContextHandler createAdminContextHandler() {
+   private ContextHandler createAdminContextHandler() {
 
       final ContextHandler adminContextHandler = new ContextHandler();
       adminContextHandler.setContextPath("/");
@@ -140,7 +126,7 @@ public final class JettyOrchestrator {
       return adminContextHandler;
    }
 
-   protected static ContextHandler createClientContextHandler() {
+   private ContextHandler createClientContextHandler() {
 
       final ContextHandler clientContextHandler = new ContextHandler();
 
@@ -152,18 +138,18 @@ public final class JettyOrchestrator {
       return clientContextHandler;
    }
 
-   protected static int getClientPort(final Map<String, String> commandLineArgs) {
+   protected int getClientPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         currentClientPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
-         return currentClientPort;
+         CURRENT_CLIENT_PORT = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         return CURRENT_CLIENT_PORT;
       }
       return DEFAULT_CLIENT_PORT;
    }
 
-   protected static int getAdminPort(final Map<String, String> commandLineArgs) {
+   protected int getAdminPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT)) {
-         currentAdminPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
-         return currentAdminPort;
+         CURRENT_ADMIN_PORT = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
+         return CURRENT_ADMIN_PORT;
       }
       return DEFAULT_ADMIN_PORT;
    }

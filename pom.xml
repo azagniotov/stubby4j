@@ -94,7 +94,7 @@
                   <manifest>
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                      <addClasspath>true</addClasspath>
-                     <mainClass>org.stubby.Stubby4JRunner</mainClass>
+                     <mainClass>org.stubby.Stubby4J</mainClass>
                      <packageName>org.stubby</packageName>
                   </manifest>
                   <manifestEntries>
@@ -116,6 +116,11 @@
                      <goal>shade</goal>
                   </goals>
                   <configuration>
+                     <artifactSet>
+                        <excludes>
+                           <exclude/>
+                        </excludes>
+                     </artifactSet>
                      <filters>
                         <filter>
                            <artifact>org.eclipse.jetty.orbit:javax.servlet</artifact>
@@ -194,7 +199,7 @@
                   <manifest>
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                      <addClasspath>true</addClasspath>
-                     <mainClass>org.stubby.Stubby4JRunner</mainClass>
+                     <mainClass>org.stubby.Stubby4JClass>
                      <packageName>org.stubby</packageName>
                   </manifest>
                   <manifestEntries>

@@ -31,7 +31,6 @@ import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -40,27 +39,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public final class Stubby4JRunner {
+public final class Stubby4J {
 
    private static final String URL_TEMPLATE = "http://%s:%s%s";
    private static final String UTF_8 = "UTF-8";
    public static final String KEY_STATUS = "status";
    public static final String KEY_RESPONSE = "response";
+   private final JettyOrchestrator jettyOrchestrator;
+
+   public Stubby4J(final String yamlConfigurationFilename) throws IOException {
+      this.jettyOrchestrator = constructJettyOrchestrator(yamlConfigurationFilename);
+   }
+
+   private JettyOrchestrator constructJettyOrchestrator(final String yamlConfigurationFilename) throws IOException {
+      final List<StubHttpLifecycle> httpLifecycles = new YamlConsumer(yamlConfigurationFilename).parseYaml();
+      return new JettyOrchestrator(new Repository(httpLifecycles));
+   }
+
+   public void start() throws Exception {
+      start(JettyOrchestrator.CURRENT_CLIENT_PORT, JettyOrchestrator.CURRENT_ADMIN_PORT);
+   }
+
+   public void start(final int clientPort, final int adminPort) throws Exception {
+
+      final Map<String, String> params = new HashMap<String, String>();
+      params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
+      params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
+
+      jettyOrchestrator.startJetty(params);
+   }
+
+   public void stop() throws Exception {
+      jettyOrchestrator.stopJetty();
+   }
 
    public static Map<String, String> doGetOnURI(final String uri) throws IOException {
       return parseHttpResponse(constructHttpConnection(uri));
    }
 
-   public static Map<String, String> doPostOnURI(final String uri, final String queryParams) throws IOException {
+   public static Map<String, String> doPostOnURI(final String uri, final String postData) throws IOException {
       final HttpURLConnection con = constructHttpConnection(uri);
-      prepareConnectionForPOST(con, queryParams);
-      writePostBytes(con, queryParams);
+      prepareConnectionForPOST(con, postData);
+      writePostBytes(con, postData);
 
       return parseHttpResponse(con);
    }
 
    private static HttpURLConnection constructHttpConnection(final String uri) throws IOException {
-      final String urlString = String.format(URL_TEMPLATE, JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, uri);
+      final String urlString = String.format(URL_TEMPLATE, JettyOrchestrator.CURRENT_HOST, JettyOrchestrator.CURRENT_CLIENT_PORT, uri);
       final URL url = new URL(urlString);
       return (HttpURLConnection) url.openConnection();
    }
@@ -97,21 +123,6 @@ public final class Stubby4JRunner {
       dataOutputStream.close();
    }
 
-   public static void startStubby4J(final InputStream yamlInputStream) throws Exception {
-      startStubby4J(yamlInputStream, JettyOrchestrator.currentClientPort, JettyOrchestrator.currentAdminPort);
-   }
-
-   public static void stopStubby4J() throws Exception {
-      JettyOrchestrator.stopJetty();
-   }
-
-   public static void startStubby4J(final InputStream yamlInputStream, final int clientPort, final int adminPort) throws Exception {
-      final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlInputStream);
-      final Map<String, String> params = new HashMap<String, String>();
-      params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
-      params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
-      JettyOrchestrator.startJetty(new Repository(httpLifecycles), params);
-   }
 
    public static void main(final String[] args) {
 
@@ -122,7 +133,7 @@ public final class Stubby4JRunner {
          System.exit(1);
       }
       if (CommandLineIntepreter.isHelp()) {
-         CommandLineIntepreter.printHelp(Stubby4JRunner.class);
+         CommandLineIntepreter.printHelp(Stubby4J.class);
 
       } else if (!CommandLineIntepreter.isYamlProvided()) {
          System.err.println("\n\nYAML configuration was not provided using command line option '-f' or '--config'.\nPlease run again with option '--help'\n\n");
@@ -133,8 +144,9 @@ public final class Stubby4JRunner {
          try {
             final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
             final String yamlConfigFilename = params.get(CommandLineIntepreter.OPTION_CONFIG);
-            final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.readYaml(yamlConfigFilename);
-            JettyOrchestrator.startJetty(new Repository(httpLifecycles), params);
+
+            final List<StubHttpLifecycle> httpLifecycles = new YamlConsumer(yamlConfigFilename).parseYaml();
+            new JettyOrchestrator(new Repository(httpLifecycles)).startJetty(params);
 
          } catch (Exception e) {
             e.printStackTrace();

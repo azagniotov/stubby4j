@@ -78,10 +78,10 @@ public final class AdminHandler extends AbstractHandler {
    private String buildSystemStatusHtmlTable() {
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", JettyOrchestrator.currentClientPort));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", JettyOrchestrator.currentAdminPort));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", JettyOrchestrator.currentHost));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.loadedConfig));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", JettyOrchestrator.CURRENT_CLIENT_PORT));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", JettyOrchestrator.CURRENT_ADMIN_PORT));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", JettyOrchestrator.CURRENT_HOST));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());

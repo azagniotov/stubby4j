@@ -95,10 +95,13 @@ ________________________________________________
 Starting stubby4j programmatically
 ==================================
 ```
+private static Stubby4JRunner stubby4JRunner;
+
 @BeforeClass
 public static void beforeClass() throws Exception {
    final URL url = UtilsTest.class.getResource("/config.yaml");
-   Stubby4JRunner.startStubby4J(url.openStream());
+   stubby4JRunner = new Stubby4JRunner(url.getFile());
+   stubby4JRunner.startStubby4J();
 }
 ```
 
@@ -110,7 +113,8 @@ public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = Stubby4JRunnerTest.class.getResource("/config.yaml");
-   Stubby4JRunner.startStubby4J(url.openStream(), clientPort, adminPort);
+   stubby4JRunner = new Stubby4JRunner(url.getFile());
+   stubby4JRunner.startStubby4J(clientPort, adminPort);
 }
 ```
 
@@ -133,7 +137,7 @@ public void shouldDoPostOnURI() throws Exception {
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   Stubby4JRunner.stopStubby4J();
+   stubby4JRunner.stopStubby4J();
 }
 ```
 ________________________________________________

@@ -1,10 +1,11 @@
 package org.stubby.server;
 
 import junit.framework.Assert;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.stubby.cli.CommandLineIntepreter;
+import org.stubby.database.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,25 +16,27 @@ import java.util.Map;
  */
 public class JettyOrchestratorTest {
 
-   @AfterClass
-   public static void afterClass() throws Exception {
-      JettyOrchestrator.currentClientPort = JettyOrchestrator.DEFAULT_CLIENT_PORT;
-      JettyOrchestrator.currentAdminPort = JettyOrchestrator.DEFAULT_ADMIN_PORT;
+   private static JettyOrchestrator jettyOrchestrator;
+
+   @BeforeClass
+   public static void beforeClass() throws Exception {
+      final Repository mockRepository = Mockito.mock(Repository.class);
+      jettyOrchestrator = new JettyOrchestrator(mockRepository);
    }
 
    @Test
    public void shouldReturnDefaultClientPort() throws Exception {
-      int clientPort = JettyOrchestrator.getClientPort(new HashMap<String, String>());
+      int clientPort = jettyOrchestrator.getClientPort(new HashMap<String, String>());
       Assert.assertEquals(JettyOrchestrator.DEFAULT_CLIENT_PORT, clientPort);
    }
 
    @Test
    public void shouldReturnGivenClientPort() throws Exception {
-      final String expectedClientPort = "12345";
+      final String expectedClientPort = "" + JettyOrchestrator.DEFAULT_CLIENT_PORT;
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_CLIENTPORT, expectedClientPort);
 
-      int clientPort = JettyOrchestrator.getClientPort(commandlineArgs);
+      int clientPort = jettyOrchestrator.getClientPort(commandlineArgs);
       Assert.assertEquals(expectedClientPort, "" + clientPort);
    }
 
@@ -43,23 +46,23 @@ public class JettyOrchestratorTest {
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_CLIENTPORT, expectedClientPort);
 
-      int clientPort = JettyOrchestrator.getClientPort(commandlineArgs);
+      int clientPort = jettyOrchestrator.getClientPort(commandlineArgs);
       Assert.assertEquals(expectedClientPort, "" + clientPort);
    }
 
    @Test
    public void shouldReturnDefaultAdminPort() throws Exception {
-      int adminPort = JettyOrchestrator.getAdminPort(new HashMap<String, String>());
+      int adminPort = jettyOrchestrator.getAdminPort(new HashMap<String, String>());
       Assert.assertEquals(JettyOrchestrator.DEFAULT_ADMIN_PORT, adminPort);
    }
 
    @Test
    public void shouldReturnGivenAdminPort() throws Exception {
-      final String expectedAdminPort = "12345";
+      final String expectedAdminPort = "" + JettyOrchestrator.DEFAULT_ADMIN_PORT;
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_ADMINPORT, expectedAdminPort);
 
-      int adminPort = JettyOrchestrator.getAdminPort(commandlineArgs);
+      int adminPort = jettyOrchestrator.getAdminPort(commandlineArgs);
       Assert.assertEquals(expectedAdminPort, "" + adminPort);
    }
 
@@ -69,7 +72,7 @@ public class JettyOrchestratorTest {
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_ADMINPORT, expectedAdminPort);
 
-      int adminPort = JettyOrchestrator.getAdminPort(commandlineArgs);
+      int adminPort = jettyOrchestrator.getAdminPort(commandlineArgs);
       Assert.assertEquals(expectedAdminPort, "" + adminPort);
    }
 }

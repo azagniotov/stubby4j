@@ -42,7 +42,7 @@ final class HandlerUtils {
 
    static String linkifyRequestUrl(final Object uri) {
       return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>",
-            JettyOrchestrator.currentHost, JettyOrchestrator.currentClientPort, uri, uri);
+            JettyOrchestrator.CURRENT_HOST, JettyOrchestrator.CURRENT_CLIENT_PORT, uri, uri);
    }
 
    static String populateHtmlTemplate(final String templateName, final Object... params) {

@@ -27,12 +27,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -41,79 +42,88 @@ import java.util.logging.Logger;
  */
 public final class YamlConsumer {
 
+   public static String LOADED_CONFIG;
+
+   private static final String YAMLLINE_KEY = "nodeKey";
+   private static final String YAMLLINE_VALUE = "nodeValue";
+
    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+   private final String yamlConfigFilename;
 
-   public static String loadedConfig;
-
-   private YamlConsumer() {
-
+   public YamlConsumer(final String yamlConfigFilename) {
+      this.yamlConfigFilename = yamlConfigFilename;
    }
 
-   public static List<StubHttpLifecycle> readYaml(final File yamlFile) throws IOException {
-      final String filename = yamlFile.getName().toLowerCase();
-      if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
-         loadedConfig = yamlFile.getAbsolutePath();
-         final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
-         final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-         logger.info("Loaded YAML " + filename);
-
-         return transformYamlNode(bufferedReader, null);
-      }
-      return new LinkedList<StubHttpLifecycle>();
-   }
-
-   public static List<StubHttpLifecycle> readYaml(final InputStream yamlInputStream) throws IOException {
-      final InputStreamReader inputStreamReader = new InputStreamReader(yamlInputStream, Charset.forName("UTF-8"));
-      return transformYamlNode(new BufferedReader(inputStreamReader), null);
-   }
-
-   public static List<StubHttpLifecycle> readYaml(final String yamlConfigFilename) throws IOException {
-      final File yamlFile = new File(yamlConfigFilename);
-      return readYaml(yamlFile);
-   }
-
-   protected static List<StubHttpLifecycle> transformYamlNode(final BufferedReader bufferedReader, StubHttpLifecycle parentStub) throws IOException {
+   public List<StubHttpLifecycle> parseYaml() throws IOException {
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
 
-      String yamlLine;
-      while ((yamlLine = bufferedReader.readLine()) != null) {
-         yamlLine = yamlLine.trim();
-         if (yamlLine.isEmpty()) {
+      final File yamlFile = new File(yamlConfigFilename);
+      final String filename = yamlFile.getName().toLowerCase();
+      if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
+         LOADED_CONFIG = yamlFile.getAbsolutePath();
+
+         final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
+         final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+         httpLifecycles.addAll(unmarshallYaml(bufferedReader));
+         bufferedReader.close();
+      }
+      return httpLifecycles;
+   }
+
+   private final List<StubHttpLifecycle> unmarshallYaml(final BufferedReader buffRead) throws IOException {
+
+      final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
+      StubHttpLifecycle parentStub = null;
+
+      for (String yamlLine = buffRead.readLine(); yamlLine != null; yamlLine = buffRead.readLine()) {
+
+         if (yamlLine.trim().isEmpty()) {
             continue;
          }
 
-         final String[] keyAndValue = yamlLine.split(":", 2);
-         final String nodeKey = keyAndValue[0].toLowerCase().trim();
+         final Map<String, String> keyValuePair = breakDownYamlLineToKeyValuePair(yamlLine);
 
-         switch (YamlParentNodes.getFor(nodeKey)) {
+         switch (YamlParentNodes.getFor(keyValuePair.get(YAMLLINE_KEY))) {
 
             case HTTPLIFECYCLE:
                parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
                httpLifecycles.add(parentStub);
-               break;
+               continue;
 
             case REQUEST:
                parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
-               break;
+               continue;
 
             case RESPONSE:
                parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
-               break;
+               continue;
 
             case HEADERS:
-               break;
+               continue;
 
             default:
-               final String nodeValue = (keyAndValue.length == 2 ? keyAndValue[1].trim() : "");
-               bindYamlValueToPojo(nodeKey, nodeValue, parentStub);
-               break;
+               bindYamlValueToPojo(keyValuePair, parentStub);
          }
       }
-      bufferedReader.close();
       return httpLifecycles;
    }
 
-   private static void bindYamlValueToPojo(final String nodeName, final String nodeValue, final StubHttpLifecycle parentStub) {
+   private Map<String, String> breakDownYamlLineToKeyValuePair(final String yamlLine) {
+      final Map<String, String> keyValuePair = new HashMap<String, String>();
+
+      final String[] keyAndValue = yamlLine.split(":", 2);
+      final String nodeKey = keyAndValue[0].toLowerCase().trim();
+      final String nodeValue = (keyAndValue.length == 2 ? keyAndValue[1].trim() : "");
+
+      keyValuePair.put(YAMLLINE_KEY, nodeKey);
+      keyValuePair.put(YAMLLINE_VALUE, nodeValue);
+
+      return keyValuePair;
+   }
+
+   private final void bindYamlValueToPojo(final Map<String, String> keyValuePair, final StubHttpLifecycle parentStub) {
+      final String nodeName = keyValuePair.get(YAMLLINE_KEY);
+      final String nodeValue = keyValuePair.get(YAMLLINE_VALUE);
 
       if (StubRequest.isFieldCorrespondsToYamlNode(nodeName)) {
          setYamlValueToFieldProperty(parentStub, nodeName, nodeValue, YamlParentNodes.REQUEST);
@@ -126,7 +136,7 @@ public final class YamlConsumer {
       }
    }
 
-   private static void setYamlValueToFieldProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue, final YamlParentNodes type) {
+   private void setYamlValueToFieldProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue, final YamlParentNodes type) {
       try {
          if (type.equals(YamlParentNodes.REQUEST)) {
             stubHttpLifecycle.getRequest().setValue(nodeName, nodeValue);
@@ -141,9 +151,10 @@ public final class YamlConsumer {
       stubHttpLifecycle.setCurrentlyPopulated(type);
    }
 
-   private static void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue) {
+   private void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue) {
       if (stubHttpLifecycle.getCurrentlyPopulated().equals(YamlParentNodes.REQUEST)) {
          stubHttpLifecycle.getRequest().addHeader(nodeName, nodeValue);
+
       } else if (stubHttpLifecycle.getCurrentlyPopulated().equals(YamlParentNodes.RESPONSE)) {
          stubHttpLifecycle.getResponse().addHeader(nodeName, nodeValue);
       }

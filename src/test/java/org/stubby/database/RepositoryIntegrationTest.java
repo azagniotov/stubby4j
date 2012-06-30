@@ -23,7 +23,8 @@ public class RepositoryIntegrationTest {
    public static void beforeClass() throws IOException {
       final URL url = RepositoryIntegrationTest.class.getResource("/httplifecycles-noheaders.yaml");
       Assert.assertNotNull(url);
-      final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.readYaml(url.getFile());
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlConsumer(url.getFile()).parseYaml();
       repository = new Repository(stubHttpLifecycles);
    }
 
