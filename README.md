@@ -95,13 +95,13 @@ ________________________________________________
 Starting stubby4j programmatically
 ==================================
 ```
-private static Stubby4JRunner stubby4JRunner;
+private static Stubby4J stubby4J;
 
 @BeforeClass
 public static void beforeClass() throws Exception {
    final URL url = UtilsTest.class.getResource("/config.yaml");
-   stubby4JRunner = new Stubby4JRunner(url.getFile());
-   stubby4JRunner.startStubby4J();
+   stubby4J = new Stubby4J(url.getFile());
+   stubby4J.start();
 }
 ```
 
@@ -112,32 +112,32 @@ OR
 public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
-   final URL url = Stubby4JRunnerTest.class.getResource("/config.yaml");
-   stubby4JRunner = new Stubby4JRunner(url.getFile());
-   stubby4JRunner.startStubby4J(clientPort, adminPort);
+   final URL url = Stubby4JTest.class.getResource("/config.yaml");
+   stubby4J = new Stubby4J(url.getFile());
+   stubby4J.start(clientPort, adminPort);
 }
 ```
 
 ```
 @Test
 public void shouldDoGetOnURI() throws Exception {
-   final Map<String, String> result = Stubby4JRunner.doGetOnURI("/item/1");
-   Assert.assertEquals("200", result.get(Stubby4JRunner.KEY_STATUS));
-   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4JRunner.KEY_RESPONSE));
+   final Map<String, String> result = Stubby4J.doGetOnURI("/item/1");
+   Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
+   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4J.KEY_RESPONSE));
 }
 
 @Test
 public void shouldDoPostOnURI() throws Exception {
-   final Map<String, String> result = Stubby4JRunner.doPostOnURI("/item/1", "post body");
-   Assert.assertEquals("200", result.get(Stubby4JRunner.KEY_STATUS));
-   Assert.assertEquals("Got post response", result.get(Stubby4JRunner.KEY_RESPONSE));
+   final Map<String, String> result = Stubby4J.doPostOnURI("/item/1", "post body");
+   Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
+   Assert.assertEquals("Got post response", result.get(Stubby4J.KEY_RESPONSE));
 }
 .
 .
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubby4JRunner.stopStubby4J();
+   stubby4J.stop();
 }
 ```
 ________________________________________________
