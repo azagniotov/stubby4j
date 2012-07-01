@@ -72,4 +72,13 @@ public class YamlConsumerTest {
 
       final List<StubHttpLifecycle> stubHttpLifecycle = new YamlConsumer(url.getFile()).parseYaml();
    }
+
+   @Test(expected = Stubby4JException.class)
+   public void testReadYamlWithoutHttpLifeCycle() throws Exception {
+
+      final URL url = this.getClass().getResource("/httplifecycles-none.yaml");
+      Assert.assertNotNull(url);
+
+      final List<StubHttpLifecycle> stubHttpLifecycle = new YamlConsumer(url.getFile()).parseYaml();
+   }
 }

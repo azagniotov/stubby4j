@@ -74,6 +74,9 @@ public final class YamlConsumer {
    }
 
    private void validateStubHttpLifecycles(final List<StubHttpLifecycle> httpLifecycles) {
+      if (httpLifecycles.size() == 0) {
+         throw new Stubby4JException("No HttpLifecycles loaded.. Please check your YAML configuration");
+      }
       for (final StubHttpLifecycle stubHttpLifecycle : httpLifecycles) {
          if (!stubHttpLifecycle.isComplete()) {
             throw new Stubby4JException("Detected incomplete HttpLifecycle.. Did you omit some configuration detail in YAML (url, method or status etc.)?");
