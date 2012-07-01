@@ -121,14 +121,14 @@ public static void beforeClass() throws Exception {
 ```
 @Test
 public void shouldDoGetOnURI() throws Exception {
-   final Map<String, String> result = Stubby4J.doGetOnURI("/item/1");
+   final Map<String, String> result = stubby4J.doGetOnURI("/item/1");
    Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
    Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4J.KEY_RESPONSE));
 }
 
 @Test
 public void shouldDoPostOnURI() throws Exception {
-   final Map<String, String> result = Stubby4J.doPostOnURI("/item/1", "post body");
+   final Map<String, String> result = stubby4J.doPostOnURI("/item/1", "post body");
    Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
    Assert.assertEquals("Got post response", result.get(Stubby4J.KEY_RESPONSE));
 }
