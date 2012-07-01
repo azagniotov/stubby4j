@@ -26,6 +26,7 @@ public class RepositoryIntegrationTest {
 
       final List<StubHttpLifecycle> stubHttpLifecycles = new YamlConsumer(url.getFile()).parseYaml();
       repository = new Repository(stubHttpLifecycles);
+      repository.init();
    }
 
    @Test

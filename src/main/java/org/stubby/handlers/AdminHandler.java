@@ -26,9 +26,11 @@ public final class AdminHandler extends AbstractHandler {
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
 
    private final Repository repository;
+   private final JettyOrchestrator jettyOrchestrator;
 
-   public AdminHandler(final Repository repository) {
+   public AdminHandler(final Repository repository, final JettyOrchestrator jettyOrchestrator) {
       this.repository = repository;
+      this.jettyOrchestrator = jettyOrchestrator;
    }
 
    @Override
@@ -40,7 +42,7 @@ public final class AdminHandler extends AbstractHandler {
       baseRequest.setHandled(true);
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
       response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
          response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
@@ -48,7 +50,7 @@ public final class AdminHandler extends AbstractHandler {
          return;
       }
 
-      final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", request.getContextPath());
+      final String adminHandlerHtml = HandlerHelper.populateHtmlTemplate("index", request.getContextPath());
       response.getWriter().println(adminHandlerHtml);
    }
 
@@ -64,7 +66,7 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(buildRequestCounterHtmlTable(requestData));
       builder.append(buildSystemStatusHtmlTable());
 
-      final String requestCounterHtml = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
+      final String requestCounterHtml = HandlerHelper.getHtmlResourceByName("snippet_request_response_tables");
       for (int idx = 0; idx < requestData.size(); idx++) {
          final Map<String, Object> requestHeaders = (requestHeaderData.size() > 0 ? requestHeaderData.get(idx) : null);
          builder.append(buildPageBodyHtml(requestCounterHtml, "Request", requestData.get(idx), constructTableRowWithHeadersData(requestHeaders)));
@@ -72,18 +74,18 @@ public final class AdminHandler extends AbstractHandler {
          builder.append(buildPageBodyHtml(requestCounterHtml, "Response", responseData.get(idx), constructTableRowWithHeadersData(responseHeaders)));
       }
 
-      return HandlerUtils.populateHtmlTemplate("ping", requestData.size(), builder.toString());
+      return HandlerHelper.populateHtmlTemplate("ping", requestData.size(), builder.toString());
    }
 
    private String buildSystemStatusHtmlTable() {
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", JettyOrchestrator.CURRENT_CLIENT_PORT));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", JettyOrchestrator.CURRENT_ADMIN_PORT));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", JettyOrchestrator.CURRENT_HOST));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", jettyOrchestrator.getCurrentClientPort()));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", jettyOrchestrator.getCurrentAdminPort()));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", jettyOrchestrator.getCurrentHost()));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 
-      final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
+      final String systemStatusTable = HandlerHelper.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());
    }
 
@@ -91,10 +93,11 @@ public final class AdminHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
       for (final Map<String, Object> rowData : requestData) {
-         final String urlAsHyperLink = HandlerUtils.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
+         final String urlAsHyperLink = HandlerHelper.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL),
+               jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
          builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, urlAsHyperLink, rowData.get(Repository.TBL_COLUMN_COUNTER)));
       }
-      final String requestCounterHtml = HandlerUtils.getHtmlResourceByName("snippet_request_counter_table");
+      final String requestCounterHtml = HandlerHelper.getHtmlResourceByName("snippet_request_counter_table");
       return String.format(requestCounterHtml, builder.toString());
    }
 
@@ -106,9 +109,10 @@ public final class AdminHandler extends AbstractHandler {
 
             Object value = columnData.getValue();
             if (columnData.getKey().equals(Repository.TBL_COLUMN_URL)) {
-               value = HandlerUtils.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL));
+               value = HandlerHelper.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL),
+                     jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
             } else if (value != null) {
-               value = HandlerUtils.escapeHtmlEntities(value.toString());
+               value = HandlerHelper.escapeHtmlEntities(value.toString());
             }
 
             builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), value));

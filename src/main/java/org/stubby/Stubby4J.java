@@ -24,10 +24,8 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.database.Repository;
 import org.stubby.server.JettyOrchestrator;
-import org.stubby.yaml.YamlConsumer;
-import org.stubby.yaml.stubs.StubHttpLifecycle;
+import org.stubby.server.JettyOrchestratorFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -35,7 +33,6 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -45,19 +42,16 @@ public final class Stubby4J {
    private static final String UTF_8 = "UTF-8";
    public static final String KEY_STATUS = "status";
    public static final String KEY_RESPONSE = "response";
-   private final JettyOrchestrator jettyOrchestrator;
 
-   public Stubby4J(final String yamlConfigurationFilename) throws IOException {
-      this.jettyOrchestrator = constructJettyOrchestrator(yamlConfigurationFilename);
-   }
+   private JettyOrchestrator jettyOrchestrator;
+   private final String yamlConfigurationFilename;
 
-   private JettyOrchestrator constructJettyOrchestrator(final String yamlConfigurationFilename) throws IOException {
-      final List<StubHttpLifecycle> httpLifecycles = new YamlConsumer(yamlConfigurationFilename).parseYaml();
-      return new JettyOrchestrator(new Repository(httpLifecycles));
+   public Stubby4J(final String yamlConfigurationFilename) {
+      this.yamlConfigurationFilename = yamlConfigurationFilename;
    }
 
    public void start() throws Exception {
-      start(JettyOrchestrator.CURRENT_CLIENT_PORT, JettyOrchestrator.CURRENT_ADMIN_PORT);
+      start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
    }
 
    public void start(final int clientPort, final int adminPort) throws Exception {
@@ -66,6 +60,7 @@ public final class Stubby4J {
       params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
       params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
 
+      jettyOrchestrator = JettyOrchestratorFactory.getInstance(yamlConfigurationFilename);
       jettyOrchestrator.startJetty(params);
    }
 
@@ -73,11 +68,11 @@ public final class Stubby4J {
       jettyOrchestrator.stopJetty();
    }
 
-   public static Map<String, String> doGetOnURI(final String uri) throws IOException {
+   public Map<String, String> doGetOnURI(final String uri) throws IOException {
       return parseHttpResponse(constructHttpConnection(uri));
    }
 
-   public static Map<String, String> doPostOnURI(final String uri, final String postData) throws IOException {
+   public Map<String, String> doPostOnURI(final String uri, final String postData) throws IOException {
       final HttpURLConnection con = constructHttpConnection(uri);
       prepareConnectionForPOST(con, postData);
       writePostBytes(con, postData);
@@ -85,8 +80,8 @@ public final class Stubby4J {
       return parseHttpResponse(con);
    }
 
-   private static HttpURLConnection constructHttpConnection(final String uri) throws IOException {
-      final String urlString = String.format(URL_TEMPLATE, JettyOrchestrator.CURRENT_HOST, JettyOrchestrator.CURRENT_CLIENT_PORT, uri);
+   private HttpURLConnection constructHttpConnection(final String uri) throws IOException {
+      final String urlString = String.format(URL_TEMPLATE, jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort(), uri);
       final URL url = new URL(urlString);
       return (HttpURLConnection) url.openConnection();
    }
@@ -145,8 +140,7 @@ public final class Stubby4J {
             final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
             final String yamlConfigFilename = params.get(CommandLineIntepreter.OPTION_CONFIG);
 
-            final List<StubHttpLifecycle> httpLifecycles = new YamlConsumer(yamlConfigFilename).parseYaml();
-            new JettyOrchestrator(new Repository(httpLifecycles)).startJetty(params);
+            JettyOrchestratorFactory.getInstance(yamlConfigFilename).startJetty(params);
 
          } catch (Exception e) {
             e.printStackTrace();

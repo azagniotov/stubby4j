@@ -22,7 +22,8 @@ import java.util.Map;
  */
 public final class ClientHandler extends AbstractHandler {
 
-   private final Repository repository;
+   protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( \n\nBad request, POST body is missing";
+   private Repository repository;
 
    public ClientHandler(final Repository repository) {
       this.repository = repository;
@@ -40,16 +41,16 @@ public final class ClientHandler extends AbstractHandler {
       String postBody = null;
       if (request.getMethod().toLowerCase().equals("post")) {
 
-         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
+         postBody = HandlerHelper.inputStreamToString(request.getInputStream());
          if (postBody == null || postBody.isEmpty()) {
             response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
             response.setStatus(HttpStatus.BAD_REQUEST_400);
-            response.getWriter().println("Oh oh :( \n\nBad request, POST body is missing");
+            response.getWriter().println(BAD_POST_REQUEST_MESSAGE);
             return;
          }
       }
 
-      final Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
+      Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
          response.setStatus(HttpStatus.NOT_FOUND_404);
          response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
@@ -69,7 +70,7 @@ public final class ClientHandler extends AbstractHandler {
    }
 
    private void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
       response.setHeader(HttpHeaders.DATE, new Date().toString());
       response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
       response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.

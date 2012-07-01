@@ -65,11 +65,16 @@ public class Repository {
    public final static String NOCONTENT_MSG_KEY = "DEFAULT";
 
    private static Connection dbConnection = null;
+   private final List<StubHttpLifecycle> httpLifecycles;
 
    public Repository(final List<StubHttpLifecycle> httpLifecycles) {
-      initConnection();
+      this.httpLifecycles = httpLifecycles;
+   }
+
+   public void init() {
+      openConnection();
       createEndpointTables();
-      insertTableData(httpLifecycles);
+      insertTableData();
    }
 
    private void createEndpointTables() {
@@ -92,7 +97,7 @@ public class Repository {
       }
    }
 
-   private void insertTableData(final List<StubHttpLifecycle> httpLifecycles) {
+   private void insertTableData() {
       final Map<String, Statement> statmnts = new HashMap<String, Statement>();
       try {
          statmnts.put("request", dbConnection.prepareStatement(Queries.INSERT_INTO_REQUEST_PREP_QRY));
@@ -179,7 +184,7 @@ public class Repository {
       responseStatement.executeUpdate();
    }
 
-   private void initConnection() {
+   private void openConnection() {
 
       if (dbConnection == null) {
          try {
@@ -221,7 +226,7 @@ public class Repository {
       return data;
    }
 
-   public final Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
+   public Map<String, String> retrieveResponseFor(final String requestPathinfo, final String method, final String postBody) {
 
       Map<String, String> responseValues = new HashMap<String, String>();
       final String postMessage = (postBody != null ? " for post data: " + postBody : "");

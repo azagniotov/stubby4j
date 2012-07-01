@@ -1,7 +1,6 @@
 package org.stubby.handlers;
 
 import org.stubby.exception.Stubby4JException;
-import org.stubby.server.JettyOrchestrator;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -10,11 +9,15 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
  */
-final class HandlerUtils {
+final class HandlerHelper {
+
+   private HandlerHelper() {
+
+   }
 
    static String getHtmlResourceByName(final String templateSuffix) {
       final String htmlTemplatePath = String.format("/html/%s.html", templateSuffix);
-      final InputStream postBodyInputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
+      final InputStream postBodyInputStream = HandlerHelper.class.getResourceAsStream(htmlTemplatePath);
       if (postBodyInputStream == null) {
          throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
       }
@@ -22,7 +25,7 @@ final class HandlerUtils {
    }
 
    static String constructHeaderServerName() {
-      final Package pkg = HandlerUtils.class.getPackage();
+      final Package pkg = HandlerHelper.class.getPackage();
       final String implementationVersion = pkg.getImplementationVersion() == null ?
             "x.x.x" : pkg.getImplementationVersion();
       final String implementationTitle = pkg.getImplementationTitle() == null ?
@@ -31,6 +34,9 @@ final class HandlerUtils {
    }
 
    static String inputStreamToString(final InputStream inputStream) {
+      if (inputStream == null || inputStream.toString().isEmpty()) {
+         return null;
+      }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
       return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
@@ -40,9 +46,8 @@ final class HandlerUtils {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
    }
 
-   static String linkifyRequestUrl(final Object uri) {
-      return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>",
-            JettyOrchestrator.CURRENT_HOST, JettyOrchestrator.CURRENT_CLIENT_PORT, uri, uri);
+   static String linkifyRequestUrl(final Object uri, final String host, final int clientPort) {
+      return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>", host, clientPort, uri, uri);
    }
 
    static String populateHtmlTemplate(final String templateName, final Object... params) {
