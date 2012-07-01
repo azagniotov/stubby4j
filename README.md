@@ -11,6 +11,7 @@ A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL da
 * You want support for GET/POST/PUT/DELETE HTTP methods
 * You want to trigger multiple responses based on multiple requests on the same URI
 * You want to easily configure HTTP request and response stubs
+* You want to easily provide canned answers in your contract/integration tests
 * You don't want to spend time coding for the above requirements and just want to concentrate on the task at hand
 
 ### Why would a QA use stubby4j?

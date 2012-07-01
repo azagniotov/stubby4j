@@ -62,7 +62,7 @@ public class ClientHandlerTest {
    }
 
    @Test
-   public void verifyHandleGetRequestWithNoResults() throws Exception {
+   public void verifyBehaviourDuringHandleGetRequestWithNoResults() throws Exception {
       final String method = "GET";
       final String requestPathInfo = "/path/1";
 
@@ -82,7 +82,7 @@ public class ClientHandlerTest {
 
 
    @Test
-   public void verifyHandleGetRequestWithSomeResults() throws Exception {
+   public void verifyBehaviourDuringHandleGetRequestWithSomeResults() throws Exception {
       final String method = "GET";
       final String requestPathInfo = "/path/1";
 
@@ -100,7 +100,7 @@ public class ClientHandlerTest {
    }
 
    @Test
-   public void verifyHandlePostRequestWithEmptyPostBody() throws Exception {
+   public void verifyBehaviourDuringHandlePostRequestWithEmptyPostBody() throws Exception {
       final String method = "POST";
       final String requestPathInfo = "/path/1";
 

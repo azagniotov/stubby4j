@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * @author Alexander Zagniotov
  * @since 6/12/12, 5:36 PM
  */
-public final class JettyOrchestrator {
+public class JettyOrchestrator {
 
    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 

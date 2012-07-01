@@ -201,7 +201,7 @@ public class Repository {
       }
    }
 
-   public final List<List<Map<String, Object>>> getHttpConfigData() {
+   public List<List<Map<String, Object>>> getHttpConfigData() {
       final List<List<Map<String, Object>>> data = new LinkedList<List<Map<String, Object>>>();
       try {
          final Statement statement = dbConnection.createStatement();

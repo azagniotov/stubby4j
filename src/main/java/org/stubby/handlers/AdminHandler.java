@@ -64,7 +64,6 @@ public final class AdminHandler extends AbstractHandler {
       response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
-         response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
          response.getWriter().println(getConfigDataPresentation());
          return;
       }
