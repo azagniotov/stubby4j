@@ -1,3 +1,22 @@
+/*
+A Java-based HTTP stub server
+
+Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpHeaders;
@@ -22,7 +41,7 @@ import java.util.Map;
  */
 public final class ClientHandler extends AbstractHandler {
 
-   protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( \n\nBad request, POST body is missing";
+   protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
    private Repository repository;
 
    public ClientHandler(final Repository repository) {
@@ -41,11 +60,18 @@ public final class ClientHandler extends AbstractHandler {
       String postBody = null;
       if (request.getMethod().toLowerCase().equals("post")) {
 
-         postBody = HandlerHelper.inputStreamToString(request.getInputStream());
-         if (postBody == null || postBody.isEmpty()) {
+         try {
+            postBody = HandlerHelper.inputStreamToString(request.getInputStream());
+            if (postBody == null || postBody.isEmpty()) {
+               response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+               response.setStatus(HttpStatus.BAD_REQUEST_400);
+               response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
+               return;
+            }
+         } catch (Exception ex) {
             response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
             response.setStatus(HttpStatus.BAD_REQUEST_400);
-            response.getWriter().println(BAD_POST_REQUEST_MESSAGE);
+            response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
             return;
          }
       }
@@ -53,7 +79,7 @@ public final class ClientHandler extends AbstractHandler {
       Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
       if (responseBody.size() == 1) {
          response.setStatus(HttpStatus.NOT_FOUND_404);
-         response.getWriter().println(responseBody.get(Repository.NOCONTENT_MSG_KEY));
+         response.sendError(HttpStatus.NOT_FOUND_404, responseBody.get(Repository.NOCONTENT_MSG_KEY));
          return;
       }
 

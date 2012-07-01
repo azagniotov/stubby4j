@@ -1,0 +1,6 @@
+httplifecycle:
+   request:
+      method: GET
+      url: /invoice/123
+   response:
+      body: This is a response for 123

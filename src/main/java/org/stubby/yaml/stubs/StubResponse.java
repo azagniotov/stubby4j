@@ -82,6 +82,10 @@ public class StubResponse {
       return headers;
    }
 
+   public boolean isConfigured() {
+      return (status != null && body != null);
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) return true;

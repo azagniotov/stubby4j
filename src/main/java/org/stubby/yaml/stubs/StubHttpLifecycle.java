@@ -52,6 +52,10 @@ public class StubHttpLifecycle {
       this.currentlyPopulated = currentlyPopulated;
    }
 
+   public boolean isComplete() {
+      return request.isConfigured() && response.isConfigured();
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) return true;

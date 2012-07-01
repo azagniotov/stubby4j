@@ -71,12 +71,13 @@ public class ClientHandlerTest {
       when(mockRepository.retrieveResponseFor(requestPathInfo, method, null)).thenReturn(mockResponseValues);
       when(mockResponseValues.size()).thenReturn(1);
       when(mockResponseValues.get(Repository.TBL_COLUMN_STATUS)).thenReturn("200");
+      when(mockResponseValues.get(Repository.NOCONTENT_MSG_KEY)).thenReturn(noResultsMessage);
 
       final ClientHandler clientHandler = new ClientHandler(mockRepository);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockPrintWriter, times(1)).println(noResultsMessage);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, noResultsMessage);
    }
 
 
@@ -111,6 +112,6 @@ public class ClientHandlerTest {
 
       verify(mockHttpServletResponse, times(1)).setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockPrintWriter, times(1)).println(ClientHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
    }
 }

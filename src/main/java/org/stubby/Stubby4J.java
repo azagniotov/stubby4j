@@ -81,7 +81,9 @@ public final class Stubby4J {
    }
 
    private HttpURLConnection constructHttpConnection(final String uri) throws IOException {
-      final String urlString = String.format(URL_TEMPLATE, jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort(), uri);
+      final String urlString = String.format(URL_TEMPLATE,
+            jettyOrchestrator.getCurrentHost(),
+            jettyOrchestrator.getCurrentClientPort(), uri != null ? uri : "");
       final URL url = new URL(urlString);
       return (HttpURLConnection) url.openConnection();
    }
@@ -90,20 +92,26 @@ public final class Stubby4J {
       final Map<String, String> results = new HashMap<String, String>();
 
       final Integer responseCode = con.getResponseCode();
-      final String response = new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next();
-
-      if (con != null) {
-         con.disconnect();
-      }
       results.put(KEY_STATUS, responseCode.toString());
-      results.put(KEY_RESPONSE, response.trim());
+
+      try {
+         final String response = new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next();
+         results.put(KEY_RESPONSE, response.trim());
+      } catch (Exception ex) {
+         results.put(KEY_RESPONSE, con.getResponseMessage().trim());
+         //throw new Stubby4JException("aaaaaaaa");
+      } finally {
+         if (con != null) {
+            con.disconnect();
+         }
+      }
       return results;
    }
 
-   private static void prepareConnectionForPOST(final HttpURLConnection con, final String queryParams) throws ProtocolException {
+   private static void prepareConnectionForPOST(final HttpURLConnection con, final String postData) throws ProtocolException {
       con.setRequestMethod(HttpMethods.POST);
       con.setRequestProperty(HttpHeaders.CONTENT_TYPE, MimeTypes.FORM_ENCODED);
-      con.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(queryParams.getBytes().length));
+      con.setRequestProperty(HttpHeaders.CONTENT_LENGTH, calculatePostDataLength(postData));
       con.setRequestProperty(HttpHeaders.CONTENT_LANGUAGE, "en-US");
       con.setRequestProperty(HttpHeaders.CONTENT_ENCODING, UTF_8);
       con.setUseCaches(false);
@@ -111,9 +119,13 @@ public final class Stubby4J {
       con.setDoOutput(true);
    }
 
-   private static void writePostBytes(final HttpURLConnection con, final String queryParams) throws IOException {
+   private static String calculatePostDataLength(final String postData) {
+      return (postData != null ? Integer.toString(postData.getBytes().length) : "0");
+   }
+
+   private static void writePostBytes(final HttpURLConnection con, final String postData) throws IOException {
       final DataOutputStream dataOutputStream = new DataOutputStream(con.getOutputStream());
-      dataOutputStream.writeBytes(queryParams);
+      dataOutputStream.writeBytes((postData != null ? postData : ""));
       dataOutputStream.flush();
       dataOutputStream.close();
    }

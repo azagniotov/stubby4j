@@ -91,6 +91,10 @@ public class StubRequest {
       return headers;
    }
 
+   public boolean isConfigured() {
+      return (url != null && method != null);
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) return true;

@@ -1,5 +1,6 @@
 package org.stubby.database;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,6 +28,11 @@ public class RepositoryIntegrationTest {
       final List<StubHttpLifecycle> stubHttpLifecycles = new YamlConsumer(url.getFile()).parseYaml();
       repository = new Repository(stubHttpLifecycles);
       repository.init();
+   }
+
+   @AfterClass
+   public static void afterClass() throws IOException {
+      repository.dropSchema();
    }
 
    @Test

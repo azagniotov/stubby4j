@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml;
 
+import org.stubby.exception.Stubby4JException;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -67,7 +68,17 @@ public final class YamlConsumer {
          httpLifecycles.addAll(unmarshallYaml(bufferedReader));
          bufferedReader.close();
       }
+      validateStubHttpLifecycles(httpLifecycles);
+
       return httpLifecycles;
+   }
+
+   private void validateStubHttpLifecycles(final List<StubHttpLifecycle> httpLifecycles) {
+      for (final StubHttpLifecycle stubHttpLifecycle : httpLifecycles) {
+         if (!stubHttpLifecycle.isComplete()) {
+            throw new Stubby4JException("Detected incomplete HttpLifecycle.. Did you omit some configuration detail in YAML (url, method or status etc.)?");
+         }
+      }
    }
 
    private final List<StubHttpLifecycle> unmarshallYaml(final BufferedReader buffRead) throws IOException {
