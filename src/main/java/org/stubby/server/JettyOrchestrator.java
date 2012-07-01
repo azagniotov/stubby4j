@@ -55,22 +55,25 @@ public final class JettyOrchestrator {
 
    private final Server server;
    private final Repository repository;
+   private final Map<String, String> commandLineArgs;
 
-   public JettyOrchestrator(final Server server, final Repository repository) {
+   public JettyOrchestrator(final Server server, final Repository repository, final Map<String, String> commandLineArgs) {
       this.server = server;
       this.repository = repository;
+      this.commandLineArgs = commandLineArgs;
    }
 
-   public void startJetty(final Map<String, String> commandLineArgs) throws Exception {
-
-      final Connector[] connectors = buildConnectorList(commandLineArgs);
-      final HandlerList handlers = new HandlerList();
-      handlers.setHandlers(new Handler[]{createClientContextHandler(), createAdminContextHandler()});
-
-      server.setConnectors(connectors);
-      server.setHandler(handlers);
+   public void startJetty() throws Exception {
+      server.setConnectors(buildConnectorList());
+      server.setHandler(buildHandlerList());
       server.setStopAtShutdown(true);
       server.start();
+   }
+
+   private HandlerList buildHandlerList() {
+      final HandlerList handlers = new HandlerList();
+      handlers.setHandlers(new Handler[]{createClientContextHandler(), createAdminContextHandler()});
+      return handlers;
    }
 
    public void stopJetty() {
@@ -90,15 +93,15 @@ public final class JettyOrchestrator {
       }.start();
    }
 
-   private Connector[] buildConnectorList(final Map<String, String> commandLineArgs) {
+   private Connector[] buildConnectorList() {
 
-      final SelectChannelConnector clientChannel = buildClientConnector(commandLineArgs);
-      final SelectChannelConnector adminChannel = buildAdminConnector(commandLineArgs);
+      final SelectChannelConnector clientChannel = buildClientConnector();
+      final SelectChannelConnector adminChannel = buildAdminConnector();
 
       return new Connector[]{clientChannel, adminChannel};
    }
 
-   private SelectChannelConnector buildAdminConnector(final Map<String, String> commandLineArgs) {
+   private SelectChannelConnector buildAdminConnector() {
       final SelectChannelConnector adminChannel = new SelectChannelConnector();
       adminChannel.setPort(getAdminPort(commandLineArgs));
       logger.info("Stubby4j admin was set to listen on port " + adminChannel.getPort());
@@ -113,7 +116,7 @@ public final class JettyOrchestrator {
       return adminChannel;
    }
 
-   private SelectChannelConnector buildClientConnector(final Map<String, String> commandLineArgs) {
+   private SelectChannelConnector buildClientConnector() {
       final SelectChannelConnector clientChannel = new SelectChannelConnector();
       clientChannel.setPort(getClientPort(commandLineArgs));
       logger.info("Stubby4j client was set to listen on port " + clientChannel.getPort());

@@ -28,8 +28,6 @@ public class JettyOrchestratorTest {
 
    @Before
    public void beforeTest() throws Exception {
-      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository);
-
       doNothing().when(spyServer).setConnectors(Mockito.any(Connector[].class));
       doNothing().when(spyServer).setHandler(Mockito.any(HandlerList.class));
       doNothing().when(spyServer).start();
@@ -37,22 +35,28 @@ public class JettyOrchestratorTest {
 
    @After
    public void afterTest() throws Exception {
-      jettyOrchestrator.stopJetty();
-      jettyOrchestrator = null;
+      if (jettyOrchestrator != null) {
+         jettyOrchestrator.stopJetty();
+         jettyOrchestrator = null;
+      }
    }
 
    @Test
    public void shouldReturnDefaultClientPort() throws Exception {
-      jettyOrchestrator.startJetty(new HashMap<String, String>());
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, new HashMap<String, String>());
+      jettyOrchestrator.startJetty();
       Assert.assertEquals(JettyOrchestrator.DEFAULT_CLIENT_PORT, jettyOrchestrator.getCurrentClientPort());
    }
 
    @Test
    public void shouldReturnGivenClientPort() throws Exception {
+
       final int expectedClientPort = 1244;
+
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_CLIENTPORT, Integer.toString(expectedClientPort));
-      jettyOrchestrator.startJetty(commandlineArgs);
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, commandlineArgs);
+      jettyOrchestrator.startJetty();
 
       Assert.assertEquals(expectedClientPort, jettyOrchestrator.getCurrentClientPort());
    }
@@ -62,12 +66,14 @@ public class JettyOrchestratorTest {
       final String expectedClientPort = "1244asd";
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_CLIENTPORT, new Integer(expectedClientPort).toString());
-      jettyOrchestrator.startJetty(commandlineArgs);
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, commandlineArgs);
+      jettyOrchestrator.startJetty();
    }
 
    @Test
    public void shouldReturnDefaultAdminPort() throws Exception {
-      jettyOrchestrator.startJetty(new HashMap<String, String>());
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, new HashMap<String, String>());
+      jettyOrchestrator.startJetty();
       Assert.assertEquals(JettyOrchestrator.DEFAULT_ADMIN_PORT, jettyOrchestrator.getCurrentAdminPort());
    }
 
@@ -77,7 +83,8 @@ public class JettyOrchestratorTest {
       final int expectedAdminPort = 1245;
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_ADMINPORT, Integer.toString(expectedAdminPort));
-      jettyOrchestrator.startJetty(commandlineArgs);
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, commandlineArgs);
+      jettyOrchestrator.startJetty();
 
       Assert.assertEquals(expectedAdminPort, jettyOrchestrator.getCurrentAdminPort());
    }
@@ -87,12 +94,14 @@ public class JettyOrchestratorTest {
       final String expectedAdminPort = "1244asd";
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_ADMINPORT, new Integer(expectedAdminPort).toString());
-      jettyOrchestrator.startJetty(commandlineArgs);
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, commandlineArgs);
+      jettyOrchestrator.startJetty();
    }
 
    @Test
    public void shouldReturnDefaultHost() throws Exception {
-      jettyOrchestrator.startJetty(new HashMap<String, String>());
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, new HashMap<String, String>());
+      jettyOrchestrator.startJetty();
       Assert.assertEquals(JettyOrchestrator.DEFAULT_HOST, jettyOrchestrator.getCurrentHost());
    }
 
@@ -102,7 +111,8 @@ public class JettyOrchestratorTest {
       final String expectedHost = "132.122.123.125";
       final Map<String, String> commandlineArgs = new HashMap<String, String>();
       commandlineArgs.put(CommandLineIntepreter.OPTION_ADDRESS, expectedHost);
-      jettyOrchestrator.startJetty(commandlineArgs);
+      jettyOrchestrator = new JettyOrchestrator(spyServer, mockRepository, commandlineArgs);
+      jettyOrchestrator.startJetty();
 
       Assert.assertEquals(expectedHost, jettyOrchestrator.getCurrentHost());
    }

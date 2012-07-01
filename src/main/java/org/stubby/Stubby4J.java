@@ -60,8 +60,8 @@ public final class Stubby4J {
       params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
       params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
 
-      jettyOrchestrator = JettyOrchestratorFactory.getInstance(yamlConfigurationFilename);
-      jettyOrchestrator.startJetty(params);
+      jettyOrchestrator = JettyOrchestratorFactory.getInstance(yamlConfigurationFilename, params);
+      jettyOrchestrator.startJetty();
    }
 
    public void stop() throws Exception {
@@ -137,10 +137,10 @@ public final class Stubby4J {
       } else {
 
          try {
-            final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
-            final String yamlConfigFilename = params.get(CommandLineIntepreter.OPTION_CONFIG);
+            final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
+            final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
 
-            JettyOrchestratorFactory.getInstance(yamlConfigFilename).startJetty(params);
+            JettyOrchestratorFactory.getInstance(yamlConfigFilename, commandLineArgs).startJetty();
 
          } catch (Exception e) {
             e.printStackTrace();

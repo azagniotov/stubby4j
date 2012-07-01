@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Map;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +32,7 @@ public class ClientHandlerTest {
    private Request mockRequest = Mockito.mock(Request.class);
    private HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
    private HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+   @SuppressWarnings("unchecked")
    private Map<String, String> mockResponseValues = Mockito.mock(Map.class);
    private PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
 
@@ -53,6 +55,10 @@ public class ClientHandlerTest {
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
       verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeaders.EXPIRES, 0);
+
+      verify(mockHttpServletResponse, never()).setHeader(Repository.TBL_COLUMN_BODY, "no-cache");
+      verify(mockHttpServletResponse, never()).setHeader(Repository.NOCONTENT_MSG_KEY, "no-cache");
+      verify(mockHttpServletResponse, never()).setHeader(Repository.TBL_COLUMN_STATUS, "no-cache");
    }
 
    @Test
