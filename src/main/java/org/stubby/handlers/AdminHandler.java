@@ -24,15 +24,17 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.stubby.database.Repository;
+import org.stubby.database.DataStore;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.yaml.YamlConsumer;
+import org.stubby.yaml.stubs.StubHttpLifecycle;
+import org.stubby.yaml.stubs.StubRequest;
+import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +46,11 @@ public final class AdminHandler extends AbstractHandler {
 
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
 
-   private final Repository repository;
+   private final DataStore dataStore;
    private final JettyOrchestrator jettyOrchestrator;
 
-   public AdminHandler(final Repository repository, final JettyOrchestrator jettyOrchestrator) {
-      this.repository = repository;
+   public AdminHandler(final DataStore dataStore, final JettyOrchestrator jettyOrchestrator) {
+      this.dataStore = dataStore;
       this.jettyOrchestrator = jettyOrchestrator;
    }
 
@@ -64,7 +66,11 @@ public final class AdminHandler extends AbstractHandler {
       response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
-         response.getWriter().println(getConfigDataPresentation());
+         try {
+            response.getWriter().println(getConfigDataPresentation());
+         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+         }
          return;
       }
 
@@ -72,27 +78,23 @@ public final class AdminHandler extends AbstractHandler {
       response.getWriter().println(adminHandlerHtml);
    }
 
-   private String getConfigDataPresentation() {
-      final List<List<Map<String, Object>>> data = repository.getHttpConfigData();
-      final List<Map<String, Object>> requestData = data.get(0);
-      final List<Map<String, Object>> requestHeaderData = data.get(1);
-      final List<Map<String, Object>> responseData = data.get(2);
-      final List<Map<String, Object>> responseHeaderData = data.get(3);
+   private String getConfigDataPresentation() throws IllegalAccessException {
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = dataStore.getStubHttpLifecycles();
 
       final StringBuilder builder = new StringBuilder();
-
-      builder.append(buildRequestCounterHtmlTable(requestData));
       builder.append(buildSystemStatusHtmlTable());
+      builder.append("<br /><br />");
 
       final String requestCounterHtml = HandlerHelper.getHtmlResourceByName("snippet_request_response_tables");
-      for (int idx = 0; idx < requestData.size(); idx++) {
-         final Map<String, Object> requestHeaders = (requestHeaderData.size() > 0 ? requestHeaderData.get(idx) : null);
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Request", requestData.get(idx), constructTableRowWithHeadersData(requestHeaders)));
-         final Map<String, Object> responseHeaders = (responseHeaderData.size() > 0 ? responseHeaderData.get(idx) : null);
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Response", responseData.get(idx), constructTableRowWithHeadersData(responseHeaders)));
+      for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
+         final StubRequest stubRequest = stubHttpLifecycle.getRequest();
+         final StubResponse stubResponse = stubHttpLifecycle.getResponse();
+         builder.append(buildPageBodyHtml(requestCounterHtml, "Request", stubRequest.getProperties()));
+         builder.append(buildPageBodyHtml(requestCounterHtml, "Response", stubResponse.getProperties()));
+         builder.append("<br /><br />");
       }
-
-      return HandlerHelper.populateHtmlTemplate("ping", requestData.size(), builder.toString());
+      return HandlerHelper.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
    }
 
    private String buildSystemStatusHtmlTable() {
@@ -107,57 +109,21 @@ public final class AdminHandler extends AbstractHandler {
       return String.format(systemStatusTable, builder.toString());
    }
 
-   private String buildRequestCounterHtmlTable(final List<Map<String, Object>> requestData) {
-
-      final StringBuilder builder = new StringBuilder();
-      for (final Map<String, Object> rowData : requestData) {
-         final String urlAsHyperLink = HandlerHelper.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL),
-               jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, urlAsHyperLink, rowData.get(Repository.TBL_COLUMN_COUNTER)));
-      }
-      final String requestCounterHtml = HandlerHelper.getHtmlResourceByName("snippet_request_counter_table");
-      return String.format(requestCounterHtml, builder.toString());
-   }
-
-   private String buildPageBodyHtml(final String requestCounterHtml, final String tableName, final Map<String, Object> rowData, final String rowHeaderData) {
+   private String buildPageBodyHtml(final String requestCounterHtml, final String tableName, final Map<String, String> stubMemberFields) {
       final StringBuilder builder = new StringBuilder();
 
-      for (final Map.Entry<String, Object> columnData : rowData.entrySet()) {
-         if (!columnData.getKey().equals(Repository.TBL_COLUMN_ID)) {
+      for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
 
-            Object value = columnData.getValue();
-            if (columnData.getKey().equals(Repository.TBL_COLUMN_URL)) {
-               value = HandlerHelper.linkifyRequestUrl(rowData.get(Repository.TBL_COLUMN_URL),
-                     jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
-            } else if (value != null) {
-               value = HandlerHelper.escapeHtmlEntities(value.toString());
-            }
-
-            builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, columnData.getKey(), value));
+         Object value = keyValue.getValue();
+         if (keyValue.getKey().equals("url")) {
+            value = HandlerHelper.linkifyRequestUrl(stubMemberFields.get(keyValue.getKey()),
+                  jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
+         } else if (value != null) {
+            value = HandlerHelper.escapeHtmlEntities(value.toString());
          }
+
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), value));
       }
-      return String.format(requestCounterHtml, tableName, rowHeaderData, builder.toString());
-   }
-
-   private String constructTableRowWithHeadersData(final Map<String, Object> headerData) {
-      final StringBuilder builder = new StringBuilder();
-
-      if (headerData == null) {
-         return builder.append("None").toString();
-      }
-
-      final List<Object> params = new LinkedList<Object>();
-      for (final Map.Entry<String, Object> columnData : headerData.entrySet()) {
-
-         if (!columnData.getKey().endsWith(Repository.TBL_COLUMN_ID)) {
-            params.add(columnData.getValue());
-
-            if (params.size() == 2) {
-               builder.append(String.format("%s=%s ", params.get(0).toString(), params.get(1).toString()));
-               params.clear();
-            }
-         }
-      }
-      return builder.toString();
+      return String.format(requestCounterHtml, tableName, builder.toString());
    }
 }

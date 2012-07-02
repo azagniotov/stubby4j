@@ -64,7 +64,6 @@ public class StubHttpLifecycle {
       final StubHttpLifecycle that = (StubHttpLifecycle) o;
 
       if (!request.equals(that.request)) return false;
-      if (!response.equals(that.response)) return false;
 
       return true;
    }
@@ -72,7 +71,7 @@ public class StubHttpLifecycle {
    @Override
    public int hashCode() {
       int result = request.hashCode();
-      result = 31 * result + response.hashCode();
+      result = 31 * result;
       return result;
    }
 

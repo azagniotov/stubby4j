@@ -2,7 +2,7 @@
 
 # stubby4j
 
-A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL database).
+A Java-based stub HTTP server with embedded Jetty.
 
 ### Why would a developer use stubby4j?
 
@@ -22,7 +22,7 @@ A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL da
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 1.8MB
+##### All this goodness in just under 1.1MB
 _______________________________________________
 
 
@@ -155,6 +155,5 @@ The following dependencies embedded within stubby4j:
 3. jetty-continuation-8.1.1.v20120215.jar 
 4. jetty-http-8.1.1.v20120215.jar 
 5. jetty-io-8.1.1.v20120215.jar 
-6. jetty-util-8.1.1.v20120215.jar 
-7. hsqldb-1.8.0.10.jar
-8. commons-cli-1.2.jar
+6. jetty-util-8.1.1.v20120215.jar
+7. commons-cli-1.2.jar

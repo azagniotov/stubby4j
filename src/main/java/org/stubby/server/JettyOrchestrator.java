@@ -26,7 +26,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.database.Repository;
+import org.stubby.database.DataStore;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.handlers.ClientHandler;
 
@@ -54,12 +54,12 @@ public class JettyOrchestrator {
    private String currentHost = DEFAULT_HOST;
 
    private final Server server;
-   private final Repository repository;
+   private final DataStore dataStore;
    private final Map<String, String> commandLineArgs;
 
-   public JettyOrchestrator(final Server server, final Repository repository, final Map<String, String> commandLineArgs) {
+   public JettyOrchestrator(final Server server, final DataStore dataStore, final Map<String, String> commandLineArgs) {
       this.server = server;
-      this.repository = repository;
+      this.dataStore = dataStore;
       this.commandLineArgs = commandLineArgs;
    }
 
@@ -82,7 +82,6 @@ public class JettyOrchestrator {
             try {
                if (server != null && !server.isStopped()) {
                   logger.info("Shutting down the server...");
-                  repository.dropSchema();
                   server.stop();
                   logger.info("Server has stopped.");
                }
@@ -137,7 +136,7 @@ public class JettyOrchestrator {
       final ContextHandler adminContextHandler = new ContextHandler();
       adminContextHandler.setContextPath("/");
       adminContextHandler.setConnectorNames(new String[]{ADMIN_CONNECTOR_NAME});
-      adminContextHandler.setHandler(new AdminHandler(repository, this));
+      adminContextHandler.setHandler(new AdminHandler(dataStore, this));
 
       return adminContextHandler;
    }
@@ -147,7 +146,7 @@ public class JettyOrchestrator {
       final ContextHandler clientContextHandler = new ContextHandler();
       clientContextHandler.setContextPath("/");
       clientContextHandler.setConnectorNames(new String[]{CLIENT_CONNECTOR_NAME});
-      clientContextHandler.setHandler(new ClientHandler(repository));
+      clientContextHandler.setHandler(new ClientHandler(dataStore));
 
       return clientContextHandler;
    }

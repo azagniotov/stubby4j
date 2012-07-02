@@ -46,11 +46,6 @@
          <version>8.1.1.v20120215</version>
       </dependency>
       <dependency>
-         <groupId>hsqldb</groupId>
-         <artifactId>hsqldb</artifactId>
-         <version>1.8.0.10</version>
-      </dependency>
-      <dependency>
          <groupId>commons-cli</groupId>
          <artifactId>commons-cli</artifactId>
          <version>1.2</version>

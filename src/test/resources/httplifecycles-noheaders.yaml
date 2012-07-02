@@ -13,3 +13,12 @@ httplifecycle:
    response:
       body: This is a response for 567
       status: 503
+
+httplifecycle:
+   request:
+      method: POST
+      postBody: This is a post data
+      url: /invoice/567
+   response:
+      body: This is a response for 567
+      status: 503

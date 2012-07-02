@@ -24,15 +24,15 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.stubby.database.Repository;
+import org.stubby.database.DataStore;
+import org.stubby.yaml.stubs.NullStubResponse;
+import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,10 +42,10 @@ import java.util.Map;
 public final class ClientHandler extends AbstractHandler {
 
    protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
-   private Repository repository;
+   private final DataStore dataStore;
 
-   public ClientHandler(final Repository repository) {
-      this.repository = repository;
+   public ClientHandler(final DataStore dataStore) {
+      this.dataStore = dataStore;
    }
 
    @Override
@@ -63,29 +63,38 @@ public final class ClientHandler extends AbstractHandler {
          try {
             postBody = HandlerHelper.inputStreamToString(request.getInputStream());
             if (postBody == null || postBody.isEmpty()) {
-               response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
-               response.setStatus(HttpStatus.BAD_REQUEST_400);
-               response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
+               createResponseToHandleBadPost(response);
                return;
             }
          } catch (Exception ex) {
-            response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
-            response.setStatus(HttpStatus.BAD_REQUEST_400);
-            response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
+            createResponseToHandleBadPost(response);
             return;
          }
       }
 
-      Map<String, String> responseBody = repository.retrieveResponseFor(constructFullURI(request), request.getMethod(), postBody);
-      if (responseBody.size() == 1) {
+      final StubResponse stubResponse = dataStore.findResponseFor(constructFullURI(request), request.getMethod(), postBody);
+      if (stubResponse instanceof NullStubResponse) {
          response.setStatus(HttpStatus.NOT_FOUND_404);
-         response.sendError(HttpStatus.NOT_FOUND_404, responseBody.get(Repository.NOCONTENT_MSG_KEY));
+         final String error = generate404ErrorMessage(request, postBody);
+         response.sendError(HttpStatus.NOT_FOUND_404, error);
+
          return;
       }
 
-      setStubResponseHeaders(responseBody, response);
-      response.setStatus(Integer.parseInt(responseBody.get(Repository.TBL_COLUMN_STATUS)));
-      response.getWriter().println(responseBody.get(Repository.TBL_COLUMN_BODY));
+      setStubResponseHeaders(stubResponse, response);
+      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
+      response.getWriter().println(stubResponse.getBody());
+   }
+
+   private String generate404ErrorMessage(final HttpServletRequest request, final String postBody) {
+      final String postMessage = (postBody != null ? " for post data: " + postBody : "");
+      return "No data found for " + request.getMethod() + " request at URI " + constructFullURI(request) + postMessage;
+   }
+
+   private void createResponseToHandleBadPost(final HttpServletResponse response) throws IOException {
+      response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+      response.setStatus(HttpStatus.BAD_REQUEST_400);
+      response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
    }
 
    private String constructFullURI(final HttpServletRequest request) {
@@ -103,19 +112,9 @@ public final class ClientHandler extends AbstractHandler {
       response.setDateHeader(HttpHeaders.EXPIRES, 0);
    }
 
-   private void setStubResponseHeaders(final Map<String, String> responseBody, final HttpServletResponse response) {
-
-      final List<String> nonHeaderProperties = Arrays.asList(
-            Repository.TBL_COLUMN_BODY,
-            Repository.NOCONTENT_MSG_KEY,
-            Repository.TBL_COLUMN_STATUS);
-
+   private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
       response.setCharacterEncoding("UTF-8");
-
-      for (Map.Entry<String, String> entry : responseBody.entrySet()) {
-         if (nonHeaderProperties.contains(entry.getKey())) {
-            continue;
-         }
+      for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
          response.setHeader(entry.getKey(), entry.getValue());
       }
    }

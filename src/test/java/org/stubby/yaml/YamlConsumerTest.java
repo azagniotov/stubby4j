@@ -23,12 +23,21 @@ public class YamlConsumerTest {
       final List<StubHttpLifecycle> stubHttpLifecycle = new YamlConsumer(url.getFile()).parseYaml();
       final String expected = "[" +
             "StubHttpLifecycle{" +
-            "request=StubRequest{url='/invoice/123', method='GET', postBody='null', headers={}}, " +
-            "response=StubResponse{status='200', body='This is a response for 123', headers={}}}, " +
+            "request=StubRequest{url='/invoice/123', method='GET', postBody='null', " +
+            "headers={}}, " +
+            "response=StubResponse{status='200', body='This is a response for 123', " +
+            "headers={}}}, " +
             "StubHttpLifecycle{" +
-            "request=StubRequest{url='/invoice/567', method='GET', postBody='null', headers={}}, " +
-            "response=StubResponse{status='503', body='This is a response for 567', headers={}}}" +
-            "]";
+            "request=StubRequest{url='/invoice/567', method='GET', postBody='null', " +
+            "headers={}}, " +
+            "response=StubResponse{status='503', body='This is a response for 567', " +
+            "headers={}}}, " +
+            "StubHttpLifecycle{" +
+            "request=StubRequest{url='/invoice/567', method='POST', postBody='This is a post data', " +
+            "headers={}}, " +
+            "response=" +
+            "StubResponse{status='503', body='This is a response for 567', " +
+            "headers={}}}]";
       Assert.assertEquals(expected, stubHttpLifecycle.toString());
    }
 

@@ -40,6 +40,18 @@ public class StubRequest {
 
    }
 
+   public Map<String, String> getProperties() throws IllegalAccessException {
+      final Map<String, String> properties = new HashMap<String, String>();
+
+      for (final Field field : StubRequest.class.getDeclaredFields()) {
+         final String reflectedFieldName = field.getName().toLowerCase();
+         final String value = (field.get(this) != null ? field.get(this).toString() : "Not provided");
+         properties.put(reflectedFieldName, value);
+      }
+
+      return properties;
+   }
+
    public static boolean isFieldCorrespondsToYamlNode(final String fieldName) {
       for (Field field : StubRequest.class.getDeclaredFields()) {
          final String reflectedFieldName = field.getName().toLowerCase();
@@ -103,7 +115,6 @@ public class StubRequest {
       final StubRequest that = (StubRequest) o;
 
       if (postBody != null ? !postBody.equals(that.postBody) : that.postBody != null) return false;
-      if (!headers.equals(that.headers)) return false;
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
 
@@ -115,7 +126,6 @@ public class StubRequest {
       int result = url.hashCode();
       result = 31 * result + method.hashCode();
       result = 31 * result + (postBody != null ? postBody.hashCode() : 0);
-      result = 31 * result + headers.hashCode();
       return result;
    }
 

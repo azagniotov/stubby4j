@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.server;
 
 import org.eclipse.jetty.server.Server;
-import org.stubby.database.Repository;
+import org.stubby.database.DataStore;
 import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
@@ -44,9 +44,8 @@ public final class JettyOrchestratorFactory {
       if (jettyOrchestrator == null) {
          final YamlConsumer yamlConsumer = new YamlConsumer(yamlConfigFilename);
          final List<StubHttpLifecycle> httpLifecycles = yamlConsumer.parseYaml();
-         final Repository repository = new Repository(httpLifecycles);
-         repository.init();
-         jettyOrchestrator = new JettyOrchestrator(new Server(), repository, commandLineArgs);
+         final DataStore dataStore = new DataStore(httpLifecycles);
+         jettyOrchestrator = new JettyOrchestrator(new Server(), dataStore, commandLineArgs);
       }
       return jettyOrchestrator;
    }

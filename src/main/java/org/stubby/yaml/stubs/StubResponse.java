@@ -39,8 +39,19 @@ public class StubResponse {
 
    }
 
+   public Map<String, String> getProperties() throws IllegalAccessException {
+      final Map<String, String> properties = new HashMap<String, String>();
+
+      for (final Field field : StubResponse.class.getDeclaredFields()) {
+         final String reflectedFieldName = field.getName().toLowerCase();
+         properties.put(reflectedFieldName, field.get(this).toString());
+      }
+
+      return properties;
+   }
+
    public static boolean isFieldCorrespondsToYamlNode(final String fieldName) {
-      for (Field field : StubResponse.class.getDeclaredFields()) {
+      for (final Field field : StubResponse.class.getDeclaredFields()) {
          final String reflectedFieldName = field.getName().toLowerCase();
          if (!fieldName.equals("headers") && reflectedFieldName.equals(fieldName)) {
             return true;
@@ -58,11 +69,11 @@ public class StubResponse {
       }
    }
 
-   public final String getStatus() {
+   public String getStatus() {
       return status;
    }
 
-   public final String getBody() {
+   public String getBody() {
       return body;
    }
 
@@ -78,7 +89,7 @@ public class StubResponse {
       headers.put(param, value);
    }
 
-   public final Map<String, String> getHeaders() {
+   public Map<String, String> getHeaders() {
       return headers;
    }
 

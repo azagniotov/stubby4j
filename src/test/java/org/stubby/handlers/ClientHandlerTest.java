@@ -8,12 +8,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.stubby.database.Repository;
+import org.stubby.database.DataStore;
+import org.stubby.yaml.stubs.NullStubResponse;
+import org.stubby.yaml.stubs.StubResponse;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.doNothing;
@@ -28,21 +35,16 @@ import static org.mockito.Mockito.when;
  */
 public class ClientHandlerTest {
 
-   private Repository mockRepository = Mockito.mock(Repository.class);
+   private DataStore mockDataStore = Mockito.mock(DataStore.class);
    private Request mockRequest = Mockito.mock(Request.class);
    private HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
    private HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
-   @SuppressWarnings("unchecked")
-   private Map<String, String> mockResponseValues = Mockito.mock(Map.class);
    private PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
 
-   private final String noResultsMessage = "no results";
    private final String someResultsMessage = "we have results";
 
    @Before
    public void beforeTest() throws Exception {
-      when(mockResponseValues.get(Repository.NOCONTENT_MSG_KEY)).thenReturn(noResultsMessage);
-      when(mockResponseValues.get(Repository.TBL_COLUMN_BODY)).thenReturn(someResultsMessage);
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
       doNothing().when(mockPrintWriter).println(Mockito.anyString());
    }
@@ -55,10 +57,6 @@ public class ClientHandlerTest {
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
       verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeaders.EXPIRES, 0);
-
-      verify(mockHttpServletResponse, never()).setHeader(Repository.TBL_COLUMN_BODY, "no-cache");
-      verify(mockHttpServletResponse, never()).setHeader(Repository.NOCONTENT_MSG_KEY, "no-cache");
-      verify(mockHttpServletResponse, never()).setHeader(Repository.TBL_COLUMN_STATUS, "no-cache");
    }
 
    @Test
@@ -66,18 +64,17 @@ public class ClientHandlerTest {
       final String method = "GET";
       final String requestPathInfo = "/path/1";
 
+      final NullStubResponse mockStubResponse = Mockito.mock(NullStubResponse.class);
+
       when(mockHttpServletRequest.getMethod()).thenReturn(method);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockRepository.retrieveResponseFor(requestPathInfo, method, null)).thenReturn(mockResponseValues);
-      when(mockResponseValues.size()).thenReturn(1);
-      when(mockResponseValues.get(Repository.TBL_COLUMN_STATUS)).thenReturn("200");
-      when(mockResponseValues.get(Repository.NOCONTENT_MSG_KEY)).thenReturn(noResultsMessage);
+      when(mockDataStore.findResponseFor(requestPathInfo, method, null)).thenReturn(mockStubResponse);
 
-      final ClientHandler clientHandler = new ClientHandler(mockRepository);
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, noResultsMessage);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for GET request at URI /path/1");
    }
 
 
@@ -86,13 +83,16 @@ public class ClientHandlerTest {
       final String method = "GET";
       final String requestPathInfo = "/path/1";
 
+      final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
+
       when(mockHttpServletRequest.getMethod()).thenReturn(method);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockRepository.retrieveResponseFor(requestPathInfo, method, null)).thenReturn(mockResponseValues);
-      when(mockResponseValues.size()).thenReturn(2);
-      when(mockResponseValues.get(Repository.TBL_COLUMN_STATUS)).thenReturn("200");
+      when(mockDataStore.findResponseFor(requestPathInfo, method, null)).thenReturn(mockStubResponse);
+      when(mockStubResponse.getStatus()).thenReturn("200");
+      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>());
 
-      final ClientHandler clientHandler = new ClientHandler(mockRepository);
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
@@ -104,14 +104,79 @@ public class ClientHandlerTest {
       final String method = "POST";
       final String requestPathInfo = "/path/1";
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(method);
-      when(mockHttpServletRequest.getInputStream()).thenReturn(null);
+      final NullStubResponse mockStubResponse = Mockito.mock(NullStubResponse.class);
 
-      final ClientHandler clientHandler = new ClientHandler(mockRepository);
+      when(mockHttpServletRequest.getMethod()).thenReturn(method);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockDataStore.findResponseFor(requestPathInfo, method, null)).thenReturn(mockStubResponse);
+
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(mockHttpServletResponse, times(1)).setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
    }
+
+   @Test
+   public void verifyBehaviourDuringHandlePostRequestWithNoMatch() throws Exception {
+      final String postData = "postData";
+      final String method = "POST";
+      final String requestPathInfo = "/path/1";
+
+      final NullStubResponse mockStubResponse = Mockito.mock(NullStubResponse.class);
+      final ServletInputStream mockServletInputStream = Mockito.mock(ServletInputStream.class);
+
+      when(mockHttpServletRequest.getMethod()).thenReturn(method);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+
+      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+         @Override
+         public int read() throws IOException {
+            return inputStream.read();
+         }
+      });
+
+      when(mockDataStore.findResponseFor(requestPathInfo, method, postData)).thenReturn(mockStubResponse);
+
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
+      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for POST request at URI /path/1 for post data: " + postData);
+   }
+
+
+   @Test
+   public void verifyBehaviourDuringHandlePostRequestWithMatch() throws Exception {
+      final String postData = "postData";
+      final String method = "POST";
+      final String requestPathInfo = "/path/1";
+
+      final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
+      final ServletInputStream mockServletInputStream = Mockito.mock(ServletInputStream.class);
+
+      when(mockHttpServletRequest.getMethod()).thenReturn(method);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockStubResponse.getStatus()).thenReturn("200");
+      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>());
+
+      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+         @Override
+         public int read() throws IOException {
+            return inputStream.read();
+         }
+      });
+
+      when(mockDataStore.findResponseFor(requestPathInfo, method, postData)).thenReturn(mockStubResponse);
+
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
+      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+      verify(mockPrintWriter, times(1)).println(someResultsMessage);
+   }
+
 }
