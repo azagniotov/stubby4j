@@ -19,9 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,36 +34,6 @@ public class StubResponse {
 
    public StubResponse() {
 
-   }
-
-   public Map<String, String> getProperties() throws IllegalAccessException {
-      final Map<String, String> properties = new HashMap<String, String>();
-
-      for (final Field field : StubResponse.class.getDeclaredFields()) {
-         final String reflectedFieldName = field.getName().toLowerCase();
-         properties.put(reflectedFieldName, field.get(this).toString());
-      }
-
-      return properties;
-   }
-
-   public static boolean isFieldCorrespondsToYamlNode(final String fieldName) {
-      for (final Field field : StubResponse.class.getDeclaredFields()) {
-         final String reflectedFieldName = field.getName().toLowerCase();
-         if (!fieldName.equals("headers") && reflectedFieldName.equals(fieldName)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   public final void setValue(final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
-      for (Method method : this.getClass().getDeclaredMethods()) {
-         if (method.getName().toLowerCase().equals("set" + fieldName)) {
-            method.invoke(this, value);
-            break;
-         }
-      }
    }
 
    public String getStatus() {

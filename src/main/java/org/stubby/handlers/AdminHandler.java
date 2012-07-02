@@ -26,6 +26,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
 import org.stubby.server.JettyOrchestrator;
+import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
@@ -63,7 +65,7 @@ public final class AdminHandler extends AbstractHandler {
       baseRequest.setHandled(true);
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
       response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
+      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       if (request.getPathInfo().equals("/ping")) {
          try {
@@ -74,7 +76,7 @@ public final class AdminHandler extends AbstractHandler {
          return;
       }
 
-      final String adminHandlerHtml = HandlerHelper.populateHtmlTemplate("index", request.getContextPath());
+      final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", request.getContextPath());
       response.getWriter().println(adminHandlerHtml);
    }
 
@@ -86,15 +88,15 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(buildSystemStatusHtmlTable());
       builder.append("<br /><br />");
 
-      final String requestCounterHtml = HandlerHelper.getHtmlResourceByName("snippet_request_response_tables");
+      final String requestCounterHtml = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
       for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
          final StubRequest stubRequest = stubHttpLifecycle.getRequest();
          final StubResponse stubResponse = stubHttpLifecycle.getResponse();
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Request", stubRequest.getProperties()));
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Response", stubResponse.getProperties()));
+         builder.append(buildPageBodyHtml(requestCounterHtml, "Request", ReflectionUtils.getProperties(stubRequest)));
+         builder.append(buildPageBodyHtml(requestCounterHtml, "Response", ReflectionUtils.getProperties(stubResponse)));
          builder.append("<br /><br />");
       }
-      return HandlerHelper.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
+      return HandlerUtils.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
    }
 
    private String buildSystemStatusHtmlTable() {
@@ -105,7 +107,7 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", jettyOrchestrator.getCurrentHost()));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 
-      final String systemStatusTable = HandlerHelper.getHtmlResourceByName("snippet_system_status_table");
+      final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());
    }
 
@@ -116,10 +118,10 @@ public final class AdminHandler extends AbstractHandler {
 
          Object value = keyValue.getValue();
          if (keyValue.getKey().equals("url")) {
-            value = HandlerHelper.linkifyRequestUrl(stubMemberFields.get(keyValue.getKey()),
+            value = HandlerUtils.linkifyRequestUrl(stubMemberFields.get(keyValue.getKey()),
                   jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
          } else if (value != null) {
-            value = HandlerHelper.escapeHtmlEntities(value.toString());
+            value = HandlerUtils.escapeHtmlEntities(value.toString());
          }
 
          builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), value));

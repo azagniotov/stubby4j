@@ -25,6 +25,7 @@ import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
+import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.NullStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -61,7 +62,7 @@ public final class ClientHandler extends AbstractHandler {
       if (request.getMethod().toLowerCase().equals("post")) {
 
          try {
-            postBody = HandlerHelper.inputStreamToString(request.getInputStream());
+            postBody = HandlerUtils.inputStreamToString(request.getInputStream());
             if (postBody == null || postBody.isEmpty()) {
                createResponseToHandleBadPost(response);
                return;
@@ -105,7 +106,7 @@ public final class ClientHandler extends AbstractHandler {
    }
 
    private void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
+      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
       response.setHeader(HttpHeaders.DATE, new Date().toString());
       response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
       response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.

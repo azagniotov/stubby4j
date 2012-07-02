@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.yaml;
 
 import org.stubby.exception.Stubby4JException;
+import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -135,14 +136,14 @@ public final class YamlConsumer {
       return keyValuePair;
    }
 
-   private final void bindYamlValueToPojo(final Map<String, String> keyValuePair, final StubHttpLifecycle parentStub) {
+   private void bindYamlValueToPojo(final Map<String, String> keyValuePair, final StubHttpLifecycle parentStub) {
       final String nodeName = keyValuePair.get(YAMLLINE_KEY);
       final String nodeValue = keyValuePair.get(YAMLLINE_VALUE);
 
-      if (StubRequest.isFieldCorrespondsToYamlNode(nodeName)) {
+      if (ReflectionUtils.isFieldCorrespondsToYamlNode(StubRequest.class, nodeName)) {
          setYamlValueToFieldProperty(parentStub, nodeName, nodeValue, YamlParentNodes.REQUEST);
 
-      } else if (StubResponse.isFieldCorrespondsToYamlNode(nodeName)) {
+      } else if (ReflectionUtils.isFieldCorrespondsToYamlNode(StubResponse.class, nodeName)) {
          setYamlValueToFieldProperty(parentStub, nodeName, nodeValue, YamlParentNodes.RESPONSE);
 
       } else {
@@ -153,9 +154,9 @@ public final class YamlConsumer {
    private void setYamlValueToFieldProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue, final YamlParentNodes type) {
       try {
          if (type.equals(YamlParentNodes.REQUEST)) {
-            stubHttpLifecycle.getRequest().setValue(nodeName, nodeValue);
+            ReflectionUtils.setValue(stubHttpLifecycle.getRequest(), nodeName, nodeValue);
          } else {
-            stubHttpLifecycle.getResponse().setValue(nodeName, nodeValue);
+            ReflectionUtils.setValue(stubHttpLifecycle.getResponse(), nodeName, nodeValue);
          }
       } catch (InvocationTargetException e) {
          e.printStackTrace();

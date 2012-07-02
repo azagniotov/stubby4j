@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.stubby.handlers;
+package org.stubby.utils;
 
 import org.stubby.exception.Stubby4JException;
 
@@ -28,23 +28,23 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
  */
-final class HandlerHelper {
+public final class HandlerUtils {
 
-   private HandlerHelper() {
+   private HandlerUtils() {
 
    }
 
-   static String getHtmlResourceByName(final String templateSuffix) {
+   public static String getHtmlResourceByName(final String templateSuffix) {
       final String htmlTemplatePath = String.format("/html/%s.html", templateSuffix);
-      final InputStream postBodyInputStream = HandlerHelper.class.getResourceAsStream(htmlTemplatePath);
+      final InputStream postBodyInputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
       if (postBodyInputStream == null) {
          throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
       }
       return inputStreamToString(postBodyInputStream);
    }
 
-   static String constructHeaderServerName() {
-      final Package pkg = HandlerHelper.class.getPackage();
+   public static String constructHeaderServerName() {
+      final Package pkg = HandlerUtils.class.getPackage();
       final String implementationVersion = pkg.getImplementationVersion() == null ?
             "x.x.x" : pkg.getImplementationVersion();
       final String implementationTitle = pkg.getImplementationTitle() == null ?
@@ -52,7 +52,7 @@ final class HandlerHelper {
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
    }
 
-   static String inputStreamToString(final InputStream inputStream) {
+   public static String inputStreamToString(final InputStream inputStream) {
       if (inputStream == null || inputStream.toString().isEmpty()) {
          return null;
       }
@@ -61,15 +61,15 @@ final class HandlerHelper {
       return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
    }
 
-   static String escapeHtmlEntities(final String toBeEscaped) {
+   public static String escapeHtmlEntities(final String toBeEscaped) {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
    }
 
-   static String linkifyRequestUrl(final Object uri, final String host, final int clientPort) {
+   public static String linkifyRequestUrl(final Object uri, final String host, final int clientPort) {
       return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>", host, clientPort, uri, uri);
    }
 
-   static String populateHtmlTemplate(final String templateName, final Object... params) {
+   public static String populateHtmlTemplate(final String templateName, final Object... params) {
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(getHtmlResourceByName(templateName), params));
       return builder.toString();

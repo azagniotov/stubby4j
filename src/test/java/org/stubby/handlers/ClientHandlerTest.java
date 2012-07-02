@@ -2,13 +2,13 @@ package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.database.DataStore;
+import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.NullStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -21,10 +21,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,7 +50,7 @@ public class ClientHandlerTest {
    @After
    public void afterTest() throws Exception {
       verify(mockRequest, times(1)).setHandled(true);
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerHelper.constructHeaderServerName());
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.DATE, new Date().toString());
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
