@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
+
 # stubby4j
 
 A Java-based stub HTTP server, with embedded Jetty and HSQLDB (Hypersonic SQL database).
