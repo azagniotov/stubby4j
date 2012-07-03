@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,14 +51,46 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringHandleGetRequestOnIndexPage() throws Exception {
       final String requestPathInfo = "/";
-      final AdminHandler clientHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
 
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", mockHttpServletRequest.getContextPath());
       verify(mockPrintWriter, times(1)).println(adminHandlerHtml);
+   }
+
+   @Test
+   public void verifyBehaviourDuringHandleGetRequestOnPingPage() throws Exception {
+      final String requestPathInfo = "/ping";
+      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
+
+      adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", mockHttpServletRequest.getContextPath());
+      verify(mockPrintWriter, never()).println(adminHandlerHtml);
+
+   }
+
+   @Test
+   public void verifyBehaviourDuringExceptionWhenSubmittingGetRequestOnPingPage() throws Exception {
+      final String requestPathInfo = "/ping";
+      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
+      doThrow(IllegalAccessException.class).when(mockPrintWriter).println(Mockito.anyString());
+
+      adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", mockHttpServletRequest.getContextPath());
+      verify(mockPrintWriter, never()).println(adminHandlerHtml);
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, null);
    }
 }

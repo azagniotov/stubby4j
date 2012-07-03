@@ -20,7 +20,7 @@ import static org.mockito.Mockito.doNothing;
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:23 AM
  */
-public class JettyOrchestratorTest {
+public class JettyOrchestratorIntegrationTest {
 
    private static JettyOrchestrator jettyOrchestrator;
    private final Server spyServer = Mockito.spy(new Server());

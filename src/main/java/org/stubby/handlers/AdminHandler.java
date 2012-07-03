@@ -71,7 +71,8 @@ public final class AdminHandler extends AbstractHandler {
          try {
             response.getWriter().println(getConfigDataPresentation());
          } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, e.getMessage());
          }
          return;
       }
