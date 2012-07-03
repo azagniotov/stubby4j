@@ -35,7 +35,7 @@ ________________________________________________
 YAML Configuration
 ==================
 
-When creating request/response data for the stub server, it must be in the following format:
+When creating request/response data for the stub server, the config data should be specified in YAML-like syntax:
 
 ```
 httplifecycle:
@@ -70,7 +70,27 @@ httplifecycle:
 ```
 The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
 Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
-respective children nodes as per above example. 
+respective children nodes as per above example. Indentation of `httplifecycle` is _not_ required. In other words,
+the following format is also valid:
+
+```
+httplifecycle:
+request:
+method: GET
+url: /invoice/123
+response:
+status: 200
+body: This is a response for 123
+
+httplifecycle:
+request:
+method: POST
+url: /invoice/123
+postBody: post body
+response:
+status: 200
+body: This is a response for 123
+```
 
 Please keep in mind, you MUST ensure that the provided `response` body is on one line. In other words, no line
 breaks.
