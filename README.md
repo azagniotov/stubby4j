@@ -178,7 +178,9 @@ to the following end point: `http://<host>:<admin_port>/endpoint/new`
 2. `postBody` => HTTP request post body (Optional)
 3. `body` => Expected response body (a JSON string etc.) (Required)
 4. `status` => HTTP status (Required)
-5. `responseHeaders` => HTTP response headers as key/value pairs, separated by comma: `content-type=application/json,charset=UTF-8` (Optional)
+5. `responseHeaders` => HTTP response headers as key/value pairs, separated by comma: 
+
+`content-type=application/json,charset=UTF-8` (Optional)
 
 ##### Please note:
 1. POSTed duplicate or incomplete data will result in an error from the server.
