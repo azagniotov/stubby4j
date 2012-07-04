@@ -57,7 +57,7 @@ public class StubRequest {
    }
 
    public final void setMethod(final String method) {
-      this.method = method;
+      this.method = (method != null ? method.toUpperCase() : null);
    }
 
    public final void setPostBody(final String postBody) {

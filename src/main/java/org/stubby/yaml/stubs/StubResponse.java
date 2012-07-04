@@ -60,6 +60,10 @@ public class StubResponse {
       return headers;
    }
 
+   public void setHeaders(final Map<String, String> headers) {
+      this.headers = headers;
+   }
+
    public boolean isConfigured() {
       return (status != null && body != null);
    }

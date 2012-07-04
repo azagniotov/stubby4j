@@ -12,7 +12,8 @@ A Java-based stub HTTP server with embedded Jetty.
 * You want to trigger response from the server based on the request parameters
 * You want support for GET/POST/PUT/DELETE HTTP methods
 * You want to trigger multiple responses based on multiple requests on the same URI
-* You want to easily configure HTTP request and response stubs
+* You want to easily configure stub data using configuration file
+* You want to easily configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
 * You want to easily provide canned answers in your contract/integration tests
 * You don't want to spend time coding for the above requirements and just want to concentrate on the task at hand
 
@@ -163,6 +164,25 @@ public static void afterClass() throws Exception {
    stubby4J.stop();
 }
 ```
+________________________________________________
+
+Configuring HTTP request and response stubs at runtime without restarting the server
+====================================================================================
+
+In order to configure HTTP request and response stubs at runtime, you need to make a POST
+to the following end point: `http://<host>:<admin_port>/endpoint/new`
+
+##### The data that should be POSTed is as follows:
+1. `method` => Any of the HTTP methods (GET/POST/PUT/DELETE) (Required)
+2. `url` => An endpoint URI to be consumed (Required)
+2. `postBody` => HTTP request post body (Optional)
+3. `body` => Expected response body (a JSON string etc.) (Required)
+4. `status` => HTTP status (Required)
+5. `responseHeaders` => HTTP response headers as key/value pairs, separated by comma: `content-type=application/json,charset=UTF-8` (Optional)
+
+##### Please note:
+1. POSTed duplicate or incomplete data will result in an error from the server.
+2. POSTed stub data will be lost on server restart. If you want to use the same stub data all over again, load it from configuration file
 ________________________________________________
 
 DEPENDENCIES

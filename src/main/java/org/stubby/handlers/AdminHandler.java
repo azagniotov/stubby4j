@@ -37,6 +37,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,9 @@ import java.util.Map;
  * @since 6/17/12, 11:25 PM
  */
 public final class AdminHandler extends AbstractHandler {
+
+   public static final String RESOURCE_PING = "/ping";
+   public static final String RESOURCE_ENDPOINT_NEW = "/endpoint/new";
 
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
 
@@ -67,18 +71,74 @@ public final class AdminHandler extends AbstractHandler {
       response.setStatus(HttpStatus.OK_200);
       response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
-      if (request.getPathInfo().equals("/ping")) {
-         try {
-            response.getWriter().println(getConfigDataPresentation());
-         } catch (IllegalAccessException e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, e.getMessage());
-         }
+      if (request.getPathInfo().equals(AdminHandler.RESOURCE_PING)) {
+         handleGetOnPing(response);
+         return;
+      } else if (request.getPathInfo().equals(AdminHandler.RESOURCE_ENDPOINT_NEW)) {
+         handlePostOnRegisteringNewEndpoint(request, response);
          return;
       }
 
       final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", request.getContextPath());
       response.getWriter().println(adminHandlerHtml);
+   }
+
+   private void handlePostOnRegisteringNewEndpoint(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+      if (request.getMethod().equalsIgnoreCase("get")) {
+         response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
+         response.sendError(HttpStatus.METHOD_NOT_ALLOWED_405, String.format("Method GET is not allowed on URI %s", request.getPathInfo()));
+         return;
+      }
+
+      final StubHttpLifecycle registered = addHttpCycleToDataStore(request);
+      if (!registered.isComplete()) {
+         response.setStatus(HttpStatus.BAD_REQUEST_400);
+         response.sendError(HttpStatus.BAD_REQUEST_400, String.format("Endpoint content provided is not complete, was given %s", registered));
+         return;
+      }
+
+      final boolean isAdded = !dataStore.getStubHttpLifecycles().contains(registered)
+            && dataStore.getStubHttpLifecycles().add(registered);
+      if (!isAdded) {
+         response.setStatus(HttpStatus.CONFLICT_409);
+         response.sendError(HttpStatus.CONFLICT_409, String.format("Endpoint already exists for provided parameters, was given %s", registered));
+         return;
+      }
+
+      response.setStatus(HttpStatus.CREATED_201);
+      response.getWriter().println(String.format("Created endpoint %s", registered));
+   }
+
+   private StubHttpLifecycle addHttpCycleToDataStore(final HttpServletRequest request) {
+
+      final StubRequest registeredStubRequest = new StubRequest();
+      registeredStubRequest.setMethod(request.getParameter("method"));
+      registeredStubRequest.setUrl(request.getParameter("url"));
+      registeredStubRequest.setPostBody(request.getParameter("postBody"));
+
+      final StubResponse registeredStubResponse = new StubResponse();
+      registeredStubResponse.setBody(request.getParameter("body"));
+      registeredStubResponse.setStatus(request.getParameter("status"));
+
+      final Map<String, String> headers = new HashMap<String, String>();
+      for (final String header : request.getParameter("responseHeaders").split(",")) {
+         final String[] keyAndValueHeader = header.split("=");
+         if (keyAndValueHeader.length != 2) {
+            continue;
+         }
+         headers.put(keyAndValueHeader[0], keyAndValueHeader[1]);
+      }
+      registeredStubResponse.setHeaders(headers);
+      return new StubHttpLifecycle(registeredStubRequest, registeredStubResponse);
+   }
+
+   private void handleGetOnPing(final HttpServletResponse response) throws IOException {
+      try {
+         response.getWriter().println(getConfigDataPresentation());
+      } catch (IllegalAccessException e) {
+         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, e.getMessage());
+      }
    }
 
    private String getConfigDataPresentation() throws IllegalAccessException {
