@@ -65,8 +65,9 @@ public final class HandlerUtils {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
    }
 
-   public static String linkifyRequestUrl(final Object uri, final String host, final int clientPort) {
-      return String.format("<a target='_blank' href='http://%s:%s%s'>%s</a>", host, clientPort, uri, uri);
+   public static String linkifyRequestUrl(final String scheme, final Object uri, final String host, final int port) {
+      final String fullUrl = String.format("%s://%s:%s%s", scheme, host, port, uri);
+      return String.format("<a target='_blank' href='%s'>%s</a>", fullUrl, fullUrl);
    }
 
    public static String populateHtmlTemplate(final String templateName, final Object... params) {

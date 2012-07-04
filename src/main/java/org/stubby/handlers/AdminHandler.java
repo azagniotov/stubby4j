@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
@@ -50,7 +51,7 @@ public final class AdminHandler extends AbstractHandler {
    public static final String RESOURCE_PING = "/ping";
    public static final String RESOURCE_ENDPOINT_NEW = "/endpoint/new";
 
-   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='120px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
+   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='185px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
 
    private final DataStore dataStore;
    private final JettyOrchestrator jettyOrchestrator;
@@ -120,16 +121,22 @@ public final class AdminHandler extends AbstractHandler {
       registeredStubResponse.setBody(request.getParameter("body"));
       registeredStubResponse.setStatus(request.getParameter("status"));
 
-      final Map<String, String> headers = new HashMap<String, String>();
-      for (final String header : request.getParameter("responseHeaders").split(",")) {
-         final String[] keyAndValueHeader = header.split("=");
-         if (keyAndValueHeader.length != 2) {
-            continue;
-         }
-         headers.put(keyAndValueHeader[0], keyAndValueHeader[1]);
-      }
-      registeredStubResponse.setHeaders(headers);
+      setStubResponseHeaders(request, registeredStubResponse);
       return new StubHttpLifecycle(registeredStubRequest, registeredStubResponse);
+   }
+
+   private void setStubResponseHeaders(final HttpServletRequest request, final StubResponse registeredStubResponse) {
+      if (request.getParameter("responseHeaders") != null) {
+         final Map<String, String> headers = new HashMap<String, String>();
+         for (final String header : request.getParameter("responseHeaders").split(",")) {
+            final String[] keyAndValueHeader = header.split("=");
+            if (keyAndValueHeader.length != 2) {
+               continue;
+            }
+            headers.put(keyAndValueHeader[0], keyAndValueHeader[1]);
+         }
+         registeredStubResponse.setHeaders(headers);
+      }
    }
 
    private void handleGetOnPing(final HttpServletResponse response) throws IOException {
@@ -173,23 +180,34 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", jettyOrchestrator.getCurrentHost()));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_ENDPOINT_NEW,
+            jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentAdminPort());
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW ENDPOINT POST URI", endpointRegistration));
+
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());
    }
 
-   private String buildPageBodyHtml(final String requestCounterHtml, final String tableName, final Map<String, String> stubMemberFields) {
+   private String buildPageBodyHtml(final String requestCounterHtml, final String tableName, final Map<String, String> stubMemberFields) throws Exception {
       final StringBuilder builder = new StringBuilder();
 
-      for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
+      final String host = jettyOrchestrator.getCurrentHost();
+      final int clientPort = jettyOrchestrator.getCurrentClientPort();
 
+      for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
          Object value = keyValue.getValue();
-         if (keyValue.getKey().equals("url")) {
-            value = HandlerUtils.linkifyRequestUrl(stubMemberFields.get(keyValue.getKey()),
-                  jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentClientPort());
-         } else if (value != null) {
+         if (value != null) {
             value = HandlerUtils.escapeHtmlEntities(value.toString());
          }
 
+         if (keyValue.getKey().equals("url")) {
+            value = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, value, host, clientPort);
+
+            if (jettyOrchestrator.isSslConfigured() && tableName.equalsIgnoreCase("request")) {
+               final String sslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, keyValue.getValue(), host, JettyOrchestrator.DEFAULT_SSL_PORT);
+               builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL URL", sslUrl));
+            }
+         }
          builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), value));
       }
       return String.format(requestCounterHtml, tableName, builder.toString());
