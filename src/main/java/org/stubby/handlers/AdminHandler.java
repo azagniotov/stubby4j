@@ -135,13 +135,13 @@ public final class AdminHandler extends AbstractHandler {
    private void handleGetOnPing(final HttpServletResponse response) throws IOException {
       try {
          response.getWriter().println(getConfigDataPresentation());
-      } catch (IllegalAccessException e) {
+      } catch (Exception e) {
          response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
          response.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, e.getMessage());
       }
    }
 
-   private String getConfigDataPresentation() throws IllegalAccessException {
+   private String getConfigDataPresentation() throws Exception {
 
       final List<StubHttpLifecycle> stubHttpLifecycles = dataStore.getStubHttpLifecycles();
 
@@ -160,11 +160,16 @@ public final class AdminHandler extends AbstractHandler {
       return HandlerUtils.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
    }
 
-   private String buildSystemStatusHtmlTable() {
+   private String buildSystemStatusHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", jettyOrchestrator.getCurrentClientPort()));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", jettyOrchestrator.getCurrentAdminPort()));
+
+      if (jettyOrchestrator.isSslConfigured()) {
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL PORT", JettyOrchestrator.DEFAULT_SSL_PORT));
+      }
+
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", jettyOrchestrator.getCurrentHost()));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 

@@ -45,8 +45,10 @@ public final class CommandLineIntepreter {
    public static final String OPTION_CLIENTPORT = "clientport";
    public static final String OPTION_ADMINPORT = "adminport";
    public static final String OPTION_CONFIG = "config";
+   public static final String OPTION_KEYSTORE = "keystore";
+   public static final String OPTION_KEYPASS = "keypassword";
 
-   private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG};
+   private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
    private static final String OPTION_HELP = "help";
 
@@ -55,6 +57,8 @@ public final class CommandLineIntepreter {
       options.addOption("c", OPTION_CLIENTPORT, true, "Port for incoming client requests");
       options.addOption("m", OPTION_ADMINPORT, true, "Port for admin status check requests");
       options.addOption("f", OPTION_CONFIG, true, "YAML file with request/response configuration");
+      options.addOption("k", OPTION_KEYSTORE, true, "Path to a local keystore file for enabling SSL");
+      options.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file");
       options.addOption("h", OPTION_HELP, false, "This help message");
    }
 
@@ -77,6 +81,10 @@ public final class CommandLineIntepreter {
       } catch (Exception ignored) {
          return "stubby4j-x.x.x-SNAPSHOT.jar";
       }
+   }
+
+   public static boolean isSslRequested() {
+      return line.hasOption(OPTION_KEYSTORE);
    }
 
    public static boolean isYamlProvided() {

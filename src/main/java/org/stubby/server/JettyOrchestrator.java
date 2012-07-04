@@ -25,10 +25,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.DataStore;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.handlers.ClientHandler;
+import org.stubby.handlers.SslHandler;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -44,10 +46,13 @@ public class JettyOrchestrator {
 
    public static final int DEFAULT_ADMIN_PORT = 8889;
    public static final int DEFAULT_CLIENT_PORT = 8882;
+   public static final int DEFAULT_SSL_PORT = 7443;
+
    public static final String DEFAULT_HOST = "localhost";
 
    private static final String ADMIN_CONNECTOR_NAME = "adminConnector";
    private static final String CLIENT_CONNECTOR_NAME = "clientConnector";
+   private static final String SSL_CONNECTOR_NAME = "sslConnector";
 
    private int currentClientPort = DEFAULT_CLIENT_PORT;
    private int currentAdminPort = DEFAULT_ADMIN_PORT;
@@ -70,9 +75,25 @@ public class JettyOrchestrator {
       server.start();
    }
 
+   public boolean isSslConfigured() throws Exception {
+      for (final Connector connector : server.getConnectors()) {
+         if (connector instanceof SslSocketConnector) {
+            return true;
+         }
+      }
+      return false;
+   }
+
    private HandlerList buildHandlerList() {
       final HandlerList handlers = new HandlerList();
-      handlers.setHandlers(new Handler[]{createClientContextHandler(), createAdminContextHandler()});
+      handlers.setHandlers(
+            new Handler[]
+                  {
+                        createClientContextHandler(),
+                        createAdminContextHandler(),
+                        createSslContextHandler()
+                  }
+      );
       return handlers;
    }
 
@@ -93,11 +114,30 @@ public class JettyOrchestrator {
    }
 
    private Connector[] buildConnectorList() {
+      final Connector[] connectors = new Connector[]{buildClientConnector(), buildAdminConnector()};
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE) &&
+            commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
+         return new Connector[]{buildSslConnector(), connectors[0], connectors[1]};
+      }
+      return connectors;
+   }
 
-      final SelectChannelConnector clientChannel = buildClientConnector();
-      final SelectChannelConnector adminChannel = buildAdminConnector();
+   private SslSocketConnector buildSslConnector() {
 
-      return new Connector[]{clientChannel, adminChannel};
+      final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
+      final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
+
+      final SslSocketConnector sslConnector = new SslSocketConnector();
+      sslConnector.setPort(DEFAULT_SSL_PORT);
+      sslConnector.setName(SSL_CONNECTOR_NAME);
+      logger.info("Stubby4j SSL was set to listen on port " + DEFAULT_SSL_PORT);
+
+      sslConnector.getSslContextFactory().setKeyStorePassword(password);
+      sslConnector.getSslContextFactory().setTrustStorePassword(password);
+      sslConnector.getSslContextFactory().setKeyManagerPassword(password);
+      sslConnector.getSslContextFactory().setKeyStorePath(keystorePath);
+
+      return sslConnector;
    }
 
    private SelectChannelConnector buildAdminConnector() {
@@ -149,6 +189,16 @@ public class JettyOrchestrator {
       clientContextHandler.setHandler(new ClientHandler(dataStore));
 
       return clientContextHandler;
+   }
+
+   private ContextHandler createSslContextHandler() {
+
+      final ContextHandler sslContextHandler = new ContextHandler();
+      sslContextHandler.setContextPath("/");
+      sslContextHandler.setConnectorNames(new String[]{SSL_CONNECTOR_NAME});
+      sslContextHandler.setHandler(new SslHandler(dataStore));
+
+      return sslContextHandler;
    }
 
    private int getClientPort(final Map<String, String> commandLineArgs) {

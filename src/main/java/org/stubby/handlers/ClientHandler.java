@@ -40,7 +40,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/17/12, 11:25 PM
  */
-public final class ClientHandler extends AbstractHandler {
+public class ClientHandler extends AbstractHandler {
 
    protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
    private final DataStore dataStore;

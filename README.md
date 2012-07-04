@@ -9,8 +9,8 @@ A Java-based stub HTTP server with embedded Jetty.
 * You want to simulate responses from real server and don't care (or cannot) to go over the network
 * You want to verify that your code makes HTTP requests with all the required parameters and/or headers
 * You want to verify that your code correctly handles HTTP error codes
-* You want to trigger response from the server based on the request parameters
-* You want support for GET/POST/PUT/DELETE HTTP methods
+* You want to trigger response from the server based on the request parameters over HTTP or HTTPS
+* You want support for any of the available HTTP methods
 * You want to trigger multiple responses based on multiple requests on the same URI
 * You want to easily configure stub data using configuration file
 * You want to easily configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
@@ -101,18 +101,21 @@ Commandline Usage
 =================
 
 ```
-java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-m <arg>]
+java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-k <arg>] [-m <arg>] [-p <arg>]
 
- -a,--address <arg>      Host address that stubby4j should run on. Default is localhost
- -c,--clientport <arg>   Port for incoming client requests
- -f,--config <arg>       YAML file with request/response configuration
- -h,--help               This help message
- -m,--adminport <arg>    Port for admin status check requests
+ -a,--address <arg>       Host address that stubby4j should run on
+ -c,--clientport <arg>    Port for incoming client requests
+ -f,--config <arg>        YAML file with request/response configuration
+ -h,--help                This help message
+ -k,--keystore <arg>      Path to a local keystore file for enabling SSL
+ -m,--adminport <arg>     Port for admin status check requests
+ -p,--keypassword <arg>   Password for the provided keystore file
 ```
 
-By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
-
-For system status (ATM it is just a database dump), navigate to `http://<host>:<admin_port>/ping`
+1. By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
+2. For system status (ATM it is just a dump of in-memory stub configuration), navigate to `http://<host>:<admin_port>/ping`
+3. It is possible to enable stubby4j to accept HTTP requests over SSL. Use command line options as per above example to provide
+SSL certificate and password. The default SSL port is `7443`
 
 ________________________________________________
 
@@ -173,14 +176,12 @@ In order to configure HTTP request and response stubs at runtime, you need to ma
 to the following end point: `http://<host>:<admin_port>/endpoint/new`
 
 ##### The data that should be POSTed is as follows:
-1. `method` => Any of the HTTP methods (GET/POST/PUT/DELETE) (Required)
-2. `url` => An endpoint URI to be consumed (Required)
-2. `postBody` => HTTP request post body (Optional)
-3. `body` => Expected response body (a JSON string etc.) (Required)
-4. `status` => HTTP status (Required)
-5. `responseHeaders` => HTTP response headers as key/value pairs, separated by comma: 
-
-`content-type=application/json,charset=UTF-8` (Optional)
+1. `method` => Any of the available HTTP methods (GET or POST etc.) (Required)
+2. `url` => An endpoint URI that will accept HTTP requests (Required)
+3. `body` => HTTP response body (a JSON string etc.) (Required)
+4. `status` => HTTP response status (Required)
+5. `postBody` => HTTP request post body (Optional)
+6. `responseHeaders` => HTTP headers comma-separated key/value pairs: `content-type=text/json, pragma=no-cache` (Optional)
 
 ##### Please note:
 1. POSTed duplicate or incomplete data will result in an error from the server.
