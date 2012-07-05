@@ -1,0 +1,11 @@
+stubby4J.
+   whenRequest().
+      hasMethod("GET").
+      hasUri("/item/2").
+      hasPostBody("post body").
+   thenResponse().
+      hasStatus("200").
+      hasBody("response body").
+      hasHeader("content-type=text/json").
+      hasHeader("pragma=no-cache").
+   configure();

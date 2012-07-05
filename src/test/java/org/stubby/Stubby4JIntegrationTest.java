@@ -30,6 +30,14 @@ public class Stubby4JIntegrationTest {
       stubby4J.stop();
    }
 
+
+   @Test
+   public void shoudlRegisterNewEndpoint() throws Exception {
+      final Map<String, String> result = stubby4J.doGetOnURI("/item/1");
+      Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4J.KEY_RESPONSE));
+   }
+
    @Test
    public void shouldDoGetOnURI() throws Exception {
       final Map<String, String> result = stubby4J.doGetOnURI("/item/1");

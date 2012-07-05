@@ -24,6 +24,7 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.CommandLineIntepreter;
+import org.stubby.exception.Stubby4JException;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.server.JettyOrchestratorFactory;
 
@@ -55,6 +56,10 @@ public final class Stubby4J {
    }
 
    public void start(final int clientPort, final int adminPort) throws Exception {
+
+      if (yamlConfigurationFilename == null) {
+         throw new Stubby4JException("YAML configuration file is required before starting stubby4j");
+      }
 
       final Map<String, String> params = new HashMap<String, String>();
       params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
