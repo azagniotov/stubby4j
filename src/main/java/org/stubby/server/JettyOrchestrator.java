@@ -72,7 +72,10 @@ public class JettyOrchestrator {
       server.setConnectors(buildConnectorList());
       server.setHandler(buildHandlerList());
       server.setStopAtShutdown(true);
-      server.start();
+
+      if (server != null && !server.isStarted()) {
+         server.start();
+      }
    }
 
    public boolean isSslConfigured() throws Exception {
