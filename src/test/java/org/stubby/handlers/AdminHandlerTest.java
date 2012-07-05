@@ -82,18 +82,19 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringExceptionWhenSubmittingGetRequestOnPingPage() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_PING;
+      final Class<IllegalAccessException> exceptionClass = IllegalAccessException.class;
       final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
-      doThrow(IllegalAccessException.class).when(mockPrintWriter).println(Mockito.anyString());
+      doThrow(exceptionClass).when(mockPrintWriter).println(Mockito.anyString());
 
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", mockHttpServletRequest.getContextPath());
       verify(mockPrintWriter, never()).println(adminHandlerHtml);
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, null);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, exceptionClass.getCanonicalName());
    }
 
    @Test
@@ -101,7 +102,7 @@ public class AdminHandlerTest {
       final String requestPathInfo = AdminHandler.RESOURCE_ENDPOINT_NEW;
       final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn("get");
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
 

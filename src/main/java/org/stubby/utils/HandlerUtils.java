@@ -21,6 +21,8 @@ package org.stubby.utils;
 
 import org.stubby.exception.Stubby4JException;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -32,6 +34,11 @@ public final class HandlerUtils {
 
    private HandlerUtils() {
 
+   }
+
+   public static  void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
+      response.setStatus(httpStatus);
+      response.sendError(httpStatus, message);
    }
 
    public static String getHtmlResourceByName(final String templateSuffix) {

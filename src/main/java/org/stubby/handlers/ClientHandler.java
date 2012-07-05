@@ -21,7 +21,6 @@ package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
@@ -64,38 +63,34 @@ public class ClientHandler extends AbstractHandler {
          try {
             postBody = HandlerUtils.inputStreamToString(request.getInputStream());
             if (postBody == null || postBody.isEmpty()) {
-               createResponseToHandleBadPost(response);
+               HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
                return;
             }
          } catch (Exception ex) {
-            createResponseToHandleBadPost(response);
+            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
             return;
          }
       }
 
       final StubResponse stubResponse = dataStore.findResponseFor(constructFullURI(request), request.getMethod(), postBody);
       if (stubResponse instanceof NullStubResponse) {
-         response.setStatus(HttpStatus.NOT_FOUND_404);
          final String error = generate404ErrorMessage(request, postBody);
-         response.sendError(HttpStatus.NOT_FOUND_404, error);
-
+         HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
          return;
       }
 
-      setStubResponseHeaders(stubResponse, response);
-      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
-      response.getWriter().println(stubResponse.getBody());
+      try {
+         setStubResponseHeaders(stubResponse, response);
+         response.setStatus(Integer.parseInt(stubResponse.getStatus()));
+         response.getWriter().println(stubResponse.getBody());
+      } catch (Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      }
    }
 
    private String generate404ErrorMessage(final HttpServletRequest request, final String postBody) {
       final String postMessage = (postBody != null ? " for post data: " + postBody : "");
       return "No data found for " + request.getMethod() + " request at URI " + constructFullURI(request) + postMessage;
-   }
-
-   private void createResponseToHandleBadPost(final HttpServletResponse response) throws IOException {
-      response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
-      response.setStatus(HttpStatus.BAD_REQUEST_400);
-      response.sendError(HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
    }
 
    private String constructFullURI(final HttpServletRequest request) {

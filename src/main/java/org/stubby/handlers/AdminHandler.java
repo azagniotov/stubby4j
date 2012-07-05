@@ -85,24 +85,24 @@ public final class AdminHandler extends AbstractHandler {
    }
 
    private void handlePostOnRegisteringNewEndpoint(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-      if (request.getMethod().equalsIgnoreCase("get")) {
-         response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-         response.sendError(HttpStatus.METHOD_NOT_ALLOWED_405, String.format("Method GET is not allowed on URI %s", request.getPathInfo()));
+      if (!request.getMethod().equalsIgnoreCase("post")) {
+         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), request.getPathInfo());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.METHOD_NOT_ALLOWED_405, errorMessage);
          return;
       }
 
       final StubHttpLifecycle registered = addHttpCycleToDataStore(request);
       if (!registered.isComplete()) {
-         response.setStatus(HttpStatus.BAD_REQUEST_400);
-         response.sendError(HttpStatus.BAD_REQUEST_400, String.format("Endpoint content provided is not complete, was given %s", registered));
+         final String errorMessage = String.format("Endpoint content provided is not complete, was given %s", registered);
+         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
          return;
       }
 
       final boolean isAdded = !dataStore.getStubHttpLifecycles().contains(registered)
             && dataStore.getStubHttpLifecycles().add(registered);
       if (!isAdded) {
-         response.setStatus(HttpStatus.CONFLICT_409);
-         response.sendError(HttpStatus.CONFLICT_409, String.format("Endpoint already exists for provided parameters, was given %s", registered));
+         final String errorMessage = String.format("Endpoint already exists for provided parameters, was given %s", registered);
+         HandlerUtils.configureErrorResponse(response, HttpStatus.CONFLICT_409, errorMessage);
          return;
       }
 
@@ -142,9 +142,8 @@ public final class AdminHandler extends AbstractHandler {
    private void handleGetOnPing(final HttpServletResponse response) throws IOException {
       try {
          response.getWriter().println(getConfigDataPresentation());
-      } catch (Exception e) {
-         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, e.getMessage());
+      } catch (Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
    }
 
@@ -170,18 +169,22 @@ public final class AdminHandler extends AbstractHandler {
    private String buildSystemStatusHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", jettyOrchestrator.getCurrentClientPort()));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", jettyOrchestrator.getCurrentAdminPort()));
+
+      final String host = jettyOrchestrator.getCurrentHost();
+      final int clientPort = jettyOrchestrator.getCurrentClientPort();
+      final int adminPort = jettyOrchestrator.getCurrentAdminPort();
+
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", clientPort));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", adminPort));
 
       if (jettyOrchestrator.isSslConfigured()) {
          builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL PORT", JettyOrchestrator.DEFAULT_SSL_PORT));
       }
 
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", jettyOrchestrator.getCurrentHost()));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", host));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
 
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_ENDPOINT_NEW,
-            jettyOrchestrator.getCurrentHost(), jettyOrchestrator.getCurrentAdminPort());
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_ENDPOINT_NEW, host, adminPort);
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW ENDPOINT POST URI", endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
