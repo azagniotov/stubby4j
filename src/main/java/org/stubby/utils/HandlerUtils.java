@@ -82,5 +82,30 @@ public final class HandlerUtils {
       builder.append(String.format(getHtmlResourceByName(templateName), params));
       return builder.toString();
    }
+
+   public static Object highlightResponseMarkup(final Object value) {
+      String valueString = value.toString();
+      valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span class='xml-tag-content'>$1</span>&lt;");
+      valueString = valueString.replaceAll("\"(.*?)\"", "\"<span class='xml-tag-content'>$1</span>\"");
+
+      valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "&lt;/<span class='xml-tag'>$1</span>&gt;");
+      valueString = valueString.replaceAll("&lt;(.*?)&gt;", "&lt;<span class='xml-tag'>$1</span>&gt;");
+
+      final String[] firstSet = {"&gt;", "&lt;", "\\{", "\\}", "\\[", "\\]", "null", "true", "false"};
+      for (final String attrib : firstSet) {
+         valueString = valueString.replaceAll(attrib, String.format("<span class='xml-tag-opening'>%s</span>", attrib));
+      }
+
+      valueString = valueString.replaceAll(">([0-9\\.\\$]+)<", "><span class='xml-number'>$1</span><");
+      valueString = valueString.replaceAll("\"", "<span class='xml-quote'>\"</span>");
+
+      final String[] secondSet = {"name=", "value=", "version=", "description=", "urn:uuid", "id=", "href=", "rel=", "encoding=", "xmlns:xsi", "xmlns=", "type=", "xsi:schemaLocation=", "xml:lang=", "\\?"};
+      for (final String attrib : secondSet) {
+         valueString = valueString.replaceAll(attrib, String.format("<span class='xml-attrib'>%s</span>", attrib));
+      }
+      valueString = valueString.replaceAll("=<", "<span class='xml-equals'>=</span><");
+
+      return valueString;
+   }
 }
 

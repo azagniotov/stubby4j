@@ -202,6 +202,10 @@ public final class AdminHandler extends AbstractHandler {
          Object value = keyValue.getValue();
          if (value != null) {
             value = HandlerUtils.escapeHtmlEntities(value.toString());
+
+            if (keyValue.getKey().equalsIgnoreCase("body")) {
+               value = HandlerUtils.highlightResponseMarkup(value);
+            }
          }
 
          if (keyValue.getKey().equals("url")) {
