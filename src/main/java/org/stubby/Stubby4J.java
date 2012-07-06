@@ -33,91 +33,30 @@ public final class Stubby4J {
    public static final String KEY_RESPONSE = "response";
    public static final String KEY_RESPONSE_HEADERS = "responseHeaders";
 
-   private Stubby4JApiExposer stubby4JApiExposer;
-   private Stubby4jMocker stubby4jMocker;
-
-   public Stubby4J() {
-      stubby4jMocker = new Stubby4jMocker();
-   }
+   private Stubby4JCore stubby4JCore;
 
    public Stubby4J(final String yamlConfigurationFilename) {
-      stubby4JApiExposer = new Stubby4JApiExposer(yamlConfigurationFilename);
+      stubby4JCore = new Stubby4JCore(yamlConfigurationFilename);
    }
 
    public void start() throws Exception {
-      stubby4JApiExposer.start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
+      stubby4JCore.start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
    }
 
    public void start(final int clientPort, final int adminPort) throws Exception {
-      stubby4JApiExposer.start(clientPort, adminPort);
+      stubby4JCore.start(clientPort, adminPort);
    }
 
    public void stop() throws Exception {
-      stubby4JApiExposer.stop();
+      stubby4JCore.stop();
    }
 
    public Map<String, String> doGetOnURI(final String uri) throws IOException {
-      return stubby4JApiExposer.doGetOnURI(uri);
+      return stubby4JCore.doGetOnURI(uri);
    }
 
    public Map<String, String> doPostOnURI(final String uri, final String postData) throws IOException {
-      return stubby4JApiExposer.doPostOnURI(uri, postData);
-   }
-
-   public Stubby4J whenRequest() {
-      stubby4jMocker.whenRequest();
-      return this;
-   }
-
-   public Stubby4J thenResponse() {
-      stubby4jMocker.thenResponse();
-      return this;
-   }
-
-   public Stubby4J hasMethod(final String method) {
-      stubby4jMocker.hasMethod(method);
-      return this;
-   }
-
-   public Stubby4J hasUri(final String uri) {
-      stubby4jMocker.hasUri(uri);
-      return this;
-   }
-
-   public Stubby4J hasPostBody(final String postBody) {
-      stubby4jMocker.hasPostBody(postBody);
-      return this;
-   }
-
-   public Stubby4J withStatus(final String status) {
-      stubby4jMocker.withStatus(status);
-      return this;
-   }
-
-   public Stubby4J withBody(final String body) {
-      stubby4jMocker.withBody(body);
-      return this;
-   }
-
-   public Stubby4J withHeader(final String header, final String value) {
-      stubby4jMocker.withHeader(header, value);
-      return this;
-   }
-
-   public void configure() {
-      stubby4jMocker.configure();
-   }
-
-   public void clearMocks() {
-      stubby4jMocker.clear();
-   }
-
-   public Map<String, String> simulateGetOnURI(final String uri) throws IOException {
-      return stubby4jMocker.simulateGetOnURI(uri);
-   }
-
-   public Map<String, String> simulatePostOnURI(final String uri, final String postData) throws IOException {
-      return stubby4jMocker.simulatePostOnURI(uri, postData);
+      return stubby4JCore.doPostOnURI(uri, postData);
    }
 
    public static void main(final String[] args) {

@@ -26,11 +26,6 @@ A Java-based stub and mock HTTP server with embedded Jetty.
 ##### All this goodness in just under 1.1MB
 _______________________________________________
 
-Is it possible to use stubby4j as a mock server without actually running Jetty?
-===============================================================================
-Yes. You can configure mock expectations programmatically (ie. when writing unit tests).
-
-
 Why "stubby"?
 =============
 

@@ -21,7 +21,7 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 7/4/12, 10:46 PM
  */
-final class Stubby4JApiExposer {
+final class Stubby4JCore {
 
    private static final String URL_TEMPLATE = "http://%s:%s%s";
    private static final String UTF_8 = "UTF-8";
@@ -29,7 +29,7 @@ final class Stubby4JApiExposer {
    private JettyOrchestrator jettyOrchestrator;
    private final String yamlConfigurationFilename;
 
-   Stubby4JApiExposer(final String yamlConfigurationFilename) {
+   Stubby4JCore(final String yamlConfigurationFilename) {
       this.yamlConfigurationFilename = yamlConfigurationFilename;
    }
 
