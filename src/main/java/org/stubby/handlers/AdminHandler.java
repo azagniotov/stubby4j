@@ -119,7 +119,7 @@ public final class AdminHandler extends AbstractHandler {
 
       final StubResponse registeredStubResponse = new StubResponse();
       registeredStubResponse.setBody(request.getParameter("body"));
-      registeredStubResponse.setBody(request.getParameter("latency"));
+      registeredStubResponse.setLatency(request.getParameter("latency"));
       registeredStubResponse.setStatus(request.getParameter("status"));
 
       setStubResponseHeaders(request, registeredStubResponse);
