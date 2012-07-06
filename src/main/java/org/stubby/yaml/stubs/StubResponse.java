@@ -30,6 +30,7 @@ public class StubResponse {
 
    private String status = null;
    private String body = null;
+   private String millisecondsDelay = null;
    private Map<String, String> headers = new HashMap<String, String>();
 
    public StubResponse() {
@@ -62,6 +63,14 @@ public class StubResponse {
 
    public void setHeaders(final Map<String, String> headers) {
       this.headers = headers;
+   }
+
+   public String getMillisecondsDelay() {
+      return millisecondsDelay;
+   }
+
+   public void setMillisecondsDelay(final String millisecondsDelay) {
+      this.millisecondsDelay = millisecondsDelay;
    }
 
    public boolean isConfigured() {

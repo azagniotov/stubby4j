@@ -82,6 +82,10 @@ public class ClientHandler extends AbstractHandler {
       try {
          setStubResponseHeaders(stubResponse, response);
          response.setStatus(Integer.parseInt(stubResponse.getStatus()));
+
+         if (stubResponse.getMillisecondsDelay() != null) {
+            Thread.sleep(Long.parseLong(stubResponse.getMillisecondsDelay()));
+         }
          response.getWriter().println(stubResponse.getBody());
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

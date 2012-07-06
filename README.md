@@ -15,6 +15,7 @@ A Java-based stub and mock HTTP server with embedded Jetty.
 * You want to easily configure stub data using configuration file
 * You want to easily configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
 * You want to easily provide canned answers in your contract/integration tests
+* You want to enable delayed responses for performance and stability testing
 * You don't want to spend time coding for the above requirements and just want to concentrate on the task at hand
 
 ### Why would a QA use stubby4j?
@@ -52,6 +53,7 @@ httplifecycle:
       url: /invoice/567
    response:
       body: This is a response for 567
+      millisecondsDelay: 5000
       status: 503
 
 httplifecycle:
@@ -66,6 +68,7 @@ httplifecycle:
       headers:
          content-type: application/text
       status: 200
+      millisecondsDelay: 1000
       body: This is a response for 123
 ```
 The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
@@ -199,3 +202,10 @@ The following dependencies embedded within stubby4j:
 5. jetty-io-8.1.1.v20120215.jar 
 6. jetty-util-8.1.1.v20120215.jar
 7. commons-cli-1.2.jar
+
+Contributors
+=============
+
+1. Isa Goksu
+2. Eric Mrak
+3. Sankalp Saxena
