@@ -148,6 +148,7 @@ public class AdminHandlerTest {
       when(mockHttpServletRequest.getParameter("method")).thenReturn("get");
       when(mockHttpServletRequest.getParameter("url")).thenReturn("/some/endpoint");
       when(mockHttpServletRequest.getParameter("status")).thenReturn("200");
+      when(mockHttpServletRequest.getParameter("latency")).thenReturn("2000");
       when(mockHttpServletRequest.getParameter("body")).thenReturn("{\"alex\" : \"zagniotov\"}");
       when(mockHttpServletRequest.getParameter("responseHeaders")).thenReturn("content-type=application/json");
 
@@ -176,6 +177,7 @@ public class AdminHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getParameter("method")).thenReturn("get");
+      when(mockHttpServletRequest.getParameter("latency")).thenReturn("2000");
       when(mockHttpServletRequest.getParameter("url")).thenReturn("/some/endpoint");
       when(mockHttpServletRequest.getParameter("status")).thenReturn("200");
       when(mockHttpServletRequest.getParameter("body")).thenReturn("{\"alex\" : \"zagniotov\"}");
