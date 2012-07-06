@@ -203,9 +203,11 @@ The following dependencies embedded within stubby4j:
 6. jetty-util-8.1.1.v20120215.jar
 7. commons-cli-1.2.jar
 
-Contributors
-=============
+Kudos
+=====
+Special thanks fly out to the following ninjas for their help, support and feedback:
 
 1. Isa Goksu
 2. Eric Mrak
 3. Sankalp Saxena
+4. Simon Brunning
