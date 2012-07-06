@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Alexander Zagniotov
@@ -55,10 +56,9 @@ public class ClientHandler extends AbstractHandler {
                       final HttpServletResponse response) throws IOException, ServletException {
 
       baseRequest.setHandled(true);
-      setResponseMainHeaders(response);
 
       String postBody = null;
-      if (request.getMethod().toLowerCase().equals("post")) {
+      if (request.getMethod().equalsIgnoreCase("post")) {
 
          try {
             postBody = HandlerUtils.inputStreamToString(request.getInputStream());
@@ -80,16 +80,26 @@ public class ClientHandler extends AbstractHandler {
       }
 
       try {
-         setStubResponseHeaders(stubResponse, response);
-         response.setStatus(Integer.parseInt(stubResponse.getStatus()));
-
-         if (stubResponse.getMillisecondsDelay() != null) {
-            Thread.sleep(Long.parseLong(stubResponse.getMillisecondsDelay()));
-         }
-         response.getWriter().println(stubResponse.getBody());
+         doHandle(response, stubResponse);
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
+   }
+
+   private void doHandle(final HttpServletResponse response, final StubResponse stubResponse) throws IOException {
+      setResponseMainHeaders(response);
+      setStubResponseHeaders(stubResponse, response);
+      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
+
+      if (stubResponse.getLatency() != null) {
+         try {
+            final long latency = Long.parseLong(stubResponse.getLatency());
+            TimeUnit.MILLISECONDS.sleep(latency);
+         } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+         }
+      }
+      response.getWriter().println(stubResponse.getBody());
    }
 
    private String generate404ErrorMessage(final HttpServletRequest request, final String postBody) {

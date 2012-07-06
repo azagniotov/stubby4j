@@ -45,8 +45,7 @@ public final class ReflectionUtils {
 
    public static boolean isFieldCorrespondsToYamlNode(final Class<?> clazzor, final String fieldName) {
       for (final Field field : clazzor.getDeclaredFields()) {
-         final String reflectedFieldName = field.getName().toLowerCase();
-         if (!fieldName.equals("headers") && reflectedFieldName.equals(fieldName)) {
+         if (!fieldName.equals("headers") && field.getName().equalsIgnoreCase(fieldName)) {
             return true;
          }
       }
@@ -55,7 +54,7 @@ public final class ReflectionUtils {
 
    public static void setValue(final Object object, final String fieldName, final String value) throws InvocationTargetException, IllegalAccessException {
       for (final Method method : object.getClass().getDeclaredMethods()) {
-         if (method.getName().toLowerCase().equals("set" + fieldName)) {
+         if (method.getName().equalsIgnoreCase("set" + fieldName)) {
             method.invoke(object, value);
             break;
          }

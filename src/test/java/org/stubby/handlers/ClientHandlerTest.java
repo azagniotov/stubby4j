@@ -47,8 +47,8 @@ public class ClientHandlerTest {
       doNothing().when(mockPrintWriter).println(Mockito.anyString());
    }
 
-   @After
-   public void afterTest() throws Exception {
+
+   public void verifySetResponseMainHeaders() throws Exception {
       verify(mockRequest, times(1)).setHandled(true);
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.DATE, new Date().toString());
@@ -93,6 +93,7 @@ public class ClientHandlerTest {
       final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
+      verifySetResponseMainHeaders();
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
    }
@@ -173,6 +174,7 @@ public class ClientHandlerTest {
       final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
+      verifySetResponseMainHeaders();
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
    }

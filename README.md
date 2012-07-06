@@ -53,7 +53,7 @@ httplifecycle:
       url: /invoice/567
    response:
       body: This is a response for 567
-      millisecondsDelay: 5000
+      latency: 5000
       status: 503
 
 httplifecycle:
@@ -68,13 +68,13 @@ httplifecycle:
       headers:
          content-type: application/text
       status: 200
-      millisecondsDelay: 1000
+      latency: 1000
       body: This is a response for 123
 ```
 The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
 Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
-respective children nodes as per above example. Indentation of `httplifecycle` is _not_ required. In other words,
-the following format is also valid:
+respective children nodes as per above example. Response `latency` is in milliseconds.
+Indentation of `httplifecycle` is _not_ required. In other words, the following format is also valid:
 
 ```
 httplifecycle:
