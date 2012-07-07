@@ -88,7 +88,7 @@ public final class HandlerUtils {
       valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span class='xml-tag-content'>$1</span>&lt;");
       valueString = valueString.replaceAll("\"(.*?)\"", "\"<span class='xml-tag-content'>$1</span>\"");
 
-      valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "&lt;/<span class='xml-tag'>$1</span>&gt;");
+      valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "&lt;<span class='xml-tag-opening'>/</span><span class='xml-tag'>$1</span>&gt;");
       valueString = valueString.replaceAll("&lt;(.*?)&gt;", "&lt;<span class='xml-tag'>$1</span>&gt;");
 
       final String[] firstSet = {"&gt;", "&lt;", "\\{", "\\}", "\\[", "\\]", "null", "true", "false"};
