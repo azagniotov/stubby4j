@@ -178,12 +178,17 @@ In order to configure HTTP request and response stubs at runtime, you need to ma
 to the following end point: `http://<host>:<admin_port>/endpoint/new`
 
 ##### The data that should be POSTed is as follows:
-1. `method` => Any of the available HTTP methods (GET or POST etc.) (Required)
-2. `url` => An endpoint URI that will accept HTTP requests (Required)
-3. `body` => HTTP response body (a JSON string etc.) (Required)
-4. `status` => HTTP response status (Required)
-5. `postBody` => HTTP request post body (Optional)
-6. `responseHeaders` => HTTP headers comma-separated key/value pairs: `content-type=text/json, pragma=no-cache` (Optional)
+
+###### Stub request related parameters:
+1. `method` => Any of the available HTTP methods (Required)
+2. `url` => An endpoint URI for consuming (Required)
+3. `postBody` => Post body (Optional)
+
+###### Stub response related parameters:
+4. `body` => Response body (a JSON string etc.) (Required)
+5. `status` => Response status (Required)
+6. `latency` => Response delay in milliseconds (Optional)
+7. `responseHeaders` => Headers as comma-separated key/value pairs: `content-type=text/json, pragma=no-cache` (Optional)
 
 ##### Please note:
 1. POSTed duplicate or incomplete data will result in an error from the server.
