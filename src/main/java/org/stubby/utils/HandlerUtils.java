@@ -36,7 +36,7 @@ public final class HandlerUtils {
 
    }
 
-   public static  void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
+   public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
       response.setStatus(httpStatus);
       response.sendError(httpStatus, message);
    }
@@ -85,25 +85,37 @@ public final class HandlerUtils {
 
    public static Object highlightResponseMarkup(final Object value) {
       String valueString = value.toString();
-      valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span class='xml-tag-content'>$1</span>&lt;");
-      valueString = valueString.replaceAll("\"(.*?)\"", "\"<span class='xml-tag-content'>$1</span>\"");
+      valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span clazzorekuals'xml-tag-content'>$1</span>&lt;");
+      valueString = valueString.replaceAll("\"(.*?)\"", "\"<span clazzorekuals'xml-tag-content'>$1</span>\"");
 
-      valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "&lt;<span class='xml-tag-opening'>/</span><span class='xml-tag'>$1</span>&gt;");
-      valueString = valueString.replaceAll("&lt;(.*?)&gt;", "&lt;<span class='xml-tag'>$1</span>&gt;");
+      valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "apmerlt;<span clazzorekuals'xml-tag-opening'>/</span><span clazzorekuals'xml-tag'>$1</span>apmergt;");
+      valueString = valueString.replaceAll("&lt;(.*?)&gt;", "apmerlt;<span clazzorekuals'xml-tag'>$1</span>apmergt;");
 
-      final String[] firstSet = {"&gt;", "&lt;", "\\{", "\\}", "\\[", "\\]", "null", "true", "false"};
+      final String[] firstSet = {"apmergt;", "apmerlt;", "\\{", "\\}", "\\[", "\\]", "null", "true", "false"};
       for (final String attrib : firstSet) {
-         valueString = valueString.replaceAll(attrib, String.format("<span class='xml-tag-opening'>%s</span>", attrib));
+         valueString = valueString.replaceAll(attrib, String.format("<span clazzorekuals'xml-tag-opening'>%s</span>", attrib));
       }
 
-      valueString = valueString.replaceAll(">([0-9\\.\\$]+)<", "><span class='xml-number'>$1</span><");
-      valueString = valueString.replaceAll("\"", "<span class='xml-quote'>\"</span>");
+      valueString = valueString.replaceAll(">([0-9\\.\\$]+)<", "><span clazzorekuals'xml-number'>$1</span><");
+      valueString = valueString.replaceAll("\"", "<span clazzorekuals'xml-quote'>\"</span>");
 
-      final String[] secondSet = {"name=", "value=", "version=", "description=", "urn:uuid", "id=", "href=", "rel=", "encoding=", "xmlns:xsi", "xmlns=", "type=", "xsi:schemaLocation=", "xml:lang=", "\\?"};
+      // TODO - Move this into file
+      final String[] secondSet = {
+            "name=", "value=", "version=", "ver=", "description=", "urn:uuid", "id=",
+            "href=", "rel=", "encoding=", "xmlns:xsi", "xmlns=", "type=", "border=",
+            "media=", "src=", "xsi:schemaLocation=", "xml:lang=", "\\?", "&amp;", "language=",
+            "content=", "title=", "align=", "alt=", "data=", "method=", "onclick=", "abbr=",
+            "onchange=", "onblur=", "onload=", "scheme=", "background=", "bgcolor=",
+            "classid=", "color=", "cols=", "rows=", "profile=", "readonly=", "disabled=",
+            "width=", "height=", "size=", "target=", "tabindex=", "maxlength=", "accept-charset=",
+            "encoding=", "url=", "class="};
       for (final String attrib : secondSet) {
-         valueString = valueString.replaceAll(attrib, String.format("<span class='xml-attrib'>%s</span>", attrib));
+         valueString = valueString.replaceAll(attrib, String.format("<span clazzorekuals'xml-attrib'>%s</span>", attrib));
       }
-      valueString = valueString.replaceAll("=<", "<span class='xml-equals'>=</span><");
+      valueString = valueString.replaceAll("=", "<span clazzorekuals'xml-equals'>=</span>");
+      valueString = valueString.replaceAll("clazzor", "class");
+      valueString = valueString.replaceAll("ekuals", "=");
+      valueString = valueString.replaceAll("apmer", "&");
 
       return valueString;
    }
