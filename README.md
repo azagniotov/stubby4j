@@ -182,7 +182,7 @@ to the following end point: `http://<host>:<admin_port>/endpoint/new`
 ###### Stub request related parameters:
 1. `method` => Any of the available HTTP methods (Required)
 2. `url` => An endpoint URI for consuming (Required)
-3. `postBody` => Post body (Optional)
+3. `postBody` => Post body (Required when method is `POST`, otherwise optional)
 
 ###### Stub response related parameters:
 4. `body` => Response body (a JSON string etc.) (Required)
