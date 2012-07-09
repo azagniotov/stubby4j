@@ -85,8 +85,10 @@ public final class HandlerUtils {
 
    public static Object highlightResponseMarkup(final Object value) {
       String valueString = value.toString();
-      valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span clazzorekuals'xml-tag-content'>$1</span>&lt;");
-      valueString = valueString.replaceAll("\"(.*?)\"", "\"<span clazzorekuals'xml-tag-content'>$1</span>\"");
+      valueString = valueString.replaceAll("\"(.*?)\"", "<span clazzorekuals'xml-tag-content'>\"$1\"</span>");
+      valueString = valueString.replaceAll("=('|\")(.*?)('|\")", "=<span clazzorekuals'xml-tag-content'>$1$2$3</span>");
+      valueString = valueString.replaceAll("&gt;(.*?)&lt;", "&gt;<span clazzorekuals'xml-content'>$1</span>&lt;");
+      //valueString = valueString.replaceAll("\"(.*?)\"", "\"<span clazzorekuals'xml-tag-content'>$1</span>\"");
 
       valueString = valueString.replaceAll("&lt;/(.*?)&gt;", "apmerlt;<span clazzorekuals'xml-tag-opening'>/</span><span clazzorekuals'xml-tag'>$1</span>apmergt;");
       valueString = valueString.replaceAll("&lt;(.*?)&gt;", "apmerlt;<span clazzorekuals'xml-tag'>$1</span>apmergt;");
@@ -97,7 +99,7 @@ public final class HandlerUtils {
       }
 
       valueString = valueString.replaceAll(">([0-9\\.\\$]+)<", "><span clazzorekuals'xml-number'>$1</span><");
-      valueString = valueString.replaceAll("\"", "<span clazzorekuals'xml-quote'>\"</span>");
+      //valueString = valueString.replaceAll("\"", "<span clazzorekuals'xml-quote'>\"</span>");
 
       // TODO - Move this into file
       final String[] secondSet = {

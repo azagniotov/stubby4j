@@ -51,7 +51,7 @@ public final class AdminHandler extends AbstractHandler {
    public static final String RESOURCE_PING = "/ping";
    public static final String RESOURCE_ENDPOINT_NEW = "/endpoint/new";
 
-   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='185px' valign='top' align='left'><code>%s</code></td><td align='left'>%s</td></tr>";
+   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='185px' valign='top' align='left'><code>%s</code></td><td class='%s' align='left'>%s</td></tr>";
 
    private final DataStore dataStore;
    private final JettyOrchestrator jettyOrchestrator;
@@ -175,18 +175,18 @@ public final class AdminHandler extends AbstractHandler {
       final int clientPort = jettyOrchestrator.getCurrentClientPort();
       final int adminPort = jettyOrchestrator.getCurrentAdminPort();
 
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", clientPort));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", adminPort));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", "", clientPort));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", "", adminPort));
 
       if (jettyOrchestrator.isSslConfigured()) {
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL PORT", JettyOrchestrator.DEFAULT_SSL_PORT));
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL PORT", "", JettyOrchestrator.DEFAULT_SSL_PORT));
       }
 
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", host));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", YamlConsumer.LOADED_CONFIG));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", "", host));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", "", YamlConsumer.LOADED_CONFIG));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_ENDPOINT_NEW, host, adminPort);
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW ENDPOINT POST URI", endpointRegistration));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW ENDPOINT POST URI", "", endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());
@@ -200,11 +200,13 @@ public final class AdminHandler extends AbstractHandler {
 
       for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
          Object value = keyValue.getValue();
+         String responseClass = "";
          if (value != null) {
             value = HandlerUtils.escapeHtmlEntities(value.toString());
 
             if (keyValue.getKey().equalsIgnoreCase("body")) {
                value = HandlerUtils.highlightResponseMarkup(value);
+               responseClass = "response";
             }
          }
 
@@ -213,10 +215,10 @@ public final class AdminHandler extends AbstractHandler {
 
             if (jettyOrchestrator.isSslConfigured() && tableName.equalsIgnoreCase("request")) {
                final String sslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, keyValue.getValue(), host, JettyOrchestrator.DEFAULT_SSL_PORT);
-               builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL URL", sslUrl));
+               builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL URL", responseClass, sslUrl));
             }
          }
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), value));
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), responseClass, value));
       }
       return String.format(requestCounterHtml, tableName, builder.toString());
    }
