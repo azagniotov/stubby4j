@@ -104,7 +104,9 @@ public final class AdminHandler extends AbstractHandler {
 
       try {
          final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlContent(postBody);
-         dataStore.getStubHttpLifecycles().clear();
+         if (dataStore.getStubHttpLifecycles().size() > 0) {
+            dataStore.getStubHttpLifecycles().clear();
+         }
          dataStore.setStubHttpLifecycles(stubHttpLifecycles);
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration");

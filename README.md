@@ -148,6 +148,24 @@ OR
 ```
 @BeforeClass
 public static void beforeClass() throws Exception {
+   stubby4JClient = Stubby4JClientFactory.getInstance();
+   stubby4JClient.start();
+}
+
+@Test
+public void shoudlCreateStubbedData() throws Exception {
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.registerStubData(postData, "localhost", 8889);
+
+   Assert.assertEquals(201, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
+}
+```
+
+OR
+
+```
+@BeforeClass
+public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = Stubby4JTest.class.getResource("/config.yaml");

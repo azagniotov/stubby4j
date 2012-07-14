@@ -22,7 +22,7 @@ public class Stubby4JAdminClientIntegrationTest {
       final URL url = Stubby4JAdminClientIntegrationTest.class.getResource("/atom-feed-for-content-tests.yaml");
       Assert.assertNotNull(url);
 
-      stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
+      stubby4JClient = Stubby4JClientFactory.getInstance();
       stubby4JClient.start();
 
       content = HandlerUtils.inputStreamToString(url.openStream());
@@ -31,7 +31,7 @@ public class Stubby4JAdminClientIntegrationTest {
    @AfterClass
    public static void afterClass() throws Exception {
       stubby4JClient.stop();
-      Thread.sleep(100);
+      Thread.sleep(1000); //To make sure Jetty has stopped before running another suite
    }
 
    @Test

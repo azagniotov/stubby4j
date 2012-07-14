@@ -24,6 +24,7 @@ import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ import java.util.List;
  */
 public class DataStore {
 
-   private List<StubHttpLifecycle> stubHttpLifecycles;
+   private List<StubHttpLifecycle> stubHttpLifecycles = new LinkedList<StubHttpLifecycle>();
 
    public DataStore() {
 
