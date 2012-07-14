@@ -37,6 +37,7 @@ public class JettyOrchestratorIntegrationTest {
    public void afterTest() throws Exception {
       if (jettyOrchestrator != null) {
          jettyOrchestrator.stopJetty();
+         JettyOrchestratorFactory.cleanUp();
          jettyOrchestrator = null;
       }
    }

@@ -25,8 +25,9 @@ public class DataStoreTest {
       final URL url = DataStoreTest.class.getResource("/httplifecycles-noheaders.yaml");
       Assert.assertNotNull(url);
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlConsumer(url.getFile()).parseYaml();
-      dataStore = new DataStore(stubHttpLifecycles);
+      final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlFile(url.getFile());
+      dataStore = new DataStore();
+      dataStore.setStubHttpLifecycles(stubHttpLifecycles);
    }
 
    @Test

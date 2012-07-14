@@ -32,9 +32,13 @@ import java.util.List;
  */
 public class DataStore {
 
-   private final List<StubHttpLifecycle> stubHttpLifecycles;
+   private List<StubHttpLifecycle> stubHttpLifecycles;
 
-   public DataStore(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public DataStore() {
+
+   }
+
+   public void setStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles = stubHttpLifecycles;
    }
 

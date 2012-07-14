@@ -12,8 +12,12 @@ import org.stubby.server.JettyOrchestrator;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -99,7 +103,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringGetRequestOnRegisterNewEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_ENDPOINT_NEW;
+      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
       final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
@@ -116,27 +120,24 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewIncompleteEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_ENDPOINT_NEW;
+      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
       final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
-      when(mockHttpServletRequest.getParameter("url")).thenReturn("/some/endpoint");
-      when(mockHttpServletRequest.getParameter("responseHeaders")).thenReturn("");
 
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400,
-            "Endpoint content provided is not complete, was given StubHttpLifecycle{request=StubRequest{url='/some/endpoint', method='null', postBody='null', headers={}}, response=StubResponse{status='null', body='null', headers={}}}");
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
 
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CREATED_201);
    }
 
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_ENDPOINT_NEW;
+      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
       final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       @SuppressWarnings("unchecked")
@@ -145,16 +146,23 @@ public class AdminHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
-      when(mockHttpServletRequest.getParameter("method")).thenReturn("get");
-      when(mockHttpServletRequest.getParameter("url")).thenReturn("/some/endpoint");
-      when(mockHttpServletRequest.getParameter("status")).thenReturn("200");
-      when(mockHttpServletRequest.getParameter("latency")).thenReturn("2000");
-      when(mockHttpServletRequest.getParameter("body")).thenReturn("{\"alex\" : \"zagniotov\"}");
-      when(mockHttpServletRequest.getParameter("responseHeaders")).thenReturn("content-type=application/json");
 
-      when(mockDataStore.getStubHttpLifecycles()).thenReturn(mockStubHttpLifecycleList);
-      when(mockStubHttpLifecycleList.contains(Mockito.any(StubHttpLifecycle.class))).thenReturn(false);
-      when(mockStubHttpLifecycleList.add(Mockito.any(StubHttpLifecycle.class))).thenReturn(true);
+      final String postData = "httplifecycle:\n" +
+            "   request:\n" +
+            "      method: GET\n" +
+            "      url: /item/8\n" +
+            "   response:\n" +
+            "      headers:\n" +
+            "         content-type: application/json\n" +
+            "      status: 200\n" +
+            "      body: {\"alex\" : \"zagniotov\"}";
+      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+         @Override
+         public int read() throws IOException {
+            return inputStream.read();
+         }
+      });
 
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
@@ -163,32 +171,5 @@ public class AdminHandlerTest {
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.CREATED_201);
-   }
-
-   @Test
-   public void verifyBehaviourDuringPostRequestOnRegisterNewDuplicateEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_ENDPOINT_NEW;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
-
-      @SuppressWarnings("unchecked")
-      final List<StubHttpLifecycle> mockStubHttpLifecycleList = Mockito.mock(List.class);
-
-      when(mockHttpServletRequest.getMethod()).thenReturn("post");
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
-      when(mockHttpServletRequest.getParameter("method")).thenReturn("get");
-      when(mockHttpServletRequest.getParameter("latency")).thenReturn("2000");
-      when(mockHttpServletRequest.getParameter("url")).thenReturn("/some/endpoint");
-      when(mockHttpServletRequest.getParameter("status")).thenReturn("200");
-      when(mockHttpServletRequest.getParameter("body")).thenReturn("{\"alex\" : \"zagniotov\"}");
-      when(mockHttpServletRequest.getParameter("responseHeaders")).thenReturn("content-type=application/json");
-
-      when(mockDataStore.getStubHttpLifecycles()).thenReturn(mockStubHttpLifecycleList);
-      when(mockStubHttpLifecycleList.contains(Mockito.any(StubHttpLifecycle.class))).thenReturn(true);
-      when(mockStubHttpLifecycleList.add(Mockito.any(StubHttpLifecycle.class))).thenReturn(true);
-
-      adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.CONFLICT_409);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CREATED_201);
    }
 }

@@ -89,7 +89,7 @@
                   <manifest>
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                      <addClasspath>true</addClasspath>
-                     <mainClass>org.stubby.Stubby4J</mainClass>
+                     <mainClass>org.stubby.application.Stubby4JStarter</mainClass>
                      <packageName>org.stubby</packageName>
                   </manifest>
                   <manifestEntries>

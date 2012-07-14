@@ -17,46 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.stubby;
+package org.stubby.application;
 
 import org.apache.commons.cli.ParseException;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.server.JettyOrchestrator;
 import org.stubby.server.JettyOrchestratorFactory;
 
-import java.io.IOException;
 import java.util.Map;
 
-public final class Stubby4J {
+final class Stubby4JStarter {
 
-   public static final String KEY_STATUS = "status";
-   public static final String KEY_RESPONSE = "response";
-   public static final String KEY_RESPONSE_HEADERS = "responseHeaders";
+   private Stubby4JStarter() {
 
-   private Stubby4JCore stubby4JCore;
-
-   public Stubby4J(final String yamlConfigurationFilename) {
-      stubby4JCore = new Stubby4JCore(yamlConfigurationFilename);
-   }
-
-   public void start() throws Exception {
-      stubby4JCore.start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
-   }
-
-   public void start(final int clientPort, final int adminPort) throws Exception {
-      stubby4JCore.start(clientPort, adminPort);
-   }
-
-   public void stop() throws Exception {
-      stubby4JCore.stop();
-   }
-
-   public Map<String, String> doGetOnURI(final String uri) throws IOException {
-      return stubby4JCore.doGetOnURI(uri);
-   }
-
-   public Map<String, String> doPostOnURI(final String uri, final String postData) throws IOException {
-      return stubby4JCore.doPostOnURI(uri, postData);
    }
 
    public static void main(final String[] args) {
@@ -68,7 +40,7 @@ public final class Stubby4J {
          System.exit(1);
       }
       if (CommandLineIntepreter.isHelp()) {
-         CommandLineIntepreter.printHelp(Stubby4J.class);
+         CommandLineIntepreter.printHelp(Stubby4JStarter.class);
 
       } else if (!CommandLineIntepreter.isYamlProvided()) {
          System.err.println("\n\nYAML configuration was not provided using command line option '-f' or '--config'.\nPlease run again with option '--help'\n\n");

@@ -38,7 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +48,9 @@ import java.util.Map;
 public final class AdminHandler extends AbstractHandler {
 
    public static final String RESOURCE_PING = "/ping";
-   public static final String RESOURCE_ENDPOINT_NEW = "/endpoint/new";
+   public static final String RESOURCE_STUBDATA_NEW = "/stubdata/new";
 
-   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='185px' valign='top' align='left'><code>%s</code></td><td class='%s' align='left'>%s</td></tr>";
+   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='200px' valign='top' align='left'><code>%s</code></td><td class='%s' align='left'>%s</td></tr>";
 
    private final DataStore dataStore;
    private final JettyOrchestrator jettyOrchestrator;
@@ -75,7 +74,7 @@ public final class AdminHandler extends AbstractHandler {
       if (request.getPathInfo().equals(AdminHandler.RESOURCE_PING)) {
          handleGetOnPing(response);
          return;
-      } else if (request.getPathInfo().equals(AdminHandler.RESOURCE_ENDPOINT_NEW)) {
+      } else if (request.getPathInfo().equals(AdminHandler.RESOURCE_STUBDATA_NEW)) {
          handlePostOnRegisteringNewEndpoint(request, response);
          return;
       }
@@ -91,53 +90,29 @@ public final class AdminHandler extends AbstractHandler {
          return;
       }
 
-      final StubHttpLifecycle registered = addHttpCycleToDataStore(request);
-      if (!registered.isComplete()) {
-         final String errorMessage = String.format("Endpoint content provided is not complete, was given %s", registered);
-         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
+      String postBody;
+      try {
+         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
+         if (postBody == null || postBody.isEmpty()) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+            return;
+         }
+      } catch (Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
          return;
       }
 
-      final boolean isAdded = !dataStore.getStubHttpLifecycles().contains(registered)
-            && dataStore.getStubHttpLifecycles().add(registered);
-      if (!isAdded) {
-         final String errorMessage = String.format("Endpoint already exists for provided parameters, was given %s", registered);
-         HandlerUtils.configureErrorResponse(response, HttpStatus.CONFLICT_409, errorMessage);
+      try {
+         final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlContent(postBody);
+         dataStore.getStubHttpLifecycles().clear();
+         dataStore.setStubHttpLifecycles(stubHttpLifecycles);
+      } catch (Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration");
          return;
       }
 
       response.setStatus(HttpStatus.CREATED_201);
-      response.getWriter().println(String.format("Created endpoint %s", registered));
-   }
-
-   private StubHttpLifecycle addHttpCycleToDataStore(final HttpServletRequest request) {
-
-      final StubRequest registeredStubRequest = new StubRequest();
-      registeredStubRequest.setMethod(request.getParameter("method"));
-      registeredStubRequest.setUrl(request.getParameter("url"));
-      registeredStubRequest.setPostBody(request.getParameter("postBody"));
-
-      final StubResponse registeredStubResponse = new StubResponse();
-      registeredStubResponse.setBody(request.getParameter("body"));
-      registeredStubResponse.setLatency(request.getParameter("latency"));
-      registeredStubResponse.setStatus(request.getParameter("status"));
-
-      setStubResponseHeaders(request, registeredStubResponse);
-      return new StubHttpLifecycle(registeredStubRequest, registeredStubResponse);
-   }
-
-   private void setStubResponseHeaders(final HttpServletRequest request, final StubResponse registeredStubResponse) {
-      if (request.getParameter("responseHeaders") != null) {
-         final Map<String, String> headers = new HashMap<String, String>();
-         for (final String header : request.getParameter("responseHeaders").split(",")) {
-            final String[] keyAndValueHeader = header.split("=");
-            if (keyAndValueHeader.length != 2) {
-               continue;
-            }
-            headers.put(keyAndValueHeader[0], keyAndValueHeader[1]);
-         }
-         registeredStubResponse.setHeaders(headers);
-      }
+      response.getWriter().println("Configuration created successfully");
    }
 
    private void handleGetOnPing(final HttpServletResponse response) throws IOException {
@@ -185,8 +160,8 @@ public final class AdminHandler extends AbstractHandler {
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", "", host));
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", "", YamlConsumer.LOADED_CONFIG));
 
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_ENDPOINT_NEW, host, adminPort);
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW ENDPOINT POST URI", "", endpointRegistration));
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_STUBDATA_NEW, host, adminPort);
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW STUB DATA POST URI", "", endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
       return String.format(systemStatusTable, builder.toString());

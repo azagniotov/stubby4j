@@ -52,7 +52,10 @@ httplifecycle:
       method: GET
       url: /invoice/567
    response:
-      body: This is a response for 567
+      headers:
+         content-type: application/json
+         access-control-allow-origin: *
+      body: {"name" : "stubby4j"}
       latency: 5000
       status: 503
 
@@ -67,6 +70,7 @@ httplifecycle:
    response:
       headers:
          content-type: application/text
+         access-control-allow-origin: *
       status: 200
       latency: 1000
       body: This is a response for 123
@@ -82,8 +86,11 @@ request:
 method: GET
 url: /invoice/123
 response:
+headers:
+content-type: application/json
+access-control-allow-origin: *
 status: 200
-body: This is a response for 123
+body: {"message" : "This is a response for 123"}
 
 httplifecycle:
 request:
@@ -95,8 +102,10 @@ status: 200
 body: This is a response for 123
 ```
 
-Please keep in mind, you MUST ensure that the provided `response` body is on one line. In other words, no line
-breaks.
+Please keep in mind:
+1. Ensure that the provided `response` body is on one line. In other words, no line breaks.
+2. Because stubby4j listens on its own port, due to Ajax same-origin policy
+the `access-control-allow-origin: *` header has to be sent with HTTP response.
 ________________________________________________
 
 Commandline Usage
@@ -124,13 +133,13 @@ ________________________________________________
 Starting stubby4j programmatically
 ==================================
 ```
-private static Stubby4J stubby4J;
+private static Stubby4JClient stubby4JClient;
 
 @BeforeClass
 public static void beforeClass() throws Exception {
    final URL url = UtilsTest.class.getResource("/config.yaml");
-   stubby4J = new Stubby4J(url.getFile());
-   stubby4J.start();
+   stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
+   stubby4JClient.start();
 }
 ```
 
@@ -142,31 +151,31 @@ public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = Stubby4JTest.class.getResource("/config.yaml");
-   stubby4J = new Stubby4J(url.getFile());
-   stubby4J.start(clientPort, adminPort);
+   stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
+   stubby4JClient.start(clientPort, adminPort);
 }
 ```
 
 ```
 @Test
 public void shouldDoGetOnURI() throws Exception {
-   final Map<String, String> result = stubby4J.doGetOnURI("/item/1");
-   Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
-   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", result.get(Stubby4J.KEY_RESPONSE));
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/item/1", "localhost", 8882);
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
 }
 
 @Test
 public void shouldDoPostOnURI() throws Exception {
-   final Map<String, String> result = stubby4J.doPostOnURI("/item/1", "post body");
-   Assert.assertEquals("200", result.get(Stubby4J.KEY_STATUS));
-   Assert.assertEquals("Got post response", result.get(Stubby4J.KEY_RESPONSE));
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", "post body", "localhost", 8882);
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
 }
 .
 .
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubby4J.stop();
+   stubby4JClient.stop();
 }
 ```
 ________________________________________________
@@ -175,20 +184,45 @@ Configuring HTTP request and response stubs at runtime without restarting the se
 ====================================================================================
 
 In order to configure HTTP request and response stubs at runtime, you need to make a POST
-to the following end point: `http://<host>:<admin_port>/endpoint/new`
+to the following end point: `http://<host>:<admin_port>/stubdata/new`
 
-##### The data that should be POSTed is as follows:
 
-###### Stub request related parameters:
-1. `method` => Any of the available HTTP methods (Required)
-2. `url` => An endpoint URI for consuming (Required)
-3. `postBody` => Post body (Required when method is `POST`, otherwise optional)
+##### The following is an example of stub data that can be POSTed. The stub data should follow
+the same structure as stub config data that you would normally put in YAML configuration:
 
-###### Stub response related parameters:
-4. `body` => Response body (a JSON string etc.) (Required)
-5. `status` => Response status (Required)
-6. `latency` => Response delay in milliseconds (Optional)
-7. `responseHeaders` => Headers as comma-separated key/value pairs: `content-type=text/json, pragma=no-cache` (Optional)
+```
+httplifecycle:
+request:
+method: GET
+url: /invoice/123
+response:
+headers:
+content-type: application/json
+access-control-allow-origin: *
+status: 200
+body: {"message" : "This is a response for 123"}
+
+httplifecycle:
+request:
+method: POST
+url: /invoice/123
+postBody: post body
+response:
+status: 200
+body: This is a response for 123
+```
+
+```
+@Test
+public void shoudlCleanUpStubbedData() throws Exception {
+   stubby4JClient.registerStubData(postData, "localhost", 8889);
+
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/invoice/123", "localhost", 8882);
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("{\"message\" : \"This is a response for 123\"}", stubby4JResponse.getContent());
+}
+```
+
 
 ##### Please note:
 1. POSTed duplicate or incomplete data will result in an error from the server.

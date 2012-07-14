@@ -31,7 +31,11 @@ import org.stubby.database.DataStore;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.handlers.ClientHandler;
 import org.stubby.handlers.SslHandler;
+import org.stubby.yaml.YamlConsumer;
+import org.stubby.yaml.stubs.StubHttpLifecycle;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -72,8 +76,7 @@ public class JettyOrchestrator {
       server.setConnectors(buildConnectorList());
       server.setHandler(buildHandlerList());
       server.setStopAtShutdown(true);
-
-      if (server != null && !server.isStarted()) {
+      if (server != null && !server.isStarting() && !server.isStarted()) {
          server.start();
       }
    }
@@ -230,5 +233,10 @@ public class JettyOrchestrator {
 
    public String getCurrentHost() {
       return currentHost;
+   }
+
+   public void registerStubData(final String yamlConfigurationContent) throws IOException {
+      final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.parseYamlContent(yamlConfigurationContent);
+      dataStore.setStubHttpLifecycles(httpLifecycles);
    }
 }

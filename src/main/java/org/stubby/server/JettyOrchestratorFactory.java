@@ -40,11 +40,17 @@ public final class JettyOrchestratorFactory {
 
    }
 
+   public static void cleanUp() {
+      jettyOrchestrator = null;
+   }
+
    public static JettyOrchestrator getInstance(final String yamlConfigFilename, final Map<String, String> commandLineArgs) throws IOException {
       if (jettyOrchestrator == null) {
-         final YamlConsumer yamlConsumer = new YamlConsumer(yamlConfigFilename);
-         final List<StubHttpLifecycle> httpLifecycles = yamlConsumer.parseYaml();
-         final DataStore dataStore = new DataStore(httpLifecycles);
+         final DataStore dataStore = new DataStore();
+         if (yamlConfigFilename != null && !yamlConfigFilename.isEmpty()) {
+            final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.parseYamlFile(yamlConfigFilename);
+            dataStore.setStubHttpLifecycles(httpLifecycles);
+         }
          jettyOrchestrator = new JettyOrchestrator(new Server(), dataStore, commandLineArgs);
       }
       return jettyOrchestrator;

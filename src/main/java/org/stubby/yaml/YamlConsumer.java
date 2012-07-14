@@ -26,6 +26,7 @@ import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,13 +51,27 @@ public final class YamlConsumer {
    private static final String YAMLLINE_VALUE = "nodeValue";
 
    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-   private final String yamlConfigFilename;
 
-   public YamlConsumer(final String yamlConfigFilename) {
-      this.yamlConfigFilename = yamlConfigFilename;
+   private YamlConsumer() {
+
    }
 
-   public List<StubHttpLifecycle> parseYaml() throws IOException {
+   public static List<StubHttpLifecycle> parseYamlContent(final String yamlConfigContent) throws IOException {
+      final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
+
+      final InputStreamReader inputStreamReader =
+            new InputStreamReader(
+                  new ByteArrayInputStream(yamlConfigContent.getBytes(Charset.forName("UTF-8"))));
+      final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+      httpLifecycles.addAll(unmarshallYaml(bufferedReader));
+      bufferedReader.close();
+
+      validateStubHttpLifecycles(httpLifecycles);
+
+      return httpLifecycles;
+   }
+
+   public static List<StubHttpLifecycle> parseYamlFile(final String yamlConfigFilename) throws IOException {
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
 
       final File yamlFile = new File(yamlConfigFilename);
@@ -74,7 +89,7 @@ public final class YamlConsumer {
       return httpLifecycles;
    }
 
-   private void validateStubHttpLifecycles(final List<StubHttpLifecycle> httpLifecycles) {
+   private static void validateStubHttpLifecycles(final List<StubHttpLifecycle> httpLifecycles) {
       if (httpLifecycles.size() == 0) {
          throw new Stubby4JException("No HttpLifecycles loaded.. Please check your YAML configuration");
       }
@@ -85,7 +100,7 @@ public final class YamlConsumer {
       }
    }
 
-   private final List<StubHttpLifecycle> unmarshallYaml(final BufferedReader buffRead) throws IOException {
+   private static final List<StubHttpLifecycle> unmarshallYaml(final BufferedReader buffRead) throws IOException {
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
       StubHttpLifecycle parentStub = null;
@@ -123,7 +138,7 @@ public final class YamlConsumer {
       return httpLifecycles;
    }
 
-   private Map<String, String> breakDownYamlLineToKeyValuePair(final String yamlLine) {
+   private static Map<String, String> breakDownYamlLineToKeyValuePair(final String yamlLine) {
       final Map<String, String> keyValuePair = new HashMap<String, String>();
 
       final String[] keyAndValue = yamlLine.split(":", 2);
@@ -136,7 +151,7 @@ public final class YamlConsumer {
       return keyValuePair;
    }
 
-   private void bindYamlValueToPojo(final Map<String, String> keyValuePair, final StubHttpLifecycle parentStub) {
+   private static void bindYamlValueToPojo(final Map<String, String> keyValuePair, final StubHttpLifecycle parentStub) {
       final String nodeName = keyValuePair.get(YAMLLINE_KEY);
       final String nodeValue = keyValuePair.get(YAMLLINE_VALUE);
 
@@ -151,7 +166,7 @@ public final class YamlConsumer {
       }
    }
 
-   private void setYamlValueToFieldProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue, final YamlParentNodes type) {
+   private static void setYamlValueToFieldProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue, final YamlParentNodes type) {
       try {
          if (type.equals(YamlParentNodes.REQUEST)) {
             ReflectionUtils.setValue(stubHttpLifecycle.getRequest(), nodeName, nodeValue);
@@ -166,7 +181,7 @@ public final class YamlConsumer {
       stubHttpLifecycle.setCurrentlyPopulated(type);
    }
 
-   private void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue) {
+   private static void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue) {
       if (stubHttpLifecycle.getCurrentlyPopulated().equals(YamlParentNodes.REQUEST)) {
          stubHttpLifecycle.getRequest().addHeader(nodeName, nodeValue);
 
