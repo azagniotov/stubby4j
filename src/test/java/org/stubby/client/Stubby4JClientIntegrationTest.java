@@ -27,6 +27,7 @@ public class Stubby4JClientIntegrationTest {
    @AfterClass
    public static void afterClass() throws Exception {
       stubby4JClient.stop();
+      Thread.sleep(2000); //To make sure Jetty has stopped before running another suite
    }
 
    @Test
