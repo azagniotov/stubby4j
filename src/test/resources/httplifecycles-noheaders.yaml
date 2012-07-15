@@ -9,6 +9,17 @@ httplifecycle:
 httplifecycle:
    request:
       method: GET
+      url: /invoice/555
+      headers:
+         authorization: Basic Ym9iOnNlY3JldA==
+
+   response:
+      status: 200
+      body: This is a response for 555
+
+httplifecycle:
+   request:
+      method: GET
       url: /invoice/567
    response:
       body: This is a response for 567

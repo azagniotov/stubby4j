@@ -1,11 +1,14 @@
 package org.stubby.client;
 
+import org.apache.commons.codec.binary.Base64;
+import org.eclipse.jetty.http.HttpMethods;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
  * @author Alexander Zagniotov
@@ -31,81 +34,113 @@ public class Stubby4JClientIntegrationTest {
    }
 
    @Test
-   public void shoudlRegisterNewEndpoint() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/item/1", "localhost", 8882);
+   public void shouldDoGetOnURI() throws Exception {
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(200, stubby4JResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
    }
 
    @Test
-   public void shouldDoGetOnURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/item/1", "localhost", 8882);
+   public void shouldDoGetOnURIWithAuthorization() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
+      final String postBody = null;
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, postBody, encodedCredentials);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubby4JResponse.getContent());
+   }
+
+   @Test
+   public void shouldDoGetOnURIWithAuthorizationWithWrongCredentials() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(Charset.forName("UTF-8"))));
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, null, encodedCredentials);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+      Assert.assertEquals(401, stubby4JResponse.getResponseCode());
+      Assert.assertEquals("Unauthorized with supplied encoded credentials: 'Ym9iOndyb25nLXNlY3JldA==' which decodes to 'bob:wrong-secret'", stubby4JResponse.getContent());
+   }
+
+   @Test
+   public void shouldDoGetOnURIWithAuthorizationWithMissingCredentials() throws Exception {
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+      Assert.assertEquals(401, stubby4JResponse.getResponseCode());
+      Assert.assertEquals("You are not authorized to view this page without supplied 'Authorization' HTTP header", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoGetOnEmptyURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("", "localhost", 8882);
+
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "", "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoGetOnNullURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI(null, "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, null, "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoGetOnIncorrectURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/item/888", "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/888", "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /item/888", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoPostOnURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", "post body", "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(200, stubby4JResponse.getResponseCode());
       Assert.assertEquals("Got post response", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoPostOnEmptyURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("", "post body", "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "", "localhost", 8882, "post body");
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI / for post data: post body",
-            stubby4JResponse.getContent());
+      Assert.assertEquals("No data found for POST request at URI / for post data: post body", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldDoPostOnNullURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI(null, "post body", "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, null, "localhost", 8882, "post body");
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI / for post data: post body",
-            stubby4JResponse.getContent());
+      Assert.assertEquals("No data found for POST request at URI / for post data: post body", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldFailWhenDoingIncorrectPostOnURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", "a", "localhost", 8882);
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "a");
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
       Assert.assertEquals(404, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI /item/1 for post data: a",
-            stubby4JResponse.getContent());
+      Assert.assertEquals("No data found for POST request at URI /item/1 for post data: a", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldFailWhenDoingEmptyPostOnURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", "", "localhost", 8882);
-      Assert.assertEquals(400, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("Oh oh :( Bad request, POST body is missing", stubby4JResponse.getContent());
-   }
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "");
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
-   @Test
-   public void shouldFailWhenDoingNullPostOnURI() throws Exception {
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", null, "localhost", 8882);
       Assert.assertEquals(400, stubby4JResponse.getResponseCode());
       Assert.assertEquals("Oh oh :( Bad request, POST body is missing", stubby4JResponse.getContent());
    }

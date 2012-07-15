@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.database;
 
-import org.stubby.yaml.stubs.NullStubResponse;
+import org.stubby.handlers.HttpRequestInfo;
+import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
+import org.stubby.yaml.stubs.UnauthorizedStubResponse;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,43 +41,44 @@ public class DataStore {
 
    }
 
-   public void setStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
-      this.stubHttpLifecycles = stubHttpLifecycles;
+   public StubResponse findStubResponseFor(final HttpRequestInfo httpRequestInfo) {
+
+      final StubRequest assertionStubRequest = new StubRequest();
+
+      assertionStubRequest.setMethod(httpRequestInfo.getMethod());
+      assertionStubRequest.setUrl(httpRequestInfo.getUrl());
+      assertionStubRequest.getHeaders().put(HttpRequestInfo.AUTH_HEADER, httpRequestInfo.getAuthorizationHeader());
+
+      if (httpRequestInfo.getPostBody() != null) {
+         assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
+      }
+
+      return identifyResponseHandlingStrategyFor(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
    }
 
-   protected StubResponse findGetFor(final String pathInfo) {
-      final StubHttpLifecycle assertionStubHttpLifecycle = buildAssertionStubRequest("GET", pathInfo, null);
-      return findStubResponse(assertionStubHttpLifecycle);
-   }
-
-   private StubResponse findStubResponse(final StubHttpLifecycle assertionStubHttpLifecycle) {
+   private StubResponse identifyResponseHandlingStrategyFor(final StubHttpLifecycle assertionStubHttpLifecycle) {
 
       if (stubHttpLifecycles.contains(assertionStubHttpLifecycle)) {
          final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
-         return stubHttpLifecycles.get(indexOf).getResponse();
+         final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
+
+         if (foundStubHttpLifecycle.getRequest().getHeaders().containsKey(HttpRequestInfo.AUTH_HEADER)) {
+            final String foundBasicAuthorization = foundStubHttpLifecycle.getRequest().getHeaders().get(HttpRequestInfo.AUTH_HEADER);
+            final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(HttpRequestInfo.AUTH_HEADER);
+
+            if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
+               return new UnauthorizedStubResponse();
+            }
+         }
+
+         return foundStubHttpLifecycle.getResponse();
       }
 
-      return new NullStubResponse();
+      return new NotFoundStubResponse();
    }
 
-   protected StubResponse findPostFor(final String pathInfo, final String postData) {
-      final StubHttpLifecycle assertionStubHttpLifecycle = buildAssertionStubRequest("POST", pathInfo, postData);
-      return findStubResponse(assertionStubHttpLifecycle);
-   }
-
-   private StubHttpLifecycle buildAssertionStubRequest(final String method, final String pathInfo, final String postData) {
-      final StubRequest assertionStubRequest = new StubRequest();
-      assertionStubRequest.setMethod(method);
-      assertionStubRequest.setUrl(pathInfo);
-      assertionStubRequest.setPostBody(postData);
-      return new StubHttpLifecycle(assertionStubRequest, new StubResponse());
-   }
-
-   public StubResponse findResponseFor(final String pathInfo, final String method, final String postData) {
-      if (method.equalsIgnoreCase("get")) {
-         return findGetFor(pathInfo);
-      }
-      return findPostFor(pathInfo, postData);
+   public void setStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+      this.stubHttpLifecycles = stubHttpLifecycles;
    }
 
    public List<StubHttpLifecycle> getStubHttpLifecycles() {

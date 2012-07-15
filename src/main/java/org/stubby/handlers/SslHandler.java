@@ -2,7 +2,6 @@ package org.stubby.handlers;
 
 import org.eclipse.jetty.server.Request;
 import org.stubby.database.DataStore;
-import org.stubby.server.JettyOrchestrator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

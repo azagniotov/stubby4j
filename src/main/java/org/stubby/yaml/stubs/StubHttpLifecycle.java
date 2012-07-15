@@ -25,7 +25,7 @@ import org.stubby.yaml.YamlParentNodes;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
  */
-public class StubHttpLifecycle {
+public final class StubHttpLifecycle {
 
    private StubRequest request;
    private StubResponse response;

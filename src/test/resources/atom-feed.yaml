@@ -23,6 +23,20 @@ httplifecycle:
 
 httplifecycle:
    request:
+      headers:
+         authorization: Basic Ym9iOnNlY3JldA==
+      method: GET
+      url: /item/auth
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: {"id" : "8", "description" : "authorized"}
+
+
+httplifecycle:
+   request:
       method: POST
       url: /item/1
       postBody: post body

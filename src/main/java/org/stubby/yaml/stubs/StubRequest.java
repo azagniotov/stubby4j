@@ -19,9 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +26,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
  */
-public class StubRequest {
+public final class StubRequest {
 
    private String url = null;
    private String method = null;

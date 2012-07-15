@@ -19,22 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.handlers;
 
-import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
+import org.stubby.handlers.strategy.HandlingStrategy;
+import org.stubby.handlers.strategy.HandlingStrategyFactory;
 import org.stubby.utils.HandlerUtils;
-import org.stubby.yaml.stubs.NullStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Alexander Zagniotov
@@ -63,60 +60,14 @@ public class ClientHandler extends AbstractHandler {
          if (postBody == null) return;
       }
 
-      final StubResponse stubResponse = dataStore.findResponseFor(constructFullURI(request), request.getMethod(), postBody);
-      if (stubResponse instanceof NullStubResponse) {
-         final String error = generate404ErrorMessage(request, postBody);
-         HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
-         return;
-      }
+      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(request, postBody);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final HandlingStrategy strategy = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
 
       try {
-         doHandle(response, stubResponse);
+         strategy.handle(response, httpRequestInfo);
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-   }
-
-   private void doHandle(final HttpServletResponse response, final StubResponse stubResponse) throws IOException {
-      setResponseMainHeaders(response);
-      setStubResponseHeaders(stubResponse, response);
-
-      if (stubResponse.getLatency() != null) {
-         try {
-            final long latency = Long.parseLong(stubResponse.getLatency());
-            TimeUnit.MILLISECONDS.sleep(latency);
-         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-         }
-      }
-      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
-      response.getWriter().println(stubResponse.getBody());
-   }
-
-   private String generate404ErrorMessage(final HttpServletRequest request, final String postBody) {
-      final String postMessage = (postBody != null ? " for post data: " + postBody : "");
-      return "No data found for " + request.getMethod() + " request at URI " + constructFullURI(request) + postMessage;
-   }
-
-   private String constructFullURI(final HttpServletRequest request) {
-      final String pathInfo = request.getPathInfo();
-      final String queryStr = request.getQueryString();
-      final String queryString = (queryStr == null || queryStr.equals("")) ? "" : String.format("?%s", request.getQueryString());
-      return String.format("%s%s", pathInfo, queryString);
-   }
-
-   private void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeaders.DATE, new Date().toString());
-      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeaders.EXPIRES, 0);
-   }
-
-   private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
-      response.setCharacterEncoding("UTF-8");
-      for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-         response.setHeader(entry.getKey(), entry.getValue());
       }
    }
 }

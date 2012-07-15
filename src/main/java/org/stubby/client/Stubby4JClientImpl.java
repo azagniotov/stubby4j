@@ -4,7 +4,6 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.handlers.AdminHandler;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.server.JettyOrchestratorFactory;
 
@@ -38,15 +37,6 @@ final class Stubby4JClientImpl implements Stubby4JClient {
    }
 
    @Override
-   public Stubby4JResponse registerStubData(final String yamlConfigurationContent, final String host, final int adminPort) throws Exception {
-      final HttpURLConnection con = constructClientHttpConnection(AdminHandler.RESOURCE_STUBDATA_NEW, host, adminPort);
-      prepareConnectionForPOST(con, yamlConfigurationContent);
-      writePostBytes(con, yamlConfigurationContent);
-
-      return parseHttpResponse(con);
-   }
-
-   @Override
    public void start() throws Exception {
       start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
    }
@@ -68,24 +58,33 @@ final class Stubby4JClientImpl implements Stubby4JClient {
       JettyOrchestratorFactory.cleanUp();
    }
 
-   @Override
-   public Stubby4JResponse doGetOnURI(final String uri, final String host, final int clientPort) throws IOException {
-      return parseHttpResponse(constructClientHttpConnection(uri, host, clientPort));
-   }
 
    @Override
-   public Stubby4JResponse doPostOnURI(final String uri, final String postData, final String host, final int clientPort) throws IOException {
-      final HttpURLConnection con = constructClientHttpConnection(uri, host, clientPort);
-      prepareConnectionForPOST(con, postData);
-      writePostBytes(con, postData);
+   public Stubby4JResponse makeRequestWith(final ClientRequestInfo clientRequest) throws IOException {
+      final HttpURLConnection con = constructClientHttpConnection(clientRequest);
+
+      if (clientRequest.getPostBody() != null) {
+         prepareConnectionForPOST(con, clientRequest.getPostBody());
+         writePostBytes(con, clientRequest.getPostBody());
+      }
 
       return parseHttpResponse(con);
    }
 
-   private HttpURLConnection constructClientHttpConnection(final String uri, final String host, final int port) throws IOException {
-      final String urlString = String.format(URL_TEMPLATE, host, port, uri != null ? uri : "");
+   private HttpURLConnection constructClientHttpConnection(final ClientRequestInfo clientRequest) throws IOException {
+      final String uri = clientRequest.getUri();
+      final String host = clientRequest.getHost();
+      final int clientPort = clientRequest.getClientPort();
+      final String urlString = String.format(URL_TEMPLATE, host, clientPort, uri != null ? uri : "");
       final URL url = new URL(urlString);
-      return (HttpURLConnection) url.openConnection();
+
+      final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+      if (clientRequest.getBase64encodedCredentials() != null) {
+         httpURLConnection.setRequestProperty("Authorization", "Basic " + clientRequest.getBase64encodedCredentials());
+      }
+
+      return httpURLConnection;
    }
 
    private Stubby4JResponse parseHttpResponse(final HttpURLConnection con) throws IOException {

@@ -11,6 +11,7 @@ A Java-based stub and mock HTTP server with embedded Jetty.
 * You want to verify that your code correctly handles HTTP error codes
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
 * You want support for any of the available HTTP methods
+* You want support for Basic Authorization
 * You want to trigger multiple responses based on multiple requests on the same URI
 * You want to easily configure stub data using configuration file
 * You want to easily configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
@@ -24,7 +25,7 @@ A Java-based stub and mock HTTP server with embedded Jetty.
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 1.1MB
+##### All this goodness in just under 1.2MB
 _______________________________________________
 
 Why "stubby"?
@@ -43,6 +44,8 @@ httplifecycle:
    request:
       method: GET
       url: /invoice/123
+      headers:
+         authorization: Basic Ym9iOnNlY3JldA==
    response:
       status: 200
       body: This is a response for 123
@@ -83,6 +86,8 @@ Indentation of `httplifecycle` is _not_ required. In other words, the following 
 ```
 httplifecycle:
 request:
+headers:
+authorization: Basic Ym9iOnNlY3JldA==
 method: GET
 url: /invoice/123
 response:
@@ -105,7 +110,8 @@ body: This is a response for 123
 Please keep in mind:
 1. Ensure that the provided `response` body is on one line. In other words, no line breaks.
 2. Because stubby4j listens on its own port, due to Ajax same-origin policy
-the `access-control-allow-origin: *` header has to be sent with HTTP response.
+the `access-control-allow-origin: *` header has to be sent with HTTP response. In other words, if your web app running
+on `localhost:8080`, submitting Ajax request to `localhost:8882` (stubby4j) is not allowed unless correct headers are set
 ________________________________________________
 
 Commandline Usage
@@ -141,6 +147,13 @@ public static void beforeClass() throws Exception {
    stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
    stubby4JClient.start();
 }
+.
+.
+.
+@AfterClass
+public static void afterClass() throws Exception {
+   stubby4JClient.stop();
+}
 ```
 
 OR
@@ -151,13 +164,12 @@ public static void beforeClass() throws Exception {
    stubby4JClient = Stubby4JClientFactory.getInstance();
    stubby4JClient.start();
 }
-
-@Test
-public void shoudlCreateStubbedData() throws Exception {
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.registerStubData(postedNewStubData, "localhost", 8889);
-
-   Assert.assertEquals(201, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
+.
+.
+.
+@AfterClass
+public static void afterClass() throws Exception {
+   stubby4JClient.stop();
 }
 ```
 
@@ -172,22 +184,6 @@ public static void beforeClass() throws Exception {
    stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
    stubby4JClient.start(clientPort, adminPort);
 }
-```
-
-```
-@Test
-public void shouldDoGetOnURI() throws Exception {
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/item/1", "localhost", 8882);
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
-}
-
-@Test
-public void shouldDoPostOnURI() throws Exception {
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.doPostOnURI("/item/1", "post body", "localhost", 8882);
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
-}
 .
 .
 .
@@ -196,21 +192,58 @@ public static void afterClass() throws Exception {
    stubby4JClient.stop();
 }
 ```
+
+________________________________________________
+
+Making HTTP requests to stubby4j at runtime using stubby4j client
+=================================================================
+
+```
+@Test
+public void shouldDoGetOnURI() throws Exception {
+   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
+}
+
+@Test
+public void shouldDoGetOnURIWithAuthorization() throws Exception {
+   final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
+   final String postBody = null;
+   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, postBody, encodedCredentials);
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubby4JResponse.getContent());
+}
+
+@Test
+public void shouldDoPostOnURI() throws Exception {
+   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
+}
+```
 ________________________________________________
 
 Configuring HTTP request and response stubs at runtime without restarting the server
 ====================================================================================
 
-In order to configure HTTP request and response stubs at runtime, you need to make a POST
-to the following end point: `http://<host>:<admin_port>/stubdata/new`
+In order to configure HTTP request and response stubs at runtime, you need to POST
+stub config data to the following end point: `http://<host>:<admin_port>/stubdata/new`
 
 
-##### The following is an example of stub data that can be POSTed. The stub data should follow
-the same structure as stub config data that you would normally put in YAML configuration:
+###### The POSTed stub data should have the same structure as the config data from YAML configuration, eg.:
 
 ```
 httplifecycle:
 request:
+headers:
+authorization: Basic Ym9iOnNlY3JldA==
 method: GET
 url: /invoice/123
 response:
@@ -232,18 +265,20 @@ body: This is a response for 123
 
 ```
 @Test
-public void shoudlCleanUpStubbedData() throws Exception {
-   stubby4JClient.registerStubData(postData, "localhost", 8889);
+public void shouldCreateStubbedData() throws Exception {
+   final URL url = Stubby4JAdminClientIntegrationTest.class.getResource("/config.yaml");
+   final String content = HandlerUtils.inputStreamToString(url.openStream());
+   final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.doGetOnURI("/invoice/123", "localhost", 8882);
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("{\"message\" : \"This is a response for 123\"}", stubby4JResponse.getContent());
+   Assert.assertEquals(201, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
 }
 ```
 
 
 ##### Please note:
-1. New POSTed data will purge the previous stub data from memory.
+1. New POSTed data will purge the previous stub data from stubby4j memory.
 2. POSTed stub data will be lost on server restart. If you want to use the same stub data all over again, load it from configuration file
 ________________________________________________
 
@@ -259,6 +294,7 @@ The following dependencies embedded within stubby4j:
 5. jetty-io-8.1.1.v20120215.jar 
 6. jetty-util-8.1.1.v20120215.jar
 7. commons-cli-1.2.jar
+8. commons-codec-1.5.jar
 
 Kudos
 =====

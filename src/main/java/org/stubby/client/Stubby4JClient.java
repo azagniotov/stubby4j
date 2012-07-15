@@ -14,9 +14,5 @@ public interface Stubby4JClient {
 
    void stop() throws Exception;
 
-   Stubby4JResponse registerStubData(final String yamlConfigurationContent, final String host, final int adminPort) throws Exception;
-
-   Stubby4JResponse doGetOnURI(final String uri, final String host, final int clientPort) throws IOException;
-
-   Stubby4JResponse doPostOnURI(final String uri, final String postData, final String host, final int clientPort) throws IOException;
+   Stubby4JResponse makeRequestWith(final ClientRequestInfo clientRequest) throws IOException;
 }
