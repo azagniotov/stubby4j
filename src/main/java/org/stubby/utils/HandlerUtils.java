@@ -19,8 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.utils;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.exception.Stubby4JException;
+import org.stubby.handlers.ClientHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,6 +84,21 @@ public final class HandlerUtils {
       final StringBuilder builder = new StringBuilder();
       builder.append(String.format(getHtmlResourceByName(templateName), params));
       return builder.toString();
+   }
+
+   public static String extractPostRequestBody(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+      String postBody;
+      try {
+         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
+         if (postBody == null || postBody.isEmpty()) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+            return null;
+         }
+      } catch (Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+         return null;
+      }
+      return postBody;
    }
 
    public static Object highlightResponseMarkup(final Object value) {

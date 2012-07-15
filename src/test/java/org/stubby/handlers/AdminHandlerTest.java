@@ -116,6 +116,7 @@ public class AdminHandlerTest {
       verify(mockPrintWriter, never()).println(adminHandlerHtml);
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.METHOD_NOT_ALLOWED_405, String.format("Method GET is not allowed on URI %s", mockHttpServletRequest.getPathInfo()));
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CREATED_201);
    }
 
    @Test
@@ -146,6 +147,8 @@ public class AdminHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
+      when(mockDataStore.getStubHttpLifecycles()).thenReturn(mockStubHttpLifecycleList);
+      when(mockStubHttpLifecycleList.size()).thenReturn(1);
 
       final String postData = "httplifecycle:\n" +
             "   request:\n" +
@@ -168,8 +171,10 @@ public class AdminHandlerTest {
 
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CONFLICT_409);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 
+      verify(mockStubHttpLifecycleList, times(1)).clear();
+      verify(mockDataStore, times(1)).setStubHttpLifecycles(Mockito.anyListOf(StubHttpLifecycle.class));
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.CREATED_201);
    }
 }

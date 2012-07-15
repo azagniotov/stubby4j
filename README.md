@@ -154,7 +154,7 @@ public static void beforeClass() throws Exception {
 
 @Test
 public void shoudlCreateStubbedData() throws Exception {
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.registerStubData(postData, "localhost", 8889);
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.registerStubData(postedNewStubData, "localhost", 8889);
 
    Assert.assertEquals(201, stubby4JResponse.getResponseCode());
    Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
@@ -243,7 +243,7 @@ public void shoudlCleanUpStubbedData() throws Exception {
 
 
 ##### Please note:
-1. POSTed duplicate or incomplete data will result in an error from the server.
+1. New POSTed data will purge the previous stub data from memory.
 2. POSTed stub data will be lost on server restart. If you want to use the same stub data all over again, load it from configuration file
 ________________________________________________
 
@@ -262,9 +262,11 @@ The following dependencies embedded within stubby4j:
 
 Kudos
 =====
-Special thanks fly out to the following ninjas for their help, support and feedback:
+Special thanks fly out to the following Ninjas for their help, support and feedback:
 
 1. Isa Goksu
 2. Eric Mrak
 3. Sankalp Saxena
 4. Simon Brunning
+5. Ed Hewell
+6. Kenny Lin

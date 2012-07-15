@@ -3,7 +3,6 @@ package org.stubby.handlers;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -19,10 +18,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.Date;
 import java.util.HashMap;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +50,6 @@ public class ClientHandlerTest {
    public void verifySetResponseMainHeaders() throws Exception {
       verify(mockRequest, times(1)).setHandled(true);
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.DATE, new Date().toString());
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
       verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeaders.EXPIRES, 0);
@@ -88,7 +86,6 @@ public class ClientHandlerTest {
       when(mockDataStore.findResponseFor(requestPathInfo, method, null)).thenReturn(mockStubResponse);
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
-      when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>());
 
       final ClientHandler clientHandler = new ClientHandler(mockDataStore);
       clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -96,6 +93,51 @@ public class ClientHandlerTest {
       verifySetResponseMainHeaders();
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
+   }
+
+   @Test
+   public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
+      final String method = "GET";
+      final String requestPathInfo = "/path/1";
+
+      final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
+
+      when(mockHttpServletRequest.getMethod()).thenReturn(method);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockStubResponse.getLatency()).thenReturn("50");
+      when(mockStubResponse.getStatus()).thenReturn("200");
+      when(mockDataStore.findResponseFor(requestPathInfo, method, null)).thenReturn(mockStubResponse);
+      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
+      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verifySetResponseMainHeaders();
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+      verify(mockPrintWriter, times(1)).println(someResultsMessage);
+   }
+
+   @Test
+   public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
+      final String method = "GET";
+      final String requestPathInfo = "/path/1";
+
+      final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
+
+      when(mockHttpServletRequest.getMethod()).thenReturn(method);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+      when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
+
+      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
+      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verifySetResponseMainHeaders();
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+      verify(mockPrintWriter, never()).println(someResultsMessage);
    }
 
    @Test

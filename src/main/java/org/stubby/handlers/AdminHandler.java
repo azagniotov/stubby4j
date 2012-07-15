@@ -75,7 +75,7 @@ public final class AdminHandler extends AbstractHandler {
          handleGetOnPing(response);
          return;
       } else if (request.getPathInfo().equals(AdminHandler.RESOURCE_STUBDATA_NEW)) {
-         handlePostOnRegisteringNewEndpoint(request, response);
+         handlePostOnRegisteringNewStubData(request, response);
          return;
       }
 
@@ -83,24 +83,16 @@ public final class AdminHandler extends AbstractHandler {
       response.getWriter().println(adminHandlerHtml);
    }
 
-   private void handlePostOnRegisteringNewEndpoint(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+   private void handlePostOnRegisteringNewStubData(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+
       if (!request.getMethod().equalsIgnoreCase("post")) {
          final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), request.getPathInfo());
          HandlerUtils.configureErrorResponse(response, HttpStatus.METHOD_NOT_ALLOWED_405, errorMessage);
          return;
       }
 
-      String postBody;
-      try {
-         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
-         if (postBody == null || postBody.isEmpty()) {
-            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
-            return;
-         }
-      } catch (Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
-         return;
-      }
+      final String postBody = HandlerUtils.extractPostRequestBody(request, response);
+      if (postBody == null) return;
 
       try {
          final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlContent(postBody);
@@ -109,7 +101,7 @@ public final class AdminHandler extends AbstractHandler {
          }
          dataStore.setStubHttpLifecycles(stubHttpLifecycles);
       } catch (Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration");
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
          return;
       }
 

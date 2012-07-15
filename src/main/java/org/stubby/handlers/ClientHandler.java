@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientHandler extends AbstractHandler {
 
-   protected static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
+   public static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
    private final DataStore dataStore;
 
    public ClientHandler(final DataStore dataStore) {
@@ -59,17 +59,8 @@ public class ClientHandler extends AbstractHandler {
 
       String postBody = null;
       if (request.getMethod().equalsIgnoreCase("post")) {
-
-         try {
-            postBody = HandlerUtils.inputStreamToString(request.getInputStream());
-            if (postBody == null || postBody.isEmpty()) {
-               HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
-               return;
-            }
-         } catch (Exception ex) {
-            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, BAD_POST_REQUEST_MESSAGE);
-            return;
-         }
+         postBody = HandlerUtils.extractPostRequestBody(request, response);
+         if (postBody == null) return;
       }
 
       final StubResponse stubResponse = dataStore.findResponseFor(constructFullURI(request), request.getMethod(), postBody);
@@ -89,7 +80,6 @@ public class ClientHandler extends AbstractHandler {
    private void doHandle(final HttpServletResponse response, final StubResponse stubResponse) throws IOException {
       setResponseMainHeaders(response);
       setStubResponseHeaders(stubResponse, response);
-      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
 
       if (stubResponse.getLatency() != null) {
          try {
@@ -99,6 +89,7 @@ public class ClientHandler extends AbstractHandler {
             throw new RuntimeException(e);
          }
       }
+      response.setStatus(Integer.parseInt(stubResponse.getStatus()));
       response.getWriter().println(stubResponse.getBody());
    }
 
