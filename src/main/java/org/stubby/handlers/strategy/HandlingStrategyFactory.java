@@ -18,6 +18,9 @@ public final class HandlingStrategyFactory {
          case HttpStatus.UNAUTHORIZED_401:
             return new UnauthorizedResponseHandlingStrategy(foundStubResponse);
 
+         case HttpStatus.MOVED_PERMANENTLY_301:
+            return new RedirectResponseHandlingStrategy(foundStubResponse);
+
       }
 
       return new DefaultResponseHandlingStrategy(foundStubResponse);

@@ -1,4 +1,16 @@
-httplifecycle:                                                                                                          
+httplifecycle:
+   request:
+      method: GET
+      url: /item/redirect
+
+   response:
+      latency: 1000
+      status: 301
+      headers:
+         location: /item/1
+      body:
+
+httplifecycle:
    request:                                                                                                             
       method: GET                                                                                                       
       url: /atomfeed/1                                                                                                 

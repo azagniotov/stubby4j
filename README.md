@@ -12,6 +12,7 @@ A Java-based stub and mock HTTP server with embedded Jetty.
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
 * You want support for any of the available HTTP methods
 * You want support for Basic Authorization
+* You want support for HTTP 30x redirects
 * You want to trigger multiple responses based on multiple requests on the same URI
 * You want to easily configure stub data using configuration file
 * You want to easily configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
@@ -77,11 +78,28 @@ httplifecycle:
       status: 200
       latency: 1000
       body: This is a response for 123
+
+httplifecycle:
+   request:
+      method: GET
+      url: /item/redirect
+
+   response:
+      latency: 1000
+      status: 301
+      headers:
+         location: /item/1
+      body:
 ```
-The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
-Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
-respective children nodes as per above example. Response `latency` is in milliseconds.
-Indentation of `httplifecycle` is _not_ required. In other words, the following format is also valid:
+
+1. The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
+2. Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
+respective children nodes as per above example.
+3. Response `latency` is in milliseconds.
+4. In order to enable 30x redirects, please refer to the above example. In other words, configure `response` header
+`location` with the location URL of the expected redirect
+5. Indentation of `httplifecycle` is _not_ required. In other words, the following format is also valid:
+
 
 ```
 httplifecycle:
@@ -105,6 +123,18 @@ postBody: post body
 response:
 status: 200
 body: This is a response for 123
+
+httplifecycle:
+request:
+method: GET
+url: /item/redirect
+
+response:
+latency: 1000
+status: 301
+headers:
+location: /item/1
+body:
 ```
 
 Please keep in mind:

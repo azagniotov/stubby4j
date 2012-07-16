@@ -21,6 +21,7 @@ package org.stubby.database;
 
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
+import org.stubby.yaml.stubs.RedirectStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -53,10 +54,10 @@ public class DataStore {
          assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
       }
 
-      return identifyResponseHandlingStrategyFor(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
+      return identifyTypeOfStubResponse(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
    }
 
-   private StubResponse identifyResponseHandlingStrategyFor(final StubHttpLifecycle assertionStubHttpLifecycle) {
+   private StubResponse identifyTypeOfStubResponse(final StubHttpLifecycle assertionStubHttpLifecycle) {
 
       if (stubHttpLifecycles.contains(assertionStubHttpLifecycle)) {
          final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
@@ -69,6 +70,17 @@ public class DataStore {
             if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
                return new UnauthorizedStubResponse();
             }
+         }
+
+         if (foundStubHttpLifecycle.getResponse().getHeaders().containsKey("location")) {
+            final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
+
+            redirectStubResponse.setLatency(foundStubHttpLifecycle.getResponse().getLatency());
+            redirectStubResponse.setBody(foundStubHttpLifecycle.getResponse().getBody());
+            redirectStubResponse.setStatus(foundStubHttpLifecycle.getResponse().getStatus());
+            redirectStubResponse.setHeaders(foundStubHttpLifecycle.getResponse().getHeaders());
+
+            return redirectStubResponse;
          }
 
          return foundStubHttpLifecycle.getResponse();
