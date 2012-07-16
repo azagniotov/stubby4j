@@ -224,7 +224,7 @@ Making HTTP requests to stubby4j at runtime using stubby4j client with Basic Aut
 ==========================================================================================
 
 In order to configure Basic Authorization, you need to specify username followed by `:`, followed by password
-as `authorization` header value in the stub `request` consfiguration:
+as `authorization` header value in the stub `request` configuration:
 
 ```
 httplifecycle:
