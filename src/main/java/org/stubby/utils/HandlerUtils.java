@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.utils;
 
+import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.exception.Stubby4JException;
 import org.stubby.handlers.ClientHandler;
 
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -42,6 +45,7 @@ public final class HandlerUtils {
    public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
       response.setStatus(httpStatus);
       response.sendError(httpStatus, message);
+      response.flushBuffer();
    }
 
    public static String getHtmlResourceByName(final String templateSuffix) {
@@ -60,6 +64,15 @@ public final class HandlerUtils {
       final String implementationTitle = pkg.getImplementationTitle() == null ?
             "Java-based HTTP stub server" : pkg.getImplementationTitle();
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+   }
+
+   public static void setResponseMainHeaders(final HttpServletResponse response) {
+      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeaders.DATE, new Date().toString());
+      response.setHeader(HttpHeaders.CONTENT_TYPE, MimeTypes.TEXT_HTML_UTF_8);
+      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeaders.EXPIRES, 0);
    }
 
    public static String inputStreamToString(final InputStream inputStream) {

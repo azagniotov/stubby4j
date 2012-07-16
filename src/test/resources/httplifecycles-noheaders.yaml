@@ -11,7 +11,7 @@ httplifecycle:
       method: GET
       url: /invoice/555
       headers:
-         authorization: Basic Ym9iOnNlY3JldA==
+         authorization: bob:secret
 
    response:
       status: 200

@@ -45,7 +45,7 @@ httplifecycle:
       method: GET
       url: /invoice/123
       headers:
-         authorization: Basic Ym9iOnNlY3JldA==
+         authorization: bob:secret
    response:
       status: 200
       body: This is a response for 123
@@ -87,7 +87,7 @@ Indentation of `httplifecycle` is _not_ required. In other words, the following 
 httplifecycle:
 request:
 headers:
-authorization: Basic Ym9iOnNlY3JldA==
+authorization: bob:secret
 method: GET
 url: /invoice/123
 response:
@@ -209,6 +209,41 @@ public void shouldDoGetOnURI() throws Exception {
 }
 
 @Test
+public void shouldDoPostOnURI() throws Exception {
+   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
+   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
+   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
+}
+```
+
+________________________________________________
+
+Making HTTP requests to stubby4j at runtime using stubby4j client with Basic Authorization
+==========================================================================================
+
+In order to configure Basic Authorization, you need to specify username followed by `:`, followed by password
+as `authorization` header value in the stub `request` consfiguration:
+
+```
+httplifecycle:
+   request:
+      method: GET
+      url: /invoice/123
+      headers:
+         authorization: bob:secret
+   response:
+      status: 200
+      body: This is a response for 123
+```
+
+Upon parsing of the stub config data, base64 encoding scheme will be applied to the provided `username:password` value, which
+will be prepended with the word "Basic". The final result will conform to HTTP header `Authorization` format, eg.: `Basic Ym9iOnNlY3JldA==`
+
+
+```
+@Test
 public void shouldDoGetOnURIWithAuthorization() throws Exception {
    final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
    final String postBody = null;
@@ -219,14 +254,6 @@ public void shouldDoGetOnURIWithAuthorization() throws Exception {
    Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubby4JResponse.getContent());
 }
 
-@Test
-public void shouldDoPostOnURI() throws Exception {
-   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
-
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
-}
 ```
 ________________________________________________
 
@@ -243,7 +270,7 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 httplifecycle:
 request:
 headers:
-authorization: Basic Ym9iOnNlY3JldA==
+authorization: bob:secret
 method: GET
 url: /invoice/123
 response:

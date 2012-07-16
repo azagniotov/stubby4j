@@ -25,7 +25,7 @@ public final class DefaultResponseHandlingStrategy implements HandlingStrategy {
 
    @Override
    public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
-      setResponseMainHeaders(response);
+      HandlerUtils.setResponseMainHeaders(response);
       setStubResponseHeaders(foundStubResponse, response);
 
       if (foundStubResponse.getLatency() != null) {
@@ -38,14 +38,6 @@ public final class DefaultResponseHandlingStrategy implements HandlingStrategy {
       }
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
       response.getWriter().println(foundStubResponse.getBody());
-   }
-
-   private void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeaders.DATE, new Date().toString());
-      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeaders.EXPIRES, 0);
    }
 
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {

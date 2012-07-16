@@ -1,6 +1,7 @@
 package org.stubby.handlers.strategy;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
@@ -24,6 +25,7 @@ public final class UnauthorizedResponseHandlingStrategy implements HandlingStrat
 
    @Override
    public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
+      HandlerUtils.setResponseMainHeaders(response);
       final String authorizationHeader = httpRequestInfo.getAuthorizationHeader();
       String error = "";
       if (authorizationHeader == null) {

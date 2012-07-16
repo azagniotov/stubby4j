@@ -22,6 +22,7 @@ public final class NotFoundResponseHandlingStrategy implements HandlingStrategy 
 
    @Override
    public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
+      HandlerUtils.setResponseMainHeaders(response);
       final String postMessage = (httpRequestInfo.getPostBody() != null ? " for post data: " + httpRequestInfo.getPostBody() : "");
       final String error = "No data found for " + httpRequestInfo.getMethod() + " request at URI " + httpRequestInfo.getUrl() + postMessage;
       HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);

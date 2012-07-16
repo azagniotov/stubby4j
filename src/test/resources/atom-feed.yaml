@@ -24,7 +24,7 @@ httplifecycle:
 httplifecycle:
    request:
       headers:
-         authorization: Basic Ym9iOnNlY3JldA==
+         authorization: bob:secret
       method: GET
       url: /item/auth
 

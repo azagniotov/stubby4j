@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml;
 
+import org.apache.commons.codec.binary.Base64;
 import org.stubby.exception.Stubby4JException;
+import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
@@ -121,11 +123,15 @@ public final class YamlConsumer {
                continue;
 
             case REQUEST:
-               parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
+               if (parentStub != null) {
+                  parentStub.setCurrentlyPopulated(YamlParentNodes.REQUEST);
+               }
                continue;
 
             case RESPONSE:
-               parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
+               if (parentStub != null) {
+                  parentStub.setCurrentlyPopulated(YamlParentNodes.RESPONSE);
+               }
                continue;
 
             case HEADERS:
@@ -181,8 +187,12 @@ public final class YamlConsumer {
       stubHttpLifecycle.setCurrentlyPopulated(type);
    }
 
-   private static void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, final String nodeValue) {
+   private static void setYamlValueToHeaderProperty(final StubHttpLifecycle stubHttpLifecycle, final String nodeName, String nodeValue) {
       if (stubHttpLifecycle.getCurrentlyPopulated().equals(YamlParentNodes.REQUEST)) {
+         if (nodeName.equalsIgnoreCase(HttpRequestInfo.AUTH_HEADER)) {
+            final byte[] bytes = nodeValue.getBytes(Charset.forName("UTF-8"));
+            nodeValue = String.format("%s %s", "Basic", new String(Base64.encodeBase64(bytes)));
+         }
          stubHttpLifecycle.getRequest().addHeader(nodeName, nodeValue);
 
       } else if (stubHttpLifecycle.getCurrentlyPopulated().equals(YamlParentNodes.RESPONSE)) {
