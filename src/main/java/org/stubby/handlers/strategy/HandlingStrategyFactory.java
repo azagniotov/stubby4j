@@ -1,6 +1,5 @@
 package org.stubby.handlers.strategy;
 
-import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.yaml.stubs.StubResponse;
 
 /**
@@ -11,14 +10,14 @@ public final class HandlingStrategyFactory {
 
    public static HandlingStrategy identifyHandlingStrategyFor(final StubResponse foundStubResponse) {
 
-      switch (foundStubResponse.getHttpStatus()) {
-         case HttpStatus.NOT_FOUND_404:
+      switch (foundStubResponse.getStubResponseType()) {
+         case NOTFOUND:
             return new NotFoundResponseHandlingStrategy(foundStubResponse);
 
-         case HttpStatus.UNAUTHORIZED_401:
+         case UNAUTHORIZED:
             return new UnauthorizedResponseHandlingStrategy(foundStubResponse);
 
-         case HttpStatus.MOVED_PERMANENTLY_301:
+         case REDIRECT:
             return new RedirectResponseHandlingStrategy(foundStubResponse);
 
       }

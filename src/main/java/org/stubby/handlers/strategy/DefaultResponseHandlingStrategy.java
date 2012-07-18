@@ -1,13 +1,11 @@
 package org.stubby.handlers.strategy;
 
-import org.eclipse.jetty.http.HttpHeaders;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
-import org.eclipse.jetty.http.HttpStatus;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,8 +77,8 @@ public class StubResponse {
       return (status != null && body != null);
    }
 
-   public int getHttpStatus() {
-      return HttpStatus.OK_200;
+   public StubResponseTypes getStubResponseType() {
+      return StubResponseTypes.DEFAULT;
    }
 
    @Override

@@ -8,6 +8,6 @@ out/*
 .DS_Store
 Thumbs.db
 # Package Files #
-*.jar
+*-shaded.jar
 *.war
 *.ear

@@ -10,6 +10,7 @@ import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubResponse;
+import org.stubby.yaml.stubs.StubResponseTypes;
 import org.stubby.yaml.stubs.UnauthorizedStubResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +53,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
-      Assert.assertEquals(200, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
    }
 
    @Test
@@ -70,7 +71,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
-      Assert.assertEquals(200, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
    }
 
    @Test
@@ -88,7 +89,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
-      Assert.assertEquals(401, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
    }
 
    @Test
@@ -106,7 +107,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
-      Assert.assertEquals(401, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
    }
 
    @Test
@@ -123,7 +124,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
-      Assert.assertEquals(404, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
    }
 
 
@@ -142,7 +143,7 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
-      Assert.assertEquals(200, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
    }
 
 
@@ -161,6 +162,6 @@ public class DataStoreTest {
       final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
-      Assert.assertEquals(404, stubResponse.getHttpStatus());
+      Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
    }
 }

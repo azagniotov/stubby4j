@@ -104,6 +104,7 @@
                </archive>
             </configuration>
          </plugin>
+            <!-- ${project.build.outputDirectory} ${basedir}-->
 
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -184,6 +185,25 @@
             </executions>
          </plugin>
 
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+               <execution>
+                  <id>Copy Artifact</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                     <executable>
+                        ${basedir}/copy-artifact.sh
+                     </executable>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
          <!--
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
