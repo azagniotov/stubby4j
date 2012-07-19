@@ -27,6 +27,27 @@ public class CommandLineIntepreterTest {
       Assert.assertEquals(false, isYamlProvided);
    }
 
+   @Test
+   public void shouldBeTrueWhenSslIsRequested() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{"--" + CommandLineIntepreter.OPTION_KEYSTORE, "keystore.crt"});
+      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
+      Assert.assertEquals(true, isSslRequested);
+   }
+
+   @Test
+   public void shouldBeTrueWhenSslIsRequestedShortConfigOption() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{"-k", "keystore.crt"});
+      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
+      Assert.assertEquals(true, isSslRequested);
+   }
+
+   @Test
+   public void shouldBeFalseWhenSslIsNotRequested() throws Exception {
+      CommandLineIntepreter.parseCommandLine(new String[]{"alex", "zagniotov"});
+      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
+      Assert.assertEquals(false, isSslRequested);
+   }
+
    @Test(expected = ParseException.class)
    public void shouldFailOnInvalidCommandlineLongOptionString() throws Exception {
       CommandLineIntepreter.parseCommandLine(new String[]{"--alex"});
@@ -73,5 +94,11 @@ public class CommandLineIntepreterTest {
       CommandLineIntepreter.parseCommandLine(new String[]{"--config", "somefilename.yaml", "-c", "12345", "--adminport", "567"});
       final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
       Assert.assertEquals(3, params.size());
+   }
+
+   @Test
+   public void shouldGetCurrentJarLocation() throws Exception {
+      final String currentJarLocation = CommandLineIntepreter.getCurrentJarLocation(CommandLineIntepreter.class);
+      Assert.assertEquals("stubby4j-x.x.x-SNAPSHOT.jar", currentJarLocation);
    }
 }

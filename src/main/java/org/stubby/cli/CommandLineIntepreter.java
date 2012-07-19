@@ -70,7 +70,7 @@ public final class CommandLineIntepreter {
       line = parser.parse(options, args);
    }
 
-   private static String getCurrentJarLocation(final Class theclass) {
+   protected static String getCurrentJarLocation(final Class theclass) {
       final URL location = theclass.getProtectionDomain().getCodeSource().getLocation();
       try {
          final String jar = new File(location.getFile()).getName();

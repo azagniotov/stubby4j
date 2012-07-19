@@ -79,6 +79,7 @@ final class Stubby4JClientImpl implements Stubby4JClient {
       final URL url = new URL(urlString);
 
       final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+      httpURLConnection.setRequestMethod(clientRequest.getMethod());
 
       if (clientRequest.getBase64encodedCredentials() != null) {
          httpURLConnection.setRequestProperty("Authorization", "Basic " + clientRequest.getBase64encodedCredentials());

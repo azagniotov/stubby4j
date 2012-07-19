@@ -138,7 +138,9 @@ public final class YamlConsumer {
                continue;
 
             default:
-               bindYamlValueToPojo(keyValuePair, parentStub);
+               if (parentStub != null) {
+                  bindYamlValueToPojo(keyValuePair, parentStub);
+               }
          }
       }
       return httpLifecycles;
