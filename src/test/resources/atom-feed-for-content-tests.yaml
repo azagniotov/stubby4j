@@ -1,5 +1,4 @@
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /item/8
    response:
@@ -9,8 +8,7 @@ httplifecycle:
       body: {"id" : "8", "description" : "butter"}
 
 
-httplifecycle:
-   request:
+-  request:
       method: POST
       url: /item/1
       postBody: post body

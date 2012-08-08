@@ -1,5 +1,4 @@
-httplifecycle:
-   request:
+-  request:
       method: GET
       headers:
          content-type: application/json
@@ -8,11 +7,11 @@ httplifecycle:
    response:
       headers:
          content-type: application/text
+         access-control-allow-origin: "*"
       status: 200
       body: This is a response for 123
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /invoice/567
       headers:

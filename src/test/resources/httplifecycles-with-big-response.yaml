@@ -1,5 +1,4 @@
-httplifecycle:
-   request:
+-  request:
       method: GET
       headers:
          content-type: application/json

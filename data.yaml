@@ -1,5 +1,4 @@
-httplifecycle:
-   request:
+-  request:
       method: GET
       headers:
          content-type: application/json
@@ -11,8 +10,7 @@ httplifecycle:
       status: 200
       body: This is a response for 123
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /invoice/567
       headers:
@@ -25,8 +23,7 @@ httplifecycle:
       headers:
          content-type: application/momo
  
-httplifecycle:
-   request:
+-  request:
       method: GET
       headers:
          content-type: application/json
@@ -38,8 +35,7 @@ httplifecycle:
       status: 200
       body: {"id":1000054, "version":1, "maxSeedRecordId":56268, "orderType":"Initial", "status":"Draft"}
  
-httplifecycle:
-   request:
+-  request:
       method: POST
       url: /invoice/45
       headers:

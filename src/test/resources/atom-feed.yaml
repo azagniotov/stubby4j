@@ -1,5 +1,4 @@
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /item/redirect
 
@@ -10,8 +9,7 @@ httplifecycle:
          location: /item/1
       body:
 
-httplifecycle:
-   request:                                                                                                             
+-  request:
       method: GET                                                                                                       
       url: /atomfeed/1                                                                                                 
                                                                                                                         
@@ -21,8 +19,7 @@ httplifecycle:
       status: 200                                                                                                       
       body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode><invoiceDate>2012-06-27 14:51:26.416 PDT</invoiceDate><invoiceAmount>880.10</invoiceAmount><poNumber>1000054</poNumber><invoiceNumber>23423423</invoiceNumber><invoiceCurrencyCode>USD</invoiceCurrencyCode><vendorNumber>12345</vendorNumber><paymentDetails><paymentDetail><lineNumber>123</lineNumber><amount>20.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>ITEM</lineTypeLookupCode><taxCode /></paymentDetail><paymentDetail><lineNumber>124</lineNumber><amount>80.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>TEXT</lineTypeLookupCode><taxCode>VAT10</taxCode></paymentDetail></paymentDetails></payment>
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /item/1
 
@@ -33,8 +30,7 @@ httplifecycle:
       body: {"id" : "1", "description" : "milk"}
 
 
-httplifecycle:
-   request:
+-  request:
       headers:
          authorization: bob:secret
       method: GET
@@ -47,8 +43,7 @@ httplifecycle:
       body: {"id" : "8", "description" : "authorized"}
 
 
-httplifecycle:
-   request:
+-  request:
       method: POST
       url: /item/1
       postBody: post body

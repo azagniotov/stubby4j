@@ -113,14 +113,15 @@ public final class YamlConsumer {
             continue;
          }
 
+         if (yamlLine.trim().startsWith("-")) {
+             parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
+             httpLifecycles.add(parentStub);
+             yamlLine = yamlLine.replaceFirst("-", " ");
+         }
+
          final Map<String, String> keyValuePair = breakDownYamlLineToKeyValuePair(yamlLine);
 
          switch (YamlParentNodes.getFor(keyValuePair.get(YAMLLINE_KEY))) {
-
-            case HTTPLIFECYCLE:
-               parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
-               httpLifecycles.add(parentStub);
-               continue;
 
             case REQUEST:
                if (parentStub != null) {
@@ -170,7 +171,11 @@ public final class YamlConsumer {
          setYamlValueToFieldProperty(parentStub, nodeName, nodeValue, YamlParentNodes.RESPONSE);
 
       } else {
-         setYamlValueToHeaderProperty(parentStub, nodeName, nodeValue);
+         String trimmedNodeValue = nodeValue.trim();
+         if(trimmedNodeValue.startsWith("\"") && trimmedNodeValue.endsWith("\"")){
+             trimmedNodeValue = trimmedNodeValue.substring(1, trimmedNodeValue.length() -1);
+         }
+         setYamlValueToHeaderProperty(parentStub, nodeName, trimmedNodeValue);
       }
    }
 

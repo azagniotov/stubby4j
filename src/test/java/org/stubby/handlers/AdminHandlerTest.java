@@ -150,8 +150,8 @@ public class AdminHandlerTest {
       when(mockDataStore.getStubHttpLifecycles()).thenReturn(mockStubHttpLifecycleList);
       when(mockStubHttpLifecycleList.size()).thenReturn(1);
 
-      final String postData = "httplifecycle:\n" +
-            "   request:\n" +
+      final String postData = "" +
+            "-  request:\n" +
             "      method: GET\n" +
             "      url: /item/8\n" +
             "   response:\n" +

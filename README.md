@@ -40,9 +40,8 @@ YAML Configuration
 
 When creating request/response data for the stub server, the config data should be specified in YAML-like syntax:
 
-```
-httplifecycle:
-   request:
+```yaml
+-  request:
       method: GET
       url: /invoice/123
       headers:
@@ -51,8 +50,7 @@ httplifecycle:
       status: 200
       body: This is a response for 123
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /invoice/567
    response:
@@ -63,8 +61,7 @@ httplifecycle:
       latency: 5000
       status: 503
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       headers:
          content-type: application/json
@@ -79,8 +76,7 @@ httplifecycle:
       latency: 1000
       body: This is a response for 123
 
-httplifecycle:
-   request:
+-  request:
       method: GET
       url: /item/redirect
 
@@ -92,18 +88,17 @@ httplifecycle:
       body:
 ```
 
-1. The parent node called `httplifecycle`. You can have as many httplifecycles as you want in one configuration.
-2. Under each `httplifecycle` you should have one `request` and one `response` nodes. Each of the latter has its
-respective children nodes as per above example.
+1. Each item in the yaml list is an HTTP life-cycle. You can have as many life-cycles as you want in one configuration.
+2. Each HTTP life-cycle has one `request` and one `response` node. Each of these in turn has its
+respective child nodes as per the above example.
 3. Response `latency` is in milliseconds.
 4. In order to enable 30x redirects, please refer to the above example. In other words, configure `response` header
 `location` with the location URL of the expected redirect
-5. Indentation of `httplifecycle` is _not_ required. In other words, the following format is also valid:
+5. Indentation is _not_ required. In other words, the following format is also valid:
 
 
 ```
-httplifecycle:
-request:
+-request:
 headers:
 authorization: bob:secret
 method: GET
@@ -115,8 +110,7 @@ access-control-allow-origin: *
 status: 200
 body: {"message" : "This is a response for 123"}
 
-httplifecycle:
-request:
+-request:
 method: POST
 url: /invoice/123
 postBody: post body
@@ -124,8 +118,7 @@ response:
 status: 200
 body: This is a response for 123
 
-httplifecycle:
-request:
+-request:
 method: GET
 url: /item/redirect
 
@@ -138,10 +131,10 @@ body:
 ```
 
 Please keep in mind:
-1. Ensure that the provided `response` body is on one line. In other words, no line breaks.
-2. Because stubby4j listens on its own port, due to Ajax same-origin policy
-the `access-control-allow-origin: *` header has to be sent with HTTP response. In other words, if your web app running
-on `localhost:8080`, submitting Ajax request to `localhost:8882` (stubby4j) is not allowed unless correct headers are set
+1. The provided `response` body is on one line. In other words, no line breaks.
+2. Due to the facts that stubby4j listens on its own port and Ajax same-origin policies
+the `access-control-allow-origin: *` header has to be sent with the HTTP response. In other words, if your web app is running at
+on `localhost:8080`, submitting Ajax requests to `localhost:8882` (stubby4j) is not allowed unless this header is set
 ________________________________________________
 
 Commandline Usage
@@ -160,7 +153,7 @@ java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-k <arg>] [-
 ```
 
 1. By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
-2. For system status (ATM it is just a dump of in-memory stub configuration), navigate to `http://<host>:<admin_port>/ping`
+2. For system status (at the moment it is just a dump of in-memory stub configuration), navigate to `http://<host>:<admin_port>/ping`
 3. It is possible to enable stubby4j to accept HTTP requests over SSL. Use command line options as per above example to provide
 SSL certificate and password. The default SSL port is `7443`
 
@@ -168,7 +161,7 @@ ________________________________________________
 
 Starting stubby4j programmatically
 ==================================
-```
+```java
 private static Stubby4JClient stubby4JClient;
 
 @BeforeClass
@@ -188,7 +181,7 @@ public static void afterClass() throws Exception {
 
 OR
 
-```
+```java
 @BeforeClass
 public static void beforeClass() throws Exception {
    stubby4JClient = Stubby4JClientFactory.getInstance();
@@ -205,7 +198,7 @@ public static void afterClass() throws Exception {
 
 OR
 
-```
+```java
 @BeforeClass
 public static void beforeClass() throws Exception {
    int clientPort = 8888;
@@ -228,7 +221,7 @@ ________________________________________________
 Making HTTP requests to stubby4j at runtime using stubby4j client
 =================================================================
 
-```
+```java
 @Test
 public void shouldDoGetOnURI() throws Exception {
    final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
@@ -256,9 +249,8 @@ Making HTTP requests to stubby4j at runtime using stubby4j client with Basic Aut
 In order to configure Basic Authorization, you need to specify username followed by `:`, followed by password
 as `authorization` header value in the stub `request` configuration:
 
-```
-httplifecycle:
-   request:
+```yaml
+-  request:
       method: GET
       url: /invoice/123
       headers:
@@ -272,7 +264,7 @@ Upon parsing of the stub config data, base64 encoding scheme will be applied to 
 will be prepended with the word "Basic". The final result will conform to HTTP header `Authorization` format, eg.: `Basic Ym9iOnNlY3JldA==`
 
 
-```
+```java
 @Test
 public void shouldDoGetOnURIWithAuthorization() throws Exception {
    final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
@@ -297,8 +289,7 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 ###### The POSTed stub data should have the same structure as the config data from YAML configuration, eg.:
 
 ```
-httplifecycle:
-request:
+-request:
 headers:
 authorization: bob:secret
 method: GET
@@ -310,8 +301,7 @@ access-control-allow-origin: *
 status: 200
 body: {"message" : "This is a response for 123"}
 
-httplifecycle:
-request:
+-request:
 method: POST
 url: /invoice/123
 postBody: post body
@@ -320,7 +310,7 @@ status: 200
 body: This is a response for 123
 ```
 
-```
+```java
 @Test
 public void shouldCreateStubbedData() throws Exception {
    final URL url = Stubby4JAdminClientIntegrationTest.class.getResource("/config.yaml");
