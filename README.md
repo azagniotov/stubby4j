@@ -56,7 +56,7 @@ When creating request/response data for the stub server, the config data should 
    response:
       headers:
          content-type: application/json
-         access-control-allow-origin: *
+         access-control-allow-origin: "*"
       body: {"name" : "stubby4j"}
       latency: 5000
       status: 503
@@ -71,7 +71,7 @@ When creating request/response data for the stub server, the config data should 
    response:
       headers:
          content-type: application/text
-         access-control-allow-origin: *
+         access-control-allow-origin: "*"
       status: 200
       latency: 1000
       body: This is a response for 123
@@ -106,7 +106,7 @@ url: /invoice/123
 response:
 headers:
 content-type: application/json
-access-control-allow-origin: *
+access-control-allow-origin: "*"
 status: 200
 body: {"message" : "This is a response for 123"}
 
@@ -297,7 +297,7 @@ url: /invoice/123
 response:
 headers:
 content-type: application/json
-access-control-allow-origin: *
+access-control-allow-origin: "*"
 status: 200
 body: {"message" : "This is a response for 123"}
 
