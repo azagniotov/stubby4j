@@ -37,7 +37,7 @@ public class YamlConsumerTest {
             "request=StubRequest{url='/invoice/123', method='GET', postBody='null', " +
             "headers={content-type=application/json}}, " +
             "response=StubResponse{status='200', body='This is a response for 123', " +
-            "headers={content-type=application/text}}}, " +
+            "headers={content-type=application/text, access-control-allow-origin=*}}}, " +
             "StubHttpLifecycle{" +
             "request=StubRequest{url='/invoice/567', method='GET', postBody='null', " +
             "headers={content-type=application/alex, pragma=no-cache}}, " +

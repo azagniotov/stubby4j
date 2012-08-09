@@ -39,8 +39,7 @@ public class JettyOrchestratorTest {
    @Test
    public void shouldVerifyBehaviourWhenRegistereringValidStubData() throws Exception {
       jettyOrchestrator.registerStubData("" +
-            "httplifecycle:\n" +
-            "   request:\n" +
+            "-  request:\n" +
             "      method: GET\n" +
             "      url: /item/redirect\n" +
             "\n" +
