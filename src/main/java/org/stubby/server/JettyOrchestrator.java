@@ -73,11 +73,17 @@ public class JettyOrchestrator {
    }
 
    public void startJetty() throws Exception {
-      server.setConnectors(buildConnectorList());
-      server.setHandler(buildHandlerList());
-      server.setStopAtShutdown(true);
-      if (server != null && !server.isStarting() && !server.isStarted()) {
+      do {
+         stopServer();
+      }
+      while (!server.isStopped());
+
+      if (!server.isStarting() && !server.isStarted()) {
+         server.setConnectors(buildConnectorList());
+         server.setHandler(buildHandlerList());
          server.start();
+      } else {
+         logger.info("Could not start Jetty - it has been already started, how so?!");
       }
    }
 
@@ -104,12 +110,23 @@ public class JettyOrchestrator {
    }
 
    public void stopJetty() {
+
+      try {
+         if (server != null && !server.isStopped()) {
+            logger.info("Shutting down the server...");
+            stopServer();
+            logger.info("Server has stopped.");
+         }
+      } catch (Exception ex) {
+         logger.info("Error when stopping Jetty server: " + ex.getMessage());
+      }
+      /*
       new Thread() {
          public void run() {
             try {
                if (server != null && !server.isStopped()) {
                   logger.info("Shutting down the server...");
-                  server.stop();
+                  stopServer();
                   logger.info("Server has stopped.");
                }
             } catch (Exception ex) {
@@ -117,6 +134,13 @@ public class JettyOrchestrator {
             }
          }
       }.start();
+      */
+   }
+
+   private void stopServer() throws Exception {
+      server.setGracefulShutdown(250);
+      server.setStopAtShutdown(true);
+      server.stop();
    }
 
    private Connector[] buildConnectorList() {
