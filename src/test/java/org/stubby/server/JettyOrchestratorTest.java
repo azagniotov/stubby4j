@@ -1,6 +1,10 @@
 package org.stubby.server;
 
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -12,6 +16,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Alexander Zagniotov
@@ -51,5 +56,25 @@ public class JettyOrchestratorTest {
    @Test(expected = Stubby4JException.class)
    public void shouldNotRegisterStubData() throws Exception {
       jettyOrchestrator.registerStubData("alex");
+   }
+
+   @Test
+   public void shouldVerifyBehaviourWhenSslConfigured() throws Exception {
+
+      final Connector[] connectors = new Connector[] {new SslSocketConnector()};
+      when(mockServer.getConnectors()).thenReturn(connectors);
+
+      final boolean isSslConfigured = jettyOrchestrator.isSslConfigured();
+      Assert.assertTrue(isSslConfigured);
+   }
+
+   @Test
+   public void shouldVerifyBehaviourWhenSslNotConfigured() throws Exception {
+
+      final Connector[] connectors = new Connector[] {new SelectChannelConnector()};
+      when(mockServer.getConnectors()).thenReturn(connectors);
+
+      final boolean isSslConfigured = jettyOrchestrator.isSslConfigured();
+      Assert.assertFalse(isSslConfigured);
    }
 }

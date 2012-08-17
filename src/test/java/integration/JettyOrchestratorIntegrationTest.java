@@ -1,4 +1,4 @@
-package org.stubby.server;
+package integration;
 
 import junit.framework.Assert;
 import org.eclipse.jetty.server.Connector;
@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.DataStore;
+import org.stubby.server.JettyOrchestrator;
+import org.stubby.server.JettyOrchestratorFactory;
 
 import java.util.HashMap;
 import java.util.Map;

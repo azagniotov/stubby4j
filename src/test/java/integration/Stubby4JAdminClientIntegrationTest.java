@@ -1,10 +1,15 @@
-package org.stubby.client;
+package integration;
 
 import org.eclipse.jetty.http.HttpMethods;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.stubby.client.ClientRequestInfo;
+import org.stubby.client.Stubby4JClient;
+import org.stubby.client.Stubby4JClientFactory;
+import org.stubby.client.Stubby4JResponse;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.utils.HandlerUtils;
 
@@ -30,6 +35,12 @@ public class Stubby4JAdminClientIntegrationTest {
       content = HandlerUtils.inputStreamToString(url.openStream());
    }
 
+   @Before
+   public void beforeEach() throws Exception {
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
+   }
+
    @AfterClass
    public static void afterClass() throws Exception {
       stubby4JClient.stop();
@@ -37,7 +48,7 @@ public class Stubby4JAdminClientIntegrationTest {
    }
 
    @Test
-   public void shoudlCreateStubbedData() throws Exception {
+   public void shouldCreateStubbedData() throws Exception {
       final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
@@ -46,10 +57,7 @@ public class Stubby4JAdminClientIntegrationTest {
    }
 
    @Test
-   public void shoudlCleanUpStubbedData() throws Exception {
-
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8889, content);
-      stubby4JClient.makeRequestWith(adminRequest);
+   public void shouldCleanUpStubbedData() throws Exception {
 
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/8", "localhost", 8882);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
@@ -59,7 +67,7 @@ public class Stubby4JAdminClientIntegrationTest {
    }
 
    @Test
-   public void shoudlNotFindStubRequestFromOriginalAtomFeedData() throws Exception {
+   public void shouldNotFindStubRequestFromOriginalAtomFeedData() throws Exception {
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 

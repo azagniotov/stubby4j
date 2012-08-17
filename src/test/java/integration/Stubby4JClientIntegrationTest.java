@@ -1,4 +1,4 @@
-package org.stubby.client;
+package integration;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpMethods;
@@ -6,6 +6,10 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.stubby.client.ClientRequestInfo;
+import org.stubby.client.Stubby4JClient;
+import org.stubby.client.Stubby4JClientFactory;
+import org.stubby.client.Stubby4JResponse;
 
 import java.net.URL;
 import java.nio.charset.Charset;
