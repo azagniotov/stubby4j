@@ -144,11 +144,14 @@ public class JettyOrchestrator {
    }
 
    private Connector[] buildConnectorList() {
-      final Connector[] connectors = new Connector[]{buildClientConnector(), buildAdminConnector()};
+      final Connector[] connectors = new Connector[]{null, buildAdminConnector()};
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE) &&
             commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
-         return new Connector[]{buildSslConnector(), connectors[0], connectors[1]};
+         connectors[0] = buildSslConnector();
+      } else {
+         connectors[0] = buildClientConnector();
       }
+
       return connectors;
    }
 
@@ -156,11 +159,13 @@ public class JettyOrchestrator {
 
       final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
       final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
-
+      final int port = getSslPort(commandLineArgs);
       final SslSocketConnector sslConnector = new SslSocketConnector();
-      sslConnector.setPort(DEFAULT_SSL_PORT);
+
+      sslConnector.setPort(port);
+
       sslConnector.setName(SSL_CONNECTOR_NAME);
-      logger.info("Stubby4j SSL was set to listen on port " + DEFAULT_SSL_PORT);
+      logger.info("Stubby4j SSL was set to listen on port " + port);
 
       sslConnector.getSslContextFactory().setKeyStorePassword(password);
       sslConnector.getSslContextFactory().setTrustStorePassword(password);
@@ -229,6 +234,14 @@ public class JettyOrchestrator {
       sslContextHandler.setHandler(new SslHandler(dataStore));
 
       return sslContextHandler;
+   }
+
+   private int getSslPort(final Map<String, String> commandLineArgs) {
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
+         currentClientPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         return currentClientPort;
+      }
+      return DEFAULT_SSL_PORT;
    }
 
    private int getClientPort(final Map<String, String> commandLineArgs) {
