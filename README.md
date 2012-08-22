@@ -353,3 +353,9 @@ Special thanks fly out to the following Ninjas for their help, support and feedb
 4. Simon Brunning
 5. Ed Hewell
 6. Kenny Lin
+
+
+See Also
+========
+
+**[stubby4node](https://github.com/Afmrak/stubby4node):** A nodejs implementation of stubby
