@@ -102,25 +102,28 @@ public class YamlParser {
 
          try {
             if (value instanceof Map) {
-
-               final Map<String, String> headers = (Map<String, String>) value;
-               if (headers.containsKey(HttpRequestInfo.AUTH_HEADER)) {
-                  final String authorizationHeader = headers.get(HttpRequestInfo.AUTH_HEADER);
-                  final byte[] bytes = authorizationHeader.getBytes(Charset.forName("UTF-8"));
-                  final String encodedAuthorizationHeader = String.format("%s %s", "Basic", new String(Base64.encodeBase64(bytes)));
-                  headers.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
-               }
-
+               final Map<String, String> headers = handleHeaderValues((Map<String, String>) value);
                ReflectionUtils.setValue(target, pair.getKey(), headers);
-
                continue;
             }
             final String propertyValue = (value != null ? value.toString() : "");
             ReflectionUtils.setValue(target, pair.getKey(), propertyValue);
+
          } catch (final Exception ex) {
             throw new IOException(String.format("Could not parse YAML %s", yamlConfigFilename), ex);
          }
       }
+   }
+
+   private Map<String, String> handleHeaderValues(final Map<String, String> value) {
+      final Map<String, String> headers = (Map<String, String>) value;
+      if (headers.containsKey(HttpRequestInfo.AUTH_HEADER)) {
+         final String authorizationHeader = headers.get(HttpRequestInfo.AUTH_HEADER);
+         final byte[] bytes = authorizationHeader.getBytes(Charset.forName("UTF-8"));
+         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", new String(Base64.encodeBase64(bytes)));
+         headers.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
+      }
+      return headers;
    }
 
    private List<?> loadListOfElementsThroughSnakeYAML(final Reader io) throws IOException {
