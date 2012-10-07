@@ -69,6 +69,10 @@ public final class StubRequest {
       return headers;
    }
 
+   public void setHeaders(final Map<String, String> headers) {
+      this.headers = headers;
+   }
+
    public boolean isConfigured() {
       return (url != null && method != null);
    }

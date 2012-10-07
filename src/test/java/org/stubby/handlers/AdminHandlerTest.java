@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.stubby.database.DataStore;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import javax.servlet.ServletInputStream;
@@ -19,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.when;
 public class AdminHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);
+   private YamlParser mockYamlParser = Mockito.mock(YamlParser.class);
    private JettyOrchestrator mockJettyOrchestrator = Mockito.mock(JettyOrchestrator.class);
    private Request mockRequest = Mockito.mock(Request.class);
    private HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
@@ -57,7 +60,7 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringHandleGetRequestOnIndexPage() throws Exception {
       final String requestPathInfo = "/";
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
@@ -71,7 +74,7 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringHandleGetRequestOnPingPage() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_PING;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
@@ -87,12 +90,16 @@ public class AdminHandlerTest {
    public void verifyBehaviourDuringExceptionWhenSubmittingGetRequestOnPingPage() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_PING;
       final Class<IllegalAccessException> exceptionClass = IllegalAccessException.class;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
+      when(mockJettyOrchestrator.getDataStore()).thenReturn(mockDataStore);
+      when(mockDataStore.getStubHttpLifecycles()).thenReturn(new LinkedList<StubHttpLifecycle>());
+      when(mockJettyOrchestrator.getYamlParser()).thenReturn(mockYamlParser);
+      when(mockYamlParser.getLoadedConfigYamlPath()).thenReturn("/User/filename.yaml");
       doThrow(exceptionClass).when(mockPrintWriter).println(Mockito.anyString());
 
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       final String adminHandlerHtml = HandlerUtils.populateHtmlTemplate("index", mockHttpServletRequest.getContextPath());
@@ -104,7 +111,7 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringGetRequestOnRegisterNewEndpoint() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
@@ -122,7 +129,7 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewIncompleteEndpoint() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
@@ -139,16 +146,20 @@ public class AdminHandlerTest {
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewEndpoint() throws Exception {
       final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
-      final AdminHandler adminHandler = new AdminHandler(mockDataStore, mockJettyOrchestrator);
 
       @SuppressWarnings("unchecked")
       final List<StubHttpLifecycle> mockStubHttpLifecycleList = Mockito.mock(List.class);
 
+      when(mockJettyOrchestrator.getDataStore()).thenReturn(mockDataStore);
+      when(mockJettyOrchestrator.getYamlParser()).thenReturn(mockYamlParser);
+      when(mockYamlParser.getLoadedConfigYamlPath()).thenReturn("/User/filename.yaml");
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
       when(mockDataStore.getStubHttpLifecycles()).thenReturn(mockStubHttpLifecycleList);
       when(mockStubHttpLifecycleList.size()).thenReturn(1);
+
+      final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       final String postData = "" +
             "-  request:\n" +

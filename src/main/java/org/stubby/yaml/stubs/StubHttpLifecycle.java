@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
-import org.stubby.yaml.YamlParentNodes;
-
 /**
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
@@ -29,7 +27,6 @@ public final class StubHttpLifecycle {
 
    private StubRequest request;
    private StubResponse response;
-   private YamlParentNodes currentlyPopulated = YamlParentNodes.REQUEST;
 
    public StubHttpLifecycle(final StubRequest request, final StubResponse response) {
       this.request = request;
@@ -42,14 +39,6 @@ public final class StubHttpLifecycle {
 
    public StubResponse getResponse() {
       return response;
-   }
-
-   public final YamlParentNodes getCurrentlyPopulated() {
-      return currentlyPopulated;
-   }
-
-   public final void setCurrentlyPopulated(final YamlParentNodes currentlyPopulated) {
-      this.currentlyPopulated = currentlyPopulated;
    }
 
    public boolean isComplete() {

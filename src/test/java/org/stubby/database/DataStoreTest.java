@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.handlers.HttpRequestInfo;
-import org.stubby.yaml.YamlConsumer;
+import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubResponse;
@@ -34,7 +34,9 @@ public class DataStoreTest {
       final URL url = DataStoreTest.class.getResource("/httplifecycles-noheaders.yaml");
       Assert.assertNotNull(url);
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlFile(url.getFile());
+      final YamlParser yamlParser = new YamlParser(url.getFile());
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.load(yamlParser.buildYamlReaderFromFilename());
+
       dataStore = new DataStore();
       dataStore.setStubHttpLifecycles(stubHttpLifecycles);
    }

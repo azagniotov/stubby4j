@@ -78,21 +78,4 @@ public class RedirectResponseHandlingStrategyTest {
       verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CONNECTION, "close");
       verifyMainHeaders(mockHttpServletResponse);
    }
-
-   @Test
-   public void shouldCheckLatencyDelayWhenHandlingRedirectResponseWithLatency() throws Exception {
-
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
-
-      when(mockStubResponse.getStatus()).thenReturn("301");
-      when(mockStubResponse.getLatency()).thenReturn("100");
-
-      long before = System.currentTimeMillis();
-      redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
-      long after = System.currentTimeMillis();
-
-      Assert.assertTrue((after - before) > 100);
-
-      verifyMainHeaders(mockHttpServletResponse);
-   }
 }

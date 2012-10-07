@@ -27,7 +27,8 @@
       headers:
          content-type: application/json
       status: 200
-      body: {"id" : "1", "description" : "milk"}
+      body: >
+         {"id" : "1", "description" : "milk"}
 
 
 -  request:
@@ -40,7 +41,8 @@
       headers:
          content-type: application/json
       status: 200
-      body: {"id" : "8", "description" : "authorized"}
+      body: >
+         {"id" : "8", "description" : "authorized"}
 
 
 -  request:

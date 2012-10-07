@@ -31,11 +31,8 @@ import org.stubby.database.DataStore;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.handlers.ClientHandler;
 import org.stubby.handlers.SslHandler;
-import org.stubby.yaml.YamlConsumer;
-import org.stubby.yaml.stubs.StubHttpLifecycle;
+import org.stubby.yaml.YamlParser;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -63,10 +60,12 @@ public class JettyOrchestrator {
    private String currentHost = DEFAULT_HOST;
 
    private final Server server;
+   private final YamlParser yamlParser;
    private final DataStore dataStore;
    private final Map<String, String> commandLineArgs;
 
-   public JettyOrchestrator(final Server server, final DataStore dataStore, final Map<String, String> commandLineArgs) {
+   public JettyOrchestrator(final YamlParser yamlParser, final Server server, final DataStore dataStore, final Map<String, String> commandLineArgs) {
+      this.yamlParser = yamlParser;
       this.server = server;
       this.dataStore = dataStore;
       this.commandLineArgs = commandLineArgs;
@@ -211,7 +210,7 @@ public class JettyOrchestrator {
       final ContextHandler adminContextHandler = new ContextHandler();
       adminContextHandler.setContextPath("/");
       adminContextHandler.setConnectorNames(new String[]{ADMIN_CONNECTOR_NAME});
-      adminContextHandler.setHandler(new AdminHandler(dataStore, this));
+      adminContextHandler.setHandler(new AdminHandler(this));
 
       return adminContextHandler;
    }
@@ -272,8 +271,11 @@ public class JettyOrchestrator {
       return currentHost;
    }
 
-   public void registerStubData(final String yamlConfigurationContent) throws IOException {
-      final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.parseYamlContent(yamlConfigurationContent);
-      dataStore.setStubHttpLifecycles(httpLifecycles);
+   public DataStore getDataStore() {
+      return dataStore;
+   }
+
+   public YamlParser getYamlParser() {
+      return yamlParser;
    }
 }

@@ -29,7 +29,6 @@ import org.stubby.database.DataStore;
 import org.stubby.server.JettyOrchestrator;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.ReflectionUtils;
-import org.stubby.yaml.YamlConsumer;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -37,7 +36,12 @@ import org.stubby.yaml.stubs.StubResponse;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +59,9 @@ public final class AdminHandler extends AbstractHandler {
    private final DataStore dataStore;
    private final JettyOrchestrator jettyOrchestrator;
 
-   public AdminHandler(final DataStore dataStore, final JettyOrchestrator jettyOrchestrator) {
-      this.dataStore = dataStore;
+   public AdminHandler(final JettyOrchestrator jettyOrchestrator) {
       this.jettyOrchestrator = jettyOrchestrator;
+      this.dataStore = jettyOrchestrator.getDataStore();
    }
 
    @Override
@@ -95,7 +99,10 @@ public final class AdminHandler extends AbstractHandler {
       if (postBody == null) return;
 
       try {
-         final List<StubHttpLifecycle> stubHttpLifecycles = YamlConsumer.parseYamlContent(postBody);
+         final InputStream is = new ByteArrayInputStream(postBody.getBytes(Charset.forName("UTF-8")));
+         final Reader yamlReader = new InputStreamReader(is);
+
+         final List<StubHttpLifecycle> stubHttpLifecycles = jettyOrchestrator.getYamlParser().load(yamlReader);
          if (dataStore.getStubHttpLifecycles().size() > 0) {
             dataStore.getStubHttpLifecycles().clear();
          }
@@ -152,7 +159,7 @@ public final class AdminHandler extends AbstractHandler {
       }
 
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", "", host));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", "", YamlConsumer.LOADED_CONFIG));
+      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", "", jettyOrchestrator.getYamlParser().getLoadedConfigYamlPath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, RESOURCE_STUBDATA_NEW, host, adminPort);
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW STUB DATA POST URI", "", endpointRegistration));

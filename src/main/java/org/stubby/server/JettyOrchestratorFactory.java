@@ -21,7 +21,7 @@ package org.stubby.server;
 
 import org.eclipse.jetty.server.Server;
 import org.stubby.database.DataStore;
-import org.stubby.yaml.YamlConsumer;
+import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.IOException;
@@ -45,14 +45,17 @@ public final class JettyOrchestratorFactory {
    }
 
    public static JettyOrchestrator getInstance(final String yamlConfigFilename, final Map<String, String> commandLineArgs) throws IOException {
-      if (jettyOrchestrator == null) {
-         final DataStore dataStore = new DataStore();
-         if (yamlConfigFilename != null && !yamlConfigFilename.isEmpty()) {
-            final List<StubHttpLifecycle> httpLifecycles = YamlConsumer.parseYamlFile(yamlConfigFilename);
-            dataStore.setStubHttpLifecycles(httpLifecycles);
-         }
-         jettyOrchestrator = new JettyOrchestrator(new Server(), dataStore, commandLineArgs);
+      if (jettyOrchestrator != null) {
+         return jettyOrchestrator;
       }
+      final DataStore dataStore = new DataStore();
+      final YamlParser yamlParser = new YamlParser(yamlConfigFilename);
+      final List<StubHttpLifecycle> httpLifecycles = yamlParser.load(yamlParser.buildYamlReaderFromFilename());
+
+      dataStore.setStubHttpLifecycles(httpLifecycles);
+
+      jettyOrchestrator = new JettyOrchestrator(yamlParser, new Server(), dataStore, commandLineArgs);
+
       return jettyOrchestrator;
    }
 }

@@ -5,7 +5,8 @@
       headers:
          content-type: application/json
       status: 200
-      body: {"id" : "8", "description" : "butter"}
+      body: >
+         {"id" : "8", "description" : "butter"}
 
 
 -  request:
