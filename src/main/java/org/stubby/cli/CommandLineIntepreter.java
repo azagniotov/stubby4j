@@ -41,25 +41,25 @@ public final class CommandLineIntepreter {
    private final static CommandLineParser parser = new PosixParser();
    private final static Options options = new Options();
 
-   public static final String OPTION_ADDRESS = "address";
-   public static final String OPTION_CLIENTPORT = "clientport";
-   public static final String OPTION_ADMINPORT = "adminport";
-   public static final String OPTION_CONFIG = "config";
+   public static final String OPTION_ADDRESS = "location";
+   public static final String OPTION_CLIENTPORT = "stub";
+   public static final String OPTION_ADMINPORT = "admin";
+   public static final String OPTION_CONFIG = "data";
    public static final String OPTION_KEYSTORE = "keystore";
-   public static final String OPTION_KEYPASS = "keypassword";
+   public static final String OPTION_KEYPASS = "password";
 
    private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
    private static final String OPTION_HELP = "help";
 
    static {
-      options.addOption("a", OPTION_ADDRESS, true, "Host address that stubby4j should run on");
-      options.addOption("c", OPTION_CLIENTPORT, true, "Port for incoming client requests");
-      options.addOption("m", OPTION_ADMINPORT, true, "Port for admin status check requests");
-      options.addOption("f", OPTION_CONFIG, true, "YAML file with request/response configuration");
-      options.addOption("k", OPTION_KEYSTORE, true, "Path to a local keystore file for enabling SSL");
-      options.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file");
-      options.addOption("h", OPTION_HELP, false, "This help message");
+      options.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
+      options.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
+      options.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
+      options.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. YAML expected.");
+      options.addOption("k", OPTION_KEYSTORE, true, "Keystore file for enabling SSL.");
+      options.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
+      options.addOption("h", OPTION_HELP, false, "This help text.");
    }
 
    private CommandLineIntepreter() {

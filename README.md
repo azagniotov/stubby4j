@@ -94,62 +94,26 @@ respective child nodes as per the above example.
 3. Response `latency` is in milliseconds.
 4. In order to enable 30x redirects, please refer to the above example. In other words, configure `response` header
 `location` with the location URL of the expected redirect
-5. Indentation is _not_ required. In other words, the following format is also valid:
-
-
-```
--request:
-headers:
-authorization: bob:secret
-method: GET
-url: /invoice/123
-response:
-headers:
-content-type: application/json
-access-control-allow-origin: "*"
-status: 200
-body: {"message" : "This is a response for 123"}
-
--request:
-method: POST
-url: /invoice/123
-postBody: post body
-response:
-status: 200
-body: This is a response for 123
-
--request:
-method: GET
-url: /item/redirect
-
-response:
-latency: 1000
-status: 301
-headers:
-location: /item/1
-body:
-```
 
 Please keep in mind:
-1. The provided `response` body is on one line. In other words, no line breaks.
-2. Due to the facts that stubby4j listens on its own port and Ajax same-origin policies
+Due to the fact that stubby4j listens on its own port and AJAX same-origin policies
 the `access-control-allow-origin: *` header has to be sent with the HTTP response. In other words, if your web app is running at
-on `localhost:8080`, submitting Ajax requests to `localhost:8882` (stubby4j) is not allowed unless this header is set
+on `localhost:8080`, submitting AJAX requests to `localhost:8882` (stubby4j) is not allowed unless this header is set
 ________________________________________________
 
 Commandline Usage
 =================
 
 ```
-java -jar stubby4j-x.x.x.jar [-a <arg>] [-c <arg>] [-f <arg>] [-h] [-k <arg>] [-m <arg>] [-p <arg>]
+java -jar stubby4j-x.x.x.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>] [-l <arg>] [-p <arg>] [-s <arg>]
 
- -a,--address <arg>       Host address that stubby4j should run on
- -c,--clientport <arg>    Port for incoming client requests
- -f,--config <arg>        YAML file with request/response configuration
- -h,--help                This help message
- -k,--keystore <arg>      Path to a local keystore file for enabling SSL
- -m,--adminport <arg>     Port for admin status check requests
- -p,--keypassword <arg>   Password for the provided keystore file
+ -a,--admin <arg>      Port for admin portal. Defaults to 8889.
+ -d,--data <arg>       Data file to pre-load endpoints. YAML expected.
+ -h,--help             This help text.
+ -k,--keystore <arg>   Keystore file for enabling SSL.
+ -l,--location <arg>   Hostname at which to bind stubby.
+ -p,--password <arg>   Password for the provided keystore file.
+ -s,--stub <arg>       Port for stub portal. Defaults to 8882.
 ```
 
 1. By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
@@ -288,26 +252,26 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 
 ###### The POSTed stub data should have the same structure as the config data from YAML configuration, eg.:
 
-```
--request:
-headers:
-authorization: bob:secret
-method: GET
-url: /invoice/123
-response:
-headers:
-content-type: application/json
-access-control-allow-origin: "*"
-status: 200
-body: {"message" : "This is a response for 123"}
+```yaml
+-  request:
+      headers:
+         authorization: bob:secret
+      method: GET
+      url: /invoice/123
+   response:
+      headers:
+         content-type: application/json
+         access-control-allow-origin: "*"
+      status: 200
+      body: {"message" : "This is a response for 123"}
 
--request:
-method: POST
-url: /invoice/123
-postBody: post body
-response:
-status: 200
-body: This is a response for 123
+-  request:
+      method: POST
+      url: /invoice/123
+      post: post body
+   response:
+      status: 200
+      body: This is a response for 123
 ```
 
 ```java
