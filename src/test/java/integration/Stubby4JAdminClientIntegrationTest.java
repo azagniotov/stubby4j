@@ -10,6 +10,7 @@ import org.stubby.client.ClientRequestInfo;
 import org.stubby.client.Stubby4JClient;
 import org.stubby.client.Stubby4JClientFactory;
 import org.stubby.client.Stubby4JResponse;
+import org.stubby.handlers.AdminEndpoints;
 import org.stubby.handlers.AdminHandler;
 import org.stubby.utils.HandlerUtils;
 
@@ -37,7 +38,7 @@ public class Stubby4JAdminClientIntegrationTest {
 
    @Before
    public void beforeEach() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
    }
 
@@ -49,7 +50,7 @@ public class Stubby4JAdminClientIntegrationTest {
 
    @Test
    public void shouldCreateStubbedData() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
       Assert.assertEquals(201, stubby4JResponse.getResponseCode());

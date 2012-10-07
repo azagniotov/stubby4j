@@ -73,7 +73,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringHandleGetRequestOnPingPage() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_PING;
+      final String requestPathInfo = AdminEndpoints.PING.desc();
       final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
@@ -88,7 +88,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringExceptionWhenSubmittingGetRequestOnPingPage() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_PING;
+      final String requestPathInfo = AdminEndpoints.PING.desc();
       final Class<IllegalAccessException> exceptionClass = IllegalAccessException.class;
 
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
@@ -110,7 +110,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringGetRequestOnRegisterNewEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
+      final String requestPathInfo = AdminEndpoints.STUBDATA_NEW.desc();
       final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
@@ -128,7 +128,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewIncompleteEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
+      final String requestPathInfo = AdminEndpoints.STUBDATA_NEW.desc();
       final AdminHandler adminHandler = new AdminHandler(mockJettyOrchestrator);
 
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
@@ -145,7 +145,7 @@ public class AdminHandlerTest {
 
    @Test
    public void verifyBehaviourDuringPostRequestOnRegisterNewEndpoint() throws Exception {
-      final String requestPathInfo = AdminHandler.RESOURCE_STUBDATA_NEW;
+      final String requestPathInfo = AdminEndpoints.STUBDATA_NEW.desc();
 
       @SuppressWarnings("unchecked")
       final List<StubHttpLifecycle> mockStubHttpLifecycleList = Mockito.mock(List.class);

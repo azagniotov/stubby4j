@@ -1,7 +1,6 @@
-package org.stubby.handlers.strategy;
+package org.stubby.handlers.strategy.client;
 
 import org.apache.commons.codec.binary.Base64;
-import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
@@ -15,7 +14,7 @@ import java.nio.charset.Charset;
  * @author Alexander Zagniotov
  * @since 7/15/12, 10:47 AM
  */
-public final class UnauthorizedResponseHandlingStrategy implements HandlingStrategy {
+public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
    private final StubResponse foundStubResponse;
 

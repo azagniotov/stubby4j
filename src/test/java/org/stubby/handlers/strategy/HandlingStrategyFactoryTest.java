@@ -2,6 +2,12 @@ package org.stubby.handlers.strategy;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import org.stubby.handlers.strategy.client.DefaultResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.NotFoundResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.RedirectResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.HandlingStrategyFactory;
+import org.stubby.handlers.strategy.client.UnauthorizedResponseHandlingStrategy;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.RedirectStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
@@ -17,31 +23,31 @@ public class HandlingStrategyFactoryTest {
    public void shouldIdentifyResponseStrategyForDefaultResponse() throws Exception {
       final StubResponse stubResponse = new StubResponse();
 
-      final HandlingStrategy handlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(handlingStrategy instanceof DefaultResponseHandlingStrategy);
+      final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
+      Assert.assertTrue(stubResponseHandlingStrategy instanceof DefaultResponseHandlingStrategy);
    }
 
    @Test
    public void shouldIdentifyResponseStrategyForNotFoundResponse() throws Exception {
       final StubResponse stubResponse = new NotFoundStubResponse();
 
-      final HandlingStrategy handlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(handlingStrategy instanceof NotFoundResponseHandlingStrategy);
+      final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
+      Assert.assertTrue(stubResponseHandlingStrategy instanceof NotFoundResponseHandlingStrategy);
    }
 
    @Test
    public void shouldIdentifyResponseStrategyForUnauthorizedResponse() throws Exception {
       final StubResponse stubResponse = new UnauthorizedStubResponse();
 
-      final HandlingStrategy handlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(handlingStrategy instanceof UnauthorizedResponseHandlingStrategy);
+      final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
+      Assert.assertTrue(stubResponseHandlingStrategy instanceof UnauthorizedResponseHandlingStrategy);
    }
 
    @Test
    public void shouldIdentifyResponseStrategyForRedirectResponse() throws Exception {
       final StubResponse stubResponse = new RedirectStubResponse();
 
-      final HandlingStrategy handlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(handlingStrategy instanceof RedirectResponseHandlingStrategy);
+      final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
+      Assert.assertTrue(stubResponseHandlingStrategy instanceof RedirectResponseHandlingStrategy);
    }
 }

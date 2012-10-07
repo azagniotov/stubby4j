@@ -23,8 +23,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
-import org.stubby.handlers.strategy.HandlingStrategy;
-import org.stubby.handlers.strategy.HandlingStrategyFactory;
+import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.HandlingStrategyFactory;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -62,10 +62,10 @@ public class ClientHandler extends AbstractHandler {
 
       final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(request, postBody);
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(httpRequestInfo);
-      final HandlingStrategy strategy = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
+      final StubResponseHandlingStrategy strategyStubResponse = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
 
       try {
-         strategy.handle(response, httpRequestInfo);
+         strategyStubResponse.handle(response, httpRequestInfo);
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }

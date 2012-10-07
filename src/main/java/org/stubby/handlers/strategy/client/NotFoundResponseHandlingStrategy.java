@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy;
+package org.stubby.handlers.strategy.client;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author Alexander Zagniotov
  * @since 7/15/12, 10:47 AM
  */
-public final class NotFoundResponseHandlingStrategy implements HandlingStrategy {
+public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
    private final StubResponse foundStubResponse;
 

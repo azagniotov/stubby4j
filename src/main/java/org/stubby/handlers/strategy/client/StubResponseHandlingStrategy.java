@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy;
+package org.stubby.handlers.strategy.client;
 
 import org.stubby.handlers.HttpRequestInfo;
 
@@ -9,6 +9,6 @@ import java.io.IOException;
  * @author Alexander Zagniotov
  * @since 7/15/12, 10:46 AM
  */
-public interface HandlingStrategy {
+public interface StubResponseHandlingStrategy {
    void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException;
 }

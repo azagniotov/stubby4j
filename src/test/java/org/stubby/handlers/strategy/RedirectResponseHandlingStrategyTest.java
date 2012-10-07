@@ -3,11 +3,12 @@ package org.stubby.handlers.strategy;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.handlers.HttpRequestInfo;
+import org.stubby.handlers.strategy.client.RedirectResponseHandlingStrategy;
+import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -27,11 +28,11 @@ public class RedirectResponseHandlingStrategyTest {
    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
    private static final HttpRequestInfo mockHttpRequestInfo = Mockito.mock(HttpRequestInfo.class);
 
-   private static HandlingStrategy redirectResponseHandlingStrategy;
+   private static StubResponseHandlingStrategy redirectResponseStubResponseHandlingStrategy;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      redirectResponseHandlingStrategy = new RedirectResponseHandlingStrategy(mockStubResponse);
+      redirectResponseStubResponseHandlingStrategy = new RedirectResponseHandlingStrategy(mockStubResponse);
    }
 
    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
@@ -51,7 +52,7 @@ public class RedirectResponseHandlingStrategyTest {
       when(mockStubResponse.getStatus()).thenReturn("301");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
 
-      redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
@@ -70,7 +71,7 @@ public class RedirectResponseHandlingStrategyTest {
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
       when(mockStubResponse.getLatency()).thenReturn("100");
 
-      redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));

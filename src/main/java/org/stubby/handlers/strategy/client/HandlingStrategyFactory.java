@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy;
+package org.stubby.handlers.strategy.client;
 
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -8,7 +8,7 @@ import org.stubby.yaml.stubs.StubResponse;
  */
 public final class HandlingStrategyFactory {
 
-   public static HandlingStrategy identifyHandlingStrategyFor(final StubResponse foundStubResponse) {
+   public static StubResponseHandlingStrategy identifyHandlingStrategyFor(final StubResponse foundStubResponse) {
 
       switch (foundStubResponse.getStubResponseType()) {
          case NOTFOUND:

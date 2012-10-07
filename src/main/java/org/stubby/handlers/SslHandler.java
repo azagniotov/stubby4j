@@ -14,11 +14,8 @@ import java.io.IOException;
  */
 public final class SslHandler extends ClientHandler {
 
-   private final DataStore dataStore;
-
    public SslHandler(final DataStore dataStore) {
       super(dataStore);
-      this.dataStore = dataStore;
    }
 
    @Override
