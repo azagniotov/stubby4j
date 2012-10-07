@@ -38,7 +38,7 @@ ________________________________________________
 YAML Configuration
 ==================
 
-When creating request/response data for the stub server, the config data should be specified in YAML-like syntax:
+When creating request/response data for the stub server, the config data should be specified in valid YAML 1.1 syntax:
 
 ```yaml
 -  request:
@@ -57,7 +57,8 @@ When creating request/response data for the stub server, the config data should 
       headers:
          content-type: application/json
          access-control-allow-origin: "*"
-      body: {"name" : "stubby4j"}
+      body: >
+         {"name" : "stubby4j"}
       latency: 5000
       status: 503
 
@@ -72,9 +73,11 @@ When creating request/response data for the stub server, the config data should 
       headers:
          content-type: application/text
          access-control-allow-origin: "*"
-      status: 200
       latency: 1000
-      body: This is a response for 123
+      body: >
+         This is a response for 123, that can span across
+         multiple lines as long as appropriate indentation is in place.
+      status: 200
 
 -  request:
       method: GET
@@ -88,11 +91,13 @@ When creating request/response data for the stub server, the config data should 
       body:
 ```
 
-1. Each item in the yaml list is an HTTP life-cycle. You can have as many life-cycles as you want in one configuration.
-2. Each HTTP life-cycle has one `request` and one `response` node. Each of these in turn has its
-respective child nodes as per the above example.
-3. Response `latency` is in milliseconds.
-4. In order to enable 30x redirects, please refer to the above example. In other words, configure `response` header
+1. Each `request` in the YAML list must be prepended with the `-` sign. You can have as many `request` configurations as you want
+in one file.
+2. Each `request` must have one `response` node underneath.
+3. `body` can span across multiple lines as long as appropriate indentation is in place and block literals such as `|` or `>` are used.
+4. When specifying JSON as a `response` `body`, use block literals such as `|` or `>`.
+5. Configuration for `latency` in `'response` node is in milliseconds.
+6. In order to enable 30x redirects, please refer to the above example. In other words, configure `response` header
 `location` with the location URL of the expected redirect
 
 Please keep in mind:
@@ -221,7 +226,7 @@ as `authorization` header value in the stub `request` configuration:
          authorization: bob:secret
    response:
       status: 200
-      body: This is a response for 123
+      body: This is a response for 123,
 ```
 
 Upon parsing of the stub config data, base64 encoding scheme will be applied to the provided `username:password` value, which
@@ -263,7 +268,8 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
          content-type: application/json
          access-control-allow-origin: "*"
       status: 200
-      body: {"message" : "This is a response for 123"}
+      body: >
+         {"message" : "This is a response for 123"}
 
 -  request:
       method: POST
@@ -306,6 +312,7 @@ The following dependencies embedded within stubby4j:
 6. jetty-util-8.1.1.v20120215.jar
 7. commons-cli-1.2.jar
 8. commons-codec-1.5.jar
+9. snakeyaml-1.11.jar
 
 Kudos
 =====
