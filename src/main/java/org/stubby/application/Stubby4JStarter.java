@@ -33,31 +33,49 @@ final class Stubby4JStarter {
 
    public static void main(final String[] args) {
 
+      parseCommandLineArgs(args);
+      printHelpIfRequested();
+      verifyYamlDataProvided();
+      startStubby4jUsingCommandLineArgs();
+   }
+
+   private static void parseCommandLineArgs(final String[] args) {
       try {
          CommandLineIntepreter.parseCommandLine(args);
-      } catch (ParseException e) {
-         e.printStackTrace();
+      } catch (final ParseException ex) {
+         final String msg = String.format("Could not parse provided command line arguments, error: %s", ex.toString());
+         System.err.println(msg);
          System.exit(1);
       }
+   }
+
+   private static void printHelpIfRequested() {
       if (CommandLineIntepreter.isHelp()) {
          CommandLineIntepreter.printHelp(Stubby4JStarter.class);
+      }
+   }
 
-      } else if (!CommandLineIntepreter.isYamlProvided()) {
-         System.err.println("\n\nYAML configuration was not provided using command line option '-f' or '--config'.\nPlease run again with option '--help'\n\n");
+   private static void verifyYamlDataProvided() {
+      if (!CommandLineIntepreter.isYamlProvided()) {
+         final String msg = String.format("YAML data was not provided using command line option '--%s'. \nTo see all command line options run again with option '--%s'",
+               CommandLineIntepreter.OPTION_CONFIG,
+               CommandLineIntepreter.OPTION_HELP);
+         System.err.println(msg);
          System.exit(1);
+      }
+   }
 
-      } else {
+   private static void startStubby4jUsingCommandLineArgs() {
+      try {
+         final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
+         final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
 
-         try {
-            final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
-            final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
+         JettyOrchestratorFactory.getInstance(yamlConfigFilename, commandLineArgs).startJetty();
 
-            JettyOrchestratorFactory.getInstance(yamlConfigFilename, commandLineArgs).startJetty();
-
-         } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-         }
+      } catch (final Exception ex) {
+         final String msg = String.format("Could not start stubby4j, error: %s", ex.toString());
+         System.err.println(msg);
+         System.exit(1);
       }
    }
 }

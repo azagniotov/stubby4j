@@ -50,7 +50,7 @@ public final class CommandLineIntepreter {
 
    private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
-   private static final String OPTION_HELP = "help";
+   public static final String OPTION_HELP = "help";
 
    static {
       options.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
