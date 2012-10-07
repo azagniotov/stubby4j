@@ -13,6 +13,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -56,67 +58,68 @@ public class YamlParser {
 
    @SuppressWarnings("unchecked")
    public List<StubHttpLifecycle> load(final Reader io) throws IOException {
+
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
+      final List<?> loadedYamlData = loadYamlData(io);
 
-      final List<?> parseYAMLContents = loadListOfElementsThroughSnakeYAML(io);
+      if (loadedYamlData.isEmpty()) return httpLifecycles;
 
-      if (parseYAMLContents.isEmpty()) {
-         return httpLifecycles;
-      }
+      for (final Object rawParentNode : loadedYamlData) {
 
-      for (final Object yamlSectionObj : parseYAMLContents) {
-
-         final LinkedHashMap<String, LinkedHashMap> yamlSection = (LinkedHashMap<String, LinkedHashMap>) yamlSectionObj;
+         final LinkedHashMap<String, LinkedHashMap> parentNode = (LinkedHashMap<String, LinkedHashMap>) rawParentNode;
 
          final StubHttpLifecycle parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
          httpLifecycles.add(parentStub);
 
-         mapYamlContentToPojos(parentStub, yamlSection);
+         mapParentYamlNodeToPojo(parentStub, parentNode);
       }
 
       return httpLifecycles;
    }
 
    @SuppressWarnings("unchecked")
-   private void mapYamlContentToPojos(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> yamlSection) throws IOException {
-      for (final Map.Entry<String, LinkedHashMap> section : yamlSection.entrySet()) {
+   protected void mapParentYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws IOException {
+      for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
 
-         final LinkedHashMap<String, Object> keyValuePair = (LinkedHashMap<String, Object>) section.getValue();
+         final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
 
-         switch (YamlParentNodes.getFor(section.getKey())) {
+         switch (YamlParentNodes.getFor(parent.getKey())) {
             case REQUEST:
-               mapYamlNodeToPojoProperty(parentStub.getRequest(), keyValuePair);
+               mapHttpSettingsToPojo(parentStub.getRequest(), httpSettings);
                break;
 
             case RESPONSE:
-               mapYamlNodeToPojoProperty(parentStub.getResponse(), keyValuePair);
+               mapHttpSettingsToPojo(parentStub.getResponse(), httpSettings);
 
          }
       }
    }
 
    @SuppressWarnings("unchecked")
-   private void mapYamlNodeToPojoProperty(final Object target, final LinkedHashMap<String, Object> keyValuePair) throws IOException {
-      for (final Map.Entry<String, Object> pair : keyValuePair.entrySet()) {
+   protected void mapHttpSettingsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws IOException {
+
+      for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
          final Object value = pair.getValue();
+         final String propertyName = pair.getKey();
 
          try {
             if (value instanceof Map) {
-               final Map<String, String> headers = handleHeaderValues((Map<String, String>) value);
-               ReflectionUtils.setValue(target, pair.getKey(), headers);
+               final Map<String, String> headers = encodeAuthorizationHeader((Map<String, String>) value);
+               ReflectionUtils.setPropertyValue(target, propertyName, headers);
                continue;
             }
+
             final String propertyValue = (value != null ? value.toString() : "");
-            ReflectionUtils.setValue(target, pair.getKey(), propertyValue);
+            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
 
          } catch (final Exception ex) {
-            throw new IOException(String.format("Could not assign value '%s' to property '%s' on POJO: %s", value, pair.getKey(), target.getClass().getCanonicalName()), ex);
+            throw new IOException(String.format("Could not assign value '%s' to property '%s' on POJO: %s", value, propertyName, target.getClass().getCanonicalName()), ex);
          }
       }
    }
 
-   private Map<String, String> handleHeaderValues(final Map<String, String> value) {
+   protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {
       if (!value.containsKey(HttpRequestInfo.AUTH_HEADER))
          return value;
 
@@ -128,13 +131,13 @@ public class YamlParser {
       return value;
    }
 
-   private List<?> loadListOfElementsThroughSnakeYAML(final Reader io) throws IOException {
+   protected List<?> loadYamlData(final Reader io) throws IOException {
       try {
          final Yaml yaml = new Yaml();
          final Object loadedYaml = yaml.load(io);
 
          if (!(loadedYaml instanceof ArrayList)) {
-            throw new IOException(String.format("Loaded conetnt from YAML %s is not an instance of ArrayList", yamlConfigFilename));
+            throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
          }
 
          return (ArrayList<?>) loadedYaml;

@@ -5,5 +5,5 @@
 # Will work with spaces and other weird characters
 # Quote everything so that no strange characters can cause havoc
  DIR="$( cd "$( dirname "$0" )" && pwd )"
- cp $DIR/target/stubby4j-1.0.2.jar $DIR/artifact/stubby4j-1.0.2.jar
- echo "[INFO] Copied $DIR/target/stubby4j-1.0.2.jar to $DIR/artifact/"
+ cp $DIR/target/stubby4j-1.0.3.jar $DIR/artifact/stubby4j-1.0.3.jar
+ echo "[INFO] Copied $DIR/target/stubby4j-1.0.3.jar to $DIR/artifact/"

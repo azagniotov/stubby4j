@@ -26,8 +26,6 @@ package org.stubby.yaml;
 public enum YamlParentNodes {
    REQUEST("request"),
    RESPONSE("response"),
-   HEADERS("headers"),
-   HTTPLIFECYCLE("httplifecycle"),
    NULL("");
 
    private final String description;

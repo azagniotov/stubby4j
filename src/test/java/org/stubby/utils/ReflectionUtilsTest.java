@@ -43,7 +43,7 @@ public class ReflectionUtilsTest {
       final StubRequest stubRequest = new StubRequest();
       Assert.assertEquals(null, stubRequest.getUrl());
 
-      ReflectionUtils.setValue(stubRequest, "url", "google.com");
+      ReflectionUtils.setPropertyValue(stubRequest, "url", "google.com");
       Assert.assertEquals("google.com", stubRequest.getUrl());
    }
 
@@ -52,7 +52,7 @@ public class ReflectionUtilsTest {
       final StubRequest stubRequest = new StubRequest();
       Assert.assertEquals(null, stubRequest.getUrl());
 
-      ReflectionUtils.setValue(stubRequest, "blah", "google.com");
+      ReflectionUtils.setPropertyValue(stubRequest, "blah", "google.com");
       Assert.assertEquals(null, stubRequest.getUrl());
    }
 }

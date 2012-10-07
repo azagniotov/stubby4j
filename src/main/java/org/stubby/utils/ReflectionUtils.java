@@ -52,7 +52,7 @@ public final class ReflectionUtils {
       return false;
    }
 
-   public static void setValue(final Object object, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
+   public static void setPropertyValue(final Object object, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
       for (final Method method : object.getClass().getDeclaredMethods()) {
          if (method.getName().equalsIgnoreCase("set" + fieldName)) {
             method.invoke(object, value);
