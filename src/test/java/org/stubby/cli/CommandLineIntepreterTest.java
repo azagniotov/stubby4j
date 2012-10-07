@@ -15,7 +15,7 @@ public class CommandLineIntepreterTest {
 
    @Test
    public void shouldBeTrueWhenYamlIsProvided() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"--config", "somefilename.yaml"});
+      CommandLineIntepreter.parseCommandLine(new String[]{"--data", "somefilename.yaml"});
       final boolean isYamlProvided = CommandLineIntepreter.isYamlProvided();
       Assert.assertEquals(true, isYamlProvided);
    }
@@ -65,7 +65,7 @@ public class CommandLineIntepreterTest {
 
    @Test(expected = MissingArgumentException.class)
    public void shouldFailOnMissingArgumentForExistingLongOption() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"--config"});
+      CommandLineIntepreter.parseCommandLine(new String[]{"--data"});
    }
 
    @Test
@@ -91,7 +91,7 @@ public class CommandLineIntepreterTest {
 
    @Test
    public void shouldReturnCommandlineParams() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"--config", "somefilename.yaml", "-c", "12345", "--adminport", "567"});
+      CommandLineIntepreter.parseCommandLine(new String[]{"--data", "somefilename.yaml", "-s", "12345", "--admin", "567"});
       final Map<String, String> params = CommandLineIntepreter.getCommandlineParams();
       Assert.assertEquals(3, params.size());
    }
