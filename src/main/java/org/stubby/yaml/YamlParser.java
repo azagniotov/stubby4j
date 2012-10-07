@@ -77,13 +77,13 @@ public class YamlParser {
       return httpLifecycles;
    }
 
+   @SuppressWarnings("unchecked")
    private void mapYamlContentToPojos(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> yamlSection) throws IOException {
       for (final Map.Entry<String, LinkedHashMap> section : yamlSection.entrySet()) {
-         final String key = section.getKey();
+
          final LinkedHashMap<String, Object> keyValuePair = (LinkedHashMap<String, Object>) section.getValue();
 
-         switch (YamlParentNodes.getFor(key)) {
-
+         switch (YamlParentNodes.getFor(section.getKey())) {
             case REQUEST:
                mapYamlNodeToPojoProperty(parentStub.getRequest(), keyValuePair);
                break;
@@ -95,6 +95,7 @@ public class YamlParser {
       }
    }
 
+   @SuppressWarnings("unchecked")
    private void mapYamlNodeToPojoProperty(final Object target, final LinkedHashMap<String, Object> keyValuePair) throws IOException {
       for (final Map.Entry<String, Object> pair : keyValuePair.entrySet()) {
 
@@ -110,20 +111,21 @@ public class YamlParser {
             ReflectionUtils.setValue(target, pair.getKey(), propertyValue);
 
          } catch (final Exception ex) {
-            throw new IOException(String.format("Could not parse YAML %s", yamlConfigFilename), ex);
+            throw new IOException(String.format("Could not assign value '%s' to property '%s' on POJO: %s", value, pair.getKey(), target.getClass().getCanonicalName()), ex);
          }
       }
    }
 
    private Map<String, String> handleHeaderValues(final Map<String, String> value) {
-      final Map<String, String> headers = (Map<String, String>) value;
-      if (headers.containsKey(HttpRequestInfo.AUTH_HEADER)) {
-         final String authorizationHeader = headers.get(HttpRequestInfo.AUTH_HEADER);
-         final byte[] bytes = authorizationHeader.getBytes(Charset.forName("UTF-8"));
-         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", new String(Base64.encodeBase64(bytes)));
-         headers.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
-      }
-      return headers;
+      if (!value.containsKey(HttpRequestInfo.AUTH_HEADER))
+         return value;
+
+      final String authorizationHeader = value.get(HttpRequestInfo.AUTH_HEADER);
+      final byte[] bytes = authorizationHeader.getBytes(Charset.forName("UTF-8"));
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
+      value.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
+
+      return value;
    }
 
    private List<?> loadListOfElementsThroughSnakeYAML(final Reader io) throws IOException {
@@ -132,7 +134,7 @@ public class YamlParser {
          final Object loadedYaml = yaml.load(io);
 
          if (!(loadedYaml instanceof ArrayList)) {
-            throw new IOException(String.format("YAML %s was not parsed correctly", yamlConfigFilename));
+            throw new IOException(String.format("Loaded conetnt from YAML %s is not an instance of ArrayList", yamlConfigFilename));
          }
 
          return (ArrayList<?>) loadedYaml;
