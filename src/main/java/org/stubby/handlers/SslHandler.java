@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author Alexander Zagniotov
  * @since 7/4/12, 1:54 AM
  */
-public final class SslHandler extends ClientHandler {
+public final class SslHandler extends StubsHandler {
 
    public SslHandler(final DataStore dataStore) {
       super(dataStore);

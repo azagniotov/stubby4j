@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.application;
 
 import org.apache.commons.cli.ParseException;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.server.JettyOrchestratorFactory;
 
+import java.awt.*;
 import java.util.Map;
 
 final class Stubby4JStarter {
@@ -52,6 +54,7 @@ final class Stubby4JStarter {
    private static void printHelpIfRequested() {
       if (CommandLineIntepreter.isHelp()) {
          CommandLineIntepreter.printHelp(Stubby4JStarter.class);
+         System.exit(0);
       }
    }
 
@@ -69,6 +72,8 @@ final class Stubby4JStarter {
       try {
          final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
          final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
+
+         ANSITerminal.mute = CommandLineIntepreter.isMute();
 
          JettyOrchestratorFactory.getInstance(yamlConfigFilename, commandLineArgs).startJetty();
 

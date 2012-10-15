@@ -42,11 +42,12 @@ public final class CommandLineIntepreter {
    private final static Options options = new Options();
 
    public static final String OPTION_ADDRESS = "location";
-   public static final String OPTION_CLIENTPORT = "stub";
+   public static final String OPTION_CLIENTPORT = "stubs";
    public static final String OPTION_ADMINPORT = "admin";
    public static final String OPTION_CONFIG = "data";
    public static final String OPTION_KEYSTORE = "keystore";
    public static final String OPTION_KEYPASS = "password";
+   public static final String OPTION_MUTE = "mute";
 
    private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
@@ -60,6 +61,7 @@ public final class CommandLineIntepreter {
       options.addOption("k", OPTION_KEYSTORE, true, "Keystore file for enabling SSL.");
       options.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       options.addOption("h", OPTION_HELP, false, "This help text.");
+      options.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console");
    }
 
    private CommandLineIntepreter() {
@@ -81,6 +83,10 @@ public final class CommandLineIntepreter {
       } catch (Exception ignored) {
          return "stubby4j-x.x.x-SNAPSHOT.jar";
       }
+   }
+
+   public static boolean isMute() {
+      return line.hasOption(OPTION_MUTE);
    }
 
    public static boolean isSslRequested() {

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
  * @since 6/30/12, 8:15 PM
  */
 
-public class ClientHandlerTest {
+public class StubsHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);
    private Request mockRequest = Mockito.mock(Request.class);
@@ -58,8 +58,8 @@ public class ClientHandlerTest {
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.NOTFOUND);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for GET request at URI /path/1");
@@ -87,8 +87,8 @@ public class ClientHandlerTest {
          }
       });
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for POST request at URI /path/1 for post data: " + postData);
@@ -108,11 +108,11 @@ public class ClientHandlerTest {
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 
@@ -136,11 +136,11 @@ public class ClientHandlerTest {
          }
       });
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 
@@ -160,8 +160,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
@@ -183,8 +183,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "You are not authorized to view this page without supplied 'Authorization' HTTP header");
@@ -212,8 +212,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "Unauthorized with supplied encoded credentials: 'Ym9iOnNlY3JldA==' which decodes to 'bob:secret'");
@@ -240,8 +240,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
       when(mockStubResponse.getStatus()).thenReturn("200");
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, "java.lang.StringIndexOutOfBoundsException: String index out of range: -6");
@@ -267,8 +267,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
       when(mockStubResponse.getStatus()).thenReturn("200");
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "Unauthorized with supplied encoded credentials: '' which decodes to ''");
@@ -298,8 +298,8 @@ public class ClientHandlerTest {
          }
       });
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
@@ -322,8 +322,8 @@ public class ClientHandlerTest {
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 
@@ -345,8 +345,8 @@ public class ClientHandlerTest {
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
 
-      final ClientHandler clientHandler = new ClientHandler(mockDataStore);
-      clientHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
+      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
 

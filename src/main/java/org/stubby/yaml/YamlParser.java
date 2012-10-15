@@ -1,6 +1,7 @@
 package org.stubby.yaml;
 
 import org.apache.commons.codec.binary.Base64;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -13,8 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,6 +71,11 @@ public class YamlParser {
          httpLifecycles.add(parentStub);
 
          mapParentYamlNodeToPojo(parentStub, parentNode);
+
+          final String method = parentStub.getRequest().getMethod();
+          final String url = parentStub.getRequest().getUrl();
+          final String loadedMsg = String.format("Loaded: %s %s", method, url);
+          ANSITerminal.loaded(loadedMsg);
       }
 
       return httpLifecycles;

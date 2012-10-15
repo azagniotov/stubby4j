@@ -39,6 +39,7 @@ import java.io.IOException;
  * @since 6/17/12, 11:25 PM
  */
 public final class AdminHandler extends AbstractHandler {
+   private static final String NAME = "admin";
 
    private final JettyOrchestrator jettyOrchestrator;
 
@@ -51,6 +52,7 @@ public final class AdminHandler extends AbstractHandler {
                       final Request baseRequest,
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
+      HandlerUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
@@ -65,5 +67,9 @@ public final class AdminHandler extends AbstractHandler {
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
+
+      HandlerUtils.logOutgoingResponse(request, response, NAME);
    }
+
+
 }

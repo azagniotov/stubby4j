@@ -26,15 +26,15 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.DataStore;
 import org.stubby.handlers.AdminHandler;
-import org.stubby.handlers.ClientHandler;
+import org.stubby.handlers.StubsHandler;
 import org.stubby.handlers.SslHandler;
 import org.stubby.yaml.YamlParser;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 
 /**
@@ -42,11 +42,8 @@ import java.util.logging.Logger;
  * @since 6/12/12, 5:36 PM
  */
 public class JettyOrchestrator {
-
-   private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
    public static final int DEFAULT_ADMIN_PORT = 8889;
-   public static final int DEFAULT_CLIENT_PORT = 8882;
+   public static final int DEFAULT_STUBS_PORT = 8882;
    public static final int DEFAULT_SSL_PORT = 7443;
 
    public static final String DEFAULT_HOST = "localhost";
@@ -55,7 +52,7 @@ public class JettyOrchestrator {
    private static final String CLIENT_CONNECTOR_NAME = "clientConnector";
    private static final String SSL_CONNECTOR_NAME = "sslConnector";
 
-   private int currentClientPort = DEFAULT_CLIENT_PORT;
+   private int currentStubsPort = DEFAULT_STUBS_PORT;
    private int currentAdminPort = DEFAULT_ADMIN_PORT;
    private String currentHost = DEFAULT_HOST;
 
@@ -69,6 +66,7 @@ public class JettyOrchestrator {
       this.server = server;
       this.dataStore = dataStore;
       this.commandLineArgs = commandLineArgs;
+
    }
 
    public void startJetty() throws Exception {
@@ -82,7 +80,7 @@ public class JettyOrchestrator {
          server.setHandler(buildHandlerList());
          server.start();
       } else {
-         logger.info("Could not start Jetty - it has been already started, how so?!");
+         ANSITerminal.error("Could not start Jetty - it has been already started, how so?!");
       }
    }
 
@@ -112,28 +110,13 @@ public class JettyOrchestrator {
 
       try {
          if (server != null && !server.isStopped()) {
-            logger.info("Shutting down the server...");
+            ANSITerminal.status("Shutting down the server...");
             stopServer();
-            logger.info("Server has stopped.");
+            ANSITerminal.status("Server has stopped.");
          }
       } catch (Exception ex) {
-         logger.info("Error when stopping Jetty server: " + ex.getMessage());
+         ANSITerminal.error("Error when stopping Jetty server: " + ex.getMessage());
       }
-      /*
-      new Thread() {
-         public void run() {
-            try {
-               if (server != null && !server.isStopped()) {
-                  logger.info("Shutting down the server...");
-                  stopServer();
-                  logger.info("Server has stopped.");
-               }
-            } catch (Exception ex) {
-               logger.info("Error when stopping Jetty server: " + ex.getMessage());
-            }
-         }
-      }.start();
-      */
    }
 
    private void stopServer() throws Exception {
@@ -155,7 +138,6 @@ public class JettyOrchestrator {
    }
 
    private SslSocketConnector buildSslConnector() {
-
       final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
       final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
       final int port = getSslPort(commandLineArgs);
@@ -164,45 +146,44 @@ public class JettyOrchestrator {
       sslConnector.setPort(port);
 
       sslConnector.setName(SSL_CONNECTOR_NAME);
-      logger.info("Stubby4j SSL was set to listen on port " + port);
 
       sslConnector.getSslContextFactory().setKeyStorePassword(password);
       sslConnector.getSslContextFactory().setTrustStorePassword(password);
       sslConnector.getSslContextFactory().setKeyManagerPassword(password);
       sslConnector.getSslContextFactory().setKeyStorePath(keystorePath);
 
+      ANSITerminal.status("Stubs portal running at https://" + currentHost + ":" + sslConnector.getPort());
       return sslConnector;
    }
 
    private SelectChannelConnector buildAdminConnector() {
       final SelectChannelConnector adminChannel = new SelectChannelConnector();
       adminChannel.setPort(getAdminPort(commandLineArgs));
-      logger.info("Stubby4j admin was set to listen on port " + adminChannel.getPort());
 
       adminChannel.setName(ADMIN_CONNECTOR_NAME);
 
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
          adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
          currentHost = adminChannel.getHost();
-         logger.info("Stubby4j admin was set to run on host " + adminChannel.getHost());
       }
+
+      ANSITerminal.status("Admin portal running at http://" + currentHost + ":" + adminChannel.getPort());
       return adminChannel;
    }
 
    private SelectChannelConnector buildClientConnector() {
-      final SelectChannelConnector clientChannel = new SelectChannelConnector();
-      clientChannel.setPort(getClientPort(commandLineArgs));
-      logger.info("Stubby4j client was set to listen on port " + clientChannel.getPort());
-
-      clientChannel.setMaxIdleTime(30000);
-      clientChannel.setRequestHeaderSize(8192);
-      clientChannel.setName(CLIENT_CONNECTOR_NAME);
+      final SelectChannelConnector stubsChannel = new SelectChannelConnector();
+      stubsChannel.setPort(getStubsPort(commandLineArgs));
+      stubsChannel.setMaxIdleTime(30000);
+      stubsChannel.setRequestHeaderSize(8192);
+      stubsChannel.setName(CLIENT_CONNECTOR_NAME);
 
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
-         clientChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
-         logger.info("Stubby4j client was set to run on host " + clientChannel.getHost());
+         stubsChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
       }
-      return clientChannel;
+
+      ANSITerminal.status("Stubs portal running at http://" + currentHost + ":" + stubsChannel.getPort());
+      return stubsChannel;
    }
 
    private ContextHandler createAdminContextHandler() {
@@ -220,7 +201,7 @@ public class JettyOrchestrator {
       final ContextHandler clientContextHandler = new ContextHandler();
       clientContextHandler.setContextPath("/");
       clientContextHandler.setConnectorNames(new String[]{CLIENT_CONNECTOR_NAME});
-      clientContextHandler.setHandler(new ClientHandler(dataStore));
+      clientContextHandler.setHandler(new StubsHandler(dataStore));
 
       return clientContextHandler;
    }
@@ -237,18 +218,18 @@ public class JettyOrchestrator {
 
    private int getSslPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         currentClientPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
-         return currentClientPort;
+         currentStubsPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         return currentStubsPort;
       }
       return DEFAULT_SSL_PORT;
    }
 
-   private int getClientPort(final Map<String, String> commandLineArgs) {
+   private int getStubsPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         currentClientPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
-         return currentClientPort;
+         currentStubsPort = Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+         return currentStubsPort;
       }
-      return DEFAULT_CLIENT_PORT;
+      return DEFAULT_STUBS_PORT;
    }
 
    private int getAdminPort(final Map<String, String> commandLineArgs) {
@@ -259,8 +240,8 @@ public class JettyOrchestrator {
       return DEFAULT_ADMIN_PORT;
    }
 
-   public int getCurrentClientPort() {
-      return currentClientPort;
+   public int getCurrentStubsPort() {
+      return currentStubsPort;
    }
 
    public int getCurrentAdminPort() {

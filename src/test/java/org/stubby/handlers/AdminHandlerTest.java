@@ -138,7 +138,7 @@ public class AdminHandlerTest {
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
 
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CREATED_201);
    }

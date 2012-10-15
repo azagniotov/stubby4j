@@ -50,7 +50,7 @@ public class JettyOrchestratorIntegrationTest {
    public void shouldReturnDefaultClientPort() throws Exception {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, new HashMap<String, String>());
       jettyOrchestrator.startJetty();
-      Assert.assertEquals(JettyOrchestrator.DEFAULT_CLIENT_PORT, jettyOrchestrator.getCurrentClientPort());
+      Assert.assertEquals(JettyOrchestrator.DEFAULT_STUBS_PORT, jettyOrchestrator.getCurrentStubsPort());
    }
 
    @Test
@@ -63,7 +63,7 @@ public class JettyOrchestratorIntegrationTest {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, commandlineArgs);
       jettyOrchestrator.startJetty();
 
-      Assert.assertEquals(expectedClientPort, jettyOrchestrator.getCurrentClientPort());
+      Assert.assertEquals(expectedClientPort, jettyOrchestrator.getCurrentStubsPort());
    }
 
    @Test(expected = NumberFormatException.class)

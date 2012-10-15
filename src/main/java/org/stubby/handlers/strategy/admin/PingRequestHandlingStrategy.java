@@ -67,7 +67,7 @@ public class PingRequestHandlingStrategy  implements AdminRequestHandlingStrateg
       final StringBuilder builder = new StringBuilder();
 
       final String host = jettyOrchestrator.getCurrentHost();
-      final int clientPort = jettyOrchestrator.getCurrentClientPort();
+      final int clientPort = jettyOrchestrator.getCurrentStubsPort();
       final int adminPort = jettyOrchestrator.getCurrentAdminPort();
 
       builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", "", clientPort));
@@ -91,7 +91,7 @@ public class PingRequestHandlingStrategy  implements AdminRequestHandlingStrateg
       final StringBuilder builder = new StringBuilder();
 
       final String host = jettyOrchestrator.getCurrentHost();
-      final int clientPort = jettyOrchestrator.getCurrentClientPort();
+      final int clientPort = jettyOrchestrator.getCurrentStubsPort();
 
       for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
          Object value = keyValue.getValue();

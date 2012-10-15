@@ -38,7 +38,7 @@ final class Stubby4JClientImpl implements Stubby4JClient {
 
    @Override
    public void start() throws Exception {
-      start(JettyOrchestrator.DEFAULT_CLIENT_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
+      start(JettyOrchestrator.DEFAULT_STUBS_PORT, JettyOrchestrator.DEFAULT_ADMIN_PORT);
    }
 
    @Override

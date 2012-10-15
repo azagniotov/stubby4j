@@ -37,12 +37,13 @@ import java.io.IOException;
  * @author Alexander Zagniotov
  * @since 6/17/12, 11:25 PM
  */
-public class ClientHandler extends AbstractHandler {
+public class StubsHandler extends AbstractHandler {
+   private static final String NAME = "stubs";
 
    public static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
    private final DataStore dataStore;
 
-   public ClientHandler(final DataStore dataStore) {
+   public StubsHandler(final DataStore dataStore) {
       this.dataStore = dataStore;
    }
 
@@ -51,6 +52,7 @@ public class ClientHandler extends AbstractHandler {
                       final Request baseRequest,
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
+      HandlerUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
 
@@ -69,5 +71,7 @@ public class ClientHandler extends AbstractHandler {
       } catch (Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
+
+      HandlerUtils.logOutgoingResponse(request, response, NAME);
    }
 }

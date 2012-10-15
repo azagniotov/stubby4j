@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.server;
 
 import org.eclipse.jetty.server.Server;
+import org.stubby.cli.ANSITerminal;
+import org.stubby.cli.DoNothingLogger;
 import org.stubby.database.DataStore;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -54,8 +56,10 @@ public final class JettyOrchestratorFactory {
 
       dataStore.setStubHttpLifecycles(httpLifecycles);
 
+      org.eclipse.jetty.util.log.Log.setLog(new DoNothingLogger());
       jettyOrchestrator = new JettyOrchestrator(yamlParser, new Server(), dataStore, commandLineArgs);
 
+      ANSITerminal.info("\nQuit: ctrl-c\n");
       return jettyOrchestrator;
    }
 }

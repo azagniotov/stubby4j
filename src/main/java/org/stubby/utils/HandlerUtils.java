@@ -22,13 +22,15 @@ package org.stubby.utils;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.exception.Stubby4JException;
-import org.stubby.handlers.ClientHandler;
+import org.stubby.handlers.StubsHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -36,10 +38,53 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
  */
-public final class HandlerUtils {
+public class HandlerUtils {
 
    private HandlerUtils() {
 
+   }
+
+   public static void logIncomingRequest(final HttpServletRequest request, final String source) {
+
+      final String logMessage = String.format("[%s] -> %s [%s]%s",
+            getTime(),
+            request.getMethod(),
+            source,
+            request.getRequestURI()
+      );
+      ANSITerminal.incoming(logMessage);
+   }
+
+   public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponse response, final String source) {
+      final int status = response.getStatus();
+
+      final String logMessage = String.format("[%s] <- %s [%s]%s %s",
+            getTime(),
+            status,
+            source,
+            request.getRequestURI(),
+            HttpStatus.getMessage(status)
+      );
+
+      if (status >= 400 && status < 600)
+         ANSITerminal.error(logMessage);
+      else if (status >= 300)
+         ANSITerminal.warn(logMessage);
+      else if (status >= 200)
+         ANSITerminal.ok(logMessage);
+      else if (status >= 100)
+         ANSITerminal.info(logMessage);
+      else
+         ANSITerminal.log(logMessage);
+   }
+
+   private static String getTime() {
+      final Calendar now = Calendar.getInstance();
+      return String.format("%02d:%02d:%02d",
+            now.get(Calendar.HOUR_OF_DAY),
+            now.get(Calendar.MINUTE),
+            now.get(Calendar.SECOND)
+      );
    }
 
    public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
@@ -104,11 +149,11 @@ public final class HandlerUtils {
       try {
          postBody = HandlerUtils.inputStreamToString(request.getInputStream());
          if (postBody == null || postBody.isEmpty()) {
-            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
             return null;
          }
       } catch (Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, ClientHandler.BAD_POST_REQUEST_MESSAGE);
+         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
          return null;
       }
       return postBody;
