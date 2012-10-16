@@ -118,7 +118,7 @@ java -jar stubby4j-x.x.x.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>] [-l <arg>] [-
  -k,--keystore <arg>   Keystore file for enabling SSL.
  -l,--location <arg>   Hostname at which to bind stubby.
  -p,--password <arg>   Password for the provided keystore file.
- -s,--stub <arg>       Port for stub portal. Defaults to 8882.
+ -s,--stubs <arg>      Port for stubs portal. Defaults to 8882.
 ```
 
 1. By default client (the request consumer) is running on port `8882`, while admin (system status) is running on port `8889`.
