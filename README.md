@@ -7,7 +7,6 @@ A stub HTTP server written in Java with embedded Jetty server
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_ 
 
 ________________________________________________
-
 ## Why would a developer use stubby4j?
 ####You want to:
 	
@@ -36,9 +35,6 @@ ________________________________________________
 
 ###### All this goodness in just under 1.5MB
 ________________________________________________
-
-
-
 ## Dependencies
 
 stubby4j is a fat JAR, and contains the following dependencies:
@@ -54,7 +50,6 @@ stubby4j is a fat JAR, and contains the following dependencies:
 * snakeyaml-1.11.jar
 
 ________________________________________________
-
 ## Documentation
 
 See `docs` directory for:
@@ -65,25 +60,20 @@ See `docs` directory for:
 * Sample YAML configuration file (YAML.md)
 
 ________________________________________________
-
-
 ## Authors
 
 See AUTHORS.md for details.
 
 ________________________________________________
-
 ## Kudos
   
 See THANKS.md for details.
 
 ________________________________________________
-
 ## See Also
 
 **[stubby4node](https://github.com/Afmrak/stubby4node):** A NodeJS implementation of stubby4j
 
 ________________________________________________
-
 ## Copyright
 See COPYRIGHT for details.
