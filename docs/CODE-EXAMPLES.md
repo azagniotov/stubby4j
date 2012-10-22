@@ -1,4 +1,4 @@
-## Starting stubby4j programmatically
+## How to Start stubby4j Programmatically
 
 ```java
 private static Stubby4JClient stubby4JClient;
@@ -38,7 +38,7 @@ public static void afterClass() throws Exception {
 }
 ```
 
-## Making HTTP Requests to stubby4j at Runtime Using stubby4j Client
+## How to Make HTTP Request to stubby4j at Runtime Using Client
 
 ```java
 @Test
@@ -60,7 +60,7 @@ public void shouldDoPostOnURI() throws Exception {
 }
 ```
 
-## Making HTTP requests to stubby4j at runtime using stubby4j client with Basic Authorization
+## How to Make HTTP Request with Basic Authorization to stubby4j at Runtime Using Client
 
 
 In order to configure Basic Authorization, you need to specify username followed by `:`, followed by password
@@ -95,7 +95,7 @@ public void shouldDoGetOnURIWithAuthorization() throws Exception {
 
 ```
 
-## Configuring HTTP Request and Response Stubs at Runtime Without Restarting stubby4j
+## How to Configure Stub Configuration Data at Runtime
 
 In order to configure HTTP request and response stubs at runtime, you need to POST
 stub config data to the following end point: `http://<host>:<admin_port>/stubdata/new`
