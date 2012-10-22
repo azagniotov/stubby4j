@@ -95,7 +95,7 @@ public void shouldDoGetOnURIWithAuthorization() throws Exception {
 
 ```
 
-## How to Configure Stub Configuration Data at Runtime
+## How to Configure HTTP Stub Data at Runtime
 
 In order to configure HTTP request and response stubs at runtime, you need to POST
 stub config data to the following end point: `http://<host>:<admin_port>/stubdata/new`
