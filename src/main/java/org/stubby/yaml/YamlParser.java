@@ -32,12 +32,10 @@ public class YamlParser {
    }
 
    public YamlParser(final String yamlConfigFilename) {
-      synchronized (this) {
-         if (yamlConfigFilename == null) {
-            throw new IllegalArgumentException("Given YAML config filename is null!");
-         }
-         this.yamlConfigFilename = yamlConfigFilename;
+      if (yamlConfigFilename == null) {
+         throw new IllegalArgumentException("Given YAML config filename is null!");
       }
+      this.yamlConfigFilename = yamlConfigFilename;
    }
 
    public Reader buildYamlReaderFromFilename() throws IOException {
@@ -72,10 +70,10 @@ public class YamlParser {
 
          mapParentYamlNodeToPojo(parentStub, parentNode);
 
-          final String method = parentStub.getRequest().getMethod();
-          final String url = parentStub.getRequest().getUrl();
-          final String loadedMsg = String.format("Loaded: %s %s", method, url);
-          ANSITerminal.loaded(loadedMsg);
+         final String method = parentStub.getRequest().getMethod();
+         final String url = parentStub.getRequest().getUrl();
+         final String loadedMsg = String.format("Loaded: %s %s", method, url);
+         ANSITerminal.loaded(loadedMsg);
       }
 
       return httpLifecycles;

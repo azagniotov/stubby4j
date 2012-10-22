@@ -23,23 +23,6 @@ OR
 ```java
 @BeforeClass
 public static void beforeClass() throws Exception {
-   stubby4JClient = Stubby4JClientFactory.getInstance();
-   stubby4JClient.start();
-}
-.
-.
-.
-@AfterClass
-public static void afterClass() throws Exception {
-   stubby4JClient.stop();
-}
-```
-
-OR
-
-```java
-@BeforeClass
-public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = SomeClass.class.getResource("/config.yaml");
