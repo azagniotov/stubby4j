@@ -1,4 +1,4 @@
-## Usage
+## Commandline Usage
 ```
 java -jar stubby4j-x.x.x.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>]

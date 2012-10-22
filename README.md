@@ -49,9 +49,8 @@ stubby4j is a fat JAR, and contains the following dependencies:
 ## Documentation
 See `docs` directory for:
 
-* Command-line usage (USAGE.md)
-* Programmatic API (API.md)
-* Examples (EXAMPLES.md)
+* Command-line usage (COMMAND-LINE-USAGE.md)
+* Code Examples (CODE-EXAMPLES.md)
 * Sample YAML configuration file (YAML.md)
 
 
