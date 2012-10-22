@@ -106,14 +106,16 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
+
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStatus()).thenReturn("200");
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
+      verify(mockHttpServletResponse, never()).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
    }
 
    @Test
@@ -128,6 +130,8 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStatus()).thenReturn("200");
+
       final InputStream inputStream = new ByteArrayInputStream("".getBytes());
       Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
          @Override
@@ -139,9 +143,9 @@ public class StubsHandlerTest {
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
+      verify(mockHttpServletResponse, never()).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
    }
 
 

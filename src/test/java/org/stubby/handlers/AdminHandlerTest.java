@@ -134,13 +134,17 @@ public class AdminHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("post");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getContextPath()).thenReturn(requestPathInfo);
+      final InputStream inputStream = new ByteArrayInputStream("Incomplete or bad YAML structure".getBytes());
+      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+         @Override
+         public int read() throws IOException {
+            return inputStream.read();
+         }
+      });
 
       adminHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
-
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.CREATED_201);
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
    }
 
    @Test

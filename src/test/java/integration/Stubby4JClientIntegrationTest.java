@@ -141,11 +141,11 @@ public class Stubby4JClientIntegrationTest {
    }
 
    @Test
-   public void shouldFailWhenDoingEmptyPostOnURI() throws Exception {
+   public void shouldNotFailWhenDoingEmptyPostOnURI() throws Exception {
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
-      Assert.assertEquals(400, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("Oh oh :( Bad request, POST body is missing", stubby4JResponse.getContent());
+      Assert.assertEquals(404, stubby4JResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI /item/1", stubby4JResponse.getContent());
    }
 }

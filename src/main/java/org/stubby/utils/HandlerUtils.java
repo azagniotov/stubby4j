@@ -24,7 +24,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.exception.Stubby4JException;
-import org.stubby.handlers.StubsHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +41,18 @@ public class HandlerUtils {
 
    private HandlerUtils() {
 
+   }
+
+   public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
+
+      final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
+            getTime(),
+            request.getMethod(),
+            source,
+            request.getRequestURI(),
+            error
+      );
+      ANSITerminal.error(logMessage);
    }
 
    public static void logIncomingRequest(final HttpServletRequest request, final String source) {
@@ -144,19 +155,16 @@ public class HandlerUtils {
       return builder.toString();
    }
 
-   public static String extractPostRequestBody(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-      String postBody;
+   public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
+      if (!request.getMethod().equalsIgnoreCase("post")) return null;
+
       try {
-         postBody = HandlerUtils.inputStreamToString(request.getInputStream());
-         if (postBody == null || postBody.isEmpty()) {
-            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
-            return null;
-         }
-      } catch (Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, StubsHandler.BAD_POST_REQUEST_MESSAGE);
+         return HandlerUtils.inputStreamToString(request.getInputStream());
+      } catch (final Exception ex) {
+         final String err = String.format("Error when extracting POST body: %s, returning null..", ex.toString());
+         HandlerUtils.logIncomingRequestError(request, source, err);
          return null;
       }
-      return postBody;
    }
 
    public static Object highlightResponseMarkup(final Object value) {

@@ -27,8 +27,21 @@ When creating request/response data for the stub server, the config data should 
       latency: 1000
       status: 200
       body: You're request was successfully processed!
-      
-      
+
+
+-  request:
+      url: /some/uri?firstParam=1&secondParam=2
+      method: POST
+      headers:
+         authorization: bob:secret
+
+   response:
+      headers:
+         content-type: text/plain
+      status: 200
+      body: Success!
+
+
 -  request:
       method: GET
       url: /some/uri

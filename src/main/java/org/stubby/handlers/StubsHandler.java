@@ -23,8 +23,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
-import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
 import org.stubby.handlers.strategy.client.HandlingStrategyFactory;
+import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -56,12 +56,7 @@ public class StubsHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      String postBody = null;
-      if (request.getMethod().equalsIgnoreCase("post")) {
-         postBody = HandlerUtils.extractPostRequestBody(request, response);
-         if (postBody == null) return;
-      }
-
+      final String postBody = HandlerUtils.extractPostRequestBody(request, NAME);
       final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(request, postBody);
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(httpRequestInfo);
       final StubResponseHandlingStrategy strategyStubResponse = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
