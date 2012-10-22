@@ -41,6 +41,9 @@ import java.io.IOException;
 public final class AdminHandler extends AbstractHandler {
    private static final String NAME = "admin";
 
+   //Do not remove this constant without changing the example in documentation
+   public static final String RESOURCE_STUBDATA_NEW = "/stubdata/new";
+
    private final JettyOrchestrator jettyOrchestrator;
 
    public AdminHandler(final JettyOrchestrator jettyOrchestrator) {

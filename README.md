@@ -20,9 +20,9 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
-* Avoid to spend time coding for the above requirements  
+* Avoid to spend time coding for the above requirements
 * Concentrate on the task at hand
-	
+
 
 
 ## Why would a QA use stubby4j?
@@ -35,11 +35,11 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## Dependencies
 stubby4j is a fat JAR, and contains the following dependencies:
 
-* jetty-server-8.1.1.v20120215.jar 
-* javax.servlet-3.0.0.v201112011016.jar 
-* jetty-continuation-8.1.1.v20120215.jar 
-* jetty-http-8.1.1.v20120215.jar 
-* jetty-io-8.1.1.v20120215.jar 
+* jetty-server-8.1.1.v20120215.jar
+* javax.servlet-3.0.0.v201112011016.jar
+* jetty-continuation-8.1.1.v20120215.jar
+* jetty-http-8.1.1.v20120215.jar
+* jetty-io-8.1.1.v20120215.jar
 * jetty-util-8.1.1.v20120215.jar
 * commons-cli-1.2.jar
 * commons-codec-1.5.jar
@@ -49,9 +49,9 @@ stubby4j is a fat JAR, and contains the following dependencies:
 ## Documentation
 See `docs` directory for:
 
-* Command-line usage (COMMAND-LINE-USAGE.md)
-* Code Examples (CODE-EXAMPLES.md)
-* Sample YAML configuration file (YAML.md)
+* [Commandline Usage](https://github.com/azagniotov/stubby4j/blob/master/docs/COMMAND-LINE-USAGE.md)
+* [Code Examples](https://github.com/azagniotov/stubby4j/blob/master/docs/CODE-EXAMPLES.md)
+* [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 
 ## Authors
