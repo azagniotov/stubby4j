@@ -1,5 +1,4 @@
 ## AUTHORS
-___________________
 A number of people have contributed directly to stubby4j by writing
 documentation or developing software.
 
