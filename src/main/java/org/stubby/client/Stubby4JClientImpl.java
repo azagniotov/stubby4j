@@ -72,12 +72,8 @@ final class Stubby4JClientImpl implements Stubby4JClient {
    }
 
    private HttpURLConnection constructClientHttpConnection(final ClientRequestInfo clientRequest) throws IOException {
-      final String uri = clientRequest.getUri();
-      final String host = clientRequest.getHost();
-      final int clientPort = clientRequest.getClientPort();
-      final String urlString = String.format(URL_TEMPLATE, host, clientPort, uri != null ? uri : "");
-      final URL url = new URL(urlString);
 
+      final URL url = new URL(constructUrl(clientRequest));
       final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
       httpURLConnection.setRequestMethod(clientRequest.getMethod());
 
@@ -88,19 +84,29 @@ final class Stubby4JClientImpl implements Stubby4JClient {
       return httpURLConnection;
    }
 
+   private String constructUrl(final ClientRequestInfo clientRequest) {
+      final String uri = clientRequest.getUri();
+      final String host = clientRequest.getHost();
+      final int clientPort = clientRequest.getClientPort();
+
+      return String.format(URL_TEMPLATE, host, clientPort, uri != null ? uri : "");
+   }
+
    private Stubby4JResponse parseHttpResponse(final HttpURLConnection con) throws IOException {
 
-      String response;
       final int responseCode = con.getResponseCode();
 
       try {
-         response = new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next().trim();
-      } catch (Exception ex) {
-         response = con.getResponseMessage().trim();
+         final String response = new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next().trim();
+
+         return new Stubby4JResponse(responseCode, response);
+      } catch (final Exception ex) {
+         final String response = con.getResponseMessage().trim();
+
+         return new Stubby4JResponse(responseCode, response);
       } finally {
          con.disconnect();
       }
-      return new Stubby4JResponse(responseCode, response);
    }
 
    private void prepareConnectionForPOST(final HttpURLConnection con, final String postData) throws ProtocolException {

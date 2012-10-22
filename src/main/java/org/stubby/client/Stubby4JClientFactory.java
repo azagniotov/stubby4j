@@ -29,10 +29,6 @@ public final class Stubby4JClientFactory {
 
    }
 
-   public static Stubby4JClient getInstance() {
-      return new Stubby4JClientImpl();
-   }
-
    public static Stubby4JClient getInstance(final String yamlConfigurationFilename) {
       return new Stubby4JClientImpl(yamlConfigurationFilename);
    }

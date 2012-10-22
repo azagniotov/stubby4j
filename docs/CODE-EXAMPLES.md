@@ -55,8 +55,6 @@ public static void afterClass() throws Exception {
 }
 ```
 
-________________________________________________
-
 ## Making HTTP Requests to stubby4j at Runtime Using stubby4j Client
 
 ```java
@@ -78,8 +76,6 @@ public void shouldDoPostOnURI() throws Exception {
    Assert.assertEquals("Got post response", stubby4JResponse.getContent());
 }
 ```
-
-________________________________________________
 
 ## Making HTTP requests to stubby4j at runtime using stubby4j client with Basic Authorization
 
@@ -115,7 +111,6 @@ public void shouldDoGetOnURIWithAuthorization() throws Exception {
 }
 
 ```
-________________________________________________
 
 ## Configuring HTTP Request and Response Stubs at Runtime Without Restarting stubby4j
 
