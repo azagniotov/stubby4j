@@ -4,12 +4,10 @@
 
 A stub HTTP server written in Java with embedded Jetty server	
 ##### Why the word "stubby"?
-It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_ 
+It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-________________________________________________
 ## Why would a developer use stubby4j?
 ####You want to:
-	
 * Simulate responses from real server and don't care (or cannot) to go over the network
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP error codes
@@ -28,15 +26,13 @@ ________________________________________________
 
 
 ## Why would a QA use stubby4j?
-
 * Specifiable mock responses to simulate page conditions without real data.
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ###### All this goodness in just under 1.5MB
-________________________________________________
-## Dependencies
 
+## Dependencies
 stubby4j is a fat JAR, and contains the following dependencies:
 
 * jetty-server-8.1.1.v20120215.jar 
@@ -49,9 +45,8 @@ stubby4j is a fat JAR, and contains the following dependencies:
 * commons-codec-1.5.jar
 * snakeyaml-1.11.jar
 
-________________________________________________
-## Documentation
 
+## Documentation
 See `docs` directory for:
 
 * Command-line usage (USAGE.md)
@@ -59,21 +54,18 @@ See `docs` directory for:
 * Examples (EXAMPLES.md)
 * Sample YAML configuration file (YAML.md)
 
-________________________________________________
-## Authors
 
+## Authors
 See AUTHORS.md for details.
 
-________________________________________________
+
 ## Kudos
-  
 See THANKS.md for details.
 
-________________________________________________
-## See Also
 
+## See Also
 **[stubby4node](https://github.com/Afmrak/stubby4node):** A NodeJS implementation of stubby4j
 
-________________________________________________
+
 ## Copyright
 See COPYRIGHT for details.
