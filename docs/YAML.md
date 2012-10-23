@@ -3,17 +3,17 @@
 When creating request/response data for the stub server, the config data should be specified in valid YAML 1.1 syntax.
 Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a data file (`-d` or `--data`) with the following structure for each endpoint:
 
-* `request`:      (REQUIRED)     describes the client's call to the server
-   * `method`:    (REQUIRED)     GET/POST/PUT/DELETE/etc.
-   * `headers`:   (OPTIONAL)     a key/value map of HTTP headers the server should read from the request
-   * `params`:    (OPTIONAL)     a key/value map of query string params the server should read from the URI
-   * `url`:       (REQUIRED)     the URI string. Can include query string
-   * `postBody`:  (OPTIONAL)     a string matching the textual body of the response.
-* `response`:     (REQUIRED)     describes the server's response to the client
-   * `headers`:   (OPTIONAL)     a key/value map of headers the server should respond with
-   * `latency`:   (OPTIONAL)     the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
-   * `body`:      (OPTIONAL)     the textual body of the server's response to the client
-   * `status`:    (REQUIRED)     the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+* `request`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the client's call to the server
+   * `method`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GET/POST/PUT/DELETE/etc.
+   * `headers`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of HTTP headers the server should read from the request
+   * `params`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of query string params the server should read from the URI
+   * `url`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the URI string. Can include query string
+   * `postBody`:&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a string matching the textual body of the response.
+* `response`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the server's response to the client
+   * `headers`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of headers the server should respond with
+   * `latency`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delay in milliseconds the server should wait before responding
+   * `body`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the textual body of the server's response to the client
+   * `status`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
 ```yaml
 -  request:
