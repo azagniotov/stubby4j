@@ -11,3 +11,7 @@ Thumbs.db
 *-shaded.jar
 *.war
 *.ear
+# Eclipse Files #
+.classpath 
+.project
+.settings
