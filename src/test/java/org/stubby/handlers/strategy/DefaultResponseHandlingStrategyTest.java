@@ -98,7 +98,7 @@ public class DefaultResponseHandlingStrategyTest {
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
       long after = System.currentTimeMillis();
 
-      Assert.assertTrue((after - before) > 100);
+      Assert.assertTrue((after - before) >= 100);
 
       verifyMainHeaders(mockHttpServletResponse);
    }

@@ -7,7 +7,11 @@ import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,7 +139,13 @@ public class YamlParser {
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
       try {
-         final Yaml yaml = new Yaml();
+         final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
+            @Override
+            protected void addImplicitResolvers()
+            {
+               // no implicit resolvers - resolve everything to String
+            }
+         });
          final Object loadedYaml = yaml.load(io);
 
          if (!(loadedYaml instanceof ArrayList)) {
