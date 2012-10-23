@@ -30,6 +30,7 @@ public class StubResponse {
 
    private String status = null;
    private String body = null;
+   private String file = null;
    private String latency = null;
    private Map<String, String> headers = new HashMap<String, String>();
    private Map<String, String> params = new HashMap<String, String>();
@@ -43,7 +44,7 @@ public class StubResponse {
    }
 
    public String getBody() {
-      return body;
+      return (body != null && body.trim().length() != 0 ? body : "");
    }
 
    public final void setStatus(final String status) {
@@ -76,6 +77,20 @@ public class StubResponse {
 
    public void setLatency(final String latency) {
       this.latency = latency;
+   }
+
+   public String getFile() {
+      return file;
+   }
+
+   public void setFile(final String file) {
+      this.file = file;
+   }
+
+   public String getResponseBody() {
+      if (file == null || file.trim().length() == 0)
+         return getBody();
+      return file;
    }
 
    public boolean isConfigured() {

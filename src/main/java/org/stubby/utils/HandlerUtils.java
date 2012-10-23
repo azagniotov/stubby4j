@@ -24,6 +24,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.exception.Stubby4JException;
+import org.stubby.javax.servlet.http.HttpServletResponseWithGetStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +68,9 @@ public class HandlerUtils {
    }
 
    public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponse response, final String source) {
-      final int status = response.getStatus();
+      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
+
+      final int status = wrapper.getStatus();
 
       final String logMessage = String.format("[%s] <- %s [%s]%s %s",
             getTime(),
