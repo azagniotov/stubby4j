@@ -2,7 +2,7 @@
       method: POST
       url: /item/path
       queryParams:
-         paramTwo: valueTwo
+         paramTwo: 12345
          paramOne: valueOne
 
    response:

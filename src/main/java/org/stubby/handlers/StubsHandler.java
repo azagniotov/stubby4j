@@ -67,8 +67,6 @@ public class StubsHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      if (System.getProperty(AdminHandler.STUBBY4J_NO_LOG_PROPERTY) == null) {
-         HandlerUtils.logOutgoingResponse(request, response, NAME);
-      }
+      HandlerUtils.logOutgoingResponse(request, response, NAME);
    }
 }

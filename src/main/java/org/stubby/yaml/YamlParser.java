@@ -116,8 +116,7 @@ public class YamlParser {
                continue;
             }
 
-            final String propertyValue = (value != null ? value.toString() : "");
-            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
+            ReflectionUtils.setPropertyValue(target, propertyName, value);
 
          } catch (final Exception ex) {
             throw new IOException(String.format("Could not assign value '%s' to property '%s' on POJO: %s", value, propertyName, target.getClass().getCanonicalName()), ex);
@@ -141,18 +140,16 @@ public class YamlParser {
       try {
          final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
             @Override
-            protected void addImplicitResolvers()
-            {
+            protected void addImplicitResolvers() {
                // no implicit resolvers - resolve everything to String
             }
          });
          final Object loadedYaml = yaml.load(io);
 
-         if (!(loadedYaml instanceof ArrayList)) {
-            throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
-         }
+         if (loadedYaml instanceof ArrayList)
+            return (ArrayList<?>) loadedYaml;
 
-         return (ArrayList<?>) loadedYaml;
+         throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
       } catch (final Exception ex) {
          throw new IOException(ex);
       }
