@@ -39,6 +39,8 @@ import java.io.IOException;
  * @since 6/17/12, 11:25 PM
  */
 public final class AdminHandler extends AbstractHandler {
+   public static final String STUBBY4J_NO_LOG_PROPERTY = "stubby4j.no-log";
+
    private static final String NAME = "admin";
 
    //Do not remove this constant without changing the example in documentation
@@ -71,7 +73,9 @@ public final class AdminHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      HandlerUtils.logOutgoingResponse(request, response, NAME);
+      if (System.getProperty(STUBBY4J_NO_LOG_PROPERTY) == null) {
+         HandlerUtils.logOutgoingResponse(request, response, NAME);
+      }
    }
 
 
