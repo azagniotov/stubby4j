@@ -32,7 +32,7 @@ public final class StubRequest {
    private String method = null;
    private String postBody = null;
    private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> params = new HashMap<String, String>();
+   private Map<String, String> queryParams = new HashMap<String, String>();
 
    public StubRequest() {
 
@@ -70,12 +70,12 @@ public final class StubRequest {
       this.headers = headers;
    }
 
-   public Map<String, String> getParams() {
-      return params;
+   public Map<String, String> getQueryParams() {
+      return queryParams;
    }
 
-   public void setParams(final Map<String, String> params) {
-      this.params = params;
+   public void setQueryParams(final Map<String, String> queryParams) {
+      this.queryParams = queryParams;
    }
 
    public boolean isConfigured() {
@@ -94,7 +94,7 @@ public final class StubRequest {
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
       //if (!headers.equals(that.headers)) return false;
-      if (!params.equals(that.params)) return false;
+      if (!queryParams.equals(that.queryParams)) return false;
 
       return true;
    }
@@ -115,7 +115,7 @@ public final class StubRequest {
       sb.append(", method='").append(method).append('\'');
       sb.append(", postBody='").append(postBody).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", params=").append(params);
+      sb.append(", queryParams=").append(queryParams);
       sb.append('}');
       return sb.toString();
    }

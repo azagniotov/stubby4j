@@ -50,7 +50,7 @@ public class DataStore {
       assertionStubRequest.setMethod(httpRequestInfo.getMethod());
       assertionStubRequest.setUrl(httpRequestInfo.getUrl());
       assertionStubRequest.setHeaders(httpRequestInfo.getHeaders());
-      assertionStubRequest.setParams(httpRequestInfo.getParams());
+      assertionStubRequest.setQueryParams(httpRequestInfo.getQueryParams());
       assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
 
       return identifyTypeOfStubResponse(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));

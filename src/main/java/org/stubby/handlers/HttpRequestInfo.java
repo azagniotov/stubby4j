@@ -16,7 +16,7 @@ public class HttpRequestInfo {
    private final String url;
    private final String postBody;
    private final Map<String, String> headers = new HashMap<String, String>();
-   private final Map<String, String> params = new HashMap<String, String>();
+   private final Map<String, String> queryParams = new HashMap<String, String>();
 
    public HttpRequestInfo(final HttpServletRequest request, final String postBody) {
       this.method = request.getMethod();
@@ -28,7 +28,7 @@ public class HttpRequestInfo {
          headers.put(AUTH_HEADER, authHeader);
       }
 
-      this.params.putAll(constructParamMap(request.getQueryString()));
+      this.queryParams.putAll(constructParamMap(request.getQueryString()));
    }
 
    public String getMethod() {
@@ -47,8 +47,8 @@ public class HttpRequestInfo {
       return headers;
    }
 
-   public Map<String, String> getParams() {
-      return params;
+   public Map<String, String> getQueryParams() {
+      return queryParams;
    }
 
    private Map<String, String> constructParamMap(final String queryString) {

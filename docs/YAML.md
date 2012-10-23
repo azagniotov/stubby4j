@@ -6,7 +6,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 * `request`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the client's call to the server
    * `method`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GET/POST/PUT/DELETE/etc.
    * `headers`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of HTTP headers the server should read from the request
-   * `params`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of query string params the server should read from the URI
+   * `queryParams`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of query string queryParams the server should read from the URI
    * `url`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the URI string. Can include query string
    * `postBody`:&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a string matching the textual body of the response.
 * `response`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the server's response to the client
@@ -29,7 +29,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 -  request:
       url: /some/uri
-      params:
+      queryParams:
          paramTwo: valueTwo
          paramOne: valueOne
       method: POST

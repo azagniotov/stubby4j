@@ -17,7 +17,7 @@
       headers:
          content-type: application/alex
          pragma: no-cache
-      params:
+      queryParams:
          paramOne: valueOne
          paramTwo: valueTwo
 

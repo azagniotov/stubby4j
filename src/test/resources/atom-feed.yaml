@@ -1,7 +1,7 @@
 -  request:
       method: POST
       url: /item/path
-      params:
+      queryParams:
          paramTwo: valueTwo
          paramOne: valueOne
 
