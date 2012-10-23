@@ -17,6 +17,9 @@
       headers:
          content-type: application/alex
          pragma: no-cache
+      params:
+         paramOne: valueOne
+         paramTwo: valueTwo
 
    response:
       body: This is a response for 567

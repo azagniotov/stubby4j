@@ -29,6 +29,7 @@ import org.stubby.yaml.stubs.UnauthorizedStubResponse;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -48,11 +49,9 @@ public class DataStore {
 
       assertionStubRequest.setMethod(httpRequestInfo.getMethod());
       assertionStubRequest.setUrl(httpRequestInfo.getUrl());
-      assertionStubRequest.getHeaders().put(HttpRequestInfo.AUTH_HEADER, httpRequestInfo.getAuthorizationHeader());
-
-      if (httpRequestInfo.getPostBody() != null) {
-         assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
-      }
+      assertionStubRequest.setHeaders(httpRequestInfo.getHeaders());
+      assertionStubRequest.setParams(httpRequestInfo.getParams());
+      assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
 
       return identifyTypeOfStubResponse(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
    }
@@ -63,8 +62,9 @@ public class DataStore {
          final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
          final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
 
-         if (foundStubHttpLifecycle.getRequest().getHeaders().containsKey(HttpRequestInfo.AUTH_HEADER)) {
-            final String foundBasicAuthorization = foundStubHttpLifecycle.getRequest().getHeaders().get(HttpRequestInfo.AUTH_HEADER);
+         final Map<String, String> headers = foundStubHttpLifecycle.getRequest().getHeaders();
+         if (headers.containsKey(HttpRequestInfo.AUTH_HEADER)) {
+            final String foundBasicAuthorization = headers.get(HttpRequestInfo.AUTH_HEADER);
             final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(HttpRequestInfo.AUTH_HEADER);
 
             if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {

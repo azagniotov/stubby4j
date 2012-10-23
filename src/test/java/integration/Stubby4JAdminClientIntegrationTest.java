@@ -11,7 +11,6 @@ import org.stubby.client.Stubby4JClient;
 import org.stubby.client.Stubby4JClientFactory;
 import org.stubby.client.Stubby4JResponse;
 import org.stubby.handlers.AdminEndpoints;
-import org.stubby.handlers.AdminHandler;
 import org.stubby.utils.HandlerUtils;
 
 import java.net.URL;
@@ -60,11 +59,11 @@ public class Stubby4JAdminClientIntegrationTest {
    @Test
    public void shouldCleanUpStubbedData() throws Exception {
 
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/8", "localhost", 8882);
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, null);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
       Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"butter\"}", stubby4JResponse.getContent());
+      Assert.assertEquals("Stub data cleared!", stubby4JResponse.getContent());
    }
 
    @Test

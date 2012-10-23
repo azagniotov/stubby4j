@@ -1,4 +1,15 @@
 -  request:
+      method: POST
+      url: /item/path
+      params:
+         paramTwo: valueTwo
+         paramOne: valueOne
+
+   response:
+      status: 201
+      body: OK
+
+-  request:
       method: GET
       url: /item/redirect
 

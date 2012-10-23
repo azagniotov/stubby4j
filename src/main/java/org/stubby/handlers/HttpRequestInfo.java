@@ -1,6 +1,8 @@
 package org.stubby.handlers;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -13,13 +15,20 @@ public class HttpRequestInfo {
    private final String method;
    private final String url;
    private final String postBody;
-   private final String authorizationHeader;
+   private final Map<String, String> headers = new HashMap<String, String>();
+   private final Map<String, String> params = new HashMap<String, String>();
 
    public HttpRequestInfo(final HttpServletRequest request, final String postBody) {
       this.method = request.getMethod();
-      this.url = constructFullURI(request);
+      this.url = request.getPathInfo();
       this.postBody = postBody;
-      this.authorizationHeader = request.getHeader(AUTH_HEADER);
+
+      final String authHeader = request.getHeader(AUTH_HEADER);
+      if (authHeader != null && authHeader.trim().length() > 0) {
+         headers.put(AUTH_HEADER, authHeader);
+      }
+
+      this.params.putAll(constructParamMap(request.getQueryString()));
    }
 
    public String getMethod() {
@@ -34,15 +43,27 @@ public class HttpRequestInfo {
       return postBody;
    }
 
-   public String getAuthorizationHeader() {
-      return authorizationHeader;
+   public Map<String, String> getHeaders() {
+      return headers;
    }
 
-   private String constructFullURI(final HttpServletRequest request) {
-      final String pathInfo = request.getPathInfo();
-      final String queryStr = request.getQueryString();
-      final String queryString = (queryStr == null || queryStr.equals("")) ? "" : String.format("?%s", request.getQueryString());
-      return String.format("%s%s", pathInfo, queryString);
+   public Map<String, String> getParams() {
+      return params;
+   }
+
+   private Map<String, String> constructParamMap(final String queryString) {
+
+      if (queryString == null || queryString.trim().length() == 0)
+         return new HashMap<String, String>();
+
+      return new HashMap<String, String>() {{
+         final String[] pairs = queryString.split("&");
+
+         for (final String pair : pairs) {
+            final String[] splittedPair = pair.split("=");
+            put(splittedPair[0], splittedPair[1]);
+         }
+      }};
    }
 
    @Override
@@ -52,8 +73,6 @@ public class HttpRequestInfo {
 
       final HttpRequestInfo that = (HttpRequestInfo) o;
 
-      if (authorizationHeader != null ? !authorizationHeader.equals(that.authorizationHeader) : that.authorizationHeader != null)
-         return false;
       if (!method.equals(that.method)) return false;
       if (postBody != null ? !postBody.equals(that.postBody) : that.postBody != null) return false;
       if (!url.equals(that.url)) return false;
@@ -66,7 +85,7 @@ public class HttpRequestInfo {
       int result = method.hashCode();
       result = 31 * result + url.hashCode();
       result = 31 * result + (postBody != null ? postBody.hashCode() : 0);
-      result = 31 * result + (authorizationHeader != null ? authorizationHeader.hashCode() : 0);
+      result = 31 * result + headers.hashCode();
       return result;
    }
 }

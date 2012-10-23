@@ -42,8 +42,8 @@ public class SetupStubDataHandlingStrategy implements AdminRequestHandlingStrate
 
       final String postBody = HandlerUtils.extractPostRequestBody(request, "admin");
       if (postBody == null) {
-         response.setStatus(HttpStatus.NO_CONTENT_204);
-         response.getWriter().println("The POST request did not contain any content");
+         response.setStatus(HttpStatus.OK_200);
+         response.getWriter().println("Stub data cleared!");
          return;
       }
 

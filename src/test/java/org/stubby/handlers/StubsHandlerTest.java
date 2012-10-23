@@ -247,8 +247,8 @@ public class StubsHandlerTest {
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.INTERNAL_SERVER_ERROR_500, "java.lang.StringIndexOutOfBoundsException: String index out of range: -6");
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "You are not authorized to view this page without supplied 'Authorization' HTTP header");
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 

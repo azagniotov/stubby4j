@@ -25,7 +25,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
    @Override
    public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
-      final String authorizationHeader = httpRequestInfo.getAuthorizationHeader();
+      final String authorizationHeader = httpRequestInfo.getHeaders().get(HttpRequestInfo.AUTH_HEADER);
       String error = "";
       if (authorizationHeader == null) {
          error = "You are not authorized to view this page without supplied 'Authorization' HTTP header";

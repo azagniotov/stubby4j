@@ -38,6 +38,15 @@ public class Stubby4JClientIntegrationTest {
    }
 
    @Test
+   public void shouldDoPostOnURIWithQueryParams() throws Exception {
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/path?paramOne=valueOne&paramTwo=valueTwo", "localhost", 8882);
+      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+
+      Assert.assertEquals(201, stubby4JResponse.getResponseCode());
+      Assert.assertEquals("OK", stubby4JResponse.getContent());
+   }
+
+   @Test
    public void shouldDoGetOnURI() throws Exception {
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);

@@ -107,8 +107,8 @@ public class YamlParser {
 
          try {
             if (value instanceof Map) {
-               final Map<String, String> headers = encodeAuthorizationHeader((Map<String, String>) value);
-               ReflectionUtils.setPropertyValue(target, propertyName, headers);
+               final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
+               ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
                continue;
             }
 

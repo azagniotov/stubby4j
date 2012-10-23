@@ -14,7 +14,7 @@ public class ReflectionUtilsTest {
 
    @Test
    public void shouldGetObjectPropertiesAndValues() throws Exception {
-      final int totalOfStubRequestMemberFields = 4;
+      final int totalOfStubRequestMemberFields = 5;
       final StubRequest stubRequest = new StubRequest();
       stubRequest.setMethod("POST");
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);

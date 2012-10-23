@@ -32,6 +32,7 @@ public class StubResponse {
    private String body = null;
    private String latency = null;
    private Map<String, String> headers = new HashMap<String, String>();
+   private Map<String, String> params = new HashMap<String, String>();
 
    public StubResponse() {
 
@@ -53,16 +54,20 @@ public class StubResponse {
       this.body = body;
    }
 
-   public final void addHeader(final String param, final String value) {
-      headers.put(param, value);
-   }
-
    public Map<String, String> getHeaders() {
       return headers;
    }
 
    public void setHeaders(final Map<String, String> headers) {
       this.headers = headers;
+   }
+
+   public Map<String, String> getParams() {
+      return params;
+   }
+
+   public void setParams(final Map<String, String> params) {
+      this.params = params;
    }
 
    public String getLatency() {
@@ -105,10 +110,14 @@ public class StubResponse {
 
    @Override
    public String toString() {
-      return "StubResponse{" +
-            "status='" + status + '\'' +
-            ", body='" + body + '\'' +
-            ", headers=" + headers +
-            '}';
+      final StringBuffer sb = new StringBuffer();
+      sb.append("StubResponse");
+      sb.append("{status='").append(status).append('\'');
+      sb.append(", body='").append(body).append('\'');
+      sb.append(", latency='").append(latency).append('\'');
+      sb.append(", headers=").append(headers);
+      sb.append(", params=").append(params);
+      sb.append('}');
+      return sb.toString();
    }
 }

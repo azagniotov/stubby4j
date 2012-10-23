@@ -32,6 +32,7 @@ public final class StubRequest {
    private String method = null;
    private String postBody = null;
    private Map<String, String> headers = new HashMap<String, String>();
+   private Map<String, String> params = new HashMap<String, String>();
 
    public StubRequest() {
 
@@ -61,16 +62,20 @@ public final class StubRequest {
       this.postBody = postBody;
    }
 
-   public final void addHeader(final String param, final String value) {
-      headers.put(param, value);
-   }
-
    public final Map<String, String> getHeaders() {
       return headers;
    }
 
    public void setHeaders(final Map<String, String> headers) {
       this.headers = headers;
+   }
+
+   public Map<String, String> getParams() {
+      return params;
+   }
+
+   public void setParams(final Map<String, String> params) {
+      this.params = params;
    }
 
    public boolean isConfigured() {
@@ -84,9 +89,12 @@ public final class StubRequest {
 
       final StubRequest that = (StubRequest) o;
 
+
       if (postBody != null ? !postBody.equals(that.postBody) : that.postBody != null) return false;
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
+      //if (!headers.equals(that.headers)) return false;
+      if (!params.equals(that.params)) return false;
 
       return true;
    }
@@ -101,11 +109,14 @@ public final class StubRequest {
 
    @Override
    public String toString() {
-      return "StubRequest{" +
-            "url='" + url + '\'' +
-            ", method='" + method + '\'' +
-            ", postBody='" + postBody + '\'' +
-            ", headers=" + headers +
-            '}';
+      final StringBuffer sb = new StringBuffer();
+      sb.append("StubRequest");
+      sb.append("{url='").append(url).append('\'');
+      sb.append(", method='").append(method).append('\'');
+      sb.append(", postBody='").append(postBody).append('\'');
+      sb.append(", headers=").append(headers);
+      sb.append(", params=").append(params);
+      sb.append('}');
+      return sb.toString();
    }
 }

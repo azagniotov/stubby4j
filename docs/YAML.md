@@ -3,17 +3,17 @@
 When creating request/response data for the stub server, the config data should be specified in valid YAML 1.1 syntax.
 Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a data file (`-d` or `--data`) with the following structure for each endpoint:
 
-* `request`: describes the client's call to the server
-   * `method`: GET/POST/PUT/DELETE/etc.
-   * `headers`: a key/value map of headers the server should read from the request
-   * `url`: the URI string. GET parameters should also be included inline here
-   * `headers`: a key/value map of headers the server should respond to
-   * `postBody`: a string matching the textual body of the response.
-* `response`: describes the server's response to the client
-   * `headers`: a key/value map of headers the server should use in it's response
-   * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
-   * `body`: the textual body of the server's response to the client
-   * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+* `request`:      (REQUIRED)     describes the client's call to the server
+   * `method`:    (REQUIRED)     GET/POST/PUT/DELETE/etc.
+   * `headers`:   (OPTIONAL)     a key/value map of HTTP headers the server should read from the request
+   * `params`:    (OPTIONAL)     a key/value map of query string params the server should read from the URI
+   * `url`:       (REQUIRED)     the URI string. Can include query string
+   * `postBody`:  (OPTIONAL)     a string matching the textual body of the response.
+* `response`:     (REQUIRED)     describes the server's response to the client
+   * `headers`:   (OPTIONAL)     a key/value map of headers the server should respond with
+   * `latency`:   (OPTIONAL)     the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
+   * `body`:      (OPTIONAL)     the textual body of the server's response to the client
+   * `status`:    (REQUIRED)     the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
 ```yaml
 -  request:
@@ -29,6 +29,9 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 -  request:
       url: /some/uri
+      params:
+         paramTwo: valueTwo
+         paramOne: valueOne
       method: POST
       headers:
          authorization: bob:secret
