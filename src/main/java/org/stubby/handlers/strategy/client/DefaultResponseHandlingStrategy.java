@@ -35,7 +35,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
          }
       }
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
-      response.getWriter().println(foundStubResponse.getBody());
+      response.getWriter().println(foundStubResponse.getResponseBody());
    }
 
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {

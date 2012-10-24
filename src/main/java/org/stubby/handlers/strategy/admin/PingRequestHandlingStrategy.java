@@ -99,7 +99,7 @@ public class PingRequestHandlingStrategy  implements AdminRequestHandlingStrateg
          if (value != null) {
             value = HandlerUtils.escapeHtmlEntities(value.toString());
 
-            if (keyValue.getKey().equalsIgnoreCase("body")) {
+            if (keyValue.getKey().equalsIgnoreCase("body") || keyValue.getKey().equalsIgnoreCase("file")) {
                value = HandlerUtils.highlightResponseMarkup(value);
                responseClass = "response";
             }

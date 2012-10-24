@@ -135,7 +135,7 @@ public class HandlerUtils {
    }
 
    public static String inputStreamToString(final InputStream inputStream) {
-      if (inputStream == null || inputStream.toString().isEmpty()) {
+      if (inputStream == null || inputStream.toString().trim().length() == 0) {
          return null;
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize

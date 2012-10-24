@@ -162,7 +162,7 @@ public class StubsHandlerTest {
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -291,7 +291,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
 
       final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
@@ -324,7 +324,7 @@ public class StubsHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
       when(mockDataStore.findStubResponseFor(Mockito.any(HttpRequestInfo.class))).thenReturn(mockStubResponse);
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);

@@ -3,6 +3,7 @@ package org.stubby.yaml;
 import org.apache.commons.codec.binary.Base64;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.handlers.HttpRequestInfo;
+import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
@@ -56,6 +57,14 @@ public class YamlParser {
       return new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
    }
 
+   //TODO Ability get response from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
+   private String loadResponseBodyFromFile(final String filePath) throws IOException {
+      final File responseFileFromFilesystem = new File(filePath);
+      if (!responseFileFromFilesystem.isFile())
+         throw new IOException(String.format("Could not load file from path: %s", filePath));
+
+      return HandlerUtils.inputStreamToString(new FileInputStream(responseFileFromFilesystem));
+   }
 
    @SuppressWarnings("unchecked")
    public List<StubHttpLifecycle> load(final Reader io) throws IOException {
@@ -116,12 +125,19 @@ public class YamlParser {
                continue;
             }
 
-            ReflectionUtils.setPropertyValue(target, propertyName, value);
+            final String propertyValue = extractPropertyValueAsString(propertyName, value);
+            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
 
          } catch (final Exception ex) {
-            throw new IOException(String.format("Could not assign value '%s' to property '%s' on POJO: %s", value, propertyName, target.getClass().getCanonicalName()), ex);
+            throw new IOException(String.format("Could not assign value '%s' to property '%s' to %s, error: %s", value, propertyName, target.getClass().getSimpleName(), ex.getMessage()), ex);
          }
       }
+   }
+
+   private String extractPropertyValueAsString(final String propertyName, final Object value) throws IOException {
+      final String valueAsString = value.toString();
+
+      return propertyName.equalsIgnoreCase("file") ? loadResponseBodyFromFile(valueAsString) : valueAsString;
    }
 
    protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {

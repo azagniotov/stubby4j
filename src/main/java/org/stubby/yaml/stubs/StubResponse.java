@@ -94,7 +94,7 @@ public class StubResponse {
    }
 
    public boolean isConfigured() {
-      return (status != null && body != null);
+      return (status != null && (body != null || file != null));
    }
 
    public StubResponseTypes getStubResponseType() {

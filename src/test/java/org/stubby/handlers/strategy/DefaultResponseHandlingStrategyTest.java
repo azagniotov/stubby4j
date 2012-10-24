@@ -54,7 +54,7 @@ public class DefaultResponseHandlingStrategyTest {
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
 
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
 
@@ -72,7 +72,7 @@ public class DefaultResponseHandlingStrategyTest {
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
       when(mockStubResponse.getLatency()).thenReturn("100");
 
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);

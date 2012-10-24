@@ -3,17 +3,20 @@
 When creating request/response data for the stub server, the config data should be specified in valid YAML 1.1 syntax.
 Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a data file (`-d` or `--data`) with the following structure for each endpoint:
 
-* `request`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the client's call to the server
-   * `method`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GET/POST/PUT/DELETE/etc.
-   * `headers`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of HTTP headers the server should read from the request
-   * `queryParams`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of query string queryParams the server should read from the URI
-   * `url`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the URI string. Can include query string
-   * `postBody`:&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a string matching the textual body of the response.
-* `response`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;describes the server's response to the client
-   * `headers`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a key/value map of headers the server should respond with
-   * `latency`:&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delay in milliseconds the server should wait before responding
-   * `body`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(OPTIONAL)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the textual body of the server's response to the client
-   * `status`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(REQUIRED)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+* `request`: (REQUIRED) describes the client's call to the server
+   * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc.
+   * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request
+   * `queryParams`: (OPTIONAL) a key/value map of query string queryParams the server should read from the URI
+   * `url`: (REQUIRED) the URI string. Can include query string
+   * `postBody`: (OPTIONAL) a string matching the textual body of the response.
+* `response`: (REQUIRED) describes the server's response to the client
+   * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
+   * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
+   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the stubby4j JAR),
+      returns the contents of the given file as the response body. If the file cannot be found at YAML data parse time,
+      `body` is used instead. If `body` was not provided, an empty string is returned
+   * `body`: (OPTIONAL) the textual body of the server's response to the client
+   * `status`: (REQUIRED) the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
 ```yaml
 -  request:
@@ -28,9 +31,20 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 
 -  request:
+      method: GET
+      url: /some/uri?param=true&anotherParam=false
+      headers:
+         authorization: bob:secret
+
+   response:
+      status: 200
+      file: /home/development/application/testing/data/create-account-soap-response.xml
+
+
+-  request:
       url: /some/uri
       queryParams:
-         paramTwo: valueTwo
+         paramTwo: 12345
          paramOne: valueOne
       method: POST
       headers:
@@ -43,6 +57,19 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       latency: 1000
       status: 200
       body: You're request was successfully processed!
+
+
+-  request:
+      method: GET
+      url: /some/uri
+      queryParams:
+         paramTwo: 12345
+         paramOne: valueOne
+
+   response:
+      status: 200
+      file: ../data/create-service-soap-response.xml
+      latency: 1000
 
 
 -  request:

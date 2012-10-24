@@ -3,6 +3,7 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 
 * Isa Goksu
 * Eric Mrak
+* Oleksandr Berezianskyi
 * Sankalp Saxena
 * Simon Brunning
 * Ed Hewell
