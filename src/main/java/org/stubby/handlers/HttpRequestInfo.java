@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class HttpRequestInfo {
 
+   public static final long serialVersionUID = 8L;
+
    public static final String AUTH_HEADER = "authorization";
 
    private final String method;
