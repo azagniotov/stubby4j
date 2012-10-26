@@ -7,7 +7,7 @@
    <url>http://maven.apache.org</url>
    <groupId>org.stubby</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.3</version>
+   <version>1.0.4</version>
    <packaging>jar</packaging>
    <name>A stub HTTP server written in Java with embedded Jetty server</name>
 
@@ -122,7 +122,7 @@
                   <manifest>
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                      <addClasspath>true</addClasspath>
-                     <mainClass>org.stubby.application.Stubby4JStarter</mainClass>
+                     <mainClass>org.stubby.Main</mainClass>
                      <packageName>org.stubby</packageName>
                   </manifest>
                   <manifestEntries>

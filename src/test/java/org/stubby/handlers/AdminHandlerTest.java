@@ -1,3 +1,4 @@
+/*
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpStatus;
@@ -30,10 +31,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+*/
 /**
  * @author Alexander Zagniotov
  * @since 7/2/12, 10:46 AM
- */
+ *//*
+
 public class AdminHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);
@@ -192,4 +195,4 @@ public class AdminHandlerTest {
       verify(mockDataStore, times(1)).setStubHttpLifecycles(Mockito.anyListOf(StubHttpLifecycle.class));
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.CREATED_201);
    }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package integration;
 
 import junit.framework.Assert;
@@ -19,10 +20,12 @@ import java.util.Map;
 
 import static org.mockito.Mockito.doNothing;
 
+*/
 /**
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:23 AM
- */
+ *//*
+
 public class JettyOrchestratorIntegrationTest {
 
    private static JettyOrchestrator jettyOrchestrator;
@@ -34,7 +37,7 @@ public class JettyOrchestratorIntegrationTest {
    public void beforeTest() throws Exception {
       doNothing().when(spyServer).setConnectors(Mockito.any(Connector[].class));
       doNothing().when(spyServer).setHandler(Mockito.any(HandlerList.class));
-      doNothing().when(spyServer).start();
+      doNothing().when(spyServer).construct();
    }
 
    @After
@@ -50,7 +53,7 @@ public class JettyOrchestratorIntegrationTest {
    public void shouldReturnDefaultClientPort() throws Exception {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, new HashMap<String, String>());
       jettyOrchestrator.startJetty();
-      Assert.assertEquals(JettyOrchestrator.DEFAULT_STUBS_PORT, jettyOrchestrator.getCurrentStubsPort());
+      Assert.assertEquals(JettyOrchestrator.DEFAULT_STUBS_PORT, jettyOrchestrator.getStubsPort());
    }
 
    @Test
@@ -63,7 +66,7 @@ public class JettyOrchestratorIntegrationTest {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, commandlineArgs);
       jettyOrchestrator.startJetty();
 
-      Assert.assertEquals(expectedClientPort, jettyOrchestrator.getCurrentStubsPort());
+      Assert.assertEquals(expectedClientPort, jettyOrchestrator.getStubsPort());
    }
 
    @Test(expected = NumberFormatException.class)
@@ -79,7 +82,7 @@ public class JettyOrchestratorIntegrationTest {
    public void shouldReturnDefaultAdminPort() throws Exception {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, new HashMap<String, String>());
       jettyOrchestrator.startJetty();
-      Assert.assertEquals(JettyOrchestrator.DEFAULT_ADMIN_PORT, jettyOrchestrator.getCurrentAdminPort());
+      Assert.assertEquals(JettyOrchestrator.DEFAULT_ADMIN_PORT, jettyOrchestrator.getAdminPort());
    }
 
    @Test
@@ -91,7 +94,7 @@ public class JettyOrchestratorIntegrationTest {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, commandlineArgs);
       jettyOrchestrator.startJetty();
 
-      Assert.assertEquals(expectedAdminPort, jettyOrchestrator.getCurrentAdminPort());
+      Assert.assertEquals(expectedAdminPort, jettyOrchestrator.getAdminPort());
    }
 
    @Test(expected = NumberFormatException.class)
@@ -107,7 +110,7 @@ public class JettyOrchestratorIntegrationTest {
    public void shouldReturnDefaultHost() throws Exception {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, new HashMap<String, String>());
       jettyOrchestrator.startJetty();
-      Assert.assertEquals(JettyOrchestrator.DEFAULT_HOST, jettyOrchestrator.getCurrentHost());
+      Assert.assertEquals(JettyOrchestrator.DEFAULT_HOST, jettyOrchestrator.getHost());
    }
 
    @Test
@@ -119,6 +122,6 @@ public class JettyOrchestratorIntegrationTest {
       jettyOrchestrator = new JettyOrchestrator(mockYamlParser, spyServer, mockDataStore, commandlineArgs);
       jettyOrchestrator.startJetty();
 
-      Assert.assertEquals(expectedHost, jettyOrchestrator.getCurrentHost());
+      Assert.assertEquals(expectedHost, jettyOrchestrator.getHost());
    }
-}
+}*/

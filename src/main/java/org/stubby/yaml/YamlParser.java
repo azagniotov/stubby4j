@@ -29,6 +29,9 @@ import java.util.Map;
 
 public class YamlParser {
 
+   private static final String NODE_REQUEST = "request";
+   private static final String NODE_RESPONSE = "response";
+
    private String loadedConfigAbsolutePath;
    private String yamlConfigFilename;
 
@@ -98,15 +101,12 @@ public class YamlParser {
 
          final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
 
-         switch (YamlParentNodes.getFor(parent.getKey())) {
-            case REQUEST:
-               mapHttpSettingsToPojo(parentStub.getRequest(), httpSettings);
-               break;
-
-            case RESPONSE:
-               mapHttpSettingsToPojo(parentStub.getResponse(), httpSettings);
-
+         if (parent.getKey().equals(NODE_REQUEST)) {
+            mapHttpSettingsToPojo(parentStub.getRequest(), httpSettings);
+            continue;
          }
+
+         mapHttpSettingsToPojo(parentStub.getResponse(), httpSettings);
       }
    }
 

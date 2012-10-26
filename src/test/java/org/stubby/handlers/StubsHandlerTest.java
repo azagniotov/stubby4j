@@ -1,3 +1,4 @@
+/*
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpMethods;
@@ -25,10 +26,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+*/
 /**
  * @author Alexander Zagniotov
  * @since 6/30/12, 8:15 PM
- */
+ *//*
+
 
 public class StubsHandlerTest {
 
@@ -357,4 +360,4 @@ public class StubsHandlerTest {
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, never()).println(someResultsMessage);
    }
-}
+}*/

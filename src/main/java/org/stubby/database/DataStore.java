@@ -27,7 +27,7 @@ import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 import org.stubby.yaml.stubs.UnauthorizedStubResponse;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +37,10 @@ import java.util.Map;
  */
 public class DataStore {
 
-   private List<StubHttpLifecycle> stubHttpLifecycles = new LinkedList<StubHttpLifecycle>();
+   private final List<StubHttpLifecycle> stubHttpLifecycles;
 
-   public DataStore() {
-
+   public DataStore(final List<StubHttpLifecycle> stubHttpLifecycles) {
+      this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }
 
    public StubResponse findStubResponseFor(final HttpRequestInfo httpRequestInfo) {
@@ -89,8 +89,9 @@ public class DataStore {
       return new NotFoundStubResponse();
    }
 
-   public void setStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
-      this.stubHttpLifecycles = stubHttpLifecycles;
+   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+      this.stubHttpLifecycles.clear();
+      this.stubHttpLifecycles.addAll(stubHttpLifecycles);
    }
 
    public List<StubHttpLifecycle> getStubHttpLifecycles() {

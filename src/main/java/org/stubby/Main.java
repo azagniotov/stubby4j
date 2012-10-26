@@ -17,19 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.stubby.application;
+package org.stubby;
 
 import org.apache.commons.cli.ParseException;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.server.JettyOrchestratorFactory;
+import org.stubby.server.JettyManagerFactory;
+import org.stubby.server.JettyManager;
 
-import java.awt.*;
 import java.util.Map;
 
-final class Stubby4JStarter {
+final class Main {
 
-   private Stubby4JStarter() {
+   private Main() {
 
    }
 
@@ -53,7 +53,7 @@ final class Stubby4JStarter {
 
    private static void printHelpIfRequested() {
       if (CommandLineIntepreter.isHelp()) {
-         CommandLineIntepreter.printHelp(Stubby4JStarter.class);
+         CommandLineIntepreter.printHelp(Main.class);
          System.exit(0);
       }
    }
@@ -75,10 +75,11 @@ final class Stubby4JStarter {
 
          ANSITerminal.mute = CommandLineIntepreter.isMute();
 
-         JettyOrchestratorFactory.getInstance(yamlConfigFilename, commandLineArgs).startJetty();
+         final JettyManager jettyManager = new JettyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
+         jettyManager.startJetty();
 
       } catch (final Exception ex) {
-         final String msg = String.format("Could not start stubby4j, error: %s", ex.toString());
+         final String msg = String.format("Could not init stubby4j, error: %s", ex.toString());
          System.err.println(msg);
          System.exit(1);
       }

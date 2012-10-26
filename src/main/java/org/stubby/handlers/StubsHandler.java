@@ -63,10 +63,10 @@ public class StubsHandler extends AbstractHandler {
 
       try {
          strategyStubResponse.handle(response, httpRequestInfo);
+         HandlerUtils.logOutgoingResponse(request, response, NAME);
+
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
-
-      HandlerUtils.logOutgoingResponse(request, response, NAME);
    }
 }

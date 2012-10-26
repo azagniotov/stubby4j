@@ -2,7 +2,7 @@ package org.stubby.cli;
 
 import org.eclipse.jetty.util.log.Logger;
 
-public class DoNothingLogger implements Logger {
+public class EmptyLogger implements Logger {
    @Override
    public String getName() {
       return null;
