@@ -5,9 +5,11 @@ private static Stubby4JClient stubby4JClient;
 
 @BeforeClass
 public static void beforeClass() throws Exception {
-   final URL url = SomeClass.class.getResource("/config.yaml");
-   stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
-   stubby4JClient.start();
+   final URL url = Stubby4JClientStubsIntegrationTest.class.getResource("/atom-feed.yaml");
+
+   ANSITerminal.mute = true;
+   stubby4JClient = new Stubby4JClient(url.getFile());
+   stubby4JClient.startJetty();
 }
 .
 .
@@ -26,7 +28,7 @@ public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = SomeClass.class.getResource("/config.yaml");
-   stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
+   stubby4JClient = new Stubby4JClient(url.getFile());
    stubby4JClient.start(clientPort, adminPort);
 }
 .
@@ -131,7 +133,7 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 public void shouldCreateStubbedData() throws Exception {
    final URL url = SomeClass.class.getResource("/config.yaml");
    final String content = SomeUtils.inputStreamToString(url.openStream());
-   final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+   final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
    final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
    Assert.assertEquals(201, stubby4JResponse.getResponseCode());

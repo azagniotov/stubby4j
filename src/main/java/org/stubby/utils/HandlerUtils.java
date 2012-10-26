@@ -20,17 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.utils;
 
 import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
-import org.stubby.cli.ANSITerminal;
 import org.stubby.exception.Stubby4JException;
-import org.stubby.javax.servlet.http.HttpServletResponseWithGetStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -38,67 +34,10 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
  */
-public class HandlerUtils {
+public final class HandlerUtils {
 
    private HandlerUtils() {
 
-   }
-
-   public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
-
-      final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-            getTime(),
-            request.getMethod(),
-            source,
-            request.getRequestURI(),
-            error
-      );
-      ANSITerminal.error(logMessage);
-   }
-
-   public static void logIncomingRequest(final HttpServletRequest request, final String source) {
-
-      final String logMessage = String.format("[%s] -> %s [%s]%s",
-            getTime(),
-            request.getMethod(),
-            source,
-            request.getRequestURI()
-      );
-      ANSITerminal.incoming(logMessage);
-   }
-
-   public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponse response, final String source) {
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
-      final int status = wrapper.getStatus();
-
-      final String logMessage = String.format("[%s] <- %s [%s]%s %s",
-            getTime(),
-            status,
-            source,
-            request.getRequestURI(),
-            HttpStatus.getMessage(status)
-      );
-
-      if (status >= 400 && status < 600)
-         ANSITerminal.error(logMessage);
-      else if (status >= 300)
-         ANSITerminal.warn(logMessage);
-      else if (status >= 200)
-         ANSITerminal.ok(logMessage);
-      else if (status >= 100)
-         ANSITerminal.info(logMessage);
-      else
-         ANSITerminal.log(logMessage);
-   }
-
-   private static String getTime() {
-      final Calendar now = Calendar.getInstance();
-      return String.format("%02d:%02d:%02d",
-            now.get(Calendar.HOUR_OF_DAY),
-            now.get(Calendar.MINUTE),
-            now.get(Calendar.SECOND)
-      );
    }
 
    public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
@@ -165,7 +104,7 @@ public class HandlerUtils {
          return HandlerUtils.inputStreamToString(request.getInputStream());
       } catch (final Exception ex) {
          final String err = String.format("Error when extracting POST body: %s, returning null..", ex.toString());
-         HandlerUtils.logIncomingRequestError(request, source, err);
+         ConsoleUtils.logIncomingRequestError(request, source, err);
          return null;
       }
    }

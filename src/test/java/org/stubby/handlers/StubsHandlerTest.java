@@ -1,12 +1,12 @@
-/*
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.database.DataStore;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
@@ -26,13 +26,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-*/
+
 /**
  * @author Alexander Zagniotov
  * @since 6/30/12, 8:15 PM
- *//*
-
-
+ */
 public class StubsHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);
@@ -43,9 +41,9 @@ public class StubsHandlerTest {
 
    private final String someResultsMessage = "we have results";
 
-   @Before
-   public void beforeTest() throws Exception {
-
+   @BeforeClass
+   public static void beforeClass() throws Exception {
+      ANSITerminal.mute = true;
    }
 
    @Test
@@ -360,4 +358,4 @@ public class StubsHandlerTest {
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, never()).println(someResultsMessage);
    }
-}*/
+}

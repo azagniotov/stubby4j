@@ -21,7 +21,7 @@ import java.util.Scanner;
  * @author Alexander Zagniotov
  * @since 7/4/12, 10:46 PM
  */
-final class Stubby4JClient {
+public final class Stubby4JClient {
 
    private static final String URL_TEMPLATE = "http://%s:%s%s";
    private static final String UTF_8 = "UTF-8";

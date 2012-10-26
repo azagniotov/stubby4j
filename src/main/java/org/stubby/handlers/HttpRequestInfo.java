@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public class HttpRequestInfo {
 
-   public static final long serialVersionUID = 8L;
-
    public static final String AUTH_HEADER = "authorization";
 
    private final String method;
@@ -58,14 +56,15 @@ public class HttpRequestInfo {
       if (queryString == null || queryString.trim().length() == 0)
          return new HashMap<String, String>();
 
-      return new HashMap<String, String>() {{
-         final String[] pairs = queryString.split("&");
+      final Map<String, String> paramMap = new HashMap<String, String>();
 
-         for (final String pair : pairs) {
-            final String[] splittedPair = pair.split("=");
-            put(splittedPair[0], splittedPair[1]);
-         }
-      }};
+      final String[] pairs = queryString.split("&");
+      for (final String pair : pairs) {
+         final String[] splittedPair = pair.split("=");
+         paramMap.put(splittedPair[0], splittedPair[1]);
+      }
+
+      return paramMap;
    }
 
    @Override

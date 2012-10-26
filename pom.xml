@@ -13,6 +13,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
    </properties>
 
    <licenses>
@@ -175,7 +176,6 @@
                <skip>true</skip>
             </configuration>
             <executions>
-
                <execution>
                   <id>unit-tests</id>
                   <phase>test</phase>
@@ -187,30 +187,45 @@
                      <includes>
                         <include>**/*Test.java</include>
                      </includes>
-                     <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                     </excludes>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>integration-tests</id>
-                  <!-- <phase>integration-test</phase> -->
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <includes>
-                        <include>**/*IntegrationTest.java</include>
-                     </includes>
-                     <excludes>
-                        <exclude>none</exclude>
-                     </excludes>
                   </configuration>
                </execution>
             </executions>
          </plugin>
+
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.12.2</version>
+            <executions>
+               <execution>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>integration-test</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+               <execution>
+                  <id>add-test-source</id>
+                  <phase>generate-test-sources</phase>
+                  <goals>
+                     <goal>add-test-source</goal>
+                  </goals>
+                  <configuration>
+                     <sources>
+                        <source>src/integration/java</source>
+                     </sources>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
       </plugins>
    </build>
 </project>

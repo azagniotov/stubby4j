@@ -1,72 +1,69 @@
-/*
-package integration;
+package org.stubby.client;
 
 import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.stubby.client.ClientRequestInfo;
-import org.stubby.client.Stubby4JClient;
-import org.stubby.client.Stubby4JClientFactory;
-import org.stubby.client.Stubby4JResponse;
-import org.stubby.handlers.AdminEndpoints;
+import org.stubby.cli.ANSITerminal;
+import org.stubby.handlers.StubsRegistrationHandler;
 import org.stubby.utils.HandlerUtils;
 
 import java.net.URL;
 
-*/
+
 /**
  * @author Alexander Zagniotov
  * @since 6/28/12, 2:54 PM
- *//*
+ */
 
-public class Stubby4JAdminClientIntegrationTest {
+public class Stubby4JClientAdminIT {
 
    private static Stubby4JClient stubby4JClient;
    private static String content;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = Stubby4JAdminClientIntegrationTest.class.getResource("/atom-feed-for-content-tests.yaml");
+      final URL url = Stubby4JClientAdminIT.class.getResource("/atom-feed-for-content-tests.yaml");
       Assert.assertNotNull(url);
 
-      stubby4JClient = Stubby4JClientFactory.getInstance(url.getFile());
-      stubby4JClient.construct();
+      ANSITerminal.mute = true;
+      stubby4JClient = new Stubby4JClient(url.getFile());
+      stubby4JClient.startJetty();
 
       content = HandlerUtils.inputStreamToString(url.openStream());
    }
 
    @Before
    public void beforeEach() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, content);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
    }
 
    @AfterClass
    public static void afterClass() throws Exception {
-      stubby4JClient.stop();
-      Thread.sleep(2000); //To make sure Jetty has stopped before running another suite
+      stubby4JClient.stopJetty();
    }
 
    @Test
    public void shouldCreateStubbedData() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, content);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
-      Assert.assertEquals(201, stubby4JResponse.getResponseCode());
+      Assert.assertEquals(HttpStatus.CREATED_201, stubby4JResponse.getResponseCode());
       Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
    }
 
    @Test
    public void shouldCleanUpStubbedData() throws Exception {
 
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, AdminEndpoints.STUBDATA_NEW.desc(), "localhost", 8889, null);
+      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, null);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
-      Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-      Assert.assertEquals("Stub data cleared!", stubby4JResponse.getContent());
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, stubby4JResponse.getResponseCode());
+      Assert.assertEquals("POST request on URI null was empty", stubby4JResponse.getContent());
    }
 
    @Test
@@ -74,8 +71,8 @@ public class Stubby4JAdminClientIntegrationTest {
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
-      Assert.assertEquals(404, stubby4JResponse.getResponseCode());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /item/1", stubby4JResponse.getContent());
    }
 }
-*/
+

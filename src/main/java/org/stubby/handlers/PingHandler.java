@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
 import org.stubby.server.JettyContext;
 import org.stubby.server.JettyFactory;
+import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.YamlParser;
@@ -44,7 +45,7 @@ public class PingHandler extends AbstractHandler {
 
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      HandlerUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);

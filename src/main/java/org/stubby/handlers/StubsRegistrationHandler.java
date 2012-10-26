@@ -6,6 +6,7 @@ import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
+import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -41,7 +42,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
 
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      HandlerUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
       response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
@@ -72,7 +73,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
          response.setStatus(HttpStatus.CREATED_201);
          response.getWriter().println("Configuration created successfully");
 
-         HandlerUtils.logOutgoingResponse(request, response, NAME);
+         ConsoleUtils.logOutgoingResponse(request, response, NAME);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
       }

@@ -1,4 +1,3 @@
-/*
 package org.stubby.database;
 
 import org.eclipse.jetty.http.HttpMethods;
@@ -6,6 +5,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
@@ -21,11 +21,10 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-*/
 /**
  * @author Alexander Zagniotov
  * @since 6/20/12, 5:27 PM
- *//*
+ */
 
 
 public class DataStoreTest {
@@ -34,14 +33,16 @@ public class DataStoreTest {
 
    @BeforeClass
    public static void beforeClass() throws IOException {
+
+      ANSITerminal.mute = true;
+
       final URL url = DataStoreTest.class.getResource("/httplifecycles-noheaders.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
       final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.load(yamlParser.buildYamlReaderFromFilename());
 
-      dataStore = new DataStore(httpLifecycles);
-      dataStore.setStubHttpLifecycles(stubHttpLifecycles);
+      dataStore = new DataStore(stubHttpLifecycles);
    }
 
    @Test
@@ -170,4 +171,3 @@ public class DataStoreTest {
       Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
    }
 }
-*/

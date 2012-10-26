@@ -25,6 +25,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
 import org.stubby.handlers.strategy.HandlingStrategyFactory;
 import org.stubby.handlers.strategy.StubResponseHandlingStrategy;
+import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
@@ -52,7 +53,7 @@ public class StubsHandler extends AbstractHandler {
                       final Request baseRequest,
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
-      HandlerUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
 
@@ -63,7 +64,7 @@ public class StubsHandler extends AbstractHandler {
 
       try {
          strategyStubResponse.handle(response, httpRequestInfo);
-         HandlerUtils.logOutgoingResponse(request, response, NAME);
+         ConsoleUtils.logOutgoingResponse(request, response, NAME);
 
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
