@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy.client;
+package org.stubby.handlers.strategy;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpStatus;

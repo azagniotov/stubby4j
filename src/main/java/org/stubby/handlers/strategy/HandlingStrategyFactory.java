@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy.client;
+package org.stubby.handlers.strategy;
 
 import org.stubby.yaml.stubs.StubResponse;
 

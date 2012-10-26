@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy.client;
+package org.stubby.handlers.strategy;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
