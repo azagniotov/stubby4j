@@ -23,6 +23,7 @@ public final class JettyManagerFactory {
    public JettyManager construct(final String yamlConfigFilename, final Map<String, String> commandLineArgs) throws Exception {
 
       synchronized (JettyManagerFactory.class) {
+
          Log.setLog(new EmptyLogger());
 
          final YamlParser yamlParser = new YamlParser(yamlConfigFilename);

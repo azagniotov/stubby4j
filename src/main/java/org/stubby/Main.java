@@ -22,8 +22,8 @@ package org.stubby;
 import org.apache.commons.cli.ParseException;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.server.JettyManagerFactory;
 import org.stubby.server.JettyManager;
+import org.stubby.server.JettyManagerFactory;
 
 import java.util.Map;
 
