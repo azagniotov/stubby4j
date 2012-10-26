@@ -2,12 +2,6 @@ package org.stubby.handlers.strategy;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import org.stubby.handlers.strategy.client.DefaultResponseHandlingStrategy;
-import org.stubby.handlers.strategy.client.NotFoundResponseHandlingStrategy;
-import org.stubby.handlers.strategy.client.RedirectResponseHandlingStrategy;
-import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
-import org.stubby.handlers.strategy.client.HandlingStrategyFactory;
-import org.stubby.handlers.strategy.client.UnauthorizedResponseHandlingStrategy;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.RedirectStubResponse;
 import org.stubby.yaml.stubs.StubResponse;

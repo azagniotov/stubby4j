@@ -7,8 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.handlers.HttpRequestInfo;
-import org.stubby.handlers.strategy.client.RedirectResponseHandlingStrategy;
-import org.stubby.handlers.strategy.client.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
