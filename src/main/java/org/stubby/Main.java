@@ -1,5 +1,5 @@
 /*
-A Java-based HTTP stub server
+HTTP stub server written in Java with embedded Jetty
 
 Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
 
@@ -22,6 +22,7 @@ package org.stubby;
 import org.apache.commons.cli.ParseException;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
+import org.stubby.exception.Stubby4JException;
 import org.stubby.server.JettyManager;
 import org.stubby.server.JettyManagerFactory;
 
@@ -48,18 +49,18 @@ final class Main {
          CommandLineIntepreter.parseCommandLine(args);
       } catch (final ParseException ex) {
          final String msg = String.format("Could not parse provided command line arguments, error: %s", ex.toString());
-         System.err.println(msg);
-         throw new RuntimeException(msg);
+
+         throw new Stubby4JException(msg);
       }
    }
 
    private static boolean printHelpIfRequested() {
-      if (CommandLineIntepreter.isHelp()) {
-         CommandLineIntepreter.printHelp(Main.class);
+      if (!CommandLineIntepreter.isHelp())
+         return false;
 
-         return true;
-      }
-      return false;
+      CommandLineIntepreter.printHelp(Main.class);
+
+      return true;
    }
 
    private static void verifyYamlDataProvided() {
@@ -68,8 +69,8 @@ final class Main {
                CommandLineIntepreter.OPTION_CONFIG,
                "\n",
                CommandLineIntepreter.OPTION_HELP);
-         System.err.println(msg);
-         throw new RuntimeException(msg);
+
+         throw new Stubby4JException(msg);
       }
    }
 
@@ -85,8 +86,8 @@ final class Main {
 
       } catch (final Exception ex) {
          final String msg = String.format("Could not init stubby4j, error: %s", ex.toString());
-         System.err.println(msg);
-         throw new RuntimeException(msg);
+
+         throw new Stubby4JException(msg);
       }
    }
 }

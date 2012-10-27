@@ -47,11 +47,20 @@ public final class HandlerUtils {
 
    public static String getHtmlResourceByName(final String templateSuffix) {
       final String htmlTemplatePath = String.format("/html/%s.html", templateSuffix);
-      final InputStream postBodyInputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
-      if (postBodyInputStream == null) {
+      final InputStream inputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
+      if (inputStream == null) {
          throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
       }
-      return StringUtils.inputStreamToString(postBodyInputStream);
+      return StringUtils.inputStreamToString(inputStream);
+   }
+
+   public static String[] getHighlightableHtmlAttributes(final String templateSuffix) {
+      final String templatePath = String.format("/html/%s", templateSuffix);
+      final InputStream inputStream = HandlerUtils.class.getResourceAsStream(templatePath);
+      if (inputStream == null) {
+         throw new Stubby4JException(String.format("Could not find resource %s", templatePath));
+      }
+      return StringUtils.inputStreamToString(inputStream).split("\\n");
    }
 
    public static String constructHeaderServerName() {
@@ -95,7 +104,7 @@ public final class HandlerUtils {
       }
    }
 
-   public static Object highlightResponseMarkup(final Object value) {
+   public static Object highlightResponseMarkup(final Object value, final String[] attributesToHighlight) {
       String valueString = value.toString();
       valueString = valueString.replaceAll("\"(.*?)\"", "<span clazzorekuals'xml-tag-content'>\"$1\"</span>");
       valueString = valueString.replaceAll("=('|\")(.*?)('|\")", "=<span clazzorekuals'xml-tag-content'>$1$2$3</span>");
@@ -113,18 +122,9 @@ public final class HandlerUtils {
       valueString = valueString.replaceAll(">([0-9\\.\\$]+)<", "><span clazzorekuals'xml-number'>$1</span><");
       //valueString = valueString.replaceAll("\"", "<span clazzorekuals'xml-quote'>\"</span>");
 
-      // TODO - Move this into file
-      final String[] secondSet = {
-            "name=", "value=", "version=", "ver=", "description=", "urn:uuid", "id=",
-            "href=", "rel=", "encoding=", "xmlns:xsi", "xmlns=", "type=", "border=",
-            "media=", "src=", "xsi:schemaLocation=", "xml:lang=", "\\?", "&amp;", "language=",
-            "content=", "title=", "align=", "alt=", "data=", "method=", "onclick=", "abbr=",
-            "onchange=", "onblur=", "onload=", "scheme=", "background=", "bgcolor=",
-            "classid=", "color=", "cols=", "rows=", "profile=", "readonly=", "disabled=",
-            "width=", "height=", "size=", "target=", "tabindex=", "maxlength=", "accept-charset=",
-            "encoding=", "url=", "class="};
-      for (final String attrib : secondSet) {
-         valueString = valueString.replaceAll(attrib, String.format("<span clazzorekuals'xml-attrib'>%s</span>", attrib));
+      for (final String attrib : attributesToHighlight) {
+         final String trimmedAttrib = attrib.trim();
+         valueString = valueString.replaceAll(trimmedAttrib, String.format("<span clazzorekuals'xml-attrib'>%s</span>", trimmedAttrib));
       }
       valueString = valueString.replaceAll("=", "<span clazzorekuals'xml-equals'>=</span>");
       valueString = valueString.replaceAll("clazzor", "class");

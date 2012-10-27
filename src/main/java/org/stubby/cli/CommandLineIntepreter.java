@@ -32,10 +32,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/12/12, 5:41 PM
- */
 public final class CommandLineIntepreter {
 
    private static CommandLine line = null;

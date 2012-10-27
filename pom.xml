@@ -9,7 +9,7 @@
    <artifactId>stubby4j</artifactId>
    <version>1.0.4</version>
    <packaging>jar</packaging>
-   <name>A stub HTTP server written in Java with embedded Jetty server</name>
+   <name>HTTP stub server with embedded Jetty</name>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,3 +1,22 @@
+/*
+HTTP stub server written in Java with embedded Jetty
+
+Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpHeaders;
@@ -25,11 +44,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 10/25/12, 12:06 AM
- */
-public class PingHandler extends AbstractHandler {
+public final class PingHandler extends AbstractHandler {
 
    private static final String NAME = "admin";
    private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='200px' valign='top' align='left'><code>%s</code></td><td class='%s' align='left'>%s</td></tr>";
@@ -110,6 +125,8 @@ public class PingHandler extends AbstractHandler {
       final String host = jettyContext.getHost();
       final int clientPort = jettyContext.getStubsPort();
 
+      final String[] attributesToHighlight = HandlerUtils.getHighlightableHtmlAttributes("html_attributes_to_style.txt");
+
       for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
          Object value = keyValue.getValue();
          String responseClass = "";
@@ -117,7 +134,7 @@ public class PingHandler extends AbstractHandler {
             value = StringUtils.escapeHtmlEntities(value.toString());
 
             if (keyValue.getKey().equalsIgnoreCase("body") || keyValue.getKey().equalsIgnoreCase("file")) {
-               value = HandlerUtils.highlightResponseMarkup(value);
+               value = HandlerUtils.highlightResponseMarkup(value, attributesToHighlight);
                responseClass = "response";
             }
          }

@@ -34,10 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/17/12, 11:25 PM
- */
 public class StubsHandler extends AbstractHandler {
    private static final String NAME = "stubs";
 

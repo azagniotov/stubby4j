@@ -1,3 +1,22 @@
+/*
+HTTP stub server written in Java with embedded Jetty
+
+Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.stubby.client;
 
 import org.eclipse.jetty.http.HttpHeaders;
@@ -20,10 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/4/12, 10:46 PM
- */
 public final class Stubby4JClient {
 
    private static final String URL_TEMPLATE = "http://%s:%s%s";
@@ -62,7 +77,7 @@ public final class Stubby4JClient {
    public Stubby4JResponse makeRequestWith(final ClientRequestInfo clientRequest) throws IOException {
       final HttpURLConnection con = constructClientHttpConnection(clientRequest);
 
-      if (clientRequest.getPostBody() != null) {
+      if (StringUtils.isSet(clientRequest.getPostBody())) {
          prepareConnectionForPOST(con, clientRequest.getPostBody());
          writePostBytes(con, clientRequest.getPostBody());
       }
@@ -76,7 +91,7 @@ public final class Stubby4JClient {
       final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
       httpURLConnection.setRequestMethod(clientRequest.getMethod());
 
-      if (clientRequest.getBase64encodedCredentials() != null) {
+      if (StringUtils.isSet(clientRequest.getBase64encodedCredentials())) {
          httpURLConnection.setRequestProperty("Authorization", "Basic " + clientRequest.getBase64encodedCredentials());
       }
 
@@ -88,7 +103,7 @@ public final class Stubby4JClient {
       final String host = clientRequest.getHost();
       final int clientPort = clientRequest.getClientPort();
 
-      return String.format(URL_TEMPLATE, host, clientPort, uri != null ? uri : "");
+      return String.format(URL_TEMPLATE, host, clientPort, (StringUtils.isSet(uri) ? uri : ""));
    }
 
    private Stubby4JResponse parseHttpResponse(final HttpURLConnection con) {
@@ -133,7 +148,7 @@ public final class Stubby4JClient {
    private void writePostBytes(final HttpURLConnection con, final String postData) throws IOException {
       final DataOutputStream dataOutputStream = new DataOutputStream(con.getOutputStream());
       try {
-         dataOutputStream.writeBytes((postData != null ? postData : ""));
+         dataOutputStream.writeBytes((StringUtils.isSet(postData) ? postData : ""));
          dataOutputStream.flush();
       } catch (final IOException ex) {
          throw new IOException(ex);

@@ -31,10 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/1/12, 11:22 PM
- */
 public class DataStore {
 
    private final List<StubHttpLifecycle> stubHttpLifecycles;

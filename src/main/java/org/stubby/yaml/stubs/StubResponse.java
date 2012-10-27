@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
+import org.stubby.utils.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,7 @@ public class StubResponse {
    }
 
    public String getBody() {
-      return (body != null && body.trim().length() != 0 ? body : "");
+      return (StringUtils.isSet(body) ? body : "");
    }
 
    public final void setStatus(final String status) {
@@ -88,7 +90,7 @@ public class StubResponse {
    }
 
    public String getResponseBody() {
-      if (file == null || file.trim().length() == 0)
+      if (!StringUtils.isSet(file))
          return getBody();
       return file;
    }
