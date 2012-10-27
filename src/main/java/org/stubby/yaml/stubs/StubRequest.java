@@ -40,15 +40,15 @@ public final class StubRequest {
 
    }
 
-   public final String getUrl() {
+   public String getUrl() {
       return url;
    }
 
-   public final String getMethod() {
+   public String getMethod() {
       return StringUtils.toUpper(method);
    }
 
-   public final String getPostBody() {
+   public String getPostBody() {
       return postBody;
    }
 
@@ -56,15 +56,15 @@ public final class StubRequest {
       this.url = url;
    }
 
-   public final void setMethod(final String method) {
-      this.method = (StringUtils.isSet(method) ? StringUtils.toUpper(method) : null);
+   public void setMethod(final String method) {
+      this.method = (StringUtils.isSet(method) ? method : null);
    }
 
-   public final void setPostBody(final String postBody) {
+   public void setPostBody(final String postBody) {
       this.postBody = postBody;
    }
 
-   public final Map<String, String> getHeaders() {
+   public Map<String, String> getHeaders() {
       return headers;
    }
 

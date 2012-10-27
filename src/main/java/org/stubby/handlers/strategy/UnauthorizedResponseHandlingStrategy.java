@@ -24,11 +24,9 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.StringUtils;
-import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
