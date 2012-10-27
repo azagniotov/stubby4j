@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
  */
 
 
-public class DataStoreTest {
+public class DataStoreIT {
 
    private static DataStore dataStore;
 
@@ -36,7 +36,7 @@ public class DataStoreTest {
 
       ANSITerminal.mute = true;
 
-      final URL url = DataStoreTest.class.getResource("/httplifecycles-noheaders.yaml");
+      final URL url = DataStoreIT.class.getResource("/datastoreit-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
