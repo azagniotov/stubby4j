@@ -136,6 +136,67 @@
 
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <useDefaultManifestFile>false</useDefaultManifestFile>
+                     <archive>
+                        <compress>true</compress>
+                        <manifest>
+                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                           <addClasspath>true</addClasspath>
+                           <mainClass>org.stubby.Main</mainClass>
+                           <packageName>org.stubby</packageName>
+                        </manifest>
+                        <manifestEntries>
+                           <Built-By>Alexander Zagniotov</Built-By>
+                           <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                     </archive>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9</version>
+            <executions>
+               <execution>
+                  <id>attach-javadocs</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <archive>
+                        <compress>true</compress>
+                        <manifest>
+                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                           <addClasspath>true</addClasspath>
+                           <mainClass>org.stubby.Main</mainClass>
+                           <packageName>org.stubby</packageName>
+                        </manifest>
+                        <manifestEntries>
+                           <Built-By>Alexander Zagniotov</Built-By>
+                           <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                     </archive>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
             <version>1.7</version>
             <executions>
