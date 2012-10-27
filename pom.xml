@@ -12,8 +12,16 @@
    <name>HTTP stub server with embedded Jetty</name>
 
    <properties>
+
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <manifest.builtBy>Alexander Zagniotov</manifest.builtBy>
+      <manifest.addDefaultImplementationEntries>true</manifest.addDefaultImplementationEntries>
+      <manifest.addClasspath>true</manifest.addClasspath>
+      <manifest.mainClass>org.stubby.Main</manifest.mainClass>
+      <manifest.packageName>org.stubby</manifest.packageName>
+      <manifest.compress>true</manifest.compress>
+      <compileSource>1.6</compileSource>
    </properties>
 
    <licenses>
@@ -94,8 +102,8 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>2.5.1</version>
             <configuration>
-               <source>1.6</source>
-               <target>1.6</target>
+               <source>${compileSource}</source>
+               <target>${compileSource}</target>
                <compilerArgument>-Xlint:all</compilerArgument>
                <showWarnings>true</showWarnings>
                <showDeprecation>true</showDeprecation>
@@ -119,15 +127,17 @@
             </executions>
             <configuration>
                <archive>
-                  <compress>true</compress>
+                  <compress>${manifest.compress}</compress>
                   <manifest>
-                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                     <addClasspath>true</addClasspath>
-                     <mainClass>org.stubby.Main</mainClass>
-                     <packageName>org.stubby</packageName>
+                     <addDefaultImplementationEntries>
+                        ${manifest.addDefaultImplementationEntries}
+                     </addDefaultImplementationEntries>
+                     <addClasspath>${manifest.addClasspath}</addClasspath>
+                     <mainClass>${manifest.mainClass}</mainClass>
+                     <packageName>${manifest.packageName}</packageName>
                   </manifest>
                   <manifestEntries>
-                     <Built-By>Alexander Zagniotov</Built-By>
+                     <Built-By>${manifest.builtBy}</Built-By>
                      <Implementation-Version>${project.version}</Implementation-Version>
                   </manifestEntries>
                </archive>
@@ -140,7 +150,7 @@
             <version>2.2.1</version>
             <executions>
                <execution>
-                  <id>attach-sources</id>
+                  <id>generate-sources-jar</id>
                   <phase>package</phase>
                   <goals>
                      <goal>jar</goal>
@@ -148,15 +158,17 @@
                   <configuration>
                      <useDefaultManifestFile>false</useDefaultManifestFile>
                      <archive>
-                        <compress>true</compress>
+                        <compress>${manifest.compress}</compress>
                         <manifest>
-                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                           <addClasspath>true</addClasspath>
-                           <mainClass>org.stubby.Main</mainClass>
-                           <packageName>org.stubby</packageName>
+                           <addDefaultImplementationEntries>
+                              ${manifest.addDefaultImplementationEntries}
+                           </addDefaultImplementationEntries>
+                           <addClasspath>${manifest.addClasspath}</addClasspath>
+                           <mainClass>${manifest.mainClass}</mainClass>
+                           <packageName>${manifest.packageName}</packageName>
                         </manifest>
                         <manifestEntries>
-                           <Built-By>Alexander Zagniotov</Built-By>
+                           <Built-By>${manifest.builtBy}</Built-By>
                            <Implementation-Version>${project.version}</Implementation-Version>
                         </manifestEntries>
                      </archive>
@@ -171,22 +183,24 @@
             <version>2.9</version>
             <executions>
                <execution>
-                  <id>attach-javadocs</id>
+                  <id>generate-javadocs-jar</id>
                   <phase>package</phase>
                   <goals>
                      <goal>jar</goal>
                   </goals>
                   <configuration>
                      <archive>
-                        <compress>true</compress>
+                        <compress>${manifest.compress}</compress>
                         <manifest>
-                           <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                           <addClasspath>true</addClasspath>
-                           <mainClass>org.stubby.Main</mainClass>
-                           <packageName>org.stubby</packageName>
+                           <addDefaultImplementationEntries>
+                              ${manifest.addDefaultImplementationEntries}
+                           </addDefaultImplementationEntries>
+                           <addClasspath>${manifest.addClasspath}</addClasspath>
+                           <mainClass>${manifest.mainClass}</mainClass>
+                           <packageName>${manifest.packageName}</packageName>
                         </manifest>
                         <manifestEntries>
-                           <Built-By>Alexander Zagniotov</Built-By>
+                           <Built-By>${manifest.builtBy}</Built-By>
                            <Implementation-Version>${project.version}</Implementation-Version>
                         </manifestEntries>
                      </archive>
@@ -275,9 +289,15 @@
                      <version>2.5.2</version>
                      <configuration>
                         <effort>Max</effort>
-                        <!-- Default -->
                         <threshold>Exp</threshold>
-                        <!-- Default -->
+                     </configuration>
+                  </plugin>
+                  <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-pmd-plugin</artifactId>
+                     <version>2.7.1</version>
+                     <configuration>
+                        <targetJdk>${compileSource}</targetJdk>
                      </configuration>
                   </plugin>
                   <plugin>
