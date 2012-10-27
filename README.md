@@ -57,7 +57,11 @@ See `docs` directory for:
 
 
 ## Artifacts
-See `artifacts` directory for fat and skinny stubby4j JARs:
+See `artifacts` directory for the following stubby4j JARs:
+* Fat
+* Skinny
+* Sources
+* Javadocs
 
 
 ## Authors
