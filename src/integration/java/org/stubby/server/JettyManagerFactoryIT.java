@@ -5,8 +5,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stubby.cli.ANSITerminal;
-import org.stubby.server.JettyManager;
-import org.stubby.server.JettyManagerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -22,7 +20,7 @@ public class JettyManagerFactoryIT {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      url = Stubby4JClientStubsIT.class.getResource("/atom-feed.yaml");
+      url = Stubby4JClientStubsIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
       Assert.assertNotNull(url);
 
       ANSITerminal.mute = true;

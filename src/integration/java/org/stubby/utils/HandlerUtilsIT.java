@@ -9,7 +9,7 @@ import org.stubby.exception.Stubby4JException;
  * @author Alexander Zagniotov
  * @since 6/27/12, 10:26 AM
  */
-public class HandlerUtilsTest {
+public class HandlerUtilsIT {
 
    @Test
    public void shouldGenerateServerName() throws Exception {

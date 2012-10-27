@@ -26,7 +26,7 @@ public class Stubby4JClientAdminIT {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = Stubby4JClientAdminIT.class.getResource("/atom-feed-for-content-tests.yaml");
+      final URL url = Stubby4JClientAdminIT.class.getResource("/yaml/stubby4jclientadminit-test-data.yaml");
       Assert.assertNotNull(url);
 
       ANSITerminal.mute = true;

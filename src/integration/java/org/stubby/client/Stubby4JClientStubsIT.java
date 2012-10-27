@@ -24,7 +24,7 @@ public class Stubby4JClientStubsIT {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = Stubby4JClientStubsIT.class.getResource("/atom-feed.yaml");
+      final URL url = Stubby4JClientStubsIT.class.getResource("/yaml/stubby4jclientstubs-test-data.yaml");
       Assert.assertNotNull(url);
 
       ANSITerminal.mute = true;

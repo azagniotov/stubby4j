@@ -36,7 +36,7 @@ public class DataStoreIT {
 
       ANSITerminal.mute = true;
 
-      final URL url = DataStoreIT.class.getResource("/datastoreit-test-data.yaml");
+      final URL url = DataStoreIT.class.getResource("/yaml/datastoreit-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
