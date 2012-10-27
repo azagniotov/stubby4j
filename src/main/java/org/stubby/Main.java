@@ -36,7 +36,9 @@ final class Main {
    public static void main(final String[] args) {
 
       parseCommandLineArgs(args);
-      printHelpIfRequested();
+      if (printHelpIfRequested())
+         return;
+
       verifyYamlDataProvided();
       startStubby4jUsingCommandLineArgs();
    }
@@ -47,24 +49,27 @@ final class Main {
       } catch (final ParseException ex) {
          final String msg = String.format("Could not parse provided command line arguments, error: %s", ex.toString());
          System.err.println(msg);
-         System.exit(1);
+         throw new RuntimeException(msg);
       }
    }
 
-   private static void printHelpIfRequested() {
+   private static boolean printHelpIfRequested() {
       if (CommandLineIntepreter.isHelp()) {
          CommandLineIntepreter.printHelp(Main.class);
-         System.exit(0);
+
+         return true;
       }
+      return false;
    }
 
    private static void verifyYamlDataProvided() {
       if (!CommandLineIntepreter.isYamlProvided()) {
-         final String msg = String.format("YAML data was not provided using command line option '--%s'. \nTo see all command line options run again with option '--%s'",
+         final String msg = String.format("YAML data was not provided using command line option '--%s'. %sTo see all command line options run again with option '--%s'",
                CommandLineIntepreter.OPTION_CONFIG,
+               "\n",
                CommandLineIntepreter.OPTION_HELP);
          System.err.println(msg);
-         System.exit(1);
+         throw new RuntimeException(msg);
       }
    }
 
@@ -73,7 +78,7 @@ final class Main {
          final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
          final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
 
-         ANSITerminal.mute = CommandLineIntepreter.isMute();
+         ANSITerminal.muteConsole(CommandLineIntepreter.isMute());
 
          final JettyManager jettyManager = new JettyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
          jettyManager.startJetty();
@@ -81,7 +86,7 @@ final class Main {
       } catch (final Exception ex) {
          final String msg = String.format("Could not init stubby4j, error: %s", ex.toString());
          System.err.println(msg);
-         System.exit(1);
+         throw new RuntimeException(msg);
       }
    }
 }

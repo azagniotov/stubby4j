@@ -1,7 +1,8 @@
-package org.stubby.utils;
+package unit.org.stubby.utils;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import org.stubby.utils.ReflectionUtils;
 import org.stubby.yaml.stubs.StubRequest;
 
 import java.util.Map;

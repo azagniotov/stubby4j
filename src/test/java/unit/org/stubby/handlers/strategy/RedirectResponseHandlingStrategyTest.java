@@ -1,4 +1,4 @@
-package org.stubby.handlers.strategy;
+package unit.org.stubby.handlers.strategy;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
@@ -7,6 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.handlers.HttpRequestInfo;
+import org.stubby.handlers.strategy.RedirectResponseHandlingStrategy;
+import org.stubby.handlers.strategy.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.yaml.stubs.StubResponse;
 

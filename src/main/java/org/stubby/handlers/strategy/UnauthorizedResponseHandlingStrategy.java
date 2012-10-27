@@ -16,10 +16,8 @@ import java.nio.charset.Charset;
  */
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-   private final StubResponse foundStubResponse;
-
    public UnauthorizedResponseHandlingStrategy(final StubResponse foundStubResponse) {
-      this.foundStubResponse = foundStubResponse;
+
    }
 
    @Override

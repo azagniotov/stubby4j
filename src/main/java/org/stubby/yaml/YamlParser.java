@@ -5,6 +5,7 @@ import org.stubby.cli.ANSITerminal;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.ReflectionUtils;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
@@ -49,7 +50,7 @@ public class YamlParser {
    public Reader buildYamlReaderFromFilename() throws IOException {
 
       final File yamlFile = new File(yamlConfigFilename);
-      final String filename = yamlFile.getName().toLowerCase();
+      final String filename = StringUtils.toLower(yamlFile.getName());
 
       if (!filename.endsWith(".yaml") && !filename.endsWith(".yml")) {
          throw new IOException(String.format("The given filename %s does not ends with YAML or YML", yamlConfigFilename));
@@ -70,7 +71,7 @@ public class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   public List<StubHttpLifecycle> load(final Reader io) throws IOException {
+   public List<StubHttpLifecycle> load(final Reader io) throws Exception {
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
       final List<?> loadedYamlData = loadYamlData(io);
@@ -96,7 +97,7 @@ public class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapParentYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws IOException {
+   protected void mapParentYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
       for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
 
          final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
@@ -111,26 +112,22 @@ public class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapHttpSettingsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws IOException {
+   protected void mapHttpSettingsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
 
       for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
          final Object value = pair.getValue();
          final String propertyName = pair.getKey();
 
-         try {
-            if (value instanceof Map) {
-               final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
-               ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
-               continue;
-            }
 
-            final String propertyValue = extractPropertyValueAsString(propertyName, value);
-            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
-
-         } catch (final Exception ex) {
-            throw new IOException(String.format("Could not assign value '%s' to property '%s' to %s, error: %s", value, propertyName, target.getClass().getSimpleName(), ex.getMessage()), ex);
+         if (value instanceof Map) {
+            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
+            ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
+            continue;
          }
+
+         final String propertyValue = extractPropertyValueAsString(propertyName, value);
+         ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
       }
    }
 
@@ -153,25 +150,28 @@ public class YamlParser {
    }
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
-      try {
-         final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
-            @Override
-            protected void addImplicitResolvers() {
-               // no implicit resolvers - resolve everything to String
-            }
-         });
-         final Object loadedYaml = yaml.load(io);
+      final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
+      final Object loadedYaml = yaml.load(io);
 
-         if (loadedYaml instanceof ArrayList)
-            return (ArrayList<?>) loadedYaml;
+      if (loadedYaml instanceof ArrayList)
+         return (ArrayList<?>) loadedYaml;
 
-         throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
-      } catch (final Exception ex) {
-         throw new IOException(ex);
-      }
+      throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
    }
 
    public String getLoadedConfigYamlPath() {
       return loadedConfigAbsolutePath;
+   }
+
+   private static final class YamlParserResolver extends Resolver {
+
+      public YamlParserResolver() {
+         super();
+      }
+
+      @Override
+      protected void addImplicitResolvers() {
+         // no implicit resolvers - resolve everything to String
+      }
    }
 }

@@ -22,6 +22,8 @@ package org.stubby.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,9 +37,16 @@ public final class ReflectionUtils {
       final Map<String, String> properties = new HashMap<String, String>();
 
       for (final Field field : object.getClass().getDeclaredFields()) {
-         field.setAccessible(true);
+
+         AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+            public Boolean run() {
+               field.setAccessible(true);
+               return true;
+            }
+         });
+
          final String value = (field.get(object) != null ? field.get(object).toString() : "Not provided");
-         properties.put(field.getName().toLowerCase(), value);
+         properties.put(StringUtils.toLower(field.getName()), value);
       }
 
       return properties;

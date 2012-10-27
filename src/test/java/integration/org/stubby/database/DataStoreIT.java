@@ -1,4 +1,4 @@
-package org.stubby.database;
+package integration.org.stubby.database;
 
 import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Assert;
@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.cli.ANSITerminal;
+import org.stubby.database.DataStore;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
@@ -32,9 +33,9 @@ public class DataStoreIT {
    private static DataStore dataStore;
 
    @BeforeClass
-   public static void beforeClass() throws IOException {
+   public static void beforeClass() throws Exception {
 
-      ANSITerminal.mute = true;
+      ANSITerminal.muteConsole(true);
 
       final URL url = DataStoreIT.class.getResource("/yaml/datastoreit-test-data.yaml");
       Assert.assertNotNull(url);

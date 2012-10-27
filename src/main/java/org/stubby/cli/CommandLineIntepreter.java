@@ -25,6 +25,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.stubby.utils.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -72,17 +73,14 @@ public final class CommandLineIntepreter {
       line = parser.parse(options, args);
    }
 
-   protected static String getCurrentJarLocation(final Class theclass) {
+   public static String getCurrentJarLocation(final Class theclass) {
       final URL location = theclass.getProtectionDomain().getCodeSource().getLocation();
-      try {
-         final String jar = new File(location.getFile()).getName();
-         if (jar.toLowerCase().endsWith(".jar")) {
-            return jar;
-         }
-         return "stubby4j-x.x.x-SNAPSHOT.jar";
-      } catch (Exception ignored) {
-         return "stubby4j-x.x.x-SNAPSHOT.jar";
-      }
+      final String jar = new File(location.getFile()).getName();
+
+      if (StringUtils.toLower(jar).endsWith(".jar"))
+         return jar;
+
+      return "stubby4j-x.x.x-SNAPSHOT.jar";
    }
 
    public static boolean isMute() {
@@ -103,7 +101,7 @@ public final class CommandLineIntepreter {
 
    public static void printHelp(final Class theclass) {
       final HelpFormatter formatter = new HelpFormatter();
-      final String command = String.format("\njava -jar %s", getCurrentJarLocation(theclass));
+      final String command = String.format("%sjava -jar %s", "\n", getCurrentJarLocation(theclass));
       formatter.printHelp(command, options, true);
    }
 

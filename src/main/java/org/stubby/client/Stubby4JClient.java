@@ -2,17 +2,19 @@ package org.stubby.client;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.stubby.cli.CommandLineIntepreter;
-import org.stubby.server.JettyManagerFactory;
 import org.stubby.server.JettyFactory;
 import org.stubby.server.JettyManager;
+import org.stubby.server.JettyManagerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -52,7 +54,8 @@ public final class Stubby4JClient {
    }
 
    public void stopJetty() throws Exception {
-      jettyManager.stopJetty();
+      if (jettyManager != null)
+         jettyManager.stopJetty();
    }
 
 
@@ -88,20 +91,27 @@ public final class Stubby4JClient {
       return String.format(URL_TEMPLATE, host, clientPort, uri != null ? uri : "");
    }
 
-   private Stubby4JResponse parseHttpResponse(final HttpURLConnection con) throws IOException {
-
-      final int responseCode = con.getResponseCode();
-
+   private Stubby4JResponse parseHttpResponse(final HttpURLConnection con) {
       try {
-         final String response = new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next().trim();
+         final String response = getResponseAsString(con);
 
-         return new Stubby4JResponse(responseCode, response);
+         return new Stubby4JResponse(con.getResponseCode(), response);
       } catch (final Exception ex) {
-         final String response = con.getResponseMessage().trim();
-
-         return new Stubby4JResponse(responseCode, response);
+         return new Stubby4JResponse(HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       } finally {
          con.disconnect();
+      }
+   }
+
+   private String getResponseAsString(final HttpURLConnection con) {
+      try {
+         return new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next().trim();
+      } catch (final Exception ex) {
+         try {
+            return con.getResponseMessage().trim();
+         } catch (final IOException ex2) {
+            return String.format("%s->%s", ex.toString(), ex2.toString());
+         }
       }
    }
 
@@ -117,13 +127,18 @@ public final class Stubby4JClient {
    }
 
    private String calculatePostDataLength(final String postData) {
-      return (postData != null ? Integer.toString(postData.getBytes().length) : "0");
+      return (postData != null ? Integer.toString(postData.getBytes(Charset.forName("UTF-8")).length) : "0");
    }
 
    private void writePostBytes(final HttpURLConnection con, final String postData) throws IOException {
       final DataOutputStream dataOutputStream = new DataOutputStream(con.getOutputStream());
-      dataOutputStream.writeBytes((postData != null ? postData : ""));
-      dataOutputStream.flush();
-      dataOutputStream.close();
+      try {
+         dataOutputStream.writeBytes((postData != null ? postData : ""));
+         dataOutputStream.flush();
+      } catch (final IOException ex) {
+         throw new IOException(ex);
+      } finally {
+         dataOutputStream.close();
+      }
    }
 }

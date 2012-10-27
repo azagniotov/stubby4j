@@ -1,7 +1,8 @@
-package org.stubby.yaml;
+package integration.org.stubby.yaml;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
 import java.io.Reader;

@@ -1,4 +1,4 @@
-package org.stubby.client;
+package integration.org.stubby.client;
 
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stubby.cli.ANSITerminal;
+import org.stubby.client.ClientRequestInfo;
+import org.stubby.client.Stubby4JClient;
+import org.stubby.client.Stubby4JResponse;
 import org.stubby.handlers.StubsRegistrationHandler;
 import org.stubby.utils.HandlerUtils;
 
@@ -29,7 +32,7 @@ public class Stubby4JClientAdminIT {
       final URL url = Stubby4JClientAdminIT.class.getResource("/yaml/stubby4jclientadminit-test-data.yaml");
       Assert.assertNotNull(url);
 
-      ANSITerminal.mute = true;
+      ANSITerminal.muteConsole(true);
       stubby4JClient = new Stubby4JClient(url.getFile());
       stubby4JClient.startJetty();
 

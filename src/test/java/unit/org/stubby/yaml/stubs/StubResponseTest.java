@@ -1,7 +1,8 @@
-package org.stubby.yaml.stubs;
+package unit.org.stubby.yaml.stubs;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.stubby.yaml.stubs.StubResponse;
 
 /**
  * @author Alexander Zagniotov

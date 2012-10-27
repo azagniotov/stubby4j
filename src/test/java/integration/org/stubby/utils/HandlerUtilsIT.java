@@ -1,9 +1,10 @@
-package org.stubby.utils;
+package integration.org.stubby.utils;
 
 import junit.framework.Assert;
 import org.eclipse.jetty.http.HttpSchemes;
 import org.junit.Test;
 import org.stubby.exception.Stubby4JException;
+import org.stubby.utils.HandlerUtils;
 
 /**
  * @author Alexander Zagniotov

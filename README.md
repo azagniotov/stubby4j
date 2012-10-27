@@ -33,7 +33,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ###### All this goodness in just under 1.5MB
 
 ## Dependencies
-stubby4j is a fat JAR, and contains the following dependencies (Its not impossible for stubby4j to work with earlier versions of Jetty, I have not tested it):
+stubby4j is a fat JAR (for the skinny JAR, please refer to `artifacts`), and contains the following dependencies.
 
 * jetty-server-8.1.1.v20120215.jar
 * javax.servlet-3.0.0.v201112011016.jar
@@ -44,6 +44,8 @@ stubby4j is a fat JAR, and contains the following dependencies (Its not impossib
 * commons-cli-1.2.jar
 * commons-codec-1.5.jar
 * snakeyaml-1.11.jar
+
+**stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
 
 
 ## Documentation

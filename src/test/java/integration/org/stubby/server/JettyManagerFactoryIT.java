@@ -1,10 +1,12 @@
-package org.stubby.server;
+package integration.org.stubby.server;
 
-import org.stubby.client.Stubby4JClientStubsIT;
+import integration.org.stubby.client.Stubby4JClientStubsIT;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stubby.cli.ANSITerminal;
+import org.stubby.server.JettyManager;
+import org.stubby.server.JettyManagerFactory;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class JettyManagerFactoryIT {
       url = Stubby4JClientStubsIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
       Assert.assertNotNull(url);
 
-      ANSITerminal.mute = true;
+      ANSITerminal.muteConsole(true);
       jettyManagerFactory = new JettyManagerFactory();
    }
 

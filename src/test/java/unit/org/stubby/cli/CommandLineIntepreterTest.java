@@ -1,9 +1,13 @@
-package org.stubby.cli;
+package unit.org.stubby.cli;
 
 import junit.framework.Assert;
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.stubby.cli.ANSITerminal;
+import org.stubby.cli.CommandLineIntepreter;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package org.stubby.handlers;
+package unit.org.stubby.handlers;
 
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.database.DataStore;
+import org.stubby.handlers.HttpRequestInfo;
+import org.stubby.handlers.StubsHandler;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubResponse;
 import org.stubby.yaml.stubs.StubResponseTypes;
@@ -43,7 +45,7 @@ public class StubsHandlerTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      ANSITerminal.mute = true;
+      ANSITerminal.muteConsole(true);
    }
 
    @Test

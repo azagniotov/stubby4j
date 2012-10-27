@@ -1,7 +1,7 @@
 package org.stubby.cli;
 
 public class ANSITerminal {
-   public static boolean mute = false;
+   private static boolean mute = false;
 
    private static final char ESCAPE = 27;
 
@@ -56,5 +56,13 @@ public class ANSITerminal {
 
    public static void loaded(final String msg) {
       print(MAGENTA, msg);
+   }
+
+   public static void muteConsole(final boolean isMute) {
+      mute = isMute;
+   }
+
+   public static boolean isMute() {
+      return mute;
    }
 }

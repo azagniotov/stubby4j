@@ -12,6 +12,7 @@ import org.stubby.server.JettyFactory;
 import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.ReflectionUtils;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 import org.stubby.yaml.stubs.StubRequest;
@@ -128,8 +129,8 @@ public class PingHandler extends AbstractHandler {
                final String sslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, keyValue.getValue(), host, JettyFactory.DEFAULT_SSL_PORT);
                builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL URL", responseClass, sslUrl));
             }
-         }                                                                                             /**/
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, keyValue.getKey().toUpperCase(), responseClass, value));
+         }
+         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, StringUtils.toUpper(keyValue.getKey()), responseClass, value));
       }
       return String.format(requestCounterHtml, tableName, builder.toString());
    }

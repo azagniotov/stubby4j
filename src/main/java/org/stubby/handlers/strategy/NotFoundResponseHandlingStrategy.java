@@ -14,10 +14,8 @@ import java.io.IOException;
  */
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-   private final StubResponse foundStubResponse;
-
    public NotFoundResponseHandlingStrategy(final StubResponse foundStubResponse) {
-      this.foundStubResponse = foundStubResponse;
+
    }
 
    @Override

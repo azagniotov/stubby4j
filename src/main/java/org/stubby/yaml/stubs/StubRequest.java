@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
+import org.stubby.utils.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +45,7 @@ public final class StubRequest {
    }
 
    public final String getMethod() {
-      return method.toUpperCase();
+      return StringUtils.toUpper(method);
    }
 
    public final String getPostBody() {
@@ -55,7 +57,7 @@ public final class StubRequest {
    }
 
    public final void setMethod(final String method) {
-      this.method = (method != null ? method.toUpperCase() : null);
+      this.method = (method != null ? StringUtils.toUpper(method) : null);
    }
 
    public final void setPostBody(final String postBody) {

@@ -1,4 +1,4 @@
-package org.stubby.client;
+package integration.org.stubby.client;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpMethods;
@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.stubby.cli.ANSITerminal;
+import org.stubby.client.ClientRequestInfo;
+import org.stubby.client.Stubby4JClient;
+import org.stubby.client.Stubby4JResponse;
 
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -27,7 +30,7 @@ public class Stubby4JClientStubsIT {
       final URL url = Stubby4JClientStubsIT.class.getResource("/yaml/stubby4jclientstubs-test-data.yaml");
       Assert.assertNotNull(url);
 
-      ANSITerminal.mute = true;
+      ANSITerminal.muteConsole(true);
       stubby4JClient = new Stubby4JClient(url.getFile());
       stubby4JClient.startJetty();
    }

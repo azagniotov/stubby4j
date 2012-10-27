@@ -14,12 +14,6 @@ public final class JettyManager {
 
    public void startJetty() throws Exception {
       synchronized (JettyManager.class) {
-
-         while (server.isStopping()) {
-            ANSITerminal.warn("Another Jetty instance is shutting down.. Going to sleep for 200ms before start..");
-            Thread.sleep(200);
-         }
-
          if (server.isStopped() && !server.isRunning()) {
             server.start();
 
