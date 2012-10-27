@@ -58,7 +58,7 @@ public class YamlParser {
 
       loadedConfigAbsolutePath = yamlFile.getAbsolutePath();
 
-      return new InputStreamReader(new FileInputStream(yamlFile), Charset.forName("UTF-8"));
+      return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.utf8Charset());
    }
 
    //TODO Ability get response from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
@@ -67,7 +67,7 @@ public class YamlParser {
       if (!responseFileFromFilesystem.isFile())
          throw new IOException(String.format("Could not load file from path: %s", filePath));
 
-      return HandlerUtils.inputStreamToString(new FileInputStream(responseFileFromFilesystem));
+      return StringUtils.inputStreamToString(new FileInputStream(responseFileFromFilesystem));
    }
 
    @SuppressWarnings("unchecked")
@@ -142,7 +142,7 @@ public class YamlParser {
          return value;
 
       final String authorizationHeader = value.get(HttpRequestInfo.AUTH_HEADER);
-      final byte[] bytes = authorizationHeader.getBytes(Charset.forName("UTF-8"));
+      final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
       value.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
 

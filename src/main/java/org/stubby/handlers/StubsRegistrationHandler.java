@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.stubby.database.DataStore;
 import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
@@ -63,8 +64,8 @@ public class StubsRegistrationHandler extends AbstractHandler {
       }
 
       try {
-         final InputStream is = new ByteArrayInputStream(postBody.getBytes(Charset.forName("UTF-8")));
-         final Reader yamlReader = new InputStreamReader(is, Charset.forName("UTF-8"));
+         final InputStream is = new ByteArrayInputStream(postBody.getBytes(StringUtils.utf8Charset()));
+         final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
 
          final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.load(yamlReader);
 

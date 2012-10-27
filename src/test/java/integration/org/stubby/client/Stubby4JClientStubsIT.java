@@ -11,6 +11,7 @@ import org.stubby.cli.ANSITerminal;
 import org.stubby.client.ClientRequestInfo;
 import org.stubby.client.Stubby4JClient;
 import org.stubby.client.Stubby4JResponse;
+import org.stubby.utils.StringUtils;
 
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnURIWithAuthorization() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
       final String postBody = null;
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, postBody, encodedCredentials);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
@@ -71,7 +72,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnURIWithAuthorizationWithWrongCredentials() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(Charset.forName("UTF-8"))));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.utf8Charset())));
       final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, null, encodedCredentials);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 

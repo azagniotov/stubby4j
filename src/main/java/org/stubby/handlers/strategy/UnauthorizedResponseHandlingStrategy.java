@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpStatus;
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +32,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
          return;
       }
       final String expectedbase64encodedHeader = authorizationHeader.substring("Basic ".length());
-      final String expectedbase64decodedHeader = new String(Base64.decodeBase64(expectedbase64encodedHeader), Charset.forName("UTF-8"));
+      final String expectedbase64decodedHeader = new String(Base64.decodeBase64(expectedbase64encodedHeader), StringUtils.utf8Charset());
 
       final String template = "Unauthorized with supplied encoded credentials: '%s' which decodes to '%s'";
       error = String.format(template, expectedbase64encodedHeader, expectedbase64decodedHeader);

@@ -2,6 +2,7 @@ package org.stubby.handlers.strategy;
 
 import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +40,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    }
 
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
-      response.setCharacterEncoding("UTF-8");
+      response.setCharacterEncoding(StringUtils.UTF_8);
       for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
          response.setHeader(entry.getKey(), entry.getValue());
       }

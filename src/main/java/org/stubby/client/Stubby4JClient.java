@@ -8,6 +8,7 @@ import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.server.JettyFactory;
 import org.stubby.server.JettyManager;
 import org.stubby.server.JettyManagerFactory;
+import org.stubby.utils.StringUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.util.Scanner;
 public final class Stubby4JClient {
 
    private static final String URL_TEMPLATE = "http://%s:%s%s";
-   private static final String UTF_8 = "UTF-8";
 
    private JettyManager jettyManager;
    private String yamlConfigurationFilename;
@@ -105,7 +105,7 @@ public final class Stubby4JClient {
 
    private String getResponseAsString(final HttpURLConnection con) {
       try {
-         return new Scanner(con.getInputStream(), UTF_8).useDelimiter("\\A").next().trim();
+         return new Scanner(con.getInputStream(), StringUtils.UTF_8).useDelimiter("\\A").next().trim();
       } catch (final Exception ex) {
          try {
             return con.getResponseMessage().trim();
@@ -120,14 +120,14 @@ public final class Stubby4JClient {
       con.setRequestProperty(HttpHeaders.CONTENT_TYPE, MimeTypes.FORM_ENCODED);
       con.setRequestProperty(HttpHeaders.CONTENT_LENGTH, calculatePostDataLength(postData));
       con.setRequestProperty(HttpHeaders.CONTENT_LANGUAGE, "en-US");
-      con.setRequestProperty(HttpHeaders.CONTENT_ENCODING, UTF_8);
+      con.setRequestProperty(HttpHeaders.CONTENT_ENCODING, StringUtils.UTF_8);
       con.setUseCaches(false);
       con.setDoInput(true);
       con.setDoOutput(true);
    }
 
    private String calculatePostDataLength(final String postData) {
-      return (postData != null ? Integer.toString(postData.getBytes(Charset.forName("UTF-8")).length) : "0");
+      return (postData != null ? Integer.toString(postData.getBytes(StringUtils.utf8Charset()).length) : "0");
    }
 
    private void writePostBytes(final HttpURLConnection con, final String postData) throws IOException {

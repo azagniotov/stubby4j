@@ -114,7 +114,7 @@ public class PingHandler extends AbstractHandler {
          Object value = keyValue.getValue();
          String responseClass = "";
          if (value != null) {
-            value = HandlerUtils.escapeHtmlEntities(value.toString());
+            value = StringUtils.escapeHtmlEntities(value.toString());
 
             if (keyValue.getKey().equalsIgnoreCase("body") || keyValue.getKey().equalsIgnoreCase("file")) {
                value = HandlerUtils.highlightResponseMarkup(value);

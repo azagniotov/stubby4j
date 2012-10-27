@@ -16,6 +16,7 @@ import org.stubby.handlers.PingHandler;
 import org.stubby.handlers.SslHandler;
 import org.stubby.handlers.StubsHandler;
 import org.stubby.handlers.StubsRegistrationHandler;
+import org.stubby.utils.StringUtils;
 import org.stubby.yaml.YamlParser;
 
 import java.util.Locale;
@@ -96,7 +97,7 @@ public final class JettyFactory {
       contextHandler.setContextPath(pathInfo);
       contextHandler.setAllowNullPathInfo(true);
       contextHandler.setConnectorNames(new String[]{connectorName});
-      contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), "UTF-8");
+      contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
       contextHandler.setHandler(handler);
 
       return contextHandler;

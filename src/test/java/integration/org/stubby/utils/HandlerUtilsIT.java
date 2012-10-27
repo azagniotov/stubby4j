@@ -5,6 +5,7 @@ import org.eclipse.jetty.http.HttpSchemes;
 import org.junit.Test;
 import org.stubby.exception.Stubby4JException;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.StringUtils;
 
 /**
  * @author Alexander Zagniotov
@@ -20,7 +21,7 @@ public class HandlerUtilsIT {
 
    @Test
    public void shouldEscapeHtmlEntities() throws Exception {
-      final String escaped = HandlerUtils.escapeHtmlEntities("<xmlElement>8</xmlElement>");
+      final String escaped = StringUtils.escapeHtmlEntities("<xmlElement>8</xmlElement>");
       Assert.assertEquals("&lt;xmlElement&gt;8&lt;/xmlElement&gt;", escaped);
    }
 

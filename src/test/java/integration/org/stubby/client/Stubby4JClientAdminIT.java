@@ -12,7 +12,7 @@ import org.stubby.client.ClientRequestInfo;
 import org.stubby.client.Stubby4JClient;
 import org.stubby.client.Stubby4JResponse;
 import org.stubby.handlers.StubsRegistrationHandler;
-import org.stubby.utils.HandlerUtils;
+import org.stubby.utils.StringUtils;
 
 import java.net.URL;
 
@@ -36,7 +36,7 @@ public class Stubby4JClientAdminIT {
       stubby4JClient = new Stubby4JClient(url.getFile());
       stubby4JClient.startJetty();
 
-      content = HandlerUtils.inputStreamToString(url.openStream());
+      content = StringUtils.inputStreamToString(url.openStream());
    }
 
    @Before
