@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.database;
 
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.RedirectStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -39,16 +38,7 @@ public class DataStore {
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }
 
-   public StubResponse findStubResponseFor(final HttpRequestInfo httpRequestInfo) {
-
-      final StubRequest assertionStubRequest = new StubRequest();
-
-      assertionStubRequest.setMethod(httpRequestInfo.getMethod());
-      assertionStubRequest.setUrl(httpRequestInfo.getUrl());
-      assertionStubRequest.setHeaders(httpRequestInfo.getHeaders());
-      assertionStubRequest.setQueryParams(httpRequestInfo.getQueryParams());
-      assertionStubRequest.setPostBody(httpRequestInfo.getPostBody());
-
+   public StubResponse findStubResponseFor(final StubRequest assertionStubRequest) {
       return identifyTypeOfStubResponse(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
    }
 
@@ -59,9 +49,9 @@ public class DataStore {
          final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
 
          final Map<String, String> headers = foundStubHttpLifecycle.getRequest().getHeaders();
-         if (headers.containsKey(HttpRequestInfo.AUTH_HEADER)) {
-            final String foundBasicAuthorization = headers.get(HttpRequestInfo.AUTH_HEADER);
-            final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(HttpRequestInfo.AUTH_HEADER);
+         if (headers.containsKey(StubRequest.AUTH_HEADER)) {
+            final String foundBasicAuthorization = headers.get(StubRequest.AUTH_HEADER);
+            final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(StubRequest.AUTH_HEADER);
 
             if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
                return new UnauthorizedStubResponse();

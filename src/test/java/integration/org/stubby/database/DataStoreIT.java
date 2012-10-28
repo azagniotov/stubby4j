@@ -7,16 +7,19 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.database.DataStore;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.NotFoundStubResponse;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 import org.stubby.yaml.stubs.StubResponseTypes;
 import org.stubby.yaml.stubs.UnauthorizedStubResponse;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -56,8 +59,8 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, null);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
       Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
@@ -72,10 +75,10 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
-      when(mockHttpServletRequest.getHeader(HttpRequestInfo.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA=="); //bob:secret
+      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA=="); //bob:secret
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, null);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
       Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
@@ -92,8 +95,8 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, null);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
       Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
@@ -108,10 +111,10 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
-      when(mockHttpServletRequest.getHeader(HttpRequestInfo.AUTH_HEADER)).thenReturn("Basic 88888nNlY3JldA=="); //bob:secret
+      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic 88888nNlY3JldA=="); //bob:secret
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, null);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
       Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
@@ -127,8 +130,8 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, null);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
       Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
@@ -145,11 +148,17 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
+      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+         @Override
+         public int read() throws IOException {
+            return inputStream.read();
+         }
+      });
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, postData);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
-      Assert.assertTrue(stubResponse instanceof StubResponse);
       Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
    }
 
@@ -165,8 +174,8 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(mockHttpServletRequest, postData);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
       Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());

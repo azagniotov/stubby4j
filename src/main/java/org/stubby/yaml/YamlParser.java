@@ -21,7 +21,6 @@ package org.stubby.yaml;
 
 import org.apache.commons.codec.binary.Base64;
 import org.stubby.cli.ANSITerminal;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.ReflectionUtils;
 import org.stubby.utils.StringUtils;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
@@ -154,13 +153,13 @@ public class YamlParser {
    }
 
    protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {
-      if (!value.containsKey(HttpRequestInfo.AUTH_HEADER))
+      if (!value.containsKey(StubRequest.AUTH_HEADER))
          return value;
 
-      final String authorizationHeader = value.get(HttpRequestInfo.AUTH_HEADER);
+      final String authorizationHeader = value.get(StubRequest.AUTH_HEADER);
       final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
-      value.put(HttpRequestInfo.AUTH_HEADER, encodedAuthorizationHeader);
+      value.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
 
       return value;
    }

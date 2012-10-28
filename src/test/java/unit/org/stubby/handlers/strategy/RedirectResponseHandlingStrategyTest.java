@@ -6,10 +6,10 @@ import org.eclipse.jetty.http.MimeTypes;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.handlers.strategy.RedirectResponseHandlingStrategy;
 import org.stubby.handlers.strategy.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class RedirectResponseHandlingStrategyTest {
 
    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
-   private static final HttpRequestInfo mockHttpRequestInfo = Mockito.mock(HttpRequestInfo.class);
+   private static final StubRequest mockAssertionRequest = Mockito.mock(StubRequest.class);
 
    private static StubResponseHandlingStrategy redirectResponseStubResponseHandlingStrategy;
 
@@ -52,7 +52,7 @@ public class RedirectResponseHandlingStrategyTest {
       when(mockStubResponse.getStatus()).thenReturn("301");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
 
-      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
@@ -71,7 +71,7 @@ public class RedirectResponseHandlingStrategyTest {
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
       when(mockStubResponse.getLatency()).thenReturn("100");
 
-      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));

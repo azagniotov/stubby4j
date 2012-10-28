@@ -7,10 +7,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.handlers.strategy.DefaultResponseHandlingStrategy;
 import org.stubby.handlers.strategy.StubResponseHandlingStrategy;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class DefaultResponseHandlingStrategyTest {
 
    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
-   private static final HttpRequestInfo mockHttpRequestInfo = Mockito.mock(HttpRequestInfo.class);
+   private static final StubRequest mockAssertionRequest = Mockito.mock(StubRequest.class);
 
    private final String someResultsMessage = "we have results";
 
@@ -56,7 +56,7 @@ public class DefaultResponseHandlingStrategyTest {
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
       when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
 
-      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
@@ -75,7 +75,7 @@ public class DefaultResponseHandlingStrategyTest {
       when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage);
       when(mockStubResponse.getLatency()).thenReturn("100");
 
-      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
       verify(mockPrintWriter, times(1)).println(someResultsMessage);
@@ -95,7 +95,7 @@ public class DefaultResponseHandlingStrategyTest {
       when(mockStubResponse.getLatency()).thenReturn("100");
 
       long before = System.currentTimeMillis();
-      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockHttpRequestInfo);
+      defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
       long after = System.currentTimeMillis();
 
       Assert.assertTrue((after - before) >= 100);

@@ -21,9 +21,9 @@ package org.stubby.handlers.strategy;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpStatus;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.StringUtils;
+import org.stubby.yaml.stubs.StubRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,9 +36,9 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
    }
 
    @Override
-   public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
-      final String authorizationHeader = httpRequestInfo.getHeaders().get(HttpRequestInfo.AUTH_HEADER);
+      final String authorizationHeader = assertionStubRequest.getHeaders().get(StubRequest.AUTH_HEADER);
       String error = "";
       if (authorizationHeader == null) {
          error = "You are not authorized to view this page without supplied 'Authorization' HTTP header";

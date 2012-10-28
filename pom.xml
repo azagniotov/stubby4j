@@ -96,6 +96,7 @@
    </dependencies>
 
    <build>
+      <finalName>${project.artifactId}-${project.version}</finalName>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -284,6 +285,11 @@
             <configuration>
                <reportPlugins>
                   <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-jxr-plugin</artifactId>
+                     <version>2.3</version>
+                  </plugin>
+                  <plugin>
                      <groupId>org.codehaus.mojo</groupId>
                      <artifactId>findbugs-maven-plugin</artifactId>
                      <version>2.5.2</version>
@@ -299,6 +305,11 @@
                      <configuration>
                         <targetJdk>${compileSource}</targetJdk>
                      </configuration>
+                  </plugin>
+                  <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-checkstyle-plugin</artifactId>
+                     <version>2.9.1</version>
                   </plugin>
                   <plugin>
                      <groupId>org.apache.maven.plugins</groupId>

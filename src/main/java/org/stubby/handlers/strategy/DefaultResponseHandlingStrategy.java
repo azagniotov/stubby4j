@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package org.stubby.handlers.strategy;
 
 import org.stubby.exception.Stubby4JException;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.StringUtils;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +39,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    }
 
    @Override
-   public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
       setStubResponseHeaders(foundStubResponse, response);
 

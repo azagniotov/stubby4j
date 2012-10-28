@@ -27,6 +27,7 @@ import org.stubby.handlers.strategy.HandlingStrategyFactory;
 import org.stubby.handlers.strategy.StubResponseHandlingStrategy;
 import org.stubby.utils.ConsoleUtils;
 import org.stubby.utils.HandlerUtils;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.ServletException;
@@ -35,9 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class StubsHandler extends AbstractHandler {
-   private static final String NAME = "stubs";
 
-   public static final String BAD_POST_REQUEST_MESSAGE = "Oh oh :( Bad request, POST body is missing";
+   private static final String NAME = "stubs";
    private final DataStore dataStore;
 
    public StubsHandler(final DataStore dataStore) {
@@ -53,13 +53,12 @@ public class StubsHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      final String postBody = HandlerUtils.extractPostRequestBody(request, NAME);
-      final HttpRequestInfo httpRequestInfo = new HttpRequestInfo(request, postBody);
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(httpRequestInfo);
+      final StubRequest assertionStubRequest = StubRequest.constructAssertionStubRequest(request);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertionStubRequest);
       final StubResponseHandlingStrategy strategyStubResponse = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
 
       try {
-         strategyStubResponse.handle(response, httpRequestInfo);
+         strategyStubResponse.handle(response, assertionStubRequest);
          ConsoleUtils.logOutgoingResponse(request, response, NAME);
 
       } catch (final Exception ex) {

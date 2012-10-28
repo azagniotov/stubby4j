@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -70,6 +72,21 @@ public final class HandlerUtils {
       final String implementationTitle = pkg.getImplementationTitle() == null ?
             "Java-based HTTP stub server" : pkg.getImplementationTitle();
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+   }
+
+   public static  Map<String, String> constructParamMap(final String queryString) {
+
+      if (!StringUtils.isSet(queryString))
+         return new HashMap<String, String>();
+
+      final Map<String, String> paramMap = new HashMap<String, String>();
+      final String[] pairs = queryString.split("&");
+      for (final String pair : pairs) {
+         final String[] splittedPair = pair.split("=");
+         paramMap.put(splittedPair[0], splittedPair[1]);
+      }
+
+      return paramMap;
    }
 
    public static void setResponseMainHeaders(final HttpServletResponse response) {

@@ -19,8 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.yaml.stubs;
 
+import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +31,9 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
  */
-public final class StubRequest {
+public class StubRequest {
+
+   public static final String AUTH_HEADER = "authorization";
 
    private String url = null;
    private String method = null;
@@ -84,6 +89,22 @@ public final class StubRequest {
       return (url != null && method != null);
    }
 
+   public static StubRequest constructAssertionStubRequest(final HttpServletRequest request) throws IOException {
+      final StubRequest assertionRequest = new StubRequest();
+
+      assertionRequest.setMethod(request.getMethod());
+      assertionRequest.setUrl(request.getPathInfo());
+      assertionRequest.setQueryParams(HandlerUtils.constructParamMap(request.getQueryString()));
+      assertionRequest.setPostBody(HandlerUtils.extractPostRequestBody(request, "stubs"));
+
+      final String authHeader = request.getHeader(AUTH_HEADER);
+      if (StringUtils.isSet(authHeader)) {
+         assertionRequest.getHeaders().put(AUTH_HEADER, authHeader);
+      }
+
+      return assertionRequest;
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) return true;
@@ -95,7 +116,6 @@ public final class StubRequest {
       if (postBody != null ? !postBody.equals(that.postBody) : that.postBody != null) return false;
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
-      //if (!headers.equals(that.headers)) return false;
       if (!queryParams.equals(that.queryParams)) return false;
 
       return true;

@@ -21,9 +21,9 @@ package org.stubby.handlers.strategy;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.stubby.exception.Stubby4JException;
-import org.stubby.handlers.HttpRequestInfo;
 import org.stubby.utils.HandlerUtils;
 import org.stubby.utils.StringUtils;
+import org.stubby.yaml.stubs.StubRequest;
 import org.stubby.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +39,7 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
    }
 
    @Override
-   public void handle(final HttpServletResponse response, final HttpRequestInfo httpRequestInfo) throws IOException {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
 
       if (StringUtils.isSet(foundStubResponse.getLatency())) {
