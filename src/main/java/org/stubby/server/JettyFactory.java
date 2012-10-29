@@ -125,9 +125,10 @@ public final class JettyFactory {
    private Connector[] buildConnectors() {
       final Connector[] connectors = new Connector[]{buildStubsConnector(), buildAdminConnector()};
 
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE) &&
-            commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS))
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
+            && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
          connectors[0] = buildStubsSslConnector();
+      }
 
       return connectors;
    }
@@ -143,7 +144,8 @@ public final class JettyFactory {
          adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
       }
 
-      final String status = String.format("Admin portal configured at http://%s:%s", adminChannel.getHost(), adminChannel.getPort());
+      final String status = String.format("Admin portal configured at http://%s:%s",
+            adminChannel.getHost(), adminChannel.getPort());
       ANSITerminal.status(status);
 
       currentHost = adminChannel.getHost();
@@ -156,7 +158,8 @@ public final class JettyFactory {
 
       final SelectChannelConnector stubsChannel = new SelectChannelConnector();
       stubsChannel.setPort(getStubsPort(commandLineArgs));
-      stubsChannel.setMaxIdleTime(30000);
+      final int idleTimeInMilliseconds = 30000;
+      stubsChannel.setMaxIdleTime(idleTimeInMilliseconds);
       stubsChannel.setRequestHeaderSize(8192);
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
       stubsChannel.setHost(DEFAULT_HOST);
@@ -165,7 +168,8 @@ public final class JettyFactory {
          stubsChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
       }
 
-      final String status = String.format("Stubs portal configured at http://%s:%s", stubsChannel.getHost(), stubsChannel.getPort());
+      final String status = String.format("Stubs portal configured at http://%s:%s",
+            stubsChannel.getHost(), stubsChannel.getPort());
       ANSITerminal.status(status);
 
       currentStubsPort = stubsChannel.getPort();
@@ -188,7 +192,8 @@ public final class JettyFactory {
       sslConnector.getSslContextFactory().setKeyManagerPassword(password);
       sslConnector.getSslContextFactory().setKeyStorePath(keystorePath);
 
-      final String status = String.format("Stubs portal with SSL configured at https://%s:%s", sslConnector.getHost(), sslConnector.getPort());
+      final String status = String.format("Stubs portal with SSL configured at https://%s:%s",
+            sslConnector.getHost(), sslConnector.getPort());
       ANSITerminal.status(status);
 
       isSsl = true;
@@ -197,20 +202,23 @@ public final class JettyFactory {
    }
 
    private int getSslPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT))
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+      }
       return DEFAULT_SSL_PORT;
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT))
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+      }
       return DEFAULT_STUBS_PORT;
    }
 
    private int getAdminPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT))
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT)) {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
+      }
       return DEFAULT_ADMIN_PORT;
    }
 }

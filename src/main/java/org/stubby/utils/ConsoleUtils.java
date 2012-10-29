@@ -26,6 +26,7 @@ import org.stubby.javax.servlet.http.HttpServletResponseWithGetStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * @author Alexander Zagniotov
@@ -73,20 +74,21 @@ public final class ConsoleUtils {
             HttpStatus.getMessage(status)
       );
 
-      if (status >= 400 && status < 600)
+      if (status >= HttpStatus.BAD_REQUEST_400 && status < HttpStatus.INSUFFICIENT_STORAGE_507) {
          ANSITerminal.error(logMessage);
-      else if (status >= 300)
+      } else if (status >= HttpStatus.MULTIPLE_CHOICES_300) {
          ANSITerminal.warn(logMessage);
-      else if (status >= 200)
+      } else if (status >= HttpStatus.OK_200) {
          ANSITerminal.ok(logMessage);
-      else if (status >= 100)
+      } else if (status >= HttpStatus.CONTINUE_100) {
          ANSITerminal.info(logMessage);
-      else
+      } else {
          ANSITerminal.log(logMessage);
+      }
    }
 
    private static String getTime() {
-      final Calendar now = Calendar.getInstance();
+      final Calendar now = Calendar.getInstance(Locale.US);
       return String.format("%02d:%02d:%02d",
             now.get(Calendar.HOUR_OF_DAY),
             now.get(Calendar.MINUTE),
