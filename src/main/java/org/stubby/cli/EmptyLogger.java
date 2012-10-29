@@ -21,34 +21,34 @@ package org.stubby.cli;
 
 import org.eclipse.jetty.util.log.Logger;
 
-public class EmptyLogger implements Logger {
+public final class EmptyLogger implements Logger {
    @Override
    public String getName() {
       return null;
    }
 
    @Override
-   public void warn(String s, Object... objects) {
+   public void warn(final String s, final Object... objects) {
    }
 
    @Override
-   public void warn(Throwable throwable) {
+   public void warn(final Throwable throwable) {
    }
 
    @Override
-   public void warn(String s, Throwable throwable) {
+   public void warn(final String s, final Throwable throwable) {
    }
 
    @Override
-   public void info(String s, Object... objects) {
+   public void info(final String s, final Object... objects) {
    }
 
    @Override
-   public void info(Throwable throwable) {
+   public void info(final Throwable throwable) {
    }
 
    @Override
-   public void info(String s, Throwable throwable) {
+   public void info(final String s, final Throwable throwable) {
    }
 
    @Override
@@ -57,27 +57,27 @@ public class EmptyLogger implements Logger {
    }
 
    @Override
-   public void setDebugEnabled(boolean b) {
+   public void setDebugEnabled(final boolean b) {
    }
 
    @Override
-   public void debug(String s, Object... objects) {
+   public void debug(final String s, final Object... objects) {
    }
 
    @Override
-   public void debug(Throwable throwable) {
+   public void debug(final Throwable throwable) {
    }
 
    @Override
-   public void debug(String s, Throwable throwable) {
+   public void debug(final String s, final Throwable throwable) {
    }
 
    @Override
-   public Logger getLogger(String s) {
+   public Logger getLogger(final String s) {
       return this;
    }
 
    @Override
-   public void ignore(Throwable throwable) {
+   public void ignore(final Throwable throwable) {
    }
 }

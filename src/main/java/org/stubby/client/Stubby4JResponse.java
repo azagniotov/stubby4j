@@ -24,9 +24,9 @@ public final class Stubby4JResponse {
    private final int responseCode;
    private final String content;
 
-   public Stubby4JResponse(final int responseCode, final String content) {
-      this.responseCode = responseCode;
-      this.content = content;
+   public Stubby4JResponse(final int newResponseCode, final String newContent) {
+      this.responseCode = newResponseCode;
+      this.content = newContent;
    }
 
    public int getResponseCode() {

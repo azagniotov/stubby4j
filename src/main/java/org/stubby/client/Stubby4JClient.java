@@ -49,8 +49,8 @@ public final class Stubby4JClient {
 
    }
 
-   public Stubby4JClient(final String yamlConfigurationFilename) {
-      this.yamlConfigurationFilename = yamlConfigurationFilename;
+   public Stubby4JClient(final String newYamlConfigurationFilename) {
+      this.yamlConfigurationFilename = newYamlConfigurationFilename;
    }
 
    public void startJetty() throws Exception {
@@ -68,8 +68,9 @@ public final class Stubby4JClient {
    }
 
    public void stopJetty() throws Exception {
-      if (jettyManager != null)
+      if (jettyManager != null) {
          jettyManager.stopJetty();
+      }
    }
 
 
@@ -141,7 +142,11 @@ public final class Stubby4JClient {
    }
 
    private String calculatePostDataLength(final String postData) {
-      return (postData != null ? Integer.toString(postData.getBytes(StringUtils.utf8Charset()).length) : "0");
+      if (postData != null) {
+         final byte[] postDataBytes = postData.getBytes(StringUtils.utf8Charset());
+         return Integer.toString(postDataBytes.length);
+      }
+      return "0";
    }
 
    private void writePostBytes(final HttpURLConnection con, final String postData) throws IOException {

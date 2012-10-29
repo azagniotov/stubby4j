@@ -28,33 +28,33 @@ public final class ClientRequestInfo {
    private final String base64encodedCredentials;
    private final int clientPort;
 
-   public ClientRequestInfo(final String method,
-                            final String uri,
-                            final String host,
-                            final int clientPort) {
-      this(method, uri, host, clientPort, null, null);
+   public ClientRequestInfo(final String newMethod,
+                            final String newUri,
+                            final String newHost,
+                            final int newClientPort) {
+      this(newMethod, newUri, newHost, newClientPort, null, null);
    }
 
-   public ClientRequestInfo(final String method,
-                            final String uri,
-                            final String host,
-                            final int clientPort,
-                            final String postBody) {
-      this(method, uri, host, clientPort, postBody, null);
+   public ClientRequestInfo(final String newMethod,
+                            final String newUri,
+                            final String newHost,
+                            final int newClientPort,
+                            final String newPostBody) {
+      this(newMethod, newUri, newHost, newClientPort, newPostBody, null);
    }
 
-   public ClientRequestInfo(final String method,
-                            final String uri,
-                            final String host,
-                            final int clientPort,
-                            final String postBody,
-                            final String base64encodedCredentials) {
-      this.method = method;
-      this.uri = uri;
-      this.host = host;
-      this.clientPort = clientPort;
-      this.postBody = postBody;
-      this.base64encodedCredentials = base64encodedCredentials;
+   public ClientRequestInfo(final String newMethod,
+                            final String newUri,
+                            final String newHost,
+                            final int newClientPort,
+                            final String newPostBody,
+                            final String newBase64encodedCredentials) {
+      this.method = newMethod;
+      this.uri = newUri;
+      this.host = newHost;
+      this.clientPort = newClientPort;
+      this.postBody = newPostBody;
+      this.base64encodedCredentials = newBase64encodedCredentials;
    }
 
    public String getMethod() {

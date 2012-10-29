@@ -44,7 +44,7 @@ public class DataStoreIT {
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.load(yamlParser.buildYamlReaderFromFilename());
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad();
 
       dataStore = new DataStore(stubHttpLifecycles);
    }
@@ -59,7 +59,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
@@ -77,7 +77,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
       when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA=="); //bob:secret
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
@@ -95,7 +95,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
@@ -113,7 +113,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
       when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic 88888nNlY3JldA=="); //bob:secret
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
@@ -130,7 +130,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
@@ -156,7 +156,7 @@ public class DataStoreIT {
          }
       });
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
@@ -174,7 +174,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);

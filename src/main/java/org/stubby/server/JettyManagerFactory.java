@@ -42,7 +42,7 @@ public final class JettyManagerFactory {
          Log.setLog(new EmptyLogger());
 
          final YamlParser yamlParser = new YamlParser(yamlConfigFilename);
-         final List<StubHttpLifecycle> httpLifecycles = yamlParser.load(yamlParser.buildYamlReaderFromFilename());
+         final List<StubHttpLifecycle> httpLifecycles = yamlParser.parseAndLoad();
          final DataStore dataStore = new DataStore(httpLifecycles);
          final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
          final Server server = jettyFactory.construct(dataStore, yamlParser);

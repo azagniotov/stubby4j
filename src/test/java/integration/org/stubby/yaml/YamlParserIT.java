@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.stubby.yaml.YamlParser;
 import org.stubby.yaml.stubs.StubHttpLifecycle;
 
-import java.io.Reader;
 import java.net.URL;
 import java.util.List;
 
@@ -21,8 +20,7 @@ public class YamlParserIT {
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
-      final Reader yamlReader = yamlParser.buildYamlReaderFromFilename();
-      final List<StubHttpLifecycle> loadedHttpCycles = yamlParser.load(yamlReader);
+      final List<StubHttpLifecycle> loadedHttpCycles = yamlParser.parseAndLoad();
 
       Assert.assertEquals(2, loadedHttpCycles.size());
    }

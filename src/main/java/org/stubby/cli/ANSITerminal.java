@@ -19,7 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.stubby.cli;
 
-public class ANSITerminal {
+public final class ANSITerminal {
+
+   private ANSITerminal() {
+
+   }
+
    private static boolean mute = false;
 
    private static final char ESCAPE = 27;
@@ -37,7 +42,9 @@ public class ANSITerminal {
    private static final String YELLOW = String.format("%s[33m", ESCAPE);
 
    private static void print(final String color, final String msg) {
-      if (mute) return;
+      if (mute) {
+         return;
+      }
       System.out.println(String.format("%s%s%s", color, msg, RESET));
    }
 

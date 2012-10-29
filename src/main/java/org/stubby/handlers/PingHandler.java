@@ -53,10 +53,10 @@ public final class PingHandler extends AbstractHandler {
    private final JettyContext jettyContext;
    private final YamlParser yamlParser;
 
-   public PingHandler(final JettyContext jettyContext, final DataStore dataStore, final YamlParser yamlParser) {
-      this.jettyContext = jettyContext;
-      this.dataStore = dataStore;
-      this.yamlParser = yamlParser;
+   public PingHandler(final JettyContext newContext, final DataStore newDataStore, final YamlParser newYamlParser) {
+      this.jettyContext = newContext;
+      this.dataStore = newDataStore;
+      this.yamlParser = newYamlParser;
    }
 
    @Override

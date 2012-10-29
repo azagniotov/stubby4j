@@ -62,7 +62,7 @@ public class YamlParser {
       this.yamlConfigFilename = yamlConfigFilename;
    }
 
-   public Reader buildYamlReaderFromFilename() throws IOException {
+   private Reader buildYamlReaderFromFilename() throws IOException {
 
       final File yamlFile = new File(yamlConfigFilename);
       final String filename = StringUtils.toLower(yamlFile.getName());
@@ -79,19 +79,26 @@ public class YamlParser {
    //TODO Ability get response from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
    private String loadResponseBodyFromFile(final String filePath) throws IOException {
       final File responseFileFromFilesystem = new File(filePath);
-      if (!responseFileFromFilesystem.isFile())
+      if (!responseFileFromFilesystem.isFile()) {
          throw new IOException(String.format("Could not load file from path: %s", filePath));
+      }
 
       return StringUtils.inputStreamToString(new FileInputStream(responseFileFromFilesystem));
    }
 
+   public List<StubHttpLifecycle> parseAndLoad() throws Exception {
+      return parseAndLoad(buildYamlReaderFromFilename());
+   }
+
    @SuppressWarnings("unchecked")
-   public List<StubHttpLifecycle> load(final Reader io) throws Exception {
+   public List<StubHttpLifecycle> parseAndLoad(final Reader io) throws Exception {
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
       final List<?> loadedYamlData = loadYamlData(io);
 
-      if (loadedYamlData.isEmpty()) return httpLifecycles;
+      if (loadedYamlData.isEmpty()) {
+         return httpLifecycles;
+      }
 
       for (final Object rawParentNode : loadedYamlData) {
 
@@ -134,7 +141,6 @@ public class YamlParser {
          final Object value = pair.getValue();
          final String propertyName = pair.getKey();
 
-
          if (value instanceof Map) {
             final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
             ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
@@ -149,12 +155,14 @@ public class YamlParser {
    private String extractPropertyValueAsString(final String propertyName, final Object value) throws IOException {
       final String valueAsString = value.toString();
 
-      return propertyName.equalsIgnoreCase("file") ? loadResponseBodyFromFile(valueAsString) : valueAsString;
+      return propertyName.equalsIgnoreCase("file") ?
+            loadResponseBodyFromFile(valueAsString) : valueAsString;
    }
 
    protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {
-      if (!value.containsKey(StubRequest.AUTH_HEADER))
+      if (!value.containsKey(StubRequest.AUTH_HEADER)) {
          return value;
+      }
 
       final String authorizationHeader = value.get(StubRequest.AUTH_HEADER);
       final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
@@ -165,11 +173,13 @@ public class YamlParser {
    }
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
-      final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
+      final Yaml yaml = new Yaml(new Constructor(), new Representer(),
+            new DumperOptions(), new YamlParserResolver());
       final Object loadedYaml = yaml.load(io);
 
-      if (loadedYaml instanceof ArrayList)
+      if (loadedYaml instanceof ArrayList) {
          return (ArrayList<?>) loadedYaml;
+      }
 
       throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
    }

@@ -75,12 +75,12 @@ public class DataStore {
       return new NotFoundStubResponse();
    }
 
-   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public final void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
       this.stubHttpLifecycles.addAll(stubHttpLifecycles);
    }
 
-   public List<StubHttpLifecycle> getStubHttpLifecycles() {
+   public final List<StubHttpLifecycle> getStubHttpLifecycles() {
       return stubHttpLifecycles;
    }
 }

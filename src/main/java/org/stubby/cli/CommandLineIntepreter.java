@@ -35,8 +35,8 @@ import java.util.Map;
 public final class CommandLineIntepreter {
 
    private static CommandLine line = null;
-   private final static CommandLineParser parser = new PosixParser();
-   private final static Options options = new Options();
+   private static final CommandLineParser POSIX_PARSER = new PosixParser();
+   private static final Options OPTIONS = new Options();
 
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
@@ -46,19 +46,19 @@ public final class CommandLineIntepreter {
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
 
-   private static final String[] OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
+   private static final String[] ALL_OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
    public static final String OPTION_HELP = "help";
 
    static {
-      options.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
-      options.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
-      options.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
-      options.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. YAML expected.");
-      options.addOption("k", OPTION_KEYSTORE, true, "Keystore file for enabling SSL.");
-      options.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
-      options.addOption("h", OPTION_HELP, false, "This help text.");
-      options.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console");
+      OPTIONS.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
+      OPTIONS.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
+      OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
+      OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. YAML expected.");
+      OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for enabling SSL.");
+      OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
+      OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
+      OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console");
    }
 
    private CommandLineIntepreter() {
@@ -66,15 +66,16 @@ public final class CommandLineIntepreter {
    }
 
    public static void parseCommandLine(final String[] args) throws ParseException {
-      line = parser.parse(options, args);
+      line = POSIX_PARSER.parse(OPTIONS, args);
    }
 
    public static String getCurrentJarLocation(final Class theclass) {
       final URL location = theclass.getProtectionDomain().getCodeSource().getLocation();
       final String jar = new File(location.getFile()).getName();
 
-      if (StringUtils.toLower(jar).endsWith(".jar"))
+      if (StringUtils.toLower(jar).endsWith(".jar")) {
          return jar;
+      }
 
       return "stubby4j-x.x.x-SNAPSHOT.jar";
    }
@@ -98,13 +99,13 @@ public final class CommandLineIntepreter {
    public static void printHelp(final Class theclass) {
       final HelpFormatter formatter = new HelpFormatter();
       final String command = String.format("%sjava -jar %s", "\n", getCurrentJarLocation(theclass));
-      formatter.printHelp(command, options, true);
+      formatter.printHelp(command, OPTIONS, true);
    }
 
    public static Map<String, String> getCommandlineParams() {
 
       final Map<String, String> params = new HashMap<String, String>();
-      for (final String option : OPTIONS) {
+      for (final String option : ALL_OPTIONS) {
          if (line.hasOption(option)) {
             params.put(option, line.getOptionValue(option));
          }

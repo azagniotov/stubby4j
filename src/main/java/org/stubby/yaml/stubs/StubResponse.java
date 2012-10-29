@@ -21,6 +21,7 @@ package org.stubby.yaml.stubs;
 
 import org.stubby.utils.StringUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,8 +35,8 @@ public class StubResponse {
    private String body = null;
    private String file = null;
    private String latency = null;
-   private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> params = new HashMap<String, String>();
+   private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
+   private Map<String, String> params = Collections.synchronizedMap(new HashMap<String, String>());
 
    public StubResponse() {
 
@@ -49,11 +50,11 @@ public class StubResponse {
       return (StringUtils.isSet(body) ? body : "");
    }
 
-   public final void setStatus(final String status) {
+   public void setStatus(final String status) {
       this.status = status;
    }
 
-   public final void setBody(final String body) {
+   public void setBody(final String body) {
       this.body = body;
    }
 
@@ -90,8 +91,9 @@ public class StubResponse {
    }
 
    public String getResponseBody() {
-      if (!StringUtils.isSet(file))
+      if (!StringUtils.isSet(file)) {
          return getBody();
+      }
       return file;
    }
 

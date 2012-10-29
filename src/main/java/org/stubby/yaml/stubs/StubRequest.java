@@ -45,15 +45,15 @@ public class StubRequest {
 
    }
 
-   public String getUrl() {
+   public final String getUrl() {
       return url;
    }
 
-   public String getMethod() {
+   public final String getMethod() {
       return StringUtils.toUpper(method);
    }
 
-   public String getPostBody() {
+   public final String getPostBody() {
       return postBody;
    }
 
@@ -61,15 +61,15 @@ public class StubRequest {
       this.url = url;
    }
 
-   public void setMethod(final String method) {
-      this.method = (StringUtils.isSet(method) ? method : null);
+   public void setMethod(final String newMethod) {
+      this.method = (StringUtils.isSet(newMethod) ? newMethod : null);
    }
 
    public void setPostBody(final String postBody) {
       this.postBody = postBody;
    }
 
-   public Map<String, String> getHeaders() {
+   public final Map<String, String> getHeaders() {
       return headers;
    }
 
@@ -77,7 +77,7 @@ public class StubRequest {
       this.headers = headers;
    }
 
-   public Map<String, String> getQueryParams() {
+   public final Map<String, String> getQueryParams() {
       return queryParams;
    }
 
@@ -85,11 +85,11 @@ public class StubRequest {
       this.queryParams = queryParams;
    }
 
-   public boolean isConfigured() {
+   public final boolean isConfigured() {
       return (url != null && method != null);
    }
 
-   public static StubRequest constructAssertionStubRequest(final HttpServletRequest request) throws IOException {
+   public static final StubRequest creatFromHttpServletRequest(final HttpServletRequest request) throws IOException {
       final StubRequest assertionRequest = new StubRequest();
 
       assertionRequest.setMethod(request.getMethod());
@@ -106,7 +106,7 @@ public class StubRequest {
    }
 
    @Override
-   public boolean equals(final Object o) {
+   public final boolean equals(final Object o) {
       if (this == o) return true;
       if (!(o instanceof StubRequest)) return false;
 
@@ -122,7 +122,7 @@ public class StubRequest {
    }
 
    @Override
-   public int hashCode() {
+   public final int hashCode() {
       int result = url.hashCode();
       result = 31 * result + method.hashCode();
       result = 31 * result + (postBody != null ? postBody.hashCode() : 0);
@@ -130,7 +130,7 @@ public class StubRequest {
    }
 
    @Override
-   public String toString() {
+   public final String toString() {
       final StringBuffer sb = new StringBuffer();
       sb.append("StubRequest");
       sb.append("{url='").append(url).append('\'');

@@ -209,7 +209,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest assertionStubRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest assertionStubRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       when(mockDataStore.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
 
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
@@ -238,7 +238,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest assertionStubRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest assertionStubRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       when(mockDataStore.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
 
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
@@ -265,7 +265,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest assertionStubRequest = StubRequest.constructAssertionStubRequest(mockHttpServletRequest);
+      final StubRequest assertionStubRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
       when(mockDataStore.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
 
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);

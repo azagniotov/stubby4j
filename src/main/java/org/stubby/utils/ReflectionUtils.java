@@ -33,6 +33,10 @@ import java.util.Map;
  */
 public final class ReflectionUtils {
 
+   private ReflectionUtils() {
+
+   }
+
    public static Map<String, String> getProperties(final Object object) throws IllegalAccessException {
       final Map<String, String> properties = new HashMap<String, String>();
 

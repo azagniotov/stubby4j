@@ -8,8 +8,8 @@ Run the `mvn site` command to generate `site` directory under `target` with the 
 * PMD (source code analyzer)
 * FindBugs (looks for bugs in Java programs based on the concept of bug patterns)
 * CPD (copy/paste detector)
-* Checkstyle (code style violations)
-* Source Xref (cross-reference of the project's sources)
+* Checkstyle (code style violations according to Sun)
+* Source Xref (cross-reference of the project's sources, used by other reports)
 * Javadocs
 
 The commands can be also run in one go: `mvn clean package site`
