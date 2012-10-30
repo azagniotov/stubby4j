@@ -22,6 +22,7 @@ package org.stubby.handlers;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.stubby.cli.ANSITerminal;
 import org.stubby.database.DataStore;
 import org.stubby.handlers.strategy.HandlingStrategyFactory;
 import org.stubby.handlers.strategy.StubResponseHandlingStrategy;

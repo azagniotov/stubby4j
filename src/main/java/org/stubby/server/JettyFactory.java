@@ -27,17 +27,22 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.spdy.http.HTTPSPDYServerConnector;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.stubby.cli.ANSITerminal;
 import org.stubby.cli.CommandLineIntepreter;
 import org.stubby.database.DataStore;
 import org.stubby.handlers.PingHandler;
+import org.stubby.handlers.SpdyHandler;
 import org.stubby.handlers.SslHandler;
 import org.stubby.handlers.StubsHandler;
 import org.stubby.handlers.StubsRegistrationHandler;
 import org.stubby.utils.StringUtils;
 import org.stubby.yaml.YamlParser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -55,6 +60,7 @@ public final class JettyFactory {
    static final String ADMIN_CONNECTOR_NAME = "stubbyAdminConnector";
    static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
    static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
+   static final String SPDY_CONNECTOR_NAME = "speedySslConnector";
 
    private final Map<String, String> commandLineArgs;
    private final YamlParser yamlParser;
@@ -90,6 +96,7 @@ public final class JettyFactory {
             {
                   constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
                   constructHandler(SSL_CONNECTOR_NAME, "/", new SslHandler(dataStore)),
+                  constructHandler(SPDY_CONNECTOR_NAME, "/", new SpdyHandler(dataStore)),
 
                   constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
@@ -123,14 +130,35 @@ public final class JettyFactory {
    }
 
    private Connector[] buildConnectors() {
-      final Connector[] connectors = new Connector[]{buildStubsConnector(), buildAdminConnector()};
+
+      final List<Connector> connectors = new ArrayList<Connector>();
+      connectors.add(buildAdminConnector());
+      connectors.add(buildStubsConnector());
 
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
             && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
-         connectors[0] = buildStubsSslConnector();
+         connectors.add(buildStubsSslConnector());
+
+         final Double currentJREVersion = getCurrentJREVersion();
+         if (currentJREVersion < 1.7) {
+            ANSITerminal.error(String.format("Stubs portal cannot be configured with SPDY, "
+                  + "you are not running Java v1.7, but an older v%s", currentJREVersion));
+            return connectors.toArray(new Connector[connectors.size()]);
+         }
+         connectors.add(buildStubsSpdyConnector());
       }
 
-      return connectors;
+      return connectors.toArray(new Connector[connectors.size()]);
+   }
+
+   private Double getCurrentJREVersion() {
+      final String currentJREVersionAsString = System.getProperty("java.version");
+      if (!currentJREVersionAsString.matches(".*\\..*\\..*")) {
+         return Double.parseDouble(currentJREVersionAsString);
+      }
+      final String choppedCurrentJREVersionAsString
+            = currentJREVersionAsString.substring(0, currentJREVersionAsString.indexOf(".") + 2);
+      return Double.parseDouble(choppedCurrentJREVersionAsString);
    }
 
    private SelectChannelConnector buildAdminConnector() {
@@ -178,28 +206,56 @@ public final class JettyFactory {
    }
 
    private SslSocketConnector buildStubsSslConnector() {
+
+      isSsl = true;
+
       final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
       final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
       final int port = getSslPort(commandLineArgs);
-      final SslSocketConnector sslConnector = new SslSocketConnector();
 
+      final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
+      final SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
       sslConnector.setPort(port);
-
       sslConnector.setName(SSL_CONNECTOR_NAME);
-
-      sslConnector.getSslContextFactory().setKeyStorePassword(password);
-      sslConnector.getSslContextFactory().setTrustStorePassword(password);
-      sslConnector.getSslContextFactory().setKeyManagerPassword(password);
-      sslConnector.getSslContextFactory().setKeyStorePath(keystorePath);
+      sslConnector.setHost(DEFAULT_HOST);
 
       final String status = String.format("Stubs portal with SSL configured at https://%s:%s",
             sslConnector.getHost(), sslConnector.getPort());
       ANSITerminal.status(status);
 
-      isSsl = true;
-
       return sslConnector;
    }
+
+   private HTTPSPDYServerConnector buildStubsSpdyConnector() {
+      final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
+      final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
+      final int port = getSslPort(commandLineArgs);
+
+      final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
+      final HTTPSPDYServerConnector speedyConnector = new HTTPSPDYServerConnector(sslContextFactory);
+      speedyConnector.setPort(port);
+      speedyConnector.setName(SPDY_CONNECTOR_NAME);
+      speedyConnector.setHost(DEFAULT_HOST);
+      speedyConnector.getSslContextFactory().setProtocol("TLSv1");
+
+      final String status = String.format("Stubs portal with SSL configured at spdy://%s:%s",
+            speedyConnector.getHost(), speedyConnector.getPort());
+      ANSITerminal.status(status);
+
+      return speedyConnector;
+   }
+
+   private SslContextFactory constructSslContextFactory(final String password, final String keystorePath) {
+      final SslContextFactory sslFactory = new SslContextFactory();
+
+      sslFactory.setKeyStorePassword(password);
+      sslFactory.setTrustStorePassword(password);
+      sslFactory.setKeyManagerPassword(password);
+      sslFactory.setKeyStorePath(keystorePath);
+
+      return sslFactory;
+   }
+
 
    private int getSslPort(final Map<String, String> commandLineArgs) {
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {

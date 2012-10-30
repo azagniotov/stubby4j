@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public final class SslHandler extends StubsHandler {
+public final class SpdyHandler extends StubsHandler {
 
-   public SslHandler(final DataStore dataStore) {
+   public SpdyHandler(final DataStore dataStore) {
       super(dataStore);
    }
 

@@ -205,6 +205,8 @@
                      <goal>jar</goal>
                   </goals>
                   <configuration>
+                     <quiet>true</quiet>
+                     <javadocVersion>${compileSource}</javadocVersion>
                      <archive>
                         <compress>${manifest.compress}</compress>
                         <manifest>
