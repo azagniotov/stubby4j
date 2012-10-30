@@ -19,7 +19,6 @@
       <manifest.mainClass>${project.groupId}.Main</manifest.mainClass>
       <manifest.compress>true</manifest.compress>
       <compileSource>1.6</compileSource>
-      <library.version>1.0.5</library.version>
    </properties>
 
    <modelVersion>4.0.0</modelVersion>
@@ -122,6 +121,9 @@
                         </goals>
                      </execution>
                   </executions>
+                  <configuration>
+                     <passphrase>${gpg.passphrase}</passphrase>
+                  </configuration>
                </plugin>
             </plugins>
          </build>
