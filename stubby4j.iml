@@ -26,14 +26,10 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.7.v20120910" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.7.v20120910" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.spdy:spdy-jetty:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.spdy:spdy-core:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.spdy:spdy-jetty-http:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.npn:npn-api:8.1.2.v20120308" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.5" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.0" level="project" />
   </component>
 </module>

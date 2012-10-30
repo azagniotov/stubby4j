@@ -5,21 +5,21 @@
    <modelVersion>4.0.0</modelVersion>
    <description>The maven main core project description</description>
    <url>http://maven.apache.org</url>
-   <groupId>org.stubby</groupId>
+   <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.4</version>
+   <version>1.0.5</version>
    <packaging>jar</packaging>
    <name>HTTP stub server with embedded Jetty</name>
 
    <properties>
       <jetty.version>8.1.7.v20120910</jetty.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
       <manifest.builtBy>Alexander Zagniotov</manifest.builtBy>
       <manifest.addDefaultImplementationEntries>true</manifest.addDefaultImplementationEntries>
       <manifest.addClasspath>true</manifest.addClasspath>
-      <manifest.mainClass>org.stubby.Main</manifest.mainClass>
-      <manifest.packageName>org.stubby</manifest.packageName>
+      <manifest.packageName>${project.groupId}</manifest.packageName>
+      <manifest.mainClass>${project.groupId}.Main</manifest.mainClass>
       <manifest.compress>true</manifest.compress>
       <compileSource>1.6</compileSource>
    </properties>
@@ -57,28 +57,7 @@
       <dependency>
          <groupId>org.eclipse.jetty</groupId>
          <artifactId>jetty-server</artifactId>
-         <!-- <version>9.0.0.M1</version> -->
          <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty.spdy</groupId>
-         <artifactId>spdy-jetty</artifactId>
-         <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty.spdy</groupId>
-         <artifactId>spdy-core</artifactId>
-         <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty.spdy</groupId>
-         <artifactId>spdy-jetty-http</artifactId>
-         <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty.npn</groupId>
-         <artifactId>npn-api</artifactId>
-         <version>8.1.2.v20120308</version>
       </dependency>
       <dependency>
          <groupId>commons-cli</groupId>
