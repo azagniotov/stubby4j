@@ -17,3 +17,4 @@ Thumbs.db
 .settings
 dependency-reduced-pom.xml
 release.properties
+pom.xml.releaseBackup
