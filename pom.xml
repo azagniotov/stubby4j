@@ -25,7 +25,7 @@
    <url>http://maven.apache.org</url>
    <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.6</version>
+   <version>1.0.7-SNAPSHOT</version>
    <packaging>jar</packaging>
    <name>HTTP stub server with embedded Jetty</name>
 
