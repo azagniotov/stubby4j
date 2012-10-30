@@ -16,3 +16,4 @@ Thumbs.db
 .project
 .settings
 dependency-reduced-pom.xml
+release.properties
