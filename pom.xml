@@ -8,15 +8,6 @@
       <version>7</version>
    </parent>
 
-   <modelVersion>4.0.0</modelVersion>
-   <description>The maven main core project description</description>
-   <url>http://maven.apache.org</url>
-   <groupId>by.stub</groupId>
-   <artifactId>stubby4j</artifactId>
-   <version>1.0.5-SNAPSHOT</version>
-   <packaging>jar</packaging>
-   <name>HTTP stub server with embedded Jetty</name>
-
    <properties>
       <jetty.version>8.1.7.v20120910</jetty.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,7 +19,17 @@
       <manifest.mainClass>${project.groupId}.Main</manifest.mainClass>
       <manifest.compress>true</manifest.compress>
       <compileSource>1.6</compileSource>
+      <library.version>1.0.5</library.version>
    </properties>
+
+   <modelVersion>4.0.0</modelVersion>
+   <description>The maven main core project description</description>
+   <url>http://maven.apache.org</url>
+   <groupId>by.stub</groupId>
+   <artifactId>stubby4j</artifactId>
+   <version>${library.version}-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>HTTP stub server with embedded Jetty</name>
 
    <licenses>
       <license>
@@ -41,7 +42,7 @@
       <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
       <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
       <url>git@github.com:azagniotov/stubby4j.git</url>
-      <tag>stubby4j-1.0.5</tag>
+      <tag>stubby4j-${library.version}</tag>
    </scm>
    <developers>
       <developer>
