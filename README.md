@@ -35,11 +35,11 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## Dependencies
 stubby4j is a fat JAR (for the skinny JAR, please look under `artifacts`), which contains the following dependencies:
 
-* jetty-server-8.1.1.v20120215.jar
+* jetty-server-8.1.7.v20120910.jar
 * javax.servlet-3.0.0.v201112011016.jar
-* jetty-continuation-8.1.1.v20120215.jar
-* jetty-http-8.1.1.v20120215.jar
-* jetty-io-8.1.1.v20120215.jar
+* jetty-continuation-8.1.7.v20120910.jar
+* jetty-http-8.1.7.v20120910.jar
+* jetty-io-8.1.7.v20120910.jar
 * jetty-util-8.1.1.v20120215.jar
 * commons-cli-1.2.jar
 * commons-codec-1.5.jar
