@@ -2,12 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+   <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+   </parent>
+
    <modelVersion>4.0.0</modelVersion>
    <description>The maven main core project description</description>
    <url>http://maven.apache.org</url>
    <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.5</version>
+   <version>1.0.5-SNAPSHOT</version>
    <packaging>jar</packaging>
    <name>HTTP stub server with embedded Jetty</name>
 
@@ -32,8 +39,9 @@
       </license>
    </licenses>
    <scm>
-      <url>http://svn.apache.org/viewcvs.cgi/maven</url>
-      <connection>http://svn.apache.org/viewcvs.cgi/maven</connection>
+      <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
+      <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
+      <url>git@github.com:azagniotov/stubby4j.git</url>
    </scm>
    <developers>
       <developer>
@@ -92,6 +100,16 @@
    <build>
       <finalName>${project.artifactId}-${project.version}</finalName>
       <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.3.2</version>
+            <configuration>
+               <checkModificationExcludes>
+                  <checkModificationExclude>${project.basedir}/pom.xml</checkModificationExclude>
+               </checkModificationExcludes>
+            </configuration>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
