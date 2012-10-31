@@ -311,7 +311,7 @@
             <artifactId>maven-release-plugin</artifactId>
             <version>2.3.2</version>
             <configuration>
-               <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+               <arguments>-Dgpg.passphrase=${gpg.passphrase} -Prelease-sign-artifacts</arguments>
             </configuration>
          </plugin>
       </plugins>
