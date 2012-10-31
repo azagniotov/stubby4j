@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
 
    <parent>
       <groupId>org.sonatype.oss</groupId>
@@ -7,10 +9,24 @@
       <version>7</version>
    </parent>
 
+   <name>stubby4j</name>
+   <description>HTTP stub server written in Java with embedded Jetty</description>
+   <url>https://github.com/azagniotov/stubby4j</url>
+   <organization>
+      <name>ThoughtWorks</name>
+      <url>http://www.thoughtworks.com/</url>
+   </organization>
+   <inceptionYear>2012</inceptionYear>
+   <groupId>by.stub</groupId>
+   <artifactId>stubby4j</artifactId>
+   <version>1.0.13-SNAPSHOT</version>
+   <packaging>jar</packaging>
+
    <properties>
       <jetty.version>8.1.7.v20120910</jetty.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+      <siteProjectVersion>${project.version}</siteProjectVersion>
       <manifest.builtBy>Alexander Zagniotov</manifest.builtBy>
       <manifest.addDefaultImplementationEntries>true</manifest.addDefaultImplementationEntries>
       <manifest.addClasspath>true</manifest.addClasspath>
@@ -20,45 +36,14 @@
       <compileSource>1.6</compileSource>
    </properties>
 
-   <modelVersion>4.0.0</modelVersion>
-   <description>The maven main core project description</description>
-   <url>http://maven.apache.org</url>
-   <groupId>by.stub</groupId>
-   <artifactId>stubby4j</artifactId>
-   <version>1.0.13-SNAPSHOT</version>
-   <packaging>jar</packaging>
-   <name>HTTP stub server with embedded Jetty</name>
-
    <licenses>
       <license>
          <name>The Apache Software License, Version 2.0</name>
          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
          <distribution>repo</distribution>
+         <comments>A business-friendly OSS license</comments>
       </license>
    </licenses>
-   <scm>
-      <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
-      <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
-      <url>git@github.com:azagniotov/stubby4j.git</url>
-      <tag>HEAD</tag>
-   </scm>
-   <developers>
-      <developer>
-         <id>azagniotov</id>
-         <name>Alexander Zagniotov</name>
-         <email>AZagniotov@gmail.com</email>
-      </developer>
-      <developer>
-         <id>igoksu</id>
-         <name>Isa Goksu</name>
-         <email>isa.goksu@gmail.com</email>
-      </developer>
-      <developer>
-         <id>afmrak</id>
-         <name>Eric Mrak</name>
-         <email>enmrak@gmail.com</email>
-      </developer>
-   </developers>
 
    <dependencies>
       <dependency>
@@ -93,7 +78,6 @@
          <version>1.9.0</version>
          <scope>test</scope>
       </dependency>
-
    </dependencies>
 
    <build>
@@ -111,7 +95,6 @@
                <showDeprecation>true</showDeprecation>
             </configuration>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
@@ -145,7 +128,6 @@
                </archive>
             </configuration>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
@@ -178,7 +160,6 @@
                </execution>
             </executions>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -212,7 +193,6 @@
                </execution>
             </executions>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
@@ -241,7 +221,6 @@
                </execution>
             </executions>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
@@ -265,7 +244,6 @@
                </execution>
             </executions>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -280,7 +258,6 @@
                </execution>
             </executions>
          </plugin>
-
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
@@ -369,4 +346,50 @@
          </build>
       </profile>
    </profiles>
+
+   <scm>
+      <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
+      <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
+      <url>git@github.com:azagniotov/stubby4j.git</url>
+      <tag>HEAD</tag>
+   </scm>
+
+   <issueManagement>
+      <system>GitHub</system>
+      <url>https://github.com/azagniotov/stubby4j/issues/</url>
+   </issueManagement>
+
+   <developers>
+      <developer>
+         <id>azagniotov</id>
+         <name>Alexander Zagniotov</name>
+         <email>AZagniotov@gmail.com</email>
+         <roles>
+            <role>author</role>
+         </roles>
+         <organization>ThoughtWorks</organization>
+         <organizationUrl>http://www.ThoughtWorks.com</organizationUrl>
+      </developer>
+      <developer>
+         <id>igoksu</id>
+         <name>Isa Goksu</name>
+         <email>isa.goksu@gmail.com</email>
+         <roles>
+            <role>contributor</role>
+         </roles>
+         <organization>ThoughtWorks</organization>
+         <organizationUrl>http://www.ThoughtWorks.com</organizationUrl>
+      </developer>
+      <developer>
+         <id>afmrak</id>
+         <name>Eric Mrak</name>
+         <email>enmrak@gmail.com</email>
+         <roles>
+            <role>contributor</role>
+         </roles>
+         <organization>ThoughtWorks</organization>
+         <organizationUrl>http://www.ThoughtWorks.com</organizationUrl>
+      </developer>
+   </developers>
+
 </project>
