@@ -318,7 +318,7 @@
    </build>
    <profiles>
       <profile>
-         <id>release-sign-artifacts</id>
+         <id>sign</id>
          <activation>
             <property>
                <name>performRelease</name>
