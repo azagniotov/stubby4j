@@ -18,7 +18,7 @@
    <inceptionYear>2012</inceptionYear>
    <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.16-SNAPSHOT</version>
+   <version>1.0.16</version>
    <packaging>jar</packaging>
 
    <properties>
@@ -311,7 +311,7 @@
             <artifactId>maven-release-plugin</artifactId>
             <version>2.3.2</version>
             <configuration>
-               <arguments>-Dgpg.passphrase=${gpg.passphrase} -Prelease-sign-artifacts</arguments>
+               <arguments>-Dgpg.passphrase=${gpg.passphrase} -P release-sign-artifacts</arguments>
             </configuration>
          </plugin>
       </plugins>
@@ -353,7 +353,7 @@
       <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
       <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
       <url>git@github.com:azagniotov/stubby4j.git</url>
-      <tag>HEAD</tag>
+      <tag>stubby4j-1.0.16</tag>
    </scm>
 
    <issueManagement>
