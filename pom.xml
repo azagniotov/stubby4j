@@ -369,6 +369,15 @@
                      </execution>
                   </executions>
                </plugin>
+               <plugin>
+                  <groupId>org.sonatype.plugins</groupId>
+                  <artifactId>nexus-maven-plugin</artifactId>
+                  <version>1.7</version>
+                  <configuration>
+                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                     <serverAuthId>oss-sonatype-org</serverAuthId>
+                  </configuration>
+               </plugin>
             </plugins>
          </build>
       </profile>
