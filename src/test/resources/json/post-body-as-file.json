@@ -1,0 +1,65 @@
+{
+   "orderedSkus":[
+      {
+         "channelId":1
+      },
+      {
+         "channelId":1
+      }
+   ],
+   "id":"1000064",
+   "vendor":{
+      "id":"000300388",
+      "name":"SOME COMPANY LTD"
+   },
+   "brandId":2,
+   "marketId":5,
+   "shipMethod":{
+      "code":"O"
+   },
+   "agent":{
+      "code":"000442747",
+      "shortDesc":"HK",
+      "longDesc":"SOME SOURCING (HLDGS) LTD"
+   },
+   "customerChoiceQuantities":[
+      {
+         "quantity":"100",
+         "customerChoice":{
+            "description":"SYS CANYON BUDDIES",
+            "customerChoiceId":"000905149003",
+            "firstCost":{
+               "value":"7.50",
+               "displayValue":"$7.50",
+               "currency":"USD",
+               "usd":true
+            }
+         }
+      },
+      {
+         "quantity":"250",
+         "customerChoice":{
+            "description":"SYS INDIGO",
+            "customerChoiceId":"000905149002",
+            "firstCost":{
+               "value":"9.80",
+               "displayValue":"$9.80",
+               "currency":"USD",
+               "usd":true
+            }
+         }
+      }
+   ],
+   "paymentTerm":"N60",
+   "warehouse":{
+      "description":"RETAIL AU DC"
+   },
+   "termOfSale":"FOB",
+   "freightPaidBy":"Purchaser",
+   "origin":{
+      "longDescription":"MONGOLIA"
+   },
+   "transferPoint":{
+      "country":"HK"
+   }
+}

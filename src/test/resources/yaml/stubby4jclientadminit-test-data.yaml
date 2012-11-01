@@ -12,7 +12,7 @@
 -  request:
       method: POST
       url: /item/1
-      postBody: post body
+      post: post body
 
    response:
       headers:

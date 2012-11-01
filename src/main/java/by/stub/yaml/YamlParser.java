@@ -22,10 +22,10 @@ package by.stub.yaml;
 import by.stub.cli.ANSITerminal;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import org.apache.commons.codec.binary.Base64;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -76,14 +76,15 @@ public class YamlParser {
       return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.utf8Charset());
    }
 
-   //TODO Ability get response from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
-   private String loadResponseBodyFromFile(final String filePath) throws IOException {
-      final File responseFileFromFilesystem = new File(filePath);
-      if (!responseFileFromFilesystem.isFile()) {
+   //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
+   private String loadContentFromFile(final String filePath) throws IOException {
+
+      final File contentFile = new File(filePath);
+      if (!contentFile.isFile()) {
          throw new IOException(String.format("Could not load file from path: %s", filePath));
       }
 
-      return StringUtils.inputStreamToString(new FileInputStream(responseFileFromFilesystem));
+      return StringUtils.inputStreamToString(new FileInputStream(contentFile));
    }
 
    public List<StubHttpLifecycle> parseAndLoad() throws Exception {
@@ -156,7 +157,7 @@ public class YamlParser {
       final String valueAsString = value.toString();
 
       return propertyName.equalsIgnoreCase("file") ?
-            loadResponseBodyFromFile(valueAsString) : valueAsString;
+            loadContentFromFile(valueAsString) : valueAsString;
    }
 
    protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {

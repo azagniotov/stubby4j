@@ -24,7 +24,7 @@
 
 -  request:
       method: POST
-      postBody: This is a post data
+      post: This is a post data
       url: /invoice/567
    response:
       body: This is a response for 567

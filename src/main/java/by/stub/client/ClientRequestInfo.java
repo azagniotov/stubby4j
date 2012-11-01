@@ -24,7 +24,7 @@ public final class ClientRequestInfo {
    private final String method;
    private final String uri;
    private final String host;
-   private final String postBody;
+   private final String post;
    private final String base64encodedCredentials;
    private final int clientPort;
 
@@ -53,7 +53,7 @@ public final class ClientRequestInfo {
       this.uri = newUri;
       this.host = newHost;
       this.clientPort = newClientPort;
-      this.postBody = newPostBody;
+      this.post = newPostBody;
       this.base64encodedCredentials = newBase64encodedCredentials;
    }
 
@@ -69,8 +69,8 @@ public final class ClientRequestInfo {
       return host;
    }
 
-   public String getPostBody() {
-      return postBody;
+   public String getPost() {
+      return post;
    }
 
    public String getBase64encodedCredentials() {

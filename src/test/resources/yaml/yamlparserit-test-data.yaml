@@ -11,13 +11,14 @@
       status: 200
       body: This is a response for 123
 
+
 -  request:
       method: GET
       url: /invoice/567
       headers:
          content-type: application/alex
          pragma: no-cache
-      queryParams:
+      query:
          paramOne: valueOne
          paramTwo: valueTwo
 

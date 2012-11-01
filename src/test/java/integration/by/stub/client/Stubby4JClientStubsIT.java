@@ -61,8 +61,8 @@ public class Stubby4JClientStubsIT {
    @Test
    public void shouldDoGetOnURIWithAuthorization() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
-      final String postBody = null;
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, postBody, encodedCredentials);
+      final String post = null;
+      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, post, encodedCredentials);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.OK_200, stubby4JResponse.getResponseCode());

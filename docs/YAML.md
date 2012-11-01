@@ -6,9 +6,9 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 * `request`: (REQUIRED) describes the client's call to the server
    * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc.
    * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request
-   * `queryParams`: (OPTIONAL) a key/value map of query string queryParams the server should read from the URI
+   * `query`: (OPTIONAL) a key/value map of query string params the server should read from the URI
    * `url`: (REQUIRED) the URI string. Can include query string
-   * `postBody`: (OPTIONAL) a string matching the textual body of the response.
+   * `post`: (OPTIONAL) a string matching the textual body of the response.
 * `response`: (REQUIRED) describes the server's response to the client
    * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
    * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
@@ -35,7 +35,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       url: /some/uri
       headers:
          content-type: application/json
-      postBody: >
+      post: >
          {
             "name": "value",
             "param": "description"
@@ -62,13 +62,13 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 -  request:
       url: /some/uri
-      queryParams:
+      query:
          paramTwo: 12345
          paramOne: valueOne
       method: POST
       headers:
          authorization: bob:secret
-      postBody: this is some post data in textual format
+      post: this is some post data in textual format
    
    response:
       headers:
@@ -81,7 +81,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 -  request:
       method: GET
       url: /some/uri
-      queryParams:
+      query:
          paramTwo: 12345
          paramOne: valueOne
 

@@ -15,7 +15,7 @@ public class ReflectionUtilsTest {
 
    @Test
    public void shouldGetObjectPropertiesAndValues() throws Exception {
-      final int totalOfStubRequestMemberFields = 6;
+      final int totalOfStubRequestMemberFields = 7;
       final StubRequest stubRequest = new StubRequest();
       stubRequest.setMethod("POST");
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
@@ -23,7 +23,7 @@ public class ReflectionUtilsTest {
       Assert.assertEquals(totalOfStubRequestMemberFields, properties.size());
       Assert.assertEquals("POST", properties.get("method"));
       Assert.assertEquals("Not provided", properties.get("url"));
-      Assert.assertEquals("Not provided", properties.get("postbody"));
+      Assert.assertEquals("Not provided", properties.get("post"));
       Assert.assertEquals("{}", properties.get("headers"));
    }
 

@@ -87,8 +87,8 @@ will be prepended with the word "Basic". The final result will conform to HTTP h
 @Test
 public void shouldDoGetOnURIWithAuthorization() throws Exception {
    final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
-   final String postBody = null;
-   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, postBody, encodedCredentials);
+   final String post = null;
+   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, post, encodedCredentials);
    final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
    Assert.assertEquals(200, stubby4JResponse.getResponseCode());

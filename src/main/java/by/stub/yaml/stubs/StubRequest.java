@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.utils.StringUtils;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -37,9 +37,10 @@ public class StubRequest {
 
    private String url = null;
    private String method = null;
-   private String postBody = null;
+   private String post = null;
+   private String file = null;
    private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> queryParams = new HashMap<String, String>();
+   private Map<String, String> query = new HashMap<String, String>();
 
    public StubRequest() {
 
@@ -53,8 +54,8 @@ public class StubRequest {
       return StringUtils.toUpper(method);
    }
 
-   public final String getPostBody() {
-      return postBody;
+   public final String getPost() {
+      return post;
    }
 
    public void setUrl(final String url) {
@@ -65,8 +66,8 @@ public class StubRequest {
       this.method = (StringUtils.isSet(newMethod) ? newMethod : null);
    }
 
-   public void setPostBody(final String postBody) {
-      this.postBody = postBody;
+   public void setPost(final String post) {
+      this.post = post;
    }
 
    public final Map<String, String> getHeaders() {
@@ -77,12 +78,27 @@ public class StubRequest {
       this.headers = headers;
    }
 
-   public final Map<String, String> getQueryParams() {
-      return queryParams;
+   public final Map<String, String> getQuery() {
+      return query;
    }
 
-   public void setQueryParams(final Map<String, String> queryParams) {
-      this.queryParams = queryParams;
+   public void setQuery(final Map<String, String> query) {
+      this.query = query;
+   }
+
+   public String getFile() {
+      return file;
+   }
+
+   public void setFile(final String file) {
+      this.file = file;
+   }
+
+   public String getPostBody() {
+      if (!StringUtils.isSet(file)) {
+         return getPost();
+      }
+      return file;
    }
 
    public final boolean isConfigured() {
@@ -94,8 +110,8 @@ public class StubRequest {
 
       assertionRequest.setMethod(request.getMethod());
       assertionRequest.setUrl(request.getPathInfo());
-      assertionRequest.setQueryParams(HandlerUtils.constructParamMap(request.getQueryString()));
-      assertionRequest.setPostBody(HandlerUtils.extractPostRequestBody(request, "stubs"));
+      assertionRequest.setQuery(HandlerUtils.constructParamMap(request.getQueryString()));
+      assertionRequest.setPost(HandlerUtils.extractPostRequestBody(request, "stubs"));
 
       final String authHeader = request.getHeader(AUTH_HEADER);
       if (StringUtils.isSet(authHeader)) {
@@ -113,10 +129,10 @@ public class StubRequest {
       final StubRequest that = (StubRequest) o;
 
 
-      if (postBody != null ? !postBody.equals(that.postBody) : that.postBody != null) return false;
+      if (post != null ? !post.equals(that.post) : that.post != null) return false;
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
-      if (!queryParams.equals(that.queryParams)) return false;
+      if (!query.equals(that.query)) return false;
 
       return true;
    }
@@ -125,7 +141,7 @@ public class StubRequest {
    public final int hashCode() {
       int result = url.hashCode();
       result = 31 * result + method.hashCode();
-      result = 31 * result + (postBody != null ? postBody.hashCode() : 0);
+      result = 31 * result + (post != null ? post.hashCode() : 0);
       return result;
    }
 
@@ -135,9 +151,9 @@ public class StubRequest {
       sb.append("StubRequest");
       sb.append("{url='").append(url).append('\'');
       sb.append(", method='").append(method).append('\'');
-      sb.append(", postBody='").append(postBody).append('\'');
+      sb.append(", post='").append(post).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", queryParams=").append(queryParams);
+      sb.append(", query=").append(query);
       sb.append('}');
       return sb.toString();
    }

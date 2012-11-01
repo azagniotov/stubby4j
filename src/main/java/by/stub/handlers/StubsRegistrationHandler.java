@@ -70,15 +70,15 @@ public class StubsRegistrationHandler extends AbstractHandler {
          return;
       }
 
-      final String postBody = HandlerUtils.extractPostRequestBody(request, NAME);
-      if (!StringUtils.isSet(postBody)) {
+      final String post = HandlerUtils.extractPostRequestBody(request, NAME);
+      if (!StringUtils.isSet(post)) {
          final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getPathInfo());
          HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
          return;
       }
 
       try {
-         final InputStream is = new ByteArrayInputStream(postBody.getBytes(StringUtils.utf8Charset()));
+         final InputStream is = new ByteArrayInputStream(post.getBytes(StringUtils.utf8Charset()));
          final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
 
          final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);

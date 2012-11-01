@@ -77,9 +77,9 @@ public final class Stubby4JClient {
    public Stubby4JResponse makeRequestWith(final ClientRequestInfo clientRequest) throws IOException {
       final HttpURLConnection con = constructClientHttpConnection(clientRequest);
 
-      if (StringUtils.isSet(clientRequest.getPostBody())) {
-         prepareConnectionForPOST(con, clientRequest.getPostBody());
-         writePostBytes(con, clientRequest.getPostBody());
+      if (StringUtils.isSet(clientRequest.getPost())) {
+         prepareConnectionForPOST(con, clientRequest.getPost());
+         writePostBytes(con, clientRequest.getPost());
       }
 
       return parseHttpResponse(con);
