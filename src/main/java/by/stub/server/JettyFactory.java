@@ -134,10 +134,15 @@ public final class JettyFactory {
       connectors.add(buildAdminConnector());
       connectors.add(buildStubsConnector());
 
+      String keystorePath = null;
+      String password = "password";
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
             && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
-         connectors.add(buildStubsSslConnector());
+         password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
+         keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
       }
+
+      connectors.add(buildStubsSslConnector(keystorePath, password));
 
       return connectors.toArray(new Connector[connectors.size()]);
    }
@@ -197,44 +202,38 @@ public final class JettyFactory {
       return stubsChannel;
    }
 
-   private SslSocketConnector buildStubsSslConnector() {
+   private SslSocketConnector buildStubsSslConnector(final String keystorePath, final String password) {
 
       isSsl = true;
 
-      final String password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
-      final String keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
-      final int port = getSslPort(commandLineArgs);
-
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
       final SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
-      sslConnector.setPort(port);
+      sslConnector.setPort(DEFAULT_SSL_PORT);
       sslConnector.setName(SSL_CONNECTOR_NAME);
       sslConnector.setHost(DEFAULT_HOST);
 
-      final String status = String.format("Stubs portal configured with SSL at https://%s:%s",
-            sslConnector.getHost(), sslConnector.getPort());
+      final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
+            sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
       return sslConnector;
    }
 
    private SslContextFactory constructSslContextFactory(final String password, final String keystorePath) {
-      final SslContextFactory sslFactory = new SslContextFactory();
 
+      final SslContextFactory sslFactory = new SslContextFactory();
       sslFactory.setKeyStorePassword(password);
-      sslFactory.setTrustStorePassword(password);
       sslFactory.setKeyManagerPassword(password);
+
+      if (keystorePath == null) {
+         sslFactory.setKeyStoreResource(Resource.newClassPathResource("ssl/localhost.jks"));
+
+         return sslFactory;
+      }
+
       sslFactory.setKeyStorePath(keystorePath);
 
       return sslFactory;
-   }
-
-
-   private int getSslPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
-      }
-      return DEFAULT_SSL_PORT;
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {
