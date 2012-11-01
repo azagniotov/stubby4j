@@ -131,32 +131,14 @@ public final class JettyFactory {
    private Connector[] buildConnectors() {
 
       final List<Connector> connectors = new ArrayList<Connector>();
+
       connectors.add(buildAdminConnector());
       connectors.add(buildStubsConnector());
-
-      String keystorePath = null;
-      String password = "password";
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
-            && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
-         password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
-         keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
-      }
-
-      connectors.add(buildStubsSslConnector(keystorePath, password));
+      connectors.add(buildStubsSslConnector());
 
       return connectors.toArray(new Connector[connectors.size()]);
    }
 
-   @Deprecated
-   private Double getCurrentJREVersion() {
-      final String currentJREVersionAsString = System.getProperty("java.version");
-      if (!currentJREVersionAsString.matches(".*\\..*\\..*")) {
-         return Double.parseDouble(currentJREVersionAsString);
-      }
-      final String choppedCurrentJREVersionAsString
-            = currentJREVersionAsString.substring(0, currentJREVersionAsString.indexOf(".") + 2);
-      return Double.parseDouble(choppedCurrentJREVersionAsString);
-   }
 
    private SelectChannelConnector buildAdminConnector() {
       final SelectChannelConnector adminChannel = new SelectChannelConnector();
@@ -202,15 +184,27 @@ public final class JettyFactory {
       return stubsChannel;
    }
 
-   private SslSocketConnector buildStubsSslConnector(final String keystorePath, final String password) {
+   private SslSocketConnector buildStubsSslConnector() {
 
       isSsl = true;
+
+      String keystorePath = null;
+      String password = "password";
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
+            && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
+         password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
+         keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
+      }
 
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
       final SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
       sslConnector.setPort(DEFAULT_SSL_PORT);
       sslConnector.setName(SSL_CONNECTOR_NAME);
       sslConnector.setHost(DEFAULT_HOST);
+
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
+         sslConnector.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+      }
 
       final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
             sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));

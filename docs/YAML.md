@@ -36,7 +36,10 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       headers:
          content-type: application/json
       postBody: >
-         {"attr1": "value1", "attr2": "value2"}
+         {
+            "name": "value",
+            "param": "description"
+         }
 
    response:
       headers:
