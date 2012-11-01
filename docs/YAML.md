@@ -31,6 +31,22 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 
 -  request:
+      method: POST
+      url: /some/uri
+      headers:
+         content-type: application/json
+      postBody: >
+         {"attr1": "value1", "attr2": "value2"}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"status" : "OK"}
+
+
+-  request:
       method: GET
       url: /some/uri?param=true&anotherParam=false
       headers:

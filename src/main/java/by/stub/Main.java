@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineIntepreter;
 import by.stub.exception.Stubby4JException;
-import org.apache.commons.cli.ParseException;
-import by.stub.cli.ANSITerminal;
 import by.stub.server.JettyManager;
 import by.stub.server.JettyManagerFactory;
+import org.apache.commons.cli.ParseException;
 
 import java.util.Map;
 
@@ -93,7 +93,7 @@ final class Main {
          final String msg =
                String.format("Could not init stubby4j, error: %s", ex.toString());
 
-         throw new Stubby4JException(msg);
+         throw new Stubby4JException(msg, ex);
       }
    }
 }
