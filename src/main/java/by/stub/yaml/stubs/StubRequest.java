@@ -129,7 +129,7 @@ public class StubRequest {
       final StubRequest that = (StubRequest) o;
 
 
-      if (post != null ? !post.equals(that.post) : that.post != null) return false;
+      if (getPostBody() != null ? !getPostBody().equals(that.getPostBody()) : that.getPostBody() != null) return false;
       if (!method.equals(that.method)) return false;
       if (!url.equals(that.url)) return false;
       if (!query.equals(that.query)) return false;
@@ -152,6 +152,7 @@ public class StubRequest {
       sb.append("{url='").append(url).append('\'');
       sb.append(", method='").append(method).append('\'');
       sb.append(", post='").append(post).append('\'');
+      sb.append(", file='").append(file).append('\'');
       sb.append(", headers=").append(headers);
       sb.append(", query=").append(query);
       sb.append('}');

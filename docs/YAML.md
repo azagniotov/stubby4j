@@ -8,6 +8,9 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
    * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request
    * `query`: (OPTIONAL) a key/value map of query string params the server should read from the URI
    * `url`: (REQUIRED) the URI string. Can include query string
+   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the stubby4j JAR),
+         returns the contents of the given file as the request POST. If the file cannot be found at YAML data parse time,
+         `post` is used instead. If `post` was not provided, null string is returned
    * `post`: (OPTIONAL) a string matching the textual body of the response.
 * `response`: (REQUIRED) describes the server's response to the client
    * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
@@ -28,6 +31,19 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
    response:
       status: 200
       body: This is a single line text response
+
+
+-  request:
+      method: POST
+      headers:
+         content-type: application/json
+      file: ../data/post-body-as-file.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: OK
 
 
 -  request:
