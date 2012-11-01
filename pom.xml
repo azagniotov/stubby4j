@@ -376,6 +376,7 @@
                   <configuration>
                      <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                      <serverAuthId>oss-sonatype-org</serverAuthId>
+                     <targetRepositoryId>releases</targetRepositoryId>
                   </configuration>
                </plugin>
             </plugins>
