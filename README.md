@@ -40,7 +40,7 @@ stubby4j is a fat JAR (for the skinny JAR, please look under `artifacts`), which
 * jetty-continuation-8.1.7.v20120910.jar
 * jetty-http-8.1.7.v20120910.jar
 * jetty-io-8.1.7.v20120910.jar
-* jetty-util-8.1.1.v20120215.jar
+* jetty-util-8.1.7.v20120910.jar
 * commons-cli-1.2.jar
 * commons-codec-1.5.jar
 * snakeyaml-1.11.jar
@@ -70,11 +70,13 @@ See `docs` directory for:
 
 
 ## Artifacts
-See `artifacts` directory for the following stubby4j JARs:
+See `artifacts` directory for the following stubby4j SNAPSHOT JARs:
 * Fat
 * Skinny
 * Sources
 * Javadocs
+
+**Please keep in mind that JARs in `artifacts` directory might be few versions ahead of [Maven Central](http://search.maven.org/#search|ga|1|stubby4j)**
 
 
 ## Authors
