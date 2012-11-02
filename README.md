@@ -48,6 +48,18 @@ stubby4j is a fat JAR (for the skinny JAR, please look under `artifacts`), which
 **stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
 
 
+## Maven Central
+stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
+Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j
+
+```xml
+<dependency>
+    <groupId>by.stub</groupId>
+    <artifactId>stubby4j</artifactId>
+    <version>x.x.xx</version>
+</dependency>
+```
+
 ## Documentation
 See `docs` directory for:
 
