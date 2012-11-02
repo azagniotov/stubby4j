@@ -368,14 +368,12 @@
                </plugin>
                <plugin>
                   <groupId>org.sonatype.plugins</groupId>
-                  <artifactId>nexus-maven-plugin</artifactId>
-                  <version>1.7</version>
+                  <artifactId>nexus-staging-maven-plugin</artifactId>
+                  <version>1.2</version>
+                  <extensions>true</extensions>
                   <configuration>
                      <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                     <serverAuthId>oss-sonatype-org</serverAuthId>
-                     <repositoryId>releases</repositoryId>
-                     <targetRepositoryId>releases</targetRepositoryId>
-                     <automatic>true</automatic>
+                     <serverId>oss-sonatype-org</serverId>
                   </configuration>
                </plugin>
             </plugins>
