@@ -10,8 +10,8 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
    * `url`: (REQUIRED) the URI string. Can include query string
    * `file`: (OPTIONAL) if specified (an absolute path or path relative to the stubby4j JAR),
          returns the contents of the given file as the request POST. If the file cannot be found at YAML data parse time,
-         `post` is used instead. If `post` was not provided, null string is returned
-   * `post`: (OPTIONAL) a string matching the textual body of the response.
+         `post` is used instead. If `post` was not provided, assumed POST body is not provided
+   * `post`: (OPTIONAL) a string matching the textual body of the POST request
 * `response`: (REQUIRED) describes the server's response to the client
    * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
    * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
