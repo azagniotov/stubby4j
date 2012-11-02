@@ -30,7 +30,7 @@ public class YamlParserIT {
 
    @Test
    public void load_ShouldContainFileContentInRequest_WhenFileSpecifiedInYaml() throws Exception {
-      final URL url = this.getClass().getResource("/yaml/yamlparserit-single-request-test-data.yaml");
+      final URL url = this.getClass().getResource("/yaml/yamlparserit-request-with-post-file-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
