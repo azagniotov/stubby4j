@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -18,7 +19,7 @@
    <inceptionYear>2012</inceptionYear>
    <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.31-SNAPSHOT</version>
+   <version>1.0.29-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <properties>
@@ -324,11 +325,11 @@
                   <configuration>
                      <target>
                         <delete>
-                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}" />
+                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}"/>
                         </delete>
                         <copy todir="${project.basedir}/artifacts">
                            <fileset dir="${project.build.directory}">
-                              <include name="${project.build.finalName}*.${project.packaging}" />
+                              <include name="${project.build.finalName}*.${project.packaging}"/>
                            </fileset>
                         </copy>
                      </target>
@@ -368,12 +369,11 @@
                </plugin>
                <plugin>
                   <groupId>org.sonatype.plugins</groupId>
-                  <artifactId>nexus-staging-maven-plugin</artifactId>
-                  <version>1.2</version>
-                  <extensions>true</extensions>
+                  <artifactId>nexus-maven-plugin</artifactId>
+                  <version>1.7</version>
                   <configuration>
                      <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                     <serverId>oss-sonatype-org</serverId>
+                     <serverAuthId>oss-sonatype-org</serverAuthId>
                   </configuration>
                </plugin>
             </plugins>
