@@ -74,7 +74,7 @@ public final class Stubby4JClient {
    }
 
 
-   public Stubby4JResponse makeRequestWith(final ClientRequestInfo clientRequest) throws IOException {
+   public Stubby4JResponse makeRequestWith(final ClientRequest clientRequest) throws IOException {
       final HttpURLConnection con = constructClientHttpConnection(clientRequest);
 
       if (StringUtils.isSet(clientRequest.getPost())) {
@@ -85,7 +85,7 @@ public final class Stubby4JClient {
       return parseHttpResponse(con);
    }
 
-   private HttpURLConnection constructClientHttpConnection(final ClientRequestInfo clientRequest) throws IOException {
+   private HttpURLConnection constructClientHttpConnection(final ClientRequest clientRequest) throws IOException {
 
       final URL url = new URL(constructUrl(clientRequest));
       final HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -98,7 +98,7 @@ public final class Stubby4JClient {
       return httpURLConnection;
    }
 
-   private String constructUrl(final ClientRequestInfo clientRequest) {
+   private String constructUrl(final ClientRequest clientRequest) {
       final String uri = clientRequest.getUri();
       final String host = clientRequest.getHost();
       final int clientPort = clientRequest.getClientPort();

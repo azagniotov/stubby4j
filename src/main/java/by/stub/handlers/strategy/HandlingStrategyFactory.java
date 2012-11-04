@@ -23,6 +23,10 @@ import by.stub.yaml.stubs.StubResponse;
 
 public final class HandlingStrategyFactory {
 
+   private HandlingStrategyFactory() {
+
+   }
+
    public static StubResponseHandlingStrategy identifyHandlingStrategyFor(final StubResponse foundStubResponse) {
 
       switch (foundStubResponse.getStubResponseType()) {
@@ -35,8 +39,9 @@ public final class HandlingStrategyFactory {
          case REDIRECT:
             return new RedirectResponseHandlingStrategy(foundStubResponse);
 
-      }
+         default:
+            return new DefaultResponseHandlingStrategy(foundStubResponse);
 
-      return new DefaultResponseHandlingStrategy(foundStubResponse);
+      }
    }
 }

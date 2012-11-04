@@ -56,15 +56,6 @@ public final class HandlerUtils {
       return StringUtils.inputStreamToString(inputStream);
    }
 
-   public static String[] getHighlightableHtmlAttributes(final String templateSuffix) {
-      final String templatePath = String.format("/ui/html/templates/%s", templateSuffix);
-      final InputStream inputStream = HandlerUtils.class.getResourceAsStream(templatePath);
-      if (inputStream == null) {
-         throw new Stubby4JException(String.format("Could not find resource %s", templatePath));
-      }
-      return StringUtils.inputStreamToString(inputStream).split("\\n");
-   }
-
    public static String constructHeaderServerName() {
       final Package pkg = HandlerUtils.class.getPackage();
       final String implementationVersion = pkg.getImplementationVersion() == null ?

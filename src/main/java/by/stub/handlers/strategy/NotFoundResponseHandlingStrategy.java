@@ -36,8 +36,10 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
    @Override
    public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
-      final String postMessage = (StringUtils.isSet(assertionStubRequest.getPostBody()) ? " for post data: " + assertionStubRequest.getPostBody() : "");
-      final String error = String.format("No data found for %s request at URI %s", assertionStubRequest.getMethod(), assertionStubRequest.getUrl() + postMessage);
+      final String postMessage = (StringUtils.isSet(assertionStubRequest.getPostBody())
+            ? String.format("%s%s", " for post data: ", assertionStubRequest.getPostBody()) : "");
+      final String error = String.format("No data found for %s request at URI %s%s",
+            assertionStubRequest.getMethod(), assertionStubRequest.getUrl(), postMessage);
       HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
    }
 }

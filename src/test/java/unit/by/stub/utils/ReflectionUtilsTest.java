@@ -28,18 +28,6 @@ public class ReflectionUtilsTest {
    }
 
    @Test
-   public void shouldFindMatchingFieldInClass() throws Exception {
-      final boolean result = ReflectionUtils.isFieldCorrespondsToYamlNode(StubRequest.class, "url");
-      Assert.assertEquals(true, result);
-   }
-
-   @Test
-   public void shouldNotFindMatchingFieldInClass() throws Exception {
-      final boolean result = ReflectionUtils.isFieldCorrespondsToYamlNode(StubRequest.class, "blah");
-      Assert.assertEquals(false, result);
-   }
-
-   @Test
    public void shouldSetValueOnObjectProperty() throws Exception {
       final StubRequest stubRequest = new StubRequest();
       Assert.assertEquals(null, stubRequest.getUrl());

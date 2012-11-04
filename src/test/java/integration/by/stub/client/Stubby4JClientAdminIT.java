@@ -1,5 +1,12 @@
 package integration.by.stub.client;
 
+import by.stub.cli.ANSITerminal;
+import by.stub.client.ClientRequest;
+import by.stub.client.Stubby4JClient;
+import by.stub.client.Stubby4JResponse;
+import by.stub.handlers.StubsRegistrationHandler;
+import by.stub.server.JettyFactory;
+import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
@@ -7,12 +14,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import by.stub.cli.ANSITerminal;
-import by.stub.client.ClientRequestInfo;
-import by.stub.client.Stubby4JClient;
-import by.stub.client.Stubby4JResponse;
-import by.stub.handlers.StubsRegistrationHandler;
-import by.stub.utils.StringUtils;
 
 import java.net.URL;
 
@@ -41,8 +42,7 @@ public class Stubby4JClientAdminIT {
 
    @Before
    public void beforeEach() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
-      final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
+
    }
 
    @AfterClass
@@ -52,7 +52,7 @@ public class Stubby4JClientAdminIT {
 
    @Test
    public void shouldCreateStubbedData() throws Exception {
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
+      final ClientRequest adminRequest = new ClientRequest(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", JettyFactory.DEFAULT_ADMIN_PORT, content);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
       Assert.assertEquals(HttpStatus.CREATED_201, stubby4JResponse.getResponseCode());
@@ -62,7 +62,7 @@ public class Stubby4JClientAdminIT {
    @Test
    public void shouldCleanUpStubbedData() throws Exception {
 
-      final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, null);
+      final ClientRequest adminRequest = new ClientRequest(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", JettyFactory.DEFAULT_ADMIN_PORT, null);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
 
       Assert.assertEquals(HttpStatus.NO_CONTENT_204, stubby4JResponse.getResponseCode());
@@ -71,7 +71,7 @@ public class Stubby4JClientAdminIT {
 
    @Test
    public void shouldNotFindStubRequestFromOriginalAtomFeedData() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/1", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());

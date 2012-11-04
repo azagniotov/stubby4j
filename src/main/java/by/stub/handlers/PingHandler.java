@@ -115,15 +115,15 @@ public final class PingHandler extends AbstractHandler {
       final int clientPort = jettyContext.getStubsPort();
       final int adminPort = jettyContext.getAdminPort();
 
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "CLIENT PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, JettyFactory.DEFAULT_SSL_PORT));
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, yamlParser.getLoadedConfigYamlPath()));
+      builder.append(populateTableRowTemplate("CLIENT PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
+      builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
+      builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, JettyFactory.DEFAULT_SSL_PORT));
+      builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
+      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, yamlParser.getLoadedConfigYamlPath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
             StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, host, adminPort);
-      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
+      builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
 
@@ -142,31 +142,35 @@ public final class PingHandler extends AbstractHandler {
             continue;
          }
 
-         builder.append(constructTableRow(key, value));
+         builder.append(constructHtmlTableRow(key, value));
       }
       return String.format(htmlTemplateContent, tableName, builder.toString());
    }
 
 
-   private String constructTableRow(final String key, final String value) {
+   private String constructHtmlTableRow(final String key, final String value) {
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
 
       if (highlightableProperties.contains(key)) {
          final String row = String.format("%s%s%s", "<pre><code>", escapedValue, "</code></pre>");
 
-         return String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, row);
+         return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, row);
       }
 
       if (key.equals("url")) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
          final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), JettyFactory.DEFAULT_SSL_PORT);
 
-         final String tableRowWithUrl = String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
-         final String tableRowWithSslUrl = String.format(HTML_TABLE_ROW_TEMPLATE, "SSL " + StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
+         final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
+         final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
 
          return String.format("%s%s", tableRowWithUrl, tableRowWithSslUrl);
       }
 
-      return String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
+      return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
+   }
+
+   private String populateTableRowTemplate(final Object... tokens) {
+      return String.format(HTML_TABLE_ROW_TEMPLATE, tokens);
    }
 }

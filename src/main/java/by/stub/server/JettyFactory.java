@@ -97,15 +97,15 @@ public final class JettyFactory {
 
                   constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/", contextRootHandler("ui/html/templates/", "admin-index.html")),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", contextRootHandler("ui/html/highlight/"))
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/"))
             }
       );
 
       return handlers;
    }
 
-   private ResourceHandler contextRootHandler(final String classPathResource, final String... staticResources) {
+   private ResourceHandler staticResourceHandler(final String classPathResource, final String... staticResources) {
 
       final ResourceHandler resourceHandler = new ResourceHandler();
       resourceHandler.setDirectoriesListed(true);

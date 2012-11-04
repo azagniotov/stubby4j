@@ -57,7 +57,7 @@ public final class StringUtils {
    }
 
    public static String inputStreamToString(final InputStream inputStream) {
-      if (inputStream == null || !isSet(inputStream.toString())) {
+      if (inputStream == null || !StringUtils.isSet(inputStream.toString())) {
          return null;
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
@@ -66,6 +66,8 @@ public final class StringUtils {
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {
-      return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+      return toBeEscaped
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
    }
 }

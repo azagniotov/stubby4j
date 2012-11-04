@@ -74,7 +74,6 @@ public class StubsHandlerTest {
       final String postData = "postData";
       final String requestPathInfo = "/path/1";
 
-      final StubRequest mockAssertionStubRequest = Mockito.mock(StubRequest.class);
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
@@ -102,7 +101,6 @@ public class StubsHandlerTest {
 
       final String requestPathInfo = "/path/1";
 
-      final StubRequest mockAssertionStubRequest = Mockito.mock(StubRequest.class);
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
@@ -124,7 +122,6 @@ public class StubsHandlerTest {
 
       final String requestPathInfo = "/path/1";
 
-      final StubRequest mockAssertionStubRequest = Mockito.mock(StubRequest.class);
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);

@@ -1,5 +1,7 @@
 package integration.by.stub.client;
 
+import by.stub.client.ClientRequest;
+import by.stub.server.JettyFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import by.stub.cli.ANSITerminal;
-import by.stub.client.ClientRequestInfo;
 import by.stub.client.Stubby4JClient;
 import by.stub.client.Stubby4JResponse;
 import by.stub.utils.StringUtils;
@@ -42,7 +43,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoPostOnURIWithQueryParams() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/path?paramOne=valueOne&paramTwo=12345", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, "/item/path?paramOne=valueOne&paramTwo=12345", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.CREATED_201, stubby4JResponse.getResponseCode());
@@ -51,7 +52,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/1", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.OK_200, stubby4JResponse.getResponseCode());
@@ -62,7 +63,7 @@ public class Stubby4JClientStubsIT {
    public void shouldDoGetOnURIWithAuthorization() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
       final String post = null;
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, post, encodedCredentials);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/auth", "localhost", JettyFactory.DEFAULT_STUBS_PORT, post, encodedCredentials);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.OK_200, stubby4JResponse.getResponseCode());
@@ -72,7 +73,7 @@ public class Stubby4JClientStubsIT {
    @Test
    public void shouldDoGetOnURIWithAuthorizationWithWrongCredentials() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.utf8Charset())));
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, null, encodedCredentials);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/auth", "localhost", JettyFactory.DEFAULT_STUBS_PORT, null, encodedCredentials);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, stubby4JResponse.getResponseCode());
@@ -81,7 +82,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnURIWithAuthorizationWithMissingCredentials() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/auth", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, stubby4JResponse.getResponseCode());
@@ -91,7 +92,7 @@ public class Stubby4JClientStubsIT {
    @Test
    public void shouldDoGetOnEmptyURI() throws Exception {
 
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -100,7 +101,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnNullURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, null, "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, null, "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -109,7 +110,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoGetOnIncorrectURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/888", "localhost", 8882);
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.GET, "/item/888", "localhost", JettyFactory.DEFAULT_STUBS_PORT);
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -118,7 +119,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoPostOnURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, "/item/1", "localhost", JettyFactory.DEFAULT_STUBS_PORT, "post body");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.OK_200, stubby4JResponse.getResponseCode());
@@ -127,7 +128,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoPostOnEmptyURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "", "localhost", 8882, "post body");
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, "", "localhost", JettyFactory.DEFAULT_STUBS_PORT, "post body");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -136,7 +137,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldDoPostOnNullURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, null, "localhost", 8882, "post body");
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, null, "localhost", JettyFactory.DEFAULT_STUBS_PORT, "post body");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -145,7 +146,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldFailWhenDoingIncorrectPostOnURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "a");
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, "/item/1", "localhost", JettyFactory.DEFAULT_STUBS_PORT, "a");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());
@@ -154,7 +155,7 @@ public class Stubby4JClientStubsIT {
 
    @Test
    public void shouldNotFailWhenDoingEmptyPostOnURI() throws Exception {
-      final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "");
+      final ClientRequest clientRequest = new ClientRequest(HttpMethods.POST, "/item/1", "localhost", JettyFactory.DEFAULT_STUBS_PORT, "");
       final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubby4JResponse.getResponseCode());

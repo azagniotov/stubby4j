@@ -74,7 +74,7 @@ public final class ConsoleUtils {
             HttpStatus.getMessage(status)
       );
 
-      if (status >= HttpStatus.BAD_REQUEST_400 && status < HttpStatus.INSUFFICIENT_STORAGE_507) {
+      if (status >= HttpStatus.BAD_REQUEST_400) {
          ANSITerminal.error(logMessage);
       } else if (status >= HttpStatus.MULTIPLE_CHOICES_300) {
          ANSITerminal.warn(logMessage);

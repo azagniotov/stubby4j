@@ -167,7 +167,6 @@ public class DataStoreIT {
    public void shouldReturnHttpLifecycleForPostRequestWithDefaultResponse() throws IOException {
 
       final String pathInfo = "/invoice/569";
-      final String postData = "This is a post data";
 
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.client;
 
-public final class ClientRequestInfo {
+public final class ClientRequest {
 
    private final String method;
    private final String uri;
@@ -28,27 +28,27 @@ public final class ClientRequestInfo {
    private final String base64encodedCredentials;
    private final int clientPort;
 
-   public ClientRequestInfo(final String newMethod,
-                            final String newUri,
-                            final String newHost,
-                            final int newClientPort) {
+   public ClientRequest(final String newMethod,
+                        final String newUri,
+                        final String newHost,
+                        final int newClientPort) {
       this(newMethod, newUri, newHost, newClientPort, null, null);
    }
 
-   public ClientRequestInfo(final String newMethod,
-                            final String newUri,
-                            final String newHost,
-                            final int newClientPort,
-                            final String newPostBody) {
+   public ClientRequest(final String newMethod,
+                        final String newUri,
+                        final String newHost,
+                        final int newClientPort,
+                        final String newPostBody) {
       this(newMethod, newUri, newHost, newClientPort, newPostBody, null);
    }
 
-   public ClientRequestInfo(final String newMethod,
-                            final String newUri,
-                            final String newHost,
-                            final int newClientPort,
-                            final String newPostBody,
-                            final String newBase64encodedCredentials) {
+   public ClientRequest(final String newMethod,
+                        final String newUri,
+                        final String newHost,
+                        final int newClientPort,
+                        final String newPostBody,
+                        final String newBase64encodedCredentials) {
       this.method = newMethod;
       this.uri = newUri;
       this.host = newHost;

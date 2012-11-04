@@ -33,8 +33,9 @@ public final class JettyManager {
 
    public void startJetty() throws Exception {
       synchronized (JettyManager.class) {
-         if (server.isStarting() || server.isRunning() || !server.isStopped())
+         if (server.isStarting() || server.isRunning() || !server.isStopped()) {
             return;
+         }
 
          server.start();
 
@@ -45,10 +46,12 @@ public final class JettyManager {
 
    public void stopJetty() throws Exception {
       synchronized (JettyManager.class) {
-         if (server.isStopping() || server.isStopped() || !server.isStarted())
+         if (server.isStopping() || server.isStopped() || !server.isStarted()) {
             return;
+         }
 
-         server.setGracefulShutdown(100);
+         final int timeoutMilliseconds = 100;
+         server.setGracefulShutdown(timeoutMilliseconds);
          server.setStopAtShutdown(true);
          server.stop();
       }
