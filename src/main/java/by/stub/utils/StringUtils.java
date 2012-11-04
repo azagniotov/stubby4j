@@ -62,7 +62,7 @@ public final class StringUtils {
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
-      return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next();
+      return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {

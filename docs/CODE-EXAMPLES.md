@@ -1,22 +1,22 @@
 ## How to Start stubby4j Programmatically
 
 ```java
-private static Stubby4JClient stubby4JClient;
+private static StubbyClient stubbyClient;
 
 @BeforeClass
 public static void beforeClass() throws Exception {
-   final URL url = Stubby4JClientStubsIntegrationTest.class.getResource("/atom-feed.yaml");
+   final URL url = StubbyClientStubsIntegrationTest.class.getResource("/atom-feed.yaml");
 
    ANSITerminal.mute = true;
-   stubby4JClient = new Stubby4JClient(url.getFile());
-   stubby4JClient.startJetty();
+   stubbyClient = new StubbyClient(url.getFile());
+   stubbyClient.startJetty();
 }
 .
 .
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubby4JClient.stop();
+   stubbyClient.stop();
 }
 ```
 
@@ -28,38 +28,59 @@ public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = SomeClass.class.getResource("/config.yaml");
-   stubby4JClient = new Stubby4JClient(url.getFile());
-   stubby4JClient.start(clientPort, adminPort);
+   stubbyClient = new StubbyClient(url.getFile());
+   stubbyClient.start(clientPort, adminPort);
 }
 .
 .
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubby4JClient.stop();
+   stubbyClient.stop();
 }
 ```
 
 ## How to Make HTTP Request to stubby4j at Runtime Using Client
 
 ```java
-@Test
-public void shouldDoGetOnURI() throws Exception {
-   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/1", "localhost", 8882);
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+  @Test
+   public void makePostRequest_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubby4JResponse.getContent());
-}
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "");
 
-@Test
-public void shouldDoPostOnURI() throws Exception {
-   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.POST, "/item/1", "localhost", 8882, "post body");
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
 
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("Got post response", stubby4JResponse.getContent());
-}
+
+   @Test
+   public void makeGetRequest_ShouldMakeSuccessfulGet() throws Exception {
+
+      final String host = "localhost";
+      final String uri = "/item/1";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+
+   }
+
+   @Test
+   public void makePostRequest_ShouldMakeSuccessfulPost() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/1";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "post body");
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("Got post response", clientHttpResponse.getContent());
+   }
 ```
 
 ## How to Make HTTP Request with Basic Authorization to stubby4j at Runtime Using Client
@@ -84,17 +105,19 @@ will be prepended with the word "Basic". The final result will conform to HTTP h
 
 
 ```java
-@Test
-public void shouldDoGetOnURIWithAuthorization() throws Exception {
-   final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(Charset.forName("UTF-8"))));
-   final String post = null;
-   final ClientRequestInfo clientRequest = new ClientRequestInfo(HttpMethods.GET, "/item/auth", "localhost", 8882, post, encodedCredentials);
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(clientRequest);
+   @Test
+   public void makeGetRequest_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
 
-   Assert.assertEquals(200, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubby4JResponse.getContent());
-}
+      final String host = "localhost";
+      final String uri = "/item/auth";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+   }
 ```
 
 ## How to Configure HTTP Stub Data at Runtime
@@ -129,16 +152,17 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 ```
 
 ```java
-@Test
-public void shouldCreateStubbedData() throws Exception {
-   final URL url = SomeClass.class.getResource("/config.yaml");
-   final String content = SomeUtils.inputStreamToString(url.openStream());
-   final ClientRequestInfo adminRequest = new ClientRequestInfo(HttpMethods.POST, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, "localhost", 8889, content);
-   final Stubby4JResponse stubby4JResponse = stubby4JClient.makeRequestWith(adminRequest);
+   @Test
+   public void makePostRequest_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
+      final String host = "localhost";
+      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-   Assert.assertEquals(201, stubby4JResponse.getResponseCode());
-   Assert.assertEquals("Configuration created successfully", stubby4JResponse.getContent());
-}
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, content);
+
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("Configuration created successfully", clientHttpResponse.getContent());
+   }
 ```
 
 

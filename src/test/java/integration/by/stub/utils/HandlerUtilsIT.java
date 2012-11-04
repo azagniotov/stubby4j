@@ -16,7 +16,7 @@ public class HandlerUtilsIT {
    @Test
    public void shouldGenerateServerName() throws Exception {
       final String serverName = HandlerUtils.constructHeaderServerName();
-      Assert.assertEquals("stubby4j/x.x.x (Java-based HTTP stub server)", serverName);
+      Assert.assertEquals("stubby4j/x.x.x (HTTP stub server)", serverName);
    }
 
    @Test

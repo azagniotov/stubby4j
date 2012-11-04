@@ -58,14 +58,15 @@ public final class HandlerUtils {
 
    public static String constructHeaderServerName() {
       final Package pkg = HandlerUtils.class.getPackage();
-      final String implementationVersion = pkg.getImplementationVersion() == null ?
-            "x.x.x" : pkg.getImplementationVersion();
-      final String implementationTitle = pkg.getImplementationTitle() == null ?
-            "Java-based HTTP stub server" : pkg.getImplementationTitle();
+      final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
+            pkg.getImplementationVersion() : "x.x.x";
+
+      final String implementationTitle = StringUtils.isSet(pkg.getImplementationTitle()) ?
+            pkg.getImplementationTitle() : "HTTP stub server";
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
    }
 
-   public static  Map<String, String> constructParamMap(final String queryString) {
+   public static Map<String, String> constructParamMap(final String queryString) {
 
       if (!StringUtils.isSet(queryString))
          return new HashMap<String, String>();
