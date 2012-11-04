@@ -24,14 +24,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
  * @since 7/2/12, 10:10 AM
  */
+@SuppressWarnings("serial")
 public final class ReflectionUtils {
+
+   private static List<String> skipableProperties = Collections.unmodifiableList(new ArrayList<String>() {{
+      add("AUTH_HEADER");
+   }});
 
    private ReflectionUtils() {
 
@@ -49,7 +57,12 @@ public final class ReflectionUtils {
             }
          });
 
-         final String value = (field.get(object) != null ? field.get(object).toString() : "Not provided");
+         if (skipableProperties.contains(field.getName())) {
+            continue;
+         }
+
+         final Object fieldObject = field.get(object);
+         final String value = StringUtils.isObjectSet(fieldObject) ? fieldObject.toString() : "Not provided";
          properties.put(StringUtils.toLower(field.getName()), value);
       }
 

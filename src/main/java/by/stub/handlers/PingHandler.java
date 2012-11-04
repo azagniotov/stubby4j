@@ -19,7 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
+import by.stub.database.DataStore;
+import by.stub.server.JettyContext;
+import by.stub.server.JettyFactory;
+import by.stub.utils.ConsoleUtils;
+import by.stub.utils.HandlerUtils;
+import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.YamlParser;
+import by.stub.yaml.stubs.StubHttpLifecycle;
+import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpSchemes;
@@ -27,27 +36,28 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import by.stub.database.DataStore;
-import by.stub.server.JettyContext;
-import by.stub.server.JettyFactory;
-import by.stub.utils.ConsoleUtils;
-import by.stub.utils.HandlerUtils;
-import by.stub.utils.ReflectionUtils;
-import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.StubHttpLifecycle;
-import by.stub.yaml.stubs.StubRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("serial")
 public final class PingHandler extends AbstractHandler {
 
+   private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
+   private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
    private static final String NAME = "admin";
-   private static final String HTML_TAG_TR_PARAMETIZED_TEMPLATE = "<tr><td width='200px' valign='top' align='left'><code>%s</code></td><td class='%s' align='left'>%s</td></tr>";
+   private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
+   private static List<String> highlightableProperties = Collections.unmodifiableList(new ArrayList<String>() {{
+      add("file");
+      add("body");
+      add("post");
+   }});
 
    private final DataStore dataStore;
    private final JettyContext jettyContext;
@@ -83,14 +93,17 @@ public final class PingHandler extends AbstractHandler {
       builder.append(buildSystemStatusHtmlTable());
       builder.append("<br /><br />");
 
-      final String requestCounterHtml = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
+      final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
+
       for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
          final StubRequest stubRequest = stubHttpLifecycle.getRequest();
          final StubResponse stubResponse = stubHttpLifecycle.getResponse();
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Request", ReflectionUtils.getProperties(stubRequest)));
-         builder.append(buildPageBodyHtml(requestCounterHtml, "Response", ReflectionUtils.getProperties(stubResponse)));
+
+         builder.append(buildPageBodyHtml(htmlTemplateContent, "Request", ReflectionUtils.getProperties(stubRequest)));
+         builder.append(buildPageBodyHtml(htmlTemplateContent, "Response", ReflectionUtils.getProperties(stubResponse)));
          builder.append("<br /><br />");
       }
+
       return HandlerUtils.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
    }
 
@@ -102,53 +115,58 @@ public final class PingHandler extends AbstractHandler {
       final int clientPort = jettyContext.getStubsPort();
       final int adminPort = jettyContext.getAdminPort();
 
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CLIENT PORT", "", clientPort));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "ADMIN PORT", "", adminPort));
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "CLIENT PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, JettyFactory.DEFAULT_SSL_PORT));
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, yamlParser.getLoadedConfigYamlPath()));
 
-      if (jettyContext.isSslEnabled()) {
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL PORT", "", JettyFactory.DEFAULT_SSL_PORT));
-      }
-
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "HOST", "", host));
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "CONFIGURATION", "", yamlParser.getLoadedConfigYamlPath()));
-
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, host, adminPort);
-      builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "NEW STUB DATA POST URI", "", endpointRegistration));
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
+            StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, host, adminPort);
+      builder.append(String.format(HTML_TABLE_ROW_TEMPLATE, "NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
+
       return String.format(systemStatusTable, builder.toString());
    }
 
-   private String buildPageBodyHtml(final String requestCounterHtml, final String tableName, final Map<String, String> stubMemberFields) throws Exception {
+
+   private String buildPageBodyHtml(final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
       final StringBuilder builder = new StringBuilder();
 
-      final String host = jettyContext.getHost();
-      final int clientPort = jettyContext.getStubsPort();
+      for (final Map.Entry<String, String> keyValue : stubObjectProperties.entrySet()) {
+         final String value = keyValue.getValue();
+         final String key = keyValue.getKey();
 
-      final String[] attributesToHighlight = HandlerUtils.getHighlightableHtmlAttributes("html_attributes_to_style.txt");
-
-      for (final Map.Entry<String, String> keyValue : stubMemberFields.entrySet()) {
-         Object value = keyValue.getValue();
-         String responseClass = "";
-         if (value != null) {
-            value = StringUtils.escapeHtmlEntities(value.toString());
-
-            if (keyValue.getKey().equalsIgnoreCase("body") || keyValue.getKey().equalsIgnoreCase("file")) {
-               value = HandlerUtils.highlightResponseMarkup(value, attributesToHighlight);
-               responseClass = "response";
-            }
+         if (!StringUtils.isSet(value)) {
+            continue;
          }
 
-         if (keyValue.getKey().equals("url")) {
-            value = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, value, host, clientPort);
-
-            if (jettyContext.isSslEnabled() && tableName.equalsIgnoreCase("request")) {
-               final String sslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, keyValue.getValue(), host, JettyFactory.DEFAULT_SSL_PORT);
-               builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, "SSL URL", responseClass, sslUrl));
-            }
-         }
-         builder.append(String.format(HTML_TAG_TR_PARAMETIZED_TEMPLATE, StringUtils.toUpper(keyValue.getKey()), responseClass, value));
+         builder.append(constructTableRow(key, value));
       }
-      return String.format(requestCounterHtml, tableName, builder.toString());
+      return String.format(htmlTemplateContent, tableName, builder.toString());
+   }
+
+
+   private String constructTableRow(final String key, final String value) {
+      final String escapedValue = StringUtils.escapeHtmlEntities(value);
+
+      if (highlightableProperties.contains(key)) {
+         final String row = String.format("%s%s%s", "<pre><code>", escapedValue, "</code></pre>");
+
+         return String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, row);
+      }
+
+      if (key.equals("url")) {
+         final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
+         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), JettyFactory.DEFAULT_SSL_PORT);
+
+         final String tableRowWithUrl = String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
+         final String tableRowWithSslUrl = String.format(HTML_TABLE_ROW_TEMPLATE, "SSL " + StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
+
+         return String.format("%s%s", tableRowWithUrl, tableRowWithSslUrl);
+      }
+
+      return String.format(HTML_TABLE_ROW_TEMPLATE, StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
    }
 }

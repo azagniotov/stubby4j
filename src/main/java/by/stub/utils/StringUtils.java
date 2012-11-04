@@ -40,6 +40,10 @@ public final class StringUtils {
       return (toTest != null && toTest.trim().length() > 0);
    }
 
+   public static boolean isObjectSet(final Object toTest) {
+      return (toTest != null && toTest.toString().trim().length() > 0);
+   }
+
    public static String toUpper(final String toUpper) {
       return toUpper.toUpperCase(Locale.US);
    }

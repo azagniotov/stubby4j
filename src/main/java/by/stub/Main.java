@@ -68,14 +68,15 @@ final class Main {
    }
 
    private static void verifyYamlDataProvided() {
-      if (!CommandLineIntepreter.isYamlProvided()) {
-         final String msg =
-               String.format("YAML data was not provided using command line option '--%s'. %s"
-                     + "To see all command line options run again with option '--%s'",
-                     CommandLineIntepreter.OPTION_CONFIG, "\n", CommandLineIntepreter.OPTION_HELP);
-
-         throw new Stubby4JException(msg);
+      if (CommandLineIntepreter.isYamlProvided()) {
+         return;
       }
+      final String msg =
+            String.format("YAML data was not provided using command line option '--%s'. %s"
+                  + "To see all command line options run again with option '--%s'",
+                  CommandLineIntepreter.OPTION_CONFIG, "\n", CommandLineIntepreter.OPTION_HELP);
+
+      throw new Stubby4JException(msg);
    }
 
    private static void startStubby4jUsingCommandLineArgs() {

@@ -21,6 +21,11 @@ package by.stub.cli;
 
 import org.eclipse.jetty.util.log.Logger;
 
+/**
+ * Class used to suppress default console output of Jetty
+ *
+ * @author Eric Mrak
+ */
 public final class EmptyLogger implements Logger {
    @Override
    public String getName() {

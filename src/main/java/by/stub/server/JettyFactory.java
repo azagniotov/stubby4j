@@ -23,7 +23,6 @@ import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineIntepreter;
 import by.stub.database.DataStore;
 import by.stub.handlers.PingHandler;
-import by.stub.handlers.SpdyHandler;
 import by.stub.handlers.SslHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.handlers.StubsRegistrationHandler;
@@ -95,22 +94,22 @@ public final class JettyFactory {
             {
                   constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
                   constructHandler(SSL_CONNECTOR_NAME, "/", new SslHandler(dataStore)),
-                  constructHandler(SPDY_CONNECTOR_NAME, "/", new SpdyHandler(dataStore)),
 
                   constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/", contextRootHandler("html/", "admin-index.html"))
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/", contextRootHandler("ui/html/templates/", "admin-index.html")),
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", contextRootHandler("ui/html/highlight/"))
             }
       );
 
       return handlers;
    }
 
-   private ResourceHandler contextRootHandler(final String classPathResource, final String welcomeFile) {
+   private ResourceHandler contextRootHandler(final String classPathResource, final String... staticResources) {
 
       final ResourceHandler resourceHandler = new ResourceHandler();
       resourceHandler.setDirectoriesListed(true);
-      resourceHandler.setWelcomeFiles(new String[]{welcomeFile});
+      resourceHandler.setWelcomeFiles(staticResources);
       resourceHandler.setBaseResource(Resource.newClassPathResource(classPathResource));
 
       return resourceHandler;

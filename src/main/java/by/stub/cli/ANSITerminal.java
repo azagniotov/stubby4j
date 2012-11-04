@@ -19,6 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.cli;
 
+/**
+ * Prints to console any given message using ANSI colours.
+ *
+ * @author Eric Mrak
+ */
 public final class ANSITerminal {
 
    private ANSITerminal() {
@@ -52,42 +57,92 @@ public final class ANSITerminal {
       print("", msg);
    }
 
+   /**
+    * Prints message to the console
+    *
+    * @param msg message to to print to the console
+    */
    public static void dump(final String msg) {
       log(msg);
    }
 
+   /**
+    * Prints message to the console in black colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void status(final String msg) {
       print(BOLD_BLACK, msg);
    }
 
+   /**
+    * Prints message to the console in blue colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void info(final String msg) {
       print(BLUE, msg);
    }
 
+   /**
+    * Prints message to the console in green colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void ok(final String msg) {
       print(GREEN, msg);
    }
 
+   /**
+    * Prints message to the console in red colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void error(final String msg) {
       print(RED, msg);
    }
 
+   /**
+    * Prints message to the console in yellow colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void warn(final String msg) {
       print(YELLOW, msg);
    }
 
+   /**
+    * Prints message to the console in cyan colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void incoming(final String msg) {
       print(CYAN, msg);
    }
 
+   /**
+    * Prints message to the console in magenta colour
+    *
+    * @param msg message to to print to the console
+    */
    public static void loaded(final String msg) {
       print(MAGENTA, msg);
    }
 
+   /**
+    * Disables console output
+    *
+    * @param isMute if true, the console output will be disabled
+    */
    public static void muteConsole(final boolean isMute) {
       mute = isMute;
    }
 
+   /**
+    * Checks whether console output has been disabled by user using command line argument
+    *
+    * @return true is the console output is disabled
+    */
    public static boolean isMute() {
       return mute;
    }
