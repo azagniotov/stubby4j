@@ -50,36 +50,36 @@ public class StubbyHttpClientAdminIT {
    }
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
       final String host = "localhost";
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, content);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, content);
 
       Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
       Assert.assertEquals("Configuration created successfully", clientHttpResponse.getContent());
    }
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
       final String host = "localhost";
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
 
       Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
       Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());
    }
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
       final String host = "localhost";
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, null);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, null);
 
       Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
       Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());

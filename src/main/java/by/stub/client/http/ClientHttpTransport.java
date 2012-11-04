@@ -42,7 +42,7 @@ final class ClientHttpTransport {
       return Arrays.binarySearch(SUPPORTED_METHODS, method) >= 0;
    }
 
-   public HttpURLConnection constructHttpConnection() throws IOException {
+   HttpURLConnection constructHttpConnection() throws IOException {
 
       if (!isMethodSupported(clientHttpRequest.getMethod())) {
          throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", clientHttpRequest.getMethod()));

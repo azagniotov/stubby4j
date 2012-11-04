@@ -154,7 +154,8 @@ public class YamlParser {
    }
 
    private String extractPropertyValueAsString(final String propertyName, final Object value) throws IOException {
-      final String valueAsString = value.toString();
+      final String rawValue = StringUtils.isObjectSet(value) ? value.toString() : "";
+      final String valueAsString = rawValue.trim();
 
       return propertyName.equalsIgnoreCase("file") ?
             loadContentFromFile(valueAsString) : valueAsString;
@@ -164,8 +165,8 @@ public class YamlParser {
       if (!value.containsKey(StubRequest.AUTH_HEADER)) {
          return value;
       }
-
-      final String authorizationHeader = value.get(StubRequest.AUTH_HEADER);
+      final String rawHeader = value.get(StubRequest.AUTH_HEADER);
+      final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
       final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
       value.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);

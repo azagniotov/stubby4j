@@ -43,6 +43,17 @@ public static void afterClass() throws Exception {
 ## How to Make HTTP Request to stubby4j at Runtime Using Client
 
 ```java
+   @Test
+   public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGet() throws Exception {
+
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+   }
+
   @Test
    public void makePostRequest_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
       final String host = "localhost";
@@ -81,6 +92,29 @@ public static void afterClass() throws Exception {
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("Got post response", clientHttpResponse.getContent());
    }
+
+   @Test
+   public void doPostUsingDefaults_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
+      final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, "");
+
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPostUsingDefaults_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+
+      final String uri = "/item/submit";
+      final String post = "{\"action\" : \"submit\"}";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, post, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
 ```
 
 ## How to Make HTTP Request with Basic Authorization to stubby4j at Runtime Using Client
@@ -114,6 +148,17 @@ will be prepended with the word "Basic". The final result will conform to HTTP h
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
       final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String uri = "/item/auth";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri, encodedCredentials);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());

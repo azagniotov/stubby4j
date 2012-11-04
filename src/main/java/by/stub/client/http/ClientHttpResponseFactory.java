@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
  * @author Alexander Zagniotov
  * @since 11/4/12, 12:27 PM
  */
-class ClientHttpResponseFactory {
+final class ClientHttpResponseFactory {
 
    private final HttpURLConnection connection;
 

@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 
@@ -40,42 +39,51 @@ public class StubbyHttpClientStubsIT {
       stubbyClient.stopJetty();
    }
 
-   @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
-      final String host = "localhost";
-      final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
-      final int port = JettyFactory.DEFAULT_STUBS_PORT;
-
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "");
-
-      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
-   }
-
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGet() throws Exception {
+   public void doGet_ShouldMakeSuccessfulGet() throws Exception {
 
       final String host = "localhost";
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
-
    }
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+   public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGet() throws Exception {
+
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
 
       final String host = "localhost";
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port, encodedCredentials);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String uri = "/item/auth";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri, encodedCredentials);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
@@ -83,14 +91,14 @@ public class StubbyHttpClientStubsIT {
 
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGetWithBasicAuth_WhenWrongAuthCredentialsIsProvided() throws Exception {
+   public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenWrongAuthCredentialsIsProvided() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.utf8Charset())));
 
       final String host = "localhost";
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port, encodedCredentials);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
 
 
       Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, clientHttpResponse.getResponseCode());
@@ -98,12 +106,12 @@ public class StubbyHttpClientStubsIT {
    }
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGetWithBasicAuth_WhenNoAuthCredentialsIsProvided() throws Exception {
+   public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenNoAuthCredentialsIsProvided() throws Exception {
       final String host = "localhost";
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
 
       Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, clientHttpResponse.getResponseCode());
       Assert.assertEquals("You are not authorized to view this page without supplied 'Authorization' HTTP header", clientHttpResponse.getContent());
@@ -111,36 +119,39 @@ public class StubbyHttpClientStubsIT {
 
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGet_WhenNoUriGiven() throws Exception {
+   public void doGet_ShouldMakeSuccessfulGet_WhenNoUriGiven() throws Exception {
 
       final String host = "localhost";
       final String uri = "";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /", clientHttpResponse.getContent());
    }
 
 
-   @Test(expected = MalformedURLException.class)
-   public void makeGetRequest_ShouldThrowException_WhenGivenNulUri() throws Exception {
+   @Test
+   public void doGet_ShouldThrowException_WhenGivenNullUri() throws Exception {
       final String host = "localhost";
       final String uri = null;
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
+
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("No data found for GET request at URI /", clientHttpResponse.getContent());
    }
 
 
    @Test
-   public void makeGetRequest_ShouldMakeSuccessfulGet_WhenGivenEmptyUri() throws Exception {
+   public void doGet_ShouldMakeSuccessfulGet_WhenGivenEmptyUri() throws Exception {
       final String host = "localhost";
       final String uri = "/item/888";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeGetRequest(host, uri, port);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
       Assert.assertEquals("No data found for GET request at URI /item/888", clientHttpResponse.getContent());
@@ -148,12 +159,50 @@ public class StubbyHttpClientStubsIT {
 
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost() throws Exception {
       final String host = "localhost";
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "post body");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("Got post response", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPost_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+
+      final String host = "localhost";
+      final String uri = "/item/submit";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+      final String post = "{\"action\" : \"submit\"}";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, encodedCredentials, post);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPostUsingDefaults_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+
+      final String uri = "/item/submit";
+      final String post = "{\"action\" : \"submit\"}";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, post, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPostUsingDefaults_ShouldMakeSuccessfulPost() throws Exception {
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, "post body");
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("Got post response", clientHttpResponse.getContent());
@@ -161,60 +210,85 @@ public class StubbyHttpClientStubsIT {
 
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenGivenEmptyUri() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenGivenEmptyUri() throws Exception {
       final String host = "localhost";
       final String uri = "";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "post body");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
       Assert.assertEquals("No data found for POST request at URI / for post data: post body", clientHttpResponse.getContent());
    }
 
 
-   @Test(expected = MalformedURLException.class)
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenGivenNullUri() throws Exception {
+   @Test
+   public void doPost_ShouldMakeSuccessfulPost_WhenGivenNullUri() throws Exception {
       final String host = "localhost";
       final String uri = null;
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "post body");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
 
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI / for post data: post body", clientHttpResponse.getContent());
    }
 
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenGivenWrongPostData() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenGivenWrongPostData() throws Exception {
       final String host = "localhost";
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "unexpected or wrong post body");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "unexpected or wrong post body");
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
       Assert.assertEquals("No data found for POST request at URI /item/1 for post data: unexpected or wrong post body", clientHttpResponse.getContent());
    }
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenGivenEmptyPostData() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenGivenEmptyPostData() throws Exception {
       final String host = "localhost";
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, "");
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
       Assert.assertEquals("No data found for POST request at URI /item/1", clientHttpResponse.getContent());
    }
 
    @Test
-   public void makePostRequest_ShouldMakeSuccessfulPost_WhenNullPostGiven() throws Exception {
+   public void doPost_ShouldMakeSuccessfulPost_WhenNullPostGiven() throws Exception {
       final String host = "localhost";
       final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makePostRequest(host, uri, port, null);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, null);
+
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+
+   @Test
+   public void doPost_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
+
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPostUsingDefaults_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
+      final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, "");
 
       Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
       Assert.assertEquals("OK", clientHttpResponse.getContent());

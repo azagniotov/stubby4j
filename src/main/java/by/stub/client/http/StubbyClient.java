@@ -64,24 +64,121 @@ public final class StubbyClient {
       }
    }
 
-   public ClientHttpResponse makeGetRequest(final String host, final String uri, final int stubsPort) throws IOException {
-      return makeGetRequest(host, uri, stubsPort, null);
+   /**
+    * Makes GET HTTP request to stubby
+    *
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort) throws IOException {
+      return doGet(host, uri, stubsPort, null);
    }
 
-   public ClientHttpResponse makeGetRequest(final String host, final String uri, final int stubsPort, final String basicAuth) throws IOException {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, basicAuth);
+   /**
+    * Makes GET HTTP request to stubby
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param stubsPort          port that stubby4j Stubs is running on
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws IOException {
+      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, encodedCredentials);
 
       return makeRequest(clientHttpRequest);
    }
 
-   public ClientHttpResponse makePostRequest(final String host, final String uri, final int stubsPort, final String post) throws IOException {
-      return makePostRequest(host, uri, stubsPort, null, post);
+
+   /**
+    * Makes GET HTTP request to stubby running on default host and port - localhost:8882
+    *
+    * @param uri URI for the HTTP request
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGetUsingDefaults(final String uri) throws IOException {
+      return doGetUsingDefaults(uri, null);
    }
 
-   public ClientHttpResponse makePostRequest(final String host, final String uri, final int stubsPort, final String basicAuth, final String post) throws IOException {
+   /**
+    * Makes GET HTTP request to stubby running on default host and port - localhost:8882.
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param uri                URI for the HTTP request
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws IOException {
+      return doGet(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials);
+   }
+
+   /**
+    * Makes POST HTTP request to stubby
+    *
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @param post      data to POST to the server
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws IOException {
+      return doPost(host, uri, stubsPort, null, post);
+   }
+
+   /**
+    * Makes POST HTTP request to stubby
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param stubsPort          port that stubby4j Stubs is running on
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param post               data to POST to the server
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String basicAuth, final String post) throws IOException {
       final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, basicAuth, post);
 
       return makeRequest(clientHttpRequest);
+   }
+
+   /**
+    * Makes POST HTTP request to stubby running on default host and port - localhost:8882
+    *
+    * @param uri  URI for the HTTP request
+    * @param post data to POST to the server
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post) throws IOException {
+      return doPostUsingDefaults(uri, post, null);
+   }
+
+   /**
+    * Makes POST HTTP request to stubby running on default host and port - localhost:8882.
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param uri                URI for the HTTP request
+    * @param post               data to POST to the server
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws IOException {
+      return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials, post);
    }
 
    private ClientHttpResponse makeRequest(final ClientHttpRequest clientHttpRequest) throws IOException {

@@ -64,31 +64,31 @@ final class ClientHttpRequest {
       this.base64encodedCredentials = newBase64encodedCredentials;
    }
 
-   public String getMethod() {
+   String getMethod() {
       return method;
    }
 
-   public String getUri() {
-      return uri;
+   String getUri() {
+      return StringUtils.isSet(uri) ? uri : "";
    }
 
-   public String getHost() {
+   String getHost() {
       return host;
    }
 
-   public String getPost() {
+   String getPost() {
       return StringUtils.isSet(post) ? post : "";
    }
 
-   public String getBase64encodedCredentials() {
+   String getBase64encodedCredentials() {
       return base64encodedCredentials;
    }
 
-   public int getClientPort() {
+   int getClientPort() {
       return clientPort;
    }
 
-   public String getScheme() {
+   String getScheme() {
       return scheme;
    }
 }

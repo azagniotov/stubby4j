@@ -66,3 +66,18 @@
          content-type: text/plain
       status: 200
       body: Got post response
+
+
+-  request:
+      headers:
+         authorization: bob:secret
+      method: POST
+      url: /item/submit
+      post: >
+         {"action" : "submit"}
+
+   response:
+      headers:
+         content-type: text/plain
+      status: 200
+      body: OK
