@@ -1,0 +1,11 @@
+-  request:
+      method: POST
+      headers:
+         content-type: application/json
+      file: src/test/resources/json/post-body-as-file.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: OK
