@@ -148,8 +148,8 @@ public final class StubbyClient {
     * @return ClientHttpResponse with HTTP status code and message from the server
     * @throws IOException
     */
-   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String basicAuth, final String post) throws IOException {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, basicAuth, post);
+   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws IOException {
+      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, encodedCredentials, post);
 
       return makeRequest(clientHttpRequest);
    }
