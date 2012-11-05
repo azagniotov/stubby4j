@@ -1,4 +1,4 @@
-package by.stub.client.http;
+package by.stub.http.client;
 
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.client.http;
+package by.stub.http.client;
 
 import by.stub.cli.CommandLineIntepreter;
 import by.stub.server.JettyFactory;
@@ -36,19 +36,17 @@ public final class StubbyClient {
    private JettyManager jettyManager;
    private String yamlConfigurationFilename;
 
-   private StubbyClient() {
+   public StubbyClient() {
 
    }
 
-   public StubbyClient(final String newYamlConfigurationFilename) {
-      this.yamlConfigurationFilename = newYamlConfigurationFilename;
+   public void startJetty(final String yamlConfigurationFilename) throws Exception {
+      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
 
-   public void startJetty() throws Exception {
-      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_ADMIN_PORT);
-   }
+   public void startJetty(final int clientPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
 
-   public void startJetty(final int clientPort, final int adminPort) throws Exception {
+      this.yamlConfigurationFilename = yamlConfigurationFilename;
 
       final Map<String, String> params = new HashMap<String, String>();
       params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
@@ -59,7 +57,7 @@ public final class StubbyClient {
    }
 
    public void stopJetty() throws Exception {
-      if (jettyManager != null) {
+      if (jettyManager != null && jettyManager.isJettyUp()) {
          jettyManager.stopJetty();
       }
    }

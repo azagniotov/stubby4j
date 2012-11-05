@@ -1,8 +1,9 @@
-package integration.by.stub.client;
+package integration.by.stub.http.client;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.client.http.ClientHttpResponse;
-import by.stub.client.http.StubbyClient;
+import by.stub.http.client.ClientHttpResponse;
+import by.stub.http.client.StubbyClient;
+import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -20,18 +21,21 @@ import java.net.URL;
  * @since 6/28/12, 2:54 PM
  */
 
-public class StubbyHttpClientStubsIT {
+public class StubbyClientIT {
 
+   private static String content;
    private static StubbyClient stubbyClient;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = StubbyHttpClientStubsIT.class.getResource("/yaml/stubby4jclientstubs-test-data.yaml");
+      final URL url = StubbyClientIT.class.getResource("/yaml/stubbyclient-test-data.yaml");
       Assert.assertNotNull(url);
 
       ANSITerminal.muteConsole(true);
-      stubbyClient = new StubbyClient(url.getFile());
-      stubbyClient.startJetty();
+      stubbyClient = new StubbyClient();
+      stubbyClient.startJetty(url.getFile());
+
+      content = StringUtils.inputStreamToString(url.openStream());
    }
 
    @AfterClass
@@ -316,5 +320,41 @@ public class StubbyHttpClientStubsIT {
 
       Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
       Assert.assertEquals("OK", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPost_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
+      final String host = "localhost";
+      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final int port = JettyFactory.DEFAULT_ADMIN_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, content);
+
+      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("Configuration created successfully", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
+      final String host = "localhost";
+      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final int port = JettyFactory.DEFAULT_ADMIN_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
+
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
+      final String host = "localhost";
+      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final int port = JettyFactory.DEFAULT_ADMIN_PORT;
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, null);
+
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());
    }
 }

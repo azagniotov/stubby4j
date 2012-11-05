@@ -1,4 +1,4 @@
-package by.stub.client.http;
+package by.stub.http.client;
 
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;

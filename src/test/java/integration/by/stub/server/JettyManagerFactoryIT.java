@@ -1,6 +1,6 @@
 package integration.by.stub.server;
 
-import integration.by.stub.client.StubbyHttpClientStubsIT;
+import integration.by.stub.http.client.StubbyClientIT;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class JettyManagerFactoryIT {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      url = StubbyHttpClientStubsIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
+      url = StubbyClientIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
       Assert.assertNotNull(url);
 
       ANSITerminal.muteConsole(true);

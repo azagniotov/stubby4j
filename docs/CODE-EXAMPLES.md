@@ -8,8 +8,8 @@ public static void beforeClass() throws Exception {
    final URL url = StubbyClientStubsIntegrationTest.class.getResource("/atom-feed.yaml");
 
    ANSITerminal.mute = true;
-   stubbyClient = new StubbyClient(url.getFile());
-   stubbyClient.startJetty();
+   stubbyClient = new StubbyClient();
+   stubbyClient.startJetty(url.getFile());
 }
 .
 .
@@ -28,8 +28,8 @@ public static void beforeClass() throws Exception {
    int clientPort = 8888;
    int adminPort = 9999;
    final URL url = SomeClass.class.getResource("/config.yaml");
-   stubbyClient = new StubbyClient(url.getFile());
-   stubbyClient.start(clientPort, adminPort);
+   stubbyClient = new StubbyClient();
+   stubbyClient.start(clientPort, adminPort, url.getFile());
 }
 .
 .

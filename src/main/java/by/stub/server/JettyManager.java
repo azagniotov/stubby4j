@@ -56,4 +56,14 @@ public final class JettyManager {
          server.stop();
       }
    }
+
+   public boolean isJettyUp() throws Exception {
+      synchronized (JettyManager.class) {
+         if (server.isStarting() || server.isRunning()) {
+            return true;
+         }
+
+         return false;
+      }
+   }
 }
