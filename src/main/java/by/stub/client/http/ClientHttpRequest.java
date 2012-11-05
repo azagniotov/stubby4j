@@ -40,12 +40,12 @@ final class ClientHttpRequest {
    }
 
    ClientHttpRequest(final String scheme,
-                     final String newMethod,
-                     final String newUri,
-                     final String newHost,
-                     final int newClientPort,
+                     final String method,
+                     final String uri,
+                     final String host,
+                     final int port,
                      final String newBase64encodedCredentials) {
-      this(scheme, newMethod, newUri, newHost, newClientPort, newBase64encodedCredentials, null);
+      this(scheme, method, uri, host, port, newBase64encodedCredentials, null);
    }
 
    ClientHttpRequest(final String scheme,

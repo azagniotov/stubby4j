@@ -78,6 +78,35 @@ public final class StubbyClient {
    }
 
    /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    *
+    * @param host host that stubby4j is running on
+    * @param uri  URI for the HTTP request
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGetOverSsl(final String host, final String uri) throws IOException {
+      return doGetOverSsl(host, uri, null);
+   }
+
+   /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws IOException
+    */
+   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final String encodedCredentials) throws IOException {
+      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, JettyFactory.DEFAULT_SSL_PORT, encodedCredentials);
+
+      return makeRequest(clientHttpRequest);
+   }
+
+   /**
     * Makes GET HTTP request to stubby
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password

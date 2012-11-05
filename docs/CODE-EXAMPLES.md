@@ -93,6 +93,31 @@ public static void afterClass() throws Exception {
    }
 
    @Test
+   public void doGetOverSsl_ShouldMakeSuccessfulGet() throws Exception {
+
+      final String host = "localhost";
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void doGetOverSsl_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+
+      final String host = "localhost";
+      final String uri = "/item/auth";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, encodedCredentials);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
    public void doPost_ShouldMakeSuccessfulPost() throws Exception {
       final String host = "localhost";
       final String uri = "/item/1";

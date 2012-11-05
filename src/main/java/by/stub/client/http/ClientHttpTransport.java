@@ -4,8 +4,12 @@ import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.MimeTypes;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -49,8 +53,13 @@ final class ClientHttpTransport {
       }
 
       final URL url = new URL(constructUrlFromClientRequest());
-
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+      if (HttpSchemes.HTTPS.equals(clientHttpRequest.getScheme())) {
+         final HttpsURLConnection sslConnection = (HttpsURLConnection) connection;
+         sslConnection.setHostnameVerifier(new DefaultHostnameVerifier());
+      }
+
       connection.setRequestMethod(clientHttpRequest.getMethod());
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);
@@ -123,5 +132,17 @@ final class ClientHttpTransport {
       final String implementationTitle = StringUtils.isSet(pkg.getImplementationTitle()) ?
             pkg.getImplementationTitle() : "HTTP stub client request";
       return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+   }
+
+   private static final class DefaultHostnameVerifier implements HostnameVerifier {
+
+      DefaultHostnameVerifier() {
+
+      }
+
+      @Override
+      public boolean verify(final String s, final SSLSession sslSession) {
+         return true;
+      }
    }
 }

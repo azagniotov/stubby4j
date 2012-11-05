@@ -22,6 +22,7 @@ package by.stub.server;
 import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineIntepreter;
 import by.stub.database.DataStore;
+import by.stub.exception.Stubby4JException;
 import by.stub.handlers.PingHandler;
 import by.stub.handlers.SslHandler;
 import by.stub.handlers.StubsHandler;
@@ -39,6 +40,13 @@ import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +56,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 10/25/12, 5:17 PM
  */
+@SuppressWarnings("serial")
 public final class JettyFactory {
 
    public static final int DEFAULT_ADMIN_PORT = 8889;
@@ -209,6 +218,7 @@ public final class JettyFactory {
             sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
+
       return sslConnector;
    }
 
@@ -220,6 +230,14 @@ public final class JettyFactory {
 
       if (keystorePath == null) {
          sslFactory.setKeyStoreResource(Resource.newClassPathResource("ssl/localhost.jks"));
+
+         try {
+            final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
+            defaultSslContext.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
+            SSLContext.setDefault(defaultSslContext);
+         } catch (final Exception ex) {
+            throw new Stubby4JException(ex.toString(), ex);
+         }
 
          return sslFactory;
       }
@@ -241,5 +259,27 @@ public final class JettyFactory {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
       }
       return DEFAULT_ADMIN_PORT;
+   }
+
+   private static final class DefaultTrustManager implements X509TrustManager {
+
+      DefaultTrustManager() {
+
+      }
+
+      @Override
+      public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
+
+      }
+
+      @Override
+      public void checkServerTrusted(final X509Certificate[] chain, String authType) throws CertificateException {
+
+      }
+
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+         return null;
+      }
    }
 }
