@@ -1,9 +1,9 @@
 package integration.by.stub.http.client;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.ClientHttpResponse;
 import by.stub.http.client.StubbyClient;
-import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -26,6 +26,8 @@ public class StubbyClientIT {
    private static String content;
    private static StubbyClient stubbyClient;
 
+   private static final int SSL_PORT = 4443;
+
    @BeforeClass
    public static void beforeClass() throws Exception {
       final URL url = StubbyClientIT.class.getResource("/yaml/stubbyclient-test-data.yaml");
@@ -33,7 +35,7 @@ public class StubbyClientIT {
 
       ANSITerminal.muteConsole(true);
       stubbyClient = new StubbyClient();
-      stubbyClient.startJetty(url.getFile());
+      stubbyClient.startJetty(JettyFactory.DEFAULT_STUBS_PORT, SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, url.getFile());
 
       content = StringUtils.inputStreamToString(url.openStream());
    }
@@ -49,7 +51,7 @@ public class StubbyClientIT {
       final String host = "localhost";
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
@@ -100,7 +102,7 @@ public class StubbyClientIT {
       final String host = "localhost";
       final String uri = "/item/auth";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, encodedCredentials);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT, encodedCredentials);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());

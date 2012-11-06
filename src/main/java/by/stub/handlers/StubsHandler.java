@@ -53,7 +53,7 @@ public class StubsHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      final StubRequest assertionStubRequest = StubRequest.creatFromHttpServletRequest(request);
+      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertionStubRequest);
       final StubResponseHandlingStrategy strategyStubResponse = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
 

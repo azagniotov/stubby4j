@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.server.JettyContext;
-import by.stub.server.JettyFactory;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ReflectionUtils;
@@ -40,7 +40,11 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -87,6 +91,18 @@ public final class PingHandler extends AbstractHandler {
 
    private String getConfigDataPresentation() throws Exception {
 
+      try {
+         final InputStream is = new FileInputStream(yamlParser.getLoadedConfigYamlPath());
+         final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
+
+         final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
+
+         dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      } catch (final Exception ex) {
+         ANSITerminal.error("Could not parse reloaded YAML configuration: " + ex.toString());
+      }
+
       final List<StubHttpLifecycle> stubHttpLifecycles = dataStore.getStubHttpLifecycles();
 
       final StringBuilder builder = new StringBuilder();
@@ -113,11 +129,12 @@ public final class PingHandler extends AbstractHandler {
 
       final String host = jettyContext.getHost();
       final int clientPort = jettyContext.getStubsPort();
+      final int sslPort = jettyContext.getStubsSslPort();
       final int adminPort = jettyContext.getAdminPort();
 
       builder.append(populateTableRowTemplate("CLIENT PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
-      builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, JettyFactory.DEFAULT_SSL_PORT));
+      builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, sslPort));
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
       builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, yamlParser.getLoadedConfigYamlPath()));
 
@@ -159,7 +176,7 @@ public final class PingHandler extends AbstractHandler {
 
       if (key.equals("url")) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
-         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), JettyFactory.DEFAULT_SSL_PORT);
+         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsSslPort());
 
          final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
          final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);

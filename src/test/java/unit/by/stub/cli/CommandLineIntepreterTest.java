@@ -28,27 +28,6 @@ public class CommandLineIntepreterTest {
       Assert.assertEquals(false, isYamlProvided);
    }
 
-   @Test
-   public void shouldBeTrueWhenSslIsRequested() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"--" + CommandLineIntepreter.OPTION_KEYSTORE, "keystore.crt"});
-      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
-      Assert.assertEquals(true, isSslRequested);
-   }
-
-   @Test
-   public void shouldBeTrueWhenSslIsRequestedShortConfigOption() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"-k", "keystore.crt"});
-      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
-      Assert.assertEquals(true, isSslRequested);
-   }
-
-   @Test
-   public void shouldBeFalseWhenSslIsNotRequested() throws Exception {
-      CommandLineIntepreter.parseCommandLine(new String[]{"alex", "zagniotov"});
-      final boolean isSslRequested = CommandLineIntepreter.isSslRequested();
-      Assert.assertEquals(false, isSslRequested);
-   }
-
    @Test(expected = ParseException.class)
    public void shouldFailOnInvalidCommandlineLongOptionString() throws Exception {
       CommandLineIntepreter.parseCommandLine(new String[]{"--alex"});

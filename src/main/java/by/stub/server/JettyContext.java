@@ -26,19 +26,19 @@ package by.stub.server;
 public final class JettyContext {
 
    private final String host;
-   private final boolean sslEnabled;
+   private final int stubsSslPort;
    private final int stubsPort;
    private final int adminPort;
 
-   public JettyContext(final String host, final boolean sslEnabled, final int stubsPort, final int adminPort) {
+   public JettyContext(final String host, final int stubsPort, final int stubsSslPort, final int adminPort) {
       this.host = host;
-      this.sslEnabled = sslEnabled;
+      this.stubsSslPort = stubsSslPort;
       this.stubsPort = stubsPort;
       this.adminPort = adminPort;
    }
 
-   public boolean isSslEnabled() throws Exception {
-      return sslEnabled;
+   public int getStubsSslPort() {
+      return stubsSslPort;
    }
 
    public int getStubsPort() {

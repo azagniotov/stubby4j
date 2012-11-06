@@ -26,7 +26,6 @@ import by.stub.server.JettyManagerFactory;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,22 +33,28 @@ import java.util.Map;
 public final class StubbyClient {
 
    private JettyManager jettyManager;
-   private String yamlConfigurationFilename;
 
    public StubbyClient() {
 
    }
 
    public void startJetty(final String yamlConfigurationFilename) throws Exception {
-      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
+      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
+   }
+
+   public void startJetty(final int clientPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(clientPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
 
    public void startJetty(final int clientPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(clientPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, yamlConfigurationFilename);
+   }
 
-      this.yamlConfigurationFilename = yamlConfigurationFilename;
+   public void startJetty(final int clientPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
 
       final Map<String, String> params = new HashMap<String, String>();
       params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
+      params.put(CommandLineIntepreter.OPTION_SSLPORT, String.format("%s", sslPort));
       params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
 
       jettyManager = new JettyManagerFactory().construct(yamlConfigurationFilename, params);
@@ -69,9 +74,9 @@ public final class StubbyClient {
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort) throws IOException {
+   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort) throws Exception {
       return doGet(host, uri, stubsPort, null);
    }
 
@@ -81,10 +86,23 @@ public final class StubbyClient {
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGetOverSsl(final String host, final String uri) throws IOException {
-      return doGetOverSsl(host, uri, null);
+   public ClientHttpResponse doGetOverSsl(final String host, final String uri) throws Exception {
+      return doGetOverSsl(host, uri, JettyFactory.DEFAULT_SSL_PORT, null);
+   }
+
+   /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j
+    *
+    * @param host host that stubby4j is running on
+    * @param uri  URI for the HTTP request
+    * @param port SSL port
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception {
+      return doGetOverSsl(host, uri, port, null);
    }
 
    /**
@@ -94,12 +112,13 @@ public final class StubbyClient {
     *
     * @param host               host that stubby4j is running on
     * @param uri                URI for the HTTP request
+    * @param port               SSL port
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final String encodedCredentials) throws IOException {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, JettyFactory.DEFAULT_SSL_PORT, encodedCredentials);
+   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception {
+      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, port, encodedCredentials);
 
       return makeRequest(clientHttpRequest);
    }
@@ -114,9 +133,9 @@ public final class StubbyClient {
     * @param stubsPort          port that stubby4j Stubs is running on
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws IOException {
+   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception {
       final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, encodedCredentials);
 
       return makeRequest(clientHttpRequest);
@@ -128,9 +147,9 @@ public final class StubbyClient {
     *
     * @param uri URI for the HTTP request
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGetUsingDefaults(final String uri) throws IOException {
+   public ClientHttpResponse doGetUsingDefaults(final String uri) throws Exception {
       return doGetUsingDefaults(uri, null);
    }
 
@@ -142,9 +161,9 @@ public final class StubbyClient {
     * @param uri                URI for the HTTP request
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws IOException {
+   public ClientHttpResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception {
       return doGet(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials);
    }
 
@@ -156,9 +175,9 @@ public final class StubbyClient {
     * @param stubsPort port that stubby4j Stubs is running on
     * @param post      data to POST to the server
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws IOException {
+   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception {
       return doPost(host, uri, stubsPort, null, post);
    }
 
@@ -173,9 +192,9 @@ public final class StubbyClient {
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @param post               data to POST to the server
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws IOException {
+   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception {
       final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, encodedCredentials, post);
 
       return makeRequest(clientHttpRequest);
@@ -187,9 +206,9 @@ public final class StubbyClient {
     * @param uri  URI for the HTTP request
     * @param post data to POST to the server
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post) throws IOException {
+   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post) throws Exception {
       return doPostUsingDefaults(uri, post, null);
    }
 
@@ -202,13 +221,13 @@ public final class StubbyClient {
     * @param post               data to POST to the server
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return ClientHttpResponse with HTTP status code and message from the server
-    * @throws IOException
+    * @throws Exception
     */
-   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws IOException {
+   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception {
       return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials, post);
    }
 
-   private ClientHttpResponse makeRequest(final ClientHttpRequest clientHttpRequest) throws IOException {
+   private ClientHttpResponse makeRequest(final ClientHttpRequest clientHttpRequest) throws Exception {
       final ClientHttpTransport clientHttpTransport = new ClientHttpTransport(clientHttpRequest);
       final HttpURLConnection connection = clientHttpTransport.constructHttpConnection();
 

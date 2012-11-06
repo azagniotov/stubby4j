@@ -14,13 +14,10 @@
 
 -  request:
       method: GET
-      url: /invoice/567
+      url: /invoice/567?paramOne=valueOne&paramTwo=valueTwo
       headers:
          content-type: application/alex
          pragma: no-cache
-      query:
-         paramOne: valueOne
-         paramTwo: valueTwo
 
    response:
       body: This is a response for 567

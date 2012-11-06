@@ -21,6 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -31,6 +34,7 @@ import static org.mockito.Mockito.when;
  */
 
 
+@SuppressWarnings("serial")
 public class DataStoreIT {
 
    private static DataStore dataStore;
@@ -57,9 +61,8 @@ public class DataStoreIT {
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
@@ -71,13 +74,17 @@ public class DataStoreIT {
 
       final String pathInfo = "/invoice/555";
 
+      final Enumeration<String> headerNames = Collections.enumeration(new ArrayList<String>() {{
+         add(StubRequest.AUTH_HEADER);
+      }});
+
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getHeaderNames()).thenReturn(headerNames);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
       when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA=="); //bob:secret
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof StubResponse);
@@ -92,10 +99,9 @@ public class DataStoreIT {
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
@@ -110,10 +116,9 @@ public class DataStoreIT {
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
       when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic 88888nNlY3JldA=="); //bob:secret
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
@@ -128,9 +133,8 @@ public class DataStoreIT {
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
@@ -156,7 +160,7 @@ public class DataStoreIT {
          }
       });
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
@@ -173,7 +177,7 @@ public class DataStoreIT {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
       when(mockHttpServletRequest.getQueryString()).thenReturn("");
 
-      final StubRequest mockAssertionRequest = StubRequest.creatFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
       final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
 
       Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);

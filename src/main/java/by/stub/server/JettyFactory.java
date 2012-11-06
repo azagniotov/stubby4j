@@ -40,6 +40,7 @@ import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -74,9 +75,9 @@ public final class JettyFactory {
    private final DataStore dataStore;
 
    private String currentHost;
-   private boolean isSsl;
    private int currentStubsPort;
    private int currentAdminPort;
+   private int currentStubsSslPort;
 
    public JettyFactory(final Map<String, String> commandLineArgs, final DataStore dataStore, final YamlParser yamlParser) {
       this.commandLineArgs = commandLineArgs;
@@ -97,7 +98,7 @@ public final class JettyFactory {
 
    private HandlerList constructHandlers() {
 
-      final JettyContext jettyContext = new JettyContext(currentHost, isSsl, currentStubsPort, currentAdminPort);
+      final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
             {
@@ -194,8 +195,6 @@ public final class JettyFactory {
 
    private SslSocketConnector buildStubsSslConnector() {
 
-      isSsl = true;
-
       String keystorePath = null;
       String password = "password";
       if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
@@ -206,7 +205,7 @@ public final class JettyFactory {
 
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
       final SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
-      sslConnector.setPort(DEFAULT_SSL_PORT);
+      sslConnector.setPort(getStubsSslPort(commandLineArgs));
       sslConnector.setName(SSL_CONNECTOR_NAME);
       sslConnector.setHost(DEFAULT_HOST);
 
@@ -218,6 +217,7 @@ public final class JettyFactory {
             sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
+      currentStubsSslPort = sslConnector.getPort();
 
       return sslConnector;
    }
@@ -235,6 +235,7 @@ public final class JettyFactory {
             final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
             defaultSslContext.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
             SSLContext.setDefault(defaultSslContext);
+            HttpsURLConnection.setDefaultSSLSocketFactory(defaultSslContext.getSocketFactory());
          } catch (final Exception ex) {
             throw new Stubby4JException(ex.toString(), ex);
          }
@@ -252,6 +253,13 @@ public final class JettyFactory {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
       }
       return DEFAULT_STUBS_PORT;
+   }
+
+   private int getStubsSslPort(final Map<String, String> commandLineArgs) {
+      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_SSLPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_SSLPORT));
+      }
+      return DEFAULT_SSL_PORT;
    }
 
    private int getAdminPort(final Map<String, String> commandLineArgs) {

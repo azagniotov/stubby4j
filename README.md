@@ -18,6 +18,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Trigger multiple responses based on multiple requests on the same URI
 * Configure stub data using configuration file
 * Configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
+* Live tweak previously loaded and parsed configuration file to update the stub data WITHOUT restarting the server
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
 * Avoid to spend time coding for the above requirements

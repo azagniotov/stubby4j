@@ -40,20 +40,22 @@ public final class CommandLineIntepreter {
 
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
+   public static final String OPTION_SSLPORT = "ssl";
    public static final String OPTION_ADMINPORT = "admin";
    public static final String OPTION_CONFIG = "data";
    public static final String OPTION_KEYSTORE = "keystore";
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
 
-   private static final String[] ALL_OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
+   private static final String[] ALL_OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_SSLPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
    public static final String OPTION_HELP = "help";
 
    static {
       OPTIONS.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
-      OPTIONS.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882 (default SSL port is 7443, and ATM is not configurable).");
+      OPTIONS.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
       OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
+      OPTIONS.addOption("t", OPTION_SSLPORT, true, "Port for SSL connection. Defaults to 7443.");
       OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Valid YAML 1.1 expected.");
       OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom SSL. By default SSL is enabled using internal keystore");
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
@@ -96,15 +98,6 @@ public final class CommandLineIntepreter {
     */
    public static boolean isMute() {
       return line.hasOption(OPTION_MUTE);
-   }
-
-   /**
-    * Checks if SSL is enabled
-    *
-    * @return true if the user provided custom SSL keystore using command line arg
-    */
-   public static boolean isSslRequested() {
-      return line.hasOption(OPTION_KEYSTORE);
    }
 
    /**

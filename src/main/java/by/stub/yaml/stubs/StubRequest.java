@@ -24,7 +24,12 @@ import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,7 +45,6 @@ public class StubRequest {
    private String post = null;
    private String file = null;
    private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new HashMap<String, String>();
 
    public StubRequest() {
 
@@ -78,14 +82,6 @@ public class StubRequest {
       this.headers = headers;
    }
 
-   public final Map<String, String> getQuery() {
-      return query;
-   }
-
-   public void setQuery(final Map<String, String> query) {
-      this.query = query;
-   }
-
    public String getFile() {
       return file;
    }
@@ -101,38 +97,62 @@ public class StubRequest {
       return file;
    }
 
-   public final boolean isConfigured() {
-      return (url != null && method != null);
+   public int getUrlHashCode() {
+      final String urlToLower = StringUtils.toLower(url.trim());
+      final char[] unsortedContent = urlToLower.toCharArray();
+      Arrays.sort(unsortedContent);
+      final String reconstructedUrl = new String(unsortedContent);
+
+      return reconstructedUrl.hashCode();
    }
 
-   public static final StubRequest creatFromHttpServletRequest(final HttpServletRequest request) throws IOException {
+   public final boolean isConfigured() {
+      return (StringUtils.isSet(url) && StringUtils.isSet(method));
+   }
+
+   public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
       final StubRequest assertionRequest = new StubRequest();
 
       assertionRequest.setMethod(request.getMethod());
-      assertionRequest.setUrl(request.getPathInfo());
-      assertionRequest.setQuery(HandlerUtils.constructParamMap(request.getQueryString()));
+
+      final String url = StringUtils.isSet(request.getQueryString()) ?
+            String.format("%s?%s", request.getPathInfo(), request.getQueryString()) : request.getPathInfo();
+
+      assertionRequest.setUrl(url);
       assertionRequest.setPost(HandlerUtils.extractPostRequestBody(request, "stubs"));
 
-      final String authHeader = request.getHeader(AUTH_HEADER);
-      if (StringUtils.isSet(authHeader)) {
-         assertionRequest.getHeaders().put(AUTH_HEADER, authHeader);
+      final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
+      final List<String> headerNames = headerNamesEnumeration == null ? new LinkedList<String>() : Collections.list(request.getHeaderNames());
+      for (final String headerName : headerNames) {
+         final String headerValue = request.getHeader(headerName);
+         assertionRequest.getHeaders().put(StringUtils.toLower(headerName), headerValue);
       }
 
       return assertionRequest;
    }
 
    @Override
-   public final boolean equals(final Object o) {
+   public boolean equals(final Object o) {
       if (this == o) return true;
       if (!(o instanceof StubRequest)) return false;
 
       final StubRequest that = (StubRequest) o;
 
-
       if (getPostBody() != null ? !getPostBody().equals(that.getPostBody()) : that.getPostBody() != null) return false;
       if (!method.equals(that.method)) return false;
-      if (!url.equals(that.url)) return false;
-      if (!query.equals(that.query)) return false;
+      if (getUrlHashCode() != that.getUrlHashCode()) return false;
+
+      if (!that.getHeaders().isEmpty()) {
+         final Map<String, String> headersCopy = new HashMap<String, String>(that.getHeaders());
+         headersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with after matching of assertion request
+         if (headersCopy.isEmpty()) {
+            return true;
+         }
+         final boolean wasSetChangedInSomeWay = headersCopy.entrySet().removeAll(headers.entrySet());
+         if (wasSetChangedInSomeWay && !headersCopy.isEmpty()) {
+            return false;
+         }
+      }
 
       return true;
    }
@@ -140,8 +160,8 @@ public class StubRequest {
    @Override
    public final int hashCode() {
       int result = url.hashCode();
-      result = 31 * result + method.hashCode();
-      result = 31 * result + (post != null ? post.hashCode() : 0);
+      result = 31 * result + getUrlHashCode();
+      result = 31 * result + getPostBody().hashCode();
       return result;
    }
 
@@ -154,7 +174,6 @@ public class StubRequest {
       sb.append(", post='").append(post).append('\'');
       sb.append(", file='").append(file).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", query=").append(query);
       sb.append('}');
       return sb.toString();
    }

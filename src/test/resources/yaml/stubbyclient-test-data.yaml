@@ -1,9 +1,6 @@
 -  request:
       method: POST
-      url: /item/path
-      query:
-         paramTwo: 12345
-         paramOne: valueOne
+      url: /item/path?paramTwo=12345&paramOne=valueOne
 
    response:
       status: 201

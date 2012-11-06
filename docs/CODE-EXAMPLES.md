@@ -31,6 +31,18 @@ public static void beforeClass() throws Exception {
    stubbyClient = new StubbyClient();
    stubbyClient.start(clientPort, adminPort, url.getFile());
 }
+
+OR
+
+@BeforeClass
+public static void beforeClass() throws Exception {
+   int clientPort = 8888;
+   int sslPort = 4993;
+   int adminPort = 9999;
+   final URL url = SomeClass.class.getResource("/config.yaml");
+   stubbyClient = new StubbyClient();
+   stubbyClient.start(clientPort, sslPort, adminPort, url.getFile());
+}
 .
 .
 .
@@ -97,8 +109,9 @@ public static void afterClass() throws Exception {
 
       final String host = "localhost";
       final String uri = "/item/1";
+      final int sslPort = 4993;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, sslPort);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
@@ -110,8 +123,9 @@ public static void afterClass() throws Exception {
 
       final String host = "localhost";
       final String uri = "/item/auth";
+      final int sslPort = 4993;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, encodedCredentials);
+      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, sslPort, encodedCredentials);
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
@@ -279,3 +293,5 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 ##### Please note:
 1. New POSTed data will purge the previous stub data from stubby4j memory.
 2. POSTed stub data will be lost on server restart. If you want to use the same stub data all over again, load it from configuration file
+3. It is possible to make updates to already loaded configuration file. Just tweak the file and refresh the `http://<host>:<admin_port>/ping`
+page to reload the stub data
