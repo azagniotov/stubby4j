@@ -25,11 +25,11 @@ OR
 ```java
 @BeforeClass
 public static void beforeClass() throws Exception {
-   int clientPort = 8888;
-   int adminPort = 9999;
+   int clientPort = 8882;
+   int adminPort = 8889;
    final URL url = SomeClass.class.getResource("/config.yaml");
    stubbyClient = new StubbyClient();
-   stubbyClient.start(clientPort, adminPort, url.getFile());
+   stubbyClient.startJetty(clientPort, adminPort, url.getFile());
 }
 
 OR
@@ -48,7 +48,7 @@ public static void beforeClass() throws Exception {
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubbyClient.stop();
+   stubbyClient.stopJetty();
 }
 ```
 
