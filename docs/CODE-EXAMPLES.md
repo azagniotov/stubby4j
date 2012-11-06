@@ -16,7 +16,7 @@ public static void beforeClass() throws Exception {
 .
 @AfterClass
 public static void afterClass() throws Exception {
-   stubbyClient.stop();
+   stubbyClient.stopJetty();
 }
 ```
 
