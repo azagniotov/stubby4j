@@ -45,10 +45,16 @@ public final class StringUtils {
    }
 
    public static String toUpper(final String toUpper) {
+      if (!isSet(toUpper)) {
+         return null;
+      }
       return toUpper.toUpperCase(Locale.US);
    }
 
    public static String toLower(final String toLower) {
+      if (!isSet(toLower)) {
+         return null;
+      }
       return toLower.toLowerCase(Locale.US);
    }
 
@@ -58,7 +64,7 @@ public final class StringUtils {
 
    public static String inputStreamToString(final InputStream inputStream) {
       if (inputStream == null || !StringUtils.isSet(inputStream.toString())) {
-         return null;
+         return "Could not convert empty or null input stream to string";
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
