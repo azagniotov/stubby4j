@@ -46,20 +46,28 @@ public final class ConfigurationScanner implements Runnable {
                continue;
             }
 
-            this.lastModified = currentFileModified;
-            final InputStream is = new FileInputStream(loadedConfigYamlPath);
-            final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
-            final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
+            try {
+               this.lastModified = currentFileModified;
+               final InputStream is = new FileInputStream(loadedConfigYamlPath);
+               final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
+               final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
 
-            dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
-            ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",
-                  "\n",
-                  loadedConfigYamlPath,
-                  "\n"));
+               dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
+               ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",
+                     "\n",
+                     loadedConfigYamlPath,
+                     "\n"));
+            } catch (final Exception ex) {
+               ANSITerminal.warn("Could not reload YAML configuration: " + ex.toString());
+               ANSITerminal.error(String.format("%sFailed to perform live reload of YAML configuration from: %s%s",
+                     "\n",
+                     loadedConfigYamlPath,
+                     "\n"));
+            }
          }
 
       } catch (final Exception ex) {
-         ANSITerminal.error("Could not reload YAML configuration: " + ex.toString());
+         ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
       }
    }
 
