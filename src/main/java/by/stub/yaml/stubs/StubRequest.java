@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Alexander Zagniotov
@@ -90,7 +91,11 @@ public class StubRequest {
    }
 
    public void setHeaders(final Map<String, String> headers) {
-      this.headers = headers;
+
+      final Set<Map.Entry<String, String>> entrySet = headers.entrySet();
+      for (final Map.Entry<String, String> entry : entrySet) {
+         this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
+      }
    }
 
    public Map<String, String> getQuery() {
@@ -162,8 +167,8 @@ public class StubRequest {
             return false;
          }
 
-         final boolean wasTheKeysetChangedInSomeWay = stubHeadersCopy.entrySet().removeAll(headers.entrySet());
-         if (wasTheKeysetChangedInSomeWay && !stubHeadersCopy.isEmpty()) {
+         stubHeadersCopy.entrySet().removeAll(headers.entrySet());
+         if (!stubHeadersCopy.isEmpty()) {
             return false;
          }
       }
@@ -175,8 +180,8 @@ public class StubRequest {
          }
 
          final Map<String, String> stubQueryCopy = new HashMap<String, String>(stub.getQuery());
-         final boolean wasTheKeysetChangedInSomeWay = stubQueryCopy.entrySet().removeAll(query.entrySet());
-         if (wasTheKeysetChangedInSomeWay && !stubQueryCopy.isEmpty()) {
+         stubQueryCopy.entrySet().removeAll(query.entrySet());
+         if (!stubQueryCopy.isEmpty()) {
             return false;
          }
       }

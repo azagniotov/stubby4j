@@ -142,11 +142,11 @@ public class StubRequestIT {
    public void ShouldMatchRequest_WhenAllStubbedHeadersMatching() throws Exception {
 
       final Map<String, String> headers = new HashMap<String, String>() {{
-         put("content-type", "application/xml");
+         put("Content-type", "application/xml");
          put("content-length", "30");
-         put("content-language", "en-US");
+         put("Content-Language", "en-US");
          put("content-encoding", "UTF-8");
-         put("pragma", "no-cache");
+         put("Pragma", "no-cache");
       }};
 
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);

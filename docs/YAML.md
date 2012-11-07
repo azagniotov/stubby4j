@@ -5,9 +5,11 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 * `request`: (REQUIRED) describes the client's call to the server
    * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc.
-   * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request
+   * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request.
+      * The key (header name) must be specified in lower case
       * If stubbed headers are a subset of headers in HTTP request, then the match is successful (`left outer join` concept)
    * `query`: (OPTIONAL) a key/value map of query string params the server should read from the URI
+      * The key (param name) must have the letter case as the query string param name, ie: `paRamNaME=12` -> `paRamNaME: 12`
       * The order query string params does not matter. In other words the `/param1=1&param2=2` is the same as `/param2=2&param1=1`
       * If stubbed query params are a subset of query params in HTTP request, then the match is successful (`left outer join` concept)
    * `url`: (REQUIRED) the URI string.
