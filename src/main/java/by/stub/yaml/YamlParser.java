@@ -84,7 +84,15 @@ public class YamlParser {
          throw new IOException(String.format("Could not load file from path: %s", filePath));
       }
 
-      return StringUtils.inputStreamToString(new FileInputStream(contentFile));
+      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
+
+      /*
+         Windows:       '\r\n'
+         Mac (OS 9-):   '\r'
+         Mac (OS 10+):  '\n'
+         Unix/Linux:    '\n'
+       */
+      return loadedContent.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
    }
 
    public List<StubHttpLifecycle> parseAndLoad() throws Exception {

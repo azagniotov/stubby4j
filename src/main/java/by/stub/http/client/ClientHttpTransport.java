@@ -127,11 +127,9 @@ final class ClientHttpTransport {
    private String constructUserAgentName() {
       final Package pkg = this.getClass().getPackage();
       final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
-            pkg.getImplementationVersion() : "x.x.x";
+            pkg.getImplementationVersion() : "x.x.xx";
 
-      final String implementationTitle = StringUtils.isSet(pkg.getImplementationTitle()) ?
-            pkg.getImplementationTitle() : "HTTP stub client request";
-      return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+      return String.format("stubby4j/%s (HTTP stub client request)", implementationVersion);
    }
 
    private static final class DefaultHostnameVerifier implements HostnameVerifier {

@@ -59,9 +59,7 @@ public final class HandlerUtils {
       final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
             pkg.getImplementationVersion() : "x.x.x";
 
-      final String implementationTitle = StringUtils.isSet(pkg.getImplementationTitle()) ?
-            pkg.getImplementationTitle() : "HTTP stub server";
-      return String.format("stubby4j/%s (%s)", implementationVersion, implementationTitle);
+      return String.format("stubby4j/%s (HTTP stub server)", implementationVersion);
    }
 
    public static void setResponseMainHeaders(final HttpServletResponse response) {
