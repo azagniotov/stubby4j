@@ -21,10 +21,11 @@ package by.stub.server;
 
 import by.stub.cli.EmptyLogger;
 import by.stub.database.DataStore;
+import by.stub.database.thread.ConfigurationScanner;
 import by.stub.yaml.YamlParser;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,9 @@ public final class JettyManagerFactory {
          final DataStore dataStore = new DataStore(httpLifecycles);
          final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
          final Server server = jettyFactory.construct(dataStore, yamlParser);
+
+         final ConfigurationScanner configurationScanner = new ConfigurationScanner(yamlParser, dataStore);
+         new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
 
          return new JettyManager(server);
       }

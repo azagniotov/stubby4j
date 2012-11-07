@@ -6,11 +6,14 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 * `request`: (REQUIRED) describes the client's call to the server
    * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc.
    * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request
+      * If stubbed headers are a subset of headers in HTTP request, then the match is successful (`left outer join` concept)
+   * `query`: (OPTIONAL) a key/value map of query string params the server should read from the URI
+      * The order query string params does not matter. In other words the `/param1=1&param2=2` is the same as `/param2=2&param1=1`
+      * If stubbed query params are a subset of query params in HTTP request, then the match is successful (`left outer join` concept)
    * `url`: (REQUIRED) the URI string.
-        * Can include query string.
-        * The order query string params does not matter. In other words, `/param1=1&param2=2` is the same as `/param2=2&param1=1`
+      * If you include query string, it WILL BE stripped. If you have query params, include them in the `query` attribute
    * `file`: (OPTIONAL) if specified (an absolute path or path relative to the user current working directory), returns the contents of the given file as the `request` POST content.
-   	  * If the file cannot be found at YAML data parse time, value from `post` is used instead.
+   	* If the file cannot be found at YAML data parse time, value from `post` is used instead.
       * If `post` was not provided, it is assumed that POST body was not provided at all.
       * Use `file` for large POST content that otherwise inconvenient to configure as a one-liner. 
       * Please keep in mind: `SnakeYAML` lib (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` is used, the file content loaded as-is, in other words - it does not go through `SnakeYAML` parser. stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters). Therefore its better to load POST content for `request` using `file` attribute
@@ -28,7 +31,10 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 ```yaml
 -  request:
       method: GET
-      url: /some/uri?param=true&anotherParam=false
+      url: /some/uri
+      query:
+         param: true
+         anotherParam: false
       headers:
          authorization: bob:secret
          
@@ -71,7 +77,10 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 -  request:
       method: GET
-      url: /some/uri?param=true&anotherParam=false
+      url: /some/uri
+      query:
+         param: true
+         anotherParam: false
       headers:
          authorization: bob:secret
 
@@ -112,7 +121,10 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 
 
 -  request:
-      url: /some/uri?firstParam=1&secondParam=2
+      url: /some/uri
+      query:
+         firstParam: 1
+         secondParam: 2
       method: POST
       headers:
          authorization: bob:secret

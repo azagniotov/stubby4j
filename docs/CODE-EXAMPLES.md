@@ -41,7 +41,7 @@ public static void beforeClass() throws Exception {
    int adminPort = 9999;
    final URL url = SomeClass.class.getResource("/config.yaml");
    stubbyClient = new StubbyClient();
-   stubbyClient.start(clientPort, sslPort, adminPort, url.getFile());
+   stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
 }
 .
 .
@@ -293,5 +293,8 @@ stub config data to the following end point: `http://<host>:<admin_port>/stubdat
 ##### Please note:
 1. New POSTed data will purge the previous stub data from stubby4j memory.
 2. POSTed stub data will be lost on server restart. If you want to use the same stub data all over again, load it from configuration file
-3. It is possible to make updates to already loaded configuration file. Just tweak the file and refresh the `http://<host>:<admin_port>/ping`
-page to reload the stub data
+
+
+## How to Live Tweak Stub Data at Runtime
+It is possible to make updates to already loaded and parsed YAML configuration file.
+Just tweak the file and stubbed data will be refreshed within 3 seconds (assuming you did not introduce YAML parse errors)

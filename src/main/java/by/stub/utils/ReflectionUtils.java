@@ -45,7 +45,7 @@ public final class ReflectionUtils {
 
    }
 
-   public static Map<String, String> getProperties(final Object object) throws IllegalAccessException {
+   public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException {
       final Map<String, String> properties = new HashMap<String, String>();
 
       for (final Field field : object.getClass().getDeclaredFields()) {
@@ -61,7 +61,8 @@ public final class ReflectionUtils {
             continue;
          }
 
-         final Object fieldObject = field.get(object);
+         //final Object fieldObject = field.get(object);
+         final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
          final String value = StringUtils.isObjectSet(fieldObject) ? fieldObject.toString() : "Not provided";
          properties.put(StringUtils.toLower(field.getName()), value);
       }
@@ -76,5 +77,14 @@ public final class ReflectionUtils {
             break;
          }
       }
+   }
+
+   public static Object getPropertyValue(final Object object, final String fieldName) throws InvocationTargetException, IllegalAccessException {
+      for (final Method method : object.getClass().getDeclaredMethods()) {
+         if (method.getName().equalsIgnoreCase("get" + fieldName)) {
+            return method.invoke(object);
+         }
+      }
+      return null;
    }
 }

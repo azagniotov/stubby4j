@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
-import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
@@ -40,11 +39,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,18 +85,6 @@ public final class PingHandler extends AbstractHandler {
    }
 
    private String getConfigDataPresentation() throws Exception {
-
-      try {
-         final InputStream is = new FileInputStream(yamlParser.getLoadedConfigYamlPath());
-         final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
-
-         final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
-
-         dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
-
-      } catch (final Exception ex) {
-         ANSITerminal.error("Could not parse reloaded YAML configuration: " + ex.toString());
-      }
 
       final List<StubHttpLifecycle> stubHttpLifecycles = dataStore.getStubHttpLifecycles();
 

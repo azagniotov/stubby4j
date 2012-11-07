@@ -204,41 +204,6 @@ public class StubsHandlerTest {
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 
-   @Test
-   @Ignore
-   public void verifyBehaviourDuringHandleGetRequestWithWrongCredentialsInAuthorizationHeader() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-
-      final Enumeration<String> headerNames = Collections.enumeration(new ArrayList<String>() {{
-         add(StubRequest.AUTH_HEADER);
-      }});
-      // We already found that it was unauthorized
-      final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
-
-      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockHttpServletRequest.getHeaderNames()).thenReturn(headerNames);
-      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA==");
-
-      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      when(mockDataStore.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
-
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
-      when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
-
-      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
-      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "Unauthorized with supplied encoded credentials: 'Ym9iOnNlY3JldA==' which decodes to 'bob:secret'");
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
 
    @Test
    public void verifyBehaviourDuringHandleGetRequestWithEmptyAuthorizationHeaderSet() throws Exception {
@@ -263,40 +228,6 @@ public class StubsHandlerTest {
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
       verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "You are not authorized to view this page without supplied 'Authorization' HTTP header");
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   @Ignore
-   public void verifyBehaviourDuringHandleGetRequestWithIncompleteAuthorizationHeaderSet() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      final Enumeration<String> headerNames = Collections.enumeration(new ArrayList<String>() {{
-         add(StubRequest.AUTH_HEADER);
-      }});
-
-      // We already found that it was unauthorized
-      final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getHeaderNames()).thenReturn(headerNames);
-      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic ");
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
-
-      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      when(mockDataStore.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
-      //when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-
-
-      when(mockStubResponse.getStatus()).thenReturn("200");
-
-      final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
-      stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "Unauthorized with supplied encoded credentials: '' which decodes to ''");
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 

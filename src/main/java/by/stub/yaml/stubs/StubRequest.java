@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.utils.CollectionUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -45,13 +45,14 @@ public class StubRequest {
    private String post = null;
    private String file = null;
    private Map<String, String> headers = new HashMap<String, String>();
+   private Map<String, String> query = new HashMap<String, String>();
 
    public StubRequest() {
 
    }
 
    public final String getUrl() {
-      return url;
+      return getFullUrl();
    }
 
    public final String getMethod() {
@@ -64,6 +65,16 @@ public class StubRequest {
 
    public void setUrl(final String url) {
       this.url = url;
+   }
+
+   public String getFullUrl() {
+      if (query.isEmpty()) {
+         return url;
+      }
+
+      final String queryString = CollectionUtils.constructQueryString(query);
+
+      return String.format("%s?%s", url, queryString);
    }
 
    public void setMethod(final String newMethod) {
@@ -82,6 +93,14 @@ public class StubRequest {
       this.headers = headers;
    }
 
+   public Map<String, String> getQuery() {
+      return query;
+   }
+
+   public void setQuery(final Map<String, String> query) {
+      this.query = query;
+   }
+
    public String getFile() {
       return file;
    }
@@ -97,15 +116,6 @@ public class StubRequest {
       return file;
    }
 
-   public int getUrlHashCode() {
-      final String urlToLower = StringUtils.toLower(url.trim());
-      final char[] unsortedContent = urlToLower.toCharArray();
-      Arrays.sort(unsortedContent);
-      final String reconstructedUrl = new String(unsortedContent);
-
-      return reconstructedUrl.hashCode();
-   }
-
    public final boolean isConfigured() {
       return (StringUtils.isSet(url) && StringUtils.isSet(method));
    }
@@ -114,11 +124,7 @@ public class StubRequest {
       final StubRequest assertionRequest = new StubRequest();
 
       assertionRequest.setMethod(request.getMethod());
-
-      final String url = StringUtils.isSet(request.getQueryString()) ?
-            String.format("%s?%s", request.getPathInfo(), request.getQueryString()) : request.getPathInfo();
-
-      assertionRequest.setUrl(url);
+      assertionRequest.setUrl(request.getPathInfo());
       assertionRequest.setPost(HandlerUtils.extractPostRequestBody(request, "stubs"));
 
       final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
@@ -128,6 +134,8 @@ public class StubRequest {
          assertionRequest.getHeaders().put(StringUtils.toLower(headerName), headerValue);
       }
 
+      assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
+
       return assertionRequest;
    }
 
@@ -136,20 +144,39 @@ public class StubRequest {
       if (this == o) return true;
       if (!(o instanceof StubRequest)) return false;
 
-      final StubRequest that = (StubRequest) o;
+      final StubRequest stub = (StubRequest) o;
 
-      if (getPostBody() != null ? !getPostBody().equals(that.getPostBody()) : that.getPostBody() != null) return false;
-      if (!method.equals(that.method)) return false;
-      if (getUrlHashCode() != that.getUrlHashCode()) return false;
+      if (getPostBody() != null ? !getPostBody().equals(stub.getPostBody()) : stub.getPostBody() != null) return false;
+      if (!method.equals(stub.method)) return false;
+      if (!url.equals(stub.url)) return false;
 
-      if (!that.getHeaders().isEmpty()) {
-         final Map<String, String> headersCopy = new HashMap<String, String>(that.getHeaders());
-         headersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with after matching of assertion request
-         if (headersCopy.isEmpty()) {
+      if (!stub.getHeaders().isEmpty()) {
+
+         final Map<String, String> stubHeadersCopy = new HashMap<String, String>(stub.getHeaders());
+         stubHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with after matching of assertion request
+         if (stubHeadersCopy.isEmpty()) {
             return true;
          }
-         final boolean wasSetChangedInSomeWay = headersCopy.entrySet().removeAll(headers.entrySet());
-         if (wasSetChangedInSomeWay && !headersCopy.isEmpty()) {
+
+         if (getHeaders().isEmpty()) {
+            return false;
+         }
+
+         final boolean wasTheKeysetChangedInSomeWay = stubHeadersCopy.entrySet().removeAll(headers.entrySet());
+         if (wasTheKeysetChangedInSomeWay && !stubHeadersCopy.isEmpty()) {
+            return false;
+         }
+      }
+
+      if (!stub.getQuery().isEmpty()) {
+
+         if (getQuery().isEmpty()) {
+            return false;
+         }
+
+         final Map<String, String> stubQueryCopy = new HashMap<String, String>(stub.getQuery());
+         final boolean wasTheKeysetChangedInSomeWay = stubQueryCopy.entrySet().removeAll(query.entrySet());
+         if (wasTheKeysetChangedInSomeWay && !stubQueryCopy.isEmpty()) {
             return false;
          }
       }
@@ -160,7 +187,7 @@ public class StubRequest {
    @Override
    public final int hashCode() {
       int result = url.hashCode();
-      result = 31 * result + getUrlHashCode();
+      result = 31 * result;
       result = 31 * result + getPostBody().hashCode();
       return result;
    }
@@ -174,6 +201,7 @@ public class StubRequest {
       sb.append(", post='").append(post).append('\'');
       sb.append(", file='").append(file).append('\'');
       sb.append(", headers=").append(headers);
+      sb.append(", query=").append(query);
       sb.append('}');
       return sb.toString();
    }
