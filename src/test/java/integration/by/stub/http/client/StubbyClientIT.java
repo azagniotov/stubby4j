@@ -148,33 +148,6 @@ public class StubbyClientIT {
 
 
    @Test
-   public void doGet_ShouldMakeSuccessfulGet_WhenNoUriGiven() throws Exception {
-
-      final String host = "localhost";
-      final String uri = "";
-      final int port = JettyFactory.DEFAULT_STUBS_PORT;
-
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
-
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for GET request at URI /", clientHttpResponse.getContent());
-   }
-
-
-   @Test
-   public void doGet_ShouldThrowException_WhenGivenNullUri() throws Exception {
-      final String host = "localhost";
-      final String uri = null;
-      final int port = JettyFactory.DEFAULT_STUBS_PORT;
-
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
-
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for GET request at URI /", clientHttpResponse.getContent());
-   }
-
-
-   @Test
    public void doGet_ShouldMakeSuccessfulGet_WhenGivenEmptyUri() throws Exception {
       final String host = "localhost";
       final String uri = "/item/888";

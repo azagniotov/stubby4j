@@ -54,12 +54,6 @@ final class ClientHttpTransport {
 
       final URL url = new URL(constructUrlFromClientRequest());
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-      if (HttpSchemes.HTTPS.equals(clientHttpRequest.getScheme())) {
-         final HttpsURLConnection sslConnection = (HttpsURLConnection) connection;
-         sslConnection.setHostnameVerifier(new DefaultHostnameVerifier());
-      }
-
       connection.setRequestMethod(clientHttpRequest.getMethod());
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);
@@ -130,17 +124,5 @@ final class ClientHttpTransport {
             pkg.getImplementationVersion() : "x.x.xx";
 
       return String.format("stubby4j/%s (HTTP stub client request)", implementationVersion);
-   }
-
-   private static final class DefaultHostnameVerifier implements HostnameVerifier {
-
-      DefaultHostnameVerifier() {
-
-      }
-
-      @Override
-      public boolean verify(final String s, final SSLSession sslSession) {
-         return true;
-      }
    }
 }

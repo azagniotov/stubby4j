@@ -40,14 +40,6 @@ import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -102,15 +94,19 @@ public final class JettyFactory {
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
             {
+                  constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
+                  constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
                   constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
+
+                  constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
+                  constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
                   constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
                   constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
-
-                  new DefaultHandler(),
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))
             }
       );
 
@@ -230,17 +226,10 @@ public final class JettyFactory {
       sslFactory.setKeyStorePassword(password);
       sslFactory.setKeyManagerPassword(password);
 
+      relaxSslTrustManager();
+
       if (keystorePath == null) {
          sslFactory.setKeyStoreResource(Resource.newClassPathResource("ssl/localhost.jks"));
-
-         try {
-            final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
-            defaultSslContext.init(new KeyManager[0], new TrustManager[]{new DefaultTrustManager()}, new SecureRandom());
-            SSLContext.setDefault(defaultSslContext);
-            HttpsURLConnection.setDefaultSSLSocketFactory(defaultSslContext.getSocketFactory());
-         } catch (final Exception ex) {
-            throw new Stubby4JException(ex.toString(), ex);
-         }
 
          return sslFactory;
       }
@@ -248,6 +237,14 @@ public final class JettyFactory {
       sslFactory.setKeyStorePath(keystorePath);
 
       return sslFactory;
+   }
+
+   private void relaxSslTrustManager() {
+      try {
+         new FakeX509TrustManager().allowAllSSL();
+      } catch (final Exception ex) {
+         throw new Stubby4JException(ex.toString(), ex);
+      }
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {
@@ -269,27 +266,5 @@ public final class JettyFactory {
          return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
       }
       return DEFAULT_ADMIN_PORT;
-   }
-
-   private static final class DefaultTrustManager implements X509TrustManager {
-
-      DefaultTrustManager() {
-
-      }
-
-      @Override
-      public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-
-      }
-
-      @Override
-      public void checkServerTrusted(final X509Certificate[] chain, String authType) throws CertificateException {
-
-      }
-
-      @Override
-      public X509Certificate[] getAcceptedIssuers() {
-         return null;
-      }
    }
 }

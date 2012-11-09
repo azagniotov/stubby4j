@@ -199,7 +199,7 @@ public class StubRequest {
 
    private boolean compareStubbedPropertyVsAssertionProperty(final String propName, final String stubbedProp, final String assertionProp) {
       if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
-         ANSITerminal.warn(String.format("Stubbed %s could not be matched: %s VS %s", propName, stubbedProp, assertionProp));
+         ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
          return true;
       }
       return false;
