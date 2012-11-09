@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.database;
 
-import by.stub.yaml.stubs.RedirectStubResponse;
-import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.NotFoundStubResponse;
+import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
+import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 
 import java.util.Collections;
@@ -44,35 +44,36 @@ public class DataStore {
 
    private StubResponse identifyTypeOfStubResponse(final StubHttpLifecycle assertionStubHttpLifecycle) {
 
-      if (stubHttpLifecycles.contains(assertionStubHttpLifecycle)) {
-         final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
-         final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
-
-         final Map<String, String> headers = foundStubHttpLifecycle.getRequest().getHeaders();
-         if (headers.containsKey(StubRequest.AUTH_HEADER)) {
-            final String foundBasicAuthorization = headers.get(StubRequest.AUTH_HEADER);
-            final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(StubRequest.AUTH_HEADER);
-
-            if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
-               return new UnauthorizedStubResponse();
-            }
-         }
-
-         if (foundStubHttpLifecycle.getResponse().getHeaders().containsKey("location")) {
-            final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
-
-            redirectStubResponse.setLatency(foundStubHttpLifecycle.getResponse().getLatency());
-            redirectStubResponse.setBody(foundStubHttpLifecycle.getResponse().getBody());
-            redirectStubResponse.setStatus(foundStubHttpLifecycle.getResponse().getStatus());
-            redirectStubResponse.setHeaders(foundStubHttpLifecycle.getResponse().getHeaders());
-
-            return redirectStubResponse;
-         }
-
-         return foundStubHttpLifecycle.getResponse();
+      final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
+      if (indexOf < 0) {
+         return new NotFoundStubResponse();
       }
 
-      return new NotFoundStubResponse();
+      final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
+
+      final Map<String, String> headers = foundStubHttpLifecycle.getRequest().getHeaders();
+      if (headers.containsKey(StubRequest.AUTH_HEADER)) {
+         final String foundBasicAuthorization = headers.get(StubRequest.AUTH_HEADER);
+         final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(StubRequest.AUTH_HEADER);
+
+         if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
+            return new UnauthorizedStubResponse();
+         }
+      }
+
+      if (foundStubHttpLifecycle.getResponse().getHeaders().containsKey("location")) {
+         final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
+
+         redirectStubResponse.setLatency(foundStubHttpLifecycle.getResponse().getLatency());
+         redirectStubResponse.setBody(foundStubHttpLifecycle.getResponse().getBody());
+         redirectStubResponse.setStatus(foundStubHttpLifecycle.getResponse().getStatus());
+         redirectStubResponse.setHeaders(foundStubHttpLifecycle.getResponse().getHeaders());
+
+         return redirectStubResponse;
+      }
+
+      return foundStubHttpLifecycle.getResponse();
+
    }
 
    public final void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {

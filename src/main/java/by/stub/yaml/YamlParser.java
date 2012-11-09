@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.utils.IOUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -86,13 +87,7 @@ public class YamlParser {
 
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
 
-      /*
-         Windows:       '\r\n'
-         Mac (OS 9-):   '\r'
-         Mac (OS 10+):  '\n'
-         Unix/Linux:    '\n'
-       */
-      return loadedContent.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
+      return IOUtils.enforceSystemLineSeparator(loadedContent);
    }
 
    public List<StubHttpLifecycle> parseAndLoad() throws Exception {

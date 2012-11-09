@@ -24,7 +24,6 @@ import by.stub.cli.CommandLineIntepreter;
 import by.stub.database.DataStore;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.PingHandler;
-import by.stub.handlers.SslHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.utils.StringUtils;
@@ -33,6 +32,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -103,12 +103,14 @@ public final class JettyFactory {
       handlers.setHandlers(new Handler[]
             {
                   constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
-                  constructHandler(SSL_CONNECTOR_NAME, "/", new SslHandler(dataStore)),
+                  constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
                   constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
                   constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/"))
+                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
+
+                  new DefaultHandler(),
             }
       );
 

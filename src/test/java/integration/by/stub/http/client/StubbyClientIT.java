@@ -33,7 +33,6 @@ public class StubbyClientIT {
       final URL url = StubbyClientIT.class.getResource("/yaml/stubbyclient-test-data.yaml");
       Assert.assertNotNull(url);
 
-      ANSITerminal.muteConsole(true);
       stubbyClient = new StubbyClient();
       stubbyClient.startJetty(JettyFactory.DEFAULT_STUBS_PORT, SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, url.getFile());
 

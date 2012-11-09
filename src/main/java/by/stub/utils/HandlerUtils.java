@@ -57,7 +57,7 @@ public final class HandlerUtils {
    public static String constructHeaderServerName() {
       final Package pkg = HandlerUtils.class.getPackage();
       final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
-            pkg.getImplementationVersion() : "x.x.x";
+            pkg.getImplementationVersion() : "x.x.xx";
 
       return String.format("stubby4j/%s (HTTP stub server)", implementationVersion);
    }

@@ -29,8 +29,6 @@ public class StubRequestIT {
    @BeforeClass
    public static void beforeClass() throws Exception {
 
-      ANSITerminal.muteConsole(true);
-
       final URL url = StubRequestIT.class.getResource("/yaml/stubrequestit-test-data.yaml");
       Assert.assertNotNull(url);
 

@@ -25,7 +25,6 @@ public class JettyManagerFactoryIT {
       url = StubbyClientIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
       Assert.assertNotNull(url);
 
-      ANSITerminal.muteConsole(true);
       jettyManagerFactory = new JettyManagerFactory();
    }
 

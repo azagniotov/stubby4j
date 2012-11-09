@@ -19,8 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.IOUtils;
 import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +63,7 @@ public class StubRequest {
    }
 
    public final String getPost() {
-      return post;
+      return IOUtils.enforceSystemLineSeparator(post);
    }
 
    public void setUrl(final String url) {
@@ -118,7 +120,7 @@ public class StubRequest {
       if (!StringUtils.isSet(file)) {
          return getPost();
       }
-      return file;
+      return IOUtils.enforceSystemLineSeparator(file);
    }
 
    public final boolean isConfigured() {
@@ -151,9 +153,9 @@ public class StubRequest {
 
       final StubRequest stub = (StubRequest) o;
 
-      if (getPostBody() != null ? !getPostBody().equals(stub.getPostBody()) : stub.getPostBody() != null) return false;
-      if (!method.equals(stub.method)) return false;
-      if (!url.equals(stub.url)) return false;
+      if (compareStubbedPropertyVsAssertionProperty("post body", stub.getPostBody(), getPostBody())) return false;
+      if (compareStubbedPropertyVsAssertionProperty("method", stub.method, method)) return false;
+      if (compareStubbedPropertyVsAssertionProperty("url", stub.url, url)) return false;
 
       if (!stub.getHeaders().isEmpty()) {
 
@@ -164,29 +166,53 @@ public class StubRequest {
          }
 
          if (getHeaders().isEmpty()) {
+            ANSITerminal.warn(String.format("Stubbed headers could not be matched with empty headers from the client: %s VS %s", stubHeadersCopy, getHeaders()));
+
             return false;
          }
 
-         stubHeadersCopy.entrySet().removeAll(headers.entrySet());
-         if (!stubHeadersCopy.isEmpty()) {
-            return false;
-         }
+         if (compareStubbedMapVsAssertionMap(stub.getHeaders(), getHeaders())) return false;
       }
 
-      if (!stub.getQuery().isEmpty()) {
-
-         if (getQuery().isEmpty()) {
-            return false;
-         }
-
-         final Map<String, String> stubQueryCopy = new HashMap<String, String>(stub.getQuery());
-         stubQueryCopy.entrySet().removeAll(query.entrySet());
-         if (!stubQueryCopy.isEmpty()) {
-            return false;
-         }
+      if (!stub.getQuery().isEmpty() && getQuery().isEmpty()) {
+         ANSITerminal.warn(String.format("Stubbed query string could not be matched with empty query string from the client: %s VS %s", stub.getQuery(), getQuery()));
+         return false;
       }
+
+      if (compareStubbedMapVsAssertionMap(stub.getQuery(), getQuery())) return false;
+
+      dumpMatchedRequestToConsole(stub);
 
       return true;
+   }
+
+   private void dumpMatchedRequestToConsole(final StubRequest stub) {
+      ANSITerminal.info("Matched:");
+      ANSITerminal.status("-----------------------------------------------------------------------------------");
+      ANSITerminal.loaded("[STUB] >>");
+      ANSITerminal.info(String.format("%s", stub));
+      ANSITerminal.status("-----------------------------------------------------------------------------------");
+      ANSITerminal.loaded("[LIVE] >>");
+      ANSITerminal.info(String.format("%s", this));
+      ANSITerminal.status("-----------------------------------------------------------------------------------");
+   }
+
+   private boolean compareStubbedPropertyVsAssertionProperty(final String propName, final String stubbedProp, final String assertionProp) {
+      if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
+         ANSITerminal.warn(String.format("Stubbed %s could not be matched: %s VS %s", propName, stubbedProp, assertionProp));
+         return true;
+      }
+      return false;
+   }
+
+   private boolean compareStubbedMapVsAssertionMap(final Map<String, String> stubbedMap, final Map<String, String> assertionMap) {
+      final Map<String, String> stubbedMapCopy = new HashMap<String, String>(stubbedMap);
+      stubbedMapCopy.entrySet().removeAll(assertionMap.entrySet());
+      if (!stubbedMapCopy.isEmpty()) {
+         ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
+         return true;
+      }
+      return false;
    }
 
    @Override
