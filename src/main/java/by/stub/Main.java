@@ -28,7 +28,7 @@ import org.apache.commons.cli.ParseException;
 
 import java.util.Map;
 
-final class Main {
+public final class Main {
 
    private Main() {
 
