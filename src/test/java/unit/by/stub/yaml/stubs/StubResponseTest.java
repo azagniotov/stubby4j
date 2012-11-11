@@ -1,13 +1,16 @@
 package unit.by.stub.yaml.stubs;
 
+import by.stub.testing.categories.UnitTests;
+import by.stub.yaml.stubs.StubResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import by.stub.yaml.stubs.StubResponse;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author Alexander Zagniotov
  * @since 10/24/12, 10:49 AM
  */
+@Category(UnitTests.class)
 public class StubResponseTest {
 
    @Test

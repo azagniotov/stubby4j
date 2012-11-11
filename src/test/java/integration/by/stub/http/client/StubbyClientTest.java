@@ -1,17 +1,21 @@
 package integration.by.stub.http.client;
 
-import by.stub.cli.ANSITerminal;
+import by.stub.exception.Stubby4JException;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.ClientHttpResponse;
 import by.stub.http.client.StubbyClient;
 import by.stub.server.JettyFactory;
+import by.stub.testing.categories.IntegrationTests;
 import by.stub.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.net.URL;
 
@@ -20,8 +24,8 @@ import java.net.URL;
  * @author Alexander Zagniotov
  * @since 6/28/12, 2:54 PM
  */
-
-public class StubbyClientIT {
+@Category(IntegrationTests.class)
+public class StubbyClientTest {
 
    private static String content;
    private static StubbyClient stubbyClient;
@@ -30,7 +34,7 @@ public class StubbyClientIT {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = StubbyClientIT.class.getResource("/yaml/stubbyclient-test-data.yaml");
+      final URL url = StubbyClientTest.class.getResource("/yaml/stubbyclient-test-data.yaml");
       Assert.assertNotNull(url);
 
       stubbyClient = new StubbyClient();
@@ -54,6 +58,39 @@ public class StubbyClientIT {
 
       Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
       Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+   }
+
+   @Test
+   public void makeRequest_ShouldMakeSuccessfulGetOverSsl() throws Exception {
+
+      final String host = "localhost";
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makeRequest(
+            HttpSchemes.HTTPS,
+            HttpMethods.GET,
+            JettyFactory.DEFAULT_HOST,
+            uri,
+            SSL_PORT,
+            null);
+
+      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+   }
+
+   @Test(expected = Stubby4JException.class)
+   public void makeRequest_ShouldFailToMakeRequest_WhenUnsupportedMethodGiven() throws Exception {
+
+      final String host = "localhost";
+      final String uri = "/item/1";
+
+      final ClientHttpResponse clientHttpResponse = stubbyClient.makeRequest(
+            HttpSchemes.HTTPS,
+            HttpMethods.MOVE,
+            JettyFactory.DEFAULT_HOST,
+            uri,
+            SSL_PORT,
+            null);
    }
 
    @Test

@@ -1,8 +1,10 @@
 package unit.by.stub.utils;
 
+import by.stub.testing.categories.UnitTests;
 import by.stub.utils.CollectionUtils;
 import junit.framework.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  * @since 11/6/12, 7:00 PM
  */
 @SuppressWarnings("serial")
+@Category(UnitTests.class)
 public class CollectionUtilsTest {
 
    @Test

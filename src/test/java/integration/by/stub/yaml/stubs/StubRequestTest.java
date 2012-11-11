@@ -1,6 +1,6 @@
 package integration.by.stub.yaml.stubs;
 
-import by.stub.cli.ANSITerminal;
+import by.stub.testing.categories.IntegrationTests;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -8,6 +8,7 @@ import by.stub.yaml.stubs.StubResponse;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,13 +24,14 @@ import static org.mockito.Mockito.when;
  * @since 11/6/12, 3:44 PM
  */
 @SuppressWarnings("serial")
-public class StubRequestIT {
+@Category(IntegrationTests.class)
+public class StubRequestTest {
    private static List<StubHttpLifecycle> stubHttpLifecycles;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
 
-      final URL url = StubRequestIT.class.getResource("/yaml/stubrequestit-test-data.yaml");
+      final URL url = StubRequestTest.class.getResource("/yaml/stubrequestit-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());

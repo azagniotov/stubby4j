@@ -1,12 +1,13 @@
 package integration.by.stub.server;
 
-import integration.by.stub.http.client.StubbyClientIT;
+import by.stub.server.JettyManager;
+import by.stub.server.JettyManagerFactory;
+import by.stub.testing.categories.IntegrationTests;
+import integration.by.stub.http.client.StubbyClientTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import by.stub.cli.ANSITerminal;
-import by.stub.server.JettyManager;
-import by.stub.server.JettyManagerFactory;
+import org.junit.experimental.categories.Category;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -15,14 +16,15 @@ import java.util.HashMap;
  * @author Alexander Zagniotov
  * @since 10/26/12, 1:31 PM
  */
-public class JettyManagerFactoryIT {
+@Category(IntegrationTests.class)
+public class JettyManagerFactoryTest {
 
    private static URL url;
    private static JettyManagerFactory jettyManagerFactory;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      url = StubbyClientIT.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
+      url = StubbyClientTest.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
       Assert.assertNotNull(url);
 
       jettyManagerFactory = new JettyManagerFactory();

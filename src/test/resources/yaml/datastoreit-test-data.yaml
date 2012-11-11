@@ -1,5 +1,16 @@
 -  request:
       method: GET
+      url: /some/redirecting/uri
+
+   response:
+      status: 301
+      headers:
+         location: /invoice/123
+      body:
+
+
+-  request:
+      method: GET
       url: /invoice/123
    response:
       status: 200

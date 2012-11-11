@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -75,6 +76,12 @@
          <groupId>org.mockito</groupId>
          <artifactId>mockito-all</artifactId>
          <version>1.9.0</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.htmlunit</groupId>
+         <artifactId>htmlunit</artifactId>
+         <version>2.10</version>
          <scope>test</scope>
       </dependency>
    </dependencies>
@@ -226,6 +233,12 @@
             <version>2.12.4</version>
             <configuration>
                <skip>true</skip>
+               <properties>
+                  <property>
+                     <name>listener</name>
+                     <value>by.stub.testing.junit.MyRunListener</value>
+                  </property>
+               </properties>
             </configuration>
             <executions>
                <execution>
@@ -236,24 +249,36 @@
                   </goals>
                   <configuration>
                      <skip>false</skip>
-                     <includes>
-                        <include>**/*Test.java</include>
-                     </includes>
+                     <parallel>classes</parallel>
+                     <threadCount>10</threadCount>
+                     <groups>by.stub.testing.categories.UnitTests</groups>
                   </configuration>
                </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.12.2</version>
-            <executions>
                <execution>
-                  <id>integration</id>
+                  <id>integration-tests</id>
                   <phase>test</phase>
                   <goals>
-                     <goal>integration-test</goal>
+                     <goal>test</goal>
                   </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <parallel>classes</parallel>
+                     <threadCount>10</threadCount>
+                     <groups>by.stub.testing.categories.IntegrationTests</groups>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>system-tests</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <parallel>classes</parallel>
+                     <threadCount>10</threadCount>
+                     <groups>by.stub.testing.categories.SystemTests</groups>
+                  </configuration>
                </execution>
             </executions>
          </plugin>
@@ -324,11 +349,11 @@
                   <configuration>
                      <target>
                         <delete>
-                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}" />
+                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}"/>
                         </delete>
                         <copy todir="${project.basedir}/artifacts">
                            <fileset dir="${project.build.directory}">
-                              <include name="${project.build.finalName}*.${project.packaging}" />
+                              <include name="${project.build.finalName}*.${project.packaging}"/>
                            </fileset>
                         </copy>
                      </target>

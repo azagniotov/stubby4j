@@ -2,15 +2,10 @@ package by.stub.database.thread;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.List;
 
 /**
@@ -19,10 +14,8 @@ import java.util.List;
  */
 public final class ConfigurationScanner implements Runnable {
 
-   private long lastModified;
    private final YamlParser yamlParser;
    private final DataStore dataStore;
-   private static volatile boolean startFlag = true;
 
    public ConfigurationScanner(final YamlParser yamlParser, final DataStore dataStore) {
       this.yamlParser = yamlParser;
@@ -35,22 +28,20 @@ public final class ConfigurationScanner implements Runnable {
       try {
          final String loadedConfigYamlPath = yamlParser.getLoadedConfigYamlPath();
          final File loadedConfig = new File(loadedConfigYamlPath);
-         this.lastModified = loadedConfig.lastModified();
+         long lastModified = loadedConfig.lastModified();
 
-         while (startFlag) {
+         while (true) {
 
             Thread.sleep(3000);
 
             final long currentFileModified = loadedConfig.lastModified();
-            if (this.lastModified >= currentFileModified) {
+            if (lastModified >= currentFileModified) {
                continue;
             }
 
             try {
-               this.lastModified = currentFileModified;
-               final InputStream is = new FileInputStream(loadedConfigYamlPath);
-               final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
-               final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
+               lastModified = currentFileModified;
+               final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(loadedConfigYamlPath);
 
                dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
                ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",
@@ -68,12 +59,6 @@ public final class ConfigurationScanner implements Runnable {
 
       } catch (final Exception ex) {
          ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
-      }
-   }
-
-   public void stopScanner(final boolean toStop) {
-      synchronized (ConfigurationScanner.class) {
-         startFlag = toStop;
       }
    }
 }

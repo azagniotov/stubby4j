@@ -1,16 +1,18 @@
 package unit.by.stub.handlers.strategy;
 
+import by.stub.handlers.strategy.RedirectResponseHandlingStrategy;
+import by.stub.handlers.strategy.StubResponseHandlingStrategy;
+import by.stub.testing.categories.UnitTests;
+import by.stub.utils.HandlerUtils;
+import by.stub.yaml.stubs.StubRequest;
+import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-import by.stub.handlers.strategy.RedirectResponseHandlingStrategy;
-import by.stub.handlers.strategy.StubResponseHandlingStrategy;
-import by.stub.utils.HandlerUtils;
-import by.stub.yaml.stubs.StubRequest;
-import by.stub.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 7/18/12, 10:11 AM
  */
+@Category(UnitTests.class)
 public class RedirectResponseHandlingStrategyTest {
 
    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);

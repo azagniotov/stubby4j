@@ -3,6 +3,7 @@ package unit.by.stub.handlers;
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.handlers.StubsHandler;
+import by.stub.testing.categories.UnitTests;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -13,8 +14,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import javax.servlet.ServletInputStream;
@@ -24,9 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -39,6 +37,7 @@ import static org.mockito.Mockito.when;
  * @since 6/30/12, 8:15 PM
  */
 @SuppressWarnings("serial")
+@Category(UnitTests.class)
 public class StubsHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);

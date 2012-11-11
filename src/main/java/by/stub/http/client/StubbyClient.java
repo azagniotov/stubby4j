@@ -227,6 +227,29 @@ public final class StubbyClient {
       return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials, post);
    }
 
+   /**
+    * Makes HTTP request to stubby.
+    *
+    * @param scheme    HTTP protocol scheme, HTTP or HTTPS
+    * @param method    HTTP method, currently supported: GET, HEAD, TRACE, OPTIONS, POST
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @param post      data to POST to the server
+    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public ClientHttpResponse makeRequest(final String scheme,
+                                         final String method,
+                                         final String host,
+                                         final String uri,
+                                         final int stubsPort,
+                                         final String post) throws Exception {
+      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(scheme, method, uri, host, stubsPort, null, post);
+
+      return makeRequest(clientHttpRequest);
+   }
+
    private ClientHttpResponse makeRequest(final ClientHttpRequest clientHttpRequest) throws Exception {
       final ClientHttpTransport clientHttpTransport = new ClientHttpTransport(clientHttpRequest);
       final HttpURLConnection connection = clientHttpTransport.constructHttpConnection();

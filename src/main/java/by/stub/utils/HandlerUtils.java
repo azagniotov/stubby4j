@@ -28,11 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
  */
+@SuppressWarnings("serial")
 public final class HandlerUtils {
 
    private HandlerUtils() {
@@ -83,7 +86,11 @@ public final class HandlerUtils {
    }
 
    public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
-      if (!request.getMethod().equalsIgnoreCase("post")) return null;
+      final Set<String> httpMethodsContainingBody = new HashSet<String>() {{
+         add("post");
+         add("put");
+      }};
+      if (!httpMethodsContainingBody.contains(request.getMethod().toLowerCase())) return null;
 
       try {
          return StringUtils.inputStreamToString(request.getInputStream());

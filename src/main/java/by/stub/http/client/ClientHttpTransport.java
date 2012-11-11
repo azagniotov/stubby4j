@@ -54,6 +54,7 @@ final class ClientHttpTransport {
 
       final URL url = new URL(constructUrlFromClientRequest());
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
       connection.setRequestMethod(clientHttpRequest.getMethod());
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);

@@ -94,6 +94,12 @@ public class YamlParser {
       return parseAndLoad(buildYamlReaderFromFilename());
    }
 
+   public List<StubHttpLifecycle> parseAndLoad(final String yamlPath) throws Exception {
+      final Reader yamlReader = StringUtils.constructReader(yamlPath);
+
+      return parseAndLoad(yamlReader);
+   }
+
    @SuppressWarnings("unchecked")
    public List<StubHttpLifecycle> parseAndLoad(final Reader io) throws Exception {
 

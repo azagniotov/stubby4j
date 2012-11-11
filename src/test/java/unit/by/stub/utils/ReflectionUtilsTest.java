@@ -1,9 +1,11 @@
 package unit.by.stub.utils;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import by.stub.testing.categories.UnitTests;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubRequest;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 7/2/12, 10:33 AM
  */
+@Category(UnitTests.class)
 public class ReflectionUtilsTest {
 
    @Test

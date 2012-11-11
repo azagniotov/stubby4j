@@ -1,22 +1,25 @@
 package unit.by.stub.handlers.strategy;
 
-import junit.framework.Assert;
-import org.junit.Test;
 import by.stub.handlers.strategy.DefaultResponseHandlingStrategy;
 import by.stub.handlers.strategy.HandlingStrategyFactory;
 import by.stub.handlers.strategy.NotFoundResponseHandlingStrategy;
 import by.stub.handlers.strategy.RedirectResponseHandlingStrategy;
 import by.stub.handlers.strategy.StubResponseHandlingStrategy;
 import by.stub.handlers.strategy.UnauthorizedResponseHandlingStrategy;
+import by.stub.testing.categories.UnitTests;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author Alexander Zagniotov
  * @since 7/15/12, 1:42 PM
  */
+@Category(UnitTests.class)
 public class HandlingStrategyFactoryTest {
 
    @Test

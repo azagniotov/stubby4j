@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Scanner;
@@ -69,6 +73,11 @@ public final class StringUtils {
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
       // the entire stream, from beginning to (illogical) next beginning.
       return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
+   }
+
+   public static Reader constructReader(final String filePath) throws FileNotFoundException {
+      final InputStream is = new FileInputStream(filePath);
+      return new InputStreamReader(is, StringUtils.utf8Charset());
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {

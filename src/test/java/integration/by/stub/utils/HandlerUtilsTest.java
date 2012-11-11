@@ -1,17 +1,20 @@
 package integration.by.stub.utils;
 
+import by.stub.exception.Stubby4JException;
+import by.stub.testing.categories.IntegrationTests;
+import by.stub.utils.HandlerUtils;
+import by.stub.utils.StringUtils;
 import junit.framework.Assert;
 import org.eclipse.jetty.http.HttpSchemes;
 import org.junit.Test;
-import by.stub.exception.Stubby4JException;
-import by.stub.utils.HandlerUtils;
-import by.stub.utils.StringUtils;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author Alexander Zagniotov
  * @since 6/27/12, 10:26 AM
  */
-public class HandlerUtilsIT {
+@Category(IntegrationTests.class)
+public class HandlerUtilsTest {
 
    @Test
    public void shouldGenerateServerName() throws Exception {

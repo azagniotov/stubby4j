@@ -1,19 +1,22 @@
 package integration.by.stub.database;
 
-import org.eclipse.jetty.http.HttpMethods;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
+import by.stub.testing.categories.IntegrationTests;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
+import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import org.eclipse.jetty.http.HttpMethods;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.mockito.Mockito;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +38,8 @@ import static org.mockito.Mockito.when;
 
 
 @SuppressWarnings("serial")
-public class DataStoreIT {
+@Category(IntegrationTests.class)
+public class DataStoreTest {
 
    private static DataStore dataStore;
 
@@ -44,13 +48,29 @@ public class DataStoreIT {
 
       ANSITerminal.muteConsole(true);
 
-      final URL url = DataStoreIT.class.getResource("/yaml/datastoreit-test-data.yaml");
+      final URL url = DataStoreTest.class.getResource("/yaml/datastoreit-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
       final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad();
 
       dataStore = new DataStore(stubHttpLifecycles);
+   }
+
+   @Test
+   public void findStubResponseFor_ShouldFindRedirectStubResponse_WhenLocationHeaderIsSet() throws IOException {
+
+      final String pathInfo = "/some/redirecting/uri";
+
+      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
+
+      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
+
+      Assert.assertTrue(stubResponse instanceof RedirectStubResponse);
+      Assert.assertEquals(StubResponseTypes.REDIRECT, stubResponse.getStubResponseType());
    }
 
    @Test
