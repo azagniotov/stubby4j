@@ -48,6 +48,8 @@ public class StubsTest {
          @Override
          public void initialize(final HttpRequest request) {
             request.setThrowExceptionOnExecuteError(false);
+            request.setReadTimeout(45000);
+            request.setConnectTimeout(45000);
          }
       });
 

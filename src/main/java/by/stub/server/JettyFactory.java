@@ -171,7 +171,7 @@ public final class JettyFactory {
 
       final SelectChannelConnector stubsChannel = new SelectChannelConnector();
       stubsChannel.setPort(getStubsPort(commandLineArgs));
-      final int idleTimeInMilliseconds = 30000;
+      final int idleTimeInMilliseconds = 45000;
       stubsChannel.setMaxIdleTime(idleTimeInMilliseconds);
       stubsChannel.setRequestHeaderSize(8192);
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
