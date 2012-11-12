@@ -34,6 +34,7 @@ public class MyRunListener extends RunListener {
    @Override
    public void testFailure(final Failure failure) throws Exception {
       fail("\tFailed: " + failure.getDescription().getMethodName());
+      fail("\tStacktrace: " + failure.getTrace());
    }
 
    private void ok(final String msg) {

@@ -286,6 +286,7 @@
                   <configuration>
                      <skip>false</skip>
                      <threadCount>1</threadCount>
+                     <runOrder>filesystem</runOrder>
                      <groups>by.stub.testing.junit.categories.SystemTest</groups>
                   </configuration>
                </execution>
