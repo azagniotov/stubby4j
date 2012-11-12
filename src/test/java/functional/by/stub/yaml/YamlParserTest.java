@@ -1,11 +1,13 @@
-package integration.by.stub.yaml;
+package functional.by.stub.yaml;
 
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.cli.ANSITerminal;
+import by.stub.testing.junit.categories.FunctionalTest;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -17,8 +19,13 @@ import java.util.List;
  * @author Alexander Zagniotov
  * @since 10/6/12, 8:13 PM
  */
-@Category(IntegrationTests.class)
+@Category(FunctionalTest.class)
 public class YamlParserTest {
+
+   @BeforeClass
+   public static void beforeClass() throws Exception {
+      ANSITerminal.muteConsole(true);
+   }
 
    @Test
    public void load_ShouldGenerateListOfHttpCycles_WhenValidYamlGiven() throws Exception {

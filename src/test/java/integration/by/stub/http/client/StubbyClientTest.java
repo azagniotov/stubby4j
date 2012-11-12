@@ -5,7 +5,7 @@ import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.ClientHttpResponse;
 import by.stub.http.client.StubbyClient;
 import by.stub.server.JettyFactory;
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpMethods;
@@ -24,7 +24,7 @@ import java.net.URL;
  * @author Alexander Zagniotov
  * @since 6/28/12, 2:54 PM
  */
-@Category(IntegrationTests.class)
+@Category(IntegrationTest.class)
 public class StubbyClientTest {
 
    private static String content;

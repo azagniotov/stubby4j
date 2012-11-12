@@ -2,7 +2,7 @@ package integration.by.stub.database;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 
 
 @SuppressWarnings("serial")
-@Category(IntegrationTests.class)
+@Category(IntegrationTest.class)
 public class DataStoreTest {
 
    private static DataStore dataStore;

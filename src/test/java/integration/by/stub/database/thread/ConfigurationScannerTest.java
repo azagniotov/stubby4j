@@ -2,7 +2,7 @@ package integration.by.stub.database.thread;
 
 import by.stub.database.DataStore;
 import by.stub.database.thread.ConfigurationScanner;
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.junit.Assert;
@@ -19,7 +19,7 @@ import java.util.List;
  * @since 11/10/12, 10:05 AM
  */
 @SuppressWarnings("serial")
-@Category(IntegrationTests.class)
+@Category(IntegrationTest.class)
 public class ConfigurationScannerTest {
 
    private static ConfigurationScanner configurationScanner;

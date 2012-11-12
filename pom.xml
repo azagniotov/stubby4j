@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -68,7 +69,7 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>4.8.2</version>
+         <version>4.10</version>
          <scope>test</scope>
       </dependency>
       <dependency>
@@ -78,9 +79,9 @@
          <scope>test</scope>
       </dependency>
       <dependency>
-         <groupId>net.sourceforge.htmlunit</groupId>
-         <artifactId>htmlunit</artifactId>
-         <version>2.10</version>
+         <groupId>com.google.http-client</groupId>
+         <artifactId>google-http-client</artifactId>
+         <version>1.12.0-beta</version>
          <scope>test</scope>
       </dependency>
    </dependencies>
@@ -231,55 +232,23 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.12.4</version>
             <configuration>
-               <skip>true</skip>
+               <forkMode>never</forkMode>
+               <skip>false</skip>
+               <parallel>classes</parallel>
+               <threadCount>50</threadCount>
                <properties>
                   <property>
                      <name>listener</name>
                      <value>by.stub.testing.junit.MyRunListener</value>
                   </property>
                </properties>
+               <groups>
+                  by.stub.testing.junit.categories.UnitTest,
+                  by.stub.testing.junit.categories.FunctionalTest,
+                  by.stub.testing.junit.categories.IntegrationTest,
+                  by.stub.testing.junit.categories.SystemTest
+               </groups>
             </configuration>
-            <executions>
-               <execution>
-                  <id>unit-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <parallel>classes</parallel>
-                     <threadCount>10</threadCount>
-                     <groups>by.stub.testing.categories.UnitTests</groups>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>integration-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <parallel>classes</parallel>
-                     <threadCount>10</threadCount>
-                     <groups>by.stub.testing.categories.IntegrationTests</groups>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>system-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <parallel>classes</parallel>
-                     <threadCount>10</threadCount>
-                     <groups>by.stub.testing.categories.SystemTests</groups>
-                  </configuration>
-               </execution>
-            </executions>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -327,6 +296,11 @@
                         <quiet>true</quiet>
                      </configuration>
                   </plugin>
+                  <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-surefire-report-plugin</artifactId>
+                     <version>2.12.4</version>
+                  </plugin>
                </reportPlugins>
             </configuration>
          </plugin>
@@ -348,11 +322,11 @@
                   <configuration>
                      <target>
                         <delete>
-                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}" />
+                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}"/>
                         </delete>
                         <copy todir="${project.basedir}/artifacts">
                            <fileset dir="${project.build.directory}">
-                              <include name="${project.build.finalName}*.${project.packaging}" />
+                              <include name="${project.build.finalName}*.${project.packaging}"/>
                            </fileset>
                         </copy>
                      </target>

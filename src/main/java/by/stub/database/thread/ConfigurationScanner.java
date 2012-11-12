@@ -30,7 +30,7 @@ public final class ConfigurationScanner implements Runnable {
          final File loadedConfig = new File(loadedConfigYamlPath);
          long lastModified = loadedConfig.lastModified();
 
-         while (true) {
+         while (!Thread.currentThread().isInterrupted()) {
 
             Thread.sleep(3000);
 
@@ -60,5 +60,9 @@ public final class ConfigurationScanner implements Runnable {
       } catch (final Exception ex) {
          ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
       }
+   }
+
+   public void stopScanning() {
+      Thread.currentThread().interrupt();
    }
 }

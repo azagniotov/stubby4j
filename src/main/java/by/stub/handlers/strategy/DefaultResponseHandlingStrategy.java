@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers.strategy;
 
 import by.stub.exception.Stubby4JException;
-import by.stub.utils.StringUtils;
-import by.stub.yaml.stubs.StubResponse;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
+import by.stub.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

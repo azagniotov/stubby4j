@@ -20,16 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers;
 
 import by.stub.database.DataStore;
+import by.stub.utils.ConsoleUtils;
+import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.YamlParser;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import by.stub.utils.ConsoleUtils;
-import by.stub.utils.HandlerUtils;
-import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +65,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
       response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       if (!request.getMethod().equalsIgnoreCase("post")) {
-         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), request.getPathInfo());
+         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), RESOURCE_STUBDATA_NEW);
          HandlerUtils.configureErrorResponse(response, HttpStatus.METHOD_NOT_ALLOWED_405, errorMessage);
          return;
       }

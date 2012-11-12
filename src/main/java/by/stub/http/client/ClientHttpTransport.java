@@ -4,12 +4,8 @@ import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.MimeTypes;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;

@@ -21,6 +21,7 @@ package by.stub.handlers;
 
 import by.stub.database.DataStore;
 import by.stub.handlers.strategy.HandlingStrategyFactory;
+import by.stub.handlers.strategy.StubResponseHandlingStrategy;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -28,7 +29,6 @@ import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import by.stub.handlers.strategy.StubResponseHandlingStrategy;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,6 @@
 package integration.by.stub.yaml.stubs;
 
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  * @since 11/6/12, 3:44 PM
  */
 @SuppressWarnings("serial")
-@Category(IntegrationTests.class)
+@Category(IntegrationTest.class)
 public class StubRequestTest {
    private static List<StubHttpLifecycle> stubHttpLifecycles;
 

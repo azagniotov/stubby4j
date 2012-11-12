@@ -2,7 +2,7 @@ package unit.by.stub.handlers.strategy;
 
 import by.stub.handlers.strategy.RedirectResponseHandlingStrategy;
 import by.stub.handlers.strategy.StubResponseHandlingStrategy;
-import by.stub.testing.categories.UnitTests;
+import by.stub.testing.junit.categories.UnitTest;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 7/18/12, 10:11 AM
  */
-@Category(UnitTests.class)
+@Category(UnitTest.class)
 public class RedirectResponseHandlingStrategyTest {
 
    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);

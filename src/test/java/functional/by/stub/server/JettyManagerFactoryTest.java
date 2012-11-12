@@ -1,8 +1,9 @@
-package integration.by.stub.server;
+package functional.by.stub.server;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.server.JettyManager;
 import by.stub.server.JettyManagerFactory;
-import by.stub.testing.categories.IntegrationTests;
+import by.stub.testing.junit.categories.FunctionalTest;
 import integration.by.stub.http.client.StubbyClientTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,7 +17,7 @@ import java.util.HashMap;
  * @author Alexander Zagniotov
  * @since 10/26/12, 1:31 PM
  */
-@Category(IntegrationTests.class)
+@Category(FunctionalTest.class)
 public class JettyManagerFactoryTest {
 
    private static URL url;
@@ -28,6 +29,8 @@ public class JettyManagerFactoryTest {
       Assert.assertNotNull(url);
 
       jettyManagerFactory = new JettyManagerFactory();
+
+      ANSITerminal.muteConsole(true);
    }
 
    @Test

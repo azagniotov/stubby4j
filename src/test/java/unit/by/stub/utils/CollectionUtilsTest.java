@@ -1,6 +1,6 @@
 package unit.by.stub.utils;
 
-import by.stub.testing.categories.UnitTests;
+import by.stub.testing.junit.categories.UnitTest;
 import by.stub.utils.CollectionUtils;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.Map;
  * @since 11/6/12, 7:00 PM
  */
 @SuppressWarnings("serial")
-@Category(UnitTests.class)
+@Category(UnitTest.class)
 public class CollectionUtilsTest {
 
    @Test

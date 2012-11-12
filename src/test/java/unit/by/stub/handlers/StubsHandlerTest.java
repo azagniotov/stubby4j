@@ -3,7 +3,7 @@ package unit.by.stub.handlers;
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.handlers.StubsHandler;
-import by.stub.testing.categories.UnitTests;
+import by.stub.testing.junit.categories.UnitTest;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
  * @since 6/30/12, 8:15 PM
  */
 @SuppressWarnings("serial")
-@Category(UnitTests.class)
+@Category(UnitTest.class)
 public class StubsHandlerTest {
 
    private DataStore mockDataStore = Mockito.mock(DataStore.class);

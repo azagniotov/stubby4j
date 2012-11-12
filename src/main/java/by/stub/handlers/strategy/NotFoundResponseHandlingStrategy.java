@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy;
 
-import org.eclipse.jetty.http.HttpStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
+import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

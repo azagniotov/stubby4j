@@ -1,7 +1,7 @@
 package unit.by.stub.cli;
 
 import by.stub.cli.CommandLineIntepreter;
-import by.stub.testing.categories.UnitTests;
+import by.stub.testing.junit.categories.UnitTest;
 import junit.framework.Assert;
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 6/24/12, 2:32 AM
  */
-@Category(UnitTests.class)
+@Category(UnitTest.class)
 public class CommandLineIntepreterTest {
 
    @Test
