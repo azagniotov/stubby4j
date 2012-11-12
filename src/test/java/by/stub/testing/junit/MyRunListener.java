@@ -18,6 +18,7 @@ public class MyRunListener extends RunListener {
 
    }
 
+
    @Override
    public void testRunFinished(final Result result) throws Exception {
       final String status = String.format("\n\tTotal running time elapsed: %s sec",
@@ -28,13 +29,15 @@ public class MyRunListener extends RunListener {
 
    @Override
    public void testStarted(final Description description) throws Exception {
-      ok("\tExecuting: " + description.getMethodName());
+      ok("\tPassed: " + description.getTestClass().getSimpleName() + "::" + description.getMethodName());
    }
 
    @Override
    public void testFailure(final Failure failure) throws Exception {
-      fail("\tFailed: " + failure.getDescription().getMethodName());
-      fail("\tStacktrace: " + failure.getTrace());
+      fail("\tFailed: "
+            + failure.getDescription().getTestClass().getSimpleName()
+            + "::"
+            + failure.getDescription().getMethodName());
    }
 
    private void ok(final String msg) {

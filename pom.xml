@@ -231,64 +231,19 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.12.4</version>
             <configuration>
-               <skip>true</skip>
+               <skip>false</skip>
+               <threadCount>50</threadCount>
+               <parallel>classes</parallel>
                <properties>
                   <property>
                      <name>listener</name>
                      <value>by.stub.testing.junit.MyRunListener</value>
                   </property>
                </properties>
+               <includes>
+                  <include>**/AllSuiteRunner.java</include>
+               </includes>
             </configuration>
-            <executions>
-               <execution>
-                  <id>unit-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <threadCount>1</threadCount>
-                     <groups>by.stub.testing.junit.categories.UnitTest</groups>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>functional-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <threadCount>1</threadCount>
-                     <groups>by.stub.testing.junit.categories.FunctionalTest</groups>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>integration-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <threadCount>1</threadCount>
-                     <groups>by.stub.testing.junit.categories.IntegrationTest</groups>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>system-tests</id>
-                  <phase>test</phase>
-                  <goals>
-                     <goal>test</goal>
-                  </goals>
-                  <configuration>
-                     <skip>false</skip>
-                     <threadCount>1</threadCount>
-                     <groups>by.stub.testing.junit.categories.SystemTest</groups>
-                  </configuration>
-               </execution>
-            </executions>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
