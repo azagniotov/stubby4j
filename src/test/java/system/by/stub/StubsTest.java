@@ -42,7 +42,7 @@ public class StubsTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
 
-      ANSITerminal.muteConsole(true);
+      ANSITerminal.muteConsole(false);
 
       webClient = new NetHttpTransport().createRequestFactory(new HttpRequestInitializer() {
          @Override
