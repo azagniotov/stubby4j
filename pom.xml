@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -231,23 +232,64 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.12.4</version>
             <configuration>
-               <forkMode>never</forkMode>
-               <skip>false</skip>
-               <parallel>classes</parallel>
-               <threadCount>50</threadCount>
+               <skip>true</skip>
                <properties>
                   <property>
                      <name>listener</name>
                      <value>by.stub.testing.junit.MyRunListener</value>
                   </property>
                </properties>
-               <groups>
-                  by.stub.testing.junit.categories.UnitTest,
-                  by.stub.testing.junit.categories.FunctionalTest,
-                  by.stub.testing.junit.categories.IntegrationTest,
-                  by.stub.testing.junit.categories.SystemTest
-               </groups>
             </configuration>
+            <executions>
+               <execution>
+                  <id>unit-tests</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <threadCount>1</threadCount>
+                     <groups>by.stub.testing.junit.categories.UnitTest</groups>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>functional-tests</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <threadCount>1</threadCount>
+                     <groups>by.stub.testing.junit.categories.FunctionalTest</groups>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>integration-tests</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <threadCount>1</threadCount>
+                     <groups>by.stub.testing.junit.categories.IntegrationTest</groups>
+                  </configuration>
+               </execution>
+               <execution>
+                  <id>system-tests</id>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test</goal>
+                  </goals>
+                  <configuration>
+                     <skip>false</skip>
+                     <threadCount>1</threadCount>
+                     <groups>by.stub.testing.junit.categories.SystemTest</groups>
+                  </configuration>
+               </execution>
+            </executions>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -321,11 +363,11 @@
                   <configuration>
                      <target>
                         <delete>
-                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}" />
+                           <fileset dir="${project.basedir}/artifacts" includes="*.${project.packaging}"/>
                         </delete>
                         <copy todir="${project.basedir}/artifacts">
                            <fileset dir="${project.build.directory}">
-                              <include name="${project.build.finalName}*.${project.packaging}" />
+                              <include name="${project.build.finalName}*.${project.packaging}"/>
                            </fileset>
                         </copy>
                      </target>
