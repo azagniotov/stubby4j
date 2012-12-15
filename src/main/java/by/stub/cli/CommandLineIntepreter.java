@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CommandLineIntepreter {
+public class CommandLineIntepreter {
 
    private static CommandLine line = null;
    private static final CommandLineParser POSIX_PARSER = new PosixParser();

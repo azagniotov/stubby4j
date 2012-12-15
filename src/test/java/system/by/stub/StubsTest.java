@@ -1,24 +1,14 @@
 package system.by.stub;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.handlers.StubsRegistrationHandler;
+import by.stub.cli.CommandLineIntepreter;
 import by.stub.http.client.StubbyClient;
 import by.stub.testing.junit.categories.SystemTest;
 import by.stub.utils.StringUtils;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.eclipse.jetty.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
@@ -42,6 +32,7 @@ public class StubsTest {
    public static void beforeClass() throws Exception {
 
       ANSITerminal.muteConsole(true);
+
 
       webClient = new NetHttpTransport().createRequestFactory(new HttpRequestInitializer() {
          @Override
@@ -68,6 +59,9 @@ public class StubsTest {
       stubsUrlAsString = String.format("http://localhost:%s", clientPort);
       stubsSslUrlAsString = String.format("https://localhost:%s", sslPort);
       adminUrlAsString = String.format("http://localhost:%s", adminPort);
+
+      //Pretend we loaded a data file (since file: params in data config are relative to it, not the directory of execution)
+      CommandLineIntepreter.parseCommandLine(new String[] {"-d", url.getPath()});
    }
 
    @AfterClass

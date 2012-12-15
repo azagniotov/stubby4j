@@ -28,13 +28,7 @@ import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Alexander Zagniotov
@@ -45,7 +39,7 @@ public class StubRequest {
    public static final String AUTH_HEADER = "authorization";
 
    private String url = null;
-   private String method = null;
+   private String method = "GET";
    private String post = null;
    private String file = null;
    private Map<String, String> headers = new HashMap<String, String>();
@@ -82,7 +76,7 @@ public class StubRequest {
    }
 
    public void setMethod(final String newMethod) {
-      this.method = (StringUtils.isSet(newMethod) ? newMethod : null);
+      this.method = (StringUtils.isSet(newMethod) ? newMethod : "GET");
    }
 
    public void setPost(final String post) {
@@ -121,7 +115,11 @@ public class StubRequest {
       if (!StringUtils.isSet(file)) {
          return getPost();
       }
-      return IOUtils.enforceSystemLineSeparator(file);
+      try {
+         return IOUtils.loadContentFromFile(file);
+      } catch (Exception ex) {
+         return getPost();
+      }
    }
 
    public final boolean isConfigured() {
@@ -188,7 +186,7 @@ public class StubRequest {
    }
 
    private void dumpMatchedRequestToConsole(final StubRequest stub) {
-      if(!CommandLineIntepreter.isDebug()) return;
+      if (!CommandLineIntepreter.isDebug()) return;
       ANSITerminal.info("Matched:");
       ANSITerminal.status("-----------------------------------------------------------------------------------");
       ANSITerminal.loaded("[STUB] >>");
@@ -200,8 +198,9 @@ public class StubRequest {
    }
 
    private boolean compareStubbedPropertyVsAssertionProperty(final String propName, final String stubbedProp, final String assertionProp) {
-         if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
-            if(CommandLineIntepreter.isDebug()) ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
+      if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
+         if (CommandLineIntepreter.isDebug())
+            ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
          return true;
       }
       return false;
@@ -211,7 +210,8 @@ public class StubRequest {
       final Map<String, String> stubbedMapCopy = new HashMap<String, String>(stubbedMap);
       stubbedMapCopy.entrySet().removeAll(assertionMap.entrySet());
       if (!stubbedMapCopy.isEmpty()) {
-         if(CommandLineIntepreter.isDebug()) ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
+         if (CommandLineIntepreter.isDebug())
+            ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
          return true;
       }
       return false;

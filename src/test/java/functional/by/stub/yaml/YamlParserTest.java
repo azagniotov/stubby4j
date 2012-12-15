@@ -2,7 +2,6 @@ package functional.by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.testing.junit.categories.FunctionalTest;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -11,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void load_ShouldContainFileContentInRequest_WhenFileSpecifiedInYaml() throws Exception {
+   public void load_ShouldContainFilePathInRequest_WhenFileSpecifiedInYaml() throws Exception {
       final URL url = this.getClass().getResource("/yaml/yamlparserit-request-with-post-file-test-data.yaml");
       Assert.assertNotNull(url);
 
@@ -48,9 +46,6 @@ public class YamlParserTest {
       final StubHttpLifecycle cycle = loadedHttpCycles.get(0);
       final StubRequest request = cycle.getRequest();
 
-      final InputStream loadedInputStream = YamlParserTest.class.getResourceAsStream("/json/post-body-as-file.json");
-      final String loadedJson = StringUtils.inputStreamToString(loadedInputStream);
-
-      Assert.assertEquals(loadedJson, request.getFile());
+      Assert.assertEquals("../json/post-body-as-file.json", request.getFile());
    }
 }

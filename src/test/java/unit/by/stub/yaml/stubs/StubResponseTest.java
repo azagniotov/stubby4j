@@ -1,6 +1,7 @@
 package unit.by.stub.yaml.stubs;
 
 import by.stub.testing.junit.categories.UnitTest;
+import by.stub.utils.IOUtils;
 import by.stub.yaml.stubs.StubResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,12 +16,22 @@ public class StubResponseTest {
 
    @Test
    public void getResponseBody_ShouldReturnFile_WhenFileIsSet() throws Exception {
-
+      final String fileContent = IOUtils.readFile(this.getClass().getResource("/json/systemtest-body-response-as-file.json").getFile());
       final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile("/path/to/file");
+      stubResponse.setFile(this.getClass().getResource("/json/systemtest-body-response-as-file.json").getPath());
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("/path/to/file", stubResponse.getResponseBody());
+      Assert.assertEquals(fileContent, stubResponse.getResponseBody());
+   }
+
+   @Test
+   public void getResponseBody_ShouldReturnBody_WhenFileCannotBeFound() throws Exception {
+
+      final StubResponse stubResponse = new StubResponse();
+      stubResponse.setFile("/path/to/nowhere");
+      stubResponse.setBody("this is some body");
+
+      Assert.assertEquals("this is some body", stubResponse.getResponseBody());
    }
 
    @Test
