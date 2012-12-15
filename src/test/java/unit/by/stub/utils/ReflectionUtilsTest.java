@@ -24,7 +24,7 @@ public class ReflectionUtilsTest {
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
       Assert.assertEquals(totalOfStubRequestMemberFields, properties.size());
-      Assert.assertEquals("POST", properties.get("method"));
+      Assert.assertEquals("[POST]", properties.get("method"));
       Assert.assertEquals("Not provided", properties.get("url"));
       Assert.assertEquals("Not provided", properties.get("post"));
       Assert.assertEquals("{}", properties.get("headers"));

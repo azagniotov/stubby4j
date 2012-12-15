@@ -39,7 +39,7 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
       final String postMessage = (StringUtils.isSet(assertionStubRequest.getPostBody())
             ? String.format("%s%s", " for post data: ", assertionStubRequest.getPostBody()) : "");
       final String error = String.format("No data found for %s request at URI %s%s",
-            assertionStubRequest.getMethod(), assertionStubRequest.getUrl(), postMessage);
+            assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage);
       HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
    }
 }

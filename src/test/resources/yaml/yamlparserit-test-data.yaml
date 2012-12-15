@@ -24,3 +24,10 @@
       status: 503
       headers:
          content-type: application/momo
+
+-  request:
+      method: [GET, HEAD]
+      url: /invoice/899
+
+   response:
+      status: 204

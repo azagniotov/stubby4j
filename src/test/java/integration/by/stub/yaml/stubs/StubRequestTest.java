@@ -39,6 +39,23 @@ public class StubRequestTest {
    }
 
    @Test
+   public void ShouldMatchRequest_WhenMethodInRequestMethodArray() throws Exception {
+      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn("/invoice/789");
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+
+      final StubRequest assertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
+      for (final StubHttpLifecycle stub : stubHttpLifecycles) {
+         if (stub.getRequest().getUrl().equals("/invoice/789")) {
+            Assert.assertEquals(stub.getResponse(), assertionLifecycle.getResponse());
+            return;
+         }
+      }
+   }
+
+   @Test
    public void ShouldMatchRequest_WhenAllHeadersMatching() throws Exception {
       final Map<String, String> headers = new HashMap<String, String>() {{
          put("content-type", "application/xml");
@@ -55,7 +72,6 @@ public class StubRequestTest {
       assertionRequest.setHeaders(headers);
 
       final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
-
       Assert.assertTrue(stubHttpLifecycles.contains(assertionLifecycle));
    }
 

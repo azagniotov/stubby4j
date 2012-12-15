@@ -20,7 +20,7 @@
       body: This is a response for 123
 
 -  request:
-      method: GET
+      method: [HEAD, GET]
       url: /invoice/789
       query:
          paramOne: one

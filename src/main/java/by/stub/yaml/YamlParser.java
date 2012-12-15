@@ -97,7 +97,7 @@ public class YamlParser {
 
          mapParentYamlNodeToPojo(parentStub, parentNode);
 
-         final String method = parentStub.getRequest().getMethod();
+         final ArrayList<String> method = parentStub.getRequest().getMethod();
          final String url = parentStub.getRequest().getUrl();
          final String loadedMsg = String.format("Loaded: %s %s", method, url);
          ANSITerminal.loaded(loadedMsg);
@@ -129,9 +129,23 @@ public class YamlParser {
          final Object value = pair.getValue();
          final String propertyName = pair.getKey();
 
+         if (value instanceof ArrayList) {
+            final ArrayList<String> arrayList = (ArrayList<String>) value;
+            ReflectionUtils.setPropertyValue(target, propertyName, arrayList);
+            continue;
+         }
+
          if (value instanceof Map) {
             final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
             ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
+            continue;
+         }
+
+         if (propertyName.toLowerCase().equals("method")) {
+            final ArrayList<String> propertyValue = new ArrayList<String>(1){{
+               add(extractPropertyValueAsString(propertyName, value));
+            }};
+            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
             continue;
          }
 

@@ -39,7 +39,7 @@ public class StubRequest {
    public static final String AUTH_HEADER = "authorization";
 
    private String url = null;
-   private String method = "GET";
+   private ArrayList<String> method = new ArrayList<String>(1){{ add("GET");}};
    private String post = null;
    private String file = null;
    private Map<String, String> headers = new HashMap<String, String>();
@@ -53,8 +53,12 @@ public class StubRequest {
       return getFullUrl();
    }
 
-   public final String getMethod() {
-      return StringUtils.toUpper(method);
+   public final ArrayList<String> getMethod() {
+      final ArrayList<String> uppercased = new ArrayList<String>(method.size());
+
+      for (final String string : method) uppercased.add(StringUtils.toUpper(string));
+
+      return uppercased;
    }
 
    public final String getPost() {
@@ -76,7 +80,13 @@ public class StubRequest {
    }
 
    public void setMethod(final String newMethod) {
-      this.method = (StringUtils.isSet(newMethod) ? newMethod : "GET");
+      this.method = new ArrayList<String>(1){{
+         add((StringUtils.isSet(newMethod) ? newMethod : "GET"));
+      }};
+   }
+
+   public void setMethod(final ArrayList<String> newMethod) {
+      this.method = newMethod;
    }
 
    public void setPost(final String post) {
@@ -123,7 +133,7 @@ public class StubRequest {
    }
 
    public final boolean isConfigured() {
-      return (StringUtils.isSet(url) && StringUtils.isSet(method));
+      return StringUtils.isSet(url);
    }
 
    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
@@ -150,15 +160,15 @@ public class StubRequest {
       if (this == o) return true;
       if (!(o instanceof StubRequest)) return false;
 
-      final StubRequest stub = (StubRequest) o;
+      final StubRequest other = (StubRequest) o;
 
-      if (compareStubbedPropertyVsAssertionProperty("post body", stub.getPostBody(), getPostBody())) return false;
-      if (compareStubbedPropertyVsAssertionProperty("method", stub.method, method)) return false;
-      if (compareStubbedPropertyVsAssertionProperty("url", stub.url, url)) return false;
+      if (stringValuesDoNotMatch("post body", other.getPostBody(), this.getPostBody())) return false;
+      if (arraysDoNotMatch(other.method, this.method)) return false;
+      if (stringValuesDoNotMatch("url", other.url, this.url)) return false;
 
-      if (!stub.getHeaders().isEmpty()) {
+      if (!other.getHeaders().isEmpty()) {
 
-         final Map<String, String> stubHeadersCopy = new HashMap<String, String>(stub.getHeaders());
+         final Map<String, String> stubHeadersCopy = new HashMap<String, String>(other.getHeaders());
          stubHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with after matching of assertion request
          if (stubHeadersCopy.isEmpty()) {
             return true;
@@ -170,17 +180,17 @@ public class StubRequest {
             return false;
          }
 
-         if (compareStubbedMapVsAssertionMap(stub.getHeaders(), getHeaders())) return false;
+         if (mapsDoNotMatch(other.getHeaders(), getHeaders())) return false;
       }
 
-      if (!stub.getQuery().isEmpty() && getQuery().isEmpty()) {
-         ANSITerminal.warn(String.format("Stubbed query string could not be matched with empty query string from the client: %s VS %s", stub.getQuery(), getQuery()));
+      if (!other.getQuery().isEmpty() && getQuery().isEmpty()) {
+         ANSITerminal.warn(String.format("Stubbed query string could not be matched with empty query string from the client: %s VS %s", other.getQuery(), getQuery()));
          return false;
       }
 
-      if (compareStubbedMapVsAssertionMap(stub.getQuery(), getQuery())) return false;
+      if (mapsDoNotMatch(other.getQuery(), getQuery())) return false;
 
-      dumpMatchedRequestToConsole(stub);
+      dumpMatchedRequestToConsole(other);
 
       return true;
    }
@@ -197,21 +207,30 @@ public class StubRequest {
       ANSITerminal.status("-----------------------------------------------------------------------------------");
    }
 
-   private boolean compareStubbedPropertyVsAssertionProperty(final String propName, final String stubbedProp, final String assertionProp) {
-      if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
+   private boolean stringValuesDoNotMatch(final String propName, final String othersPropValue, final String myPropValue) {
+      if (othersPropValue != null ? !othersPropValue.equals(myPropValue) : myPropValue != null) {
          if (CommandLineIntepreter.isDebug())
-            ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
+            ANSITerminal.warn(String.format("Could not match incoming '%s' with configured: %s VS %s", propName, othersPropValue, myPropValue));
          return true;
       }
       return false;
    }
 
-   private boolean compareStubbedMapVsAssertionMap(final Map<String, String> stubbedMap, final Map<String, String> assertionMap) {
-      final Map<String, String> stubbedMapCopy = new HashMap<String, String>(stubbedMap);
-      stubbedMapCopy.entrySet().removeAll(assertionMap.entrySet());
+   private boolean arraysDoNotMatch(final ArrayList<String> othersArray, final ArrayList<String> myArray) {
+      if (othersArray == null && myArray == null) return false;
+      if (othersArray == null || myArray == null) return true;
+
+      if (othersArray.size() == 0 && myArray.size() == 0) return false;
+
+      return !othersArray.contains(myArray.get(0));
+   }
+
+   private boolean mapsDoNotMatch(final Map<String, String> othersMap, final Map<String, String> myMap) {
+      final Map<String, String> stubbedMapCopy = new HashMap<String, String>(othersMap);
+      stubbedMapCopy.entrySet().removeAll(myMap.entrySet());
       if (!stubbedMapCopy.isEmpty()) {
          if (CommandLineIntepreter.isDebug())
-            ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
+            ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", othersMap, myMap));
          return true;
       }
       return false;

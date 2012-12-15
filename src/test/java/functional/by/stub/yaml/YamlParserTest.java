@@ -33,7 +33,7 @@ public class YamlParserTest {
       final YamlParser yamlParser = new YamlParser(url.getFile());
       final List<StubHttpLifecycle> loadedHttpCycles = yamlParser.parseAndLoad();
 
-      Assert.assertEquals(2, loadedHttpCycles.size());
+      Assert.assertEquals(3, loadedHttpCycles.size());
    }
 
    @Test

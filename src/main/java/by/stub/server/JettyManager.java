@@ -39,7 +39,6 @@ public final class JettyManager {
 
          server.start();
 
-         ANSITerminal.status("Jetty running");
          ANSITerminal.info("\nQuit: ctrl-c\n");
       }
    }
