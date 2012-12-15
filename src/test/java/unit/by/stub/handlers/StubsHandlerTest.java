@@ -4,11 +4,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.handlers.StubsHandler;
 import by.stub.testing.junit.categories.UnitTest;
-import by.stub.yaml.stubs.NotFoundStubResponse;
-import by.stub.yaml.stubs.StubRequest;
-import by.stub.yaml.stubs.StubResponse;
-import by.stub.yaml.stubs.StubResponseTypes;
-import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import by.stub.yaml.stubs.*;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
@@ -26,10 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**

@@ -80,7 +80,8 @@ public class YamlParser {
    //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
    private String loadContentFromFile(final String filePath) throws IOException {
 
-      final File contentFile = new File(filePath);
+      final String yamlFileDirectory = new File(yamlConfigFilename).getParent();
+      final File contentFile = new File(yamlFileDirectory, filePath);
       if (!contentFile.isFile()) {
          throw new IOException(String.format("Could not load file from path: %s", filePath));
       }

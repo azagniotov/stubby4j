@@ -9,7 +9,7 @@
          content-type: application/json
          pragma: no-cache
       status: 200
-      file: src/test/resources/json/systemtest-body-response-as-file.json
+      file: ../json/systemtest-body-response-as-file.json
 
 
 -  request:

@@ -2,7 +2,7 @@
       method: POST
       headers:
          content-type: application/json
-      file: src/test/resources/json/post-body-as-file.json
+      file: ../json/post-body-as-file.json
 
    response:
       headers:
