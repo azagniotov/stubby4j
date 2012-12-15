@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineIntepreter;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.IOUtils;
@@ -187,6 +188,7 @@ public class StubRequest {
    }
 
    private void dumpMatchedRequestToConsole(final StubRequest stub) {
+      if(!CommandLineIntepreter.isDebug()) return;
       ANSITerminal.info("Matched:");
       ANSITerminal.status("-----------------------------------------------------------------------------------");
       ANSITerminal.loaded("[STUB] >>");
@@ -198,8 +200,8 @@ public class StubRequest {
    }
 
    private boolean compareStubbedPropertyVsAssertionProperty(final String propName, final String stubbedProp, final String assertionProp) {
-      if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
-         ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
+         if (stubbedProp != null ? !stubbedProp.equals(assertionProp) : assertionProp != null) {
+            if(CommandLineIntepreter.isDebug()) ANSITerminal.warn(String.format("Could not match stubbed '%s' with asserted: %s VS %s", propName, stubbedProp, assertionProp));
          return true;
       }
       return false;
@@ -209,7 +211,7 @@ public class StubRequest {
       final Map<String, String> stubbedMapCopy = new HashMap<String, String>(stubbedMap);
       stubbedMapCopy.entrySet().removeAll(assertionMap.entrySet());
       if (!stubbedMapCopy.isEmpty()) {
-         ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
+         if(CommandLineIntepreter.isDebug()) ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", stubbedMap, assertionMap));
          return true;
       }
       return false;
