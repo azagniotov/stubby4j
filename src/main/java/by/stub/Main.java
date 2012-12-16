@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.exception.Stubby4JException;
 import by.stub.server.JettyManager;
 import by.stub.server.JettyManagerFactory;
@@ -47,7 +47,7 @@ public final class Main {
 
    private static void parseCommandLineArgs(final String[] args) {
       try {
-         CommandLineIntepreter.parseCommandLine(args);
+         CommandLineInterpreter.parseCommandLine(args);
       } catch (final ParseException ex) {
          final String msg =
                String.format("Could not parse provided command line arguments, error: %s",
@@ -58,33 +58,33 @@ public final class Main {
    }
 
    private static boolean printHelpIfRequested() {
-      if (!CommandLineIntepreter.isHelp()) {
+      if (!CommandLineInterpreter.isHelp()) {
          return false;
       }
 
-      CommandLineIntepreter.printHelp(Main.class);
+      CommandLineInterpreter.printHelp(Main.class);
 
       return true;
    }
 
    private static void verifyYamlDataProvided() {
-      if (CommandLineIntepreter.isYamlProvided()) {
+      if (CommandLineInterpreter.isYamlProvided()) {
          return;
       }
       final String msg =
             String.format("YAML data was not provided using command line option '--%s'. %s"
                   + "To see all command line options run again with option '--%s'",
-                  CommandLineIntepreter.OPTION_CONFIG, "\n", CommandLineIntepreter.OPTION_HELP);
+                  CommandLineInterpreter.OPTION_CONFIG, "\n", CommandLineInterpreter.OPTION_HELP);
 
       throw new Stubby4JException(msg);
    }
 
    private static void startStubby4jUsingCommandLineArgs() {
       try {
-         final Map<String, String> commandLineArgs = CommandLineIntepreter.getCommandlineParams();
-         final String yamlConfigFilename = commandLineArgs.get(CommandLineIntepreter.OPTION_CONFIG);
+         final Map<String, String> commandLineArgs = CommandLineInterpreter.getCommandlineParams();
+         final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
-         ANSITerminal.muteConsole(CommandLineIntepreter.isMute());
+         ANSITerminal.muteConsole(CommandLineInterpreter.isMute());
 
          final JettyManagerFactory factory = new JettyManagerFactory();
          final JettyManager jettyManager = factory.construct(yamlConfigFilename, commandLineArgs);

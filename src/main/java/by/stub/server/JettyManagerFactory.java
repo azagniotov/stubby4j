@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.server;
 
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
 import by.stub.database.DataStore;
 import by.stub.database.thread.ConfigurationScanner;
@@ -50,7 +50,7 @@ public class JettyManagerFactory {
          final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
          final Server server = jettyFactory.construct(dataStore, yamlParser);
 
-         if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_WATCH)) watchDataStore(yamlParser, dataStore);
+         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) watchDataStore(yamlParser, dataStore);
 
          return new JettyManager(server);
       }

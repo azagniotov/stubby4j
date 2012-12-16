@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
@@ -67,9 +67,7 @@ public final class IOUtils {
 
    //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
    public static String loadContentFromFile(final String filePath) throws IOException {
-      final String yamlConfigFilename = CommandLineIntepreter.getCommandlineParams().get("data");
-      final String yamlFileDirectory = new File(yamlConfigFilename).getParent();
-      final File contentFile = new File(yamlFileDirectory, filePath);
+      final File contentFile = new File(getDataDirectory(), filePath);
 
       if (!contentFile.isFile()) {
          throw new IOException(String.format("Could not load file from path: %s", filePath));
@@ -78,6 +76,12 @@ public final class IOUtils {
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
 
       return IOUtils.enforceSystemLineSeparator(loadedContent);
+   }
+
+   private static String getDataDirectory() {
+      String yamlConfigFilename = CommandLineInterpreter.getCommandlineParams().get("data");
+      if (yamlConfigFilename == null) yamlConfigFilename = CommandLineInterpreter.getCurrentJarLocation(CommandLineInterpreter.class);
+      return new File(yamlConfigFilename).getParent();
    }
 
    public static String enforceSystemLineSeparator(final String loadedContent) {

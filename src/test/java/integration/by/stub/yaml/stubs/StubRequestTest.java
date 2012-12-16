@@ -1,5 +1,6 @@
 package integration.by.stub.yaml.stubs;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -30,6 +31,7 @@ public class StubRequestTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
+      CommandLineInterpreter.parseCommandLine(new String[]{});
 
       final URL url = StubRequestTest.class.getResource("/yaml/stubrequestit-test-data.yaml");
       Assert.assertNotNull(url);

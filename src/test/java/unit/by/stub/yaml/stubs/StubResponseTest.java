@@ -1,9 +1,11 @@
 package unit.by.stub.yaml.stubs;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.testing.junit.categories.UnitTest;
 import by.stub.utils.IOUtils;
 import by.stub.yaml.stubs.StubResponse;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -13,6 +15,10 @@ import org.junit.experimental.categories.Category;
  */
 @Category(UnitTest.class)
 public class StubResponseTest {
+   @BeforeClass
+   public static void Setup() throws Exception {
+      CommandLineInterpreter.parseCommandLine(new String[]{});
+   }
 
    @Test
    public void getResponseBody_ShouldReturnFile_WhenFileIsSet() throws Exception {

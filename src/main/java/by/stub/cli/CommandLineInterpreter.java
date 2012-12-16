@@ -32,9 +32,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandLineIntepreter {
+public class CommandLineInterpreter {
 
-   private static CommandLine line = null;
+   private static CommandLine line;
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
    private static final Options OPTIONS = new Options();
 
@@ -67,7 +67,7 @@ public class CommandLineIntepreter {
       OPTIONS.addOption(null, OPTION_DEBUG, false, "Show comparison print-outs when endpoints are hit.");
    }
 
-   private CommandLineIntepreter() {
+   private CommandLineInterpreter() {
 
    }
 

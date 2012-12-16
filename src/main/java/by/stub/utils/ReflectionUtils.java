@@ -71,12 +71,11 @@ public final class ReflectionUtils {
    }
 
    public static void setPropertyValue(final Object object, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
-      for (final Method method : object.getClass().getDeclaredMethods()) {
-         if (method.getName().equalsIgnoreCase("set" + fieldName)) {
-            method.invoke(object, value);
-            break;
-         }
-      }
+      try {
+         final Field field = object.getClass().getDeclaredField(fieldName);
+         field.setAccessible(true);
+         field.set(object, value);
+      } catch (NoSuchFieldException ignored) { }
    }
 
    public static Object getPropertyValue(final Object object, final String fieldName) throws InvocationTargetException, IllegalAccessException {

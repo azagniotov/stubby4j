@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.server;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.DataStore;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.PingHandler;
@@ -153,8 +153,8 @@ public final class JettyFactory {
       adminChannel.setName(ADMIN_CONNECTOR_NAME);
       adminChannel.setHost(DEFAULT_HOST);
 
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
-         adminChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
+         adminChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
       }
 
       final String status = String.format("Admin portal configured at http://%s:%s",
@@ -177,8 +177,8 @@ public final class JettyFactory {
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
       stubsChannel.setHost(DEFAULT_HOST);
 
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
-         stubsChannel.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
+         stubsChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
       }
 
       final String status = String.format("Stubs portal configured at http://%s:%s",
@@ -194,10 +194,10 @@ public final class JettyFactory {
 
       String keystorePath = null;
       String password = "password";
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYSTORE)
-            && commandLineArgs.containsKey(CommandLineIntepreter.OPTION_KEYPASS)) {
-         password = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYPASS);
-         keystorePath = commandLineArgs.get(CommandLineIntepreter.OPTION_KEYSTORE);
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYSTORE)
+            && commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYPASS)) {
+         password = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYPASS);
+         keystorePath = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYSTORE);
       }
 
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
@@ -206,8 +206,8 @@ public final class JettyFactory {
       sslConnector.setName(SSL_CONNECTOR_NAME);
       sslConnector.setHost(DEFAULT_HOST);
 
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADDRESS)) {
-         sslConnector.setHost(commandLineArgs.get(CommandLineIntepreter.OPTION_ADDRESS));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
+         sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
       }
 
       final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
@@ -247,22 +247,22 @@ public final class JettyFactory {
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_CLIENTPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_CLIENTPORT));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_CLIENTPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_CLIENTPORT));
       }
       return DEFAULT_STUBS_PORT;
    }
 
    private int getStubsSslPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_SSLPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_SSLPORT));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_SSLPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_SSLPORT));
       }
       return DEFAULT_SSL_PORT;
    }
 
    private int getAdminPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineIntepreter.OPTION_ADMINPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineIntepreter.OPTION_ADMINPORT));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADMINPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_ADMINPORT));
       }
       return DEFAULT_ADMIN_PORT;
    }

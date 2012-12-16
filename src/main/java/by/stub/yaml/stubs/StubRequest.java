@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.IOUtils;
@@ -196,7 +196,7 @@ public class StubRequest {
    }
 
    private void dumpMatchedRequestToConsole(final StubRequest stub) {
-      if (!CommandLineIntepreter.isDebug()) return;
+      if (!CommandLineInterpreter.isDebug()) return;
       ANSITerminal.info("Matched:");
       ANSITerminal.status("-----------------------------------------------------------------------------------");
       ANSITerminal.loaded("[STUB] >>");
@@ -209,7 +209,7 @@ public class StubRequest {
 
    private boolean stringValuesDoNotMatch(final String propName, final String othersPropValue, final String myPropValue) {
       if (othersPropValue != null ? !othersPropValue.equals(myPropValue) : myPropValue != null) {
-         if (CommandLineIntepreter.isDebug())
+         if (CommandLineInterpreter.isDebug())
             ANSITerminal.warn(String.format("Could not match incoming '%s' with configured: %s VS %s", propName, othersPropValue, myPropValue));
          return true;
       }
@@ -229,7 +229,7 @@ public class StubRequest {
       final Map<String, String> stubbedMapCopy = new HashMap<String, String>(othersMap);
       stubbedMapCopy.entrySet().removeAll(myMap.entrySet());
       if (!stubbedMapCopy.isEmpty()) {
-         if (CommandLineIntepreter.isDebug())
+         if (CommandLineInterpreter.isDebug())
             ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", othersMap, myMap));
          return true;
       }

@@ -1,6 +1,7 @@
 package unit.by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.DataStore;
 import by.stub.handlers.StubsHandler;
 import by.stub.testing.junit.categories.UnitTest;
@@ -43,6 +44,7 @@ public class StubsHandlerTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
+      CommandLineInterpreter.parseCommandLine(new String[]{});
       ANSITerminal.muteConsole(true);
    }
 
