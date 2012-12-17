@@ -31,3 +31,6 @@
 
    response:
       status: 204
+
+-  request:
+      url: /just/the/url

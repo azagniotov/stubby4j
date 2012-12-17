@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class StubResponse {
 
-   private String status = null;
+   private String status = "200";
    private String body = null;
    private String file = null;
    private String latency = null;
