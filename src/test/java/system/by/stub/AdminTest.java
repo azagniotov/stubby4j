@@ -1,6 +1,7 @@
 package system.by.stub;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.StubbyClient;
 import by.stub.testing.junit.categories.SystemTest;
@@ -36,7 +37,7 @@ public class AdminTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-
+      CommandLineInterpreter.parseCommandLine(new String[]{});
       ANSITerminal.muteConsole(true);
 
       webClient = new NetHttpTransport().createRequestFactory(new HttpRequestInitializer() {
@@ -68,7 +69,7 @@ public class AdminTest {
    }
 
    @Test
-   public void should_UpdatedstubData_AndMakeGetRequestToUpdatedEndpoint() throws Exception {
+   public void should_UpdatedStubData_AndMakeGetRequestToUpdatedEndpoint() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/systemtest-to-update-test-data.yaml");
       Assert.assertNotNull(url);

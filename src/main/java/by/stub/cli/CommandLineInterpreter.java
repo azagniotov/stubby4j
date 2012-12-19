@@ -32,9 +32,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CommandLineIntepreter {
+public class CommandLineInterpreter {
 
-   private static CommandLine line = null;
+   private static CommandLine line;
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
    private static final Options OPTIONS = new Options();
 
@@ -46,6 +46,8 @@ public final class CommandLineIntepreter {
    public static final String OPTION_KEYSTORE = "keystore";
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
+   public static final String OPTION_WATCH = "watch";
+   public static final String OPTION_DEBUG = "debug";
 
    private static final String[] ALL_OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_SSLPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
@@ -57,13 +59,15 @@ public final class CommandLineIntepreter {
       OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
       OPTIONS.addOption("t", OPTION_SSLPORT, true, "Port for SSL connection. Defaults to 7443.");
       OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Valid YAML 1.1 expected.");
-      OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom SSL. By default SSL is enabled using internal keystore");
+      OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom SSL. By default SSL is enabled using internal keystore.");
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
-      OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console");
+      OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
+      OPTIONS.addOption("w", OPTION_WATCH, false, "Reload datafile when changes are made.");
+      OPTIONS.addOption(null, OPTION_DEBUG, false, "Show comparison print-outs when endpoints are hit.");
    }
 
-   private CommandLineIntepreter() {
+   private CommandLineInterpreter() {
 
    }
 
@@ -98,6 +102,24 @@ public final class CommandLineIntepreter {
     */
    public static boolean isMute() {
       return line.hasOption(OPTION_MUTE);
+   }
+
+   /**
+    * Checks if console output has been muted
+    *
+    * @return true if the user disabled output to console using command line arg
+    */
+   public static boolean isDebug() {
+      return line.hasOption(OPTION_DEBUG);
+   }
+
+   /**
+    * Checks if the watch flag was given
+    *
+    * @return true if the user wants stubby to auto-update the datafile when changes are made
+    */
+   public static boolean isWatching() {
+      return line.hasOption(OPTION_WATCH);
    }
 
    /**

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.utils.IOUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -33,16 +32,8 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 
 public class YamlParser {
@@ -73,21 +64,9 @@ public class YamlParser {
       }
 
       loadedConfigAbsolutePath = yamlFile.getAbsolutePath();
+      System.out.println(loadedConfigAbsolutePath);
 
       return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.utf8Charset());
-   }
-
-   //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
-   private String loadContentFromFile(final String filePath) throws IOException {
-
-      final File contentFile = new File(filePath);
-      if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", filePath));
-      }
-
-      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
-
-      return IOUtils.enforceSystemLineSeparator(loadedContent);
    }
 
    public List<StubHttpLifecycle> parseAndLoad() throws Exception {
@@ -119,7 +98,7 @@ public class YamlParser {
 
          mapParentYamlNodeToPojo(parentStub, parentNode);
 
-         final String method = parentStub.getRequest().getMethod();
+         final ArrayList<String> method = parentStub.getRequest().getMethod();
          final String url = parentStub.getRequest().getUrl();
          final String loadedMsg = String.format("Loaded: %s %s", method, url);
          ANSITerminal.loaded(loadedMsg);
@@ -151,9 +130,23 @@ public class YamlParser {
          final Object value = pair.getValue();
          final String propertyName = pair.getKey();
 
+         if (value instanceof ArrayList) {
+            final ArrayList<String> arrayList = (ArrayList<String>) value;
+            ReflectionUtils.setPropertyValue(target, propertyName, arrayList);
+            continue;
+         }
+
          if (value instanceof Map) {
             final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
             ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
+            continue;
+         }
+
+         if (propertyName.toLowerCase().equals("method")) {
+            final ArrayList<String> propertyValue = new ArrayList<String>(1){{
+               add(extractPropertyValueAsString(propertyName, value));
+            }};
+            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
             continue;
          }
 
@@ -164,10 +157,8 @@ public class YamlParser {
 
    private String extractPropertyValueAsString(final String propertyName, final Object value) throws IOException {
       final String rawValue = StringUtils.isObjectSet(value) ? value.toString() : "";
-      final String valueAsString = rawValue.trim();
 
-      return propertyName.equalsIgnoreCase("file") ?
-            loadContentFromFile(valueAsString) : valueAsString;
+      return rawValue.trim();
    }
 
    protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {

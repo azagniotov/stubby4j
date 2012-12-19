@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.http.client;
 
-import by.stub.cli.CommandLineIntepreter;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.server.JettyFactory;
 import by.stub.server.JettyManager;
 import by.stub.server.JettyManagerFactory;
@@ -53,9 +53,9 @@ public final class StubbyClient {
    public void startJetty(final int clientPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
 
       final Map<String, String> params = new HashMap<String, String>();
-      params.put(CommandLineIntepreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
-      params.put(CommandLineIntepreter.OPTION_SSLPORT, String.format("%s", sslPort));
-      params.put(CommandLineIntepreter.OPTION_ADMINPORT, String.format("%s", adminPort));
+      params.put(CommandLineInterpreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
+      params.put(CommandLineInterpreter.OPTION_SSLPORT, String.format("%s", sslPort));
+      params.put(CommandLineInterpreter.OPTION_ADMINPORT, String.format("%s", adminPort));
 
       jettyManager = new JettyManagerFactory().construct(yamlConfigurationFilename, params);
       jettyManager.startJetty();

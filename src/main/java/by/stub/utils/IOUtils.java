@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.Writer;
+import by.stub.cli.CommandLineInterpreter;
+
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 /**
  * @author Alexander Zagniotov
@@ -48,6 +50,38 @@ public final class IOUtils {
 
    private IOUtils() {
 
+   }
+
+   public static String readFile(String path) throws IOException {
+      FileInputStream stream = new FileInputStream(new File(path));
+      try {
+         FileChannel fc = stream.getChannel();
+         MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+         /* Instead of using default, pass in a decoder. */
+         return Charset.defaultCharset().decode(bb).toString();
+      }
+      finally {
+         stream.close();
+      }
+   }
+
+   //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
+   public static String loadContentFromFile(final String filePath) throws IOException {
+      final File contentFile = new File(getDataDirectory(), filePath);
+
+      if (!contentFile.isFile()) {
+         throw new IOException(String.format("Could not load file from path: %s", filePath));
+      }
+
+      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
+
+      return IOUtils.enforceSystemLineSeparator(loadedContent);
+   }
+
+   private static String getDataDirectory() {
+      String yamlConfigFilename = CommandLineInterpreter.getCommandlineParams().get("data");
+      if (yamlConfigFilename == null) yamlConfigFilename = CommandLineInterpreter.getCurrentJarLocation(CommandLineInterpreter.class);
+      return new File(yamlConfigFilename).getParent();
    }
 
    public static String enforceSystemLineSeparator(final String loadedContent) {

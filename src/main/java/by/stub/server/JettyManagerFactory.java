@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.server;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
 import by.stub.database.DataStore;
 import by.stub.database.thread.ConfigurationScanner;
@@ -30,7 +31,7 @@ import org.eclipse.jetty.util.log.Log;
 import java.util.List;
 import java.util.Map;
 
-public final class JettyManagerFactory {
+public class JettyManagerFactory {
 
    public JettyManagerFactory() {
 
@@ -44,14 +45,19 @@ public final class JettyManagerFactory {
 
          final YamlParser yamlParser = new YamlParser(yamlConfigFilename);
          final List<StubHttpLifecycle> httpLifecycles = yamlParser.parseAndLoad();
+         System.out.println();
          final DataStore dataStore = new DataStore(httpLifecycles);
          final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
          final Server server = jettyFactory.construct(dataStore, yamlParser);
 
-         final ConfigurationScanner configurationScanner = new ConfigurationScanner(yamlParser, dataStore);
-         new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
+         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) watchDataStore(yamlParser, dataStore);
 
          return new JettyManager(server);
       }
+   }
+
+   public void watchDataStore(final YamlParser yamlParser, final DataStore dataStore){
+      final ConfigurationScanner configurationScanner = new ConfigurationScanner(yamlParser, dataStore);
+      new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
    }
 }

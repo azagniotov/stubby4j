@@ -1,5 +1,6 @@
 package integration.by.stub.http.client;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.ClientHttpResponse;
@@ -34,6 +35,7 @@ public class StubbyClientTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
+      CommandLineInterpreter.parseCommandLine(new String[]{});
       final URL url = StubbyClientTest.class.getResource("/yaml/stubbyclient-test-data.yaml");
       Assert.assertNotNull(url);
 

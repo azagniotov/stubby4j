@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.utils.IOUtils;
 import by.stub.utils.StringUtils;
 
 import java.util.Collections;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public class StubResponse {
 
-   private String status = null;
+   private String status = "200";
    private String body = null;
    private String file = null;
    private String latency = null;
@@ -94,7 +95,11 @@ public class StubResponse {
       if (!StringUtils.isSet(file)) {
          return getBody();
       }
-      return file;
+      try {
+         return IOUtils.loadContentFromFile(file);
+      } catch (Exception ex) {
+         return getBody();
+      }
    }
 
    public boolean isConfigured() {

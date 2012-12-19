@@ -1,5 +1,6 @@
 package integration.by.stub.yaml.stubs;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -30,12 +31,30 @@ public class StubRequestTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
+      CommandLineInterpreter.parseCommandLine(new String[]{});
 
       final URL url = StubRequestTest.class.getResource("/yaml/stubrequestit-test-data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
       stubHttpLifecycles = yamlParser.parseAndLoad();
+   }
+
+   @Test
+   public void ShouldMatchRequest_WhenMethodInRequestMethodArray() throws Exception {
+      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn("/invoice/789");
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+
+      final StubRequest assertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
+      for (final StubHttpLifecycle stub : stubHttpLifecycles) {
+         if (stub.getRequest().getUrl().equals("/invoice/789")) {
+            Assert.assertEquals(stub.getResponse(), assertionLifecycle.getResponse());
+            return;
+         }
+      }
    }
 
    @Test
@@ -55,7 +74,6 @@ public class StubRequestTest {
       assertionRequest.setHeaders(headers);
 
       final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
-
       Assert.assertTrue(stubHttpLifecycles.contains(assertionLifecycle));
    }
 
