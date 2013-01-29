@@ -1,17 +1,10 @@
 package system.by.stub;
 
-import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.http.client.StubbyClient;
 import by.stub.testing.junit.categories.SystemTest;
 import by.stub.utils.StringUtils;
-import com.google.api.client.http.ByteArrayContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
@@ -37,9 +30,6 @@ public class AdminTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-      ANSITerminal.muteConsole(true);
-
       webClient = new NetHttpTransport().createRequestFactory(new HttpRequestInitializer() {
          @Override
          public void initialize(final HttpRequest request) {

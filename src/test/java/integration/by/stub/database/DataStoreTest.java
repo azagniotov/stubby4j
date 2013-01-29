@@ -1,17 +1,9 @@
 package integration.by.stub.database;
 
-import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.DataStore;
 import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.NotFoundStubResponse;
-import by.stub.yaml.stubs.RedirectStubResponse;
-import by.stub.yaml.stubs.StubHttpLifecycle;
-import by.stub.yaml.stubs.StubRequest;
-import by.stub.yaml.stubs.StubResponse;
-import by.stub.yaml.stubs.StubResponseTypes;
-import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import by.stub.yaml.stubs.*;
 import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -46,10 +38,6 @@ public class DataStoreTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-
-      ANSITerminal.muteConsole(true);
-
       final URL url = DataStoreTest.class.getResource("/yaml/datastoreit-test-data.yaml");
       Assert.assertNotNull(url);
 

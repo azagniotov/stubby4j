@@ -51,11 +51,17 @@ public final class StubbyClient {
    }
 
    public void startJetty(final int clientPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      final String clientPortString = String.format("%s", clientPort);
+      final String sslPortString = String.format("%s", sslPort);
+      final String adminPortString = String.format("%s", adminPort);
 
       final Map<String, String> params = new HashMap<String, String>();
-      params.put(CommandLineInterpreter.OPTION_CLIENTPORT, String.format("%s", clientPort));
-      params.put(CommandLineInterpreter.OPTION_SSLPORT, String.format("%s", sslPort));
-      params.put(CommandLineInterpreter.OPTION_ADMINPORT, String.format("%s", adminPort));
+      params.put(CommandLineInterpreter.OPTION_CLIENTPORT, clientPortString);
+      params.put(CommandLineInterpreter.OPTION_SSLPORT, sslPortString);
+      params.put(CommandLineInterpreter.OPTION_ADMINPORT, adminPortString);
+
+      final String[] args = new String[]{"-m", "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
+      CommandLineInterpreter.parseCommandLine(args);
 
       jettyManager = new JettyManagerFactory().construct(yamlConfigurationFilename, params);
       jettyManager.startJetty();

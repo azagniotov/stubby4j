@@ -1,7 +1,6 @@
 package system.by.stub;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.http.client.StubbyClient;
 import by.stub.testing.junit.categories.SystemTest;
 import by.stub.utils.StringUtils;
@@ -59,9 +58,6 @@ public class StubsTest {
       stubsUrlAsString = String.format("http://localhost:%s", clientPort);
       stubsSslUrlAsString = String.format("https://localhost:%s", sslPort);
       adminUrlAsString = String.format("http://localhost:%s", adminPort);
-
-      //Pretend we loaded a data file (since file: params in data config are relative to it, not the directory of execution)
-      CommandLineInterpreter.parseCommandLine(new String[]{"-d", url.getPath()});
    }
 
    @AfterClass
