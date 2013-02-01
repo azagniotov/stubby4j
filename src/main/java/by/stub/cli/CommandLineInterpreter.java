@@ -23,6 +23,7 @@ import by.stub.utils.StringUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -48,8 +49,6 @@ public class CommandLineInterpreter {
    public static final String OPTION_MUTE = "mute";
    public static final String OPTION_WATCH = "watch";
    public static final String OPTION_DEBUG = "debug";
-
-   private static final String[] ALL_OPTIONS = {OPTION_ADDRESS, OPTION_CLIENTPORT, OPTION_SSLPORT, OPTION_ADMINPORT, OPTION_CONFIG, OPTION_KEYSTORE, OPTION_KEYPASS};
 
    public static final String OPTION_HELP = "help";
 
@@ -152,18 +151,18 @@ public class CommandLineInterpreter {
    }
 
    /**
-    * Identifies what command line arguments from available have been passed by user
+    * Identifies what command line arguments that have been passed by user are matching available options
     *
     * @return a map of passed command line arguments where key is the name of the argument
     */
    public static Map<String, String> getCommandlineParams() {
 
-      final Map<String, String> params = new HashMap<String, String>();
-      for (final String option : ALL_OPTIONS) {
-         if (line.hasOption(option)) {
-            params.put(option, line.getOptionValue(option));
+      final Option[] options = line.getOptions();
+
+      return new HashMap<String, String>() {{
+         for (final Option option : options) {
+            put(option.getLongOpt(), option.getValue());
          }
-      }
-      return params;
+      }};
    }
 }

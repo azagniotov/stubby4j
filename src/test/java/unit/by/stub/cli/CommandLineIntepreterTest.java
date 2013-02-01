@@ -59,10 +59,10 @@ public class CommandLineIntepreterTest {
    }
 
    @Test
-   public void shouldReturnEmptyCommandlineParamsWhenHelpPresent() throws Exception {
+   public void shouldReturnOneCommandlineParamWhenHelpArgPresent() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"--help"});
       final Map<String, String> params = CommandLineInterpreter.getCommandlineParams();
-      Assert.assertEquals(0, params.size());
+      Assert.assertEquals(1, params.size());
    }
 
    @Test

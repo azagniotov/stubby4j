@@ -78,9 +78,10 @@ public class StubsTest {
       final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
 
       final String contentTypeHeader = response.getContentType();
+      final String responseContent = response.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals(contentAsString, response.parseAsString().trim());
+      Assert.assertEquals(contentAsString, responseContent);
       Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
    }
 

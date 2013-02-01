@@ -4,7 +4,7 @@ When creating request/response data for the stub server, the config data should 
 Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a data file (`-d` or `--data`) with the following structure for each endpoint:
 
 * `request`: (REQUIRED) describes the client's call to the server
-   * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc.
+   * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc. Can be array of multiple HTTP methods
    * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request.
       * The key (header name) must be specified in lower case
       * If stubbed headers are a subset of headers in HTTP request, then the match is successful (`left outer join` concept)
@@ -44,6 +44,22 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       status: 200
       body: This is a single line text response
 
+
+-  request:
+      method: [GET, HEAD]
+      url: /uri/simple
+      headers:
+         Authorization: bob:secret
+
+   response:
+      headers:
+         content-type: application/json
+         access-control-allow-origin: "*"
+      status: 200
+      body: >
+         {
+             "name": "alex"
+         }
 
 -  request:
       method: POST

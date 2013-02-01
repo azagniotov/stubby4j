@@ -64,7 +64,6 @@ public class YamlParser {
       }
 
       loadedConfigAbsolutePath = yamlFile.getAbsolutePath();
-      System.out.println(loadedConfigAbsolutePath);
 
       return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.utf8Charset());
    }

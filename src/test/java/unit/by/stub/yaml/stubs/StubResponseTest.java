@@ -21,16 +21,6 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnFile_WhenFileIsSet() throws Exception {
-      final String fileContent = IOUtils.readFile(this.getClass().getResource("/json/systemtest-body-response-as-file.json").getFile());
-      final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile(this.getClass().getResource("/json/systemtest-body-response-as-file.json").getPath());
-      stubResponse.setBody("this is some body");
-
-      Assert.assertEquals(fileContent, stubResponse.getResponseBody());
-   }
-
-   @Test
    public void getResponseBody_ShouldReturnBody_WhenFileCannotBeFound() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
