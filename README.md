@@ -70,16 +70,6 @@ See `docs` directory for:
 * [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 
-## Artifacts
-See `artifacts` directory for the following stubby4j SNAPSHOT JARs:
-* Fat
-* Skinny
-* Sources
-* Javadocs
-
-**Please keep in mind that JARs in `artifacts` directory might be few versions ahead of [Maven Central](http://search.maven.org/#search|ga|1|stubby4j)**
-
-
 ## Authors
 See AUTHORS.md for details.
 
