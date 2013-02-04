@@ -1,7 +1,7 @@
 package system.by.stub;
 
 import by.stub.handlers.StubsRegistrationHandler;
-import by.stub.http.client.StubbyClient;
+import by.stub.client.StubbyClient;
 import by.stub.testing.junit.categories.SystemTest;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.*;

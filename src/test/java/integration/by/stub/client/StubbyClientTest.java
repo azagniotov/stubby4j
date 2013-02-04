@@ -1,9 +1,9 @@
-package integration.by.stub.http.client;
+package integration.by.stub.client;
 
+import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.StubsRegistrationHandler;
-import by.stub.http.client.ClientHttpResponse;
-import by.stub.http.client.StubbyClient;
+import by.stub.client.StubbyClient;
 import by.stub.server.JettyFactory;
 import by.stub.testing.junit.categories.IntegrationTest;
 import by.stub.utils.StringUtils;
@@ -54,10 +54,10 @@ public class StubbyClientTest {
       final String host = "localhost";
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT);
+      final StubbyResponse stubbyResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubbyResponse.getContent());
    }
 
    @Test
@@ -66,7 +66,7 @@ public class StubbyClientTest {
       final String host = "localhost";
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeRequest(
+      final StubbyResponse stubbyResponse = stubbyClient.makeRequest(
             HttpSchemes.HTTPS,
             HttpMethods.GET,
             JettyFactory.DEFAULT_HOST,
@@ -74,8 +74,8 @@ public class StubbyClientTest {
             SSL_PORT,
             null);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubbyResponse.getContent());
    }
 
    @Test(expected = Stubby4JException.class)
@@ -84,7 +84,7 @@ public class StubbyClientTest {
       final String host = "localhost";
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.makeRequest(
+      final StubbyResponse stubbyResponse = stubbyClient.makeRequest(
             HttpSchemes.HTTPS,
             HttpMethods.MOVE,
             JettyFactory.DEFAULT_HOST,
@@ -100,10 +100,10 @@ public class StubbyClientTest {
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
+      final StubbyResponse stubbyResponse = stubbyClient.doGet(host, uri, port);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubbyResponse.getContent());
    }
 
    @Test
@@ -111,10 +111,10 @@ public class StubbyClientTest {
 
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri);
+      final StubbyResponse stubbyResponse = stubbyClient.doGetUsingDefaults(uri);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"1\", \"description\" : \"milk\"}", stubbyResponse.getContent());
    }
 
    @Test
@@ -125,10 +125,10 @@ public class StubbyClientTest {
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
+      final StubbyResponse stubbyResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubbyResponse.getContent());
    }
 
    @Test
@@ -138,10 +138,10 @@ public class StubbyClientTest {
       final String host = "localhost";
       final String uri = "/item/auth";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT, encodedCredentials);
+      final StubbyResponse stubbyResponse = stubbyClient.doGetOverSsl(host, uri, SSL_PORT, encodedCredentials);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubbyResponse.getContent());
    }
 
    @Test
@@ -149,10 +149,10 @@ public class StubbyClientTest {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
       final String uri = "/item/auth";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGetUsingDefaults(uri, encodedCredentials);
+      final StubbyResponse stubbyResponse = stubbyClient.doGetUsingDefaults(uri, encodedCredentials);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("{\"id\" : \"8\", \"description\" : \"authorized\"}", stubbyResponse.getContent());
    }
 
 
@@ -164,11 +164,11 @@ public class StubbyClientTest {
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
+      final StubbyResponse stubbyResponse = stubbyClient.doGet(host, uri, port, encodedCredentials);
 
 
-      Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("Unauthorized with supplied encoded credentials: 'Ym9iOndyb25nLXNlY3JldA==' which decodes to 'bob:wrong-secret'", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, stubbyResponse.getResponseCode());
+      Assert.assertEquals("Unauthorized with supplied encoded credentials: 'Ym9iOndyb25nLXNlY3JldA==' which decodes to 'bob:wrong-secret'", stubbyResponse.getContent());
    }
 
    @Test
@@ -177,10 +177,10 @@ public class StubbyClientTest {
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
+      final StubbyResponse stubbyResponse = stubbyClient.doGet(host, uri, port);
 
-      Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("You are not authorized to view this page without supplied 'Authorization' HTTP header", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.UNAUTHORIZED_401, stubbyResponse.getResponseCode());
+      Assert.assertEquals("You are not authorized to view this page without supplied 'Authorization' HTTP header", stubbyResponse.getContent());
    }
 
 
@@ -190,10 +190,10 @@ public class StubbyClientTest {
       final String uri = "/item/888";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doGet(host, uri, port);
+      final StubbyResponse stubbyResponse = stubbyClient.doGet(host, uri, port);
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for GET request at URI /item/888", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubbyResponse.getResponseCode());
+      Assert.assertEquals("No data found for GET request at URI /item/888", stubbyResponse.getContent());
    }
 
 
@@ -203,10 +203,10 @@ public class StubbyClientTest {
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "post body");
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("Got post response", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("Got post response", stubbyResponse.getContent());
    }
 
    @Test
@@ -218,10 +218,10 @@ public class StubbyClientTest {
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
       final String post = "{\"action\" : \"submit\"}";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, encodedCredentials, post);
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, encodedCredentials, post);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("OK", stubbyResponse.getContent());
    }
 
    @Test
@@ -231,20 +231,20 @@ public class StubbyClientTest {
       final String uri = "/item/submit";
       final String post = "{\"action\" : \"submit\"}";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, post, encodedCredentials);
+      final StubbyResponse stubbyResponse = stubbyClient.doPostUsingDefaults(uri, post, encodedCredentials);
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("OK", stubbyResponse.getContent());
    }
 
    @Test
    public void doPostUsingDefaults_ShouldMakeSuccessfulPost() throws Exception {
       final String uri = "/item/1";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, "post body");
+      final StubbyResponse stubbyResponse = stubbyClient.doPostUsingDefaults(uri, "post body");
 
-      Assert.assertEquals(HttpStatus.OK_200, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("Got post response", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.OK_200, stubbyResponse.getResponseCode());
+      Assert.assertEquals("Got post response", stubbyResponse.getContent());
    }
 
 
@@ -254,10 +254,10 @@ public class StubbyClientTest {
       final String uri = "";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "post body");
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI / for post data: post body", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubbyResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI / for post data: post body", stubbyResponse.getContent());
    }
 
 
@@ -267,10 +267,10 @@ public class StubbyClientTest {
       final String uri = null;
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "post body");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "post body");
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI / for post data: post body", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubbyResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI / for post data: post body", stubbyResponse.getContent());
    }
 
 
@@ -280,10 +280,10 @@ public class StubbyClientTest {
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "unexpected or wrong post body");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "unexpected or wrong post body");
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI /item/1 for post data: unexpected or wrong post body", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubbyResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI /item/1 for post data: unexpected or wrong post body", stubbyResponse.getContent());
    }
 
    @Test
@@ -292,10 +292,10 @@ public class StubbyClientTest {
       final String uri = "/item/1";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "");
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("No data found for POST request at URI /item/1", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NOT_FOUND_404, stubbyResponse.getResponseCode());
+      Assert.assertEquals("No data found for POST request at URI /item/1", stubbyResponse.getContent());
    }
 
    @Test
@@ -304,10 +304,10 @@ public class StubbyClientTest {
       final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, null);
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, null);
 
-      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.CREATED_201, stubbyResponse.getResponseCode());
+      Assert.assertEquals("OK", stubbyResponse.getContent());
    }
 
 
@@ -317,20 +317,20 @@ public class StubbyClientTest {
       final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "");
 
-      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.CREATED_201, stubbyResponse.getResponseCode());
+      Assert.assertEquals("OK", stubbyResponse.getContent());
    }
 
    @Test
    public void doPostUsingDefaults_ShouldMakeSuccessfulPost_WhenEmptyPostGiven() throws Exception {
       final String uri = "/item/path?paramOne=valueOne&paramTwo=12345";
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPostUsingDefaults(uri, "");
+      final StubbyResponse stubbyResponse = stubbyClient.doPostUsingDefaults(uri, "");
 
-      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("OK", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.CREATED_201, stubbyResponse.getResponseCode());
+      Assert.assertEquals("OK", stubbyResponse.getContent());
    }
 
    @Test
@@ -339,10 +339,10 @@ public class StubbyClientTest {
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, content);
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, content);
 
-      Assert.assertEquals(HttpStatus.CREATED_201, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("Configuration created successfully", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.CREATED_201, stubbyResponse.getResponseCode());
+      Assert.assertEquals("Configuration created successfully", stubbyResponse.getContent());
    }
 
    @Test
@@ -351,10 +351,10 @@ public class StubbyClientTest {
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, "");
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "");
 
-      Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, stubbyResponse.getResponseCode());
+      Assert.assertEquals("POST request on URI null was empty", stubbyResponse.getContent());
    }
 
    @Test
@@ -363,9 +363,9 @@ public class StubbyClientTest {
       final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-      final ClientHttpResponse clientHttpResponse = stubbyClient.doPost(host, uri, port, null);
+      final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, null);
 
-      Assert.assertEquals(HttpStatus.NO_CONTENT_204, clientHttpResponse.getResponseCode());
-      Assert.assertEquals("POST request on URI null was empty", clientHttpResponse.getContent());
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, stubbyResponse.getResponseCode());
+      Assert.assertEquals("POST request on URI null was empty", stubbyResponse.getContent());
    }
 }

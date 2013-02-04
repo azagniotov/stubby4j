@@ -6,7 +6,7 @@ import by.stub.server.JettyManager;
 import by.stub.server.JettyManagerFactory;
 import by.stub.testing.junit.categories.FunctionalTest;
 import by.stub.yaml.YamlParser;
-import integration.by.stub.http.client.StubbyClientTest;
+import integration.by.stub.client.StubbyClientTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

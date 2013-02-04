@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.http.client;
+package by.stub.client;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.server.JettyFactory;
@@ -79,10 +79,10 @@ public final class StubbyClient {
     * @param host      host that stubby4j is running on
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort) throws Exception {
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort) throws Exception {
       return doGet(host, uri, stubsPort, null);
    }
 
@@ -91,10 +91,10 @@ public final class StubbyClient {
     *
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGetOverSsl(final String host, final String uri) throws Exception {
+   public StubbyResponse doGetOverSsl(final String host, final String uri) throws Exception {
       return doGetOverSsl(host, uri, JettyFactory.DEFAULT_SSL_PORT, null);
    }
 
@@ -104,10 +104,10 @@ public final class StubbyClient {
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
     * @param port SSL port
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception {
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception {
       return doGetOverSsl(host, uri, port, null);
    }
 
@@ -120,13 +120,13 @@ public final class StubbyClient {
     * @param uri                URI for the HTTP request
     * @param port               SSL port
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, port, encodedCredentials);
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, port, encodedCredentials);
 
-      return makeRequest(clientHttpRequest);
+      return makeRequest(stubbyRequest);
    }
 
    /**
@@ -138,13 +138,13 @@ public final class StubbyClient {
     * @param uri                URI for the HTTP request
     * @param stubsPort          port that stubby4j Stubs is running on
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, encodedCredentials);
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, encodedCredentials);
 
-      return makeRequest(clientHttpRequest);
+      return makeRequest(stubbyRequest);
    }
 
 
@@ -152,10 +152,10 @@ public final class StubbyClient {
     * Makes GET HTTP request to stubby running on default host and port - localhost:8882
     *
     * @param uri URI for the HTTP request
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGetUsingDefaults(final String uri) throws Exception {
+   public StubbyResponse doGetUsingDefaults(final String uri) throws Exception {
       return doGetUsingDefaults(uri, null);
    }
 
@@ -166,10 +166,10 @@ public final class StubbyClient {
     *
     * @param uri                URI for the HTTP request
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception {
+   public StubbyResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception {
       return doGet(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials);
    }
 
@@ -180,10 +180,10 @@ public final class StubbyClient {
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
     * @param post      data to POST to the server
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception {
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception {
       return doPost(host, uri, stubsPort, null, post);
    }
 
@@ -197,13 +197,13 @@ public final class StubbyClient {
     * @param stubsPort          port that stubby4j Stubs is running on
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @param post               data to POST to the server
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, encodedCredentials, post);
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, encodedCredentials, post);
 
-      return makeRequest(clientHttpRequest);
+      return makeRequest(stubbyRequest);
    }
 
    /**
@@ -211,10 +211,10 @@ public final class StubbyClient {
     *
     * @param uri  URI for the HTTP request
     * @param post data to POST to the server
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post) throws Exception {
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post) throws Exception {
       return doPostUsingDefaults(uri, post, null);
    }
 
@@ -226,10 +226,10 @@ public final class StubbyClient {
     * @param uri                URI for the HTTP request
     * @param post               data to POST to the server
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception {
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception {
       return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, encodedCredentials, post);
    }
 
@@ -242,27 +242,27 @@ public final class StubbyClient {
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
     * @param post      data to POST to the server
-    * @return ClientHttpResponse with HTTP status code and message from the server
+    * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public ClientHttpResponse makeRequest(final String scheme,
+   public StubbyResponse makeRequest(final String scheme,
                                          final String method,
                                          final String host,
                                          final String uri,
                                          final int stubsPort,
                                          final String post) throws Exception {
-      final ClientHttpRequest clientHttpRequest = new ClientHttpRequest(scheme, method, uri, host, stubsPort, null, post);
+      final StubbyRequest stubbyRequest = new StubbyRequest(scheme, method, uri, host, stubsPort, null, post);
 
-      return makeRequest(clientHttpRequest);
+      return makeRequest(stubbyRequest);
    }
 
-   private ClientHttpResponse makeRequest(final ClientHttpRequest clientHttpRequest) throws Exception {
-      final ClientHttpTransport clientHttpTransport = new ClientHttpTransport(clientHttpRequest);
-      final HttpURLConnection connection = clientHttpTransport.constructHttpConnection();
+   private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
+      final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport(stubbyRequest);
+      final HttpURLConnection connection = stubbyHttpTransport.constructHttpConnection();
 
       try {
          connection.connect();
-         final ClientHttpResponseFactory responseFactory = new ClientHttpResponseFactory(connection);
+         final StubbyResponseFactory responseFactory = new StubbyResponseFactory(connection);
 
          return responseFactory.construct();
       } finally {

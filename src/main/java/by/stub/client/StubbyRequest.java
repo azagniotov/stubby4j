@@ -17,11 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.http.client;
+package by.stub.client;
 
 import by.stub.utils.StringUtils;
 
-final class ClientHttpRequest {
+final class StubbyRequest {
+
+   private static final String URL_TEMPLATE = "%s://%s:%s%s";
 
    private final String scheme;
    private final String method;
@@ -31,30 +33,30 @@ final class ClientHttpRequest {
    private final String base64encodedCredentials;
    private final int clientPort;
 
-   ClientHttpRequest(final String scheme,
-                     final String newMethod,
-                     final String newUri,
-                     final String newHost,
-                     final int newClientPort) {
+   StubbyRequest(final String scheme,
+                 final String newMethod,
+                 final String newUri,
+                 final String newHost,
+                 final int newClientPort) {
       this(scheme, newMethod, newUri, newHost, newClientPort, null, null);
    }
 
-   ClientHttpRequest(final String scheme,
-                     final String method,
-                     final String uri,
-                     final String host,
-                     final int port,
-                     final String newBase64encodedCredentials) {
+   StubbyRequest(final String scheme,
+                 final String method,
+                 final String uri,
+                 final String host,
+                 final int port,
+                 final String newBase64encodedCredentials) {
       this(scheme, method, uri, host, port, newBase64encodedCredentials, null);
    }
 
-   ClientHttpRequest(final String scheme,
-                     final String method,
-                     final String uri,
-                     final String host,
-                     final int clientPort,
-                     final String newBase64encodedCredentials,
-                     final String post) {
+   StubbyRequest(final String scheme,
+                 final String method,
+                 final String uri,
+                 final String host,
+                 final int clientPort,
+                 final String newBase64encodedCredentials,
+                 final String post) {
       this.scheme = scheme;
       this.method = method;
       this.uri = uri;
@@ -68,14 +70,6 @@ final class ClientHttpRequest {
       return method;
    }
 
-   String getUri() {
-      return StringUtils.isSet(uri) ? uri : "";
-   }
-
-   String getHost() {
-      return host;
-   }
-
    String getPost() {
       return StringUtils.isSet(post) ? post : "";
    }
@@ -84,11 +78,14 @@ final class ClientHttpRequest {
       return base64encodedCredentials;
    }
 
-   int getClientPort() {
-      return clientPort;
+   public String constructFullUrl() {
+      return String.format(URL_TEMPLATE, scheme, host, clientPort, StringUtils.isSet(uri) ? uri : "");
    }
 
-   String getScheme() {
-      return scheme;
+   public int calculatePostLength() {
+      if (StringUtils.isSet(post)) {
+         return post.getBytes(StringUtils.utf8Charset()).length;
+      }
+      return 0;
    }
 }

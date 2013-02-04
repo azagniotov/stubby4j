@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.http.client;
+package by.stub.client;
 
-public final class ClientHttpResponse {
+public final class StubbyResponse {
 
    private final int responseCode;
    private final String content;
 
-   public ClientHttpResponse(final int newResponseCode, final String newContent) {
+   public StubbyResponse(final int newResponseCode, final String newContent) {
       this.responseCode = newResponseCode;
       this.content = newContent;
    }
