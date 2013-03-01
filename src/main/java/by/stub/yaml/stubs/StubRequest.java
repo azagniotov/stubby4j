@@ -162,7 +162,9 @@ public class StubRequest {
 
       final StubRequest other = (StubRequest) o;
 
-      if (stringValuesDoNotMatch("post body", other.getPostBody(), this.getPostBody())) return false;
+      final String postBody = other.getPostBody();
+      if (StringUtils.isSet(postBody) && stringValuesDoNotMatch("post body", other.getPostBody(), this.getPostBody())) return false;
+
       if (arraysDoNotMatch(other.method, this.method)) return false;
       if (stringValuesDoNotMatch("url", other.url, this.url)) return false;
 

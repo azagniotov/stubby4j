@@ -70,6 +70,33 @@ public class StubsTest {
 
    }
 
+   @Test
+   public void should_ReactToPostRequest_WithoutPost_AndPostNotSupplied() throws Exception {
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
+      final HttpRequest request = constructHttpRequest("POST", requestUrl);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, response.getStatusCode());
+   }
+
+   @Test
+   public void should_ReactToPostRequest_WithoutPost_AndPostSupplied() throws Exception {
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
+      final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
+      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      Assert.assertEquals(HttpStatus.NO_CONTENT_204, response.getStatusCode());
+   }
+
 
    @Test
    public void should_ReturnAllProducts_WhenGetRequestMade() throws Exception {

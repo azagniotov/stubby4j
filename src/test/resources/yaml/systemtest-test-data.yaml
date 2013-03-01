@@ -27,7 +27,6 @@
       body: >
          {"id": "123", "status": "updated"}
 
-
 -  request:
       method: POST
       url: /invoice/new
@@ -42,3 +41,10 @@
       status: 201
       body: >
          {"id": "456", "status": "created"}
+
+-  request:
+      url: /invoice/new/no/post
+      method: POST
+   response:
+      status: 204
+
