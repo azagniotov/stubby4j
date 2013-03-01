@@ -79,7 +79,7 @@ See THANKS.md for details.
 
 
 ## See Also
-**[stubby4node](https://github.com/Afmrak/stubby4node):** A NodeJS implementation of stubby4j
+**[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
 
 
 ## Copyright
