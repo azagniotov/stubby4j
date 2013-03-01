@@ -18,7 +18,7 @@
    <inceptionYear>2012</inceptionYear>
    <groupId>by.stub</groupId>
    <artifactId>stubby4j</artifactId>
-   <version>1.0.56</version>
+   <version>1.0.57-SNAPSHOT</version>
    <packaging>jar</packaging>
 
    <properties>
@@ -352,7 +352,7 @@
       <connection>scm:git:git@github.com:azagniotov/stubby4j.git</connection>
       <developerConnection>scm:git:git@github.com:azagniotov/stubby4j.git</developerConnection>
       <url>git@github.com:azagniotov/stubby4j.git</url>
-      <tag>stubby4j-1.0.56</tag>
+      <tag>stubby4j-1.0.47</tag>
    </scm>
 
    <issueManagement>
