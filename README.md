@@ -46,7 +46,7 @@ stubby4j is a fat JAR (for the skinny JAR, please look under `artifacts`), which
 * commons-codec-1.5.jar
 * snakeyaml-1.11.jar
 
-**stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
+**stubby4j is also compatible with Jetty 7.x.x and servlet API v3**
 
 
 ## Maven Central
