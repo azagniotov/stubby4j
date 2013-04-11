@@ -11,10 +11,10 @@ main/.idea/*
 unit/.idea/*
 integration/.idea/*
 functional/.idea/*
-main/*.iml
-unit/*.iml
-integration/*.iml
-functional/*.iml
+main/main.iml
+unit/unit.iml
+integration/integration.iml
+functional/functional.iml
 build/*
 out/*
 .idea/*
