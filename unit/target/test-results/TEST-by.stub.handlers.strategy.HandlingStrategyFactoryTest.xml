@@ -1,0 +1,10 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.handlers.strategy.HandlingStrategyFactoryTest" tests="4" failures="0" errors="0" timestamp="2013-04-11T21:23:07" hostname="eminence.gap.com" time="0.0020">
+  <properties/>
+  <testcase name="shouldIdentifyResponseStrategyForDefaultResponse" classname="by.stub.handlers.strategy.HandlingStrategyFactoryTest" time="0.0"/>
+  <testcase name="shouldIdentifyResponseStrategyForNotFoundResponse" classname="by.stub.handlers.strategy.HandlingStrategyFactoryTest" time="0.0"/>
+  <testcase name="shouldIdentifyResponseStrategyForUnauthorizedResponse" classname="by.stub.handlers.strategy.HandlingStrategyFactoryTest" time="0.0"/>
+  <testcase name="shouldIdentifyResponseStrategyForRedirectResponse" classname="by.stub.handlers.strategy.HandlingStrategyFactoryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

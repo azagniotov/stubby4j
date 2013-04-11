@@ -1,0 +1,104 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.client.StubbyClientTest" tests="25" failures="0" errors="0" timestamp="1970-01-01T00:00:00" hostname="eminence.gap.com" time="1.36571537956E9">
+  <properties/>
+  <testcase name="doGetOverSsl_ShouldMakeSuccessfulGet" classname="by.stub.client.StubbyClientTest" time="0.192"/>
+  <testcase name="makeRequest_ShouldMakeSuccessfulGetOverSsl" classname="by.stub.client.StubbyClientTest" time="0.013"/>
+  <testcase name="makeRequest_ShouldFailToMakeRequest_WhenUnsupportedMethodGiven" classname="by.stub.client.StubbyClientTest" time="0.0"/>
+  <testcase name="doGet_ShouldMakeSuccessfulGet" classname="by.stub.client.StubbyClientTest" time="0.018"/>
+  <testcase name="doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGet" classname="by.stub.client.StubbyClientTest" time="0.0090"/>
+  <testcase name="doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.01"/>
+  <testcase name="doGetOverSsl_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.012"/>
+  <testcase name="doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.01"/>
+  <testcase name="doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenWrongAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.014"/>
+  <testcase name="doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenNoAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.01"/>
+  <testcase name="doGet_ShouldMakeSuccessfulGet_WhenGivenEmptyUri" classname="by.stub.client.StubbyClientTest" time="0.015"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.0050"/>
+  <testcase name="doPostUsingDefaults_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPostUsingDefaults_ShouldMakeSuccessfulPost" classname="by.stub.client.StubbyClientTest" time="0.0050"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenGivenEmptyUri" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenGivenNullUri" classname="by.stub.client.StubbyClientTest" time="0.0040"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenGivenWrongPostData" classname="by.stub.client.StubbyClientTest" time="0.0050"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenGivenEmptyPostData" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenNullPostGiven" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenEmptyPostGiven" classname="by.stub.client.StubbyClientTest" time="0.0060"/>
+  <testcase name="doPostUsingDefaults_ShouldMakeSuccessfulPost_WhenEmptyPostGiven" classname="by.stub.client.StubbyClientTest" time="0.0050"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPostToCreateStubData" classname="by.stub.client.StubbyClientTest" time="0.05"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty" classname="by.stub.client.StubbyClientTest" time="0.0030"/>
+  <testcase name="doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull" classname="by.stub.client.StubbyClientTest" time="0.0020"/>
+  <system-out><![CDATA[]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/path?paramTwo=12345&paramOne=valueOne]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/redirect]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /atomfeed/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/submit]]>&#x1b;<![CDATA[[0m
+
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mAdmin portal configured at http://localhost:8889]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mStubs portal configured at http://localhost:8882]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mStubs portal configured with SSL at https://localhost:4443 using internal keystore]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[34m
+Quit: ctrl-c
+]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/auth OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/auth OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/auth OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/auth OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/auth OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> GET [stubs]/item/888]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/888 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/submit]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/submit OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/submit]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/submit OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/ OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/ OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [stubs]/item/1: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/1 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/path]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [stubs]/item/path: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/path OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/path]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [stubs]/item/path: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/path OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [stubs]/item/path]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [stubs]/item/path: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [stubs]/item/path OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/path?paramTwo=12345&paramOne=valueOne]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/redirect]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /atomfeed/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /item/auth]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/1]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /item/submit]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:59] <- 200 [admin]/stubdata/new OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [admin]/stubdata/new: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:59] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[31m[14:22:59] -> POST [admin]/stubdata/new: Error when extracting POST body: java.util.NoSuchElementException, returning null..]]>&#x1b;<![CDATA[[0m
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

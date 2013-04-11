@@ -1,0 +1,11 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.yaml.stubs.StubResponseTest" tests="5" failures="0" errors="0" timestamp="2013-04-11T21:23:07" hostname="eminence.gap.com" time="0.0020">
+  <properties/>
+  <testcase name="getResponseBody_ShouldReturnBody_WhenFileCannotBeFound" classname="by.stub.yaml.stubs.StubResponseTest" time="0.0"/>
+  <testcase name="getResponseBody_ShouldReturnBody_WhenFileIsNull" classname="by.stub.yaml.stubs.StubResponseTest" time="0.0"/>
+  <testcase name="getResponseBody_ShouldReturnBody_WhenFileIsEmpty" classname="by.stub.yaml.stubs.StubResponseTest" time="0.0"/>
+  <testcase name="getResponseBody_ShouldReturnEmptyBody_WhenFileAndBodyAreNull" classname="by.stub.yaml.stubs.StubResponseTest" time="0.0"/>
+  <testcase name="getResponseBody_ShouldReturnEmptyBody_WhenBodyIsEmpty" classname="by.stub.yaml.stubs.StubResponseTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

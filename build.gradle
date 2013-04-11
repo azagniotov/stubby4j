@@ -1,0 +1,50 @@
+// vim: ft=groovy
+defaultTasks 'clean', 'cobertura', 'build', 'cleanIdea', 'idea'
+
+description = 'Gradle configuration for stubby4j'
+
+buildscript {
+   repositories {
+      mavenCentral()
+   }
+
+   dependencies {
+      classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+   }
+}
+
+allprojects {
+   apply plugin: 'java'
+   apply plugin: 'idea'
+   apply plugin: 'eclipse'
+
+   sourceCompatibility = 1.6
+   tasks.withType(Compile) {
+      doFirst {
+         assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
+      }
+      options.encoding = 'UTF-8'
+   }
+   targetCompatibility = 1.6
+   project.buildDir = 'target'
+}
+
+subprojects {
+
+   repositories {
+      mavenCentral()
+      mavenLocal()
+   }
+
+   apply from: "$rootDir/conf/gradle/dependencies.gradle"
+   apply from: "$rootDir/conf/gradle/tests.gradle"
+
+   if (it.name == 'main') {
+      apply from: "$rootDir/conf/gradle/pmd.gradle"
+      apply from: "$rootDir/conf/gradle/sonatype.gradle"
+   } else {
+      apply from: "$rootDir/conf/gradle/cobertura.gradle"
+   }
+}
+
+apply from: "$rootDir/conf/gradle/idea.gradle"

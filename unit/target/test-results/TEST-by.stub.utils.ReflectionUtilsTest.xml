@@ -1,0 +1,9 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.utils.ReflectionUtilsTest" tests="3" failures="0" errors="0" timestamp="2013-04-11T21:23:07" hostname="eminence.gap.com" time="0.0030">
+  <properties/>
+  <testcase name="shouldGetObjectPropertiesAndValues" classname="by.stub.utils.ReflectionUtilsTest" time="0.0020"/>
+  <testcase name="shouldSetValueOnObjectProperty" classname="by.stub.utils.ReflectionUtilsTest" time="0.0"/>
+  <testcase name="shouldNotSetValueOnObjectProperty" classname="by.stub.utils.ReflectionUtilsTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

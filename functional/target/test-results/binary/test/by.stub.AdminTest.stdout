@@ -1,0 +1,23 @@
+[35mLoaded: [GET] /invoice?status=active&type=full[0m
+[35mLoaded: [PUT] /invoice/123[0m
+[35mLoaded: [POST] /invoice/new[0m
+[35mLoaded: [POST] /invoice/new/no/post[0m
+
+[1m[30mAdmin portal configured at http://localhost:5999[0m
+[1m[30mStubs portal configured at http://localhost:5992[0m
+[1m[30mStubs portal configured with SSL at https://localhost:5993 using internal keystore[0m
+[34m
+Quit: ctrl-c
+[0m
+[36m[14:22:56] -> POST [admin]/stubdata/new[0m
+[35mLoaded: [GET] /invoice/updated[0m
+[32m[14:22:56] <- 200 [admin]/stubdata/new OK[0m
+[36m[14:22:56] -> GET [stubs]/invoice/updated[0m
+[32m[14:22:56] <- 200 [stubs]/invoice/updated OK[0m
+[36m[14:22:56] -> POST [admin]/stubdata/new[0m
+[35mLoaded: [GET] /invoice/updated[0m
+[32m[14:22:56] <- 200 [admin]/stubdata/new OK[0m
+[36m[14:22:56] -> GET [stubs]/invoice/123[0m
+[32m[14:22:56] <- 200 [stubs]/invoice/123 OK[0m
+[36m[14:22:56] -> PUT [admin]/stubdata/new[0m
+[36m[14:22:56] -> POST [admin]/stubdata/new[0m

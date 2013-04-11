@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.AdminTest" tests="4" failures="0" errors="0" timestamp="1970-01-01T00:00:00" hostname="eminence.gap.com" time="1.365715376437E9">
+  <properties/>
+  <testcase name="should_UpdatedStubData_AndMakeGetRequestToUpdatedEndpoint" classname="by.stub.AdminTest" time="0.121"/>
+  <testcase name="should_UpdatedstubData_AndFailToMakeGetRequestRemovedEndpoint" classname="by.stub.AdminTest" time="0.021"/>
+  <testcase name="should_FailToUpdateStubData_WhenMethodIsNotPost" classname="by.stub.AdminTest" time="0.0030"/>
+  <testcase name="should_FailToUpdateStubData_WhenPostBadData" classname="by.stub.AdminTest" time="0.0050"/>
+  <system-out><![CDATA[]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice?status=active&type=full]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [PUT] /invoice/123]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /invoice/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /invoice/new/no/post]]>&#x1b;<![CDATA[[0m
+
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mAdmin portal configured at http://localhost:5999]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mStubs portal configured at http://localhost:5992]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[1m]]>&#x1b;<![CDATA[[30mStubs portal configured with SSL at https://localhost:5993 using internal keystore]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[34m
+Quit: ctrl-c
+]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice/updated]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:56] <- 200 [admin]/stubdata/new OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> GET [stubs]/invoice/updated]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:56] <- 200 [stubs]/invoice/updated OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice/updated]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:56] <- 200 [admin]/stubdata/new OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> GET [stubs]/invoice/123]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[32m[14:22:56] <- 200 [stubs]/invoice/123 OK]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> PUT [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[36m[14:22:56] -> POST [admin]/stubdata/new]]>&#x1b;<![CDATA[[0m
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

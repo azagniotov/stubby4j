@@ -1,0 +1,59 @@
+configurations {
+   coberturaRuntime { extendsFrom testRuntime }
+}
+
+dependencies {
+   coberturaRuntime 'net.sourceforge.cobertura:cobertura:1.9.4.1'
+}
+
+task coberturaPrepare() {
+   ext.datafileLocation = project(":main").buildDir.path + "/cobertura.ser"
+    doLast {
+      ant.taskdef(
+         name: 'coberturaInstrument', 
+         classname: 'net.sourceforge.cobertura.ant.InstrumentTask',
+         classpath: configurations.coberturaRuntime.asPath
+      )
+     
+      ant.taskdef(
+         name: 'coberturaReport', 
+         classname: 'net.sourceforge.cobertura.ant.ReportTask',
+         classpath: configurations.coberturaRuntime.asPath
+      )
+   }
+}
+
+task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
+   ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
+   doLast {
+      ant.coberturaInstrument(
+         todir: outputDir, 
+         datafile: coberturaPrepare.datafileLocation) {
+            fileset(
+               dir: project(':main').sourceSets.main.output.classesDir, 
+               includes: "**/*.class",
+               excludes: "**/*Test.class, **/ConfigurationScanner.class, **/Stubby4JException.class, **/Main.class, **/HttpServletResponseWithGetStatus.class"
+         )
+      }   
+   }
+}
+
+task coberturaReport(dependsOn: ['coberturaInstrument', 'test']) << {
+   ant.coberturaReport(
+      format: "html", 
+      destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
+      srcdir: "$rootDir/main/java", 
+      datafile: coberturaPrepare.datafileLocation
+   )
+}
+
+tasks.withType(Test) {
+   doFirst {
+      systemProperty 'net.sourceforge.cobertura.datafile', coberturaPrepare.datafileLocation
+      classpath = files(coberturaInstrument.outputDir) + classpath + configurations.coberturaRuntime
+   }
+}
+
+task cobertura {
+   dependsOn = ['clean', 'coberturaReport']
+}

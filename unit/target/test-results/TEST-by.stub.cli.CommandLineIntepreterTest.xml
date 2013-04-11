@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.cli.CommandLineIntepreterTest" tests="11" failures="0" errors="0" timestamp="2013-04-11T21:23:06" hostname="eminence.gap.com" time="0.014">
+  <properties/>
+  <testcase name="shouldBeTrueWhenYamlIsProvided" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0090"/>
+  <testcase name="shouldBeFalseThatYamlIsNotProvided" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldFailOnInvalidCommandlineLongOptionString" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldFailOnInvalidCommandlineShortOptionString" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldFailOnMissingArgumentForExistingShortOption" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldFailOnMissingArgumentForExistingLongOption" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="testIsHelpWhenLongOptionGiven" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldReturnOneCommandlineParamWhenHelpArgPresent" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0010"/>
+  <testcase name="shouldReturnEmptyCommandlineParams" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <testcase name="shouldReturnCommandlineParams" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0010"/>
+  <ignored-testcase name="shouldGetCurrentJarLocation" classname="by.stub.cli.CommandLineIntepreterTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

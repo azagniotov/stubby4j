@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jsr305-1.3.9">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/com.google.code.findbugs/jsr305/1.3.9/jar/40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf/jsr305-1.3.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/com.google.code.findbugs/jsr305/1.3.9/source/623b37de18b6a93540bc0c793c2e1dbd04fc87fa/jsr305-1.3.9-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,31 @@
+-  request:
+      method: GET
+      url: /invoice/123
+      headers:
+         content-type: application/xml
+         content-length: 30
+         content-language: en-US
+
+   response:
+      status: 200
+      body: This is a response for 123
+
+
+-  request:
+      method: GET
+      url: /invoice/456
+
+   response:
+      status: 200
+      body: This is a response for 123
+
+-  request:
+      method: [HEAD, GET]
+      url: /invoice/789
+      query:
+         paramOne: one
+         paramTwo: two
+
+   response:
+      status: 200
+      body: This is a response for 123

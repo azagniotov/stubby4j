@@ -1,0 +1,20 @@
+idea {
+   project {
+      jdkName = '1.6'
+      wildcards += [
+         '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
+         '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',
+         '?*.tld', '?*.ftl', '?*.yaml', '?*.json', '?*.jks'
+      ]
+      ipr {
+         withXml {
+            provider ->
+               def node = provider.asNode()
+               node.append(new XmlParser().parse(file("conf/idea/codeStyle.xml")))
+               node.append(new XmlParser().parse(file("conf/idea/inspectionProfile.xml")))
+               node.append(new XmlParser().parse(file("conf/idea/copyright.xml")))
+               node.append(new XmlParser().parse(file("conf/idea/vcs.xml")))
+         }
+      }
+   }
+}

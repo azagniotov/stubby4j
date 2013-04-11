@@ -25,7 +25,6 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Concentrate on the task at hand
 
 
-
 ## Why would a QA use stubby4j?
 * Specifiable mock responses to simulate page conditions without real data.
 * Easily swappable data config files to run different data sets and responses.
@@ -34,7 +33,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ###### All this goodness in just under 1.5MB
 
 ## Dependencies
-stubby4j is a fat JAR (for the skinny JAR, please look under `artifacts`), which contains the following dependencies:
+stubby4j is a fat JAR, which contains the following dependencies:
 
 * jetty-server-8.1.7.v20120910.jar
 * javax.servlet-3.0.0.v201112011016.jar
@@ -61,6 +60,9 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 </dependency>
 ```
 
+## Building with Gradle
+stubby4j is a multi-module Gradle project. IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files. Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files.
+
 ## Documentation
 See `docs` directory for:
 
@@ -69,6 +71,8 @@ See `docs` directory for:
 * [Code Examples](https://github.com/azagniotov/stubby4j/blob/master/docs/CODE-EXAMPLES.md)
 * [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
+## Change Log
+See CHANGELOG.md for details.
 
 ## Authors
 See AUTHORS.md for details.
@@ -80,7 +84,6 @@ See THANKS.md for details.
 
 ## See Also
 **[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
-
 
 ## Copyright
 See COPYRIGHT for details.

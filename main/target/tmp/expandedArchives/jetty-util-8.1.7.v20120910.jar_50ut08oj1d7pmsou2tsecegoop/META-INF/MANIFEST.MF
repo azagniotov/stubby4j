@@ -1,0 +1,49 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven Bundle Plugin
+Built-By: jesse
+Build-Jdk: 1.7.0_03
+Implementation-Vendor: Eclipse.org - Jetty
+Implementation-Version: 8.1.7.v20120910
+url: http://www.eclipse.org/jetty
+Export-Package: org.eclipse.jetty.util.security;uses:="org.eclipse.jet
+ ty.util,org.eclipse.jetty.util.resource,org.eclipse.jetty.util.log";v
+ ersion="8.1.7",org.eclipse.jetty.util.statistic;uses:="org.eclipse.je
+ tty.util";version="8.1.7",org.eclipse.jetty.util.thread;uses:="org.ec
+ lipse.jetty.util.component,org.eclipse.jetty.util.log,org.eclipse.jet
+ ty.util";version="8.1.7",org.eclipse.jetty.util.preventers;uses:="org
+ .eclipse.jetty.util.log,org.eclipse.jetty.util.component,javax.imagei
+ o,javax.xml.parsers";version="8.1.7",org.eclipse.jetty.util.component
+ ;uses:="org.eclipse.jetty.util.log,org.eclipse.jetty.util,org.eclipse
+ .jetty.util.resource";version="8.1.7",org.eclipse.jetty.util.resource
+ ;uses:="org.eclipse.jetty.util.log,org.eclipse.jetty.util";version="8
+ .1.7",org.eclipse.jetty.util.log;uses:="org.slf4j.spi,org.slf4j.helpe
+ rs,org.slf4j,org.eclipse.jetty.util";version="8.1.7",org.eclipse.jett
+ y.util.ssl;uses:="javax.net.ssl,org.eclipse.jetty.util.security,org.e
+ clipse.jetty.util.component,org.eclipse.jetty.util.resource,org.eclip
+ se.jetty.util.log,org.eclipse.jetty.util";version="8.1.7",org.eclipse
+ .jetty.util;uses:="org.eclipse.jetty.util.log,org.eclipse.jetty.util.
+ thread,org.eclipse.jetty.util.resource,javax.servlet,javax.servlet.ht
+ tp,org.eclipse.jetty.util.component";version="8.1.7",org.eclipse.jett
+ y.util.ajax;uses:="org.eclipse.jetty.util,org.eclipse.jetty.util.log"
+ ;version="8.1.7"
+Bundle-Classpath: .
+Tool: Bnd-1.15.0
+Bundle-Name: Jetty :: Utilities
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Copyright: Copyright (c) 2008-2012 Mort Bay Consulting Pty. Ltd.
+Bundle-Vendor: Eclipse Jetty Project
+Bundle-Version: 8.1.7.v20120910
+Bnd-LastModified: 1347303715180
+Bundle-ManifestVersion: 2
+Bundle-Description: Utility classes for Jetty
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0, http://www
+ .eclipse.org/org/documents/epl-v10.php
+Import-Package: javax.imageio,javax.net.ssl,javax.servlet;version="2.6
+ .0",javax.servlet.http;version="2.6.0",javax.xml.parsers,org.slf4j;re
+ solution:=optional;version="[1.5,2.0)",org.slf4j.helpers;version="[1.
+ 6,2)";resolution:=optional,org.slf4j.impl;version="[1.5,2.0)";resolut
+ ion:=optional,org.slf4j.spi;version="[1.6,2)";resolution:=optional
+Bundle-SymbolicName: org.eclipse.jetty.util
+Bundle-DocURL: http://www.eclipse.org/jetty
+

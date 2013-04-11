@@ -1,0 +1,42 @@
+-  request:
+      method: GET
+      url: /some/redirecting/uri
+
+   response:
+      status: 301
+      headers:
+         location: /invoice/123
+      body:
+
+
+-  request:
+      method: GET
+      url: /invoice/123
+   response:
+      status: 200
+      body: This is a response for 123
+
+-  request:
+      method: GET
+      url: /invoice/555
+      headers:
+         authorization: bob:secret
+
+   response:
+      status: 200
+      body: This is a response for 555
+
+-  request:
+      method: GET
+      url: /invoice/567
+   response:
+      body: This is a response for 567
+      status: 503
+
+-  request:
+      method: POST
+      post: This is a post data
+      url: /invoice/567
+   response:
+      body: This is a response for 567
+      status: 503

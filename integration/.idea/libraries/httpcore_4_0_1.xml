@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="httpcore-4.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.apache.httpcomponents/httpcore/4.0.1/jar/e813b8722c387b22e1adccf7914729db09bcb4a9/httpcore-4.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.apache.httpcomponents/httpcore/4.0.1/source/bebe489499ef2017a8fa95543d51ca4cb629827e/httpcore-4.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

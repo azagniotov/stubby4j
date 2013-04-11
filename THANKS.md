@@ -8,3 +8,4 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 * Simon Brunning
 * Ed Hewell
 * Kenny Lin
+* Logan McGrath

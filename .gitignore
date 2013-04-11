@@ -1,21 +1,19 @@
 *.class
 *.log
 *.swp
+.gradle/*
 target/*
 build/*
 out/*
 .idea/*
 .DS_Store
 Thumbs.db
-# Package Files #
-*-shaded.jar
+*.jar
 *.war
 *.ear
-# Eclipse Files #
 .classpath 
 .project
 .settings
-dependency-reduced-pom.xml
-release.properties
-pom.xml.releaseBackup
 stubby4j.iml
+stubby4j.ipr
+stubby4j.iws

@@ -1,0 +1,12 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.server.JettyManagerFactoryTest" tests="3" failures="0" errors="0" timestamp="1970-01-01T00:00:00" hostname="eminence.gap.com" time="1.365715377234E9">
+  <properties/>
+  <testcase name="shouldConstructJettyManager" classname="by.stub.server.JettyManagerFactoryTest" time="0.017"/>
+  <testcase name="shouldWatchDataFileChanges_WhenWatchFlagGivenInCommandLine" classname="by.stub.server.JettyManagerFactoryTest" time="0.148"/>
+  <testcase name="shouldNOTWatchDataFileChanges_WhenWatchFlagOmittedFromCommandLine" classname="by.stub.server.JettyManagerFactoryTest" time="0.012"/>
+  <system-out><![CDATA[
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

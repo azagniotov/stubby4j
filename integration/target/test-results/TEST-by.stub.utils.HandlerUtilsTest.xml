@@ -1,0 +1,9 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.utils.HandlerUtilsTest" tests="3" failures="0" errors="0" timestamp="2013-04-11T21:22:59" hostname="eminence.gap.com" time="0.0040">
+  <properties/>
+  <testcase name="shouldGetHtmlResourceByName" classname="by.stub.utils.HandlerUtilsTest" time="0.0020"/>
+  <testcase name="shouldPopulateHtmlTemplate" classname="by.stub.utils.HandlerUtilsTest" time="0.0"/>
+  <testcase name="shouldNotPopulateNonExistentHtmlTemplate" classname="by.stub.utils.HandlerUtilsTest" time="0.0010"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

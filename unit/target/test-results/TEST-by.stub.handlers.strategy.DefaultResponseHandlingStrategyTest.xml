@@ -1,0 +1,9 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.handlers.strategy.DefaultResponseHandlingStrategyTest" tests="3" failures="0" errors="0" timestamp="2013-04-11T21:23:07" hostname="eminence.gap.com" time="0.212">
+  <properties/>
+  <testcase name="shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency" classname="by.stub.handlers.strategy.DefaultResponseHandlingStrategyTest" time="0.0020"/>
+  <testcase name="shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency" classname="by.stub.handlers.strategy.DefaultResponseHandlingStrategyTest" time="0.103"/>
+  <testcase name="shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency" classname="by.stub.handlers.strategy.DefaultResponseHandlingStrategyTest" time="0.105"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

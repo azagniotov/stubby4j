@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="by.stub.database.DataStoreTest" tests="8" failures="0" errors="0" timestamp="1970-01-01T00:00:00" hostname="eminence.gap.com" time="1.365715379926E9">
+  <properties/>
+  <testcase name="findStubResponseFor_ShouldFindRedirectStubResponse_WhenLocationHeaderIsSet" classname="by.stub.database.DataStoreTest" time="0.144"/>
+  <testcase name="shouldFindHttpLifecycleForGetRequest" classname="by.stub.database.DataStoreTest" time="0.0010"/>
+  <testcase name="shouldFindHttpLifecycleForGetRequestWithAuthorization" classname="by.stub.database.DataStoreTest" time="0.0050"/>
+  <testcase name="shouldFindHttpLifecycleForGetRequestWithMissingAuthorizationHeader" classname="by.stub.database.DataStoreTest" time="0.0010"/>
+  <testcase name="shouldFindHttpLifecycleForGetRequestWithAuthorizationWithBadCredentials" classname="by.stub.database.DataStoreTest" time="0.0010"/>
+  <testcase name="shouldReturnHttpLifecycleForGetRequestWithDefaultResponse" classname="by.stub.database.DataStoreTest" time="0.0010"/>
+  <testcase name="shouldFindHttpLifecycleForPostRequest" classname="by.stub.database.DataStoreTest" time="0.0020"/>
+  <testcase name="shouldReturnHttpLifecycleForPostRequestWithDefaultResponse" classname="by.stub.database.DataStoreTest" time="0.0010"/>
+  <system-out><![CDATA[]]>&#x1b;<![CDATA[[35mLoaded: [GET] /some/redirecting/uri]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice/123]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice/555]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [GET] /invoice/567]]>&#x1b;<![CDATA[[0m
+]]>&#x1b;<![CDATA[[35mLoaded: [POST] /invoice/567]]>&#x1b;<![CDATA[[0m
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
