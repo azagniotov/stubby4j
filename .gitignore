@@ -7,6 +7,14 @@ main/target/*
 unit/target/*
 integration/target/*
 functional/target/*
+main/.idea/*
+unit/.idea/*
+integration/.idea/*
+functional/.idea/*
+main/*.iml
+unit/*.iml
+integration/*.iml
+functional/*.iml
 build/*
 out/*
 .idea/*

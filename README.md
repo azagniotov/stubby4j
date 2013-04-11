@@ -1,5 +1,3 @@
-[![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
-
 # stubby4j
 
 A stub HTTP server written in Java with embedded Jetty server	
@@ -61,7 +59,7 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 ```
 
 ## Building with Gradle
-stubby4j is a multi-module Gradle project. IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files. Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files.
+stubby4j is a multi-module Gradle project. IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files. Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files. Task ```testAll``` runs unit, integration and functional tests.
 
 ## Documentation
 See `docs` directory for:
