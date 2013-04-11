@@ -1,5 +1,0 @@
-[35mLoaded: [GET] /some/redirecting/uri[0m
-[35mLoaded: [GET] /invoice/123[0m
-[35mLoaded: [GET] /invoice/555[0m
-[35mLoaded: [GET] /invoice/567[0m
-[35mLoaded: [POST] /invoice/567[0m

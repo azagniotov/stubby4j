@@ -1,5 +1,0 @@
-[35mLoaded: [GET] /invoice/123[0m
-[35mLoaded: [GET] /invoice/456[0m
-[35mLoaded: [HEAD, GET] /invoice/789?paramOne=one&paramTwo=two[0m
-[33mStubbed headers could not be matched with empty headers from the client: {content-type=application/xml, content-length=30, content-language=en-US} VS {}[0m
-[33mStubbed query string could not be matched with empty query string from the client: {paramOne=one, paramTwo=two} VS {}[0m

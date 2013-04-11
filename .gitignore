@@ -3,6 +3,10 @@
 *.swp
 .gradle/*
 target/*
+main/target/*
+unit/target/*
+integration/target/*
+functional/target/*
 build/*
 out/*
 .idea/*

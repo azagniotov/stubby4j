@@ -1,8 +1,0 @@
-<?xml version="1.1" encoding="UTF-8"?>
-<testsuite name="by.stub.utils.CollectionUtilsTest" tests="2" failures="0" errors="0" timestamp="2013-04-11T21:23:07" hostname="eminence.gap.com" time="0.0010">
-  <properties/>
-  <testcase name="constructParamMap_ShouldConstructParamMap_WhenQuqeryStringGiven" classname="by.stub.utils.CollectionUtilsTest" time="0.0"/>
-  <testcase name="constructQueryString_ShouldConstructQueryString_WhenParamMapGiven" classname="by.stub.utils.CollectionUtilsTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
