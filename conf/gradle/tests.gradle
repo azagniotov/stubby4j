@@ -1,14 +1,3 @@
-test {
-   testReport = false
-   testLogging {
-      events "passed", "skipped", "failed"
-      exceptionFormat "full"
-      showExceptions true
-      showCauses true
-      showStackTraces true
-   }
-}
-
 task test1_unit(dependsOn: project(':unit').test) << {}
 task test2_integration(dependsOn: project(':integration').test) << {}
 task test3_functional(dependsOn: project(':functional').test) << {}

@@ -17,6 +17,7 @@ allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
+   apply plugin: 'project-report'
 
    sourceCompatibility = 1.6
    tasks.withType(Compile) {
@@ -37,9 +38,20 @@ subprojects {
    }
 
    apply from: "$rootDir/conf/gradle/dependencies.gradle"
-   apply from: "$rootDir/conf/gradle/tests.gradle"
+
+   test {
+      testReport = false
+      testLogging {
+         events "passed", "skipped", "failed"
+         exceptionFormat "full"
+         showExceptions true
+         showCauses true
+         showStackTraces true
+      }
+   }
 
    if (it.name == 'main') {
+      apply from: "$rootDir/conf/gradle/tests.gradle"
       apply from: "$rootDir/conf/gradle/pmd.gradle"
       apply from: "$rootDir/conf/gradle/sonatype.gradle"
    } else {
