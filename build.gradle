@@ -41,7 +41,7 @@ subprojects {
    test {
       testReport = false
       testLogging {
-         events "skipped", "failed"
+         events "passed", "skipped", "failed"
          exceptionFormat "full"
          showExceptions true
          showCauses true
