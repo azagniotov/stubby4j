@@ -27,6 +27,7 @@ import by.stub.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +53,12 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
          }
       }
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
-      response.getWriter().println(foundStubResponse.getResponseBody());
+
+      final byte[] responseBody = foundStubResponse.getResponseBody();
+      final OutputStream streamOut = response.getOutputStream();
+      streamOut.write(responseBody);
+      streamOut.flush();
+      streamOut.close();
    }
 
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {

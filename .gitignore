@@ -4,6 +4,7 @@
 .gradle/*
 target/*
 main/target/*
+builders/target/*
 unit/target/*
 integration/target/*
 functional/target/*
@@ -12,6 +13,7 @@ unit/.idea/*
 integration/.idea/*
 functional/.idea/*
 main/main.iml
+builders/builders.iml
 unit/unit.iml
 integration/integration.iml
 functional/functional.iml

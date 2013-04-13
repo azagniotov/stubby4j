@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.utils.IOUtils;
 import by.stub.utils.StringUtils;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class StubResponse {
 
    private String status = "200";
    private String body = null;
-   private String file = null;
+   private byte[] file = null;
    private String latency = null;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
    private Map<String, String> params = Collections.synchronizedMap(new HashMap<String, String>());
@@ -83,23 +82,19 @@ public class StubResponse {
       this.latency = latency;
    }
 
-   public String getFile() {
+   public Object getFile() {
       return file;
    }
 
-   public void setFile(final String file) {
+   public void setFile(final byte[] file) {
       this.file = file;
    }
 
-   public String getResponseBody() {
-      if (!StringUtils.isSet(file)) {
-         return getBody();
+   public byte[] getResponseBody() {
+      if (file == null) {
+         return getBody().getBytes(StringUtils.utf8Charset());
       }
-      try {
-         return IOUtils.loadContentFromFile(file);
-      } catch (Exception ex) {
-         return getBody();
-      }
+      return file != null ? file : "".getBytes(StringUtils.utf8Charset());
    }
 
    public boolean isConfigured() {

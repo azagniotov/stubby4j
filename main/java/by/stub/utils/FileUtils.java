@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.cli.CommandLineInterpreter;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,16 +28,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.Writer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 
 /**
  * @author Alexander Zagniotov
  * @since 11/8/12, 8:30 AM
  */
 @SuppressWarnings("serial")
-public final class IOUtils {
+public final class FileUtils {
 
    public static final String LINE_SEPARATOR_UNIX = "\n";
    public static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
@@ -53,24 +51,22 @@ public final class IOUtils {
       out.close();
    }
 
-   private IOUtils() {
+   private FileUtils() {
 
    }
 
-   public static String readFile(String path) throws IOException {
-      FileInputStream stream = new FileInputStream(new File(path));
-      try {
-         FileChannel fc = stream.getChannel();
-         MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-         /* Instead of using default, pass in a decoder. */
-         return Charset.defaultCharset().decode(bb).toString();
-      } finally {
-         stream.close();
+
+   public static byte[] binaryFileToBytes(final String filePath) throws IOException {
+      final File contentFile = new File(getDataDirectory(), filePath);
+
+      if (!contentFile.isFile()) {
+         throw new IOException(String.format("Could not load file from path: %s", filePath));
       }
+
+      return IOUtils.toByteArray(new FileInputStream(contentFile));
    }
 
-   //TODO Ability to get content from WWW via HTTP or ability to load non-textual files, eg.: images, PDFs etc.
-   public static String loadContentFromFile(final String filePath) throws IOException {
+   public static String asciiFileToString(final String filePath) throws IOException {
       final File contentFile = new File(getDataDirectory(), filePath);
 
       if (!contentFile.isFile()) {
@@ -79,8 +75,15 @@ public final class IOUtils {
 
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
 
-      return IOUtils.enforceSystemLineSeparator(loadedContent);
+      return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
+
+   public static byte[] asciiFileToUtf8Bytes(final String filePath) throws IOException {
+      final String loadedContent = FileUtils.asciiFileToString(filePath);
+
+      return loadedContent.getBytes(StringUtils.utf8Charset());
+   }
+
 
    private static String getDataDirectory() {
       final String yamlConfigFilename = CommandLineInterpreter.getCommandlineParams().get("data");
@@ -93,14 +96,14 @@ public final class IOUtils {
 
    public static String enforceSystemLineSeparator(final String loadedContent) {
       if (!StringUtils.isSet(loadedContent)) {
-         return loadedContent;
+         return "";
       }
 
       return loadedContent
-            .replace(LINE_SEPARATOR_WINDOWS, LINE_SEPARATOR_TOKEN)
-            .replace(LINE_SEPARATOR_MAC_OS_PRE_X, LINE_SEPARATOR_TOKEN)
-            .replace(LINE_SEPARATOR_UNIX, LINE_SEPARATOR_TOKEN)
-            .replace(LINE_SEPARATOR_TOKEN, LINE_SEPARATOR);
+         .replace(LINE_SEPARATOR_WINDOWS, LINE_SEPARATOR_TOKEN)
+         .replace(LINE_SEPARATOR_MAC_OS_PRE_X, LINE_SEPARATOR_TOKEN)
+         .replace(LINE_SEPARATOR_UNIX, LINE_SEPARATOR_TOKEN)
+         .replace(LINE_SEPARATOR_TOKEN, LINE_SEPARATOR);
    }
 
    private static final class StringBuilderWriter extends Writer implements Serializable {

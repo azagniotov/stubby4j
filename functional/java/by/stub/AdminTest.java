@@ -42,7 +42,7 @@ public class AdminTest {
       int clientPort = 5992;
       int sslPort = 5993;
       int adminPort = 5999;
-      final URL url = AdminTest.class.getResource("/yaml/systemtest-test-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/stubs-data.yaml");
       Assert.assertNotNull(url);
 
       stubbyClient = new StubbyClient();

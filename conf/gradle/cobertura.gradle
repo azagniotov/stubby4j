@@ -47,12 +47,17 @@ task coberturaReport(dependsOn: ['coberturaInstrument', 'test']) << {
    )
 }
 
-tasks.withType(Test) {
-   doFirst {
-      systemProperty 'net.sourceforge.cobertura.datafile', coberturaPrepare.datafileLocation
-      classpath = files(coberturaInstrument.outputDir) + classpath + configurations.coberturaRuntime
+gradle.taskGraph.whenReady { graph ->
+   if (graph.hasTask(cobertura)) { 
+      tasks.withType(Test) {
+         doFirst {
+            systemProperty 'net.sourceforge.cobertura.datafile', coberturaPrepare.datafileLocation
+            classpath = files(coberturaInstrument.outputDir) + classpath + configurations.coberturaRuntime
+         }
+      }
    }
-}
+} 
+
 
 task cobertura {
    dependsOn = ['clean', 'coberturaReport']

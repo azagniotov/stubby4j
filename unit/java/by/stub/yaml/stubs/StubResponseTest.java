@@ -1,6 +1,7 @@
 package by.stub.yaml.stubs;
 
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.utils.StringUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,10 +20,9 @@ public class StubResponseTest {
    public void getResponseBody_ShouldReturnBody_WhenFileCannotBeFound() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile("/path/to/nowhere");
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", stubResponse.getResponseBody());
+      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -32,17 +32,16 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", stubResponse.getResponseBody());
+      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
    public void getResponseBody_ShouldReturnBody_WhenFileIsEmpty() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile("");
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", stubResponse.getResponseBody());
+      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -52,7 +51,7 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody(null);
 
-      Assert.assertEquals("", stubResponse.getResponseBody());
+      Assert.assertEquals("", StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -62,6 +61,6 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("");
 
-      Assert.assertEquals("", stubResponse.getResponseBody());
+      Assert.assertEquals("", StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 }

@@ -1,6 +1,9 @@
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineInterpreter;
+import by.stub.utils.FileUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import org.junit.Assert;
@@ -62,11 +65,14 @@ public class YamlParserTest {
       final URL url = this.getClass().getResource("/yaml/yamlparserit-request-with-post-file-test-data.yaml");
       Assert.assertNotNull(url);
 
+      CommandLineInterpreter.parseCommandLine(new String[]{"--data", url.getFile()});
+
       final YamlParser yamlParser = new YamlParser(url.getFile());
       final List<StubHttpLifecycle> loadedHttpCycles = yamlParser.parseAndLoad();
       final StubHttpLifecycle cycle = loadedHttpCycles.get(0);
       final StubRequest request = cycle.getRequest();
 
-      Assert.assertEquals("../json/post-body-as-file.json", request.getFile());
+      final String expectedPostBody = FileUtils.asciiFileToString("../json/post-body-as-file.json");
+      Assert.assertEquals(expectedPostBody, new String(request.getFile(), StringUtils.utf8Charset()));
    }
 }

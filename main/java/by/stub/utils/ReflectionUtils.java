@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +37,7 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class ReflectionUtils {
 
-   private static List<String> skipableProperties = Collections.unmodifiableList(new ArrayList<String>() {{
-      add("AUTH_HEADER");
-   }});
+   private static List<String> skipableProperties = Collections.unmodifiableList(Arrays.asList("AUTH_HEADER"));
 
    private ReflectionUtils() {
 
@@ -73,7 +71,12 @@ public final class ReflectionUtils {
    public static void setPropertyValue(final Object object, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
       try {
          final Field field = object.getClass().getDeclaredField(fieldName);
-         field.setAccessible(true);
+         AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+            public Boolean run() {
+               field.setAccessible(true);
+               return true;
+            }
+         });
          field.set(object, value);
       } catch (NoSuchFieldException ignored) {
       }

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.utils.FileUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -38,16 +39,37 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class YamlParser {
 
+   private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
+      new HashSet<String>(
+         Arrays.asList(
+            ".ajx", ".am", ".asa", ".asc", ".asp", ".aspx", ".awk", ".bat",
+            ".c", ".cdf", ".cf", ".cfg", ".cfm", ".cgi", ".cnf", ".conf", ".cpp",
+            ".css", ".csv", ".ctl", ".dat", ".dhtml", ".diz", ".file", ".forward",
+            ".grp", ".h", ".hpp", ".hqx", ".hta", ".htaccess", ".htc", ".htm", ".html",
+            ".htpasswd", ".htt", ".htx", ".in", ".inc", ".info", ".ini", ".ink", ".java",
+            ".js", ".json", ".jsp", ".log", ".logfile", ".m3u", ".m4", ".m4a", ".mak",
+            ".map", ".model", ".msg", ".nfo", ".nsi", ".info", ".old", ".pas", ".patch",
+            ".perl", ".php", ".php2", ".php3", ".php4", ".php5", ".php6", ".phtml", ".pix",
+            ".pl", ".pm", ".po", ".pwd", ".py", ".qmail", ".rb", ".rbl", ".rbw", ".readme",
+            ".reg", ".rss", ".rtf", ".ruby", ".session", ".setup", ".sh", ".shtm", ".shtml",
+            ".sql", ".ssh", ".stm", ".style", ".svg", ".tcl", ".text", ".threads", ".tmpl",
+            ".tpl", ".txt", ".ubb", ".vbs", ".xhtml", ".xml", ".xrc", ".xsl", ".yaml", ".yml"
+         )
+      )
+   );
    private static final String NODE_REQUEST = "request";
-
    private String loadedConfigAbsolutePath;
    private String yamlConfigFilename;
 
@@ -134,35 +156,52 @@ public class YamlParser {
 
       for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
-         final Object value = pair.getValue();
-         final String propertyName = pair.getKey();
+         final Object pairValue = pair.getValue();
+         final String pairKey = pair.getKey();
 
-         if (value instanceof ArrayList) {
-            final ArrayList<String> arrayList = (ArrayList<String>) value;
-            ReflectionUtils.setPropertyValue(target, propertyName, arrayList);
+         if (pairValue instanceof ArrayList) {
+            final ArrayList<String> arrayList = (ArrayList<String>) pairValue;
+            ReflectionUtils.setPropertyValue(target, pairKey, arrayList);
             continue;
          }
 
-         if (value instanceof Map) {
-            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) value);
-            ReflectionUtils.setPropertyValue(target, propertyName, keyValues);
+         if (pairValue instanceof Map) {
+            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) pairValue);
+            ReflectionUtils.setPropertyValue(target, pairKey, keyValues);
             continue;
          }
 
-         if (propertyName.toLowerCase().equals("method")) {
+         if (pairKey.toLowerCase().equals("method")) {
             final ArrayList<String> propertyValue = new ArrayList<String>(1) {{
-               add(extractPropertyValueAsString(propertyName, value));
+               add(extractPropertyValueAsString(pairValue));
             }};
-            ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
+            ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
             continue;
          }
 
-         final String propertyValue = extractPropertyValueAsString(propertyName, value);
-         ReflectionUtils.setPropertyValue(target, propertyName, propertyValue);
+         if (pairKey.toLowerCase().equals("file")) {
+            final String relativeFilePath = extractPropertyValueAsString(pairValue);
+            final int dotLocation = relativeFilePath.lastIndexOf(".");
+            final String extension = relativeFilePath.substring(dotLocation);
+
+
+            byte[] contentBytes = null;
+            if (ASCII_TYPES.contains(extension)) {
+               contentBytes = FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
+            } else {
+               contentBytes = FileUtils.binaryFileToBytes(relativeFilePath);
+            }
+
+            ReflectionUtils.setPropertyValue(target, pairKey, contentBytes);
+            continue;
+         }
+
+         final String propertyValue = extractPropertyValueAsString(pairValue);
+         ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
       }
    }
 
-   private String extractPropertyValueAsString(final String propertyName, final Object value) throws IOException {
+   private String extractPropertyValueAsString(final Object value) throws IOException {
       final String rawValue = StringUtils.isObjectSet(value) ? value.toString() : "";
 
       return rawValue.trim();
@@ -183,7 +222,7 @@ public class YamlParser {
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
       final Yaml yaml = new Yaml(new Constructor(), new Representer(),
-            new DumperOptions(), new YamlParserResolver());
+         new DumperOptions(), new YamlParserResolver());
       final Object loadedYaml = yaml.load(io);
 
       if (loadedYaml instanceof ArrayList) {

@@ -22,8 +22,8 @@ package by.stub.yaml.stubs;
 import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.CollectionUtils;
+import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
-import by.stub.utils.IOUtils;
 import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +50,7 @@ public class StubRequest {
       add("GET");
    }};
    private String post = null;
-   private String file = null;
+   private byte[] file = null;
    private Map<String, String> headers = new HashMap<String, String>();
    private Map<String, String> query = new HashMap<String, String>();
 
@@ -71,7 +71,7 @@ public class StubRequest {
    }
 
    public final String getPost() {
-      return IOUtils.enforceSystemLineSeparator(post);
+      return FileUtils.enforceSystemLineSeparator(post);
    }
 
    public void setUrl(final String url) {
@@ -122,23 +122,19 @@ public class StubRequest {
       this.query = query;
    }
 
-   public String getFile() {
+   public byte[] getFile() {
       return file;
    }
 
-   public void setFile(final String file) {
+   public void setFile(final byte[] file) {
       this.file = file;
    }
 
    public String getPostBody() {
-      if (!StringUtils.isSet(file)) {
+      if (file == null) {
          return getPost();
       }
-      try {
-         return IOUtils.loadContentFromFile(file);
-      } catch (Exception ex) {
-         return getPost();
-      }
+      return new String(file, StringUtils.utf8Charset());
    }
 
    public final boolean isConfigured() {

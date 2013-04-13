@@ -66,6 +66,10 @@ public final class StringUtils {
       return Charset.forName(StringUtils.UTF_8);
    }
 
+   public static String utf8String(final byte[] bytes) {
+      return new String(bytes, StringUtils.utf8Charset());
+   }
+
    public static String inputStreamToString(final InputStream inputStream) {
       if (inputStream == null || !StringUtils.isSet(inputStream.toString())) {
          return "Could not convert empty or null input stream to string";
@@ -82,14 +86,14 @@ public final class StringUtils {
 
    public static String escapeHtmlEntities(final String toBeEscaped) {
       return toBeEscaped
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;");
+         .replaceAll("<", "&lt;")
+         .replaceAll(">", "&gt;");
    }
 
    public static String constructUserAgentName() {
       final Package pkg = StringUtils.class.getPackage();
       final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
-            pkg.getImplementationVersion() : "x.x.xx";
+         pkg.getImplementationVersion() : "x.x.xx";
 
       return String.format("stubby4j/%s (HTTP stub client request)", implementationVersion);
    }

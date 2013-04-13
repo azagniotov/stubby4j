@@ -1,6 +1,7 @@
 package by.stub;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.client.StubbyClient;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.ByteArrayContent;
@@ -24,11 +25,9 @@ import java.net.URL;
 public class StubsTest {
 
    private static final String HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON = "application/json";
-   private static final String HTTP_HEADER_CONTENT_TYPE_TEXT_PLAIN = "text/plain";
    private static StubbyClient stubbyClient;
    private static String stubsUrlAsString;
    private static String stubsSslUrlAsString;
-   private static String adminUrlAsString;
    private static String contentAsString;
    private static HttpRequestFactory webClient;
 
@@ -54,15 +53,16 @@ public class StubsTest {
       int clientPort = 5992;
       int sslPort = 5993;
       int adminPort = 5999;
-      final URL url = StubsTest.class.getResource("/yaml/systemtest-test-data.yaml");
+      final URL url = StubsTest.class.getResource("/yaml/stubs-data.yaml");
       Assert.assertNotNull(url);
+
+      CommandLineInterpreter.parseCommandLine(new String[]{"--data", url.getFile()});
 
       stubbyClient = new StubbyClient();
       stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
 
       stubsUrlAsString = String.format("http://localhost:%s", clientPort);
       stubsSslUrlAsString = String.format("https://localhost:%s", sslPort);
-      adminUrlAsString = String.format("http://localhost:%s", adminPort);
    }
 
    @AfterClass
@@ -100,6 +100,15 @@ public class StubsTest {
       final HttpResponse response = request.execute();
 
       Assert.assertEquals(HttpStatus.NO_CONTENT_204, response.getStatusCode());
+   }
+
+   @Test
+   public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
+
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/pdf/hello-world");
+      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+
+      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
    }
 
    @Test

@@ -49,7 +49,7 @@ subprojects {
       }
    }
 
-   if (it.name != 'main') {
+   if (it.name != 'main' && it.name != 'builders') {
       apply from: "$rootDir/conf/gradle/cobertura.gradle"
    }
    apply from: "$rootDir/conf/gradle/dependencies.gradle"
