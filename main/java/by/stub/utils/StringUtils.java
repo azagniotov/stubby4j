@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -36,8 +37,14 @@ public final class StringUtils {
 
    public static final String UTF_8 = "UTF-8";
 
+   private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+
    private StringUtils() {
 
+   }
+
+   public static boolean isUSAscii(final String toTest) {
+      return asciiEncoder.canEncode(toTest);
    }
 
    public static boolean isSet(final String toTest) {

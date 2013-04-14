@@ -78,6 +78,11 @@ public class StubResponse {
       this.file = file;
    }
 
+   //Used by reflection when populating stubby admin page with stubbed information
+   public byte[] getFile() {
+      return file;
+   }
+
    public byte[] getResponseBody() {
       if (file == null) {
          return getBody().getBytes(StringUtils.utf8Charset());

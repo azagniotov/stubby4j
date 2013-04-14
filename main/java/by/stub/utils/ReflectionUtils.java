@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,7 +44,7 @@ public final class ReflectionUtils {
 
    }
 
-   public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException {
+   public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
       final Map<String, String> properties = new HashMap<String, String>();
 
       for (final Field field : object.getClass().getDeclaredFields()) {
@@ -59,13 +60,33 @@ public final class ReflectionUtils {
             continue;
          }
 
-         //final Object fieldObject = field.get(object);
          final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
-         final String value = StringUtils.isObjectSet(fieldObject) ? fieldObject.toString() : "Not provided";
+         final String value = determineObjectStringValue(fieldObject);
+
          properties.put(StringUtils.toLower(field.getName()), value);
       }
 
       return properties;
+   }
+
+   private static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
+      if (fieldObject == null) {
+         return "Not provided";
+      }
+
+      if (fieldObject instanceof byte[]) {
+         final byte[] objectBytes = (byte[]) fieldObject;
+         final String toTest = new String(objectBytes);
+
+         if (!StringUtils.isUSAscii(toTest)) {
+            return "Local binary file, not able to display";
+         }
+
+         return new String(objectBytes, StringUtils.UTF_8);
+      }
+
+      return fieldObject.toString();
+
    }
 
    public static void setPropertyValue(final Object object, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {

@@ -99,6 +99,11 @@ public class StubRequest {
       this.post = post;
    }
 
+   //Used by reflection when populating stubby admin page with stubbed information
+   public String getPost() {
+      return post;
+   }
+
    public final Map<String, String> getHeaders() {
       return headers;
    }

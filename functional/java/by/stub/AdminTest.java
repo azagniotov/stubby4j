@@ -57,6 +57,20 @@ public class AdminTest {
    }
 
    @Test
+   public void should_UpdatedStubData_AndMakeGetRequestToPingPage() throws Exception {
+
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, "/ping");
+      final HttpRequest adminRequest = constructHttpRequest("GET", adminRequestUrl);
+
+      final HttpResponse adminResponse = adminRequest.execute();
+      final String responseContentAsString = adminResponse.parseAsString().trim();
+
+      Assert.assertEquals(HttpStatus.OK_200, adminResponse.getStatusCode());
+      Assert.assertTrue(responseContentAsString.contains("/pdf/hello-world"));
+      Assert.assertTrue(responseContentAsString.contains("STATUS"));
+   }
+
+   @Test
    public void should_UpdatedStubData_AndMakeGetRequestToUpdatedEndpoint() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
