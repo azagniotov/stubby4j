@@ -91,7 +91,8 @@ public class StubRequest {
       if (file == null) {
          return FileUtils.enforceSystemLineSeparator(post);
       }
-      return new String(file, StringUtils.utf8Charset());
+      final String utf8FileContent = new String(file, StringUtils.utf8Charset());
+      return FileUtils.enforceSystemLineSeparator(utf8FileContent);
    }
 
    public void setPost(final String post) {

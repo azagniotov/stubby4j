@@ -39,37 +39,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
-public class YamlParser {
+public final class YamlParser {
 
-   private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
-      new HashSet<String>(
-         Arrays.asList(
-            ".ajx", ".am", ".asa", ".asc", ".asp", ".aspx", ".awk", ".bat",
-            ".c", ".cdf", ".cf", ".cfg", ".cfm", ".cgi", ".cnf", ".conf", ".cpp",
-            ".css", ".csv", ".ctl", ".dat", ".dhtml", ".diz", ".file", ".forward",
-            ".grp", ".h", ".hpp", ".hqx", ".hta", ".htaccess", ".htc", ".htm", ".html",
-            ".htpasswd", ".htt", ".htx", ".in", ".inc", ".info", ".ini", ".ink", ".java",
-            ".js", ".json", ".jsp", ".log", ".logfile", ".m3u", ".m4", ".m4a", ".mak",
-            ".map", ".model", ".msg", ".nfo", ".nsi", ".info", ".old", ".pas", ".patch",
-            ".perl", ".php", ".php2", ".php3", ".php4", ".php5", ".php6", ".phtml", ".pix",
-            ".pl", ".pm", ".po", ".pwd", ".py", ".qmail", ".rb", ".rbl", ".rbw", ".readme",
-            ".reg", ".rss", ".rtf", ".ruby", ".session", ".setup", ".sh", ".shtm", ".shtml",
-            ".sql", ".ssh", ".stm", ".style", ".svg", ".tcl", ".text", ".threads", ".tmpl",
-            ".tpl", ".txt", ".ubb", ".vbs", ".xhtml", ".xml", ".xrc", ".xsl", ".yaml", ".yml"
-         )
-      )
-   );
-   private static final String NODE_REQUEST = "request";
+   private final static Yaml SNAKE_YAML;
+
+   static {
+      SNAKE_YAML = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
+   }
+
+   private static final String YAML_NODE_REQUEST = "request";
    private String loadedConfigAbsolutePath;
    private String yamlConfigFilename;
 
@@ -125,7 +109,7 @@ public class YamlParser {
          final StubHttpLifecycle parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
          httpLifecycles.add(parentStub);
 
-         mapParentYamlNodeToPojo(parentStub, parentNode);
+         mapRootYamlNodeToPojo(parentStub, parentNode);
 
          final ArrayList<String> method = parentStub.getRequest().getMethod();
          final String url = parentStub.getRequest().getUrl();
@@ -137,56 +121,55 @@ public class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapParentYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
+   protected void mapRootYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
       for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
 
          final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
 
-         if (parent.getKey().equals(NODE_REQUEST)) {
-            mapHttpSettingsToPojo(parentStub.getRequest(), httpSettings);
+         if (parent.getKey().equals(YAML_NODE_REQUEST)) {
+            mapYamlKeyValuePairsToPojo(parentStub.getRequest(), httpSettings);
             continue;
          }
 
-         mapHttpSettingsToPojo(parentStub.getResponse(), httpSettings);
+         mapYamlKeyValuePairsToPojo(parentStub.getResponse(), httpSettings);
       }
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapHttpSettingsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
+   protected void mapYamlKeyValuePairsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
 
       for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
-         final Object pairValue = pair.getValue();
+         final Object rawPairValue = pair.getValue();
          final String pairKey = pair.getKey();
 
-         if (pairValue instanceof ArrayList) {
-            final ArrayList<String> arrayList = (ArrayList<String>) pairValue;
+         if (rawPairValue instanceof ArrayList) {
+            final ArrayList<String> arrayList = (ArrayList<String>) rawPairValue;
             ReflectionUtils.setPropertyValue(target, pairKey, arrayList);
             continue;
          }
 
-         if (pairValue instanceof Map) {
-            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) pairValue);
+         if (rawPairValue instanceof Map) {
+            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) rawPairValue);
             ReflectionUtils.setPropertyValue(target, pairKey, keyValues);
             continue;
          }
 
          if (pairKey.toLowerCase().equals("method")) {
             final ArrayList<String> propertyValue = new ArrayList<String>(1) {{
-               add(extractPropertyValueAsString(pairValue));
+               add(pairValueToString(rawPairValue));
             }};
             ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
             continue;
          }
 
          if (pairKey.toLowerCase().equals("file")) {
-            final String relativeFilePath = extractPropertyValueAsString(pairValue);
+            final String relativeFilePath = pairValueToString(rawPairValue);
             final int dotLocation = relativeFilePath.lastIndexOf(".");
             final String extension = relativeFilePath.substring(dotLocation);
 
-
             byte[] contentBytes = null;
-            if (ASCII_TYPES.contains(extension)) {
+            if (FileUtils.ASCII_TYPES.contains(extension)) {
                contentBytes = FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
             } else {
                contentBytes = FileUtils.binaryFileToBytes(relativeFilePath);
@@ -196,12 +179,12 @@ public class YamlParser {
             continue;
          }
 
-         final String propertyValue = extractPropertyValueAsString(pairValue);
+         final String propertyValue = pairValueToString(rawPairValue);
          ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
       }
    }
 
-   private String extractPropertyValueAsString(final Object value) throws IOException {
+   private String pairValueToString(final Object value) throws IOException {
       final String rawValue = StringUtils.isObjectSet(value) ? value.toString() : "";
 
       return rawValue.trim();
@@ -221,9 +204,8 @@ public class YamlParser {
    }
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
-      final Yaml yaml = new Yaml(new Constructor(), new Representer(),
-         new DumperOptions(), new YamlParserResolver());
-      final Object loadedYaml = yaml.load(io);
+
+      final Object loadedYaml = SNAKE_YAML.load(io);
 
       if (loadedYaml instanceof ArrayList) {
          return (ArrayList<?>) loadedYaml;
