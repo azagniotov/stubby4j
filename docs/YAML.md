@@ -12,6 +12,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       * The key (param name) must have the letter case as the query string param name, ie: `paRamNaME=12` -> `paRamNaME: 12`
       * The order query string params does not matter. In other words the `/param1=1&param2=2` is the same as `/param2=2&param1=1`
       * If stubbed query params are a subset of query params in HTTP request, then the match is successful (`left outer join` concept)
+      * query param can also be an array with quoted/un-quoted elements: `attributes=["id","uuid"]` or `attributes=[id,uuid]`. Please note no spaces between the CSV
    * `url`: (REQUIRED) the URI string.
       * If you include query string, it WILL BE stripped. If you have query params, include them in the `query` attribute
    * `file`: (OPTIONAL) if specified (an absolute path or path relative to the user current working directory), returns the contents of the given file as the `request` POST content.
@@ -30,7 +31,7 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
    * `body`: (OPTIONAL) the textual body of the server's response to the client
    * `status`: (REQUIRED) the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
-### Various Configuration Examples
+## Various Configuration Examples
 
 ```yaml
 -  request:
@@ -97,6 +98,23 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
          content-type: application/json
       status: 200
       body: OK
+
+
+-  request:
+      method: GET
+      url: /entity.find
+      query:
+         type_name: user
+         client_id: id
+         client_secret: secret
+         attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world"}
+      headers:
+         content-type: application/json
 
 
 -  request:

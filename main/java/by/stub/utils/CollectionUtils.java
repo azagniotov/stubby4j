@@ -26,19 +26,17 @@ public final class CollectionUtils {
       for (final String pair : pairs) {
          final String[] splittedPair = pair.split("=");
 
-         final String queryValue = splittedPair[1];
-         if (queryValue.startsWith("%5B") && queryValue.endsWith("%5D")) {
-            final String[] arrayParams = queryValue.
-               replaceAll("%5B", "").
-               replaceAll("%5D", "").
-               replaceAll("%22", "\"").split(",");
+         final String splittedPairKey = splittedPair[0];
+         String splittedPairValue = splittedPair[1];
 
-            final String listWithParams = Arrays.asList(arrayParams).toString();
-            paramMap.put(splittedPair[0], listWithParams);
-            continue;
+         if (StringUtils.isWithinSquareBrackets(splittedPairValue)) {
+
+            final String cleansedValue = StringUtils.decodeUrlEncodedQuotes(StringUtils.removeSquareBrackets(splittedPairValue));
+            final String bracketedQueryValueAsCSV = Arrays.asList(cleansedValue.split(",")).toString();
+            splittedPairValue = StringUtils.trimSpacesBetweenCSVElements(bracketedQueryValueAsCSV);
          }
 
-         paramMap.put(splittedPair[0], queryValue);
+         paramMap.put(splittedPairKey, splittedPairValue);
       }
 
       return paramMap;

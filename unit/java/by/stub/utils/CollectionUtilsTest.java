@@ -44,7 +44,7 @@ public class CollectionUtilsTest {
    public void constructParamMap_ShouldUrlDecodeQueryString_WhenQueryParamsAreAnArray() throws Exception {
 
       final Map<String, String> expectedParams = new HashMap<String, String>() {{
-         put("paramOne", "[id, uuid, created, lastUpdated, displayName, email, givenName, familyName]");
+         put("paramOne", "[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
       }};
 
 
@@ -58,7 +58,7 @@ public class CollectionUtilsTest {
    public void constructParamMap_ShouldUrlDecodeQueryString_WhenQueryParamsAreAnArrayWithQuotedElements() throws Exception {
 
       final Map<String, String> expectedParams = new HashMap<String, String>() {{
-         put("paramOne", "[\"id\", \"uuid\", \"created\", \"lastUpdated\", \"displayName\", \"email\", \"givenName\", \"familyName\"]");
+         put("paramOne", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]");
       }};
 
 

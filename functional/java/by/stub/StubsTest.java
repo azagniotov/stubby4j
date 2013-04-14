@@ -75,8 +75,9 @@ public class StubsTest {
 
    }
 
+
    @Test
-   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithQuotedElements() throws Exception {
+   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
       final HttpRequest request = constructHttpRequest("GET", requestUrl);
 

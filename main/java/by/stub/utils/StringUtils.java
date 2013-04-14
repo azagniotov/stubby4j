@@ -92,9 +92,28 @@ public final class StringUtils {
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {
-      return toBeEscaped
-         .replaceAll("<", "&lt;")
-         .replaceAll(">", "&gt;");
+      return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+   }
+
+   public static String trimSpacesBetweenCSVElements(final String toBeFiltered) {
+      return toBeFiltered.replaceAll("\",\\s+\"", "\",\"").replaceAll(",\\s+", ",");
+   }
+
+   public static String removeSquareBrackets(final String toBeFiltered) {
+      return toBeFiltered.replaceAll("%5B", "")
+         .replaceAll("%5D", "").replaceAll("\\[", "").replaceAll("]", "");
+   }
+
+   public static boolean isWithinSquareBrackets(final String toCheck) {
+      final boolean isEncodedBrackets = toCheck.startsWith("%5B") && toCheck.endsWith("%5D");
+      final int lastCharIdx = toCheck.length() - 1;
+      final boolean isBrackets = toCheck.charAt(0) == '[' && toCheck.charAt(lastCharIdx) == ']';
+
+      return isEncodedBrackets || isBrackets;
+   }
+
+   public static String decodeUrlEncodedQuotes(final String toBeFiltered) {
+      return toBeFiltered.replaceAll("%22", "\"");
    }
 
    public static String constructUserAgentName() {
