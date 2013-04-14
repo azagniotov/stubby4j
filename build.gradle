@@ -49,8 +49,10 @@ subprojects {
       }
    }
 
+   apply from: "$rootDir/conf/gradle/dependencies.gradle"
+
    if (it.name == 'main') {
-      pply from: "$rootDir/conf/gradle/tests.gradle"
+      apply from: "$rootDir/conf/gradle/tests.gradle"
       apply from: "$rootDir/conf/gradle/pmd.gradle"
       apply from: "$rootDir/conf/gradle/sonatype.gradle"
    }
@@ -58,7 +60,6 @@ subprojects {
    if (it.name != 'main' && it.name != 'builders') {
       apply from: "$rootDir/conf/gradle/cobertura.gradle"
    }
-   apply from: "$rootDir/conf/gradle/dependencies.gradle"
 }
 
 project(":").tasks.each {
