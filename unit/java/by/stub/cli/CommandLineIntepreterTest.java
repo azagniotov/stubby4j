@@ -3,7 +3,6 @@ package by.stub.cli;
 import junit.framework.Assert;
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Map;
@@ -75,11 +74,5 @@ public class CommandLineIntepreterTest {
       CommandLineInterpreter.parseCommandLine(new String[]{"--data", "somefilename.yaml", "-s", "12345", "--admin", "567"});
       final Map<String, String> params = CommandLineInterpreter.getCommandlineParams();
       Assert.assertEquals(3, params.size());
-   }
-
-   @Test
-   public void shouldGetCurrentJarLocation() throws Exception {
-      final String currentJarLocation = CommandLineInterpreter.getCurrentJarLocation(CommandLineInterpreter.class);
-      Assert.assertEquals("stubby4j-x.x.x-SNAPSHOT.jar", currentJarLocation);
    }
 }

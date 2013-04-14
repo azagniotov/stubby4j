@@ -24,11 +24,13 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
    * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
    * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
    * `file`: (OPTIONAL) if specified (an absolute path or path relative to the user current working directory),
-      returns the contents of the given file as the response body. 
+      returns the contents of the given file as the response body. It can be ascii of binary file (PDF, images, etc.)
       * If the file cannot be found at YAML data parse time, value from `body` is used instead. 
       * If `body` was not provided, an empty string is returned by default
    * `body`: (OPTIONAL) the textual body of the server's response to the client
    * `status`: (REQUIRED) the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+
+### Various Configuration Examples
 
 ```yaml
 -  request:
@@ -60,6 +62,29 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
          {
              "name": "alex"
          }
+
+-  request:
+      method: GET
+      url: /pdf/release-notes
+   response:
+      headers:
+         content-type: application/pdf
+         content-disposition: "attachment; filename=release-notes.pdf"
+         pragma: no-cache
+      status: 200
+      file: ../release-notes.pdf
+
+
+-  request:
+      method: GET
+      url: /images/alex
+   response:
+      headers:
+         content-type: image/png
+         content-disposition: "attachment; filename=alexander.zagniotov.png"
+      status: 200
+      file: ../alexander.zagniotov.png
+
 
 -  request:
       method: POST
