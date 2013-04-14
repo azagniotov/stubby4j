@@ -91,32 +91,38 @@ uploadArchives {
          jarPom.version = "$version"
          jarPom.artifactId = "$stubbyProjectName"
          jarPom.groupId = "$stubbyProjectGroup"
-         jarPom.project {
-            name 'stubby4j'
-            description 'A stub HTTP server written in Java with embedded Jetty server.'
-            url 'https://github.com/azagniotov/stubby4j'
-            inceptionYear '2012'
-            packaging 'jar'
+         
+         def poms = [jarPom, ascPom]
 
-            scm {
+         poms.each {
+            pom ->
+            pom.project {
+               name 'stubby4j'
+               description 'A stub HTTP server written in Java with embedded Jetty server.'
                url 'https://github.com/azagniotov/stubby4j'
-               connection 'scm:https://azagniotov@github.com/azagniotov/stubby4j.git'
-               developerConnection 'scm:git://github.com/azagniotov/stubby4j.git'
-            }
+               inceptionYear '2012'
+               packaging 'jar'
 
-            licenses {
-               license {
-                   name 'The Apache Software License, Version 2.0'
-                   url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                   distribution 'repo'
+               scm {
+                  url 'https://github.com/azagniotov/stubby4j'
+                  connection 'scm:https://azagniotov@github.com/azagniotov/stubby4j.git'
+                  developerConnection 'scm:git://github.com/azagniotov/stubby4j.git'
                }
-            }
 
-            developers {
-               developer {
-                   id 'azagniotov'
-                   name 'Alexander Zagniotov'
-                   email 'azagniotov@gmail.com'
+               licenses {
+                  license {
+                      name 'The Apache Software License, Version 2.0'
+                      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                      distribution 'repo'
+                  }
+               }
+
+               developers {
+                  developer {
+                      id 'azagniotov'
+                      name 'Alexander Zagniotov'
+                      email 'azagniotov@gmail.com'
+                  }
                }
             }
          }
