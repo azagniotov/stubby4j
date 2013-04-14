@@ -1,5 +1,6 @@
 package by.stub.utils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +25,20 @@ public final class CollectionUtils {
       final String[] pairs = queryString.split("&");
       for (final String pair : pairs) {
          final String[] splittedPair = pair.split("=");
-         paramMap.put(splittedPair[0], splittedPair[1]);
+
+         final String queryValue = splittedPair[1];
+         if (queryValue.startsWith("%5B") && queryValue.endsWith("%5D")) {
+            final String[] arrayParams = queryValue.
+               replaceAll("%5B", "").
+               replaceAll("%5D", "").
+               replaceAll("%22", "\"").split(",");
+
+            final String listWithParams = Arrays.asList(arrayParams).toString();
+            paramMap.put(splittedPair[0], listWithParams);
+            continue;
+         }
+
+         paramMap.put(splittedPair[0], queryValue);
       }
 
       return paramMap;
@@ -38,12 +52,15 @@ public final class CollectionUtils {
 
       while (iterator.hasNext()) {
          final Map.Entry<String, String> entry = iterator.next();
-         final String pair = String.format("%s=%s", entry.getKey(), entry.getValue());
+         Object entryValue = entry.getValue();
+
+         final String pair = String.format("%s=%s", entry.getKey(), entryValue);
 
          queryStringBuilder.append(pair);
          if (iterator.hasNext()) {
             queryStringBuilder.append("&");
          }
+
       }
 
       return queryStringBuilder.toString();

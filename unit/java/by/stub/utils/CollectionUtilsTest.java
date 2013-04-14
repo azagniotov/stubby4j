@@ -39,4 +39,32 @@ public class CollectionUtilsTest {
 
       Assert.assertEquals("paramTwo=two&paramOne=one", queryString);
    }
+
+   @Test
+   public void constructParamMap_ShouldUrlDecodeQueryString_WhenQueryParamsAreAnArray() throws Exception {
+
+      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+         put("paramOne", "[id, uuid, created, lastUpdated, displayName, email, givenName, familyName]");
+      }};
+
+
+      final String queryString = String.format("paramOne=%s", "%5Bid,uuid,created,lastUpdated,displayName,email,givenName,familyName%5D");
+      final Map<String, String> actualParams = CollectionUtils.constructParamMap(queryString);
+
+      Assert.assertEquals(expectedParams, actualParams);
+   }
+
+   @Test
+   public void constructParamMap_ShouldUrlDecodeQueryString_WhenQueryParamsAreAnArrayWithQuotedElements() throws Exception {
+
+      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+         put("paramOne", "[\"id\", \"uuid\", \"created\", \"lastUpdated\", \"displayName\", \"email\", \"givenName\", \"familyName\"]");
+      }};
+
+
+      final String queryString = String.format("paramOne=%s", "%5B%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22%5D");
+      final Map<String, String> actualParams = CollectionUtils.constructParamMap(queryString);
+
+      Assert.assertEquals(expectedParams, actualParams);
+   }
 }

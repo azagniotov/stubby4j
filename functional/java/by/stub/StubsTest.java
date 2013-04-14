@@ -76,6 +76,36 @@ public class StubsTest {
    }
 
    @Test
+   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithQuotedElements() throws Exception {
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
+      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+
+      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
+      Assert.assertEquals("{\"status\": \"hello world\"}", responseContent);
+   }
+
+   @Test
+   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArray() throws Exception {
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
+      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+
+      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
+      Assert.assertEquals("{\"status\": \"hello world\"}", responseContent);
+   }
+
+   @Test
    public void should_ReactToPostRequest_WithoutPost_AndPostNotSupplied() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
       final HttpRequest request = constructHttpRequest("POST", requestUrl);
