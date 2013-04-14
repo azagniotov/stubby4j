@@ -1,6 +1,7 @@
 package by.stub.handlers.strategy;
 
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -8,11 +9,12 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import static org.mockito.Mockito.times;
@@ -47,46 +49,51 @@ public class DefaultResponseHandlingStrategyTest {
    }
 
    @Test
-   @Ignore
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
 
-      final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
       final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getResponseBody()).thenReturn(null);
+      when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
+      Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+
+         @Override
+         public void write(final int i) throws IOException {
+
+         }
+      });
 
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, times(1)).println(someResultsMessage);
-
       verifyMainHeaders(mockHttpServletResponse);
    }
 
    @Test
-   @Ignore
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
 
-      final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
       final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getResponseBody()).thenReturn(null);
+      when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
       when(mockStubResponse.getLatency()).thenReturn("100");
+
+      Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+
+         @Override
+         public void write(final int i) throws IOException {
+
+         }
+      });
+
 
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, times(1)).println(someResultsMessage);
-
       verifyMainHeaders(mockHttpServletResponse);
    }
 
    @Test
-   @Ignore
    public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
@@ -94,8 +101,15 @@ public class DefaultResponseHandlingStrategyTest {
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
+      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage.getBytes(StringUtils.UTF_8));
       when(mockStubResponse.getLatency()).thenReturn("100");
+      Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+
+         @Override
+         public void write(final int i) throws IOException {
+
+         }
+      });
 
       long before = System.currentTimeMillis();
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);

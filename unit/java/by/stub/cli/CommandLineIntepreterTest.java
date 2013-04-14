@@ -78,7 +78,6 @@ public class CommandLineIntepreterTest {
    }
 
    @Test
-   @Ignore
    public void shouldGetCurrentJarLocation() throws Exception {
       final String currentJarLocation = CommandLineInterpreter.getCurrentJarLocation(CommandLineInterpreter.class);
       Assert.assertEquals("stubby4j-x.x.x-SNAPSHOT.jar", currentJarLocation);

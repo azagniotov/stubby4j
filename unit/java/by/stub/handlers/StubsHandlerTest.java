@@ -13,11 +13,11 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -158,7 +158,6 @@ public class StubsHandlerTest {
 
 
    @Test
-   @Ignore
    public void verifyBehaviourDuringHandleGetRequestWithSomeResults() throws Exception {
 
       final String requestPathInfo = "/path/1";
@@ -177,7 +176,6 @@ public class StubsHandlerTest {
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, times(1)).println(someResultsMessage);
    }
 
 
@@ -232,7 +230,6 @@ public class StubsHandlerTest {
    }
 
    @Test
-   @Ignore
    public void verifyBehaviourDuringHandlePostRequestWithMatch() throws Exception {
       final String postData = "postData";
       final String requestPathInfo = "/path/1";
@@ -259,12 +256,10 @@ public class StubsHandlerTest {
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, times(1)).println(someResultsMessage);
    }
 
 
    @Test
-   @Ignore
    public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
 
       final String requestPathInfo = "/path/1";
@@ -278,15 +273,20 @@ public class StubsHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-      when(mockStubResponse.getResponseBody()).thenReturn(null);
+      when(mockStubResponse.getResponseBody()).thenReturn(new byte[] {});
+      Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+
+         @Override
+         public void write(final int i) throws IOException {
+
+         }
+      });
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, times(1)).println(someResultsMessage);
    }
 
 

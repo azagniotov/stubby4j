@@ -13,7 +13,6 @@ import org.junit.Ignore;
 public class HandlerUtilsTest {
 
    @Test
-   @Ignore
    public void shouldGenerateServerName() throws Exception {
       final String serverName = HandlerUtils.constructHeaderServerName();
       Assert.assertEquals("stubby4j/x.x.xx (HTTP stub server)", serverName);
