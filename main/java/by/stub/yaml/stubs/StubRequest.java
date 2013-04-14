@@ -126,10 +126,6 @@ public class StubRequest {
    }
 
 
-   public final boolean isConfigured() {
-      return StringUtils.isSet(url);
-   }
-
    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
       final StubRequest assertionRequest = new StubRequest();
 

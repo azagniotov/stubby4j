@@ -41,8 +41,8 @@ public final class StubHttpLifecycle {
       return response;
    }
 
-   public boolean isComplete() {
-      return request.isConfigured() && response.isConfigured();
+   public String getRequestAuthorizationHeader() {
+      return request.getHeaders().get(StubRequest.AUTH_HEADER);
    }
 
    @Override
@@ -67,8 +67,8 @@ public final class StubHttpLifecycle {
    @Override
    public String toString() {
       return "StubHttpLifecycle{" +
-            "request=" + request +
-            ", response=" + response +
-            '}';
+         "request=" + request +
+         ", response=" + response +
+         '}';
    }
 }

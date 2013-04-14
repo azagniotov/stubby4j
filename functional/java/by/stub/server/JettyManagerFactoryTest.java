@@ -41,16 +41,6 @@ public class JettyManagerFactoryTest {
       Assert.assertNotNull(jettyManager);
    }
 
-   @Test
-   public void shouldWatchDataFileChanges_WhenWatchFlagGivenInCommandLine() throws Exception {
-      final JettyManagerFactory spy = spy(jettyManagerFactory);
-
-      spy.construct(url.getFile(), new HashMap<String, String>() {{
-         put("watch", "");
-      }});
-
-      verify(spy).watchDataStore(any(YamlParser.class), any(DataStore.class));
-   }
 
    @Test
    public void shouldNOTWatchDataFileChanges_WhenWatchFlagOmittedFromCommandLine() throws Exception {

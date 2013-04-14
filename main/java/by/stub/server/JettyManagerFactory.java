@@ -50,7 +50,7 @@ public class JettyManagerFactory {
          final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
          final Server server = jettyFactory.construct();
 
-         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
+         if (commandLineArgs.containsKey(CommandLineInterpreter.isWatching())) {
             watchDataStore(yamlParser, dataStore);
          }
 

@@ -1,5 +1,6 @@
 package by.stub.yaml.stubs;
 
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.yaml.YamlParser;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -12,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.when;
 
 /**
@@ -30,6 +34,8 @@ public class StubRequestTest {
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
       stubHttpLifecycles = yamlParser.parseAndLoad();
+
+      CommandLineInterpreter.parseCommandLine(new String[]{});
    }
 
    @Test
@@ -70,7 +76,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void ShouldMatchRequest_WhenNoHeadersWerePassed() throws Exception {
+   public void ShouldNotMatchRequest_WhenNoHeadersWerePassed() throws Exception {
       final Map<String, String> headers = new HashMap<String, String>();
 
       final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
@@ -83,7 +89,7 @@ public class StubRequestTest {
 
       final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
 
-      Assert.assertFalse(stubHttpLifecycles.contains(assertionLifecycle));
+      assertThat(stubHttpLifecycles, not(contains(assertionLifecycle)));
    }
 
    @Test
@@ -244,7 +250,7 @@ public class StubRequestTest {
 
       final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
 
-      Assert.assertFalse(stubHttpLifecycles.contains(assertionLifecycle));
+      assertThat(stubHttpLifecycles, not(contains(assertionLifecycle)));
    }
 
    @Test
@@ -259,7 +265,7 @@ public class StubRequestTest {
 
       final StubHttpLifecycle assertionLifecycle = new StubHttpLifecycle(assertionRequest, new StubResponse());
 
-      Assert.assertFalse(stubHttpLifecycles.contains(assertionLifecycle));
+      assertThat(stubHttpLifecycles, not(contains(assertionLifecycle)));
    }
 
 }

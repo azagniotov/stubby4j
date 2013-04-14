@@ -37,14 +37,14 @@ public final class StringUtils {
 
    public static final String UTF_8 = "UTF-8";
 
-   private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+   private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
    private StringUtils() {
 
    }
 
    public static boolean isUSAscii(final String toTest) {
-      return asciiEncoder.canEncode(toTest);
+      return US_ASCII_ENCODER.canEncode(toTest);
    }
 
    public static boolean isSet(final String toTest) {
@@ -100,8 +100,7 @@ public final class StringUtils {
    }
 
    public static String removeSquareBrackets(final String toBeFiltered) {
-      return toBeFiltered.replaceAll("%5B", "")
-         .replaceAll("%5D", "").replaceAll("\\[", "").replaceAll("]", "");
+      return toBeFiltered.replaceAll("%5B|%5D|\\[|]", "");
    }
 
    public static boolean isWithinSquareBrackets(final String toCheck) {

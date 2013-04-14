@@ -38,41 +38,44 @@ public class DataStore {
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }
 
-   public StubResponse findStubResponseFor(final StubRequest assertionStubRequest) {
-      return identifyTypeOfStubResponse(new StubHttpLifecycle(assertionStubRequest, new StubResponse()));
+   public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
+      final StubHttpLifecycle assertingLifecycle = new StubHttpLifecycle(assertingRequest, new StubResponse());
+
+      return identifyStubResponseType(assertingLifecycle);
    }
 
-   private StubResponse identifyTypeOfStubResponse(final StubHttpLifecycle assertionStubHttpLifecycle) {
+   private StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
 
-      final int indexOf = stubHttpLifecycles.indexOf(assertionStubHttpLifecycle);
+      final int indexOf = stubHttpLifecycles.indexOf(assertingLifecycle);
       if (indexOf < 0) {
          return new NotFoundStubResponse();
       }
 
-      final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(indexOf);
+      final StubHttpLifecycle matchedLifecycle = stubHttpLifecycles.get(indexOf);
 
-      final Map<String, String> headers = foundStubHttpLifecycle.getRequest().getHeaders();
+      final Map<String, String> headers = matchedLifecycle.getRequest().getHeaders();
       if (headers.containsKey(StubRequest.AUTH_HEADER)) {
          final String foundBasicAuthorization = headers.get(StubRequest.AUTH_HEADER);
-         final String givenBasicAuthorization = assertionStubHttpLifecycle.getRequest().getHeaders().get(StubRequest.AUTH_HEADER);
+         final String givenBasicAuthorization = assertingLifecycle.getRequestAuthorizationHeader();
 
          if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
             return new UnauthorizedStubResponse();
          }
       }
 
-      if (foundStubHttpLifecycle.getResponse().getHeaders().containsKey("location")) {
+      final StubResponse stubResponse = matchedLifecycle.getResponse();
+      if (stubResponse.getHeaders().containsKey("location")) {
          final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
 
-         redirectStubResponse.setLatency(foundStubHttpLifecycle.getResponse().getLatency());
-         redirectStubResponse.setBody(foundStubHttpLifecycle.getResponse().getBody());
-         redirectStubResponse.setStatus(foundStubHttpLifecycle.getResponse().getStatus());
-         redirectStubResponse.setHeaders(foundStubHttpLifecycle.getResponse().getHeaders());
+         redirectStubResponse.setLatency(stubResponse.getLatency());
+         redirectStubResponse.setBody(stubResponse.getBody());
+         redirectStubResponse.setStatus(stubResponse.getStatus());
+         redirectStubResponse.setHeaders(stubResponse.getHeaders());
 
          return redirectStubResponse;
       }
 
-      return foundStubHttpLifecycle.getResponse();
+      return stubResponse;
 
    }
 

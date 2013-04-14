@@ -90,9 +90,6 @@ public class StubResponse {
       return file != null ? file : "".getBytes(StringUtils.utf8Charset());
    }
 
-   public boolean isConfigured() {
-      return (status != null && (body != null || file != null));
-   }
 
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.DEFAULT;
