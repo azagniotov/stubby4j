@@ -36,7 +36,6 @@ public class StubResponse {
    private byte[] file = null;
    private String latency = null;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
-   private Map<String, String> params = Collections.synchronizedMap(new HashMap<String, String>());
 
    public StubResponse() {
 
@@ -46,13 +45,14 @@ public class StubResponse {
       return status;
    }
 
+   public void setStatus(final String status) {
+      this.status = status;
+   }
+
    public String getBody() {
       return (StringUtils.isSet(body) ? body : "");
    }
 
-   public void setStatus(final String status) {
-      this.status = status;
-   }
 
    public void setBody(final String body) {
       this.body = body;
@@ -66,24 +66,12 @@ public class StubResponse {
       this.headers = headers;
    }
 
-   public Map<String, String> getParams() {
-      return params;
-   }
-
-   public void setParams(final Map<String, String> params) {
-      this.params = params;
-   }
-
    public String getLatency() {
       return latency;
    }
 
    public void setLatency(final String latency) {
       this.latency = latency;
-   }
-
-   public Object getFile() {
-      return file;
    }
 
    public void setFile(final byte[] file) {
@@ -135,7 +123,6 @@ public class StubResponse {
       sb.append(", body='").append(body).append('\'');
       sb.append(", latency='").append(latency).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", params=").append(params);
       sb.append('}');
       return sb.toString();
    }

@@ -29,6 +29,7 @@ import by.stub.utils.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -58,27 +59,25 @@ public class StubRequest {
 
    }
 
-   public final String getUrl() {
-      return getFullUrl();
-   }
-
    public final ArrayList<String> getMethod() {
-      final ArrayList<String> uppercased = new ArrayList<String>(method.size());
+      final ArrayList<String> uppercase = new ArrayList<String>(method.size());
 
-      for (final String string : method) uppercased.add(StringUtils.toUpper(string));
+      for (final String string : method) uppercase.add(StringUtils.toUpper(string));
 
-      return uppercased;
+      return uppercase;
    }
 
-   public final String getPost() {
-      return FileUtils.enforceSystemLineSeparator(post);
+   public void setMethod(final String newMethod) {
+      this.method = new ArrayList<String>(1) {{
+         add((StringUtils.isSet(newMethod) ? newMethod : "GET"));
+      }};
    }
 
    public void setUrl(final String url) {
       this.url = url;
    }
 
-   public String getFullUrl() {
+   public final String getUrl() {
       if (query.isEmpty()) {
          return url;
       }
@@ -88,14 +87,11 @@ public class StubRequest {
       return String.format("%s?%s", url, queryString);
    }
 
-   public void setMethod(final String newMethod) {
-      this.method = new ArrayList<String>(1) {{
-         add((StringUtils.isSet(newMethod) ? newMethod : "GET"));
-      }};
-   }
-
-   public void setMethod(final ArrayList<String> newMethod) {
-      this.method = newMethod;
+   public String getPostBody() {
+      if (file == null) {
+         return FileUtils.enforceSystemLineSeparator(post);
+      }
+      return new String(file, StringUtils.utf8Charset());
    }
 
    public void setPost(final String post) {
@@ -118,24 +114,11 @@ public class StubRequest {
       return query;
    }
 
-   public void setQuery(final Map<String, String> query) {
-      this.query = query;
-   }
 
    public byte[] getFile() {
       return file;
    }
 
-   public void setFile(final byte[] file) {
-      this.file = file;
-   }
-
-   public String getPostBody() {
-      if (file == null) {
-         return getPost();
-      }
-      return new String(file, StringUtils.utf8Charset());
-   }
 
    public final boolean isConfigured() {
       return StringUtils.isSet(url);
@@ -259,7 +242,7 @@ public class StubRequest {
       sb.append("{url='").append(url).append('\'');
       sb.append(", method='").append(method).append('\'');
       sb.append(", post='").append(post).append('\'');
-      sb.append(", file='").append(file).append('\'');
+      sb.append(", file='").append(Arrays.toString(file)).append('\'');
       sb.append(", headers=").append(headers);
       sb.append(", query=").append(query);
       sb.append('}');
