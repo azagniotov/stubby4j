@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,7 +110,7 @@ public final class YamlParser {
          final StubHttpLifecycle parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
          httpLifecycles.add(parentStub);
 
-         mapRootYamlNodeToPojo(parentStub, parentNode);
+         mapRootYamlNodeToStub(parentStub, parentNode);
 
          final ArrayList<String> method = parentStub.getRequest().getMethod();
          final String url = parentStub.getRequest().getUrl();
@@ -121,67 +122,60 @@ public final class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapRootYamlNodeToPojo(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
+   protected void mapRootYamlNodeToStub(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
       for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
 
          final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
 
          if (parent.getKey().equals(YAML_NODE_REQUEST)) {
-            mapYamlKeyValuePairsToPojo(parentStub.getRequest(), httpSettings);
+            mapPairValueToRespectiveField(parentStub.getRequest(), httpSettings);
             continue;
          }
 
-         mapYamlKeyValuePairsToPojo(parentStub.getResponse(), httpSettings);
+         mapPairValueToRespectiveField(parentStub.getResponse(), httpSettings);
       }
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapYamlKeyValuePairsToPojo(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
+   protected void mapPairValueToRespectiveField(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
 
       for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
          final Object rawPairValue = pair.getValue();
          final String pairKey = pair.getKey();
+         final Object massagedPairValue;
 
          if (rawPairValue instanceof ArrayList) {
-            final ArrayList<String> arrayList = (ArrayList<String>) rawPairValue;
-            ReflectionUtils.setPropertyValue(target, pairKey, arrayList);
-            continue;
+            massagedPairValue = rawPairValue;
+
+         } else if (rawPairValue instanceof Map) {
+            massagedPairValue = encodeAuthorizationHeader(rawPairValue);
+
+         } else if (pairKey.toLowerCase().equals("method")) {
+            massagedPairValue = new ArrayList<String>(1) {{ add(pairValueToString(rawPairValue)); }};
+
+         } else if (pairKey.toLowerCase().equals("file")) {
+            massagedPairValue = extractBytesFromFilecontent(rawPairValue);
+
+         } else {
+            massagedPairValue = pairValueToString(rawPairValue);
          }
 
-         if (rawPairValue instanceof Map) {
-            final Map<String, String> keyValues = encodeAuthorizationHeader((Map<String, String>) rawPairValue);
-            ReflectionUtils.setPropertyValue(target, pairKey, keyValues);
-            continue;
-         }
-
-         if (pairKey.toLowerCase().equals("method")) {
-            final ArrayList<String> propertyValue = new ArrayList<String>(1) {{
-               add(pairValueToString(rawPairValue));
-            }};
-            ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
-            continue;
-         }
-
-         if (pairKey.toLowerCase().equals("file")) {
-            final String relativeFilePath = pairValueToString(rawPairValue);
-            final int dotLocation = relativeFilePath.lastIndexOf(".");
-            final String extension = relativeFilePath.substring(dotLocation);
-
-            byte[] contentBytes = null;
-            if (FileUtils.ASCII_TYPES.contains(extension)) {
-               contentBytes = FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
-            } else {
-               contentBytes = FileUtils.binaryFileToBytes(relativeFilePath);
-            }
-
-            ReflectionUtils.setPropertyValue(target, pairKey, contentBytes);
-            continue;
-         }
-
-         final String propertyValue = pairValueToString(rawPairValue);
-         ReflectionUtils.setPropertyValue(target, pairKey, propertyValue);
+         ReflectionUtils.setPropertyValue(target, pairKey, massagedPairValue);
       }
+   }
+
+   private byte[] extractBytesFromFilecontent(final Object rawPairValue) throws IOException {
+
+      final String relativeFilePath = pairValueToString(rawPairValue);
+      final int dotLocation = relativeFilePath.lastIndexOf(".");
+      final String extension = relativeFilePath.substring(dotLocation);
+
+      if (FileUtils.ASCII_TYPES.contains(extension)) {
+         return FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
+      }
+
+      return FileUtils.binaryFileToBytes(relativeFilePath);
    }
 
    private String pairValueToString(final Object value) throws IOException {
@@ -190,17 +184,19 @@ public final class YamlParser {
       return rawValue.trim();
    }
 
-   protected Map<String, String> encodeAuthorizationHeader(final Map<String, String> value) {
-      if (!value.containsKey(StubRequest.AUTH_HEADER)) {
-         return value;
+   protected Map<String, String> encodeAuthorizationHeader(final Object value) {
+
+      final Map<String, String> pairValue = (HashMap<String, String>) value;
+      if (!pairValue.containsKey(StubRequest.AUTH_HEADER)) {
+         return pairValue;
       }
-      final String rawHeader = value.get(StubRequest.AUTH_HEADER);
+      final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
       final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
       final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
-      value.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
+      pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
 
-      return value;
+      return pairValue;
    }
 
    protected List<?> loadYamlData(final Reader io) throws IOException {
