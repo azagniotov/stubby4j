@@ -24,7 +24,6 @@ public class AdminTest {
    private static final String HTTP_HEADER_CONTENT_TYPE_TEXT_PLAIN = "text/plain";
    private static StubbyClient stubbyClient;
    private static String stubsUrlAsString;
-   private static String stubsSslUrlAsString;
    private static String adminUrlAsString;
    private static HttpRequestFactory webClient;
 
@@ -42,14 +41,13 @@ public class AdminTest {
       int clientPort = 5992;
       int sslPort = 5993;
       int adminPort = 5999;
-      final URL url = AdminTest.class.getResource("/yaml/stubs-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/stubs.data.yaml");
       Assert.assertNotNull(url);
 
       stubbyClient = new StubbyClient();
       stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
 
       stubsUrlAsString = String.format("http://localhost:%s", clientPort);
-      stubsSslUrlAsString = String.format("https://localhost:%s", sslPort);
       adminUrlAsString = String.format("http://localhost:%s", adminPort);
    }
 
@@ -61,7 +59,7 @@ public class AdminTest {
    @Test
    public void should_UpdatedStubData_AndMakeGetRequestToUpdatedEndpoint() throws Exception {
 
-      final URL url = AdminTest.class.getResource("/yaml/systemtest-to-update-test-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
@@ -88,7 +86,7 @@ public class AdminTest {
    @Test
    public void should_UpdatedstubData_AndFailToMakeGetRequestRemovedEndpoint() throws Exception {
 
-      final URL url = AdminTest.class.getResource("/yaml/systemtest-to-update-test-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
@@ -104,7 +102,6 @@ public class AdminTest {
       final HttpRequest clientRequest = constructHttpRequest("GET", clientRequestUrl);
       final HttpResponse clientResponse = clientRequest.execute();
 
-      final String contentTypeHeader = clientResponse.getContentType();
       final String clientResponseContentAsString = clientResponse.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientResponse.getStatusCode());
@@ -114,7 +111,7 @@ public class AdminTest {
    @Test
    public void should_FailToUpdateStubData_WhenMethodIsNotPost() throws Exception {
 
-      final URL url = AdminTest.class.getResource("/yaml/systemtest-to-update-test-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
@@ -130,7 +127,7 @@ public class AdminTest {
    @Test
    public void should_FailToUpdateStubData_WhenPostBadData() throws Exception {
 
-      final URL url = AdminTest.class.getResource("/yaml/systemtest-broken-yaml-test-data.yaml");
+      final URL url = AdminTest.class.getResource("/yaml/admin.test.class.inavlid.data.yaml");
       Assert.assertNotNull(url);
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);

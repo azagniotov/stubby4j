@@ -25,7 +25,7 @@ public class StubRequestTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = StubRequestTest.class.getResource("/yaml/stubrequestit-test-data.yaml");
+      final URL url = StubRequestTest.class.getResource("/yaml/stubrequest.test.class.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());

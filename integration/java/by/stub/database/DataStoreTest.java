@@ -42,7 +42,7 @@ public class DataStoreTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = DataStoreTest.class.getResource("/yaml/datastoreit-test-data.yaml");
+      final URL url = DataStoreTest.class.getResource("/yaml/datastore.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());

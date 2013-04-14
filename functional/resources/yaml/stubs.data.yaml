@@ -20,7 +20,7 @@
          content-type: application/json
          pragma: no-cache
       status: 200
-      file: ../json/systemtest-body-response-as-file.json
+      file: ../json/stub.response.body.json
 
 
 -  request:

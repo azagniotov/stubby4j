@@ -46,14 +46,14 @@ public class StubsTest {
          }
       });
 
-      final URL jsonContentUrl = StubsTest.class.getResource("/json/systemtest-body-response-as-file.json");
+      final URL jsonContentUrl = StubsTest.class.getResource("/json/stub.response.body.json");
       Assert.assertNotNull(jsonContentUrl);
       contentAsString = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
       int clientPort = 5992;
       int sslPort = 5993;
       int adminPort = 5999;
-      final URL url = StubsTest.class.getResource("/yaml/stubs-data.yaml");
+      final URL url = StubsTest.class.getResource("/yaml/stubs.data.yaml");
       Assert.assertNotNull(url);
 
       CommandLineInterpreter.parseCommandLine(new String[]{"--data", url.getFile()});
@@ -214,7 +214,6 @@ public class StubsTest {
       request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
-      final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
@@ -234,7 +233,6 @@ public class StubsTest {
       request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
-      final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
@@ -296,7 +294,6 @@ public class StubsTest {
       request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
-      final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
@@ -316,7 +313,6 @@ public class StubsTest {
       request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
-      final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
       Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());

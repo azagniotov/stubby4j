@@ -30,7 +30,7 @@ public class StubbyClientTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = StubbyClientTest.class.getResource("/yaml/stubbyclient-test-data.yaml");
+      final URL url = StubbyClientTest.class.getResource("/yaml/stubbyclient.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       stubbyClient = new StubbyClient();

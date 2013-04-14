@@ -1,4 +1,17 @@
 -  request:
+      method: POST
+      headers:
+         content-type: application/json
+      file: ../json/yamlparser.test.class.post.body.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: OK
+
+
+-  request:
       method: GET
       headers:
          content-type: application/json

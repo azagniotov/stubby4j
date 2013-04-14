@@ -24,7 +24,7 @@ public class ConfigurationScannerTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
 
-      final URL url = ConfigurationScannerTest.class.getResource("/yaml/datastoreit-test-data.yaml");
+      final URL url = ConfigurationScannerTest.class.getResource("/yaml/datastore.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       final YamlParser yamlParser = new YamlParser(url.getFile());

@@ -88,7 +88,7 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildExactYamlThatMatchesLoadedFile() throws Exception {
 
-      final URL jsonContentUrl = YamlBuilderTest.class.getResource("/stubbed-request-response.yaml");
+      final URL jsonContentUrl = YamlBuilderTest.class.getResource("/stubbed.request.response.yaml");
       Assert.assertNotNull(jsonContentUrl);
 
       final String expectedYaml = new Scanner(jsonContentUrl.openStream(), "UTF-8").useDelimiter("\\A").next().trim();

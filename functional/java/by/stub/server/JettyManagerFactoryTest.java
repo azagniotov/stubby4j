@@ -26,7 +26,7 @@ public class JettyManagerFactoryTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      url = JettyManagerFactoryTest.class.getResource("/yaml/jettymanagerfactoryit-test-data.yaml");
+      url = JettyManagerFactoryTest.class.getResource("/yaml/jettymanagerfactory.test.class.data.yaml");
       Assert.assertNotNull(url);
 
       jettyManagerFactory = new JettyManagerFactory();

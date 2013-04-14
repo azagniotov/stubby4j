@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Please refer to the accompanied unit tests for usage examples.
+ *
  * @author Alexander Zagniotov
  * @since 4/13/13, 12:13 AM
  */

@@ -1,9 +1,6 @@
 -  request:
       method: POST
-      url: /item/path
-      query:
-         paramTwo: 12345
-         paramOne: valueOne
+      url: /item/path?paramTwo=12345&paramOne=valueOne
 
    response:
       status: 201
@@ -22,7 +19,7 @@
 
 -  request:
       method: GET                                                                                                       
-      url: /atomfeed/1                                                                                                 
+      url: /atomfFeed/1
                                                                                                                         
    response:                                                                                                            
       headers:                                                                                                          
@@ -66,18 +63,3 @@
          content-type: text/plain
       status: 200
       body: Got post response
-
-
--  request:
-      headers:
-         authorization: bob:secret
-      method: POST
-      url: /item/submit
-      post: >
-         {"action" : "submit"}
-
-   response:
-      headers:
-         content-type: text/plain
-      status: 200
-      body: OK
