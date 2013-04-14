@@ -15,8 +15,8 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       * query param can also be an array with quoted/un-quoted elements: `attributes=["id","uuid"]` or `attributes=[id,uuid]`. Please note no spaces between the CSV
    * `url`: (REQUIRED) the URI string.
       * If you include query string, it WILL BE stripped. If you have query params, include them in the `query` attribute
-   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the user current working directory), returns the contents of the given file as the `request` POST content.
-   	* If the file cannot be found at YAML data parse time, value from `post` is used instead.
+   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the YAML in `-d` or `--data`), returns the contents of the given file as the `request` POST content.
+   	* If the `file` was not provided, stubby fallsback to value from `post` property.
       * If `post` was not provided, it is assumed that POST body was not provided at all.
       * Use `file` for large POST content that otherwise inconvenient to configure as a one-liner. 
       * Please keep in mind: `SnakeYAML` lib (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` is used, the file content loaded as-is, in other words - it does not go through `SnakeYAML` parser. stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters). Therefore its better to load POST content for `request` using `file` attribute
@@ -24,9 +24,9 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
 * `response`: (REQUIRED) describes the server's response to the client
    * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
    * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
-   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the user current working directory),
+   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the YAML in `-d` or `--data`),
       returns the contents of the given file as the response body. It can be ascii of binary file (PDF, images, etc.)
-      * If the file cannot be found at YAML data parse time, value from `body` is used instead. 
+      * If the `file` was not provided, stubby fallsback to value from `body` property. 
       * If `body` was not provided, an empty string is returned by default
    * `body`: (OPTIONAL) the textual body of the server's response to the client
    * `status`: (REQUIRED) the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
