@@ -45,7 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+@SuppressWarnings("unchecked")
 public final class YamlParser {
 
    private final static Yaml SNAKE_YAML;
@@ -93,7 +93,6 @@ public final class YamlParser {
       return parseAndLoad(yamlReader);
    }
 
-   @SuppressWarnings("unchecked")
    public List<StubHttpLifecycle> parseAndLoad(final Reader io) throws Exception {
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
@@ -152,7 +151,9 @@ public final class YamlParser {
             massagedPairValue = encodeAuthorizationHeader(rawPairValue);
 
          } else if (pairKey.toLowerCase().equals("method")) {
-            massagedPairValue = new ArrayList<String>(1) {{ add(pairValueToString(rawPairValue)); }};
+            massagedPairValue = new ArrayList<String>(1) {{
+               add(pairValueToString(rawPairValue));
+            }};
 
          } else if (pairKey.toLowerCase().equals("file")) {
             massagedPairValue = extractBytesFromFilecontent(rawPairValue);

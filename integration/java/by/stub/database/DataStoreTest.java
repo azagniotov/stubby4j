@@ -1,5 +1,6 @@
 package by.stub.database;
 
+import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
@@ -9,23 +10,21 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
-import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -35,8 +34,9 @@ import static org.mockito.Mockito.when;
 
 
 @SuppressWarnings("serial")
-
 public class DataStoreTest {
+
+   private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
 
    private static DataStore dataStore;
 
@@ -54,149 +54,224 @@ public class DataStoreTest {
    }
 
    @Test
-   public void findStubResponseFor_ShouldFindRedirectStubResponse_WhenLocationHeaderIsSet() throws IOException {
+   public void shouldReturnRedirectResponse_WhenLocationHeaderSet() throws IOException {
 
-      final String pathInfo = "/some/redirecting/uri";
+      final String url = "/some/redirecting/uri";
 
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
 
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      Assert.assertTrue(stubResponse instanceof RedirectStubResponse);
-      Assert.assertEquals(StubResponseTypes.REDIRECT, stubResponse.getStubResponseType());
+      assertThat(foundStubResponse, is(instanceOf(RedirectStubResponse.class)));
+      assertThat(StubResponseTypes.REDIRECT, is(sameInstance(foundStubResponse.getStubResponseType())));
    }
 
    @Test
-   public void shouldFindHttpLifecycleForGetRequest() throws IOException {
+   public void shouldReturnDefaultStubResponse_WhenValidGetRequestMade() throws IOException {
 
-      final String pathInfo = "/invoice/123";
+      final String url = "/invoice/123";
 
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
 
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      Assert.assertTrue(stubResponse instanceof StubResponse);
-      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
+      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
+      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
+      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
    }
 
    @Test
-   public void shouldFindHttpLifecycleForGetRequestWithAuthorization() throws IOException {
+   public void shouldReturnDefaultStubResponse_WhenValidAuthorizationHeaderSet() throws IOException {
 
-      final String pathInfo = "/invoice/555";
+      final String url = "/invoice/555";
 
-      final Enumeration<String> headerNames = Collections.enumeration(new ArrayList<String>() {{
-         add(StubRequest.AUTH_HEADER);
-      }});
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders(StubRequest.AUTH_HEADER, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
 
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getHeaderNames()).thenReturn(headerNames);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic Ym9iOnNlY3JldA=="); //bob:secret
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
-
-      Assert.assertTrue(stubResponse instanceof StubResponse);
-      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
-   }
-
-   @Test
-   public void shouldFindHttpLifecycleForGetRequestWithMissingAuthorizationHeader() throws IOException {
-
-      final String pathInfo = "/invoice/555";
-
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-
-
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
-
-      Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
-      Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
-   }
-
-   @Test
-   public void shouldFindHttpLifecycleForGetRequestWithAuthorizationWithBadCredentials() throws IOException {
-
-      final String pathInfo = "/invoice/555";
-
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("Basic 88888nNlY3JldA=="); //bob:secret
-
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
-
-      Assert.assertTrue(stubResponse instanceof UnauthorizedStubResponse);
-      Assert.assertEquals(StubResponseTypes.UNAUTHORIZED, stubResponse.getStubResponseType());
-   }
-
-   @Test
-   public void shouldReturnHttpLifecycleForGetRequestWithDefaultResponse() throws IOException {
-
-      final String pathInfo = "/invoice/125";
-
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
-
-      Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
-      Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
+      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
+      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
+      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
    }
 
 
    @Test
-   public void shouldFindHttpLifecycleForPostRequest() throws IOException {
+   public void shouldReturnUnauthorizedStubResponse_WhenAuthorizationHeaderMissing() throws IOException {
 
-      final String pathInfo = "/invoice/567";
+      final String url = "/invoice/555";
+
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(instanceOf(UnauthorizedStubResponse.class)));
+      assertThat(StubResponseTypes.UNAUTHORIZED, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+   @Test
+   public void shouldReturnUnauthorizedStubResponse_WhenAuthorizationHeaderSetWithBadCredentials() throws IOException {
+
+      final String url = "/invoice/555";
+
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders(StubRequest.AUTH_HEADER, "Basic BadCredentials").build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(instanceOf(UnauthorizedStubResponse.class)));
+      assertThat(StubResponseTypes.UNAUTHORIZED, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+
+   @Test
+   public void shouldReturnNotFoundStubResponse_WhenAssertingRequestWasNotMatched() throws IOException {
+
+      final String url = "/invoice/125";
+
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
+      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+   @Test
+   public void shouldReturnDefaultStubResponse_WhenValidPostRequestMade() throws IOException {
+
+      final String url = "/invoice/567";
       final String postData = "This is a post data";
 
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
-      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
-      Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
-         @Override
-         public int read() throws IOException {
-            return inputStream.read();
-         }
-      });
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodPost()
+            .withPost(postData).build();
 
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      Assert.assertEquals(StubResponseTypes.DEFAULT, stubResponse.getStubResponseType());
+      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
+      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
+      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+   @Test
+   public void shouldReturnNotFoundStubResponse_WhenPostBodyMissing() throws IOException {
+
+      final String url = "/invoice/567";
+
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodPost().build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
+      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
    }
 
 
    @Test
-   public void shouldReturnHttpLifecycleForPostRequestWithDefaultResponse() throws IOException {
+   public void shouldReturnNotFoundStubResponse_WhenPostRequestMadeToIncorrectUrl() throws IOException {
 
-      final String pathInfo = "/invoice/569";
+      final String url = "/invoice/non-existent-url";
+      final String postData = "This is a post data";
 
-      final HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(pathInfo);
-      when(mockHttpServletRequest.getQueryString()).thenReturn("");
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodPost()
+            .withPost(postData).build();
 
-      final StubRequest mockAssertionRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse stubResponse = dataStore.findStubResponseFor(mockAssertionRequest);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      Assert.assertTrue(stubResponse instanceof NotFoundStubResponse);
-      Assert.assertEquals(StubResponseTypes.NOTFOUND, stubResponse.getStubResponseType());
+      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
+      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
    }
+
+   @Test
+   public void shouldReturnDefaultStubResponse_WhenQueryParamIsArray() throws IOException {
+
+      final String url = "/entity.find";
+
+      final StubRequest assertingRequest =
+         BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withQuery("type_name", "user")
+            .withQuery("client_id", "id")
+            .withQuery("client_secret", "secret")
+            .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
+            .build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
+      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
+      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+   @Test
+   public void shouldReturnDefaultStubResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+
+      final String url = "/entity.find";
+
+      final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getQueryString())
+         .thenReturn(
+            "type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
+         );
+
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
+      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
+      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
+   @Test
+   public void shouldReturnNotFoundStubResponse_WhenQueryParamArrayHasNonMatchedElementsWithinUrlEncodedQuotes() throws Exception {
+
+      final String url = "/entity.find";
+
+      final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getQueryString())
+         .thenReturn(
+            "type_name=user&client_id=id&client_secret=secret&attributes=[%22NOMATCH%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
+         );
+
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
+      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+   }
+
 }

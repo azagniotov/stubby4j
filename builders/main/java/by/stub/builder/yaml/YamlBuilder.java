@@ -21,6 +21,7 @@ import java.util.TreeMap;
  * @author Alexander Zagniotov
  * @since 4/13/13, 12:13 AM
  */
+@SuppressWarnings("unchecked")
 public final class YamlBuilder {
 
    private static final Yaml SNAKE_YAML;

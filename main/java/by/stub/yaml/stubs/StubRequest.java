@@ -116,6 +116,10 @@ public class StubRequest {
       }
    }
 
+   public void setQuery(final Map<String, String> query) {
+      this.query = query;
+   }
+
    public Map<String, String> getQuery() {
       return query;
    }

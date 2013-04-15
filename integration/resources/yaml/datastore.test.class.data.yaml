@@ -40,3 +40,20 @@
    response:
       body: This is a response for 567
       status: 503
+
+
+-  request:
+      method: GET
+      url: /entity.find
+      query:
+         type_name: user
+         client_id: id
+         client_secret: secret
+         attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world"}
+      headers:
+         content-type: application/json
