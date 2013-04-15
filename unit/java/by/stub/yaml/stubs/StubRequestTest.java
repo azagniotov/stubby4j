@@ -29,6 +29,75 @@ public class StubRequestTest {
       CommandLineInterpreter.parseCommandLine(new String[]{});
    }
 
+
+   @Test
+   public void shouldNotMatchStubRequest_WhenDifferentMethod() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet().build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost().build();
+
+      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+   }
+
+   @Test
+   public void shouldNotMatchStubRequest_WhenDifferentPostBody() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost("some post").build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost("different post").build();
+
+      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+   }
+
+   @Test
+   public void shouldNotMatchStubRequest_WhenPostBodyWasStubbed_ButNoPostBodySubmitted() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost("some post").build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost().build();
+
+      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+   }
+
+   @Test
+   public void shouldMatchStubRequest_WhenNoPostBodyWasStubbed_ButPostBodyWasSubmitted() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost().build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost("some post").build();
+
+      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+   }
+
    @Test
    public void shouldNotMatchStubRequest_WhenDifferentUrl() throws Exception {
 
@@ -91,7 +160,7 @@ public class StubRequestTest {
 
 
    @Test
-   public void shouldNotMatchStubRequest_WhenNoHeadersSubmitted() throws Exception {
+   public void shouldNotMatchStubRequest_WhenHeadersWereStubbed_ButNoHeadersSubmitted() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -120,7 +189,7 @@ public class StubRequestTest {
 
 
    @Test
-   public void shouldMatchStubRequest_WhenNoHeadersWereStubbed() throws Exception {
+   public void shouldMatchStubRequest_WhenNoHeadersWereStubbed_ButHeadersWereSubmitted() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -278,7 +347,7 @@ public class StubRequestTest {
 
 
    @Test
-   public void shouldMatchStubRequest_WhenNoQueryParamsWereStubbed() throws Exception {
+   public void shouldMatchStubRequest_WhenNoQueryParamsWereStubbed_ButQueryParamsWereSubmitted() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -304,7 +373,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenNoQueryParamsWereSubmitted() throws Exception {
+   public void shouldNotMatchStubRequest_WhenQueryParamsWereStubbed_ButNoQueryParamsWereSubmitted() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -461,8 +530,8 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
-            .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoValue).build();
+            .withQuery(paramTwo, paramTwoValue)
+            .withQuery(paramOne, paramOneValue).build();
 
       final StubRequest actualRequest =
          BUILDER.withUrl(url)

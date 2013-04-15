@@ -24,7 +24,7 @@ import java.net.URL;
 
 public class StubsTest {
 
-   private static final String HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON = "application/json";
+   private static final String HEADER_APPLICATION_JSON = "application/json";
    private static StubbyClient stubbyClient;
    private static String stubsUrlAsString;
    private static String stubsSslUrlAsString;
@@ -153,7 +153,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
       Assert.assertEquals(contentAsString, responseContent);
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
@@ -177,7 +177,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
       Assert.assertEquals(contentAsString, response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
@@ -200,7 +200,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -209,7 +209,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
       Assert.assertEquals("{\"id\": \"123\", \"status\": \"updated\"}", response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
@@ -220,7 +220,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -229,7 +229,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
       Assert.assertEquals("{\"id\": \"123\", \"status\": \"updated\"}", response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
@@ -240,7 +240,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -259,7 +259,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -278,7 +278,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -288,7 +288,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.CREATED_201, response.getStatusCode());
       Assert.assertEquals("{\"id\": \"456\", \"status\": \"created\"}", responseContentAsString);
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
@@ -299,7 +299,7 @@ public class StubsTest {
       final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -309,7 +309,7 @@ public class StubsTest {
 
       Assert.assertEquals(HttpStatus.CREATED_201, response.getStatusCode());
       Assert.assertEquals("{\"id\": \"456\", \"status\": \"created\"}", responseContentAsString);
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_APPLICATION_JSON));
+      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
    }
 
    @Test
