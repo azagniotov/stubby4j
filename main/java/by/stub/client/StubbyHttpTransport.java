@@ -40,20 +40,21 @@ final class StubbyHttpTransport {
 
    HttpURLConnection constructHttpConnection() throws IOException {
 
-      if (!SUPPORTED_METHODS.contains(stubbyRequest.getMethod())) {
-         throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", stubbyRequest.getMethod()));
+      final String stubbyRequestMethod = stubbyRequest.getMethod();
+
+      if (!SUPPORTED_METHODS.contains(stubbyRequestMethod)) {
+         throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", stubbyRequestMethod));
       }
 
       final URL url = new URL(stubbyRequest.constructFullUrl());
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-      connection.setRequestMethod(stubbyRequest.getMethod());
+      connection.setRequestMethod(stubbyRequestMethod);
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);
       setRequestHeaders(connection);
 
-      final String requestMethod = connection.getRequestMethod();
-      if (POSTING_METHODS.contains(requestMethod)) {
+      if (POSTING_METHODS.contains(stubbyRequestMethod)) {
          writeOutputStream(connection);
       }
 

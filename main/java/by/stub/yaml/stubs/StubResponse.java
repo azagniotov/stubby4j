@@ -90,6 +90,9 @@ public class StubResponse {
       return file != null ? file : "".getBytes(StringUtils.utf8Charset());
    }
 
+   public boolean hasHeader(final String headerName) {
+      return getHeaders().containsKey(headerName);
+   }
 
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.DEFAULT;

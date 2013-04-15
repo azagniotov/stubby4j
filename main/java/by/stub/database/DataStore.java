@@ -55,24 +55,19 @@ public class DataStore {
 
       final Map<String, String> headers = matchedLifecycle.getRequest().getHeaders();
       if (headers.containsKey(StubRequest.AUTH_HEADER)) {
-         final String foundBasicAuthorization = headers.get(StubRequest.AUTH_HEADER);
-         final String givenBasicAuthorization = assertingLifecycle.getRequestAuthorizationHeader();
+         final String foundAuthorization = headers.get(StubRequest.AUTH_HEADER);
+         final String givenAuthorization = assertingLifecycle.getRequestAuthorizationHeader();
 
-         if (!foundBasicAuthorization.equals(givenBasicAuthorization)) {
+         if (!foundAuthorization.equals(givenAuthorization)) {
             return new UnauthorizedStubResponse();
          }
       }
 
       final StubResponse stubResponse = matchedLifecycle.getResponse();
-      if (stubResponse.getHeaders().containsKey("location")) {
+      if (stubResponse.hasHeader("location")) {
          final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
 
-         redirectStubResponse.setLatency(stubResponse.getLatency());
-         redirectStubResponse.setBody(stubResponse.getBody());
-         redirectStubResponse.setStatus(stubResponse.getStatus());
-         redirectStubResponse.setHeaders(stubResponse.getHeaders());
-
-         return redirectStubResponse;
+         return redirectStubResponse.configure(stubResponse);
       }
 
       return stubResponse;

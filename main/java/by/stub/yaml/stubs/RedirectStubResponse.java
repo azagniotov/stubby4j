@@ -33,4 +33,14 @@ public class RedirectStubResponse extends StubResponse {
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.REDIRECT;
    }
+
+   public RedirectStubResponse configure(final StubResponse stubResponse) {
+      setLatency(stubResponse.getLatency());
+      setBody(stubResponse.getBody());
+      setStatus(stubResponse.getStatus());
+      setHeaders(stubResponse.getHeaders());
+      setFile(stubResponse.getFile());
+
+      return this;
+   }
 }
