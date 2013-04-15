@@ -21,7 +21,7 @@ allprojects {
    project.buildDir = 'target'
 }
 
-apply from: "$rootDir/conf/gradle/idea.gradle"
+apply from: "$rootDir/conf/gradle/ides.gradle"
 
 subprojects {
    sourceCompatibility = 1.6
