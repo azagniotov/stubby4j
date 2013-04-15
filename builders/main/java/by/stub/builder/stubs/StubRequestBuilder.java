@@ -18,9 +18,9 @@ public final class StubRequestBuilder {
    private String url = null;
    private ArrayList<String> methods = new ArrayList<String>();
    private String post = null;
-   private byte[] file = null;
    private Map<String, String> headers = new HashMap<String, String>();
    private Map<String, String> query = new HashMap<String, String>();
+   private byte[] fileBytes;
 
    public StubRequestBuilder() {
 
@@ -74,6 +74,12 @@ public final class StubRequestBuilder {
       return this;
    }
 
+   public StubRequestBuilder withFileBytes(final byte[] fileBytes) {
+      this.fileBytes = fileBytes;
+
+      return this;
+   }
+
    public StubRequestBuilder withQuery(final String key, final String value) {
       this.query.put(key, value);
 
@@ -84,6 +90,7 @@ public final class StubRequestBuilder {
       final StubRequest stubRequest = new StubRequest();
 
       stubRequest.setPost(post);
+      stubRequest.setFile(fileBytes);
       stubRequest.setUrl(url);
       stubRequest.setHeaders(new HashMap<String, String>(headers));
       stubRequest.setQuery(new HashMap<String, String>(query));
@@ -104,7 +111,7 @@ public final class StubRequestBuilder {
       this.url = null;
       this.methods = new ArrayList<String>();
       this.post = null;
-      this.file = null;
+      this.fileBytes = null;
       this.headers = new HashMap<String, String>();
       this.query = new HashMap<String, String>();
 

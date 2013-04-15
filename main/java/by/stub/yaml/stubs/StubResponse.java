@@ -87,7 +87,7 @@ public class StubResponse {
       if (file == null) {
          return getBody().getBytes(StringUtils.utf8Charset());
       }
-      return file != null ? file : "".getBytes(StringUtils.utf8Charset());
+      return file;
    }
 
    public boolean hasHeader(final String headerName) {

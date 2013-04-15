@@ -2,6 +2,7 @@ package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.utils.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,6 +30,33 @@ public class StubRequestTest {
       CommandLineInterpreter.parseCommandLine(new String[]{});
    }
 
+   @Test
+   public void shouldGetPostBody_WhenPostProvided_ButFileNotSet() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final String postBody = "Hello";
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withPost(postBody)
+            .withMethodGet().build();
+
+      assertThat(stubbedRequest.getPostBody(), is(equalTo(postBody)));
+   }
+
+   @Test
+   public void shouldGetPostBody_WhenPostNotProvided_ButFileSet() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final String fileContent = "Hello World!";
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withFileBytes(fileContent.getBytes(StringUtils.utf8Charset()))
+            .withMethodGet().build();
+
+      assertThat(stubbedRequest.getPostBody(), is(equalTo(fileContent)));
+   }
 
    @Test
    public void shouldNotMatchStubRequest_WhenDifferentMethod() throws Exception {
@@ -639,6 +667,102 @@ public class StubRequestTest {
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
       final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+   }
+
+   @Test
+   public void shouldMatchStubRequest_WhenThereLargeSetupOfStubbedProperties() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+
+      final String headerOne = "content-type";
+      final String headerOneValue = "application/xml";
+
+      final String headerTwo = "content-length";
+      final String headerTwoValue = "30";
+
+      final String headerThree = "content-language";
+      final String headerThreeValue = "en-US";
+
+      final String url = "/invoice/123";
+      final String postBody = "this is a post body";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue)
+            .withHeaders("content-encoding", "UTF-8")
+            .withHeaders("Pragma", "no-cache").build();
+
+      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+   }
+
+   @Test
+   public void shouldMatchStubRequest_WhenThereLargeSetupOfStubbedProperties_ButNotAllHeadersSubmitted() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+
+      final String headerOne = "content-type";
+      final String headerOneValue = "application/xml";
+
+      final String headerTwo = "content-length";
+      final String headerTwoValue = "30";
+
+      final String headerThree = "content-language";
+      final String headerThreeValue = "en-US";
+
+      final String url = "/invoice/123";
+      final String postBody = "this is a post body";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, "888")
+            .withHeaders(headerThree, headerThreeValue)
+            .withHeaders("content-encoding", "UTF-8")
+            .withHeaders("Pragma", "no-cache").build();
 
       assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
    }

@@ -129,6 +129,9 @@ public class StubRequest {
       return file;
    }
 
+   public void setFile(final byte[] file) {
+      this.file = file;
+   }
 
    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
       final StubRequest assertionRequest = new StubRequest();
@@ -254,4 +257,5 @@ public class StubRequest {
       sb.append('}');
       return sb.toString();
    }
+
 }
