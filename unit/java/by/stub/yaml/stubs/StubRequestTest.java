@@ -8,10 +8,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,18 +27,19 @@ public class StubRequestTest {
       CommandLineInterpreter.parseCommandLine(new String[]{});
    }
 
+
    @Test
    public void shouldGetPostBody_WhenPostProvided_ButFileNotSet() throws Exception {
 
       final String url = "/invoice/789";
 
       final String postBody = "Hello";
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withPost(postBody)
             .withMethodGet().build();
 
-      assertThat(stubbedRequest.getPostBody(), is(equalTo(postBody)));
+      assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
    }
 
    @Test
@@ -50,12 +48,12 @@ public class StubRequestTest {
       final String url = "/invoice/789";
 
       final String fileContent = "Hello World!";
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withFileBytes(fileContent.getBytes(StringUtils.utf8Charset()))
             .withMethodGet().build();
 
-      assertThat(stubbedRequest.getPostBody(), is(equalTo(fileContent)));
+      assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
    }
 
    @Test
@@ -63,7 +61,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
@@ -71,7 +69,7 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -79,7 +77,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost("some post").build();
@@ -89,7 +87,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withPost("different post").build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -97,7 +95,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost("some post").build();
@@ -106,7 +104,7 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -114,7 +112,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
@@ -123,7 +121,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withPost("some post").build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -137,7 +135,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -151,7 +149,7 @@ public class StubRequestTest {
             .withQuery(paramTwo, paramTwoValue)
             .withQuery(paramOne, paramOneValue).build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
 
@@ -169,7 +167,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -183,7 +181,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -201,7 +199,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -212,7 +210,7 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
 
@@ -230,7 +228,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
@@ -241,7 +239,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -259,7 +257,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -273,7 +271,7 @@ public class StubRequestTest {
             .withHeaders("Content-Length", headerTwoValue)
             .withHeaders("Content-Language", headerThreeValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -291,7 +289,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -305,7 +303,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
 
@@ -323,7 +321,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -336,7 +334,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
 
@@ -354,7 +352,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/123";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -370,7 +368,7 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -385,7 +383,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead().build();
@@ -397,7 +395,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -411,7 +409,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -423,7 +421,7 @@ public class StubRequestTest {
             .withMethodGet()
             .withMethodHead().build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
 
@@ -438,7 +436,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -452,7 +450,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -467,7 +465,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -482,7 +480,7 @@ public class StubRequestTest {
             .withQuery(paramTwo, paramTwoValue)
             .withQuery("paramThree", "three").build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
 
@@ -497,7 +495,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -512,7 +510,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -526,7 +524,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -540,7 +538,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, "three").build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -554,7 +552,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -568,7 +566,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -582,7 +580,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -596,7 +594,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -607,7 +605,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -620,7 +618,7 @@ public class StubRequestTest {
 
       final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -631,7 +629,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -644,7 +642,7 @@ public class StubRequestTest {
 
       final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -655,7 +653,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -668,7 +666,7 @@ public class StubRequestTest {
 
       final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -679,7 +677,7 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -692,7 +690,7 @@ public class StubRequestTest {
 
       final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 
    @Test
@@ -716,7 +714,7 @@ public class StubRequestTest {
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodPost()
@@ -740,7 +738,7 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+      assertThat(expectedRequest).isEqualTo(actualRequest);
    }
 
    @Test
@@ -764,7 +762,7 @@ public class StubRequestTest {
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
 
-      final StubRequest stubbedRequest =
+      final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodPost()
@@ -788,6 +786,6 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(actualRequest, is(not(equalTo(stubbedRequest))));
+      assertThat(expectedRequest).isNotEqualTo(actualRequest);
    }
 }

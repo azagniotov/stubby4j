@@ -19,11 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,8 +61,8 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(RedirectStubResponse.class)));
-      assertThat(StubResponseTypes.REDIRECT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(RedirectStubResponse.class);
+      assertThat(StubResponseTypes.REDIRECT).isSameAs(foundStubResponse.getStubResponseType());
    }
 
    @Test
@@ -81,10 +77,11 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
-      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
-      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnDefaultStubResponse_WhenValidAuthorizationHeaderSet() throws IOException {
@@ -99,9 +96,9 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
-      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
-      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
    }
 
 
@@ -117,9 +114,10 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(UnauthorizedStubResponse.class)));
-      assertThat(StubResponseTypes.UNAUTHORIZED, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
+      assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnUnauthorizedStubResponse_WhenAuthorizationHeaderSetWithBadCredentials() throws IOException {
@@ -134,8 +132,8 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(UnauthorizedStubResponse.class)));
-      assertThat(StubResponseTypes.UNAUTHORIZED, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
+      assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
    }
 
 
@@ -151,9 +149,10 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
-      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
+      assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnDefaultStubResponse_WhenValidPostRequestMade() throws IOException {
@@ -169,10 +168,11 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
-      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
-      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnNotFoundStubResponse_WhenPostBodyMissing() throws IOException {
@@ -186,8 +186,8 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
-      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
+      assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
    }
 
 
@@ -205,9 +205,10 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
-      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
+      assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnDefaultStubResponse_WhenQueryParamIsArray() throws IOException {
@@ -226,10 +227,11 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
-      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
-      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnDefaultStubResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
@@ -248,10 +250,11 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(not(instanceOf(NotFoundStubResponse.class))));
-      assertThat(foundStubResponse, is(instanceOf(StubResponse.class)));
-      assertThat(StubResponseTypes.DEFAULT, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
    }
+
 
    @Test
    public void shouldReturnNotFoundStubResponse_WhenQueryParamArrayHasNonMatchedElementsWithinUrlEncodedQuotes() throws Exception {
@@ -270,8 +273,8 @@ public class DataStoreTest {
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
-      assertThat(foundStubResponse, is(instanceOf(NotFoundStubResponse.class)));
-      assertThat(StubResponseTypes.NOTFOUND, is(sameInstance(foundStubResponse.getStubResponseType())));
+      assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
+      assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
    }
 
 }

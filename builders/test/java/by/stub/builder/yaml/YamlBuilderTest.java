@@ -6,9 +6,8 @@ import org.junit.Test;
 import java.net.URL;
 import java.util.Scanner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.fest.assertions.api.Assertions.assertThat;
+
 
 /**
  * @author Alexander Zagniotov
@@ -45,7 +44,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withFile("../json/systemtest-body-response-as-file.json").build();
 
-      assertThat(actualYaml, is(equalTo(expectedYaml)));
+      assertThat(expectedYaml).isEqualTo(actualYaml);
 
    }
 
@@ -81,7 +80,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withBody("{\"id\": \"123\", \"status\": \"updated\"}").build();
 
-      assertThat(actualYaml, is(equalTo(expectedYaml)));
+      assertThat(expectedYaml).isEqualTo(actualYaml);
 
    }
 
@@ -106,7 +105,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withBody("{\"id\": \"123\", \"status\": \"updated\"}").build();
 
-      assertThat(actualYaml, is(equalTo(expectedYaml)));
+      assertThat(expectedYaml).isEqualTo(actualYaml);
 
    }
 }

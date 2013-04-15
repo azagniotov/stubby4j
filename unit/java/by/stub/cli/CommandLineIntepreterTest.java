@@ -1,11 +1,12 @@
 package by.stub.cli;
 
-import junit.framework.Assert;
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
 import java.util.Map;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -18,14 +19,16 @@ public class CommandLineIntepreterTest {
    public void shouldBeTrueWhenYamlIsProvided() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"--data", "somefilename.yaml"});
       final boolean isYamlProvided = CommandLineInterpreter.isYamlProvided();
-      Assert.assertEquals(true, isYamlProvided);
+
+      assertThat(isYamlProvided).isTrue();
    }
 
    @Test
    public void shouldBeFalseThatYamlIsNotProvided() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"alex", "zagniotov"});
       final boolean isYamlProvided = CommandLineInterpreter.isYamlProvided();
-      Assert.assertEquals(false, isYamlProvided);
+
+      assertThat(isYamlProvided).isFalse();
    }
 
    @Test(expected = ParseException.class)
@@ -52,27 +55,31 @@ public class CommandLineIntepreterTest {
    public void testIsHelpWhenLongOptionGiven() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"--help"});
       final boolean isHelp = CommandLineInterpreter.isHelp();
-      Assert.assertEquals(true, isHelp);
+
+      assertThat(isHelp).isTrue();
    }
 
    @Test
    public void shouldReturnOneCommandlineParamWhenHelpArgPresent() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"--help"});
       final Map<String, String> params = CommandLineInterpreter.getCommandlineParams();
-      Assert.assertEquals(1, params.size());
+
+      assertThat(params.size()).isEqualTo(1);
    }
 
    @Test
    public void shouldReturnEmptyCommandlineParams() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{});
       final Map<String, String> params = CommandLineInterpreter.getCommandlineParams();
-      Assert.assertEquals(0, params.size());
+
+      assertThat(params.size()).isZero();
    }
 
    @Test
    public void shouldReturnCommandlineParams() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{"--data", "somefilename.yaml", "-s", "12345", "--admin", "567"});
       final Map<String, String> params = CommandLineInterpreter.getCommandlineParams();
-      Assert.assertEquals(3, params.size());
+
+      assertThat(params.size()).isEqualTo(3);
    }
 }

@@ -1,8 +1,11 @@
 package by.stub.utils;
 
 import by.stub.exception.Stubby4JException;
-import junit.framework.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -11,20 +14,26 @@ import org.junit.Test;
 
 public class HandlerUtilsTest {
 
+   @Rule
+   public ExpectedException expectedException = ExpectedException.none();
+
    @Test
    public void shouldGetHtmlResourceByName() throws Exception {
       final String templateContent = HandlerUtils.getHtmlResourceByName("test-template");
-      Assert.assertEquals("<html><head></head><body>%s</body></html>", templateContent);
+      assertThat("<html><head></head><body>%s</body></html>").isEqualTo(templateContent);
    }
 
    @Test
    public void shouldPopulateHtmlTemplate() throws Exception {
       final String templateContent = HandlerUtils.populateHtmlTemplate("test-template", "alex");
-      Assert.assertEquals("<html><head></head><body>alex</body></html>", templateContent);
+      assertThat("<html><head></head><body>alex</body></html>").isEqualTo(templateContent);
    }
 
-   @Test(expected = Stubby4JException.class)
+   @Test
    public void shouldNotPopulateNonExistentHtmlTemplate() throws Exception {
+
+      expectedException.expect(Stubby4JException.class);
+
       HandlerUtils.populateHtmlTemplate("non-existent-template", "alex");
    }
 }

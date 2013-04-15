@@ -1,5 +1,5 @@
 // vim: ft=groovy
-defaultTasks 'clean', 'cobertura', 'build', 'cleanIdea', 'idea'
+defaultTasks 'clean', 'build', 'cleanIdea', 'idea'
 description = 'Gradle configuration for stubby4j'
 
 buildscript {
@@ -16,14 +16,6 @@ buildscript {
 allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
-
-   idea {
-      module {
-         downloadSources = true
-         downloadJavadoc = true
-      }
-   }
-
    apply plugin: 'eclipse'
    apply plugin: 'project-report'
    project.buildDir = 'target'
@@ -58,13 +50,6 @@ subprojects {
    }
 
    apply from: "$rootDir/conf/gradle/dependencies.gradle"
-
-   if (it.name == 'main') {
-      apply from: "$rootDir/conf/gradle/tests.gradle"
-      apply from: "$rootDir/conf/gradle/pmd.gradle"
-      apply from: "$rootDir/conf/gradle/sonatype.gradle"
-   }
-
    if (it.name != 'main' && it.name != 'builders') {
       apply from: "$rootDir/conf/gradle/cobertura.gradle"
    }

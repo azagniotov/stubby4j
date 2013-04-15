@@ -17,4 +17,11 @@ idea {
          }
       }
    }
+
+   idea {
+      module {
+         downloadSources = true
+         downloadJavadoc = true
+      }
+   }
 }

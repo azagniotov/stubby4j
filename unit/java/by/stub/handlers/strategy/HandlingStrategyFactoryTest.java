@@ -4,8 +4,9 @@ import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
-import junit.framework.Assert;
 import org.junit.Test;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -19,7 +20,7 @@ public class HandlingStrategyFactoryTest {
       final StubResponse stubResponse = new StubResponse();
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(stubResponseHandlingStrategy instanceof DefaultResponseHandlingStrategy);
+      assertThat(stubResponseHandlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
    }
 
    @Test
@@ -27,7 +28,7 @@ public class HandlingStrategyFactoryTest {
       final StubResponse stubResponse = new NotFoundStubResponse();
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(stubResponseHandlingStrategy instanceof NotFoundResponseHandlingStrategy);
+      assertThat(stubResponseHandlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
    }
 
    @Test
@@ -35,7 +36,7 @@ public class HandlingStrategyFactoryTest {
       final StubResponse stubResponse = new UnauthorizedStubResponse();
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(stubResponseHandlingStrategy instanceof UnauthorizedResponseHandlingStrategy);
+      assertThat(stubResponseHandlingStrategy).isInstanceOf(UnauthorizedResponseHandlingStrategy.class);
    }
 
    @Test
@@ -43,6 +44,6 @@ public class HandlingStrategyFactoryTest {
       final StubResponse stubResponse = new RedirectStubResponse();
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = HandlingStrategyFactory.identifyHandlingStrategyFor(stubResponse);
-      Assert.assertTrue(stubResponseHandlingStrategy instanceof RedirectResponseHandlingStrategy);
+      assertThat(stubResponseHandlingStrategy).isInstanceOf(RedirectResponseHandlingStrategy.class);
    }
 }
