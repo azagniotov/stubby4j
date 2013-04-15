@@ -71,6 +71,11 @@ See `docs` directory for:
 * [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 ## Change Log
+### 1.0.60
+
+* stubby's admin page was generating broken hyper links if URL had single quotes [BUG]
+* stubby is able to match URL when query string param was an array with elements within single quotes, ie: ```attributes=['id','uuid']``` [ENHANCEMENT]
+
 ### 1.0.59
 
 * stubby's admin page was not able to display the contents of stubbed response/request ```body```, ```post``` or ```file``` [BUG]
