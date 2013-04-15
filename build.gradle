@@ -16,6 +16,14 @@ buildscript {
 allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
+
+   idea {
+      module {
+         downloadSources = true
+         downloadJavadoc = true
+      }
+   }
+
    apply plugin: 'eclipse'
    apply plugin: 'project-report'
    project.buildDir = 'target'

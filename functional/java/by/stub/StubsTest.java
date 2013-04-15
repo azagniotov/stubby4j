@@ -75,6 +75,21 @@ public class StubsTest {
 
    }
 
+   @Test
+   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
+      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+
+      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
+      Assert.assertEquals("{\"status\": \"hello world with single quote\"}", responseContent);
+   }
+
 
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {

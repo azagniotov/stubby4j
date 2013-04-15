@@ -112,7 +112,11 @@ public final class StringUtils {
    }
 
    public static String decodeUrlEncodedQuotes(final String toBeFiltered) {
-      return toBeFiltered.replaceAll("%22", "\"");
+      return toBeFiltered.replaceAll("%22", "\"").replaceAll("%27", "'");
+   }
+
+   public static String encodeSingleQuotes(final String toBeEncoded) {
+      return toBeEncoded.replaceAll("'", "%27");
    }
 
    public static String constructUserAgentName() {

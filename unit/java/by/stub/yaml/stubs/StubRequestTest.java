@@ -648,6 +648,30 @@ public class StubRequestTest {
    }
 
    @Test
+   public void shouldMatchStubRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
+
+      final String paramOne = "names";
+      final String paramOneValue = "['alex','tracy']";
+
+      final String url = "/invoice/789";
+
+      final StubRequest stubbedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue).build();
+
+      final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
+
+      final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      assertThat(actualRequest, is(equalTo(stubbedRequest)));
+   }
+
+   @Test
    public void shouldNotMatchStubRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes_ButDifferentSpacing() throws Exception {
 
       final String paramOne = "names";

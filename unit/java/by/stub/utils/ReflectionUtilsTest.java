@@ -1,10 +1,14 @@
 package by.stub.utils;
 
 import by.stub.yaml.stubs.StubRequest;
-import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  * @author Alexander Zagniotov
@@ -20,28 +24,30 @@ public class ReflectionUtilsTest {
       stubRequest.setMethod("POST");
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
-      Assert.assertEquals(totalOfStubRequestMemberFields, properties.size());
-      Assert.assertEquals("[POST]", properties.get("method"));
-      Assert.assertEquals("Not provided", properties.get("url"));
-      Assert.assertEquals("Not provided", properties.get("post"));
-      Assert.assertEquals("{}", properties.get("headers"));
+      assertThat(totalOfStubRequestMemberFields, is(equalTo(properties.size())));
+      assertThat("[POST]", is(equalTo(properties.get("method"))));
+      assertThat("Not provided", is(equalTo(properties.get("url"))));
+      assertThat("Not provided", is(equalTo(properties.get("post"))));
+      assertThat("{}", is(equalTo(properties.get("headers"))));
    }
 
    @Test
-   public void shouldSetValueOnObjectProperty() throws Exception {
+   public void shouldSetValueOnObjectProperty_WhenCorrectPropertyNameGiven() throws Exception {
       final StubRequest stubRequest = new StubRequest();
-      Assert.assertEquals(null, stubRequest.getUrl());
+      assertThat(stubRequest.getUrl(), is(nullValue()));
 
       ReflectionUtils.setPropertyValue(stubRequest, "url", "google.com");
-      Assert.assertEquals("google.com", stubRequest.getUrl());
+
+      assertThat(stubRequest.getUrl(), is(equalTo("google.com")));
    }
 
    @Test
-   public void shouldNotSetValueOnObjectProperty() throws Exception {
+   public void shouldNotSetValueOnObjectProperty_WhenIncorrectPropertyNameGiven() throws Exception {
       final StubRequest stubRequest = new StubRequest();
-      Assert.assertEquals(null, stubRequest.getUrl());
+      assertThat(stubRequest.getUrl(), is(nullValue()));
 
-      ReflectionUtils.setPropertyValue(stubRequest, "blah", "google.com");
-      Assert.assertEquals(null, stubRequest.getUrl());
+      ReflectionUtils.setPropertyValue(stubRequest, "nonExistentProperty", "google.com");
+
+      assertThat(stubRequest.getUrl(), is(nullValue()));
    }
 }

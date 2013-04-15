@@ -1,8 +1,11 @@
 package by.stub.utils;
 
-import junit.framework.Assert;
 import org.eclipse.jetty.http.HttpSchemes;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  * @author Alexander Zagniotov
@@ -13,19 +16,37 @@ public class HandlerUtilsTest {
 
    @Test
    public void shouldEscapeHtmlEntities() throws Exception {
-      final String escaped = StringUtils.escapeHtmlEntities("<xmlElement>8</xmlElement>");
-      Assert.assertEquals("&lt;xmlElement&gt;8&lt;/xmlElement&gt;", escaped);
+
+      final String actualEscaped = StringUtils.escapeHtmlEntities("<xmlElement>8</xmlElement>");
+      final String expectedEscaped = "&lt;xmlElement&gt;8&lt;/xmlElement&gt;";
+
+      assertThat(actualEscaped, is(equalTo(expectedEscaped)));
    }
 
    @Test
    public void shouldLinkifyUriString() throws Exception {
-      final String linkified = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, "/google/1", "localhost", 8888);
-      Assert.assertEquals("<a target='_blank' href='http://localhost:8888/google/1'>http://localhost:8888/google/1</a>", linkified);
+
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, "/google/1", "localhost", 8888);
+      final String expectedLinkified = "<a target='_blank' href='http://localhost:8888/google/1'>http://localhost:8888/google/1</a>";
+
+      assertThat(actualLinkified, is(equalTo(expectedLinkified)));
    }
 
    @Test
    public void shouldLinkifyUriStringForHttps() throws Exception {
-      final String linkified = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, "/google/1", "localhost", 7443);
-      Assert.assertEquals("<a target='_blank' href='https://localhost:7443/google/1'>https://localhost:7443/google/1</a>", linkified);
+
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, "/google/1", "localhost", 7443);
+      final String expectedLinkified = "<a target='_blank' href='https://localhost:7443/google/1'>https://localhost:7443/google/1</a>";
+
+      assertThat(actualLinkified, is(equalTo(expectedLinkified)));
+   }
+
+   @Test
+   public void shouldLinkifyUriStringWithSingleQuotesInQueryString() throws Exception {
+
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, "/entity?client_secret=secret&attributes=['id','uuid']", "localhost", 8882);
+      final String expectedLinkified = "<a target='_blank' href='http://localhost:8882/entity?client_secret=secret&attributes=[%27id%27,%27uuid%27]'>http://localhost:8882/entity?client_secret=secret&attributes=['id','uuid']</a>";
+
+      assertThat(actualLinkified, is(equalTo(expectedLinkified)));
    }
 }

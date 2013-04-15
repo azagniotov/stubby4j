@@ -85,4 +85,14 @@ public class StringUtilsTest {
 
       assertThat(isWithinSquareBrackets, is(equalTo(false)));
    }
+
+   @Test
+   public void shouldCorrectlyEncodeSingleQuotesInURL() throws Exception {
+
+      final String originaUrl = "http://localhost:8882/entity.find.single.quote?client_secret=secret&attributes=['id','uuid','created','lastUpdated','displayName','email','givenName','familyName']";
+      final String expectedEncodedUrl = "http://localhost:8882/entity.find.single.quote?client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]";
+      final String actualEncodedUrl = StringUtils.encodeSingleQuotes(originaUrl);
+
+      assertThat(actualEncodedUrl, is(equalTo(expectedEncodedUrl)));
+   }
 }

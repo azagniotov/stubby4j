@@ -33,6 +33,23 @@
 
 -  request:
       method: GET
+      url: /entity.find.single.quote
+      query:
+         type_name: user
+         client_id: id
+         client_secret: secret
+         attributes: "['id','uuid','created','lastUpdated','displayName','email','givenName','familyName']"
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world with single quote"}
+      headers:
+         content-type: application/json
+
+
+-  request:
+      method: GET
       url: /pdf/hello-world
    response:
       headers:
