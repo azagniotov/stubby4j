@@ -18,8 +18,9 @@ public final class CollectionUtils {
 
    public static Map<String, String> constructParamMap(final String queryString) {
 
-      if (!StringUtils.isSet(queryString))
+      if (!StringUtils.isSet(queryString)) {
          return new HashMap<String, String>();
+      }
 
       final Map<String, String> paramMap = new HashMap<String, String>();
       final String[] pairs = queryString.split("&");
@@ -50,13 +51,11 @@ public final class CollectionUtils {
 
       while (iterator.hasNext()) {
          final Map.Entry<String, String> entry = iterator.next();
-         Object entryValue = entry.getValue();
-
-         final String pair = String.format("%s=%s", entry.getKey(), entryValue);
+         final String pair = String.format("%s=%s", entry.getKey(), entry.getValue());
 
          queryStringBuilder.append(pair);
          if (iterator.hasNext()) {
-            queryStringBuilder.append("&");
+            queryStringBuilder.append('&');
          }
 
       }

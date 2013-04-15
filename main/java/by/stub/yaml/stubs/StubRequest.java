@@ -46,12 +46,12 @@ public class StubRequest {
 
    public static final String AUTH_HEADER = "authorization";
 
-   private String url = null;
+   private String url;
    private ArrayList<String> method = new ArrayList<String>(1) {{
       add("GET");
    }};
-   private String post = null;
-   private byte[] file = null;
+   private String post;
+   private byte[] file;
    private Map<String, String> headers = new HashMap<String, String>();
    private Map<String, String> query = new HashMap<String, String>();
 

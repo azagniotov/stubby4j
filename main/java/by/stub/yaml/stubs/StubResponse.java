@@ -32,9 +32,9 @@ import java.util.Map;
 public class StubResponse {
 
    private String status = "200";
-   private String body = null;
-   private byte[] file = null;
-   private String latency = null;
+   private String body;
+   private byte[] file;
+   private String latency;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
 
    public StubResponse() {
