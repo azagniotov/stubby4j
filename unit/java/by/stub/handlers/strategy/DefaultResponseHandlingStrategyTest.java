@@ -7,7 +7,6 @@ import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -115,7 +115,7 @@ public class DefaultResponseHandlingStrategyTest {
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
       long after = System.currentTimeMillis();
 
-      Assert.assertTrue((after - before) >= 100);
+      assertThat(after - before).isGreaterThanOrEqualTo(100);
 
       verifyMainHeaders(mockHttpServletResponse);
    }

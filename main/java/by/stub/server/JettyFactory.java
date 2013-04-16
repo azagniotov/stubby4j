@@ -90,21 +90,21 @@ public final class JettyFactory {
       final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
-            {
-                  constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
-                  constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-                  constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
+         {
+            constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
+            constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
-                  constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
-                  constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-                  constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
+            constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
+            constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
-                  constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))
-            }
+            constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))
+         }
       );
 
       return handlers;
@@ -155,7 +155,7 @@ public final class JettyFactory {
       }
 
       final String status = String.format("Admin portal configured at http://%s:%s",
-            adminChannel.getHost(), adminChannel.getPort());
+         adminChannel.getHost(), adminChannel.getPort());
       ANSITerminal.status(status);
 
       currentHost = adminChannel.getHost();
@@ -179,7 +179,7 @@ public final class JettyFactory {
       }
 
       final String status = String.format("Stubs portal configured at http://%s:%s",
-            stubsChannel.getHost(), stubsChannel.getPort());
+         stubsChannel.getHost(), stubsChannel.getPort());
       ANSITerminal.status(status);
 
       currentStubsPort = stubsChannel.getPort();
@@ -192,7 +192,7 @@ public final class JettyFactory {
       String keystorePath = null;
       String password = "password";
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYSTORE)
-            && commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYPASS)) {
+         && commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYPASS)) {
          password = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYPASS);
          keystorePath = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYSTORE);
       }
@@ -208,7 +208,7 @@ public final class JettyFactory {
       }
 
       final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
-            sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
+         sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
       currentStubsSslPort = sslConnector.getPort();

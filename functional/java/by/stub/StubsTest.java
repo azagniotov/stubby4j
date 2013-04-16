@@ -14,13 +14,14 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsTest {
 
@@ -47,14 +48,14 @@ public class StubsTest {
       });
 
       final URL jsonContentUrl = StubsTest.class.getResource("/json/stub.response.body.json");
-      Assert.assertNotNull(jsonContentUrl);
+      assertThat(jsonContentUrl).isNotNull();
       contentAsString = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
       int clientPort = 5992;
       int sslPort = 5993;
       int adminPort = 5999;
       final URL url = StubsTest.class.getResource("/yaml/stubs.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       CommandLineInterpreter.parseCommandLine(new String[]{"--data", url.getFile()});
 
@@ -86,8 +87,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals("{\"status\": \"hello world with single quote\"}", responseContent);
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"status\": \"hello world with single quote\"}").isEqualTo(responseContent);
    }
 
 
@@ -102,8 +103,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals("{\"status\": \"hello world\"}", responseContent);
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat("{\"status\": \"hello world\"}").isEqualTo(responseContent);
    }
 
    @Test
@@ -117,8 +118,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals("{\"status\": \"hello world\"}", responseContent);
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat("{\"status\": \"hello world\"}").isEqualTo(responseContent);
    }
 
    @Test
@@ -131,7 +132,7 @@ public class StubsTest {
 
       final HttpResponse response = request.execute();
 
-      Assert.assertEquals(HttpStatus.NO_CONTENT_204, response.getStatusCode());
+      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(response.getStatusCode());
    }
 
    @Test
@@ -145,7 +146,7 @@ public class StubsTest {
 
       final HttpResponse response = request.execute();
 
-      Assert.assertEquals(HttpStatus.NO_CONTENT_204, response.getStatusCode());
+      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(response.getStatusCode());
    }
 
    @Test
@@ -154,7 +155,7 @@ public class StubsTest {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/pdf/hello-world");
       final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
    }
 
    @Test
@@ -166,9 +167,9 @@ public class StubsTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContent = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals(contentAsString, responseContent);
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(contentAsString).isEqualTo(responseContent);
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -178,8 +179,8 @@ public class StubsTest {
       final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for GET request at URI /invoice?status=active"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
    }
 
    @Test
@@ -190,9 +191,9 @@ public class StubsTest {
 
       final String contentTypeHeader = response.getContentType();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals(contentAsString, response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(contentAsString).isEqualTo(response.parseAsString().trim());
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -202,8 +203,8 @@ public class StubsTest {
       final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for GET request at URI /invoice?status=active"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
 
    }
 
@@ -222,9 +223,9 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals("{\"id\": \"123\", \"status\": \"updated\"}", response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -242,9 +243,9 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
 
-      Assert.assertEquals(HttpStatus.OK_200, response.getStatusCode());
-      Assert.assertEquals("{\"id\": \"123\", \"status\": \"updated\"}", response.parseAsString().trim());
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -262,8 +263,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for PUT request at URI /invoice/123"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
    }
 
    @Test
@@ -281,8 +282,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for PUT request at URI /invoice/123"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
    }
 
    @Test
@@ -301,9 +302,9 @@ public class StubsTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.CREATED_201, response.getStatusCode());
-      Assert.assertEquals("{\"id\": \"456\", \"status\": \"created\"}", responseContentAsString);
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.CREATED_201).isEqualTo(response.getStatusCode());
+      assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -322,9 +323,9 @@ public class StubsTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.CREATED_201, response.getStatusCode());
-      Assert.assertEquals("{\"id\": \"456\", \"status\": \"created\"}", responseContentAsString);
-      Assert.assertTrue(contentTypeHeader.contains(HEADER_APPLICATION_JSON));
+      assertThat(HttpStatus.CREATED_201).isEqualTo(response.getStatusCode());
+      assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
+      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -342,8 +343,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for POST request at URI /invoice/new"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
    }
 
    @Test
@@ -361,8 +362,8 @@ public class StubsTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, response.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("No data found for POST request at URI /invoice/new"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
    }
 
    private HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {

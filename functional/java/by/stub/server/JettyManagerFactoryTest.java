@@ -3,13 +3,13 @@ package by.stub.server;
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
 import by.stub.yaml.YamlParser;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.URL;
 import java.util.HashMap;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -27,7 +27,7 @@ public class JettyManagerFactoryTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
       url = JettyManagerFactoryTest.class.getResource("/yaml/jettymanagerfactory.test.class.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       jettyManagerFactory = new JettyManagerFactory();
 
@@ -38,7 +38,7 @@ public class JettyManagerFactoryTest {
    public void shouldConstructJettyManager() throws Exception {
       final JettyManager jettyManager = jettyManagerFactory.construct(url.getFile(), new HashMap<String, String>());
 
-      Assert.assertNotNull(jettyManager);
+      assertThat(jettyManager).isNotNull();
    }
 
 

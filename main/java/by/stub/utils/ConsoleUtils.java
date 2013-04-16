@@ -41,11 +41,11 @@ public final class ConsoleUtils {
    public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
 
       final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-            getTime(),
-            request.getMethod(),
-            source,
-            request.getRequestURI(),
-            error
+         getTime(),
+         request.getMethod(),
+         source,
+         request.getRequestURI(),
+         error
       );
       ANSITerminal.error(logMessage);
    }
@@ -53,10 +53,10 @@ public final class ConsoleUtils {
    public static void logIncomingRequest(final HttpServletRequest request, final String source) {
 
       final String logMessage = String.format("[%s] -> %s [%s]%s",
-            getTime(),
-            request.getMethod(),
-            source,
-            request.getRequestURI()
+         getTime(),
+         request.getMethod(),
+         source,
+         request.getRequestURI()
       );
       ANSITerminal.incoming(logMessage);
    }
@@ -67,11 +67,11 @@ public final class ConsoleUtils {
       final int status = wrapper.getStatus();
 
       final String logMessage = String.format("[%s] <- %s [%s]%s %s",
-            getTime(),
-            status,
-            source,
-            request.getRequestURI(),
-            HttpStatus.getMessage(status)
+         getTime(),
+         status,
+         source,
+         request.getRequestURI(),
+         HttpStatus.getMessage(status)
       );
 
       if (status >= HttpStatus.BAD_REQUEST_400) {
@@ -90,9 +90,9 @@ public final class ConsoleUtils {
    private static String getTime() {
       final Calendar now = Calendar.getInstance(Locale.US);
       return String.format("%02d:%02d:%02d",
-            now.get(Calendar.HOUR_OF_DAY),
-            now.get(Calendar.MINUTE),
-            now.get(Calendar.SECOND)
+         now.get(Calendar.HOUR_OF_DAY),
+         now.get(Calendar.MINUTE),
+         now.get(Calendar.SECOND)
       );
    }
 }

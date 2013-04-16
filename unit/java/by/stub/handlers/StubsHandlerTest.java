@@ -273,7 +273,7 @@ public class StubsHandlerTest {
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-      when(mockStubResponse.getResponseBody()).thenReturn(new byte[] {});
+      when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
       Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
 
          @Override

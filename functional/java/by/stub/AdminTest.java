@@ -12,12 +12,13 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class AdminTest {
 
@@ -42,7 +43,7 @@ public class AdminTest {
       int sslPort = 5993;
       int adminPort = 5999;
       final URL url = AdminTest.class.getResource("/yaml/stubs.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       stubbyClient = new StubbyClient();
       stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
@@ -65,16 +66,16 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, adminResponse.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("/pdf/hello-world"));
-      Assert.assertTrue(responseContentAsString.contains("STATUS"));
+      assertThat(HttpStatus.OK_200).isEqualTo(adminResponse.getStatusCode());
+      assertThat(responseContentAsString).contains("/pdf/hello-world");
+      assertThat(responseContentAsString).contains("STATUS");
    }
 
    @Test
    public void should_UpdatedStubData_AndMakeGetRequestToUpdatedEndpoint() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
       final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
@@ -82,8 +83,8 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.CREATED_201, adminResponse.getStatusCode());
-      Assert.assertEquals("Configuration created successfully", responseContentAsString);
+      assertThat(HttpStatus.CREATED_201).isEqualTo(adminResponse.getStatusCode());
+      assertThat("Configuration created successfully").isEqualTo(responseContentAsString);
 
       final String clientRequestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/updated");
       final HttpRequest clientRequest = constructHttpRequest("GET", clientRequestUrl);
@@ -92,16 +93,16 @@ public class AdminTest {
       final String contentTypeHeader = clientResponse.getContentType();
       final String clientResponseContentAsString = clientResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.OK_200, clientResponse.getStatusCode());
-      Assert.assertEquals("updated", clientResponseContentAsString);
-      Assert.assertTrue(contentTypeHeader.contains(HTTP_HEADER_CONTENT_TYPE_TEXT_PLAIN));
+      assertThat(HttpStatus.OK_200).isEqualTo(clientResponse.getStatusCode());
+      assertThat("updated").isEqualTo(clientResponseContentAsString);
+      assertThat(contentTypeHeader).contains(HTTP_HEADER_CONTENT_TYPE_TEXT_PLAIN);
    }
 
    @Test
    public void should_UpdatedstubData_AndFailToMakeGetRequestRemovedEndpoint() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
       final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
@@ -109,8 +110,8 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.CREATED_201, adminResponse.getStatusCode());
-      Assert.assertEquals("Configuration created successfully", responseContentAsString);
+      assertThat(HttpStatus.CREATED_201).isEqualTo(adminResponse.getStatusCode());
+      assertThat("Configuration created successfully").isEqualTo(responseContentAsString);
 
       final String clientRequestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
       final HttpRequest clientRequest = constructHttpRequest("GET", clientRequestUrl);
@@ -118,15 +119,15 @@ public class AdminTest {
 
       final String clientResponseContentAsString = clientResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.NOT_FOUND_404, clientResponse.getStatusCode());
-      Assert.assertTrue(clientResponseContentAsString.contains("No data found for GET request at URI /invoice/123"));
+      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(clientResponse.getStatusCode());
+      assertThat(clientResponseContentAsString).contains("No data found for GET request at URI /invoice/123");
    }
 
    @Test
    public void should_FailToUpdateStubData_WhenMethodIsNotPost() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
       final HttpRequest adminRequest = constructHttpRequest("PUT", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
@@ -134,15 +135,15 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.METHOD_NOT_ALLOWED_405, adminResponse.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("Method PUT is not allowed on URI"));
+      assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(adminResponse.getStatusCode());
+      assertThat(responseContentAsString).contains("Method PUT is not allowed on URI");
    }
 
    @Test
    public void should_FailToUpdateStubData_WhenPostBadData() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.inavlid.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
       final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
@@ -150,8 +151,8 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, adminResponse.getStatusCode());
-      Assert.assertTrue(responseContentAsString.contains("Could not parse POSTed YAML"));
+      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(adminResponse.getStatusCode());
+      assertThat(responseContentAsString).contains("Could not parse POSTed YAML");
    }
 
    private HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {

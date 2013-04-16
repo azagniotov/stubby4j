@@ -2,9 +2,10 @@ package by.stub.yaml.stubs;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.StringUtils;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -22,7 +23,7 @@ public class StubResponseTest {
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -32,7 +33,7 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -41,7 +42,7 @@ public class StubResponseTest {
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
 
-      Assert.assertEquals("this is some body", StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -51,7 +52,7 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody(null);
 
-      Assert.assertEquals("", StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -61,6 +62,6 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("");
 
-      Assert.assertEquals("", StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
    }
 }

@@ -10,7 +10,6 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -39,7 +38,7 @@ public class DataStoreTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
       final URL url = DataStoreTest.class.getResource("/yaml/datastore.test.class.data.yaml");
-      Assert.assertNotNull(url);
+      assertThat(url).isNotNull();
 
       final YamlParser yamlParser = new YamlParser(url.getFile());
       final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad();

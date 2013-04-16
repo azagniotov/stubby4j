@@ -50,8 +50,8 @@ public final class Main {
          CommandLineInterpreter.parseCommandLine(args);
       } catch (final ParseException ex) {
          final String msg =
-               String.format("Could not parse provided command line arguments, error: %s",
-                     ex.toString());
+            String.format("Could not parse provided command line arguments, error: %s",
+               ex.toString());
 
          throw new Stubby4JException(msg);
       }
@@ -72,9 +72,9 @@ public final class Main {
          return;
       }
       final String msg =
-            String.format("YAML data was not provided using command line option '--%s'. %s"
-                  + "To see all command line options run again with option '--%s'",
-                  CommandLineInterpreter.OPTION_CONFIG, "\n", CommandLineInterpreter.OPTION_HELP);
+         String.format("YAML data was not provided using command line option '--%s'. %s"
+            + "To see all command line options run again with option '--%s'",
+            CommandLineInterpreter.OPTION_CONFIG, "\n", CommandLineInterpreter.OPTION_HELP);
 
       throw new Stubby4JException(msg);
    }
@@ -92,7 +92,7 @@ public final class Main {
 
       } catch (final Exception ex) {
          final String msg =
-               String.format("Could not init stubby4j, error: %s", ex.toString());
+            String.format("Could not init stubby4j, error: %s", ex.toString());
 
          throw new Stubby4JException(msg, ex);
       }

@@ -24,35 +24,52 @@ allprojects {
 apply from: "$rootDir/conf/gradle/ides.gradle"
 
 subprojects {
-   sourceCompatibility = 1.6
-   tasks.withType(Compile) {
-      doFirst {
-         assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
+   subproject ->
+      sourceCompatibility = 1.6
+      tasks.withType(Compile) {
+         doFirst {
+            assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
+         }
+         options.encoding = 'UTF-8'
       }
-      options.encoding = 'UTF-8'
-   }
-   targetCompatibility = 1.6
+      targetCompatibility = 1.6
 
-   repositories {
-      mavenCentral()
-      mavenLocal()
-   }
-
-   test {
-      testReport = false
-      testLogging {
-         events "passed", "skipped", "failed"
-         exceptionFormat "full"
-         showExceptions true
-         showCauses true
-         showStackTraces true
+      repositories {
+         mavenCentral()
+         mavenLocal()
       }
-   }
 
-   apply from: "$rootDir/conf/gradle/dependencies.gradle"
-   if (it.name != 'main' && it.name != 'builders') {
-      apply from: "$rootDir/conf/gradle/cobertura.gradle"
-   }
+      test {
+         testReport = false
+         testLogging {
+            events "passed", "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+
+            if (subproject.name != 'main') {
+               doFirst {
+                  println ""
+                  println "*******************************************************************************************"
+                  println "********                 Running " + subproject.name.toUpperCase() + " Module Tests"
+                  println "*******************************************************************************************"
+               }
+
+               doLast {
+                  println "*******************************************************************************************"
+                  println "********                 Finished " + subproject.name.toUpperCase() + " Tests!"
+                  println "*******************************************************************************************"
+                  println ""
+               }
+            }
+         }
+      }
+
+      apply from: "$rootDir/conf/gradle/dependencies.gradle"
+      if (subproject.name != 'main' && subproject.name != 'builders') {
+         apply from: "$rootDir/conf/gradle/cobertura.gradle"
+      }
 }
 
 project(":").tasks.each {
