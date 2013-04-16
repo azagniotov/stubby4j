@@ -71,6 +71,10 @@ See `docs` directory for:
 * [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 ## Change Log
+### 1.0.61
+
+* Just some changes around unit, integration and functional tests. Code cleanup [COSMETICS]
+
 ### 1.0.60
 
 * stubby's admin page was generating broken hyper links if URL had single quotes [BUG]
