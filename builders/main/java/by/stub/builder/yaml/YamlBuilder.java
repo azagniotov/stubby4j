@@ -1,19 +1,9 @@
 package by.stub.builder.yaml;
 
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Represent;
-import org.yaml.snakeyaml.representer.Representer;
-import org.yaml.snakeyaml.resolver.Resolver;
+import by.stub.utils.FileUtils;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Please refer to the accompanied unit tests for usage examples.
@@ -24,131 +14,131 @@ import java.util.TreeMap;
 @SuppressWarnings("unchecked")
 public final class YamlBuilder {
 
-   private static final Yaml SNAKE_YAML;
+   private static final String TWO_SPACE = "  ";
+   private static final String THREE_SPACE = "   ";
+   private static final String SIX_SPACE = String.format("%s%s", THREE_SPACE, THREE_SPACE);
+   private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
 
-   static {
-      final DumperOptions dumperOptions = new DumperOptions();
-      dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-      dumperOptions.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
-      dumperOptions.setPrettyFlow(true);
+   private final static String REQUEST = "-" + TWO_SPACE + "request:";
+   private final static String RESPONSE = THREE_SPACE + "response:";
 
-      SNAKE_YAML = new Yaml(new Constructor(), new FoldedStyleRepresenter(), dumperOptions, new CustomResolver());
+   private final static String HEADERS = SIX_SPACE + "headers:";
+   private final static String QUERY = SIX_SPACE + "query:";
+   private final static String METHOD = SIX_SPACE + "method: ";
+   private final static String STATUS = SIX_SPACE + "status: ";
+   private final static String FILE = SIX_SPACE + "file: ";
+   private final static String URL = SIX_SPACE + "url: ";
 
-   }
+   private final static String ONELINEPOST = SIX_SPACE + "post: ";
+   private final static String MULTILINEPOST = SIX_SPACE + "post: >\n";
 
-   final Map<String, Object> httpcycles = new TreeMap<String, Object>();
+   private final static String ONELINEBODY = SIX_SPACE + "body: ";
+   private final static String MULTILINEBODY = SIX_SPACE + "body: >\n";
 
-   private final static String REQUEST = "request";
-   private final static String RESPONSE = "response";
-   private final static String HEADERS = "headers";
-   private final static String BODY = "body";
-   private final static String QUERY = "query";
+   private final static String NL = FileUtils.LINE_SEPARATOR;
+
+   private final static String REQUEST_HEADERS_KEY = String.format("%s-%s", REQUEST, HEADERS);
+   private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST, QUERY);
+
+   private final static String RESPONSE_HEADERS_KEY = String.format("%s-%s", RESPONSE, HEADERS);
+   private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
+
+   final Set<String> unusedNodes = new HashSet<String>() {{
+      add(REQUEST_HEADERS_KEY);
+      add(REQUEST_QUERY_KEY);
+      add(RESPONSE_HEADERS_KEY);
+      add(RESPONSE_QUERY_KEY);
+   }};
+
+   private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
+   private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
 
    public YamlBuilder() {
 
-   }
-
-   private static final class CustomResolver extends Resolver {
-
-      /*
-       * do not resolve float and timestamp
-       */
-      protected void addImplicitResolvers() {
-         // addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");
-         // addImplicitResolver(Tags.FLOAT, FLOAT, "-+0123456789.");
-         // addImplicitResolver(Tag.INT, INT, "-+0123456789");
-         // addImplicitResolver(Tag.MERGE, MERGE, "<");
-         // addImplicitResolver(Tag.NULL, NULL, "~nN\0");
-         // addImplicitResolver(Tag.NULL, EMPTY, null);
-         // addImplicitResolver(Tags.TIMESTAMP, TIMESTAMP, "0123456789");
-         // addImplicitResolver(Tag.VALUE, VALUE, "=");
-      }
-   }
-
-
-   private static final class FoldedStyleRepresenter extends Representer {
-
-      public FoldedStyleRepresenter() {
-         this.representers.put(String.class, new FoldedStyleRepresent());
-      }
-
-
-      private static final class FoldedStyleRepresent implements Represent {
-
-         private boolean foldedStyleRequired = false;
-
-         @Override
-         public Node representData(final Object data) {
-            final String dataValue = data.toString();
-
-            if (foldedStyleRequired) {
-               foldedStyleRequired = false;
-               return new ScalarNode(Tag.STR, dataValue, null, null, DumperOptions.ScalarStyle.FOLDED.getChar());
-            }
-
-            if (dataValue.equals("body") || dataValue.equals("post")) {
-               foldedStyleRequired = true;
-            }
-
-            return new ScalarNode(Tag.STR, dataValue, null, null, DumperOptions.ScalarStyle.PLAIN.getChar());
-         }
-      }
    }
 
    public Request newStubbedRequest() {
       return new Request();
    }
 
-
    public final class Request {
 
-      Request() {
-         if (!httpcycles.containsKey(REQUEST)) {
-            httpcycles.put(REQUEST, new LinkedHashMap<String, Object>());
-         }
+      public Request() {
+         REQUEST_STRING_BUILDER.setLength(0);
+         REQUEST_STRING_BUILDER.append(REQUEST).append(NL);
       }
 
       public Request withMethod(final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(REQUEST);
-         keyValues.put("method", value);
+         REQUEST_STRING_BUILDER.append(METHOD).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withMethodGet() {
+         REQUEST_STRING_BUILDER.append(METHOD).append("GET").append(NL);
+
+         return this;
+      }
+
+      public Request withMethodPut() {
+         REQUEST_STRING_BUILDER.append(METHOD).append("PUT").append(NL);
+
+         return this;
+      }
+
+      public Request withMethodPost() {
+         REQUEST_STRING_BUILDER.append(METHOD).append("POST").append(NL);
+
+         return this;
+      }
+
+      public Request withMethodHead() {
+         REQUEST_STRING_BUILDER.append(METHOD).append("HEAD").append(NL);
 
          return this;
       }
 
       public Request withUrl(final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(REQUEST);
-         keyValues.put("url", value);
+         REQUEST_STRING_BUILDER.append(URL).append(value).append(NL);
 
          return this;
       }
 
       public Request withHeaders(final String key, final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(REQUEST);
 
-         if (!keyValues.containsKey(HEADERS)) {
-            keyValues.put(HEADERS, new HashMap<String, Object>());
+         if (unusedNodes.contains(REQUEST_HEADERS_KEY)) {
+            REQUEST_STRING_BUILDER.append(HEADERS).append(NL);
+            unusedNodes.remove(REQUEST_HEADERS_KEY);
          }
-         final Map<String, Object> headerKeyValues = (Map<String, Object>) keyValues.get(HEADERS);
-         headerKeyValues.put(key, value);
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
       }
 
-      public Request withPost(final String post) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(REQUEST);
-         keyValues.put("post", post);
+      public Request withLiteralPost(final String post) {
+         REQUEST_STRING_BUILDER.append(ONELINEPOST).append(post).append(NL);
+
+         return this;
+      }
+
+      public Request withFoldedPost(final String post) {
+         final String tabbedPost = String.format("%s%s", NINE_SPACE, post);
+         REQUEST_STRING_BUILDER.append(MULTILINEPOST).append(tabbedPost).append(NL);
 
          return this;
       }
 
       public Request withQuery(final String key, final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(REQUEST);
 
-         if (!keyValues.containsKey(QUERY)) {
-            keyValues.put(QUERY, new HashMap<String, Object>());
+         if (unusedNodes.contains(REQUEST_QUERY_KEY)) {
+            REQUEST_STRING_BUILDER.append(QUERY).append(NL);
+            unusedNodes.remove(REQUEST_QUERY_KEY);
          }
-         final Map<String, Object> headerKeyValues = (Map<String, Object>) keyValues.get(QUERY);
-         headerKeyValues.put(key, value);
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
       }
@@ -156,52 +146,64 @@ public final class YamlBuilder {
       public Response newStubbedResponse() {
          return new Response();
       }
+
+      public String toString() {
+         return REQUEST_STRING_BUILDER.toString();
+      }
    }
 
    public final class Response {
 
-      Response() {
-         if (!httpcycles.containsKey(RESPONSE)) {
-            httpcycles.put(RESPONSE, new LinkedHashMap<String, Object>());
-         }
+      public Response() {
+         RESPONSE_STRING_BUILDER.setLength(0);
+         RESPONSE_STRING_BUILDER.append(RESPONSE).append(NL);
       }
 
-
       public Response withStatus(final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(RESPONSE);
-         keyValues.put("status", value);
+         RESPONSE_STRING_BUILDER.append(STATUS).append(value).append(NL);
 
          return this;
       }
 
       public Response withFile(final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(RESPONSE);
-         keyValues.put("file", value);
+         RESPONSE_STRING_BUILDER.append(FILE).append(value).append(NL);
 
          return this;
       }
 
-      public Response withBody(final String body) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(RESPONSE);
-         keyValues.put("body", body);
+      public Response withLiteralBody(final String body) {
+         RESPONSE_STRING_BUILDER.append(ONELINEBODY).append(body).append(NL);
+
+         return this;
+      }
+
+      public Response withFoldedBody(final String body) {
+         final String tabbedBody = String.format("%s%s", NINE_SPACE, body);
+         RESPONSE_STRING_BUILDER.append(MULTILINEBODY).append(tabbedBody).append(NL);
 
          return this;
       }
 
       public Response withHeaders(final String key, final String value) {
-         final Map<String, Object> keyValues = (Map<String, Object>) httpcycles.get(RESPONSE);
 
-         if (!keyValues.containsKey(HEADERS)) {
-            keyValues.put(HEADERS, new HashMap<String, Object>());
+         if (unusedNodes.contains(RESPONSE_HEADERS_KEY)) {
+            RESPONSE_STRING_BUILDER.append(HEADERS).append(NL);
+            unusedNodes.remove(RESPONSE_HEADERS_KEY);
          }
-         final Map<String, Object> headerKeyValues = (Map<String, Object>) keyValues.get(HEADERS);
-         headerKeyValues.put(key, value);
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
       }
 
       public String build() {
-         return SNAKE_YAML.dump(httpcycles).replaceAll(">-", ">").trim();
+         unusedNodes.clear();
+         unusedNodes.add(REQUEST_HEADERS_KEY);
+         unusedNodes.add(REQUEST_QUERY_KEY);
+         unusedNodes.add(RESPONSE_HEADERS_KEY);
+         unusedNodes.add(RESPONSE_QUERY_KEY);
+         return String.format("%s\n%s", REQUEST_STRING_BUILDER.toString(), RESPONSE_STRING_BUILDER.toString()).trim();
       }
    }
 }

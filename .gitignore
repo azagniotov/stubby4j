@@ -4,9 +4,13 @@
 .gradle/*
 target/*
 main/target/*
+builders/build/*
 builders/target/*
+unit/build/*
 unit/target/*
+integration/build/*
 integration/target/*
+functional/build/*
 functional/target/*
 main/.idea/*
 unit/.idea/*
