@@ -19,21 +19,21 @@ public final class YamlBuilder {
    private static final String SIX_SPACE = String.format("%s%s", THREE_SPACE, THREE_SPACE);
    private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
 
-   private final static String REQUEST = "-" + TWO_SPACE + "request:";
-   private final static String RESPONSE = THREE_SPACE + "response:";
+   private final static String REQUEST = String.format("-%s%s", TWO_SPACE, "request:");
+   private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
 
-   private final static String HEADERS = SIX_SPACE + "headers:";
-   private final static String QUERY = SIX_SPACE + "query:";
-   private final static String METHOD = SIX_SPACE + "method: ";
-   private final static String STATUS = SIX_SPACE + "status: ";
-   private final static String FILE = SIX_SPACE + "file: ";
-   private final static String URL = SIX_SPACE + "url: ";
+   private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
+   private final static String QUERY = String.format("%s%s", SIX_SPACE, "query:");
+   private final static String METHOD = String.format("%s%s", SIX_SPACE, "method: ");
+   private final static String STATUS = String.format("%s%s", SIX_SPACE, "status: ");
+   private final static String FILE = String.format("%s%s", SIX_SPACE, "file: ");
+   private final static String URL = String.format("%s%s", SIX_SPACE, "url: ");
 
-   private final static String ONELINEPOST = SIX_SPACE + "post: ";
-   private final static String MULTILINEPOST = SIX_SPACE + "post: >\n";
+   private final static String ONELINEPOST = String.format("%s%s", SIX_SPACE, "post: ");
+   private final static String MULTILINEPOST = String.format("%s%s", SIX_SPACE, "post: >\n");
 
-   private final static String ONELINEBODY = SIX_SPACE + "body: ";
-   private final static String MULTILINEBODY = SIX_SPACE + "body: >\n";
+   private final static String ONELINEBODY = String.format("%s%s", SIX_SPACE, "body: ");
+   private final static String MULTILINEBODY = String.format("%s%s", SIX_SPACE, "body: >\n");
 
    private final static String NL = FileUtils.LINE_SEPARATOR;
 
