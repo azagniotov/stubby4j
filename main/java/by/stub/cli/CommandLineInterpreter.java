@@ -44,7 +44,6 @@ public final class CommandLineInterpreter {
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
    public static final String OPTION_WATCH = "watch";
-   public static final String OPTION_DEBUG = "debug";
    public static final String OPTION_HELP = "help";
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
@@ -62,7 +61,6 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
       OPTIONS.addOption("w", OPTION_WATCH, false, "Reload datafile when changes are made.");
-      OPTIONS.addOption(null, OPTION_DEBUG, false, "Show comparison print-outs when endpoints are hit.");
    }
 
 
@@ -101,15 +99,6 @@ public final class CommandLineInterpreter {
     */
    public static boolean isMute() {
       return line.hasOption(OPTION_MUTE);
-   }
-
-   /**
-    * Checks if console output has been muted
-    *
-    * @return true if the user disabled output to console using command line arg
-    */
-   public static boolean isDebug() {
-      return line.hasOption(OPTION_DEBUG);
    }
 
    /**

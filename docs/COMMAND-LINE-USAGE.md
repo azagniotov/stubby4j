@@ -1,11 +1,10 @@
 ## Commandline Usage
 ```
-java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [--debug] [-h]
+java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
                        expected.
-    --debug            Show comparison print-outs when endpoints are hit.
  -h,--help             This help text.
  -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is
                        enabled using internal keystore.

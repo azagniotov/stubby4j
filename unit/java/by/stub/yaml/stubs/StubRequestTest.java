@@ -57,7 +57,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenDifferentMethod() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentHttpMethod() throws Exception {
 
       final String url = "/invoice/789";
 
@@ -65,15 +65,15 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenDifferentPostBody() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentPostBody() throws Exception {
 
       final String url = "/invoice/789";
 
@@ -82,16 +82,16 @@ public class StubRequestTest {
             .withMethodPost()
             .withPost("some post").build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost("different post").build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenPostBodyWasStubbed_ButNoPostBodySubmitted() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenPostBodyWasStubbed_ButNoPostBodySubmitted() throws Exception {
 
       final String url = "/invoice/789";
 
@@ -100,15 +100,15 @@ public class StubRequestTest {
             .withMethodPost()
             .withPost("some post").build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenNoPostBodyWasStubbed_ButPostBodyWasSubmitted() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenNoPostBodyWasStubbed_ButPostBodyWasSubmitted() throws Exception {
 
       final String url = "/invoice/789";
 
@@ -116,16 +116,16 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodPost().build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost("some post").build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenDifferentUrl() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentUri() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -142,19 +142,19 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl("/invoice/788")
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramTwo, paramTwoValue)
             .withQuery(paramOne, paramOneValue).build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenAllHeadersMatch() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenAllHttpHeadersMatch() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -174,19 +174,19 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldNotMatchStubRequest_WhenHeadersWereStubbed_ButNoHeadersSubmitted() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenHeadersWereStubbed_ButNoHeadersSetToAssert() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -206,16 +206,16 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenNoHeadersWereStubbed_ButHeadersWereSubmitted() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenNoHeadersWereStubbed_ButHeadersWereSetToAssert() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -232,19 +232,19 @@ public class StubRequestTest {
          BUILDER.withUrl(url)
             .withMethodGet().build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenAllHeadersSubmittedCamelCased() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenAllHeadersSubmittedCamelCased() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -264,19 +264,19 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders("Content-Type", headerOneValue)
             .withHeaders("Content-Length", headerTwoValue)
             .withHeaders("Content-Language", headerThreeValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldNotMatchStubRequest_WhenSomeHeadersMismatch() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenSomeHeadersMismatches() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -296,19 +296,19 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, "application/json")
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldNotMatchStubRequest_WhenNotAlHeadersSubmitted() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenNotAllHeadersSetToAssert() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -328,18 +328,18 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenAllStubbedHeadersMatch() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenAllStubbedHeadersMatch() throws Exception {
 
       final String headerOne = "content-type";
       final String headerOneValue = "application/xml";
@@ -359,7 +359,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withHeaders(headerOne, headerOneValue)
@@ -368,12 +368,12 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenNoQueryParamsWereStubbed_ButQueryParamsWereSubmitted() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenNoQueryParamsWereStubbed_ButQueryParamsWereSetToAssert() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -388,18 +388,18 @@ public class StubRequestTest {
             .withMethodGet()
             .withMethodHead().build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenQueryParamsWereStubbed_ButNoQueryParamsWereSubmitted() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamsWereStubbed_ButNoQueryParamsWereSetToAssert() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -416,17 +416,17 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead().build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenAllQueryParamsMatch() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenAllQueryParamsMatch() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -443,19 +443,19 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldMatchStubRequest_WhenAllStubbedQueryParamsMatch() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenAllStubbedQueryParamsMatch() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -472,7 +472,7 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
@@ -480,12 +480,12 @@ public class StubRequestTest {
             .withQuery(paramTwo, paramTwoValue)
             .withQuery("paramThree", "three").build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
 
    @Test
-   public void shouldNotMatchStubRequest_WhenNotAllQueryParamsSubmitted() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenNotAllQueryParamsSetToAssert() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -503,18 +503,18 @@ public class StubRequestTest {
             .withQuery(paramTwo, paramTwoValue)
             .withQuery("paramThree", "three").build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenQueryParamsMismatch() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamsMismatch() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -531,18 +531,18 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, "three").build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenQueryParamsInDifferentOrder() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamsInDifferentOrder() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -559,18 +559,18 @@ public class StubRequestTest {
             .withQuery(paramTwo, paramTwoValue)
             .withQuery(paramOne, paramOneValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenQueryParamIsArray() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamIsArray() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -587,18 +587,18 @@ public class StubRequestTest {
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue).build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String paramOne = "names";
       final String paramOneValue = "[\"alex\",\"tracy\"]";
@@ -616,13 +616,13 @@ public class StubRequestTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-      final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String paramOne = "names";
       final String paramOneValue = "[\"alex\",\"tracy\"]";
@@ -640,13 +640,13 @@ public class StubRequestTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
 
-      final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
 
       final String paramOne = "names";
       final String paramOneValue = "['alex','tracy']";
@@ -664,13 +664,13 @@ public class StubRequestTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
 
-      final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldNotMatchStubRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes_ButDifferentSpacing() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing() throws Exception {
 
       final String paramOne = "names";
       final String paramOneValue = "[\"alex\", \"tracy\"]";
@@ -688,13 +688,13 @@ public class StubRequestTest {
       when(mockHttpServletRequest.getMethod()).thenReturn("GET");
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-      final StubRequest actualRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+      final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenThereLargeSetupOfStubbedProperties() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenThereLargeSetupOfStubbedProperties() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -726,7 +726,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost(postBody)
@@ -738,11 +738,11 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(expectedRequest).isEqualTo(actualRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void shouldMatchStubRequest_WhenThereLargeSetupOfStubbedProperties_ButNotAllHeadersSubmitted() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenThereLargeSetupOfStubbedProperties_ButNotAllHeadersSetToAssert() throws Exception {
 
       final String paramOne = "paramOne";
       final String paramOneValue = "one";
@@ -774,7 +774,7 @@ public class StubRequestTest {
             .withHeaders(headerTwo, headerTwoValue)
             .withHeaders(headerThree, headerThreeValue).build();
 
-      final StubRequest actualRequest =
+      final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
             .withPost(postBody)
@@ -786,6 +786,6 @@ public class StubRequestTest {
             .withHeaders("content-encoding", "UTF-8")
             .withHeaders("Pragma", "no-cache").build();
 
-      assertThat(expectedRequest).isNotEqualTo(actualRequest);
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 }

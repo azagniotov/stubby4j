@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -154,86 +152,95 @@ public class StubRequest {
 
    @Override
    public boolean equals(final Object o) {
-      if (this == o) return true;
-      if (!(o instanceof StubRequest)) return false;
+      if (this == o) {
+         return true;
+      }
 
-      final StubRequest other = (StubRequest) o;
+      if (!(o instanceof StubRequest)) {
+         return false;
+      }
 
-      final String postBody = other.getPostBody();
-      if (StringUtils.isSet(postBody) && stringValuesDoNotMatch("post body", other.getPostBody(), this.getPostBody()))
+      final StubRequest dataStoreRequest = (StubRequest) o;
+
+      if (!stringsMatch(dataStoreRequest.getPostBody(), this.getPostBody()))
          return false;
 
-      if (arraysDoNotMatch(other.method, this.method)) return false;
-      if (stringValuesDoNotMatch("url", other.url, this.url)) return false;
+      if (!arraysMatch(dataStoreRequest.method, this.method)) {
+         return false;
+      }
+      if (!stringsMatch(dataStoreRequest.url, this.url)) {
+         return false;
+      }
 
-      if (!other.getHeaders().isEmpty()) {
+      if (!dataStoreRequest.getHeaders().isEmpty()) {
 
-         final Map<String, String> stubHeadersCopy = new HashMap<String, String>(other.getHeaders());
-         stubHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with after matching of assertion request
-         if (stubHeadersCopy.isEmpty()) {
+         final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreRequest.getHeaders());
+         dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with in DataStore, after matching of assertion request
+         if (dataStoreHeadersCopy.isEmpty()) {
             return true;
+         } else {
+
+            final Map<String, String> assertingHeaders = this.getHeaders();
+            if (assertingHeaders.isEmpty() || !mapsMatch(dataStoreHeadersCopy, assertingHeaders)) {
+               return false;
+            }
          }
-
-         if (getHeaders().isEmpty()) {
-            ANSITerminal.warn(String.format("Stubbed headers could not be matched with empty headers from the client: %s VS %s", stubHeadersCopy, getHeaders()));
-
-            return false;
-         }
-
-         if (mapsDoNotMatch(other.getHeaders(), getHeaders())) return false;
       }
 
-      if (!other.getQuery().isEmpty() && getQuery().isEmpty()) {
-         ANSITerminal.warn(String.format("Stubbed query string could not be matched with empty query string from the client: %s VS %s", other.getQuery(), getQuery()));
+      if (dataStoreRequest.getQuery().isEmpty()) {
+         return true;
+      }
+
+      if (this.getQuery().isEmpty() || !mapsMatch(dataStoreRequest.getQuery(), this.getQuery())) {
          return false;
       }
 
-      if (mapsDoNotMatch(other.getQuery(), getQuery())) return false;
-
-      dumpMatchedRequestToConsole(other);
 
       return true;
    }
 
-   private void dumpMatchedRequestToConsole(final StubRequest stub) {
-      if (!CommandLineInterpreter.isDebug()) return;
-      ANSITerminal.info("Matched:");
-      ANSITerminal.status("-----------------------------------------------------------------------------------");
-      ANSITerminal.loaded("[STUB] >>");
-      ANSITerminal.info(String.format("%s", stub));
-      ANSITerminal.status("-----------------------------------------------------------------------------------");
-      ANSITerminal.loaded("[LIVE] >>");
-      ANSITerminal.info(String.format("%s", this));
-      ANSITerminal.status("-----------------------------------------------------------------------------------");
+
+   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
+      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+      final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
+
+      if (!isDatastoreValueSet) {
+         return true;
+      } else if (isDatastoreValueSet && !isAssertingValueSet) {
+         return false;
+      } else if (isDatastoreValueSet && isAssertingValueSet) {
+         return dataStoreValue.equals(thisAssertingValue);
+      }
+
+      return true;
    }
 
-   private boolean stringValuesDoNotMatch(final String propName, final String othersPropValue, final String myPropValue) {
-      if (othersPropValue != null ? !othersPropValue.equals(myPropValue) : myPropValue != null) {
-         if (CommandLineInterpreter.isDebug())
-            ANSITerminal.warn(String.format("Could not match incoming '%s' with configured: %s VS %s", propName, othersPropValue, myPropValue));
+   private boolean arraysMatch(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
+      final boolean isDatastoreArraySet = (dataStoreArray != null && dataStoreArray.size() != 0);
+      final boolean isAssertingArraySet = (thisAssertingArray != null && thisAssertingArray.size() != 0);
+
+      if (!isDatastoreArraySet) {
          return true;
+      } else if (isDatastoreArraySet && !isAssertingArraySet) {
+         return false;
+      } else if (isDatastoreArraySet && isAssertingArraySet) {
+
+         for (final String assertingArrayValue : thisAssertingArray) {
+            if (dataStoreArray.contains(assertingArrayValue)) {
+               return true;
+            }
+         }
       }
+
       return false;
    }
 
-   private boolean arraysDoNotMatch(final ArrayList<String> othersArray, final ArrayList<String> myArray) {
-      if (othersArray == null && myArray == null) return false;
-      if (othersArray == null || myArray == null) return true;
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
+      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
 
-      if (othersArray.size() == 0 && myArray.size() == 0) return false;
-
-      return !othersArray.contains(myArray.get(0));
-   }
-
-   private boolean mapsDoNotMatch(final Map<String, String> othersMap, final Map<String, String> myMap) {
-      final Map<String, String> stubbedMapCopy = new HashMap<String, String>(othersMap);
-      stubbedMapCopy.entrySet().removeAll(myMap.entrySet());
-      if (!stubbedMapCopy.isEmpty()) {
-         if (CommandLineInterpreter.isDebug())
-            ANSITerminal.warn(String.format("Stubbed hashmap could not be matched: %s VS %s", othersMap, myMap));
-         return true;
-      }
-      return false;
+      return dataStoreMapCopy.isEmpty();
    }
 
    @Override
