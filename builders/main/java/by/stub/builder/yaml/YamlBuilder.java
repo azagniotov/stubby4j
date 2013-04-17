@@ -3,6 +3,7 @@ package by.stub.builder.yaml;
 import by.stub.utils.FileUtils;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -25,6 +26,7 @@ public final class YamlBuilder {
    private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
    private final static String QUERY = String.format("%s%s", SIX_SPACE, "query:");
    private final static String METHOD = String.format("%s%s", SIX_SPACE, "method: ");
+   private final static String TEMP_METHOD_PLACEHOLDER_TOKEN = "METHOD_TOKEN";
    private final static String STATUS = String.format("%s%s", SIX_SPACE, "status: ");
    private final static String FILE = String.format("%s%s", SIX_SPACE, "file: ");
    private final static String URL = String.format("%s%s", SIX_SPACE, "url: ");
@@ -42,6 +44,9 @@ public final class YamlBuilder {
 
    private final static String RESPONSE_HEADERS_KEY = String.format("%s-%s", RESPONSE, HEADERS);
    private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
+
+
+   final Set<String> storedStubbedMethods = new LinkedHashSet<String>();
 
    final Set<String> unusedNodes = new HashSet<String>() {{
       add(REQUEST_HEADERS_KEY);
@@ -69,37 +74,37 @@ public final class YamlBuilder {
       }
 
       public Request withMethod(final String value) {
-         REQUEST_STRING_BUILDER.append(METHOD).append(value).append(NL);
-
-         return this;
+         return appendTemporaryMethodPlaceholderStoreMethod(value);
       }
 
       public Request withMethodGet() {
-         REQUEST_STRING_BUILDER.append(METHOD).append("GET").append(NL);
-
-         return this;
+         return appendTemporaryMethodPlaceholderStoreMethod("GET");
       }
 
       public Request withMethodPut() {
-         REQUEST_STRING_BUILDER.append(METHOD).append("PUT").append(NL);
-
-         return this;
+         return appendTemporaryMethodPlaceholderStoreMethod("PUT");
       }
 
       public Request withMethodPost() {
-         REQUEST_STRING_BUILDER.append(METHOD).append("POST").append(NL);
-
-         return this;
+         return appendTemporaryMethodPlaceholderStoreMethod("POST");
       }
 
       public Request withMethodHead() {
-         REQUEST_STRING_BUILDER.append(METHOD).append("HEAD").append(NL);
-
-         return this;
+         return appendTemporaryMethodPlaceholderStoreMethod("HEAD");
       }
 
       public Request withUrl(final String value) {
          REQUEST_STRING_BUILDER.append(URL).append(value).append(NL);
+
+         return this;
+      }
+
+      private Request appendTemporaryMethodPlaceholderStoreMethod(final String methodName) {
+         if (REQUEST_STRING_BUILDER.indexOf(METHOD) == -1) {
+            REQUEST_STRING_BUILDER.append(METHOD).append(TEMP_METHOD_PLACEHOLDER_TOKEN).append(NL);
+         }
+
+         storedStubbedMethods.add(methodName);
 
          return this;
       }
@@ -198,12 +203,19 @@ public final class YamlBuilder {
       }
 
       public String build() {
+
+         final String rawRequestString = REQUEST_STRING_BUILDER.toString();
+         final String cleansedRequestString = rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
+         final String yaml = String.format("%s\n%s", cleansedRequestString, RESPONSE_STRING_BUILDER.toString()).trim();
+
          unusedNodes.clear();
          unusedNodes.add(REQUEST_HEADERS_KEY);
          unusedNodes.add(REQUEST_QUERY_KEY);
          unusedNodes.add(RESPONSE_HEADERS_KEY);
          unusedNodes.add(RESPONSE_QUERY_KEY);
-         return String.format("%s\n%s", REQUEST_STRING_BUILDER.toString(), RESPONSE_STRING_BUILDER.toString()).trim();
+         storedStubbedMethods.clear();
+
+         return yaml;
       }
    }
 }

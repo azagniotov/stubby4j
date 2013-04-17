@@ -12,13 +12,39 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class YamlBuilderTest {
 
    @Test
+   public void shouldBuildStubbedRequestWithMultipleMethods() throws Exception {
+      final String expectedYaml =
+            "-  request:\n" +
+            "      method: [HEAD, GET, PUT]\n" +
+            "      url: /invoice\n" +
+            "\n" +
+            "   response:\n" +
+            "      status: 200\n" +
+            "      body: OK";
+
+      final YamlBuilder yamlBuilder = new YamlBuilder();
+      final String actualYaml = yamlBuilder.
+         newStubbedRequest().
+         withMethodHead().
+         withMethodGet().
+         withMethodPut().
+         withUrl("/invoice").
+         newStubbedResponse().
+         withStatus("200").
+         withLiteralBody("OK").build();
+
+      assertThat(expectedYaml).isEqualTo(actualYaml);
+
+   }
+
+   @Test
    public void shouldBuildStubbedRequestWithStubbedResponse() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
+            "-  request:\n" +
             "      query:\n" +
             "         status: active\n" +
             "         type: full\n" +
-            "      method: GET\n" +
+            "      method: [GET]\n" +
             "      url: /invoice\n" +
             "\n" +
             "   response:\n" +
@@ -50,8 +76,8 @@ public class YamlBuilderTest {
    public void shouldBuildStubbedRequestWithMultilineStubbedResponse() throws Exception {
 
       final String expectedYaml =
-         "-  request:\n" +
-            "      method: PUT\n" +
+            "-  request:\n" +
+            "      method: [PUT]\n" +
             "      url: /invoice/123\n" +
             "      headers:\n" +
             "         content-type: application/json\n" +

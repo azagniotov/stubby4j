@@ -11,6 +11,7 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import org.fest.assertions.data.MapEntry;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,17 +50,21 @@ public class DataStoreTest {
    }
 
    @Test
-   public void shouldReturnRedirectResponse_WhenLocationHeaderSet() throws Exception {
+   public void shouldReturnMatchingRedirectResponse_WhenLocationHeaderSet() throws Exception {
 
       final String url = "/some/redirecting/uri";
+      final String expectedStatus = "301";
+      final String expectedBody = "oink";
+      final String expectedHeaderKey = "location";
+      final String expectedHeaderValue = "/invoice/123";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
          .newStubbedResponse()
-         .withStatus("301")
-         .withHeaders("location", "/invoice/123")
-         .withLiteralBody("").build();
+         .withStatus(expectedStatus)
+         .withHeaders(expectedHeaderKey, expectedHeaderValue)
+         .withLiteralBody(expectedBody).build();
 
       loadYamlToDataStore(yaml);
 
@@ -72,11 +77,17 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(RedirectStubResponse.class);
       assertThat(StubResponseTypes.REDIRECT).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
+
+      final MapEntry mapEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
+      assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
    }
 
 
    @Test
-   public void shouldReturnDefaultStubResponse_WhenValidGetRequestMade() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenValidGetRequestMade() throws Exception {
 
       final String url = "/invoice/123";
 
@@ -103,7 +114,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnDefaultStubResponse_WhenValidAuthorizationHeaderSet() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationHeaderSet() throws Exception {
 
       final String url = "/invoice/555";
 
@@ -132,7 +143,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnUnauthorizedStubResponse_WhenAuthorizationHeaderMissing() throws Exception {
+   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderMissing() throws Exception {
 
       final String url = "/invoice/555";
 
@@ -159,7 +170,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnUnauthorizedStubResponse_WhenAuthorizationHeaderSetWithBadCredentials() throws Exception {
+   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderSetWithBadCredentials() throws Exception {
 
       final String url = "/invoice/555";
 
@@ -211,7 +222,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnDefaultStubResponse_WhenValidPostRequestMade() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenValidPostRequestMade() throws Exception {
 
       final String url = "/invoice/567";
       final String postData = "This is a post data";
@@ -323,7 +334,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnDefaultStubResponse_WhenQueryParamIsArray() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenQueryParamIsArray() throws Exception {
 
       final String url = "/entity.find";
 
@@ -360,7 +371,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnDefaultStubResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String url = "/entity.find";
 
