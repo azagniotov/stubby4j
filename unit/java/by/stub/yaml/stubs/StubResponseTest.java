@@ -18,7 +18,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnBody_WhenFileCannotBeFound() throws Exception {
+   public void shouldReturnBody_WhenFileCannotBeFound() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
@@ -27,7 +27,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnBody_WhenFileIsNull() throws Exception {
+   public void shouldReturnBody_WhenFileIsNull() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setFile(null);
@@ -37,7 +37,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnBody_WhenFileIsEmpty() throws Exception {
+   public void shouldReturnBody_WhenFileIsEmpty() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
@@ -46,7 +46,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnEmptyBody_WhenFileAndBodyAreNull() throws Exception {
+   public void shouldReturnEmptyBody_WhenFileAndBodyAreNull() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setFile(null);
@@ -56,7 +56,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void getResponseBody_ShouldReturnEmptyBody_WhenBodyIsEmpty() throws Exception {
+   public void shouldReturnEmptyBody_WhenBodyIsEmpty() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setFile(null);
