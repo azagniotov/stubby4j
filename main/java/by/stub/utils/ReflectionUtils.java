@@ -38,7 +38,7 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class ReflectionUtils {
 
-   private static List<String> skipableProperties = Collections.unmodifiableList(Arrays.asList("AUTH_HEADER"));
+   private static List<String> skipableProperties = Collections.unmodifiableList(Arrays.asList("AUTH_HEADER", "REGEX_START"));
 
    private ReflectionUtils() {
 

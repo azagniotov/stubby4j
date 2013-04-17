@@ -1,5 +1,16 @@
 -  request:
       method: GET
+      url: ^/[a-z]{3}/[0-9]+/?$
+
+   response:
+      status: 200
+      body: >
+         {"status": "regex works"}
+      headers:
+         content-type: application/json
+
+-  request:
+      method: GET
       url: /entity.find.again
       query:
          type_name: user

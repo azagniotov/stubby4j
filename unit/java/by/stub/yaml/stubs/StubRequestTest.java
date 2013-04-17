@@ -57,6 +57,54 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v1() throws Exception {
+
+      final String url = "^/products/[0-9]+/?$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet().build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/products/12345/")
+            .withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v2() throws Exception {
+
+      final String url = "^/[a-z]{3}/[0-9]+/?$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet().build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abc/12345/")
+            .withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexFails_v1() throws Exception {
+
+      final String url = "^/[a-z]{3}/[0-9]+/?$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet().build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abcm/12345/")
+            .withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentHttpMethod() throws Exception {
 
       final String url = "/invoice/789";

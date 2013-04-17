@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexander Zagniotov
@@ -42,6 +43,7 @@ import java.util.Set;
  */
 public class StubRequest {
 
+   private static final String REGEX_START = "^";
    public static final String AUTH_HEADER = "authorization";
 
    private String url;
@@ -168,7 +170,12 @@ public class StubRequest {
       if (!arraysMatch(dataStoreRequest.method, this.method)) {
          return false;
       }
-      if (!stringsMatch(dataStoreRequest.url, this.url)) {
+
+      if (dataStoreRequest.url.startsWith(REGEX_START)) {
+         if (!regexMatch(dataStoreRequest.url, this.url)) {
+            return false;
+         }
+      } else if (!stringsMatch(dataStoreRequest.url, this.url)) {
          return false;
       }
 
@@ -197,6 +204,12 @@ public class StubRequest {
 
 
       return true;
+   }
+
+   private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
+      final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
+
+      return pattern.matcher(assertingUrl).matches();
    }
 
 
