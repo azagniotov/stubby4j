@@ -317,7 +317,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void loadTest_shouldUnmarshallYamlIntoHugeObjectTree_WhenYAMLValid() throws Exception {
+   public void loadTest_shouldUnmarshallHugeYamlIntoObjectTree_WhenYAMLValid() throws Exception {
 
       final String baseRequestUrl = "/some/uri";
 

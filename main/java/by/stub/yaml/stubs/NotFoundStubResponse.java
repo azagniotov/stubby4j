@@ -27,6 +27,7 @@ public class NotFoundStubResponse extends StubResponse {
 
    public NotFoundStubResponse() {
       super();
+      setStatus("404");
    }
 
    @Override

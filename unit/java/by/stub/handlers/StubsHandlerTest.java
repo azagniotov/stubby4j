@@ -118,7 +118,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
 
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockStubResponse.getStatus()).thenReturn("200");
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);
@@ -138,7 +138,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockStubResponse.getStatus()).thenReturn("200");
 
       final InputStream inputStream = new ByteArrayInputStream("".getBytes());
@@ -168,7 +168,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBody()).thenReturn(null);
 
@@ -240,7 +240,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.POST);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockStubResponse.getResponseBody()).thenReturn(null);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
 
@@ -271,7 +271,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getLatency()).thenReturn("50");
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
       Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
@@ -300,7 +300,7 @@ public class StubsHandlerTest {
       when(mockHttpServletRequest.getMethod()).thenReturn(method);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
-      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.DEFAULT);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
       when(mockDataStore.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
 
       final StubsHandler stubsHandler = new StubsHandler(mockDataStore);

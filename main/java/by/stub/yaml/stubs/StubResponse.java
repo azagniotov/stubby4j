@@ -95,7 +95,7 @@ public class StubResponse {
    }
 
    public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.DEFAULT;
+      return StubResponseTypes.OK_200;
    }
 
    @Override

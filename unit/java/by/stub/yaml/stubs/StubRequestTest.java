@@ -7,6 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -61,13 +63,8 @@ public class StubRequestTest {
 
       final String url = "^/products/[0-9]+/?$";
 
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet().build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl("/products/12345/")
-            .withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -77,29 +74,40 @@ public class StubRequestTest {
 
       final String url = "^/[a-z]{3}/[0-9]+/?$";
 
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet().build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl("/abc/12345/")
-            .withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abc/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v3() throws Exception {
+
+      final String url = "^/(cats|dogs)/?(.*)";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/cats/blah/again/").withMethodGet().build());
+         add(BUILDER.withUrl("/cats/blah/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs/blah/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexFails_v1() throws Exception {
 
       final String url = "^/[a-z]{3}/[0-9]+/?$";
 
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet().build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl("/abcm/12345/")
-            .withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
@@ -109,13 +117,8 @@ public class StubRequestTest {
 
       final String url = "/invoice/789";
 
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet().build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl(url)
-            .withMethodPost().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodPost().build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }

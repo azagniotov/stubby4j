@@ -25,8 +25,10 @@ package by.stub.yaml.stubs;
  */
 public class UnauthorizedStubResponse extends StubResponse {
 
+
    public UnauthorizedStubResponse() {
       super();
+      setStatus("401");
    }
 
    @Override

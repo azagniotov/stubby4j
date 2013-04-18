@@ -90,13 +90,15 @@ public class DataStoreTest {
    public void shouldReturnMatchingStubbedResponse_WhenValidGetRequestMade() throws Exception {
 
       final String url = "/invoice/123";
+      final String expectedStatus = "200";
+      final String expectedBody = "This is a response for 123";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
          .newStubbedResponse()
-         .withStatus("200")
-         .withLiteralBody("This is a response for 123").build();
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
 
       loadYamlToDataStore(yaml);
 
@@ -109,7 +111,10 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
 
@@ -118,13 +123,17 @@ public class DataStoreTest {
 
       final String url = "/invoice/555";
 
+      final String expectedStatus = "200";
+      final String expectedBody = "This is a response for 555";
+      final String expectedHeaderKey = "authorization";
+      final String expectedHeaderValue = "'bob:secret'";
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders("authorization", "'bob:secret'")
+         .withHeaders(expectedHeaderKey, expectedHeaderValue)
          .newStubbedResponse()
-         .withStatus("200")
-         .withLiteralBody("This is a response for 555").build();
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
 
       loadYamlToDataStore(yaml);
 
@@ -138,7 +147,10 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
 
@@ -146,14 +158,18 @@ public class DataStoreTest {
    public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderMissing() throws Exception {
 
       final String url = "/invoice/555";
+      final String expectedStatus = "200";
+      final String expectedBody = "This is a response for 555";
+      final String expectedHeaderKey = "authorization";
+      final String expectedHeaderValue = "'bob:secret'";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders("authorization", "'bob:secret'")
+         .withHeaders(expectedHeaderKey, expectedHeaderValue)
          .newStubbedResponse()
-         .withStatus("200")
-         .withLiteralBody("This is a response for 555").build();
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
 
       loadYamlToDataStore(yaml);
 
@@ -166,6 +182,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
       assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -194,6 +213,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
       assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -218,6 +240,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -226,14 +251,16 @@ public class DataStoreTest {
 
       final String url = "/invoice/567";
       final String postData = "This is a post data";
+      final String expectedStatus = "503";
+      final String expectedBody = "This is a response for 567";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodPost()
          .withLiteralPost("This is a post data")
          .withUrl(url)
          .newStubbedResponse()
-         .withStatus("503")
-         .withLiteralBody("This is a response for 567").build();
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
 
       loadYamlToDataStore(yaml);
 
@@ -247,7 +274,10 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
 
@@ -275,6 +305,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -301,6 +334,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -330,6 +366,9 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
 
@@ -337,6 +376,8 @@ public class DataStoreTest {
    public void shouldReturnMatchingStubbedResponse_WhenQueryParamIsArray() throws Exception {
 
       final String url = "/entity.find";
+      final String expectedStatus = "200";
+      final String expectedBody = "{\"status\": \"hello world\"}";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
@@ -346,8 +387,8 @@ public class DataStoreTest {
          .withQuery("client_secret", "secret")
          .withQuery("attributes", "'[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]'")
          .newStubbedResponse()
-         .withStatus("200")
-         .withFoldedBody("{\"status\": \"hello world\"}")
+         .withStatus(expectedStatus)
+         .withFoldedBody(expectedBody)
          .withHeaders("content-type", "application/json").build();
 
       loadYamlToDataStore(yaml);
@@ -366,7 +407,10 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
 
@@ -375,6 +419,8 @@ public class DataStoreTest {
 
       final String url = "/entity.find";
 
+      final String expectedStatus = "200";
+      final String expectedBody = "{\"status\": \"hello world\"}";
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
@@ -383,8 +429,8 @@ public class DataStoreTest {
          .withQuery("client_secret", "secret")
          .withQuery("attributes", "'[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]'")
          .newStubbedResponse()
-         .withStatus("200")
-         .withFoldedBody("{\"status\": \"hello world\"}")
+         .withStatus(expectedStatus)
+         .withFoldedBody(expectedBody)
          .withHeaders("content-type", "application/json").build();
 
       loadYamlToDataStore(yaml);
@@ -403,7 +449,10 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-      assertThat(StubResponseTypes.DEFAULT).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
 
@@ -435,11 +484,12 @@ public class DataStoreTest {
          );
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+      assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
    }
 
    private void loadYamlToDataStore(final String yaml) throws Exception {
