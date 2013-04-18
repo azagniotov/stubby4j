@@ -275,6 +275,34 @@ When creating stubbed request/response data for stubby4j, the config data should
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
+<td>status</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.status</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)</li></ul></td>
+</tr>
+</table>
+```
+  response:
+      status: 200
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
 <td>headers</td>
 </tr>
 <tr>
