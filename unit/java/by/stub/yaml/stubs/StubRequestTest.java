@@ -109,6 +109,17 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenMethodStubbed_ButLowercasedMethodSubmitted() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).withMethod("get").build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenMethodStubbed_ButNoMethodSubmitted() throws Exception {
 
       final String url = "/invoice/123";

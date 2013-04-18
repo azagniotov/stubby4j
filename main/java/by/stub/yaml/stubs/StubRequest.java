@@ -28,15 +28,7 @@ import com.google.common.base.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -64,7 +56,9 @@ public class StubRequest {
    public final ArrayList<String> getMethod() {
       final ArrayList<String> uppercase = new ArrayList<String>(method.size());
 
-      for (final String string : method) uppercase.add(StringUtils.toUpper(string));
+      for (final String string : method) {
+         uppercase.add(StringUtils.toUpper(string));
+      }
 
       return uppercase;
    }
@@ -169,7 +163,7 @@ public class StubRequest {
       if (!stringsMatch(dataStoreRequest.getPostBody(), this.getPostBody()))
          return false;
 
-      if (!arraysMatch(dataStoreRequest.method, this.method)) {
+      if (!arraysMatch(dataStoreRequest.getMethod(), this.method)) {
          return false;
       }
 
@@ -237,7 +231,7 @@ public class StubRequest {
       } else if (isDatastoreArraySet && isAssertingArraySet) {
 
          for (final String assertingArrayValue : thisAssertingArray) {
-            if (dataStoreArray.contains(assertingArrayValue)) {
+            if (dataStoreArray.contains(assertingArrayValue.toUpperCase(Locale.US))) {
                return true;
             }
          }

@@ -4,6 +4,8 @@
 When creating stubbed request/response data for stubby4j, the config data should be specified in valid YAML 1.1 syntax. Submit POST requests to ```http://<host>:<admin_port>/stubdata/new``` or load a data file (```-d``` or ```--data```) with the following structure for each endpoint:
 <br />
 
+## Stub request and its properties
+
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
@@ -103,7 +105,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>NO</td>
 </tr>
 <td>JSONPath</td>
-<td>$.request.headers[*]<br />$.response.headers[*]</td>
+<td>$.request.headers[*]</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
@@ -247,3 +249,5 @@ When creating stubbed request/response data for stubby4j, the config data should
          content-type: application/json
       file: ../data/post-body-as-file.json     
 ```
+
+## Stub response and its properties
