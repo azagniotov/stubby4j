@@ -1,103 +1,168 @@
-## YAML Configuration Sample
+## YAML Configuration Explained
+<br />
+When creating stubbed request/response data for stubby4j, the config data should be specified in valid YAML 1.1 syntax. Submit POST requests to ```http://<host>:<admin_port>/stubdata/new``` or load a data file (```-d``` or ```--data```) with the following structure for each endpoint:
+<br />
 
-When creating request/response data for the stub server, the config data should be specified in valid YAML 1.1 syntax.
-Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a data file (`-d` or `--data`) with the following structure for each endpoint:
+## Stub request and its properties
 
-* `request`: (REQUIRED) describes the client's call to the server
-   * `method`: (REQUIRED) GET/POST/PUT/DELETE/etc. Can be array of multiple HTTP methods
-   * `headers`: (OPTIONAL) a key/value map of HTTP headers the server should read from the request.
-      * The key (header name) must be specified in lower case
-      * If stubbed headers are a subset of headers in HTTP request, then the match is successful (`left outer join` concept)
-   * `query`: (OPTIONAL) a key/value map of query string params the server should read from the URI
-      * The key (param name) must have the letter case as the query string param name, ie: `paRamNaME=12` -> `paRamNaME: 12`
-      * The order query string params does not matter. In other words the `/param1=1&param2=2` is the same as `/param2=2&param1=1`
-      * If stubbed query params are a subset of query params in HTTP request, then the match is successful (`left outer join` concept)
-      * query param can also be an array with quoted/un-quoted elements: `attributes=["id","uuid"]` or `attributes=[id,uuid]`. Please note no spaces between the CSV
-   * `url`: (REQUIRED) the URI string.
-      * If you include query string, it WILL BE stripped. If you have query params, include them in the `query` attribute
-   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the YAML in `-d` or `--data`), returns the contents of the given file as the `request` POST content.
-   	* If the `file` was not provided, stubby fallsback to value from `post` property.
-      * If `post` was not provided, it is assumed that POST body was not provided at all.
-      * Use `file` for large POST content that otherwise inconvenient to configure as a one-liner. 
-      * Please keep in mind: `SnakeYAML` lib (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` is used, the file content loaded as-is, in other words - it does not go through `SnakeYAML` parser. stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters). Therefore its better to load POST content for `request` using `file` attribute
-   * `post`: (OPTIONAL) a string matching the textual body of the POST request.
-* `response`: (REQUIRED) describes the server's response to the client
-   * `headers`: (OPTIONAL) a key/value map of headers the server should respond with
-   * `latency`: (OPTIONAL) delay in milliseconds the server should wait before responding
-   * `file`: (OPTIONAL) if specified (an absolute path or path relative to the YAML in `-d` or `--data`),
-      returns the contents of the given file as the response body. It can be ascii of binary file (PDF, images, etc.)
-      * If the `file` was not provided, stubby fallsback to value from `body` property. 
-      * If `body` was not provided, an empty string is returned by default
-   * `body`: (OPTIONAL) the textual body of the server's response to the client
-   * `status`: (REQUIRED) the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>request</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>Describes the client's call to the server </td>
+</tr>
+</table>
 
-## Various Configuration Examples
+<hr />
 
-```yaml
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>method</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.method[*]</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Holds HTTP method verbs</li>
+<li>If multiple verbs are defined, YAML array should be used
+</li></ul></td>
+</tr>
+</table>
+```
 -  request:
       method: GET
+      
+   request:
+      method: [GET, HEAD]
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>url</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.url</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>URI string</li>
+<li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li></ul></td>
+</tr>
+</table>
+```
+-  request:
+      url: /some/uri
+      
+   request:
       url: /some/uri
       query:
          param: true
          anotherParam: false
-      headers:
-         authorization: bob:secret
-         
-   response:
-      status: 200
-      body: This is a single line text response
+```
 
+<hr />
 
--  request:
-      method: [GET, HEAD]
-      url: /uri/simple
-      headers:
-         Authorization: bob:secret
-
-   response:
-      headers:
-         content-type: application/json
-         access-control-allow-origin: "*"
-      status: 200
-      body: >
-         {
-             "name": "alex"
-         }
-
--  request:
-      method: GET
-      url: /pdf/release-notes
-   response:
-      headers:
-         content-type: application/pdf
-         content-disposition: "attachment; filename=release-notes.pdf"
-         pragma: no-cache
-      status: 200
-      file: ../release-notes.pdf
-
-
--  request:
-      method: GET
-      url: /images/alex
-   response:
-      headers:
-         content-type: image/png
-         content-disposition: "attachment; filename=alexander.zagniotov.png"
-      status: 200
-      file: ../alexander.zagniotov.png
-
-
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>headers</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.headers[*]</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Key/value map of HTTP headers the server should read from the request</li>
+<li>If stubbed headers are a subset of headers in HTTP request, then the match is successful (<i>left outer join</i> concept)</li>
+</td>
+</tr>
+</table>
+```
 -  request:
       method: POST
       headers:
          content-type: application/json
-      file: ../data/post-body-as-file.json
+         content-length: 80
 
    response:
       headers:
          content-type: application/json
-      status: 200
-      body: OK
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>query</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.query[*]</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Key/value map of query string params the server should read from the URI </li>
+<li>The stubbed key (param name) must have the letter case as the query string param name, ie: HTTP request query string <i><b>paRamNaME=12 => paRamNaME: 12</b></i></li>
+<li>The order of query string params does not matter. In other words the 
+<i><b>server.com?something=1&else=2</b></i> is the same as <i><b>server.com?else=2&something=1</b></i></li>
+<li>If stubbed query params are a subset of query params in HTTP request, then the match is successful (<i>left outer join</i> concept)</li>
+<li>query param can also be an array with double/single quoted/un-quoted elements: <i><b>attributes=["id","uuid"]</b></i> or <i><b>attributes=[id,uuid]</b></i>. Please note no spaces between the CSV</li>
+</td>
+</tr>
+</table>
+```
+-  request:
+      url: /some/uri
+      query:
+         paramTwo: 12345
+         paramOne: valueOne
+      method: POST
 
 
 -  request:
@@ -109,118 +174,229 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
          client_secret: secret
          attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
 
-   response:
-      status: 200
-      body: >
-         {"status": "hello world"}
-      headers:
-         content-type: application/json
+```
 
+<hr />
 
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>post</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.post</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>String matching the textual body of the POST request.</li>
+</td>
+</tr>
+</table>
+```
 -  request:
       method: POST
-      url: /some/uri
-      headers:
-         content-type: application/json
       post: >
          {
             "name": "value",
             "param": "description"
          }
 
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"status" : "OK"}
-
-
--  request:
-      method: GET
-      url: /some/uri
-      query:
-         param: true
-         anotherParam: false
-      headers:
-         authorization: bob:secret
-
-   response:
-      status: 200
-      file: /home/development/application/testing/data/create-account-soap-response.xml
-
 
 -  request:
       url: /some/uri
-      query:
-         paramTwo: 12345
-         paramOne: valueOne
-      method: POST
-      headers:
-         authorization: bob:secret
       post: this is some post data in textual format
-   
-   response:
-      headers:
-         content-type: application/json
-      latency: 1000
-      status: 200
-      body: You're request was successfully processed!
+```
 
+<hr />
 
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>file</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.file</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>If specified (an absolute path or path relative to the YAML in <i><b>-d</b></i> or <i><b>--data</b></i>), returns the contents of the given file as the stubbed <i><b>request</b></i> POST content</li>
+<li>If the file was not provided, stubby fallsback to value from <i><b>post</b></i> property</li>
+<li>If <i><b>post</b></i> key was not stubbed, it is assumed that stubbed POST body was not provided at all</li>
+<li>Use file for large POST content that otherwise inconvenient to configure as a one-liner or you do not want to pollute YAML config</li>
+<li>Please keep in mind: <i><b>SnakeYAML</b></i> library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If <i><b>file</b></i> property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for <i><b>request</b></i> using <b><i>file</i></b> attribute. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match</li>
+</td>
+</tr>
+</table>
+```
 -  request:
-      method: GET
-      url: /some/uri
-      query:
-         paramTwo: 12345
-         paramOne: valueOne
-
-   response:
-      status: 200
-      file: ../data/create-service-soap-response.xml
-      latency: 1000
-
-
--  request:
-      url: /some/uri
-      query:
-         firstParam: 1
-         secondParam: 2
       method: POST
       headers:
-         authorization: bob:secret
+         content-type: application/json
+      file: ../data/post-body-as-file.json     
+```
+
+## Stub response and its properties
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>response</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>Describes stubby4j's response to the client</td>
+</tr>
+</table>
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>status</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.status</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)</li></ul></td>
+</tr>
+</table>
+```
+  response:
+      status: 200
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>headers</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.headers[*]</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Key/value map of HTTP headers the stubby4j should send with the response</li>
+</td>
+</tr>
+</table>
+```
+  response:
+      headers:
+         content-type: application/json
+
 
    response:
       headers:
-         content-type: text/plain
+         content-type: application/pdf
+         content-disposition: "attachment; filename=release-notes.pdf"
+         pragma: no-cache
+         
+   response:
+      status: 301
+      headers:
+         location: /some/other/uri
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>latency</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.latency</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Delay in milliseconds stubby4j should wait before responding to the client</li>
+</td>
+</tr>
+</table>
+```
+  response:
+      latency: 1000
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>body</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.body</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>String matching the textual body of the response body</li>
+</td>
+</tr>
+</table>
+```
+   response:
+      body: OK
       status: 200
-      body: Success!
-
-
--  request:
-      method: GET
-      url: /some/uri
+      
       
    response:
-      headers:
-         content-type: application/json
-         access-control-allow-origin: "*"
-      body: >
-         {"status" : "success"}
-      latency: 5000
-      status: 201
-
-
--  request:
-      method: GET
-      headers:
-         content-type: application/json
-      url: /some/uri
-
-   response:
-      headers:
-         content-type: application/text
-         access-control-allow-origin: "*"
       latency: 1000
       body: >
          This is a text response, that can span across 
@@ -228,12 +404,14 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       status: 200
 
 
--  request:
-      method: GET
+   response:
+      status: 200
+      body: >
+         {"status": "hello world"}
       headers:
          content-type: application/json
-      url: /some/uri
-
+        
+         
    response:
       headers:
          content-type: application/xml
@@ -241,20 +419,41 @@ Submit `POST` requests to `http://<host>:<admin_port>/stubdata/new` or load a da
       latency: 1000
       body: >
          <?xml version="1.0" encoding="UTF-8"?>
-		 	<Response>
-         	<Play loop="10">https://api.twilio.com/cowbell.mp3</Play>
+            <Response>
+            <Play loop="10">https://api.twilio.com/cowbell.mp3</Play>
          </Response>
       status: 200
-      
-      
--  request:
-      method: GET
-      url: /some/redirecting/uri
+```
+<hr />
 
-   response:
-      latency: 1000
-      status: 301
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>file</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.file</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>If specified (an absolute path or path relative to the YAML in <i><b>-d</b></i> or <i><b>--data</b></i>), returns the contents of the given file as the HTTP response body</li>
+<li>If the <i><b>file</b></i> was not provided, stubby fallsback to value from <i><b>body</b></i>property </li>
+<li>If <i><b>body</b></i> was not provided, an empty string is returned by default</li>
+<li>Can be ascii of binary file (PDF, images, etc.) </li>
+</td>
+</tr>
+</table>
+```
+-  request:
+      method: POST
       headers:
-         location: /some/other/uri
-      body:
+         content-type: application/json
+      file: ../data/post-body-as-file.json     
 ```
