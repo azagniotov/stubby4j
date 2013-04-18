@@ -59,6 +59,40 @@
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
+<td>url</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.url</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>
+<ul>
+<li>URI string</li>
+<li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li></ul></td>
+</tr>
+</table>
+```
+-  request:
+      url: /some/uri
+      
+   request:
+      url: /some/uri
+      query:
+         param: true
+         anotherParam: false
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
 <td>headers</td>
 </tr>
 <tr>
@@ -121,13 +155,12 @@
 </table>
 ```
 -  request:
+      url: /some/uri
+      query:
+         paramTwo: 12345
+         paramOne: valueOne
       method: POST
       headers:
-         content-type: application/json
-         content-length: 80
-
-   response:
-      headers:
-         content-type: application/json
+         authorization: bob:secret
 
 ```
