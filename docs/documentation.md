@@ -251,3 +251,58 @@ When creating stubbed request/response data for stubby4j, the config data should
 ```
 
 ## Stub response and its properties
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>response</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>YES</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>Describes stubby4j's response to the client</td>
+</tr>
+</table>
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>headers</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.headers[*]</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Key/value map of HTTP headers the stubby4j should send with the response</li>
+</td>
+</tr>
+</table>
+```
+  response:
+      headers:
+         content-type: application/json
+
+
+   response:
+      headers:
+         content-type: application/pdf
+         content-disposition: "attachment; filename=release-notes.pdf"
+         pragma: no-cache
+
+```

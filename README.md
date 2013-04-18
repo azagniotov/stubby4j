@@ -65,17 +65,17 @@ stubby4j is a multi-module Gradle project. IntelliJ IDEA users should run ```gra
 ## Documentation
 See `docs` directory for:
 
+* [YAML Configuration Explained](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 * [Build Instructions](https://github.com/azagniotov/stubby4j/blob/master/docs/BUILDING.md)
 * [Commandline Usage](https://github.com/azagniotov/stubby4j/blob/master/docs/COMMAND-LINE-USAGE.md)
 * [Code Examples](https://github.com/azagniotov/stubby4j/blob/master/docs/CODE-EXAMPLES.md)
-* [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 ## Change Log
 ### 1.0.62
 
 * Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
 * A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
-* Documentation refinement [ENHANCEMENT]
+* Documentation revisisted and rewritten into a much clearer format [ENHANCEMENT]
 
 ### 1.0.61
 
