@@ -21,7 +21,7 @@
 </tr>
 </table>
 
-<br />
+<br /><hr />
 
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
@@ -54,6 +54,8 @@
 
 ```
 
+<hr />
+
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
@@ -81,9 +83,12 @@
       method: POST
       headers:
          content-type: application/json
+         content-length: 80
 
    response:
       headers:
          content-type: application/json
 
 ```
+
+<hr />
