@@ -1,5 +1,7 @@
 
-## stubby4j documentation
+## YAML Configuration Explained
+<br />
+When creating stubbed request/response data for stubby4j, the config data should be specified in valid YAML 1.1 syntax. Submit POST requests to ```http://<host>:<admin_port>/stubdata/new``` or load a data file (```-d``` or ```--data```) with the following structure for each endpoint:
 <br />
 
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
@@ -16,7 +18,7 @@
 <td>$.request</td>
 </tr>
 <tr>
-<td>Description</td>
+<td valign="top">Description</td>
 <td>Describes the client's call to the server </td>
 </tr>
 </table>
@@ -37,7 +39,7 @@
 <td>$.request.method[*]</td>
 </tr>
 <tr>
-<td>Description</td>
+<td valign="top">Description</td>
 <td>
 <ul>
 <li>Holds HTTP method verbs</li>
@@ -70,7 +72,7 @@
 <td>$.request.url</td>
 </tr>
 <tr>
-<td>Description</td>
+<td valign="top">Description</td>
 <td>
 <ul>
 <li>URI string</li>
@@ -104,7 +106,7 @@
 <td>$.request.headers[*]<br />$.response.headers[*]</td>
 </tr>
 <tr>
-<td>Description</td>
+<td valign="top">Description</td>
 <td>
 <ul>
 <li>Key/value map of HTTP headers the server should read from the request</li>
@@ -141,7 +143,7 @@
 <td>$.request.query[*]</td>
 </tr>
 <tr>
-<td>Description</td>
+<td valign="top">Description</td>
 <td>
 <ul>
 <li>Key/value map of query string params the server should read from the URI </li>
@@ -171,4 +173,77 @@
          client_secret: secret
          attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
 
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>post</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.post</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>String matching the textual body of the POST request.</li>
+</td>
+</tr>
+</table>
+```
+-  request:
+      method: POST
+      post: >
+         {
+            "name": "value",
+            "param": "description"
+         }
+
+
+-  request:
+      url: /some/uri
+      post: this is some post data in textual format
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>file</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.request.file</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>If specified (an absolute path or path relative to the YAML in <i><b>-d</b></i> or <i><b>--data</b></i>), returns the contents of the given file as the stubbed <i><b>request</b></i> POST content</li>
+<li>If the file was not provided, stubby fallsback to value from <i><b>post</b></i> property</li>
+<li>If <i><b>post</b></i> key was not stubbed, it is assumed that stubbed POST body was not provided at all</li>
+<li>Use file for large POST content that otherwise inconvenient to configure as a one-liner or you do not want to pollute YAML config</li>
+<li>Please keep in mind: <i><b>SnakeYAML</b></i> library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If <i><b>file</b></i> property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for <i><b>request</b></i> using <b><i>file</i></b> attribute. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match</li>
+</td>
+</tr>
+</table>
+```
+-  request:
+      method: POST
+      headers:
+         content-type: application/json
+      file: ../data/post-body-as-file.json     
 ```
