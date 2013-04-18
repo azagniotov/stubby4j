@@ -173,8 +173,7 @@ public class StubRequest {
       }
 
       if (StringUtils.isSet(dataStoreRequest.url) && dataStoreRequest.url.startsWith(REGEX_START)) {
-         //TODO attach query params back to URL and do full match using regex
-         if (!regexMatch(dataStoreRequest.url, this.url)) {
+         if (!regexMatch(dataStoreRequest.url, getUrl())) {
             return false;
          }
       } else if (!stringsMatch(dataStoreRequest.url, this.url)) {

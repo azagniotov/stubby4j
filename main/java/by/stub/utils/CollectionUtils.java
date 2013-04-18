@@ -3,6 +3,7 @@ package by.stub.utils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public final class CollectionUtils {
          return new HashMap<String, String>();
       }
 
-      final Map<String, String> paramMap = new HashMap<String, String>();
+      final Map<String, String> paramMap = new LinkedHashMap<String, String>();
       final String[] pairs = queryString.split("&");
       for (final String pair : pairs) {
          final String[] splittedPair = pair.split("=");
