@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -48,7 +50,7 @@ public class StubsTest {
          }
       });
 
-      final URL jsonContentUrl = StubsTest.class.getResource("/json/stub.response.body.json");
+      final URL jsonContentUrl = StubsTest.class.getResource("/json/response.json");
       assertThat(jsonContentUrl).isNotNull();
       contentAsString = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -75,6 +77,56 @@ public class StubsTest {
    @Before
    public void beforeEach() {
 
+   }
+
+   @Test
+   public void shouldMatchRequest_WhenHittingRegexifiedStubbedRequestUrl_WithGoodPattern() throws Exception {
+
+      //^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+
+      final List<String> assertingRequests = new LinkedList<String>() {{
+         add("/abc-efg/12/KM/jhgjkhg234234l2");
+         add("/abc-efg/12/KM/23423");
+         add("/aaa-aaa/00/AA/qwerty");
+      }};
+
+      for (final String assertingRequest : assertingRequests) {
+
+         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
+         HttpResponse response = request.execute();
+         String responseContent = response.parseAsString().trim();
+
+         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+         assertThat("{\"status\": \"The regex works!\"}").isEqualTo(responseContent);
+      }
+   }
+
+   @Test
+   public void shouldNotMatchRequest_WhenHittingRegexifiedStubbedRequestUrl_WithBadPattern() throws Exception {
+
+      //^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+
+      final List<String> assertingRequests = new LinkedList<String>() {{
+         add("/abca-efg/12/KM/jhgjkhg234234l2");
+         add("/abcefg/12/KM/23423");
+         add("/aaa-aaa/00/Af/qwerty");
+         add("/aaa-aaa/00/AA/qwerTy");
+         add("/aaa-aaa/009/AA/qwerty");
+         add("/AAA-AAA/00/AA/qwerty");
+      }};
+
+      for (final String assertingRequest : assertingRequests) {
+
+         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
+         HttpResponse response = request.execute();
+         String responseContent = response.parseAsString().trim();
+
+         final String errorMessage = String.format("No data found for GET request at URI %s", assertingRequest);
+         assertThat(responseContent).contains(errorMessage);
+         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+      }
    }
 
    @Test
@@ -157,6 +209,9 @@ public class StubsTest {
       final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getHeaders()).containsKey("content-type");
+      assertThat(response.getHeaders()).containsValue("application/pdf;charset=UTF-8");
+      assertThat(response.getHeaders()).containsKey("content-disposition");
    }
 
    @Test

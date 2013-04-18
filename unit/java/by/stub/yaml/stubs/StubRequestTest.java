@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
  * @since 11/6/12, 3:44 PM
  */
 @SuppressWarnings("serial")
-
 public class StubRequestTest {
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
@@ -194,6 +193,46 @@ public class StubRequestTest {
       final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v4() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexFails_v2() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/abca-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+         add(BUILDER.withUrl("/abcefg/12/KM/23423").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/Af/qwerty").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerTy").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/009/AA/qwerty").withMethodGet().build());
+         add(BUILDER.withUrl("/AAA-AAA/00/AA/qwerty").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      }
    }
 
    @Test

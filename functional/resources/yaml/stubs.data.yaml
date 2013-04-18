@@ -1,11 +1,11 @@
 -  request:
       method: GET
-      url: ^/[a-z]{3}/[0-9]+/?$
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 
    response:
       status: 200
       body: >
-         {"status": "regex works"}
+         {"status": "The regex works!"}
       headers:
          content-type: application/json
 
@@ -65,7 +65,7 @@
    response:
       headers:
          content-type: application/pdf
-         content-disposition: "attachment; filename=hello-world.pdf"
+         content-disposition: attachment; filename=hello-world.pdf
          pragma: no-cache
       status: 200
       file: ../binary/hello-world.pdf
@@ -81,7 +81,7 @@
          content-type: application/json
          pragma: no-cache
       status: 200
-      file: ../json/stub.response.body.json
+      file: ../json/response.json
 
 
 -  request:
