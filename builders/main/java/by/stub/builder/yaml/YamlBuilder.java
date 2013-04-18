@@ -1,6 +1,7 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
+import com.google.api.client.http.HttpMethods;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -78,19 +79,19 @@ public final class YamlBuilder {
       }
 
       public Request withMethodGet() {
-         return appendTemporaryMethodPlaceholderStoreMethod("GET");
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.GET);
       }
 
       public Request withMethodPut() {
-         return appendTemporaryMethodPlaceholderStoreMethod("PUT");
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.PUT);
       }
 
       public Request withMethodPost() {
-         return appendTemporaryMethodPlaceholderStoreMethod("POST");
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.POST);
       }
 
       public Request withMethodHead() {
-         return appendTemporaryMethodPlaceholderStoreMethod("HEAD");
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.HEAD);
       }
 
       public Request withUrl(final String value) {

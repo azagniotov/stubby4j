@@ -59,7 +59,7 @@ public class YamlBuilderTest {
          newStubbedRequest().
          withQuery("status", "active").
          withQuery("type", "full").
-         withMethod("GET").
+         withMethodGet().
          withUrl("/invoice").
          newStubbedResponse().
          withHeaders("content-type", "application/json").
@@ -95,7 +95,7 @@ public class YamlBuilderTest {
       final YamlBuilder yamlBuilder = new YamlBuilder();
       final String actualYaml = yamlBuilder.
          newStubbedRequest().
-         withMethod("PUT").
+         withMethodPut().
          withUrl("/invoice/123").
          withHeaders("content-type", "application/json").
          withFoldedPost("{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}").

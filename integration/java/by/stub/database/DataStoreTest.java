@@ -11,6 +11,7 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import com.google.api.client.http.HttpMethods;
 import org.fest.assertions.data.MapEntry;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedList;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -415,6 +417,47 @@ public class DataStoreTest {
 
 
    @Test
+   public void shouldFindHttpCycleListUnchanged_WhenMatchIsdone() throws Exception {
+
+      final String url = "/entity.find";
+      final String expectedStatus = "200";
+      final String expectedBody = "{\"status\": \"hello world\"}";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .withHeaders("content-type", "application/json")
+         .withQuery("type_name", "user")
+         .withQuery("client_id", "id")
+         .withQuery("client_secret", "secret")
+         .withQuery("attributes", "'[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]'")
+         .newStubbedResponse()
+         .withStatus(expectedStatus)
+         .withFoldedBody(expectedBody)
+         .withHeaders("content-type", "application/json").build();
+
+      final List<StubHttpLifecycle> parsedHttpLifecycles = parseYamlToStubHttpLifecycles(yaml);
+      dataStore.resetStubHttpLifecycles(parsedHttpLifecycles);
+
+      final List<StubHttpLifecycle> expectedHttpLifecycles = new LinkedList<StubHttpLifecycle>(parsedHttpLifecycles);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders("content-type", "application/json")
+            .withQuery("type_name", "user")
+            .withQuery("client_id", "id")
+            .withQuery("client_secret", "secret")
+            .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
+            .build();
+
+      dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(dataStore.getStubHttpLifecycles()).isEqualTo(expectedHttpLifecycles);
+   }
+
+   @Test
    public void shouldReturnMatchingStubbedResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String url = "/entity.find";
@@ -437,7 +480,7 @@ public class DataStoreTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString())
          .thenReturn(
             "type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
@@ -477,7 +520,7 @@ public class DataStoreTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString())
          .thenReturn(
             "type_name=user&client_id=id&client_secret=secret&attributes=[%22NOMATCH%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
@@ -497,6 +540,13 @@ public class DataStoreTest {
       final YamlParser yamlParser = new YamlParser("");
 
       dataStore.resetStubHttpLifecycles(yamlParser.parseAndLoad(reader));
+   }
+
+   private List<StubHttpLifecycle> parseYamlToStubHttpLifecycles(final String yaml) throws Exception {
+      final Reader reader = new StringReader(yaml);
+      final YamlParser yamlParser = new YamlParser("");
+
+      return yamlParser.parseAndLoad(reader);
    }
 
 }

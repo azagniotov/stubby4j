@@ -292,7 +292,7 @@ public class StubsHandlerTest {
 
    @Test
    public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
-      final String method = "GET";
+      final String method = HttpMethods.GET;
       final String requestPathInfo = "/path/1";
 
       final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);

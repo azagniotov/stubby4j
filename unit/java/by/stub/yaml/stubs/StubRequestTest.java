@@ -3,6 +3,7 @@ package by.stub.yaml.stubs;
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.StringUtils;
+import com.google.api.client.http.HttpMethods;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -664,7 +665,7 @@ public class StubRequestTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -688,7 +689,7 @@ public class StubRequestTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -712,7 +713,7 @@ public class StubRequestTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -736,7 +737,7 @@ public class StubRequestTest {
 
       final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
       when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-      when(mockHttpServletRequest.getMethod()).thenReturn("GET");
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);

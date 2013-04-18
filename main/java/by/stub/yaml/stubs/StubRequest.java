@@ -23,6 +23,7 @@ import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
+import com.google.api.client.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class StubRequest {
 
    private String url;
    private ArrayList<String> method = new ArrayList<String>(1) {{
-      add("GET");
+      add(HttpMethods.GET);
    }};
    private String post;
    private byte[] file;
@@ -69,7 +70,7 @@ public class StubRequest {
 
    public void setMethod(final String newMethod) {
       this.method = new ArrayList<String>(1) {{
-         add((StringUtils.isSet(newMethod) ? newMethod : "GET"));
+         add((StringUtils.isSet(newMethod) ? newMethod : HttpMethods.GET));
       }};
    }
 

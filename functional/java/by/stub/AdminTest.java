@@ -5,6 +5,7 @@ import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -61,7 +62,7 @@ public class AdminTest {
    public void should_UpdatedStubData_AndMakeGetRequestToPingPage() throws Exception {
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, "/ping");
-      final HttpRequest adminRequest = constructHttpRequest("GET", adminRequestUrl);
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.GET, adminRequestUrl);
 
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
@@ -78,7 +79,7 @@ public class AdminTest {
       assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
-      final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
@@ -87,7 +88,7 @@ public class AdminTest {
       assertThat("Configuration created successfully").isEqualTo(responseContentAsString);
 
       final String clientRequestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/updated");
-      final HttpRequest clientRequest = constructHttpRequest("GET", clientRequestUrl);
+      final HttpRequest clientRequest = constructHttpRequest(HttpMethods.GET, clientRequestUrl);
       final HttpResponse clientResponse = clientRequest.execute();
 
       final String contentTypeHeader = clientResponse.getContentType();
@@ -105,7 +106,7 @@ public class AdminTest {
       assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
-      final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
@@ -114,7 +115,7 @@ public class AdminTest {
       assertThat("Configuration created successfully").isEqualTo(responseContentAsString);
 
       final String clientRequestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
-      final HttpRequest clientRequest = constructHttpRequest("GET", clientRequestUrl);
+      final HttpRequest clientRequest = constructHttpRequest(HttpMethods.GET, clientRequestUrl);
       final HttpResponse clientResponse = clientRequest.execute();
 
       final String clientResponseContentAsString = clientResponse.parseAsString().trim();
@@ -130,7 +131,7 @@ public class AdminTest {
       assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
-      final HttpRequest adminRequest = constructHttpRequest("PUT", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.PUT, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
@@ -146,7 +147,7 @@ public class AdminTest {
       assertThat(url).isNotNull();
 
       final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.RESOURCE_STUBDATA_NEW);
-      final HttpRequest adminRequest = constructHttpRequest("POST", adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();

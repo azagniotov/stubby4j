@@ -1,6 +1,7 @@
 package by.stub.builder.stubs;
 
 import by.stub.yaml.stubs.StubRequest;
+import com.google.api.client.http.HttpMethods;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -33,25 +34,25 @@ public final class StubRequestBuilder {
    }
 
    public StubRequestBuilder withMethodGet() {
-      this.methods.add("GET");
+      this.methods.add(HttpMethods.GET);
 
       return this;
    }
 
    public StubRequestBuilder withMethodPut() {
-      this.methods.add("PUT");
+      this.methods.add(HttpMethods.PUT);
 
       return this;
    }
 
    public StubRequestBuilder withMethodPost() {
-      this.methods.add("POST");
+      this.methods.add(HttpMethods.POST);
 
       return this;
    }
 
    public StubRequestBuilder withMethodHead() {
-      this.methods.add("HEAD");
+      this.methods.add(HttpMethods.HEAD);
 
       return this;
    }

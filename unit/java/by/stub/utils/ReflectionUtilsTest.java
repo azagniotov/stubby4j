@@ -1,6 +1,7 @@
 package by.stub.utils;
 
 import by.stub.yaml.stubs.StubRequest;
+import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
 
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ReflectionUtilsTest {
    public void shouldGetObjectPropertiesAndValues() throws Exception {
       final int totalOfStubRequestMemberFields = 6;
       final StubRequest stubRequest = new StubRequest();
-      stubRequest.setMethod("POST");
+      stubRequest.setMethod(HttpMethods.POST);
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
       assertThat(totalOfStubRequestMemberFields).isEqualTo(properties.size());

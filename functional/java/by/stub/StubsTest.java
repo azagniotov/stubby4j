@@ -7,6 +7,7 @@ import by.stub.utils.StringUtils;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -79,7 +80,7 @@ public class StubsTest {
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
-      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+      final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       request.setHeaders(httpHeaders);
@@ -95,7 +96,7 @@ public class StubsTest {
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
-      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+      final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       request.setHeaders(httpHeaders);
@@ -110,7 +111,7 @@ public class StubsTest {
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArray() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
-      final HttpRequest request = constructHttpRequest("GET", requestUrl);
+      final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       request.setHeaders(httpHeaders);
@@ -125,7 +126,7 @@ public class StubsTest {
    @Test
    public void should_ReactToPostRequest_WithoutPost_AndPostNotSupplied() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
-      final HttpRequest request = constructHttpRequest("POST", requestUrl);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       request.setHeaders(httpHeaders);
@@ -139,7 +140,7 @@ public class StubsTest {
    public void should_ReactToPostRequest_WithoutPost_AndPostSupplied() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       request.setHeaders(httpHeaders);
@@ -153,7 +154,7 @@ public class StubsTest {
    public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/pdf/hello-world");
-      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+      final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
    }
@@ -162,7 +163,7 @@ public class StubsTest {
    public void should_ReturnAllProducts_WhenGetRequestMade() throws Exception {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice?status=active&type=full");
-      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+      final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       final String contentTypeHeader = response.getContentType();
       final String responseContent = response.parseAsString().trim();
@@ -176,7 +177,7 @@ public class StubsTest {
    public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryString() throws Exception {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice?status=active");
-      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+      final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
@@ -187,7 +188,7 @@ public class StubsTest {
    public void should_ReturnAllProducts_WhenGetRequestMadeOverSsl() throws Exception {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice?status=active&type=full");
-      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+      final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       final String contentTypeHeader = response.getContentType();
 
@@ -200,7 +201,7 @@ public class StubsTest {
    public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryStringOverSsl() throws Exception {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice?status=active");
-      final HttpResponse response = constructHttpRequest("GET", requestUrl).execute();
+      final HttpResponse response = constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
@@ -213,7 +214,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -233,7 +234,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/123");
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -253,7 +254,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
       final String content = "{\"wrong\": \"post\"}";
-      final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -272,7 +273,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/123");
       final String content = "{\"wrong\": \"post\"}";
-      final HttpRequest request = constructHttpRequest("PUT", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -291,7 +292,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -312,7 +313,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
@@ -333,7 +334,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType("application/wrong");
@@ -352,7 +353,7 @@ public class StubsTest {
 
       final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
-      final HttpRequest request = constructHttpRequest("POST", requestUrl, content);
+      final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType("application/wrong");
