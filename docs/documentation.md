@@ -34,7 +34,7 @@
 <td>YES</td>
 </tr>
 <td>JSONPath</td>
-<td>$.request.method[*]</td>
+<td>```$.request.method[*]```</td>
 </tr>
 <tr>
 <td>Description</td>
