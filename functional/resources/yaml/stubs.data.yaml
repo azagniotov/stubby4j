@@ -1,5 +1,16 @@
 -  request:
       method: GET
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
+
+   response:
+      status: 200
+      body: >
+         {"status": "The regex with query params works!"}
+      headers:
+         content-type: application/json
+
+-  request:
+      method: GET
       url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 
    response:

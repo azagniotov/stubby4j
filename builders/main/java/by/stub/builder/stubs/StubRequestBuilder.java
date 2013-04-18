@@ -8,6 +8,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +21,7 @@ public final class StubRequestBuilder {
    private ArrayList<String> methods = new ArrayList<String>();
    private String post = null;
    private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new HashMap<String, String>();
+   private Map<String, String> query = new LinkedHashMap<String, String>();
    private byte[] fileBytes;
 
    public StubRequestBuilder() {
@@ -94,7 +95,7 @@ public final class StubRequestBuilder {
       stubRequest.setFile(fileBytes);
       stubRequest.setUrl(url);
       stubRequest.setHeaders(new HashMap<String, String>(headers));
-      stubRequest.setQuery(new HashMap<String, String>(query));
+      stubRequest.setQuery(new LinkedHashMap<String, String>(query));
 
       try {
          final Field field = stubRequest.getClass().getDeclaredField("method");
@@ -114,7 +115,7 @@ public final class StubRequestBuilder {
       this.post = null;
       this.fileBytes = null;
       this.headers = new HashMap<String, String>();
-      this.query = new HashMap<String, String>();
+      this.query = new LinkedHashMap<String, String>();
 
       return stubRequest;
    }

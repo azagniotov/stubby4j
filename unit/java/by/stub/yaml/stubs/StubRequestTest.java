@@ -30,6 +30,24 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenNullUrlStubbed_ButUrlSubmitted() throws Exception {
+
+      final StubRequest expectedRequest = BUILDER.withUrl(null).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlStubbed_ButNullUrlSubmitted() throws Exception {
+
+      final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(null).withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenUrlStubbed_ButNoUrlSubmitted() throws Exception {
 
       final String url = "/invoice/123";
@@ -141,99 +159,6 @@ public class StubRequestTest {
       assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
    }
 
-   @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v1() throws Exception {
-
-      final String url = "^/products/[0-9]+/?$";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-      final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-
-      assertThat(expectedRequest).isEqualTo(assertingRequest);
-   }
-
-   @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v2() throws Exception {
-
-      final String url = "^/[a-z]{3}/[0-9]+/?$";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-      final StubRequest assertingRequest = BUILDER.withUrl("/abc/12345/").withMethodGet().build();
-
-      assertThat(expectedRequest).isEqualTo(assertingRequest);
-   }
-
-   @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v3() throws Exception {
-
-      final String url = "^/(cats|dogs)/?(.*)";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-
-      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-         add(BUILDER.withUrl("/cats/blah/again/").withMethodGet().build());
-         add(BUILDER.withUrl("/cats/blah/").withMethodGet().build());
-         add(BUILDER.withUrl("/dogs/blah/").withMethodGet().build());
-         add(BUILDER.withUrl("/dogs/").withMethodGet().build());
-         add(BUILDER.withUrl("/dogs").withMethodGet().build());
-      }};
-
-      for (final StubRequest assertingRequest : assertingRequests) {
-         assertThat(expectedRequest).isEqualTo(assertingRequest);
-      }
-   }
-
-
-   @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexFails_v1() throws Exception {
-
-      final String url = "^/[a-z]{3}/[0-9]+/?$";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-      final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
-
-      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
-   }
-
-
-   @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexPasses_v4() throws Exception {
-
-      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-
-      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-         add(BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
-         add(BUILDER.withUrl("/abc-efg/12/KM/23423").withMethodGet().build());
-         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty").withMethodGet().build());
-      }};
-
-      for (final StubRequest assertingRequest : assertingRequests) {
-         assertThat(expectedRequest).isEqualTo(assertingRequest);
-      }
-   }
-
-   @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexFails_v2() throws Exception {
-
-      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
-
-      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-
-      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-         add(BUILDER.withUrl("/abca-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
-         add(BUILDER.withUrl("/abcefg/12/KM/23423").withMethodGet().build());
-         add(BUILDER.withUrl("/aaa-aaa/00/Af/qwerty").withMethodGet().build());
-         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerTy").withMethodGet().build());
-         add(BUILDER.withUrl("/aaa-aaa/009/AA/qwerty").withMethodGet().build());
-         add(BUILDER.withUrl("/AAA-AAA/00/AA/qwerty").withMethodGet().build());
-      }};
-
-      for (final StubRequest assertingRequest : assertingRequests) {
-         assertThat(expectedRequest).isNotEqualTo(assertingRequest);
-      }
-   }
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentHttpMethod() throws Exception {
@@ -933,5 +858,450 @@ public class StubRequestTest {
             .withHeaders("Pragma", "no-cache").build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlPartiallyRegexified_ButGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/products/[0-9]+/?$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexified_ButGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}/[0-9]+/?$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abc/12345/").withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlConditionallyRegexified_ButGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/(cats|dogs)/?(.*)";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/cats/blah/again/").withMethodGet().build());
+         add(BUILDER.withUrl("/cats/blah/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs/blah/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs/").withMethodGet().build());
+         add(BUILDER.withUrl("/dogs").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexified_ButBadAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}/[0-9]+/?$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenComplexUrlRegexified_ButGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenComplexUrlRegexified_ButBadAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/abca-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+         add(BUILDER.withUrl("/abcefg/12/KM/23423").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/Af/qwerty").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerTy").withMethodGet().build());
+         add(BUILDER.withUrl("/aaa-aaa/009/AA/qwerty").withMethodGet().build());
+         add(BUILDER.withUrl("/AAA-AAA/00/AA/qwerty").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      }
+   }
+
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexifiedDoesNotAccomodateForQueryString() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER
+            .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedAccomodatesForQueryString_AndGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{8}&paramTwo=[a-zA-Z]{8}";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER
+            .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
+            .withMethodGet()
+            .withQuery("paramOne", "wqePwrew")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            .withMethodGet()
+            .withQuery("paramOne", "aaaaaaaa")
+            .withQuery("paramTwo", "QwErTyUi").build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedWithStaticQueryString_AndGoodAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=valueOne&paramTwo=valueTwo";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER
+            .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            .withMethodGet()
+            .withQuery("paramOne", "valueOne")
+            .withQuery("paramTwo", "valueTwo").build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexifiedAccomodatesForQueryString_ButBadAssertionUrlConfigured() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{8}&paramTwo=[a-zA-Z]{8}";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER
+            .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
+            .withMethodGet()
+            .withQuery("paramSix", "wqePwrew")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            .withMethodGet()
+            .withQuery("paramOne", "12345678")
+            .withQuery("paramTwo", "valueTwo").build());
+         add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            .withMethodGet()
+            .withQuery("paramOne", "aaa7aaaa")
+            .withQuery("paramTwo", "QwErTyUi").build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      }
+   }
+
+
+   @Test
+   public void shouldFindTwoHashCodesEqual_WhenTwoRequestAreTheSame() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+
+      final String headerOne = "content-type";
+      final String headerOneValue = "application/xml";
+
+      final String headerTwo = "content-length";
+      final String headerTwoValue = "30";
+
+      final String headerThree = "content-language";
+      final String headerThreeValue = "en-US";
+
+      final String url = "/invoice/123";
+      final String postBody = "this is a post body";
+
+      final StubRequest requestOne =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      final StubRequest requestTwo =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      assertThat(requestOne.hashCode()).isEqualTo(requestTwo.hashCode());
+   }
+
+   @Test
+   public void shouldNotFindTwoHashCodesEqual_WhenTwoRequestHaveDifferentAmdNullPostBody() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+
+      final String headerOne = "content-type";
+      final String headerOneValue = "application/xml";
+
+      final String headerTwo = "content-length";
+      final String headerTwoValue = "30";
+
+      final String headerThree = "content-language";
+      final String headerThreeValue = "en-US";
+
+      final String url = "/invoice/123";
+      final String postBody = "this is a post body";
+
+      final StubRequest requestOne =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(null)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      final StubRequest requestTwo =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      assertThat(requestOne.hashCode()).isNotEqualTo(requestTwo.hashCode());
+   }
+
+   @Test
+   public void shouldNotFindTwoHashCodesEqual_WhenTwoRequestHaveDifferentHeaderValue() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+
+      final String headerOne = "content-type";
+      final String headerOneValue = "application/xml";
+
+      final String headerTwo = "content-length";
+      final String headerTwoValue = "30";
+
+      final String headerThree = "content-language";
+      final String headerThreeValue = "en-US";
+
+      final String url = "/invoice/123";
+      final String postBody = "this is a post body";
+
+      final StubRequest requestOne =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue)
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      final StubRequest requestTwo =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(postBody)
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue)
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, "31")
+            .withHeaders(headerThree, headerThreeValue).build();
+
+      assertThat(requestOne.hashCode()).isNotEqualTo(requestTwo.hashCode());
+   }
+
+   @Test
+   public void shouldMatchExpectedToStringOutput_WhenActualRequestHasTheSameOutput() throws Exception {
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost("this is a post body")
+            .withQuery("paramOne", "paramOneValue")
+            .withQuery("paramTwo", "paramTwoValue")
+            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerTwo", "headerTwoValue")
+            .withHeaders("headerThree", "headerThreeValue").build();
+
+
+      final String expectedToStringOutput = "StubRequest{" +
+         "url=/invoice/123, " +
+         "method=[GET, POST, PUT], " +
+         "post=this is a post body, " +
+         "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
+         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+
+      assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldMatchExpectedToStringOutput_WhenActualRequestHasNullBody() throws Exception {
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(null)
+            .withQuery("paramOne", "paramOneValue")
+            .withQuery("paramTwo", "paramTwoValue")
+            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerTwo", "headerTwoValue")
+            .withHeaders("headerThree", "headerThreeValue").build();
+
+
+      final String expectedToStringOutput = "StubRequest{" +
+         "url=/invoice/123, " +
+         "method=[GET, POST, PUT], " +
+         "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
+         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+
+      assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldMatchExpectedToStringOutput_WhenActualRequestHasNullHeaderValue() throws Exception {
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withMethodPost()
+            .withMethodPut()
+            .withPost(null)
+            .withQuery("paramOne", "paramOneValue")
+            .withQuery("paramTwo", "paramTwoValue")
+            .withHeaders("headerOne", null)
+            .withHeaders("headerTwo", "headerTwoValue")
+            .withHeaders("headerThree", "headerThreeValue").build();
+
+
+      final String expectedToStringOutput = "StubRequest{" +
+         "url=/invoice/123, " +
+         "method=[GET, POST, PUT], " +
+         "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
+         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=null}}";
+
+      assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldMatchExpectedToStringOutput_WhenActualRequestHasAllNullFields() throws Exception {
+
+      final StubRequest actualRequest =
+         BUILDER.withUrl(null)
+            .withMethod(null)
+            .withPost(null).build();
+
+
+      final String expectedToStringOutput = "StubRequest{" +
+         "method=[null], " +
+         "query={}, " +
+         "headers={}}";
+
+      assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
 }

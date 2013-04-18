@@ -1,7 +1,6 @@
 package by.stub.utils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ public final class CollectionUtils {
    public static Map<String, String> constructParamMap(final String queryString) {
 
       if (!StringUtils.isSet(queryString)) {
-         return new HashMap<String, String>();
+         return new LinkedHashMap<String, String>();
       }
 
       final Map<String, String> paramMap = new LinkedHashMap<String, String>();

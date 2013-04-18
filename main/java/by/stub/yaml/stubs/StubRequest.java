@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class StubRequest {
    private String post;
    private byte[] file;
    private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new HashMap<String, String>();
+   private Map<String, String> query = new LinkedHashMap<String, String>();
 
    public StubRequest() {
 
@@ -218,9 +219,7 @@ public class StubRequest {
       final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
       final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
 
-      if (!isDatastoreValueSet) {
-         return true;
-      } else if (isDatastoreValueSet && !isAssertingValueSet) {
+      if (isDatastoreValueSet && !isAssertingValueSet) {
          return false;
       } else if (isDatastoreValueSet && isAssertingValueSet) {
          return dataStoreValue.equals(thisAssertingValue);
@@ -233,9 +232,7 @@ public class StubRequest {
       final boolean isDatastoreArraySet = dataStoreArray.size() != 0;
       final boolean isAssertingArraySet = thisAssertingArray.size() != 0;
 
-      if (!isDatastoreArraySet) {
-         return true;
-      } else if (isDatastoreArraySet && !isAssertingArraySet) {
+      if (isDatastoreArraySet && !isAssertingArraySet) {
          return false;
       } else if (isDatastoreArraySet && isAssertingArraySet) {
 
@@ -244,9 +241,11 @@ public class StubRequest {
                return true;
             }
          }
+
+         return false;
       }
 
-      return false;
+      return true;
    }
 
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
@@ -259,12 +258,18 @@ public class StubRequest {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(url, method, query, headers);
+      return Objects.hashCode(url, method, post, query, headers);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).omitNullValues().toString();
+      return Objects.toStringHelper(this)
+         .add("url", url)
+         .add("method", method)
+         .add("post", post)
+         .add("query", query)
+         .add("headers", headers)
+         .omitNullValues().toString();
    }
 
 }

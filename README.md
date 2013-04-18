@@ -71,6 +71,12 @@ See `docs` directory for:
 * [YAML Sample](https://github.com/azagniotov/stubby4j/blob/master/docs/YAML.md)
 
 ## Change Log
+### 1.0.62
+
+* Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
+* A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
+* Documentation refinement [ENHANCEMENT]
+
 ### 1.0.61
 
 * Just some changes around unit, integration and functional tests. Code cleanup [COSMETICS]
