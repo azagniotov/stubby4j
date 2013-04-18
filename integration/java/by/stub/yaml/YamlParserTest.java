@@ -46,10 +46,10 @@ public class YamlParserTest {
          .withStatus("301").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      assertThat(stubbedRequest.getUrl()).isEqualTo(url);
+      assertThat(actualRequest.getUrl()).isEqualTo(url);
    }
 
    @Test
@@ -62,10 +62,10 @@ public class YamlParserTest {
          .withStatus("301").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      assertThat(stubbedRequest.getMethod()).contains(HttpMethods.GET, HttpMethods.HEAD);
+      assertThat(actualRequest.getMethod()).contains(HttpMethods.GET, HttpMethods.HEAD);
    }
 
    @Test
@@ -77,10 +77,10 @@ public class YamlParserTest {
          .withLiteralBody("hello").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse stubbedResponse = stubbedHttpLifecycle.getResponse();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
-      assertThat(stubbedResponse.getStatus()).isEqualTo(String.valueOf(200));
+      assertThat(actualResponse.getStatus()).isEqualTo(String.valueOf(200));
    }
 
    @Test
@@ -96,10 +96,10 @@ public class YamlParserTest {
          .withStatus("201").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      assertThat(stubbedRequest.getPost()).isEqualTo(stubbedRequestPost);
+      assertThat(actualRequest.getPost()).isEqualTo(stubbedRequestPost);
    }
 
 
@@ -135,10 +135,10 @@ public class YamlParserTest {
          .withStatus("201").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      assertThat(stubbedRequest.getPost()).isEqualTo(stubbedRequestPost);
+      assertThat(actualRequest.getPost()).isEqualTo(stubbedRequestPost);
    }
 
    @Test
@@ -170,10 +170,10 @@ public class YamlParserTest {
          .withFoldedBody(stubbedResponseBody).build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse stubbedResponse = stubbedHttpLifecycle.getResponse();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
-      assertThat(stubbedResponse.getBody()).isEqualTo(stubbedResponseBody);
+      assertThat(actualResponse.getBody()).isEqualTo(stubbedResponseBody);
    }
 
    @Test
@@ -203,10 +203,10 @@ public class YamlParserTest {
          .withLiteralBody(stubbedResponseBody).build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse stubbedResponse = stubbedHttpLifecycle.getResponse();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
-      assertThat(stubbedResponse.getBody()).isEqualTo(stubbedResponseBody);
+      assertThat(actualResponse.getBody()).isEqualTo(stubbedResponseBody);
    }
 
 
@@ -230,14 +230,14 @@ public class YamlParserTest {
          .withStatus("500").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
       final MapEntry queryEntryTwo = MapEntry.entry(expectedParamTwo, expectedParamTwoValue);
 
-      assertThat(stubbedRequest.getUrl()).contains(fullQueryOne);
-      assertThat(stubbedRequest.getUrl()).contains(fullQueryTwo);
-      assertThat(stubbedRequest.getQuery()).contains(queryEntryOne, queryEntryTwo);
+      assertThat(actualRequest.getUrl()).contains(fullQueryOne);
+      assertThat(actualRequest.getUrl()).contains(fullQueryTwo);
+      assertThat(actualRequest.getQuery()).contains(queryEntryOne, queryEntryTwo);
    }
 
 
@@ -259,13 +259,13 @@ public class YamlParserTest {
 
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse stubbedResponse = stubbedHttpLifecycle.getResponse();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
       final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, headerOneValue);
       final MapEntry headerTwoEntry = MapEntry.entry(headerTwoKey, headerTwoValue);
 
-      assertThat(stubbedResponse.getHeaders()).contains(headerOneEntry);
-      assertThat(stubbedResponse.getHeaders()).contains(headerTwoEntry);
+      assertThat(actualResponse.getHeaders()).contains(headerOneEntry);
+      assertThat(actualResponse.getHeaders()).contains(headerTwoEntry);
    }
 
 
@@ -284,12 +284,12 @@ public class YamlParserTest {
          .withStatus("201").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
 
-      assertThat(stubbedRequest.getUrl()).contains(fullQueryOne);
-      assertThat(stubbedRequest.getQuery()).contains(queryEntryOne);
+      assertThat(actualRequest.getUrl()).contains(fullQueryOne);
+      assertThat(actualRequest.getQuery()).contains(queryEntryOne);
    }
 
    @Test
@@ -307,12 +307,12 @@ public class YamlParserTest {
          .withStatus("201").build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(0);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
 
-      assertThat(stubbedRequest.getUrl()).contains(fullQueryOne);
-      assertThat(stubbedRequest.getQuery()).contains(queryEntryOne);
+      assertThat(actualRequest.getUrl()).contains(fullQueryOne);
+      assertThat(actualRequest.getQuery()).contains(queryEntryOne);
    }
 
 
@@ -352,16 +352,16 @@ public class YamlParserTest {
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(BUILDER.toString());
       assertThat(loadedHttpCycles.size()).isEqualTo(NUMBER_OF_HTTPCYCLES);
 
-      final StubHttpLifecycle stubbedHttpLifecycle = loadedHttpCycles.get(989);
-      final StubRequest stubbedRequest = stubbedHttpLifecycle.getRequest();
-      final StubResponse stubbedResponse = stubbedHttpLifecycle.getResponse();
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(989);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
-      assertThat(stubbedRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 990));
-      assertThat(stubbedRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 990));
-      assertThat(stubbedRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 990));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 990));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 990));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 990));
 
       final MapEntry headerEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
-      assertThat(stubbedResponse.getHeaders()).contains(headerEntry);
+      assertThat(actualResponse.getHeaders()).contains(headerEntry);
    }
 
 
