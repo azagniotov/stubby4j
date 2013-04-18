@@ -160,7 +160,15 @@
          paramTwo: 12345
          paramOne: valueOne
       method: POST
-      headers:
-         authorization: bob:secret
+
+
+-  request:
+      method: GET
+      url: /entity.find
+      query:
+         type_name: user
+         client_id: id
+         client_secret: secret
+         attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
 
 ```
