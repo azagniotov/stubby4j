@@ -913,6 +913,25 @@ public class StubRequestTest {
       }
    }
 
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlConditionallyRegexified_ButGoodAssertionUrlConfigured_v2() throws Exception {
+
+      final String url = "^/(account|profile)/user/session/[a-zA-Z0-9]{32}/?";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
+         add(BUILDER.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
+         add(BUILDER.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
+         add(BUILDER.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
+      }
+   }
+
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenUrlRegexified_ButBadAssertionUrlConfigured() throws Exception {

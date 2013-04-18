@@ -13,6 +13,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Support for any of the available HTTP methods
 * Simulate support for Basic Authorization
 * Support for HTTP 30x redirects
+* Support for regular expressions (like mod_rewrite in Apache) in stubbed URIs for dynamic matching
 * Trigger multiple responses based on multiple requests on the same URI
 * Configure stub data using configuration file
 * Configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint

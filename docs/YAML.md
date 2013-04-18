@@ -77,18 +77,41 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>URI string</li>
-<li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li></ul></td>
+<li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li>
+<li>Supports regular expressions (like mod_rewrite in Apache) for dynamic matching. When stubbing regular expression in <i><b>url</b></i>, string query params should be attached to the stubbed <i><b>url</b></i> (if any)</li>
+</ul></td>
 </tr>
 </table>
 ```
 -  request:
       url: /some/uri
-      
-   request:
+
+
+-  request:
       url: /some/uri
       query:
          param: true
          anotherParam: false
+
+
+-  request:
+      method: GET
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
+
+
+-  request:
+      method: GET
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?view=full&status=active
+
+
+-  request:
+      method: GET
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+
+
+-  request:
+      method: GET
+      url: ^/(account|profile)/user/session/[a-zA-Z0-9]{32}/?
 ```
 
 <hr />
