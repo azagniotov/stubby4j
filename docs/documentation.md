@@ -332,5 +332,96 @@ When creating stubbed request/response data for stubby4j, the config data should
          content-type: application/pdf
          content-disposition: "attachment; filename=release-notes.pdf"
          pragma: no-cache
+         
+   response:
+      status: 301
+      headers:
+         location: /some/other/uri
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>latency</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.latency</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>Delay in milliseconds stubby4j should wait before responding to the client</li>
+</td>
+</tr>
+</table>
+```
+  response:
+      latency: 1000
 
 ```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
+<td>body</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.body</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>
+<ul>
+<li>String matching the textual body of the response body</li>
+</td>
+</tr>
+</table>
+```
+   response:
+      headers:
+         content-type: application/text
+         access-control-allow-origin: "*"
+      latency: 1000
+      body: >
+         This is a text response, that can span across 
+         multiple lines as long as appropriate indentation is in place.
+      status: 200
+
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world"}
+      headers:
+         content-type: application/json
+        
+         
+   response:
+      headers:
+         content-type: application/xml
+         access-control-allow-origin: "*"
+      latency: 1000
+      body: >
+         <?xml version="1.0" encoding="UTF-8"?>
+            <Response>
+            <Play loop="10">https://api.twilio.com/cowbell.mp3</Play>
+         </Response>
+      status: 200
+```
+
+<hr />
