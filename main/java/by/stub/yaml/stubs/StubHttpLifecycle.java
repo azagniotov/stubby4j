@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+
 /**
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
@@ -55,20 +56,5 @@ public final class StubHttpLifecycle {
       if (!request.equals(that.request)) return false;
 
       return true;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = request.hashCode();
-      result = 31 * result;
-      return result;
-   }
-
-   @Override
-   public String toString() {
-      return "StubHttpLifecycle{" +
-         "request=" + request +
-         ", response=" + response +
-         '}';
    }
 }

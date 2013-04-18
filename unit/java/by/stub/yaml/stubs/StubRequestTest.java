@@ -30,6 +30,89 @@ public class StubRequestTest {
       CommandLineInterpreter.parseCommandLine(new String[]{});
    }
 
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenUrlStubbed_ButNoUrlSubmitted() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlNotStubbed_ButUrlSubmitted() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlEquals() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentUri() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoValue = "two";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/invoice/788")
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramTwo, paramTwoValue)
+            .withQuery(paramOne, paramOneValue).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenMethodStubbed_ButNoMethodSubmitted() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenNoMethodStubbed_ButMethodSubmitted() throws Exception {
+
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).build();
+      final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
 
    @Test
    public void shouldGetPostBody_WhenPostProvided_ButFileNotSet() throws Exception {
@@ -174,34 +257,6 @@ public class StubRequestTest {
             .withPost("some post").build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
-   }
-
-   @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentUri() throws Exception {
-
-      final String paramOne = "paramOne";
-      final String paramOneValue = "one";
-
-      final String paramTwo = "paramTwo";
-      final String paramTwoValue = "two";
-
-      final String url = "/invoice/789";
-
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet()
-            .withMethodHead()
-            .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoValue).build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl("/invoice/788")
-            .withMethodGet()
-            .withMethodHead()
-            .withQuery(paramTwo, paramTwoValue)
-            .withQuery(paramOne, paramOneValue).build();
-
-      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
 
 

@@ -97,38 +97,4 @@ public class StubResponse {
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.OK_200;
    }
-
-   @Override
-   public boolean equals(final Object o) {
-      if (this == o) return true;
-      if (!(o instanceof StubResponse)) return false;
-
-      final StubResponse that = (StubResponse) o;
-
-      if (!body.equals(that.body)) return false;
-      if (!headers.equals(that.headers)) return false;
-      if (!status.equals(that.status)) return false;
-
-      return true;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = status.hashCode();
-      result = 31 * result + body.hashCode();
-      result = 31 * result + headers.hashCode();
-      return result;
-   }
-
-   @Override
-   public String toString() {
-      final StringBuffer sb = new StringBuffer();
-      sb.append("StubResponse");
-      sb.append("{status='").append(status).append('\'');
-      sb.append(", body='").append(body).append('\'');
-      sb.append(", latency='").append(latency).append('\'');
-      sb.append(", headers=").append(headers);
-      sb.append('}');
-      return sb.toString();
-   }
 }

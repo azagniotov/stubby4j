@@ -24,11 +24,11 @@ import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
+import com.google.common.base.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -172,7 +172,7 @@ public class StubRequest {
          return false;
       }
 
-      if (dataStoreRequest.url.startsWith(REGEX_START)) {
+      if (StringUtils.isSet(dataStoreRequest.url) && dataStoreRequest.url.startsWith(REGEX_START)) {
          //TODO attach query params back to URL and do full match using regex
          if (!regexMatch(dataStoreRequest.url, this.url)) {
             return false;
@@ -231,8 +231,8 @@ public class StubRequest {
    }
 
    private boolean arraysMatch(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-      final boolean isDatastoreArraySet = (dataStoreArray != null && dataStoreArray.size() != 0);
-      final boolean isAssertingArraySet = (thisAssertingArray != null && thisAssertingArray.size() != 0);
+      final boolean isDatastoreArraySet = dataStoreArray.size() != 0;
+      final boolean isAssertingArraySet = thisAssertingArray.size() != 0;
 
       if (!isDatastoreArraySet) {
          return true;
@@ -259,25 +259,13 @@ public class StubRequest {
    }
 
    @Override
-   public final int hashCode() {
-      int result = url.hashCode();
-      result = 31 * result;
-      result = 31 * result + getPostBody().hashCode();
-      return result;
+   public int hashCode() {
+      return Objects.hashCode(url, method, query, headers);
    }
 
    @Override
-   public final String toString() {
-      final StringBuffer sb = new StringBuffer();
-      sb.append("StubRequest");
-      sb.append("{url='").append(url).append('\'');
-      sb.append(", method='").append(method).append('\'');
-      sb.append(", post='").append(post).append('\'');
-      sb.append(", file='").append(Arrays.toString(file)).append('\'');
-      sb.append(", headers=").append(headers);
-      sb.append(", query=").append(query);
-      sb.append('}');
-      return sb.toString();
+   public String toString() {
+      return Objects.toStringHelper(this).omitNullValues().toString();
    }
 
 }
