@@ -451,9 +451,9 @@ When creating stubbed request/response data for stubby4j, the config data should
 </tr>
 </table>
 ```
--  request:
-      method: POST
+-  response:
+      status: 201
       headers:
          content-type: application/json
-      file: ../data/post-body-as-file.json     
+      file: ../data/response-body-as-file.json
 ```
