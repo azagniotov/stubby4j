@@ -1,7 +1,7 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
-import com.google.api.client.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethods;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;

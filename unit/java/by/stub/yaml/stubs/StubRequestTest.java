@@ -1328,6 +1328,7 @@ public class StubRequestTest {
 
 
       final String expectedToStringOutput = "StubRequest{" +
+         "url=null, " +
          "method=[null], " +
          "query={}, " +
          "headers={}}";

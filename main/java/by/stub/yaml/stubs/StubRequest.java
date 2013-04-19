@@ -23,8 +23,7 @@ import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
-import com.google.api.client.http.HttpMethods;
-import com.google.common.base.Objects;
+import org.eclipse.jetty.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -148,6 +147,66 @@ public class StubRequest {
       return assertionRequest;
    }
 
+
+   private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
+      final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
+
+      return pattern.matcher(assertingUrl).matches();
+   }
+
+
+   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
+      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+      final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
+
+      if (isDatastoreValueSet && !isAssertingValueSet) {
+         return false;
+      } else if (isDatastoreValueSet && isAssertingValueSet) {
+         return dataStoreValue.equals(thisAssertingValue);
+      }
+
+      return true;
+   }
+
+   private boolean arraysMatch(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
+      final boolean isDatastoreArraySet = dataStoreArray.size() != 0;
+      final boolean isAssertingArraySet = thisAssertingArray.size() != 0;
+
+      if (isDatastoreArraySet && !isAssertingArraySet) {
+         return false;
+      } else if (isDatastoreArraySet && isAssertingArraySet) {
+
+         for (final String assertingArrayValue : thisAssertingArray) {
+            if (dataStoreArray.contains(assertingArrayValue.toUpperCase(Locale.US))) {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
+      return true;
+   }
+
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
+      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
+
+      return dataStoreMapCopy.isEmpty();
+   }
+
+   @Override
+   public int hashCode() {
+      int result = url.hashCode();
+      result = 31 * result + method.hashCode();
+      result = 31 * result + (post != null ? post.hashCode() : 0);
+      result = 31 * result + (file != null ? Arrays.hashCode(file) : 0);
+      result = 31 * result + headers.hashCode();
+      result = 31 * result + query.hashCode();
+      return result;
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) {
@@ -202,68 +261,21 @@ public class StubRequest {
       return true;
    }
 
-   private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
-      final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
-
-      return pattern.matcher(assertingUrl).matches();
-   }
-
-
-   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
-      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
-      final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
-
-      if (isDatastoreValueSet && !isAssertingValueSet) {
-         return false;
-      } else if (isDatastoreValueSet && isAssertingValueSet) {
-         return dataStoreValue.equals(thisAssertingValue);
-      }
-
-      return true;
-   }
-
-   private boolean arraysMatch(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-      final boolean isDatastoreArraySet = dataStoreArray.size() != 0;
-      final boolean isAssertingArraySet = thisAssertingArray.size() != 0;
-
-      if (isDatastoreArraySet && !isAssertingArraySet) {
-         return false;
-      } else if (isDatastoreArraySet && isAssertingArraySet) {
-
-         for (final String assertingArrayValue : thisAssertingArray) {
-            if (dataStoreArray.contains(assertingArrayValue.toUpperCase(Locale.US))) {
-               return true;
-            }
-         }
-
-         return false;
-      }
-
-      return true;
-   }
-
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
-      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
-      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
-
-      return dataStoreMapCopy.isEmpty();
-   }
-
    @Override
-   public int hashCode() {
-      return Objects.hashCode(url, method, post, query, headers);
-   }
+   public final String toString() {
+      final StringBuffer sb = new StringBuffer();
+      sb.append("StubRequest");
+      sb.append("{url=").append(url);
+      sb.append(", method=").append(method);
 
-   @Override
-   public String toString() {
-      return Objects.toStringHelper(this)
-         .add("url", url)
-         .add("method", method)
-         .add("post", post)
-         .add("query", query)
-         .add("headers", headers)
-         .omitNullValues().toString();
+      if (post != null) {
+         sb.append(", post=").append(post);
+      }
+      sb.append(", query=").append(query);
+      sb.append(", headers=").append(headers);
+      sb.append('}');
+
+      return sb.toString();
    }
 
 }

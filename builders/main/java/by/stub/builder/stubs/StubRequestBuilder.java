@@ -1,7 +1,7 @@
 package by.stub.builder.stubs;
 
 import by.stub.yaml.stubs.StubRequest;
-import com.google.api.client.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethods;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
