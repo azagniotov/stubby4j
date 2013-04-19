@@ -159,33 +159,27 @@ public class StubRequest {
       final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
       final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
 
-      if (isDatastoreValueSet && !isAssertingValueSet) {
-         return false;
-      } else if (isDatastoreValueSet && isAssertingValueSet) {
+      if (!isDatastoreValueSet) {
+         return true;
+      } else if (isAssertingValueSet) {
          return dataStoreValue.equals(thisAssertingValue);
       }
 
-      return true;
+      return false;
    }
 
-   private boolean arraysMatch(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-      final boolean isDatastoreArraySet = dataStoreArray.size() != 0;
-      final boolean isAssertingArraySet = thisAssertingArray.size() != 0;
+   private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
 
-      if (isDatastoreArraySet && !isAssertingArraySet) {
-         return false;
-      } else if (isDatastoreArraySet && isAssertingArraySet) {
-
-         for (final String assertingArrayValue : thisAssertingArray) {
-            if (dataStoreArray.contains(assertingArrayValue.toUpperCase(Locale.US))) {
+      if (dataStoreArray.isEmpty()) {
+         return true;
+      } else if (!thisAssertingArray.isEmpty()) {
+         for (final String entry : thisAssertingArray) {
+            if (dataStoreArray.contains(entry)) {
                return true;
             }
          }
-
-         return false;
       }
-
-      return true;
+      return false;
    }
 
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
@@ -222,7 +216,7 @@ public class StubRequest {
       if (!stringsMatch(dataStoreRequest.getPostBody(), this.getPostBody()))
          return false;
 
-      if (!arraysMatch(dataStoreRequest.getMethod(), this.method)) {
+      if (!arraysIntersect(dataStoreRequest.getMethod(), getMethod())) {
          return false;
       }
 

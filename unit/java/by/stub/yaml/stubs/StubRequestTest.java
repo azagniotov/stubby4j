@@ -1097,6 +1097,51 @@ public class StubRequestTest {
       }
    }
 
+   @Test
+   public void shouldfindStubRequestNotEqual_WhenComparedToNull() throws Exception {
+      final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(null);
+   }
+
+   @Test
+   public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
+      final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+      final Object assertingObject = new StubResponse();
+
+      final boolean assertionResult = expectedRequest.equals(assertingObject);
+      assertThat(assertionResult).isFalse();
+   }
+
+   @Test
+   public void shouldfindStubRequestEqual_WhenComparedToSameInstanceClass() throws Exception {
+      final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+      final Object assertingObject = new StubRequest();
+
+      final boolean assertionResult = assertingObject.equals(expectedRequest);
+      assertThat(assertionResult).isFalse();
+   }
+
+   @Test
+   public void shouldfindStubRequestEqual_WhenComparedToSameObject() throws Exception {
+      final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+
+      final boolean assertionResultOne = assertingRequest.equals(expectedRequest);
+      final boolean assertionResultTwo = expectedRequest.equals(assertingRequest);
+
+      assertThat(assertionResultOne).isTrue();
+      assertThat(assertionResultTwo).isTrue();
+   }
+
+   @Test
+   public void shouldfindStubRequestEqual_WhenComparedToSameIdentity() throws Exception {
+      final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+      final StubRequest assertingRequest = expectedRequest;
+
+      assertThat(assertingRequest).isEqualTo(expectedRequest);
+   }
+
 
    @Test
    public void shouldFindTwoHashCodesEqual_WhenTwoRequestAreTheSame() throws Exception {
@@ -1125,6 +1170,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
+            .withFileBytes("bytes".getBytes(StringUtils.utf8Charset()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaders(headerOne, headerOneValue)
@@ -1137,6 +1183,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
+            .withFileBytes("bytes".getBytes(StringUtils.utf8Charset()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaders(headerOne, headerOneValue)
