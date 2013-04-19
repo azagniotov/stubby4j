@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.cli.CommandLineInterpreter;
-import org.apache.commons.io.IOUtils;
+import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,7 +104,7 @@ public final class FileUtils {
    public static byte[] asciiFileToUtf8Bytes(final String filePath) throws IOException {
       final String loadedContent = FileUtils.asciiFileToString(filePath);
 
-      return loadedContent.getBytes(StringUtils.utf8Charset());
+      return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
 

@@ -78,8 +78,8 @@ public class StubsRegistrationHandler extends AbstractHandler {
       }
 
       try {
-         final InputStream is = new ByteArrayInputStream(post.getBytes(StringUtils.utf8Charset()));
-         final Reader yamlReader = new InputStreamReader(is, StringUtils.utf8Charset());
+         final InputStream is = new ByteArrayInputStream(post.getBytes(StringUtils.charsetUTF8()));
+         final Reader yamlReader = new InputStreamReader(is, StringUtils.charsetUTF8());
 
          final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
 

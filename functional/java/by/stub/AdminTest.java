@@ -167,6 +167,6 @@ public class AdminTest {
 
       return webClient.buildRequest(method,
          new GenericUrl(targetUrl),
-         new ByteArrayContent(null, content.getBytes(StringUtils.utf8Charset())));
+         new ByteArrayContent(null, content.getBytes(StringUtils.charsetUTF8())));
    }
 }

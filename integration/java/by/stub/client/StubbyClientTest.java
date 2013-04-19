@@ -2,9 +2,9 @@ package by.stub.client;
 
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.StubsRegistrationHandler;
+import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
-import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
@@ -107,7 +107,7 @@ public class StubbyClientTest {
 
    @Test
    public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
 
       final String host = "localhost";
       final String uri = "/item/auth";
@@ -121,7 +121,7 @@ public class StubbyClientTest {
 
    @Test
    public void doGetOverSsl_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
 
       final String host = "localhost";
       final String uri = "/item/auth";
@@ -134,7 +134,7 @@ public class StubbyClientTest {
 
    @Test
    public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
       final String uri = "/item/auth";
 
       final StubbyResponse stubbyResponse = stubbyClient.doGetUsingDefaults(uri, encodedCredentials);
@@ -146,7 +146,7 @@ public class StubbyClientTest {
 
    @Test
    public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenWrongAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.charsetUTF8())));
 
       final String host = "localhost";
       final String uri = "/item/auth";
@@ -199,7 +199,7 @@ public class StubbyClientTest {
 
    @Test
    public void doPost_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
 
       final String host = "localhost";
       final String uri = "/item/submit";
@@ -214,7 +214,7 @@ public class StubbyClientTest {
 
    @Test
    public void doPostUsingDefaults_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.utf8Charset())));
+      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
 
       final String uri = "/item/submit";
       final String post = "{\"action\" : \"submit\"}";

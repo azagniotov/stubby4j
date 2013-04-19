@@ -2,12 +2,10 @@
 dependencies {
    compile "org.eclipse.jetty:jetty-server:8.1.7.v20120910"
    compile "commons-cli:commons-cli:1.2"
-   compile "commons-codec:commons-codec:1.5"
-   compile "commons-io:commons-io:2.4"
    compile "org.yaml:snakeyaml:1.11"
 
-   testCompile ('junit:junit:4.10') { transitive = false }
-   testCompile ('org.mockito:mockito-all:1.9.5') { transitive = false }
+   testCompile('junit:junit:4.10') { transitive = false }
+   testCompile('org.mockito:mockito-all:1.9.5') { transitive = false }
    testCompile 'org.easytesting:fest-assert-core:2.0M10'
    testCompile "com.google.http-client:google-http-client:1.12.0-beta"
 }

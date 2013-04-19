@@ -85,7 +85,7 @@ public class StubResponse {
 
    public byte[] getResponseBody() {
       if (file == null) {
-         return getBody().getBytes(StringUtils.utf8Charset());
+         return getBody().getBytes(StringUtils.charsetUTF8());
       }
       return file;
    }

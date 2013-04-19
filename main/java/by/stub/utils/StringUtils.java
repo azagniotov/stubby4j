@@ -69,12 +69,16 @@ public final class StringUtils {
       return toLower.toLowerCase(Locale.US);
    }
 
-   public static Charset utf8Charset() {
+   public static Charset charsetUTF8() {
       return Charset.forName(StringUtils.UTF_8);
    }
 
-   public static String utf8String(final byte[] bytes) {
-      return new String(bytes, StringUtils.utf8Charset());
+   public static String newStringUtf8(final byte[] bytes) {
+      return new String(bytes, StringUtils.charsetUTF8());
+   }
+
+   public static byte[] getBytesUtf8(String string) {
+      return string.getBytes(StringUtils.charsetUTF8());
    }
 
    public static String inputStreamToString(final InputStream inputStream) {
@@ -88,7 +92,7 @@ public final class StringUtils {
 
    public static Reader constructReader(final String filePath) throws FileNotFoundException {
       final InputStream is = new FileInputStream(filePath);
-      return new InputStreamReader(is, StringUtils.utf8Charset());
+      return new InputStreamReader(is, StringUtils.charsetUTF8());
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {

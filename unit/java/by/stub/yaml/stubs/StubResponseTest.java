@@ -23,7 +23,7 @@ public class StubResponseTest {
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -33,7 +33,7 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -42,7 +42,7 @@ public class StubResponseTest {
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -52,7 +52,7 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody(null);
 
-      assertThat("").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
    }
 
    @Test
@@ -62,6 +62,6 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("");
 
-      assertThat("").isEqualTo(StringUtils.utf8String(stubResponse.getResponseBody()));
+      assertThat("").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
    }
 }

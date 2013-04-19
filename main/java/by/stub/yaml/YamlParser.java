@@ -20,13 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.apache.commons.codec.binary.Base64;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -80,7 +80,7 @@ public final class YamlParser {
 
       loadedConfigAbsolutePath = yamlFile.getAbsolutePath();
 
-      return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.utf8Charset());
+      return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.charsetUTF8());
    }
 
    public List<StubHttpLifecycle> parseAndLoad() throws Exception {
@@ -193,7 +193,7 @@ public final class YamlParser {
       }
       final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
       final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-      final byte[] bytes = authorizationHeader.getBytes(StringUtils.utf8Charset());
+      final byte[] bytes = authorizationHeader.getBytes(StringUtils.charsetUTF8());
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
       pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
 

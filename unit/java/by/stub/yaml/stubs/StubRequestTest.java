@@ -164,7 +164,7 @@ public class StubRequestTest {
       final String fileContent = "Hello World!";
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
-            .withFileBytes(fileContent.getBytes(StringUtils.utf8Charset()))
+            .withFileBytes(fileContent.getBytes(StringUtils.charsetUTF8()))
             .withMethodGet().build();
 
       assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
@@ -1170,7 +1170,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
-            .withFileBytes("bytes".getBytes(StringUtils.utf8Charset()))
+            .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaders(headerOne, headerOneValue)
@@ -1183,7 +1183,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
-            .withFileBytes("bytes".getBytes(StringUtils.utf8Charset()))
+            .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaders(headerOne, headerOneValue)

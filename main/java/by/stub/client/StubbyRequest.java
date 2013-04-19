@@ -84,7 +84,7 @@ final class StubbyRequest {
 
    public int calculatePostLength() {
       if (StringUtils.isSet(post)) {
-         return post.getBytes(StringUtils.utf8Charset()).length;
+         return post.getBytes(StringUtils.charsetUTF8()).length;
       }
       return 0;
    }
