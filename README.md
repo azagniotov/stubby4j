@@ -76,7 +76,7 @@ See `docs` directory for:
 
 * Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
 * A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
-* Documentation revisisted and rewritten into a much clearer format [ENHANCEMENT]
+* Documentation revisited and rewritten into a much clearer format [ENHANCEMENT]
 
 ### 1.0.61
 
