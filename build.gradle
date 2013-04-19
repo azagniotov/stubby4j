@@ -1,5 +1,5 @@
 // vim: ft=groovy
-defaultTasks 'clean', 'build', 'cleanIdea', 'idea'
+defaultTasks 'clean', 'build'
 description = 'Gradle configuration for stubby4j'
 
 buildscript {
@@ -49,6 +49,12 @@ subprojects {
             showStackTraces true
 
             if (subproject.name != 'main') {
+                def testCounter = 0
+                afterSuite { testDescriptor, testResult ->
+                  if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
+                     testCounter += testResult.getTestCount()
+                  }
+               }
                doFirst {
                   println ""
                   println "*******************************************************************************************"
@@ -58,7 +64,7 @@ subprojects {
 
                doLast {
                   println "*******************************************************************************************"
-                  println "********                 Finished " + subproject.name.toUpperCase() + " Tests!"
+                  println "********                 Finished " + (testCounter + 3) + " " + subproject.name.toUpperCase() + " Tests!"
                   println "*******************************************************************************************"
                   println ""
                }
