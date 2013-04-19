@@ -470,7 +470,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <li>If specified (an absolute path or path relative to the YAML in <i><b>-d</b></i> or <i><b>--data</b></i>), returns the contents of the given file as the HTTP response body</li>
 <li>If the <i><b>file</b></i> was not provided, stubby fallsback to value from <i><b>body</b></i>property </li>
 <li>If <i><b>body</b></i> was not provided, an empty string is returned by default</li>
-<li>Can be ascii of binary file (PDF, images, etc.) </li>
+<li>Can be ascii of binary file (PDF, images, etc.). Please keep in mind, that file is preloaded upon stubby4j startup and its content is kept in byte array in memory. In other words, response files are not read from the disk on demand, but preloaded.</li>
 </td>
 </tr>
 </table>

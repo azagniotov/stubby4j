@@ -12,9 +12,118 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class YamlBuilderTest {
 
    @Test
-   public void shouldBuildStubbedRequestWithMultipleMethods() throws Exception {
+   public void shouldBuildStubbedResponseWithSequenceResponses() throws Exception {
       final String expectedYaml =
             "-  request:\n" +
+            "      method: [PUT]\n" +
+            "      url: /invoice\n" +
+            "\n" +
+            "   response:\n" +
+            "      sequence:\n" +
+            "         -  response:\n" +
+            "               status: 200\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               body: OK\n" +
+            "\n" +
+            "         -  response:\n" +
+            "               status: 200\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               body: OK\n" +
+            "\n" +
+            "         -  response:\n" +
+            "               status: 500\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               body: OMFG!!!";
+
+      final YamlBuilder yamlBuilder = new YamlBuilder();
+      final String actualYaml = yamlBuilder
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OK")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OK")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("500")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OMFG!!!")
+         .withLineBreak()
+         .build();
+
+      assertThat(expectedYaml).isEqualTo(actualYaml);
+
+   }
+
+   @Test
+   public void shouldBuildStubbedResponseWithSequenceResponsesFoldedBodyAndFile() throws Exception {
+      final String expectedYaml =
+         "-  request:\n" +
+            "      method: [PUT]\n" +
+            "      url: /invoice\n" +
+            "\n" +
+            "   response:\n" +
+            "      sequence:\n" +
+            "         -  response:\n" +
+            "               status: 200\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               body: OK\n" +
+            "\n" +
+            "         -  response:\n" +
+            "               status: 200\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               body: >\n" +
+            "                  {\"status\", \"200\"}\n" +
+            "\n" +
+            "         -  response:\n" +
+            "               status: 500\n" +
+            "               headers: \n" +
+            "                  content-type: application/json\n" +
+            "               file: ../path/to/error.file";
+
+      final YamlBuilder yamlBuilder = new YamlBuilder();
+      final String actualYaml = yamlBuilder
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OK")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseFoldedBody("{\"status\", \"200\"}")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("500")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseFile("../path/to/error.file")
+         .withLineBreak()
+         .build();
+
+      assertThat(expectedYaml).isEqualTo(actualYaml);
+
+   }
+
+   @Test
+   public void shouldBuildStubbedRequestWithMultipleMethods() throws Exception {
+      final String expectedYaml =
+         "-  request:\n" +
             "      method: [HEAD, GET, PUT]\n" +
             "      url: /invoice\n" +
             "\n" +
@@ -40,7 +149,7 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedRequestWithStubbedResponse() throws Exception {
       final String expectedYaml =
-            "-  request:\n" +
+         "-  request:\n" +
             "      query:\n" +
             "         status: active\n" +
             "         type: full\n" +
@@ -76,7 +185,7 @@ public class YamlBuilderTest {
    public void shouldBuildStubbedRequestWithMultilineStubbedResponse() throws Exception {
 
       final String expectedYaml =
-            "-  request:\n" +
+         "-  request:\n" +
             "      method: [PUT]\n" +
             "      url: /invoice/123\n" +
             "      headers:\n" +
