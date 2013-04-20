@@ -8,29 +8,12 @@ When creating stubbed request/response data for stubby4j, the config data should
 
 |||
 |---------------|------------------------------------------------------------------------------------|
-| Key           |	request                                                                            |
-| Required      |	YES                                                                                |
-| JSONPath      | $.request                                                                          |
-| Description 	 | Describes the client's call to the server                                          |
+| Key           |	request
+| Required      |	YES
+| JSONPath      | $.request
+| Description 	 | Describes the client's call to the server
 
 
-<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
-<tr>
-<td width="20">Key</td>
-<td>request</td>
-</tr>
-<tr>
-<tr>
-<td width="20">Required</td>
-<td>YES</td>
-</tr>
-<td>JSONPath</td>
-<td>$.request</td>
-</tr>
-<tr>
-<td valign="top">Description</td>
-<td>Describes the client's call to the server </td>
-</tr>
-</table>
+
 
 <hr />
