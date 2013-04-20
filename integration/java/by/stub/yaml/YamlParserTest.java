@@ -94,19 +94,18 @@ public class YamlParserTest {
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
-      final StubResponse actualSequenceResponse = actualResponse.getSequence().get(0);
 
       final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
 
-      assertThat(actualSequenceResponse).isInstanceOf(StubResponse.class);
-      assertThat(actualSequenceResponse.getHeaders()).contains(sequenceHeaderEntry);
-      assertThat(actualSequenceResponse.getStatus()).isEqualTo(sequenceResponseStatus);
-      assertThat(actualSequenceResponse.getBody()).isEqualTo(sequenceResponseBody);
+      assertThat(actualResponse).isInstanceOf(StubResponse.class);
+      assertThat(actualResponse.getHeaders()).contains(sequenceHeaderEntry);
+      assertThat(actualResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(actualResponse.getBody()).isEqualTo(sequenceResponseBody);
    }
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithManySequenceResponse() throws Exception {
+   public void shouldUnmarshallYamlIntoObjectTree_AndReturnResponsesInSequence_WithManySequenceResponse() throws Exception {
 
       final String sequenceResponseHeaderKey = "content-type";
       final String sequenceResponseHeaderValue = "application/xml";
@@ -131,13 +130,10 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
+      final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualSequenceResponse = actualHttpLifecycle.getResponse();
 
-      final List<StubResponse> actualSequence = actualResponse.getSequence();
-      assertThat(actualSequence).hasSize(2);
-
-      final StubResponse actualSequenceResponse = actualSequence.get(1);
       final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
 
       assertThat(actualSequenceResponse).isInstanceOf(StubResponse.class);

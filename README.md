@@ -26,6 +26,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 ## Why would a QA use stubby4j?
 * Specifiable mock responses to simulate page conditions without real data.
+* Ability to test polling mechanisms by sending to the client a sequence of success responses following by a failing response
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 

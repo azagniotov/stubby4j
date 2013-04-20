@@ -51,6 +51,138 @@ public class DataStoreTest {
       dataStore.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
    }
 
+
+   @Test
+   public void shouldReturnMatchingStubbedSequenceResponse_WhenSequenceHasOneResponse() throws Exception {
+
+      final String url = "/some/redirecting/uri";
+      final String sequenceResponseHeaderKey = "content-type";
+      final String sequenceResponseHeaderValue = "application/json";
+      final String sequenceResponseStatus = "200";
+      final String sequenceResponseBody = "OK";
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus(sequenceResponseStatus)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseLiteralBody(sequenceResponseBody)
+         .build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
+
+      final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+      assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
+   }
+
+   @Test
+   public void shouldReturnMatchingStubbedSequenceResponse_WhenSequenceHasManyResponses() throws Exception {
+
+      final String url = "/some/uri";
+
+      final String sequenceResponseHeaderKey = "content-type";
+      final String sequenceResponseHeaderValue = "application/xml";
+      final String sequenceResponseStatus = "500";
+      final String sequenceResponseBody = "OMFG";
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OK")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus(sequenceResponseStatus)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseFoldedBody(sequenceResponseBody)
+         .build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
+
+      final StubResponse irrelevantFirstSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
+
+      final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+      assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
+   }
+
+   @Test
+   public void shouldReturnFirstSequenceResponse_WhenAllSequenceResponsesHaveBeenConsumedInTheList() throws Exception {
+
+      final String url = "/some/uri";
+
+      final String sequenceResponseHeaderKey = "content-type";
+      final String sequenceResponseHeaderValue = "application/xml";
+      final String sequenceResponseStatus = "200";
+      final String sequenceResponseBody = "OK";
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus(sequenceResponseStatus)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseLiteralBody(sequenceResponseBody)
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("500")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseFoldedBody("OMFG")
+         .build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet().build();
+
+      final StubResponse irrelevantFirstSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse irrelevantLastSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse firstSequenceResponseRestarted = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(firstSequenceResponseRestarted).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.OK_200).isSameAs(firstSequenceResponseRestarted.getStubResponseType());
+
+      assertThat(firstSequenceResponseRestarted.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(firstSequenceResponseRestarted.getBody()).isEqualTo(sequenceResponseBody);
+
+      final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+      assertThat(firstSequenceResponseRestarted.getHeaders()).contains(mapEntry);
+   }
+
    @Test
    public void shouldReturnMatchingRedirectResponse_WhenLocationHeaderSet() throws Exception {
 

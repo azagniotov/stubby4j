@@ -39,7 +39,7 @@ public final class StubHttpLifecycle {
    }
 
    public StubResponse getResponse() {
-      return response;
+      return response.getActualStubbedResponse();
    }
 
    public String getRequestAuthorizationHeader() {

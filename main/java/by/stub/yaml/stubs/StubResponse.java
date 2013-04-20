@@ -39,6 +39,7 @@ public class StubResponse {
    private String latency;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
    private List<StubResponse> sequence = new LinkedList<StubResponse>();
+   private int sequenceCounter = 0;
 
    public StubResponse() {
 
@@ -103,5 +104,16 @@ public class StubResponse {
 
    public List<StubResponse> getSequence() {
       return sequence;
+   }
+
+   public StubResponse getActualStubbedResponse() {
+      if (sequence.size() == 0) {
+         return this;
+      }
+
+      final StubResponse sequenceStubResponse = sequence.get(sequenceCounter);
+      sequenceCounter = (sequenceCounter + 1 == sequence.size() ? sequenceCounter = 0 : ++sequenceCounter);
+
+      return sequenceStubResponse;
    }
 }
