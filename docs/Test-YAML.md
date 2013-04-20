@@ -6,19 +6,19 @@ When creating stubbed request/response data for stubby4j, the config data should
 ## Stub request and its properties
 
 
-||
---------------|------------------------------------------
-Key           | request
-JSONPath      | `$.request`
-Required      | YES
-Description   | Describes the client's call to the server
+|||
+|--------------|------------------------------------------
+|Key           | request
+|JSONPath      | `$.request`
+|Required      | YES
+|Description   | Describes the client's call to the server
 
 <hr />
 
-||
---------------|------------------------------------------
-Key           | method
-JSONPath      | `$.request.method[*]`
-Required      | YES
-Description   | * Holds HTTP method verbs
-              | * If multiple verbs are defined, YAML array should be used
+|||
+|--------------|------------------------------------------
+|Key           | method
+|JSONPath      | `$.request.method[*]`
+|Required      | YES
+|Description   | * Holds HTTP method verbs
+               | * If multiple verbs are defined, YAML array should be used
