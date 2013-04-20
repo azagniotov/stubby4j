@@ -10,10 +10,15 @@ When creating stubbed request/response data for stubby4j, the config data should
 |---------------|------------------------------------------
 | Key           |	request
 | Required      |	YES
-| JSONPath      | $.request
+| JSONPath      | `$.request`
 | Description 	 | Describes the client's call to the server
 
-
-
-
 <hr />
+
+|||
+|---------------|------------------------------------------
+| Key           |	method
+| Required      |	YES
+| JSONPath      | `$.request.method[*]`
+| Description 	 | * Holds HTTP method verbs
+|               | * If multiple verbs are defined, YAML array should be used
