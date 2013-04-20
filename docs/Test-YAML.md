@@ -6,7 +6,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 ## Stub request and its properties
 
 
-|           |                                                                               |
+|||
 |---------------|------------------------------------------------------------------------------------|
 | Key           |	request                                                                            |
 | Required      |	YES                                                                                |
