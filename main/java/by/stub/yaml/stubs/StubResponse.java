@@ -82,6 +82,10 @@ public class StubResponse {
       this.file = file;
    }
 
+   public void setSequence(final List<StubResponse> sequence) {
+      this.sequence = sequence;
+   }
+
    //Used by reflection when populating stubby admin page with stubbed information
    public byte[] getFile() {
       return file;

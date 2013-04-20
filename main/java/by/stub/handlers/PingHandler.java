@@ -91,10 +91,15 @@ public final class PingHandler extends AbstractHandler {
 
       for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
          final StubRequest stubRequest = stubHttpLifecycle.getRequest();
-         final StubResponse stubResponse = stubHttpLifecycle.getResponse();
-
          builder.append(buildPageBodyHtml(htmlTemplateContent, "Request", ReflectionUtils.getProperties(stubRequest)));
-         builder.append(buildPageBodyHtml(htmlTemplateContent, "Response", ReflectionUtils.getProperties(stubResponse)));
+
+         final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
+         for (int idx = 0; idx < allResponses.size(); idx++) {
+
+            final StubResponse stubResponse = allResponses.get(idx);
+            builder.append(buildPageBodyHtml(htmlTemplateContent, "Response #" + (1 + idx), ReflectionUtils.getProperties(stubResponse)));
+         }
+
          builder.append("<br /><br />");
       }
 

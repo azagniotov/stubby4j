@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
@@ -40,6 +43,16 @@ public final class StubHttpLifecycle {
 
    public StubResponse getResponse() {
       return response.getActualStubbedResponse();
+   }
+
+   public List<StubResponse> getAllResponses() {
+      if (response.getSequence().size() == 0) {
+         return new LinkedList<StubResponse>() {{
+            add(response);
+         }};
+      }
+
+      return response.getSequence();
    }
 
    public String getRequestAuthorizationHeader() {
