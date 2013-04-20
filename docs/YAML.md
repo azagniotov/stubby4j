@@ -45,7 +45,8 @@ When creating stubbed request/response data for stubby4j, the config data should
 <ul>
 <li>Holds HTTP method verbs</li>
 <li>If multiple verbs are defined, YAML array should be used
-</li></ul></td>
+</li>
+</ul></td>
 </tr>
 </table>
 ```
@@ -80,7 +81,8 @@ When creating stubbed request/response data for stubby4j, the config data should
 <li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li>
 <li>Supports regular expressions (similiar to <i>mod_rewrite</i> in Apache) for dynamic matching. The regular expression must be a valid Java regex and able to be compiled by <i>java.util.regex.Pattern</i></li> 
 <li>When stubbing regular expression in <i><b>url</b></i>, string query params (if any) must be attached to the <i><b>url</b></i> unlike said in the first bullet point</li>
-</ul></td>
+</ul>
+</td>
 </tr>
 </table>
 ```
@@ -136,6 +138,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <ul>
 <li>Key/value map of HTTP headers the server should read from the request</li>
 <li>If stubbed headers are a subset of headers in HTTP request, then the match is successful (<i>left outer join</i> concept)</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -177,6 +180,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <i><b>server.com?something=1&else=2</b></i> is the same as <i><b>server.com?else=2&something=1</b></i></li>
 <li>If stubbed query params are a subset of query params in HTTP request, then the match is successful (<i>left outer join</i> concept)</li>
 <li>query param can also be an array with double/single quoted/un-quoted elements: <i><b>attributes=["id","uuid"]</b></i> or <i><b>attributes=[id,uuid]</b></i>. Please note no spaces between the CSV</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -220,6 +224,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>String matching the textual body of the POST request.</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -262,6 +267,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <li>If <i><b>post</b></i> key was not stubbed, it is assumed that stubbed POST body was not provided at all</li>
 <li>Use file for large POST content that otherwise inconvenient to configure as a one-liner or you do not want to pollute YAML config</li>
 <li>Please keep in mind: <i><b>SnakeYAML</b></i> library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If <i><b>file</b></i> property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for <i><b>request</b></i> using <b><i>file</i></b> attribute. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -336,7 +342,7 @@ When creating stubbed request/response data for stubby4j, the config data should
                status: 500
                headers:
                   content-type: application/json
-               body: OMFG!!!
+               body: OMG!!!
 
 
 
@@ -402,6 +408,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>Key/value map of HTTP headers the stubby4j should send with the response</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -443,6 +450,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>Delay in milliseconds stubby4j should wait before responding to the client</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -472,6 +480,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>String matching the textual body of the response body</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -532,6 +541,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <li>If the <i><b>file</b></i> was not provided, stubby fallsback to value from <i><b>body</b></i>property </li>
 <li>If <i><b>body</b></i> was not provided, an empty string is returned by default</li>
 <li>Can be ascii of binary file (PDF, images, etc.). Please keep in mind, that file is preloaded upon stubby4j startup and its content is kept in byte array in memory. In other words, response files are not read from the disk on demand, but preloaded.</li>
+</ul>
 </td>
 </tr>
 </table>
