@@ -22,12 +22,7 @@ package by.stub.utils;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.Writer;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -127,6 +122,20 @@ public final class FileUtils {
          .replace(LINE_SEPARATOR_MAC_OS_PRE_X, LINE_SEPARATOR_TOKEN)
          .replace(LINE_SEPARATOR_UNIX, LINE_SEPARATOR_TOKEN)
          .replace(LINE_SEPARATOR_TOKEN, LINE_SEPARATOR);
+   }
+
+   public static BufferedReader constructReader(final String content) {
+      final InputStream is = new ByteArrayInputStream(content.getBytes(StringUtils.charsetUTF8()));
+      final Reader reader = new InputStreamReader(is, StringUtils.charsetUTF8());
+
+      return new BufferedReader(reader);
+   }
+
+
+   public static BufferedReader constructReader(final File file) throws FileNotFoundException {
+      final Reader reader = new InputStreamReader(new FileInputStream(file), StringUtils.charsetUTF8());
+
+      return new BufferedReader(reader);
    }
 
    private static final class StringBuilderWriter extends Writer implements Serializable {

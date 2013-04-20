@@ -26,7 +26,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 ## Why would a QA use stubby4j?
 * Specifiable mock responses to simulate page conditions without real data.
-* Ability to test polling mechanisms by stubbing a sequence of responses for the same URI, that are sent to the client in a loop
+* Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
@@ -74,6 +74,7 @@ See `docs` directory for:
 ### 1.0.63
 
 * Added ability to specify sequence of stub responses for the same URI, that are sent to the client in the loop [FEATURE]
+* Configuration scan was not enabled, even if the ```--watch``` command line argument was passed [BUG]
 
 ### 1.0.62
 

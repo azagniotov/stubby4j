@@ -2,6 +2,7 @@ package by.stub.yaml;
 
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.utils.FileUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -14,7 +15,6 @@ import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -474,9 +474,11 @@ public class YamlParserTest {
 
 
    private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
-      final Reader reader = new StringReader(yaml);
-      final YamlParser yamlParser = new YamlParser("");
 
-      return yamlParser.parseAndLoad(reader);
+      final YamlParser yamlParser = new YamlParser();
+
+      final Reader reader = FileUtils.constructReader(yaml);
+
+      return yamlParser.parse(reader);
    }
 }

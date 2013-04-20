@@ -3,6 +3,7 @@ package by.stub.database;
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
@@ -18,8 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class DataStoreTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{});
-      dataStore = new DataStore(new LinkedList<StubHttpLifecycle>());
+      dataStore = new DataStore(new File("."), new LinkedList<StubHttpLifecycle>());
    }
 
    @Before
@@ -668,17 +668,13 @@ public class DataStoreTest {
    }
 
    private void loadYamlToDataStore(final String yaml) throws Exception {
-      final Reader reader = new StringReader(yaml);
-      final YamlParser yamlParser = new YamlParser("");
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(yaml));
 
-      dataStore.resetStubHttpLifecycles(yamlParser.parseAndLoad(reader));
+      dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    private List<StubHttpLifecycle> parseYamlToStubHttpLifecycles(final String yaml) throws Exception {
-      final Reader reader = new StringReader(yaml);
-      final YamlParser yamlParser = new YamlParser("");
-
-      return yamlParser.parseAndLoad(reader);
+      return new YamlParser().parse(FileUtils.constructReader(yaml));
    }
 
 }

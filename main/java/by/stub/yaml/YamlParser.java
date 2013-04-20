@@ -33,10 +33,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,49 +52,13 @@ public final class YamlParser {
    }
 
    private static final String YAML_NODE_REQUEST = "request";
-   public static final String YAML_NODE_SEQUENCE = "sequence";
-   private String loadedConfigAbsolutePath;
-   private String yamlConfigFilename;
+   private static final String YAML_NODE_SEQUENCE = "sequence";
 
-   private YamlParser() {
 
-   }
-
-   public YamlParser(final String yamlConfigFilename) {
-      if (yamlConfigFilename == null) {
-         throw new IllegalArgumentException("Given YAML config filename is null!");
-      }
-      this.yamlConfigFilename = yamlConfigFilename;
-   }
-
-   private Reader buildYamlReaderFromFilename() throws IOException {
-
-      final File yamlFile = new File(yamlConfigFilename);
-      final String filename = StringUtils.toLower(yamlFile.getName());
-
-      if (!filename.endsWith(".yaml") && !filename.endsWith(".yml")) {
-         throw new IOException(String.format("The given filename %s does not ends with YAML or YML", yamlConfigFilename));
-      }
-
-      loadedConfigAbsolutePath = yamlFile.getAbsolutePath();
-
-      return new InputStreamReader(new FileInputStream(yamlFile), StringUtils.charsetUTF8());
-   }
-
-   public List<StubHttpLifecycle> parseAndLoad() throws Exception {
-      return parseAndLoad(buildYamlReaderFromFilename());
-   }
-
-   public List<StubHttpLifecycle> parseAndLoad(final String yamlPath) throws Exception {
-      final Reader yamlReader = StringUtils.constructReader(yamlPath);
-
-      return parseAndLoad(yamlReader);
-   }
-
-   public List<StubHttpLifecycle> parseAndLoad(final Reader io) throws Exception {
+   public List<StubHttpLifecycle> parse(final Reader yamlReader) throws Exception {
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
-      final List<?> loadedYamlData = loadYamlData(io);
+      final List<?> loadedYamlData = loadYamlData(yamlReader);
 
       if (loadedYamlData.isEmpty()) {
          return httpLifecycles;
@@ -195,8 +156,7 @@ public final class YamlParser {
    private byte[] extractBytesFromFilecontent(final Object rawPairValue) throws IOException {
 
       final String relativeFilePath = pairValueToString(rawPairValue);
-      final int dotLocation = relativeFilePath.lastIndexOf(".");
-      final String extension = relativeFilePath.substring(dotLocation);
+      final String extension = StringUtils.extractFilenameExtension(relativeFilePath);
 
       if (FileUtils.ASCII_TYPES.contains(extension)) {
          return FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
@@ -234,12 +194,9 @@ public final class YamlParser {
          return (ArrayList<?>) loadedYaml;
       }
 
-      throw new IOException(String.format("Loaded YAML data from %s must be an instance of ArrayList, otherwise something went wrong..", yamlConfigFilename));
+      throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Did you omit the '-'?");
    }
 
-   public String getLoadedConfigYamlPath() {
-      return loadedConfigAbsolutePath;
-   }
 
    private static final class YamlParserResolver extends Resolver {
 

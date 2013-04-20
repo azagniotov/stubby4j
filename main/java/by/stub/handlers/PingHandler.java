@@ -25,7 +25,6 @@ import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -55,12 +54,10 @@ public final class PingHandler extends AbstractHandler {
    private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList("file", "body", "post"));
    private final DataStore dataStore;
    private final JettyContext jettyContext;
-   private final YamlParser yamlParser;
 
-   public PingHandler(final JettyContext newContext, final DataStore newDataStore, final YamlParser newYamlParser) {
+   public PingHandler(final JettyContext newContext, final DataStore newDataStore) {
       this.jettyContext = newContext;
       this.dataStore = newDataStore;
-      this.yamlParser = newYamlParser;
    }
 
    @Override
@@ -96,8 +93,10 @@ public final class PingHandler extends AbstractHandler {
          final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
          for (int idx = 0; idx < allResponses.size(); idx++) {
 
+            String responseTableTitle = (allResponses.size() == 1 ? "Response" : String.format("Response #%s", (1 + idx)));
+
             final StubResponse stubResponse = allResponses.get(idx);
-            builder.append(buildPageBodyHtml(htmlTemplateContent, "Response #" + (1 + idx), ReflectionUtils.getProperties(stubResponse)));
+            builder.append(buildPageBodyHtml(htmlTemplateContent, responseTableTitle, ReflectionUtils.getProperties(stubResponse)));
          }
 
          builder.append("<br /><br />");
@@ -119,7 +118,7 @@ public final class PingHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, sslPort));
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
-      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, yamlParser.getLoadedConfigYamlPath()));
+      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, dataStore.getDataYaml().getAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
          StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, host, adminPort);

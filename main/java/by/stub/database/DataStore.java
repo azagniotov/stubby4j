@@ -26,15 +26,18 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class DataStore {
 
+   private final File dataYaml;
    private final List<StubHttpLifecycle> stubHttpLifecycles;
 
-   public DataStore(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public DataStore(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
+      this.dataYaml = dataYaml;
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }
 
@@ -74,12 +77,16 @@ public class DataStore {
 
    }
 
-   public final void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
       this.stubHttpLifecycles.addAll(stubHttpLifecycles);
    }
 
-   public final List<StubHttpLifecycle> getStubHttpLifecycles() {
+   public List<StubHttpLifecycle> getStubHttpLifecycles() {
       return stubHttpLifecycles;
+   }
+
+   public File getDataYaml() {
+      return dataYaml;
    }
 }

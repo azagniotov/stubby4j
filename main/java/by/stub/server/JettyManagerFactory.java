@@ -23,11 +23,13 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
 import by.stub.database.DataStore;
 import by.stub.database.thread.ConfigurationScanner;
+import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -37,29 +39,29 @@ public class JettyManagerFactory {
 
    }
 
-   public JettyManager construct(final String yamlConfigFilename, final Map<String, String> commandLineArgs) throws Exception {
+   public JettyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
-      synchronized (JettyManagerFactory.class) {
 
-         Log.setLog(new EmptyLogger());
+      Log.setLog(new EmptyLogger());
 
-         final YamlParser yamlParser = new YamlParser(yamlConfigFilename);
-         final List<StubHttpLifecycle> httpLifecycles = yamlParser.parseAndLoad();
-         System.out.println();
-         final DataStore dataStore = new DataStore(httpLifecycles);
-         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore, yamlParser);
-         final Server server = jettyFactory.construct();
+      final File dataYamlFile = new File(dataYamlFilename);
+      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(FileUtils.constructReader(dataYamlFile));
 
-         if (commandLineArgs.containsKey(CommandLineInterpreter.isWatching())) {
-            watchDataStore(yamlParser, dataStore);
-         }
+      System.out.println();
 
-         return new JettyManager(server);
+      final DataStore dataStore = new DataStore(dataYamlFile, httpLifecycles);
+      final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore);
+      final Server server = jettyFactory.construct();
+
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
+         watchDataStore(dataStore);
       }
+
+      return new JettyManager(server);
    }
 
-   public void watchDataStore(final YamlParser yamlParser, final DataStore dataStore) {
-      final ConfigurationScanner configurationScanner = new ConfigurationScanner(yamlParser, dataStore);
+   public void watchDataStore(final DataStore dataStore) {
+      final ConfigurationScanner configurationScanner = new ConfigurationScanner(dataStore);
       new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
    }
 }

@@ -21,6 +21,7 @@ package by.stub.handlers;
 
 import by.stub.database.DataStore;
 import by.stub.utils.ConsoleUtils;
+import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
@@ -34,11 +35,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.List;
 
 public class StubsRegistrationHandler extends AbstractHandler {
@@ -48,11 +45,9 @@ public class StubsRegistrationHandler extends AbstractHandler {
    //Do not remove this constant without changing the example in documentation
    public static final String RESOURCE_STUBDATA_NEW = "/stubdata/new";
    private final DataStore dataStore;
-   private final YamlParser yamlParser;
 
-   public StubsRegistrationHandler(final DataStore dataStore, final YamlParser yamlParser) {
+   public StubsRegistrationHandler(final DataStore dataStore) {
       this.dataStore = dataStore;
-      this.yamlParser = yamlParser;
    }
 
    @Override
@@ -78,10 +73,8 @@ public class StubsRegistrationHandler extends AbstractHandler {
       }
 
       try {
-         final InputStream is = new ByteArrayInputStream(post.getBytes(StringUtils.charsetUTF8()));
-         final Reader yamlReader = new InputStreamReader(is, StringUtils.charsetUTF8());
 
-         final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(yamlReader);
+         final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(post));
 
          dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
 

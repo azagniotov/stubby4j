@@ -19,11 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Locale;
@@ -90,10 +86,6 @@ public final class StringUtils {
       return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
    }
 
-   public static Reader constructReader(final String filePath) throws FileNotFoundException {
-      final InputStream is = new FileInputStream(filePath);
-      return new InputStreamReader(is, StringUtils.charsetUTF8());
-   }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -121,6 +113,12 @@ public final class StringUtils {
 
    public static String encodeSingleQuotes(final String toBeEncoded) {
       return toBeEncoded.replaceAll("'", "%27");
+   }
+
+   public static String extractFilenameExtension(final String filename) {
+      final int dotLocation = filename.lastIndexOf(".");
+
+      return filename.substring(dotLocation);
    }
 
    public static String constructUserAgentName() {

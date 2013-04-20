@@ -2,6 +2,7 @@ package by.stub.database.thread;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.DataStore;
+import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 
@@ -14,45 +15,45 @@ import java.util.List;
  */
 public final class ConfigurationScanner implements Runnable {
 
-   private final YamlParser yamlParser;
    private final DataStore dataStore;
 
-   public ConfigurationScanner(final YamlParser yamlParser, final DataStore dataStore) {
-      this.yamlParser = yamlParser;
+   public ConfigurationScanner(final DataStore dataStore) {
       this.dataStore = dataStore;
+      ANSITerminal.status(String.format("Configuration scan enabled, watching %s", dataStore.getDataYaml().getAbsolutePath()));
    }
 
    @Override
    public void run() {
 
       try {
-         final String loadedConfigYamlPath = yamlParser.getLoadedConfigYamlPath();
-         final File loadedConfig = new File(loadedConfigYamlPath);
-         long lastModified = loadedConfig.lastModified();
+         final File dataYaml = dataStore.getDataYaml();
+         long lastModified = dataYaml.lastModified();
 
          while (!Thread.currentThread().isInterrupted()) {
 
             Thread.sleep(3000);
 
-            final long currentFileModified = loadedConfig.lastModified();
+            final long currentFileModified = dataYaml.lastModified();
             if (lastModified >= currentFileModified) {
                continue;
             }
 
+            ANSITerminal.info(String.format("\nConfiguration scan detected change in %s\n", dataStore.getDataYaml().getAbsolutePath()));
+
             try {
                lastModified = currentFileModified;
-               final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parseAndLoad(loadedConfigYamlPath);
+               final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(dataYaml));
 
                dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
                ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",
                   "\n",
-                  loadedConfigYamlPath,
+                  dataYaml.getAbsolutePath(),
                   "\n"));
             } catch (final Exception ex) {
                ANSITerminal.warn("Could not reload YAML configuration: " + ex.toString());
                ANSITerminal.error(String.format("%sFailed to perform live reload of YAML configuration from: %s%s",
                   "\n",
-                  loadedConfigYamlPath,
+                  dataYaml.getAbsolutePath(),
                   "\n"));
             }
          }
@@ -60,9 +61,5 @@ public final class ConfigurationScanner implements Runnable {
       } catch (final Exception ex) {
          ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
       }
-   }
-
-   public void stopScanning() {
-      Thread.currentThread().interrupt();
    }
 }

@@ -27,7 +27,6 @@ import by.stub.handlers.PingHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.handlers.StubsRegistrationHandler;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.YamlParser;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -61,28 +60,24 @@ public final class JettyFactory {
    static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
    static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
    private final Map<String, String> commandLineArgs;
-   private final YamlParser yamlParser;
    private final DataStore dataStore;
    private String currentHost;
    private int currentStubsPort;
    private int currentAdminPort;
    private int currentStubsSslPort;
 
-   public JettyFactory(final Map<String, String> commandLineArgs, final DataStore dataStore, final YamlParser yamlParser) {
+   public JettyFactory(final Map<String, String> commandLineArgs, final DataStore dataStore) {
       this.commandLineArgs = commandLineArgs;
       this.dataStore = dataStore;
-      this.yamlParser = yamlParser;
    }
 
    public Server construct() throws IOException {
 
-      synchronized (JettyFactory.class) {
-         final Server server = new Server();
-         server.setConnectors(buildConnectors());
-         server.setHandler(constructHandlers());
+      final Server server = new Server();
+      server.setConnectors(buildConnectors());
+      server.setHandler(constructHandlers());
 
-         return server;
-      }
+      return server;
    }
 
    private HandlerList constructHandlers() {
@@ -99,8 +94,8 @@ public final class JettyFactory {
             constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
             constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore, yamlParser)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore, yamlParser)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))
