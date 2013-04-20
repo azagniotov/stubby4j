@@ -55,6 +55,7 @@ public final class YamlParser {
    }
 
    private static final String YAML_NODE_REQUEST = "request";
+   public static final String YAML_NODE_SEQUENCE = "sequence";
    private String loadedConfigAbsolutePath;
    private String yamlConfigFilename;
 
@@ -136,7 +137,7 @@ public final class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapPairValueToRespectiveField(final Object target, final LinkedHashMap<String, Object> httpProperties) throws Exception {
+   protected void mapPairValueToRespectiveField(final Object targetStub, final LinkedHashMap<String, Object> httpProperties) throws Exception {
 
       for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
 
@@ -144,8 +145,30 @@ public final class YamlParser {
          final String pairKey = pair.getKey();
          final Object massagedPairValue;
 
-         if (rawPairValue instanceof ArrayList) {
+         if (rawPairValue instanceof ArrayList && !pairKey.equals(YAML_NODE_SEQUENCE)) {
             massagedPairValue = rawPairValue;
+
+         } else if (pairKey.equals(YAML_NODE_SEQUENCE)) {
+
+            final List<StubResponse> sequence = new LinkedList<StubResponse>();
+
+            final ArrayList<LinkedHashMap<String, Object>> rawSequence = (ArrayList<LinkedHashMap<String, Object>>) rawPairValue;
+            for (final LinkedHashMap<String, Object> rawSequenceEntry : rawSequence) {
+               final LinkedHashMap<String, Object> rawSequenceResponse = (LinkedHashMap<String, Object>) rawSequenceEntry.get("response");
+
+               final StubResponse sequenceResponse = new StubResponse();
+
+               for (final Map.Entry<String, Object> mapEntry : rawSequenceResponse.entrySet()) {
+                  final String rawSequenceEntryKey = mapEntry.getKey();
+                  final Object rawSequenceEntryValue = mapEntry.getValue();
+
+                  ReflectionUtils.setPropertyValue(sequenceResponse, rawSequenceEntryKey, rawSequenceEntryValue);
+               }
+
+               sequence.add(sequenceResponse);
+            }
+
+            massagedPairValue = sequence;
 
          } else if (rawPairValue instanceof Map) {
             massagedPairValue = encodeAuthorizationHeader(rawPairValue);
@@ -162,7 +185,7 @@ public final class YamlParser {
             massagedPairValue = pairValueToString(rawPairValue);
          }
 
-         ReflectionUtils.setPropertyValue(target, pairKey, massagedPairValue);
+         ReflectionUtils.setPropertyValue(targetStub, pairKey, massagedPairValue);
       }
    }
 

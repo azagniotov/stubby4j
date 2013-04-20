@@ -36,6 +36,38 @@ public class YamlParserTest {
    }
 
    @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithOneSequenceResponse() throws Exception {
+
+      final String sequenceResponseHeaderKey = "content-type";
+      final String sequenceResponseHeaderValue = "application/json";
+      final String sequenceResponseStatus = "200";
+      final String sequenceResponseBody = "OK";
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus(sequenceResponseStatus)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseLiteralBody(sequenceResponseBody)
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualSequenceResponse = actualResponse.getSequence().get(0);
+
+      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+
+      assertThat(actualSequenceResponse).isInstanceOf(StubResponse.class);
+      assertThat(actualSequenceResponse.getHeaders()).contains(sequenceHeaderEntry);
+      assertThat(actualSequenceResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(actualSequenceResponse.getBody()).isEqualTo(sequenceResponseBody);
+   }
+
+   @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithUrlAsRegex() throws Exception {
 
       final String url = "^/[a-z]{3}/[0-9]+/?$";

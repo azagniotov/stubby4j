@@ -23,6 +23,8 @@ import by.stub.utils.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +38,7 @@ public class StubResponse {
    private byte[] file;
    private String latency;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
+   private List<StubResponse> sequence = new LinkedList<StubResponse>();
 
    public StubResponse() {
 
@@ -96,5 +99,9 @@ public class StubResponse {
 
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.OK_200;
+   }
+
+   public List<StubResponse> getSequence() {
+      return sequence;
    }
 }
