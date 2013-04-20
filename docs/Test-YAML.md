@@ -21,4 +21,4 @@ When creating stubbed request/response data for stubby4j, the config data should
 |JSONPath      | `$.request.method[*]`
 |Required      | YES
 |Description   | * Holds HTTP method verbs
-   "           | * If multiple verbs are defined, YAML array should be used
+   "           + * If multiple verbs are defined, YAML array should be used
