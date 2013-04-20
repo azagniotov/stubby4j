@@ -31,7 +31,7 @@ public class StubbyClientTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      final URL url = StubbyClientTest.class.getResource("/yaml/stubbyclient.test.class.data.yaml");
+      final URL url = StubbyClientTest.class.getResource("/yaml/stubs.data.yaml");
       assertThat(url).isNotNull();
 
       stubbyClient = new StubbyClient();
@@ -355,5 +355,29 @@ public class StubbyClientTest {
 
       assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(stubbyResponse.getResponseCode());
       assertThat("POST request on URI null was empty").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doGet_ShouldMakeSuccessfulGet_AndReturnSequencedResponse() throws Exception {
+
+      final String host = "localhost";
+      final String uri = "/uri/with/sequenced/responses";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      StubbyResponse firstSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
+      assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
+
+      final StubbyResponse secondSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
+      assertThat(HttpStatus.OK_200).isEqualTo(secondSequencedStubbyResponse.getResponseCode());
+      assertThat(secondSequencedStubbyResponse.getContent()).isEqualTo("Still going strong!");
+
+      final StubbyResponse thirdSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
+      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequencedStubbyResponse.getResponseCode());
+      assertThat(thirdSequencedStubbyResponse.getContent()).isEqualTo("Server Error");
+
+      firstSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
+      assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
    }
 }

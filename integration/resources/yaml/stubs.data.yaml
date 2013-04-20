@@ -83,3 +83,28 @@
          content-type: text/plain
       status: 200
       body: OK
+
+
+-  request:
+      method: [GET]
+      url: /uri/with/sequenced/responses
+
+   response:
+      sequence:
+         -  response:
+               status: 200
+               headers:
+                  content-type: application/json
+               body: OK
+
+         -  response:
+               status: 200
+               headers:
+                  content-type: application/json
+               body: Still going strong!
+
+         -  response:
+               status: 500
+               headers:
+                  content-type: application/json
+               body: OMFG!!!

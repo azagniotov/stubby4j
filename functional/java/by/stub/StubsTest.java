@@ -182,9 +182,6 @@ public class StubsTest {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
       final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      request.setHeaders(httpHeaders);
-
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
@@ -198,9 +195,6 @@ public class StubsTest {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
       final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      request.setHeaders(httpHeaders);
-
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
@@ -212,9 +206,6 @@ public class StubsTest {
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArray() throws Exception {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
       final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
-
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
@@ -228,9 +219,6 @@ public class StubsTest {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
       final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      request.setHeaders(httpHeaders);
-
       final HttpResponse response = request.execute();
 
       assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(response.getStatusCode());
@@ -241,9 +229,6 @@ public class StubsTest {
       final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = constructHttpRequest(HttpMethods.POST, requestUrl, content);
-
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      request.setHeaders(httpHeaders);
 
       final HttpResponse response = request.execute();
 
@@ -468,6 +453,56 @@ public class StubsTest {
 
       assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
       assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
+   }
+
+   @Test
+   public void should_MakeSuccesfulRequest_AndReturnSingleSequencedResponse() throws Exception {
+
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/uri/with/single/sequenced/response");
+      final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("Still going strong!");
+
+      firstSequenceResponse = request.execute();
+      firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("Still going strong!");
+   }
+
+   @Test
+   public void should_MakeSuccesfulRequest_AndReturnMultipleSequencedResponses() throws Exception {
+
+      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/uri/with/sequenced/responses");
+      final HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("OK");
+
+      final HttpResponse secondSequenceResponse = request.execute();
+      final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(secondSequenceResponse.getStatusCode());
+      assertThat(secondResponseContent).isEqualTo("Still going strong!");
+
+      final HttpResponse thridSequenceResponse = request.execute();
+      final String thirdResponseContent = thridSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thridSequenceResponse.getStatusCode());
+      assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
+
+      firstSequenceResponse = request.execute();
+      firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("OK");
    }
 
    private HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
