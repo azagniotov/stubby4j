@@ -5,12 +5,14 @@ When creating stubbed request/response data for stubby4j, the config data should
 
 ## Stub request and its properties
 
+
+| Name          | Value                                                                              |
 ------------------------------------------------------------------------------------------------------
 | Key           |	request                                                                            |
 | Required      |	YES                                                                                |
 | JSONPath      | $.request                                                                          |
 | Description 	 | Describes the client's call to the server                                          |
-------------------------------------------------------------------------------------------------------
+
 
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
