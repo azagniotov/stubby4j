@@ -30,7 +30,7 @@ public class YamlBuilderTest {
             "               status: 200\n" +
             "               headers: \n" +
             "                  content-type: application/json\n" +
-            "               body: OK\n" +
+            "               body: Still going strong!\n" +
             "\n" +
             "         -  response:\n" +
             "               status: 500\n" +
@@ -52,7 +52,7 @@ public class YamlBuilderTest {
          .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
-         .withSequenceResponseLiteralBody("OK")
+         .withSequenceResponseLiteralBody("Still going strong!")
          .withLineBreak()
          .withSequenceResponse()
          .withSequenceResponseStatus("500")

@@ -32,7 +32,7 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
             fileset(
                dir: project(':main').sourceSets.main.output.classesDir, 
                includes: "**/*.class",
-               excludes: "by/stub/repackaged/*.class, by/stub/cli/*.class,  **/*\$*.class, **/*Test.class, **/ConsoleUtils.class, **/FakeX509TrustManager.class, **/ConfigurationScanner.class, **/Stubby4JException.class, **/Main.class, **/HttpServletResponseWithGetStatus.class"
+               excludes: "by/stub/repackaged/**/*.class, by/stub/cli/*.class,  **/*\$*.class, **/*Test.class, **/ConsoleUtils.class, **/FakeX509TrustManager.class, **/ConfigurationScanner.class, **/Stubby4JException.class, **/Main.class, **/HttpServletResponseWithGetStatus.class"
          )
       }   
    }

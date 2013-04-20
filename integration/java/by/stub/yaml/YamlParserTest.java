@@ -36,6 +36,43 @@ public class YamlParserTest {
    }
 
    @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithNoProperties() throws Exception {
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final List<StubResponse> actualSequence = actualResponse.getSequence();
+
+      assertThat(actualSequence).hasSize(0);
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithNoSequenceResponses() throws Exception {
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withStatus("200")
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final List<StubResponse> actualSequence = actualResponse.getSequence();
+
+      assertThat(actualSequence).hasSize(0);
+   }
+
+   @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithOneSequenceResponse() throws Exception {
 
       final String sequenceResponseHeaderKey = "content-type";
@@ -66,6 +103,49 @@ public class YamlParserTest {
       assertThat(actualSequenceResponse.getStatus()).isEqualTo(sequenceResponseStatus);
       assertThat(actualSequenceResponse.getBody()).isEqualTo(sequenceResponseBody);
    }
+
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithManySequenceResponse() throws Exception {
+
+      final String sequenceResponseHeaderKey = "content-type";
+      final String sequenceResponseHeaderValue = "application/xml";
+      final String sequenceResponseStatus = "500";
+      final String sequenceResponseBody = "OMFG";
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseLiteralBody("OK")
+         .withLineBreak()
+         .withSequenceResponse()
+         .withSequenceResponseStatus(sequenceResponseStatus)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseFoldedBody(sequenceResponseBody)
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+
+
+      final List<StubResponse> actualSequence = actualResponse.getSequence();
+      assertThat(actualSequence).hasSize(2);
+
+      final StubResponse actualSequenceResponse = actualSequence.get(1);
+      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+
+      assertThat(actualSequenceResponse).isInstanceOf(StubResponse.class);
+      assertThat(actualSequenceResponse.getHeaders()).contains(sequenceHeaderEntry);
+      assertThat(actualSequenceResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+      assertThat(actualSequenceResponse.getBody()).isEqualTo(sequenceResponseBody);
+   }
+
 
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithUrlAsRegex() throws Exception {

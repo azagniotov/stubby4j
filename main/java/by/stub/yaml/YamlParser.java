@@ -125,14 +125,17 @@ public final class YamlParser {
    protected void mapRootYamlNodeToStub(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
       for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
 
-         final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
+         if (parent.getValue() != null && parent.getValue() instanceof LinkedHashMap) {
 
-         if (parent.getKey().equals(YAML_NODE_REQUEST)) {
-            mapPairValueToRespectiveField(parentStub.getRequest(), httpSettings);
-            continue;
+            final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
+
+            if (parent.getKey().equals(YAML_NODE_REQUEST)) {
+               mapPairValueToRespectiveField(parentStub.getRequest(), httpSettings);
+               continue;
+            }
+
+            mapPairValueToRespectiveField(parentStub.getResponse(), httpSettings);
          }
-
-         mapPairValueToRespectiveField(parentStub.getResponse(), httpSettings);
       }
    }
 
