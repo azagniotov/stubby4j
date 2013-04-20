@@ -7,7 +7,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 
 
 | Name          | Value                                                                              |
-|---------------|-------------------------------------------------------------------------------------
+|---------------|------------------------------------------------------------------------------------|
 | Key           |	request                                                                            |
 | Required      |	YES                                                                                |
 | JSONPath      | $.request                                                                          |
