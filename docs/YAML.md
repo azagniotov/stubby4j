@@ -298,6 +298,67 @@ When creating stubbed request/response data for stubby4j, the config data should
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
+<td>sequence</td>
+</tr>
+<tr>
+<tr>
+<td width="20">Required</td>
+<td>NO</td>
+</tr>
+<td>JSONPath</td>
+<td>$.response.sequence[*].response</td>
+</tr>
+<tr>
+<td valign="top">Description</td>
+<td>Sequence of multiple responses</td>
+</tr>
+</table>
+```
+-  request:
+      method: [GET]
+      url: /uri/with/sequenced/responses
+
+   response:
+      sequence:
+         -  response:
+               status: 200
+               headers:
+                  content-type: application/json
+               body: OK
+
+         -  response:
+               status: 200
+               headers:
+                  content-type: application/json
+               body: Still going strong!
+
+         -  response:
+               status: 500
+               headers:
+                  content-type: application/json
+               body: OMFG!!!
+
+
+
+-  request:
+      method: [GET]
+      url: /uri/with/single/sequenced/response
+
+   response:
+      sequence:
+         -  response:
+               status: 201
+               headers:
+                  content-type: application/json
+               body: Still going strong!
+
+```
+
+<hr />
+
+<table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+<tr>
+<td width="20">Key</td>
 <td>status</td>
 </tr>
 <tr>
