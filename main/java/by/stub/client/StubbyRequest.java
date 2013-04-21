@@ -33,13 +33,6 @@ final class StubbyRequest {
    private final String base64encodedCredentials;
    private final int clientPort;
 
-   StubbyRequest(final String scheme,
-                 final String newMethod,
-                 final String newUri,
-                 final String newHost,
-                 final int newClientPort) {
-      this(scheme, newMethod, newUri, newHost, newClientPort, null, null);
-   }
 
    StubbyRequest(final String scheme,
                  final String method,

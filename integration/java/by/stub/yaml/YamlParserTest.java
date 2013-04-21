@@ -3,6 +3,7 @@ package by.stub.yaml;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.FileUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -33,6 +34,15 @@ public class YamlParserTest {
    @BeforeClass
    public static void beforeClass() throws Exception {
       CommandLineInterpreter.parseCommandLine(new String[]{});
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenEmptyYAMLGiven() throws Exception {
+
+      expectedException.expect(IOException.class);
+      expectedException.expectMessage("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+
+      loadYamlToDataStore("");
    }
 
    @Test
@@ -342,6 +352,54 @@ public class YamlParserTest {
       assertThat(actualRequest.getUrl()).contains(fullQueryOne);
       assertThat(actualRequest.getUrl()).contains(fullQueryTwo);
       assertThat(actualRequest.getQuery()).contains(queryEntryOne, queryEntryTwo);
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeader() throws Exception {
+
+      final String headerOneKey = "authorization";
+      final String headerOneValue = "bob:secret";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaders(headerOneKey, headerOneValue)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(headerOneValue));
+      final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, encodedAuthorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeader() throws Exception {
+
+      final String headerOneKey = "authorization";
+      final String headerOneValue = "";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaders(headerOneKey, headerOneValue)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(headerOneValue));
+      final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, encodedAuthorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
 
 

@@ -14,6 +14,15 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class StubHttpLifecycleTest {
 
    @Test
+   public void shouldfindStubHttpLifecycleNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
+      final StubHttpLifecycle expectedStubHttpLifecycle = new StubHttpLifecycle();
+      final Object assertingObject = new StubResponse();
+
+      final boolean assertionResult = expectedStubHttpLifecycle.equals(assertingObject);
+      assertThat(assertionResult).isFalse();
+   }
+
+   @Test
    public void shouldReturnStubResponse_WhenNoSequenceResponses() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
@@ -24,6 +33,19 @@ public class StubHttpLifecycleTest {
       stubHttpLifecycle.setResponse(stubResponse);
 
       assertThat(stubHttpLifecycle.getActualStubbedResponse()).isEqualTo(stubResponse);
+   }
+
+   @Test
+   public void shouldReturnDefaultstubResponse_WhenNoSequenceResponsePresentInTheList() throws Exception {
+
+      final List<StubResponse> sequence = new LinkedList<StubResponse>();
+
+      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+      stubHttpLifecycle.setResponse(sequence);
+
+      final StubResponse actualStubbedResponse = stubHttpLifecycle.getActualStubbedResponse();
+      assertThat(actualStubbedResponse.getStatus()).isEqualTo("200");
+      assertThat(actualStubbedResponse.getBody()).isEmpty();
    }
 
    @Test

@@ -59,10 +59,6 @@ public final class YamlParser {
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
       final List<?> loadedYamlData = loadYamlData(yamlReader);
 
-      if (loadedYamlData.isEmpty()) {
-         return httpLifecycles;
-      }
-
       for (final Object rawParentNode : loadedYamlData) {
 
          final LinkedHashMap<String, Object> parentNode = (LinkedHashMap<String, Object>) rawParentNode;
@@ -190,8 +186,7 @@ public final class YamlParser {
       }
       final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
       final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-      final byte[] bytes = authorizationHeader.getBytes(StringUtils.charsetUTF8());
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", Base64.encodeBase64String(bytes));
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
       pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
 
       return pairValue;
@@ -205,7 +200,7 @@ public final class YamlParser {
          return (ArrayList<?>) loadedYaml;
       }
 
-      throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Did you omit the '-'?");
+      throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
    }
 
 
