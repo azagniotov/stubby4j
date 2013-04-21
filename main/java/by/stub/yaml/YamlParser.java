@@ -35,8 +35,6 @@ import org.yaml.snakeyaml.resolver.Resolver;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +58,10 @@ public final class YamlParser {
 
       for (final Object rawParentNode : loadedYamlData) {
 
-         final LinkedHashMap<String, Object> parentNode = (LinkedHashMap<String, Object>) rawParentNode;
-
+         final Map<String, Object> parentNode = (Map<String, Object>) rawParentNode;
          final StubHttpLifecycle parentStub = unmarshallYamlNodeToHttpLifeCycle(parentNode);
-         httpLifecycles.add(parentStub);
 
+         httpLifecycles.add(parentStub);
          reportToConsole(parentStub);
       }
 
@@ -73,7 +70,7 @@ public final class YamlParser {
 
 
    @SuppressWarnings("unchecked")
-   protected StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final LinkedHashMap<String, Object> parentNodesMap) throws Exception {
+   protected StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
 
       final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
 
@@ -81,34 +78,34 @@ public final class YamlParser {
 
          final Object parentNodeValue = parentNode.getValue();
 
-         if (parentNodeValue instanceof LinkedHashMap) {
-            handleLinkedHashMapNode(httpLifecycle, parentNode);
+         if (parentNodeValue instanceof Map) {
+            handleMapNode(httpLifecycle, parentNode);
 
-         } else if (parentNodeValue instanceof ArrayList) {
-            handleArrayListNode(httpLifecycle, parentNode);
+         } else if (parentNodeValue instanceof List) {
+            handleListNode(httpLifecycle, parentNode);
          }
       }
 
       return httpLifecycle;
    }
 
-   private void handleLinkedHashMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+   private void handleMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
-      final LinkedHashMap<String, Object> yamlProperties = (LinkedHashMap<String, Object>) parentNode.getValue();
+      final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
       if (parentNode.getKey().equals(YAML_NODE_REQUEST)) {
-         final StubRequest targetStub = constructStubsFromLinkedHashMap(yamlProperties, StubRequest.class);
+         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequest.class);
          stubHttpLifecycle.setRequest(targetStub);
 
       } else {
-         final StubResponse targetStub = constructStubsFromLinkedHashMap(yamlProperties, StubResponse.class);
+         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponse.class);
          stubHttpLifecycle.setResponse(targetStub);
       }
    }
 
 
    @SuppressWarnings("unchecked")
-   protected <T> T constructStubsFromLinkedHashMap(final LinkedHashMap<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
+   protected <T> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
 
       final T targetStub = targetStubClass.newInstance();
 
@@ -118,7 +115,7 @@ public final class YamlParser {
          final String pairKey = pair.getKey();
          final Object massagedPairValue;
 
-         if (rawPairValue instanceof ArrayList) {
+         if (rawPairValue instanceof List) {
             massagedPairValue = rawPairValue;
 
          } else if (rawPairValue instanceof Map) {
@@ -142,20 +139,20 @@ public final class YamlParser {
       return targetStub;
    }
 
-   private void handleArrayListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+   private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
-      final ArrayList yamlProperties = (ArrayList) parentNode.getValue();
-      final List<StubResponse> populatedResponseStub = constructStubsFromArrayList(yamlProperties, StubResponse.class);
+      final List yamlProperties = (List) parentNode.getValue();
+      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, StubResponse.class);
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
    @SuppressWarnings("unchecked")
-   private <T> List<T> constructStubsFromArrayList(final ArrayList yamlProperties, final Class<T> targetStubClass) throws Exception {
+   private <T> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<T> targetStubClass) throws Exception {
 
       final List<T> targetStubList = new LinkedList<T>();
       for (final Object arrayListEntry : yamlProperties) {
 
-         final LinkedHashMap<String, Object> rawSequenceEntry = (LinkedHashMap<String, Object>) arrayListEntry;
+         final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
          final T targetStub = targetStubClass.newInstance();
 
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
@@ -172,7 +169,7 @@ public final class YamlParser {
    }
 
    private void reportToConsole(final StubHttpLifecycle parentStub) {
-      final ArrayList<String> method = parentStub.getRequest().getMethod();
+      final List<String> method = parentStub.getRequest().getMethod();
       final String url = parentStub.getRequest().getUrl();
       final String loadedMsg = String.format("Loaded: %s %s", method, url);
       ANSITerminal.loaded(loadedMsg);
@@ -198,7 +195,7 @@ public final class YamlParser {
 
    protected Map<String, String> encodeAuthorizationHeader(final Object value) {
 
-      final Map<String, String> pairValue = (HashMap<String, String>) value;
+      final Map<String, String> pairValue = (Map<String, String>) value;
       if (!pairValue.containsKey(StubRequest.AUTH_HEADER)) {
          return pairValue;
       }
@@ -210,12 +207,12 @@ public final class YamlParser {
       return pairValue;
    }
 
-   protected List<?> loadYamlData(final Reader io) throws IOException {
+   protected List loadYamlData(final Reader io) throws IOException {
 
       final Object loadedYaml = SNAKE_YAML.load(io);
 
-      if (loadedYaml instanceof ArrayList) {
-         return (ArrayList<?>) loadedYaml;
+      if (loadedYaml instanceof List) {
+         return (List) loadedYaml;
       }
 
       throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
