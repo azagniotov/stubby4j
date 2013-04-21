@@ -363,7 +363,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>YES</td>
 </tr>
 <td>JSONPath</td>
-<td>$.response.status</td>
+<td>$.response[*].status</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
@@ -391,7 +391,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>NO</td>
 </tr>
 <td>JSONPath</td>
-<td>$.response.headers[*]</td>
+<td>$.response[*].headers[*]</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
@@ -433,7 +433,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>NO</td>
 </tr>
 <td>JSONPath</td>
-<td>$.response.latency</td>
+<td>$.response[*].latency</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
@@ -463,7 +463,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>NO</td>
 </tr>
 <td>JSONPath</td>
-<td>$.response.body</td>
+<td>$.response[*].body</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
@@ -521,7 +521,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>NO</td>
 </tr>
 <td>JSONPath</td>
-<td>$.response.file</td>
+<td>$.response[*].file</td>
 </tr>
 <tr>
 <td valign="top">Description</td>
