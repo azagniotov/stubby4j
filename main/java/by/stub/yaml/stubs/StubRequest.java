@@ -147,13 +147,11 @@ public class StubRequest {
       return assertionRequest;
    }
 
-
    private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
       final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
 
       return pattern.matcher(assertingUrl).matches();
    }
-
 
    private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
       final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
@@ -169,7 +167,6 @@ public class StubRequest {
    }
 
    private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-
       if (dataStoreArray.isEmpty()) {
          return true;
       } else if (!thisAssertingArray.isEmpty()) {
@@ -183,11 +180,36 @@ public class StubRequest {
    }
 
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
-      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
-      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
+      if (dataStoreMap.isEmpty() && thisAssertingMap.isEmpty()) {
+         return true;
+      } else {
+         final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+         final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+         dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
+         return dataStoreMapCopy.isEmpty();
+      }
+   }
 
-      return dataStoreMapCopy.isEmpty();
+   private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
+      return stringsMatch(dataStoreUrl, thisAssertingUrl) || (
+         StringUtils.isSet(dataStoreUrl)
+            && dataStoreUrl.startsWith(REGEX_START)
+            && regexMatch(dataStoreUrl, getUrl())
+      );
+   }
+
+   private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
+      return !StringUtils.isSet(dataStorePostBody) || stringsMatch(dataStorePostBody, thisAssertingPostBody);
+   }
+
+   private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
+      return mapsMatch(dataStoreQuery, thisAssertingQuery);
+   }
+
+   private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
+      final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
+      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER);
+      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
    }
 
    @Override
@@ -205,54 +227,16 @@ public class StubRequest {
    public boolean equals(final Object o) {
       if (this == o) {
          return true;
-      }
-
-      if (!(o instanceof StubRequest)) {
+      } else if (o instanceof StubRequest) {
+         StubRequest dataStoreRequest = (StubRequest) o;
+         return postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
+            && arraysIntersect(dataStoreRequest.getMethod(), getMethod())
+            && urlsMatch(dataStoreRequest.url, this.url)
+            && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
+            && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
+      } else {
          return false;
       }
-
-      final StubRequest dataStoreRequest = (StubRequest) o;
-
-      if (!stringsMatch(dataStoreRequest.getPostBody(), this.getPostBody()))
-         return false;
-
-      if (!arraysIntersect(dataStoreRequest.getMethod(), getMethod())) {
-         return false;
-      }
-
-      if (StringUtils.isSet(dataStoreRequest.url) && dataStoreRequest.url.startsWith(REGEX_START)) {
-         if (!regexMatch(dataStoreRequest.url, getUrl())) {
-            return false;
-         }
-      } else if (!stringsMatch(dataStoreRequest.url, this.url)) {
-         return false;
-      }
-
-      if (!dataStoreRequest.getHeaders().isEmpty()) {
-
-         final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreRequest.getHeaders());
-         dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header is dealt with in DataStore, after matching of assertion request
-         if (dataStoreHeadersCopy.isEmpty()) {
-            return true;
-         } else {
-
-            final Map<String, String> assertingHeaders = this.getHeaders();
-            if (assertingHeaders.isEmpty() || !mapsMatch(dataStoreHeadersCopy, assertingHeaders)) {
-               return false;
-            }
-         }
-      }
-
-      if (dataStoreRequest.getQuery().isEmpty()) {
-         return true;
-      }
-
-      if (this.getQuery().isEmpty() || !mapsMatch(dataStoreRequest.getQuery(), this.getQuery())) {
-         return false;
-      }
-
-
-      return true;
    }
 
    @Override
