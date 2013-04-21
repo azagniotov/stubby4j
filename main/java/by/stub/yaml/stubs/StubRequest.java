@@ -182,20 +182,19 @@ public class StubRequest {
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
       if (dataStoreMap.isEmpty() && thisAssertingMap.isEmpty()) {
          return true;
-      } else {
-         final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
-         final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-         dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
-         return dataStoreMapCopy.isEmpty();
       }
+
+      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
+
+      return dataStoreMapCopy.isEmpty();
    }
 
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-      return stringsMatch(dataStoreUrl, thisAssertingUrl) || (
-         StringUtils.isSet(dataStoreUrl)
-            && dataStoreUrl.startsWith(REGEX_START)
-            && regexMatch(dataStoreUrl, getUrl())
-      );
+      final boolean isRegexUrl = StringUtils.isSet(dataStoreUrl) && dataStoreUrl.startsWith(REGEX_START);
+
+      return stringsMatch(dataStoreUrl, thisAssertingUrl) || (isRegexUrl && regexMatch(dataStoreUrl, getUrl()));
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
@@ -208,7 +207,8 @@ public class StubRequest {
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER);
+      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in DataStore after request was matched
+
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
    }
 
@@ -220,6 +220,7 @@ public class StubRequest {
       result = 31 * result + (file != null ? Arrays.hashCode(file) : 0);
       result = 31 * result + headers.hashCode();
       result = 31 * result + query.hashCode();
+
       return result;
    }
 
@@ -228,15 +229,16 @@ public class StubRequest {
       if (this == o) {
          return true;
       } else if (o instanceof StubRequest) {
-         StubRequest dataStoreRequest = (StubRequest) o;
+         final StubRequest dataStoreRequest = (StubRequest) o;
+
          return postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
             && arraysIntersect(dataStoreRequest.getMethod(), getMethod())
             && urlsMatch(dataStoreRequest.url, this.url)
             && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
             && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
-      } else {
-         return false;
       }
+
+      return false;
    }
 
    @Override

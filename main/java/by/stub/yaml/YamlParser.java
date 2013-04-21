@@ -62,72 +62,55 @@ public final class YamlParser {
 
          final LinkedHashMap<String, Object> parentNode = (LinkedHashMap<String, Object>) rawParentNode;
 
-         final StubHttpLifecycle parentStub = mapRootYamlNodeToStub(parentNode);
+         final StubHttpLifecycle parentStub = unmarshallYamlNodeToHttpLifeCycle(parentNode);
          httpLifecycles.add(parentStub);
 
-         final ArrayList<String> method = parentStub.getRequest().getMethod();
-         final String url = parentStub.getRequest().getUrl();
-         final String loadedMsg = String.format("Loaded: %s %s", method, url);
-         ANSITerminal.loaded(loadedMsg);
+         reportToConsole(parentStub);
       }
 
       return httpLifecycles;
    }
 
+
    @SuppressWarnings("unchecked")
-   protected StubHttpLifecycle mapRootYamlNodeToStub(final LinkedHashMap<String, Object> parentNode) throws Exception {
+   protected StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final LinkedHashMap<String, Object> parentNodesMap) throws Exception {
 
-      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+      final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
 
-      for (final Map.Entry<String, Object> parent : parentNode.entrySet()) {
+      for (final Map.Entry<String, Object> parentNode : parentNodesMap.entrySet()) {
 
-         if (parent.getValue() instanceof LinkedHashMap) {
+         final Object parentNodeValue = parentNode.getValue();
 
-            final Object targetStub = parent.getKey().equals(YAML_NODE_REQUEST) ? new StubRequest() : new StubResponse();
-            final Object populatedTargetStub = mapPairValueToRespectiveField(targetStub, (LinkedHashMap<String, Object>) parent.getValue());
+         if (parentNodeValue instanceof LinkedHashMap) {
+            handleLinkedHashMapNode(httpLifecycle, parentNode);
 
-            if (parent.getKey().equals(YAML_NODE_REQUEST)) {
-               stubHttpLifecycle.setRequest((StubRequest) populatedTargetStub);
-            } else {
-               stubHttpLifecycle.setResponse(populatedTargetStub);
-            }
-
-         } else if (parent.getValue() instanceof ArrayList) {
-            final Object populatedResponseStub = mapPairValueToRespectiveField((ArrayList) parent.getValue());
-
-            stubHttpLifecycle.setResponse(populatedResponseStub);
+         } else if (parentNodeValue instanceof ArrayList) {
+            handleArrayListNode(httpLifecycle, parentNode);
          }
       }
 
-      return stubHttpLifecycle;
+      return httpLifecycle;
    }
 
-   @SuppressWarnings("unchecked")
-   private Object mapPairValueToRespectiveField(final ArrayList yamlProperties) throws Exception {
+   private void handleLinkedHashMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
-      final List<StubResponse> responses = new LinkedList<StubResponse>();
+      final LinkedHashMap<String, Object> yamlProperties = (LinkedHashMap<String, Object>) parentNode.getValue();
 
-      for (final Object arrayListEntry : yamlProperties) {
+      if (parentNode.getKey().equals(YAML_NODE_REQUEST)) {
+         final StubRequest targetStub = constructStubsFromLinkedHashMap(yamlProperties, StubRequest.class);
+         stubHttpLifecycle.setRequest(targetStub);
 
-         final LinkedHashMap<String, Object> rawSequenceEntry = (LinkedHashMap<String, Object>) arrayListEntry;
-
-         final StubResponse sequenceResponse = new StubResponse();
-
-         for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
-            final String rawSequenceEntryKey = mapEntry.getKey();
-            final Object rawSequenceEntryValue = mapEntry.getValue();
-
-            ReflectionUtils.setPropertyValue(sequenceResponse, rawSequenceEntryKey, rawSequenceEntryValue);
-         }
-
-         responses.add(sequenceResponse);
+      } else {
+         final StubResponse targetStub = constructStubsFromLinkedHashMap(yamlProperties, StubResponse.class);
+         stubHttpLifecycle.setResponse(targetStub);
       }
-
-      return responses;
    }
 
+
    @SuppressWarnings("unchecked")
-   protected Object mapPairValueToRespectiveField(final Object targetStub, final LinkedHashMap<String, Object> yamlProperties) throws Exception {
+   protected <T> T constructStubsFromLinkedHashMap(final LinkedHashMap<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
+
+      final T targetStub = targetStubClass.newInstance();
 
       for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
@@ -157,6 +140,42 @@ public final class YamlParser {
       }
 
       return targetStub;
+   }
+
+   private void handleArrayListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+
+      final ArrayList yamlProperties = (ArrayList) parentNode.getValue();
+      final List<StubResponse> populatedResponseStub = constructStubsFromArrayList(yamlProperties, StubResponse.class);
+      stubHttpLifecycle.setResponse(populatedResponseStub);
+   }
+
+   @SuppressWarnings("unchecked")
+   private <T> List<T> constructStubsFromArrayList(final ArrayList yamlProperties, final Class<T> targetStubClass) throws Exception {
+
+      final List<T> targetStubList = new LinkedList<T>();
+      for (final Object arrayListEntry : yamlProperties) {
+
+         final LinkedHashMap<String, Object> rawSequenceEntry = (LinkedHashMap<String, Object>) arrayListEntry;
+         final T targetStub = targetStubClass.newInstance();
+
+         for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
+            final String rawSequenceEntryKey = mapEntry.getKey();
+            final Object rawSequenceEntryValue = mapEntry.getValue();
+
+            ReflectionUtils.setPropertyValue(targetStub, rawSequenceEntryKey, rawSequenceEntryValue);
+         }
+
+         targetStubList.add(targetStub);
+      }
+
+      return targetStubList;
+   }
+
+   private void reportToConsole(final StubHttpLifecycle parentStub) {
+      final ArrayList<String> method = parentStub.getRequest().getMethod();
+      final String url = parentStub.getRequest().getUrl();
+      final String loadedMsg = String.format("Loaded: %s %s", method, url);
+      ANSITerminal.loaded(loadedMsg);
    }
 
    private byte[] extractBytesFromFilecontent(final Object rawPairValue) throws IOException {

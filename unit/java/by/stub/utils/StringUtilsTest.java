@@ -8,6 +8,9 @@ import java.io.ByteArrayInputStream;
 import java.util.NoSuchElementException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Alexander Zagniotov
@@ -84,9 +87,19 @@ public class StringUtilsTest {
 
 
    @Test
-   public void shouldReturnFalseWhenStringWithinNotSquareBracket() throws Exception {
+   public void shouldReturnFalseWhenStringWithinNotPairOfEscapedSquareBracket() throws Exception {
 
-      final String originalElements = "%5Balex,tracy,logan,charlie,isa]";
+      final String originalElements = "%5Balex,tracy,logan,charlie,isa";
+
+      final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
+
+      assertThat(isWithinSquareBrackets).isFalse();
+   }
+
+   @Test
+   public void shouldReturnFalseWhenStringWithinNotPairOfSquareBracket() throws Exception {
+
+      final String originalElements = "[alex,tracy,logan,charlie,isa";
 
       final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
 
@@ -133,5 +146,14 @@ public class StringUtilsTest {
       final String actualEncodedUrl = StringUtils.encodeSingleQuotes(originaUrl);
 
       assertThat(actualEncodedUrl).isEqualTo(expectedEncodedUrl);
+   }
+
+   @Test
+   public void shouldConstructUserAgentNameWhenImplementationTitleNotSet() throws Exception {
+
+      final String userAgentName = StringUtils.constructUserAgentName();
+
+      assertThat(userAgentName).contains("stubby4j");
+      assertThat(userAgentName).contains("(HTTP stub client request)");
    }
 }
