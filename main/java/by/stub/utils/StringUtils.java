@@ -37,20 +37,12 @@ public final class StringUtils {
 
    private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
-   private StringUtils() {
-
-   }
-
    public static boolean isUSAscii(final String toTest) {
       return US_ASCII_ENCODER.canEncode(toTest);
    }
 
    public static boolean isSet(final String toTest) {
       return (toTest != null && toTest.trim().length() > 0);
-   }
-
-   public static boolean isObjectSet(final Object toTest) {
-      return (toTest != null && toTest.toString().trim().length() > 0);
    }
 
    public static String toUpper(final String toUpper) {
@@ -80,7 +72,7 @@ public final class StringUtils {
    }
 
    public static String inputStreamToString(final InputStream inputStream) {
-      if (inputStream == null || !StringUtils.isSet(inputStream.toString())) {
+      if (inputStream == null) {
          return "Could not convert empty or null input stream to string";
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
@@ -102,11 +94,12 @@ public final class StringUtils {
    }
 
    public static boolean isWithinSquareBrackets(final String toCheck) {
-      final boolean isEncodedBrackets = toCheck.startsWith("%5B") && toCheck.endsWith("%5D");
-      final int lastCharIdx = toCheck.length() - 1;
-      final boolean isBrackets = toCheck.charAt(0) == '[' && toCheck.charAt(lastCharIdx) == ']';
 
-      return isEncodedBrackets || isBrackets;
+      if (toCheck.startsWith("%5B") && toCheck.endsWith("%5D")) {
+         return true;
+      }
+
+      return toCheck.startsWith("[") && toCheck.endsWith("]");
    }
 
    public static String decodeUrlEncodedQuotes(final String toBeFiltered) {

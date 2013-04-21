@@ -1,6 +1,11 @@
 package by.stub.utils;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.io.ByteArrayInputStream;
+import java.util.NoSuchElementException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -9,6 +14,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @since 4/14/13, 11:14 AM
  */
 public class StringUtilsTest {
+
+   @Rule
+   public ExpectedException expectedException = ExpectedException.none();
 
    @Test
    public void shouldFilterOutSpacesBetweenElementsWithQuotes() throws Exception {
@@ -55,16 +63,6 @@ public class StringUtilsTest {
    }
 
    @Test
-   public void shouldReturnTrueWhenStringWithinEncodedSquareBrackets() throws Exception {
-
-      final String originalElements = "%5Balex,tracy,logan,charlie,isa%5D";
-
-      final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
-
-      assertThat(isWithinSquareBrackets).isTrue();
-   }
-
-   @Test
    public void shouldReturnTrueWhenStringWithinSquareBrackets() throws Exception {
 
       final String originalElements = "[%22id%22,%20%22uuid%22,%20%22created%22,%20%22lastUpdated%22,%20%22displayName%22,%20%22email%22,%20%22givenName%22,%20%22familyName%22]";
@@ -75,7 +73,18 @@ public class StringUtilsTest {
    }
 
    @Test
-   public void shouldReturnFalseWhenStringWithinOneEncodedSquareBracket() throws Exception {
+   public void shouldReturnTrueWhenStringWithinEncodedSquareBrackets() throws Exception {
+
+      final String originalElements = "%5Balex,tracy,logan,charlie,isa%5D";
+
+      final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
+
+      assertThat(isWithinSquareBrackets).isTrue();
+   }
+
+
+   @Test
+   public void shouldReturnFalseWhenStringWithinNotSquareBracket() throws Exception {
 
       final String originalElements = "%5Balex,tracy,logan,charlie,isa]";
 
@@ -83,6 +92,38 @@ public class StringUtilsTest {
 
       assertThat(isWithinSquareBrackets).isFalse();
    }
+
+   @Test
+   public void shouldReturnNullWhenTryingTolowerEmptyString() throws Exception {
+      assertThat(StringUtils.toLower("")).isNull();
+   }
+
+   @Test
+   public void shouldReturnNullWhenTryingToUpperEmptyString() throws Exception {
+      assertThat(StringUtils.toUpper("")).isNull();
+   }
+
+   @Test
+   public void shouldReturnErrorWhenTryingToConvertNullInputStreamToString() throws Exception {
+      assertThat(StringUtils.inputStreamToString(null)).isEqualTo("Could not convert empty or null input stream to string");
+   }
+
+   @Test
+   public void shouldReturnErrorWhenTryingToConvertEmptyInputStreamToString() throws Exception {
+
+      expectedException.expect(NoSuchElementException.class);
+
+      final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StringUtils.getBytesUtf8(""));
+      assertThat(StringUtils.inputStreamToString(byteArrayInputStream)).isEqualTo("");
+   }
+
+   @Test
+   public void shouldReturnErrorWhenTryingToConvertSpaceInputStreamToString() throws Exception {
+
+      final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(StringUtils.getBytesUtf8(" "));
+      assertThat(StringUtils.inputStreamToString(byteArrayInputStream)).isEqualTo("");
+   }
+
 
    @Test
    public void shouldCorrectlyEncodeSingleQuotesInURL() throws Exception {

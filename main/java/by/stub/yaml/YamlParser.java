@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
@@ -173,7 +172,7 @@ public final class YamlParser {
    }
 
    private String pairValueToString(final Object value) throws IOException {
-      final String rawValue = StringUtils.isObjectSet(value) ? value.toString() : "";
+      final String rawValue = value != null ? value.toString() : "";
 
       return rawValue.trim();
    }
