@@ -52,7 +52,6 @@ public final class YamlParser {
    }
 
    private static final String YAML_NODE_REQUEST = "request";
-   private static final String YAML_NODE_SEQUENCE = "sequence";
 
 
    public List<StubHttpLifecycle> parse(final Reader yamlReader) throws Exception {
@@ -66,12 +65,10 @@ public final class YamlParser {
 
       for (final Object rawParentNode : loadedYamlData) {
 
-         final LinkedHashMap<String, LinkedHashMap> parentNode = (LinkedHashMap<String, LinkedHashMap>) rawParentNode;
+         final LinkedHashMap<String, Object> parentNode = (LinkedHashMap<String, Object>) rawParentNode;
 
-         final StubHttpLifecycle parentStub = new StubHttpLifecycle(new StubRequest(), new StubResponse());
+         final StubHttpLifecycle parentStub = mapRootYamlNodeToStub(parentNode);
          httpLifecycles.add(parentStub);
-
-         mapRootYamlNodeToStub(parentStub, parentNode);
 
          final ArrayList<String> method = parentStub.getRequest().getMethod();
          final String url = parentStub.getRequest().getUrl();
@@ -83,56 +80,68 @@ public final class YamlParser {
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapRootYamlNodeToStub(final StubHttpLifecycle parentStub, final LinkedHashMap<String, LinkedHashMap> parentNode) throws Exception {
-      for (final Map.Entry<String, LinkedHashMap> parent : parentNode.entrySet()) {
+   protected StubHttpLifecycle mapRootYamlNodeToStub(final LinkedHashMap<String, Object> parentNode) throws Exception {
 
-         if (parent.getValue() != null && parent.getValue() instanceof LinkedHashMap) {
+      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
 
-            final LinkedHashMap<String, Object> httpSettings = (LinkedHashMap<String, Object>) parent.getValue();
+      for (final Map.Entry<String, Object> parent : parentNode.entrySet()) {
+
+         if (parent.getValue() instanceof LinkedHashMap) {
+
+            final Object targetStub = parent.getKey().equals(YAML_NODE_REQUEST) ? new StubRequest() : new StubResponse();
+            final Object populatedTargetStub = mapPairValueToRespectiveField(targetStub, (LinkedHashMap<String, Object>) parent.getValue());
 
             if (parent.getKey().equals(YAML_NODE_REQUEST)) {
-               mapPairValueToRespectiveField(parentStub.getRequest(), httpSettings);
-               continue;
+               stubHttpLifecycle.setRequest((StubRequest) populatedTargetStub);
+            } else {
+               stubHttpLifecycle.setResponse(populatedTargetStub);
             }
 
-            mapPairValueToRespectiveField(parentStub.getResponse(), httpSettings);
+         } else if (parent.getValue() instanceof ArrayList) {
+            final Object populatedResponseStub = mapPairValueToRespectiveField((ArrayList) parent.getValue());
+
+            stubHttpLifecycle.setResponse(populatedResponseStub);
          }
       }
+
+      return stubHttpLifecycle;
    }
 
    @SuppressWarnings("unchecked")
-   protected void mapPairValueToRespectiveField(final Object targetStub, final LinkedHashMap<String, Object> httpProperties) throws Exception {
+   private Object mapPairValueToRespectiveField(final ArrayList yamlProperties) throws Exception {
 
-      for (final Map.Entry<String, Object> pair : httpProperties.entrySet()) {
+      final List<StubResponse> responses = new LinkedList<StubResponse>();
+
+      for (final Object arrayListEntry : yamlProperties) {
+
+         final LinkedHashMap<String, Object> rawSequenceEntry = (LinkedHashMap<String, Object>) arrayListEntry;
+
+         final StubResponse sequenceResponse = new StubResponse();
+
+         for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
+            final String rawSequenceEntryKey = mapEntry.getKey();
+            final Object rawSequenceEntryValue = mapEntry.getValue();
+
+            ReflectionUtils.setPropertyValue(sequenceResponse, rawSequenceEntryKey, rawSequenceEntryValue);
+         }
+
+         responses.add(sequenceResponse);
+      }
+
+      return responses;
+   }
+
+   @SuppressWarnings("unchecked")
+   protected Object mapPairValueToRespectiveField(final Object targetStub, final LinkedHashMap<String, Object> yamlProperties) throws Exception {
+
+      for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
          final Object rawPairValue = pair.getValue();
          final String pairKey = pair.getKey();
          final Object massagedPairValue;
 
-         if (rawPairValue instanceof ArrayList && !pairKey.equals(YAML_NODE_SEQUENCE)) {
+         if (rawPairValue instanceof ArrayList) {
             massagedPairValue = rawPairValue;
-
-         } else if (pairKey.equals(YAML_NODE_SEQUENCE)) {
-
-            final List<StubResponse> sequence = new LinkedList<StubResponse>();
-
-            final ArrayList<LinkedHashMap<String, Object>> rawSequence = (ArrayList<LinkedHashMap<String, Object>>) rawPairValue;
-            for (final LinkedHashMap<String, Object> rawSequenceEntry : rawSequence) {
-               final LinkedHashMap<String, Object> rawSequenceResponse = (LinkedHashMap<String, Object>) rawSequenceEntry.get("response");
-
-               final StubResponse sequenceResponse = new StubResponse();
-
-               for (final Map.Entry<String, Object> mapEntry : rawSequenceResponse.entrySet()) {
-                  final String rawSequenceEntryKey = mapEntry.getKey();
-                  final Object rawSequenceEntryValue = mapEntry.getValue();
-
-                  ReflectionUtils.setPropertyValue(sequenceResponse, rawSequenceEntryKey, rawSequenceEntryValue);
-               }
-
-               sequence.add(sequenceResponse);
-            }
-
-            massagedPairValue = sequence;
 
          } else if (rawPairValue instanceof Map) {
             massagedPairValue = encodeAuthorizationHeader(rawPairValue);
@@ -151,6 +160,8 @@ public final class YamlParser {
 
          ReflectionUtils.setPropertyValue(targetStub, pairKey, massagedPairValue);
       }
+
+      return targetStub;
    }
 
    private byte[] extractBytesFromFilecontent(final Object rawPairValue) throws IOException {

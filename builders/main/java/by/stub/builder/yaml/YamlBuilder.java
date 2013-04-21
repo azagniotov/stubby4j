@@ -22,26 +22,22 @@ public final class YamlBuilder {
    private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
    private static final String TWELVE_SPACE = String.format("%s%s", NINE_SPACE, THREE_SPACE);
    private static final String FIFTEEN_SPACE = String.format("%s%s", TWELVE_SPACE, THREE_SPACE);
-   private static final String EIGHTEEN_SPACE = String.format("%s%s", FIFTEEN_SPACE, THREE_SPACE);
 
    private final static String REQUEST = String.format("-%s%s", TWO_SPACE, "request:");
    private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
 
-   private final static String SEQUENCE = String.format("%s%s", SIX_SPACE, "sequence:");
-   private final static String SEQUENCE_RESPONSE = String.format("%s-%s%s", NINE_SPACE, TWO_SPACE, "response:");
-
    private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
-   private final static String SEQUENCE_RESPONSE_HEADERS = String.format("%s%s", FIFTEEN_SPACE, "headers: ");
+   private final static String SEQUENCE_RESPONSE_HEADERS = String.format("%s%s", NINE_SPACE, "headers: ");
 
    private final static String QUERY = String.format("%s%s", SIX_SPACE, "query:");
    private final static String METHOD = String.format("%s%s", SIX_SPACE, "method: ");
    private final static String TEMP_METHOD_PLACEHOLDER_TOKEN = "METHOD_TOKEN";
 
    private final static String STATUS = String.format("%s%s", SIX_SPACE, "status: ");
-   private final static String SEQUENCE_RESPONSE_STATUS = String.format("%s%s", FIFTEEN_SPACE, "status: ");
+   private final static String SEQUENCE_RESPONSE_STATUS = String.format("%s-%s%s", SIX_SPACE, TWO_SPACE, "status: ");
 
    private final static String FILE = String.format("%s%s", SIX_SPACE, "file: ");
-   private final static String SEQUENCE_RESPONSE_FILE = String.format("%s%s", FIFTEEN_SPACE, "file: ");
+   private final static String SEQUENCE_RESPONSE_FILE = String.format("%s%s", NINE_SPACE, "file: ");
 
    private final static String URL = String.format("%s%s", SIX_SPACE, "url: ");
 
@@ -49,10 +45,10 @@ public final class YamlBuilder {
    private final static String MULTILINEPOST = String.format("%s%s", SIX_SPACE, "post: >\n");
 
    private final static String ONELINEBODY = String.format("%s%s", SIX_SPACE, "body: ");
-   private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format("%s%s", FIFTEEN_SPACE, "body: ");
+   private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format("%s%s", NINE_SPACE, "body: ");
 
    private final static String MULTILINEBODY = String.format("%s%s", SIX_SPACE, "body: >\n");
-   private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s", FIFTEEN_SPACE, "body: >\n");
+   private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s", NINE_SPACE, "body: >\n");
 
    private final static String NL = FileUtils.LINE_SEPARATOR;
 
@@ -70,7 +66,6 @@ public final class YamlBuilder {
       add(RESPONSE_HEADERS_KEY);
       add(RESPONSE_QUERY_KEY);
       add(RESPONSE_QUERY_KEY);
-      add(SEQUENCE);
    }};
 
    private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
@@ -185,17 +180,6 @@ public final class YamlBuilder {
          return this;
       }
 
-      public Response withSequenceResponse() {
-
-         if (unusedNodes.contains(SEQUENCE)) {
-            RESPONSE_STRING_BUILDER.append(SEQUENCE).append(NL);
-            unusedNodes.remove(SEQUENCE);
-         }
-
-         RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE).append(NL);
-
-         return this;
-      }
 
       public Response withStatus(final String value) {
          RESPONSE_STRING_BUILDER.append(STATUS).append(value).append(NL);
@@ -241,7 +225,7 @@ public final class YamlBuilder {
       }
 
       public Response withSequenceResponseFoldedBody(final String body) {
-         final String tabbedBody = String.format("%s%s", EIGHTEEN_SPACE, body);
+         final String tabbedBody = String.format("%s%s", TWELVE_SPACE, body);
          RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_MULTILINEBODY).append(tabbedBody).append(NL);
 
          return this;
@@ -264,7 +248,7 @@ public final class YamlBuilder {
 
          RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_HEADERS).append(NL);
 
-         final String tabbedKey = String.format("%s%s: ", EIGHTEEN_SPACE, key);
+         final String tabbedKey = String.format("%s%s: ", TWELVE_SPACE, key);
          RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
@@ -281,7 +265,6 @@ public final class YamlBuilder {
          unusedNodes.add(REQUEST_QUERY_KEY);
          unusedNodes.add(RESPONSE_HEADERS_KEY);
          unusedNodes.add(RESPONSE_QUERY_KEY);
-         unusedNodes.add(SEQUENCE);
          storedStubbedMethods.clear();
 
          return yaml;

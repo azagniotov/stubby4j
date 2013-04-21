@@ -483,13 +483,13 @@ public class StubsTest {
       HttpResponse firstSequenceResponse = request.execute();
       String firstResponseContent = firstSequenceResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
       assertThat(firstResponseContent).isEqualTo("OK");
 
       final HttpResponse secondSequenceResponse = request.execute();
       final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(secondSequenceResponse.getStatusCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
       assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
       final HttpResponse thridSequenceResponse = request.execute();
@@ -501,7 +501,7 @@ public class StubsTest {
       firstSequenceResponse = request.execute();
       firstResponseContent = firstSequenceResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
       assertThat(firstResponseContent).isEqualTo("OK");
    }
 

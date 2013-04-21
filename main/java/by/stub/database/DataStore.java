@@ -42,7 +42,9 @@ public class DataStore {
    }
 
    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
-      final StubHttpLifecycle assertingLifecycle = new StubHttpLifecycle(assertingRequest, new StubResponse());
+      final StubHttpLifecycle assertingLifecycle = new StubHttpLifecycle();
+      assertingLifecycle.setRequest(assertingRequest);
+      assertingLifecycle.setResponse(new StubResponse());
 
       return identifyStubResponseType(assertingLifecycle);
    }

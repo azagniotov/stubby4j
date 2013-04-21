@@ -365,11 +365,11 @@ public class StubbyClientTest {
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
       StubbyResponse firstSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
-      assertThat(HttpStatus.OK_200).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
       assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
 
       final StubbyResponse secondSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
-      assertThat(HttpStatus.OK_200).isEqualTo(secondSequencedStubbyResponse.getResponseCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequencedStubbyResponse.getResponseCode());
       assertThat(secondSequencedStubbyResponse.getContent()).isEqualTo("Still going strong!");
 
       final StubbyResponse thirdSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
@@ -377,7 +377,7 @@ public class StubbyClientTest {
       assertThat(thirdSequencedStubbyResponse.getContent()).isEqualTo("Server Error");
 
       firstSequencedStubbyResponse = stubbyClient.doGet(host, uri, port);
-      assertThat(HttpStatus.OK_200).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequencedStubbyResponse.getResponseCode());
       assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
    }
 }

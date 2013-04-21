@@ -47,29 +47,28 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
-      final List<StubResponse> actualSequence = actualResponse.getSequence();
 
-      assertThat(actualSequence).hasSize(0);
+      assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
    }
 
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithNoSequenceResponses() throws Exception {
 
+      final String expectedStatus = "301";
       final String yaml = YAML_BUILDER
          .newStubbedRequest()
          .withMethodPut()
          .withUrl("/invoice")
          .newStubbedResponse()
-         .withStatus("200")
+         .withStatus(expectedStatus)
          .build();
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
-      final List<StubResponse> actualSequence = actualResponse.getSequence();
 
-      assertThat(actualSequence).hasSize(0);
+      assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
+      assertThat(actualResponse.getStatus()).isEqualTo(expectedStatus);
    }
 
    @Test
@@ -85,7 +84,6 @@ public class YamlParserTest {
          .withMethodPut()
          .withUrl("/invoice")
          .newStubbedResponse()
-         .withSequenceResponse()
          .withSequenceResponseStatus(sequenceResponseStatus)
          .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
          .withSequenceResponseLiteralBody(sequenceResponseBody)
@@ -117,12 +115,10 @@ public class YamlParserTest {
          .withMethodPut()
          .withUrl("/invoice")
          .newStubbedResponse()
-         .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
-         .withSequenceResponse()
          .withSequenceResponseStatus(sequenceResponseStatus)
          .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
          .withSequenceResponseFoldedBody(sequenceResponseBody)

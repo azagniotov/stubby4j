@@ -30,10 +30,18 @@ import java.util.List;
 public final class StubHttpLifecycle {
 
    private StubRequest request;
-   private StubResponse response;
+   private Object response;
+   private int responseSequenceCounter = 0;
 
-   public StubHttpLifecycle(final StubRequest request, final StubResponse response) {
+   public StubHttpLifecycle() {
+      response = new StubResponse();
+   }
+
+   public void setRequest(final StubRequest request) {
       this.request = request;
+   }
+
+   public void setResponse(final Object response) {
       this.response = response;
    }
 
@@ -42,21 +50,41 @@ public final class StubHttpLifecycle {
    }
 
    public StubResponse getResponse() {
-      return response.getActualStubbedResponse();
+      return getActualStubbedResponse();
    }
 
+
    public List<StubResponse> getAllResponses() {
-      if (response.getSequence().size() == 0) {
+
+      if (response instanceof StubResponse) {
          return new LinkedList<StubResponse>() {{
-            add(response);
+            add((StubResponse) response);
          }};
       }
 
-      return response.getSequence();
+      return (LinkedList<StubResponse>) response;
    }
+
 
    public String getRequestAuthorizationHeader() {
       return request.getHeaders().get(StubRequest.AUTH_HEADER);
+   }
+
+   public StubResponse getActualStubbedResponse() {
+
+      if (response instanceof StubResponse) {
+         return (StubResponse) response;
+      }
+
+      final List<StubResponse> responses = (LinkedList<StubResponse>) response;
+      if (responses.size() == 0) {
+         return new StubResponse();
+      }
+
+      final StubResponse sequenceStubResponse = responses.get(responseSequenceCounter);
+      responseSequenceCounter = (responseSequenceCounter + 1 == responses.size() ? responseSequenceCounter = 0 : ++responseSequenceCounter);
+
+      return sequenceStubResponse;
    }
 
    @Override

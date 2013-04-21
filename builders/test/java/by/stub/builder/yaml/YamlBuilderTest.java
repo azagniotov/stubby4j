@@ -14,29 +14,25 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedResponseWithSequenceResponses() throws Exception {
       final String expectedYaml =
-            "-  request:\n" +
+         "-  request:\n" +
             "      method: [PUT]\n" +
             "      url: /invoice\n" +
             "\n" +
             "   response:\n" +
-            "      sequence:\n" +
-            "         -  response:\n" +
-            "               status: 200\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               body: OK\n" +
+            "      -  status: 200\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         body: OK\n" +
             "\n" +
-            "         -  response:\n" +
-            "               status: 200\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               body: Still going strong!\n" +
+            "      -  status: 200\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         body: Still going strong!\n" +
             "\n" +
-            "         -  response:\n" +
-            "               status: 500\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               body: OMFG!!!";
+            "      -  status: 500\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         body: OMFG!!!";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
       final String actualYaml = yamlBuilder
@@ -44,17 +40,14 @@ public class YamlBuilderTest {
          .withMethodPut()
          .withUrl("/invoice")
          .newStubbedResponse()
-         .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
-         .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("Still going strong!")
          .withLineBreak()
-         .withSequenceResponse()
          .withSequenceResponseStatus("500")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("OMFG!!!")
@@ -73,25 +66,21 @@ public class YamlBuilderTest {
             "      url: /invoice\n" +
             "\n" +
             "   response:\n" +
-            "      sequence:\n" +
-            "         -  response:\n" +
-            "               status: 200\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               body: OK\n" +
+            "      -  status: 200\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         body: OK\n" +
             "\n" +
-            "         -  response:\n" +
-            "               status: 200\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               body: >\n" +
-            "                  {\"status\", \"200\"}\n" +
+            "      -  status: 200\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         body: >\n" +
+            "            {\"status\", \"200\"}\n" +
             "\n" +
-            "         -  response:\n" +
-            "               status: 500\n" +
-            "               headers: \n" +
-            "                  content-type: application/json\n" +
-            "               file: ../path/to/error.file";
+            "      -  status: 500\n" +
+            "         headers: \n" +
+            "            content-type: application/json\n" +
+            "         file: ../path/to/error.file";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
       final String actualYaml = yamlBuilder
@@ -99,17 +88,14 @@ public class YamlBuilderTest {
          .withMethodPut()
          .withUrl("/invoice")
          .newStubbedResponse()
-         .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
-         .withSequenceResponse()
          .withSequenceResponseStatus("200")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseFoldedBody("{\"status\", \"200\"}")
          .withLineBreak()
-         .withSequenceResponse()
          .withSequenceResponseStatus("500")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseFile("../path/to/error.file")

@@ -38,8 +38,6 @@ public class StubResponse {
    private byte[] file;
    private String latency;
    private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
-   private List<StubResponse> sequence = new LinkedList<StubResponse>();
-   private int sequenceCounter = 0;
 
    public StubResponse() {
 
@@ -82,10 +80,6 @@ public class StubResponse {
       this.file = file;
    }
 
-   public void setSequence(final List<StubResponse> sequence) {
-      this.sequence = sequence;
-   }
-
    //Used by reflection when populating stubby admin page with stubbed information
    public byte[] getFile() {
       return file;
@@ -104,20 +98,5 @@ public class StubResponse {
 
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.OK_200;
-   }
-
-   public List<StubResponse> getSequence() {
-      return sequence;
-   }
-
-   public StubResponse getActualStubbedResponse() {
-      if (sequence.size() == 0) {
-         return this;
-      }
-
-      final StubResponse sequenceStubResponse = sequence.get(sequenceCounter);
-      sequenceCounter = (sequenceCounter + 1 == sequence.size() ? sequenceCounter = 0 : ++sequenceCounter);
-
-      return sequenceStubResponse;
    }
 }

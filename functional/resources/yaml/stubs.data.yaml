@@ -223,24 +223,20 @@
       url: /uri/with/sequenced/responses
 
    response:
-      sequence:
-         -  response:
-               status: 200
-               headers:
-                  content-type: application/json
-               body: OK
+      -  status: 201
+         headers:
+            content-type: application/json
+         body: OK
 
-         -  response:
-               status: 200
-               headers:
-                  content-type: application/json
-               body: Still going strong!
+      -  status: 201
+         headers:
+            content-stype: application/json
+         body: Still going strong!
 
-         -  response:
-               status: 500
-               headers:
-                  content-type: application/json
-               body: OMFG!!!
+      -  status: 500
+         headers:
+            content-type: application/json
+         body: OMFG!!!
 
 
 
@@ -249,9 +245,7 @@
       url: /uri/with/single/sequenced/response
 
    response:
-      sequence:
-         -  response:
-               status: 201
-               headers:
-                  content-type: application/json
-               body: Still going strong!
+      -  status: 201
+         headers:
+            content-stype: application/json
+         body: Still going strong!
