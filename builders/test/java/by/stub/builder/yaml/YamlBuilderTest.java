@@ -32,7 +32,8 @@ public class YamlBuilderTest {
             "      -  status: 500\n" +
             "         headers: \n" +
             "            content-type: application/json\n" +
-            "         body: OMFG!!!";
+            "         body: OMFG!!!\n" +
+            "         file: ../../response.json";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
       final String actualYaml = yamlBuilder
@@ -51,6 +52,7 @@ public class YamlBuilderTest {
          .withSequenceResponseStatus("500")
          .withSequenceResponseHeaders("content-type", "application/json")
          .withSequenceResponseLiteralBody("OMFG!!!")
+         .withSequenceResponseFile("../../response.json")
          .withLineBreak()
          .build();
 
