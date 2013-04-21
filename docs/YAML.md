@@ -298,7 +298,8 @@ When creating stubbed request/response data for stubby4j, the config data should
 <td>
 <ul>
 <li>Describes stubby4j's response to the client</li>
-<li>Can be a single response or a sequence of responses</li>
+<li>Can be a single response or a sequence of responses.</li>
+<li>When sequenced responses configured, on each request to a URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next request.</li>
 </ul>
 </td>
 </tr>
