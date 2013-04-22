@@ -866,7 +866,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenRegexifiedUrlDoesNotBeginWithRegexSign() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenRegexifiedUrlDoesNotBeginWithRegexSign_ItsNotProcessedAsRegex() throws Exception {
 
       final String url = ".*account.*";
 
@@ -877,7 +877,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenRegexifiedUrlBeginsWithRegexSign() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenRegexifiedUrlBeginsWithRegexSign_ItsProcessedAsRegex() throws Exception {
 
       final String url = "^.*account.*";
 
