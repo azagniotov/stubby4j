@@ -1,8 +1,24 @@
 # stubby4j
+A stub HTTP server written in Java with embedded Jetty server
 
-A stub HTTP server written in Java with embedded Jetty server	
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
+
+## Table of Contents
+
+* [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
+* [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
+* [Building](#building)
+* [Dependencies](#dependencies)
+* [Maven Central](#maven-central)
+* [Command-line Switches](#command-line-switches)
+* [YAML Configuration Explained](#yaml-configuration-explained)
+* [How to Start stubby4j Programmatically](#how-to-start-stubby4j-programmatically)
+* [Change Log](#change-log)
+* [Authors](#authors)
+* [Kudos](#kudos)
+* [See Also](#see-also)
+
 
 ## Why would a developer use stubby4j?
 ####You want to:
@@ -31,19 +47,6 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ###### All this goodness in just under 1.5MB
-
-## Table of Contents
-
-* [Building](#building)
-* [Dependencies](#dependencies)
-* [Maven Central](#maven-central)
-* [Command-line Switches](#command-line-switches)
-* [YAML Configuration Explained](#yaml-configuration-explained)
-* [How to Start stubby4j Programmatically](#how-to-start-stubby4j-programmatically)
-* [Change Log](#change-log)
-* [Authors](#authors)
-* [Kudos](#kudos)
-* [See Also](#see-also)
 
 
 ## Building
