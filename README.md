@@ -111,7 +111,7 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h]
 When creating stubbed request/response data for stubby4j, the config data should be specified in valid YAML 1.1 syntax. Submit POST requests to ```http://<host>:<admin_port>/stubdata/new``` or load a data file (```-d``` or ```--data```) with the following structure for each endpoint:
 <br />
 
-## Stub request and its properties
+#### Stub request and its properties
 
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
@@ -387,7 +387,7 @@ When creating stubbed request/response data for stubby4j, the config data should
       file: ../data/post-body-as-file.json
 ```
 
-## Stub response and its properties
+#### Stub response and its properties
 <table border="1" width="100%" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
 <tr>
 <td width="20">Key</td>
