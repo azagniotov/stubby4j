@@ -61,7 +61,7 @@ public final class StubbyClient {
       params.put(CommandLineInterpreter.OPTION_ADMINPORT, adminPortString);
 
       final String[] args = new String[]{"-m", "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
-      CommandLineInterpreter.parseCommandLine(args);
+      new CommandLineInterpreter().parseCommandLine(args);
 
       jettyManager = new JettyManagerFactory().construct(yamlConfigurationFilename, params);
       jettyManager.startJetty();

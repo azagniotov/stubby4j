@@ -15,10 +15,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @since 10/24/12, 10:49 AM
  */
 public class StubResponseTest {
-   @BeforeClass
-   public static void Setup() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-   }
 
    @Test
    public void shouldReturnBody_WhenFileCannotBeFound() throws Exception {

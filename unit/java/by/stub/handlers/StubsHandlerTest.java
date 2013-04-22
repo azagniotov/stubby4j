@@ -49,7 +49,6 @@ public class StubsHandlerTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
       ANSITerminal.muteConsole(true);
    }
 

@@ -14,8 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -30,11 +30,6 @@ public class YamlParserTest {
    public ExpectedException expectedException = ExpectedException.none();
 
    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
-
-   @BeforeClass
-   public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-   }
 
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenEmptyYAMLGiven() throws Exception {
@@ -531,8 +526,6 @@ public class YamlParserTest {
 
       final YamlParser yamlParser = new YamlParser();
 
-      final Reader reader = FileUtils.constructReader(yaml);
-
-      return yamlParser.parse(reader);
+      return yamlParser.parse(new File(File.separator), FileUtils.constructReader(yaml));
    }
 }

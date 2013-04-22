@@ -32,6 +32,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class YamlParser {
 
+   private String dataConfigHomeDirectory;
    private final static Yaml SNAKE_YAML;
 
    static {
@@ -50,6 +52,12 @@ public final class YamlParser {
 
    private static final String YAML_NODE_REQUEST = "request";
 
+
+   public List<StubHttpLifecycle> parse(final File yamlFile, final Reader yamlReader) throws Exception {
+      this.dataConfigHomeDirectory = yamlFile.getParent();
+
+      return parse(yamlReader);
+   }
 
    public List<StubHttpLifecycle> parse(final Reader yamlReader) throws Exception {
 
@@ -181,10 +189,10 @@ public final class YamlParser {
       final String extension = StringUtils.extractFilenameExtension(relativeFilePath);
 
       if (FileUtils.ASCII_TYPES.contains(extension)) {
-         return FileUtils.asciiFileToUtf8Bytes(relativeFilePath);
+         return FileUtils.asciiFileToUtf8Bytes(dataConfigHomeDirectory, relativeFilePath);
       }
 
-      return FileUtils.binaryFileToBytes(relativeFilePath);
+      return FileUtils.binaryFileToBytes(dataConfigHomeDirectory, relativeFilePath);
    }
 
    private String pairValueToString(final Object value) throws IOException {

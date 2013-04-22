@@ -60,8 +60,6 @@ public class StubsTest {
       final URL url = StubsTest.class.getResource("/yaml/stubs.data.yaml");
       assertThat(url).isNotNull();
 
-      CommandLineInterpreter.parseCommandLine(new String[]{"--data", url.getFile()});
-
       stubbyClient = new StubbyClient();
       stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
 

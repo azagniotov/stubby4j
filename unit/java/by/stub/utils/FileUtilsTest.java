@@ -17,10 +17,6 @@ public class FileUtilsTest {
    @Rule
    public ExpectedException expectedException = ExpectedException.none();
 
-   @BeforeClass
-   public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-   }
 
    @Test
    public void shouldNotConvertFileToBytesWhenEmptyFilenameGiven() throws Exception {
@@ -28,6 +24,6 @@ public class FileUtilsTest {
       expectedException.expect(IOException.class);
       expectedException.expectMessage("Could not load file from path: bad/file/path");
 
-      FileUtils.binaryFileToBytes("bad/file/path");
+      FileUtils.binaryFileToBytes(".", "bad/file/path");
    }
 }

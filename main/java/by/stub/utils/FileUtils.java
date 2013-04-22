@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -74,21 +74,21 @@ public final class FileUtils {
    }
 
 
-   public static byte[] binaryFileToBytes(final String filePath) throws IOException {
-      final File contentFile = new File(getDataDirectory(), filePath);
+   public static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+      final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", filePath));
+         throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
       return IOUtils.toByteArray(new FileInputStream(contentFile));
    }
 
-   public static String asciiFileToString(final String filePath) throws IOException {
-      final File contentFile = new File(getDataDirectory(), filePath);
+   public static String asciiFileToString(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+      final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", filePath));
+         throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
@@ -96,21 +96,12 @@ public final class FileUtils {
       return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
 
-   public static byte[] asciiFileToUtf8Bytes(final String filePath) throws IOException {
-      final String loadedContent = FileUtils.asciiFileToString(filePath);
+   public static byte[] asciiFileToUtf8Bytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+      final String loadedContent = FileUtils.asciiFileToString(dataYamlConfigParentDir, relativePath);
 
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
-
-   private static String getDataDirectory() {
-      final String yamlConfigFilename = CommandLineInterpreter.getCommandlineParams().get("data");
-      if (yamlConfigFilename == null) {
-         return CommandLineInterpreter.getCurrentJarLocation(CommandLineInterpreter.class);
-      }
-
-      return new File(yamlConfigFilename).getParent();
-   }
 
    public static String enforceSystemLineSeparator(final String loadedContent) {
       if (!StringUtils.isSet(loadedContent)) {

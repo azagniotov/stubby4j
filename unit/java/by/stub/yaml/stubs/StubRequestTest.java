@@ -24,10 +24,6 @@ public class StubRequestTest {
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
 
-   @BeforeClass
-   public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
-   }
 
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenNullUrlStubbed_ButUrlSubmitted() throws Exception {

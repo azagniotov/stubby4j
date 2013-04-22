@@ -42,7 +42,6 @@ public class DataStoreTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      CommandLineInterpreter.parseCommandLine(new String[]{});
       dataStore = new DataStore(new File("."), new LinkedList<StubHttpLifecycle>());
    }
 
@@ -658,6 +657,7 @@ public class DataStoreTest {
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
+
       assertThat(foundStubResponse.getStatus()).isEqualTo("404");
       assertThat(foundStubResponse.getBody()).isEqualTo("");
    }

@@ -30,11 +30,15 @@ import java.util.Map;
 
 public final class Main {
 
+   private static CommandLineInterpreter commandLineInterpreter;
+
    private Main() {
 
    }
 
    public static void main(final String[] args) {
+
+      commandLineInterpreter = new CommandLineInterpreter();
 
       parseCommandLineArgs(args);
       if (printHelpIfRequested()) {
@@ -47,7 +51,7 @@ public final class Main {
 
    private static void parseCommandLineArgs(final String[] args) {
       try {
-         CommandLineInterpreter.parseCommandLine(args);
+         commandLineInterpreter.parseCommandLine(args);
       } catch (final ParseException ex) {
          final String msg =
             String.format("Could not parse provided command line arguments, error: %s",
@@ -58,17 +62,17 @@ public final class Main {
    }
 
    private static boolean printHelpIfRequested() {
-      if (!CommandLineInterpreter.isHelp()) {
+      if (!commandLineInterpreter.isHelp()) {
          return false;
       }
 
-      CommandLineInterpreter.printHelp(Main.class);
+      commandLineInterpreter.printHelp();
 
       return true;
    }
 
    private static void verifyYamlDataProvided() {
-      if (CommandLineInterpreter.isYamlProvided()) {
+      if (commandLineInterpreter.isYamlProvided()) {
          return;
       }
       final String msg =
@@ -81,10 +85,10 @@ public final class Main {
 
    private static void startStubby4jUsingCommandLineArgs() {
       try {
-         final Map<String, String> commandLineArgs = CommandLineInterpreter.getCommandlineParams();
+         final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
          final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
-         ANSITerminal.muteConsole(CommandLineInterpreter.isMute());
+         ANSITerminal.muteConsole(commandLineInterpreter.isMute());
 
          final JettyManagerFactory factory = new JettyManagerFactory();
          final JettyManager jettyManager = factory.construct(yamlConfigFilename, commandLineArgs);

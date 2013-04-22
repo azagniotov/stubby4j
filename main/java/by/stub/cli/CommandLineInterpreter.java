@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.cli;
 
-import by.stub.utils.StringUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -28,8 +27,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
-import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +45,7 @@ public final class CommandLineInterpreter {
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
    private static final Options OPTIONS = new Options();
-   private static CommandLine line;
+   private CommandLine line;
 
    static {
       OPTIONS.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
@@ -64,32 +61,8 @@ public final class CommandLineInterpreter {
    }
 
 
-   private CommandLineInterpreter() {
-
-   }
-
-   public static void parseCommandLine(final String[] args) throws ParseException {
+   public void parseCommandLine(final String[] args) throws ParseException {
       line = POSIX_PARSER.parse(OPTIONS, args);
-   }
-
-   /**
-    * Returns stubby4j JAR path, relative to current execution directory under local filesystem based
-    * on the given class executed within the JAR.
-    *
-    * @param theclass Class executed within the JAR. The class discloses JAR's current location
-    * @return relative stubby4j JAR path
-    */
-   public static String getCurrentJarLocation(final Class theclass) {
-      final URL location = theclass.getProtectionDomain().getCodeSource().getLocation();
-
-      final String jarAbsolutePath = new File(location.getFile()).getAbsolutePath();
-      final String jar = jarAbsolutePath.replaceAll(System.getProperty("user.dir") + "/", "");
-
-      if (StringUtils.toLower(jar).endsWith(".jar")) {
-         return jar;
-      }
-
-      return "stubby4j-x.x.x-SNAPSHOT.jar";
    }
 
    /**
@@ -97,17 +70,8 @@ public final class CommandLineInterpreter {
     *
     * @return true if the user disabled output to console using command line arg
     */
-   public static boolean isMute() {
+   public boolean isMute() {
       return line.hasOption(OPTION_MUTE);
-   }
-
-   /**
-    * Checks if the watch flag was given
-    *
-    * @return true if the user wants stubby to auto-update the datafile when changes are made
-    */
-   public static boolean isWatching() {
-      return line.hasOption(OPTION_WATCH);
    }
 
    /**
@@ -115,7 +79,7 @@ public final class CommandLineInterpreter {
     *
     * @return true if the user provided stub data as YAML file with using command line arg
     */
-   public static boolean isYamlProvided() {
+   public boolean isYamlProvided() {
       return line.hasOption(OPTION_CONFIG);
    }
 
@@ -124,18 +88,16 @@ public final class CommandLineInterpreter {
     *
     * @return true if the user has provided 'help' command line arg
     */
-   public static boolean isHelp() {
+   public boolean isHelp() {
       return line.hasOption(OPTION_HELP);
    }
 
    /**
     * Prints 'help' message which describes avilable command line arguments
-    *
-    * @param theclass The class that discloses JAR's current location
     */
-   public static void printHelp(final Class theclass) {
+   public void printHelp() {
       final HelpFormatter formatter = new HelpFormatter();
-      final String command = String.format("%sjava -jar %s", "\n", getCurrentJarLocation(theclass));
+      final String command = String.format("%sjava -jar stubby4j-x.x.xx.jar", "\n");
       formatter.printHelp(command, OPTIONS, true);
    }
 
@@ -144,7 +106,7 @@ public final class CommandLineInterpreter {
     *
     * @return a map of passed command line arguments where key is the name of the argument
     */
-   public static Map<String, String> getCommandlineParams() {
+   public Map<String, String> getCommandlineParams() {
 
       final Option[] options = line.getOptions();
 

@@ -74,7 +74,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
 
       try {
 
-         final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(post));
+         final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataStore.getDataYaml(), FileUtils.constructReader(post));
 
          dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
 
