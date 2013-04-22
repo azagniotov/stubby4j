@@ -192,6 +192,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 <li>If you include query string in stubbed URI, the HTTP request WILL NOT match since stubbed URI compared only to URI from HTTP request. If you want to make string query params match, include them in the <i><b>query</b></i> key</li>
 <li>Supports regular expressions (similiar to <i>mod_rewrite</i> in Apache) for dynamic matching. The regular expression must be a valid Java regex and able to be compiled by <i>java.util.regex.Pattern</i></li>
 <li>When stubbing regular expression in <i><b>url</b></i>, string query params (if any) must be attached to the <i><b>url</b></i> unlike said in the first bullet point</li>
+<li>The regular expression <b>must start with ^</b>, otherwise a full match will be performed using equals() without compiling <i>java.util.regex.Pattern</i></li>
 </ul>
 </td>
 </tr>
