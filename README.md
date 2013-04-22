@@ -653,7 +653,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 ```
 
 
-#### How to Start stubby4j Programmatically
+## How to Start stubby4j Programmatically
 
 ```java
 private static StubbyClient stubbyClient;
