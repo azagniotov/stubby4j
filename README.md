@@ -1029,7 +1029,8 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 
 
 ## See Also
-**[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
+* **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
+* **[stubby4node](https://github.com/mrak/stubby4node):** A node.js implementation of stubby
 
 
 ## Copyright
