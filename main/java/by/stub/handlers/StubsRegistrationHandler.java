@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers;
 
 import by.stub.database.DataStore;
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -74,14 +75,14 @@ public class StubsRegistrationHandler extends AbstractHandler {
 
       try {
 
-         final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataStore.getDataYaml(), FileUtils.constructReader(post));
+         final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataStore.getDataYaml().getParent(), FileUtils.constructReader(post));
 
          dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
 
          response.setStatus(HttpStatus.CREATED_201);
          response.getWriter().println("Configuration created successfully");
 
-         ConsoleUtils.logOutgoingResponse(request, response, NAME);
+         ConsoleUtils.logOutgoingResponse(request, new HttpServletResponseWithGetStatus(response), NAME);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
       }

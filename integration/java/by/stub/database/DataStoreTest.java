@@ -663,13 +663,13 @@ public class DataStoreTest {
    }
 
    private void loadYamlToDataStore(final String yaml) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(yaml));
 
       dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    private List<StubHttpLifecycle> parseYamlToStubHttpLifecycles(final String yaml) throws Exception {
-      return new YamlParser().parse(FileUtils.constructReader(yaml));
+      return new YamlParser().parse(".", FileUtils.constructReader(yaml));
    }
 
 }

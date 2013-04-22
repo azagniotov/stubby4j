@@ -42,7 +42,7 @@ public final class ConfigurationScanner implements Runnable {
 
             try {
                lastModified = currentFileModified;
-               final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(FileUtils.constructReader(dataYaml));
+               final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataYaml.getParent(), FileUtils.constructReader(dataYaml));
 
                dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
                ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",

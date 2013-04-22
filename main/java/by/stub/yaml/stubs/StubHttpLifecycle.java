@@ -27,6 +27,7 @@ import java.util.List;
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:21 AM
  */
+@SuppressWarnings("unchecked")
 public final class StubHttpLifecycle {
 
    private StubRequest request;

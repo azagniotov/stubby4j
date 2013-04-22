@@ -45,7 +45,7 @@ public class JettyManagerFactory {
       Log.setLog(new EmptyLogger());
 
       final File dataYamlFile = new File(dataYamlFilename);
-      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile, FileUtils.constructReader(dataYamlFile));
+      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
 
       System.out.println();
 

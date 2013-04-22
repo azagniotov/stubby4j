@@ -22,6 +22,7 @@ package by.stub.handlers;
 import by.stub.database.DataStore;
 import by.stub.handlers.strategy.HandlingStrategyFactory;
 import by.stub.handlers.strategy.StubResponseHandlingStrategy;
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -59,7 +60,7 @@ public class StubsHandler extends AbstractHandler {
 
       try {
          strategyStubResponse.handle(response, assertionStubRequest);
-         ConsoleUtils.logOutgoingResponse(request, response, NAME);
+         ConsoleUtils.logOutgoingResponse(request, new HttpServletResponseWithGetStatus(response), NAME);
 
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

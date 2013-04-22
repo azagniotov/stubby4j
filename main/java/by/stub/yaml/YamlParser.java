@@ -32,7 +32,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -53,13 +52,8 @@ public final class YamlParser {
    private static final String YAML_NODE_REQUEST = "request";
 
 
-   public List<StubHttpLifecycle> parse(final File yamlFile, final Reader yamlReader) throws Exception {
-      this.dataConfigHomeDirectory = yamlFile.getParent();
-
-      return parse(yamlReader);
-   }
-
-   public List<StubHttpLifecycle> parse(final Reader yamlReader) throws Exception {
+   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
+      this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
       final List<?> loadedYamlData = loadYamlData(yamlReader);

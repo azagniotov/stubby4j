@@ -526,6 +526,6 @@ public class YamlParserTest {
 
       final YamlParser yamlParser = new YamlParser();
 
-      return yamlParser.parse(new File(File.separator), FileUtils.constructReader(yaml));
+      return yamlParser.parse(".", FileUtils.constructReader(yaml));
    }
 }

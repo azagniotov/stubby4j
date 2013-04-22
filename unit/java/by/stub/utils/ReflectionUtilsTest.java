@@ -48,4 +48,39 @@ public class ReflectionUtilsTest {
 
       assertThat(stubRequest.getUrl()).isNull();
    }
+
+   @Test
+   public void shouldReturnNullWhenClassHasNoDeclaredMethods() throws Exception {
+
+      final Object result = ReflectionUtils.getPropertyValue(new MethodelessInterface() {
+      }, "somePropertyName");
+
+      assertThat(result).isNull();
+   }
+
+   @Test
+   public void shouldReturnPropertyValueWhenClassHasDeclaredMethods() throws Exception {
+
+      final String expectedMethodValue = "alex";
+      final Object result = ReflectionUtils.getPropertyValue(new MethodfullInterface() {
+         @Override
+         public String getName() {
+            return expectedMethodValue;
+         }
+      }, "name");
+
+      assertThat(result).isEqualTo(expectedMethodValue);
+   }
+
+   private static interface MethodelessInterface {
+
+   }
+
+   ;
+
+   private static interface MethodfullInterface {
+      String getName();
+   }
+
+   ;
 }

@@ -61,8 +61,7 @@ public final class ConsoleUtils {
       ANSITerminal.incoming(logMessage);
    }
 
-   public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponse response, final String source) {
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
+   public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final String source) {
 
       final int status = wrapper.getStatus();
 
