@@ -31,8 +31,8 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
          datafile: coberturaPrepare.datafileLocation) {
             fileset(
                dir: project(':main').sourceSets.main.output.classesDir, 
-               includes: "by/stub/client/**/*.class, by/stub/cli/CommandLineInterpreter.class, by/stub/database/*.class, by/stub/utils/**/*.class, by/stub/yaml/**/*.class",
-               excludes: "**/*\$*.class"
+               includes: "by/stub/client/**/*.class, by/stub/cli/CommandLineInterpreter.class, by/stub/database/*.class, by/stub/utils/*.class, by/stub/yaml/**/*.class",
+               excludes: "**/*\$*.class, by/stub/utils/ConsoleUtils.class"
          )
       }   
    }
