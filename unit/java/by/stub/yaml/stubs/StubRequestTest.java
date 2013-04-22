@@ -1,10 +1,8 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -865,6 +863,28 @@ public class StubRequestTest {
             .withHeaders("Pragma", "no-cache").build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenRegexifiedUrlDoesNotBeginWithRegexSign() throws Exception {
+
+      final String url = ".*account.*";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenRegexifiedUrlBeginsWithRegexSign() throws Exception {
+
+      final String url = "^.*account.*";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
