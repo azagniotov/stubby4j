@@ -20,7 +20,35 @@ public class CommandLineIntepreterTest {
 
 
    @Test
-   public void shouldBeTrueWhenMuteIsProvidedAsLongDescription() throws Exception {
+   public void testIsHelpWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-h"});
+      final boolean isHelp = commandLineInterpreter.isHelp();
+
+      assertThat(isHelp).isTrue();
+   }
+
+   @Test
+   public void testIsHelpWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--help"});
+      final boolean isHelp = commandLineInterpreter.isHelp();
+
+      assertThat(isHelp).isTrue();
+   }
+
+
+   @Test
+   public void testIsMuteWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-m"});
+      final boolean isMuteProvided = commandLineInterpreter.isMute();
+
+      assertThat(isMuteProvided).isTrue();
+   }
+
+   @Test
+   public void testIsMuteWhenLongOptionGiven() throws Exception {
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
       commandLineInterpreter.parseCommandLine(new String[]{"--mute"});
       final boolean isMuteProvided = commandLineInterpreter.isMute();
@@ -28,13 +56,149 @@ public class CommandLineIntepreterTest {
       assertThat(isMuteProvided).isTrue();
    }
 
-   @Test
-   public void shouldBeTrueWhenMuteIsProvidedAsShortDescription() throws Exception {
-      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-      commandLineInterpreter.parseCommandLine(new String[]{"-m"});
-      final boolean isMuteProvided = commandLineInterpreter.isMute();
 
-      assertThat(isMuteProvided).isTrue();
+   @Test
+   public void testIsYamlProvidedWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-d", "somefilename.yaml"});
+      final boolean isYamlProvided = commandLineInterpreter.isYamlProvided();
+
+      assertThat(isYamlProvided).isTrue();
+   }
+
+   @Test
+   public void testIsYamlProvidedWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--data", "somefilename.yaml"});
+      final boolean isYamlProvided = commandLineInterpreter.isYamlProvided();
+
+      assertThat(isYamlProvided).isTrue();
+   }
+
+   @Test
+   public void testtHasAdminPortWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-a", "888"});
+      final boolean isAdmin = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ADMINPORT);
+
+      assertThat(isAdmin).isTrue();
+   }
+
+   @Test
+   public void testHasAdminPortWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--admin", "8888"});
+      final boolean isAdmin = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ADMINPORT);
+
+      assertThat(isAdmin).isTrue();
+   }
+
+   @Test
+   public void testtHasStubsPortWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-s", "888"});
+      final boolean isAdmin = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_CLIENTPORT);
+
+      assertThat(isAdmin).isTrue();
+   }
+
+   @Test
+   public void testtHasStubsPortWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--stubs", "8888"});
+      final boolean isAdmin = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_CLIENTPORT);
+
+      assertThat(isAdmin).isTrue();
+   }
+
+   @Test
+   public void testtIsWatchWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-w"});
+      final boolean isWatch = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_WATCH);
+
+      assertThat(isWatch).isTrue();
+   }
+
+   @Test
+   public void testIsWatchWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--watch"});
+      final boolean isWatch = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_WATCH);
+
+      assertThat(isWatch).isTrue();
+   }
+
+   @Test
+   public void testtHasKeystoreLocationWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-k", "some/path/to/key"});
+      final boolean isKeystore = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_KEYSTORE);
+
+      assertThat(isKeystore).isTrue();
+   }
+
+   @Test
+   public void testHasKeystoreLocationWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--keystore", "some/path/to/key"});
+      final boolean isKeystore = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_KEYSTORE);
+
+      assertThat(isKeystore).isTrue();
+   }
+
+   @Test
+   public void testtHasLocationWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-l", "hostname"});
+      final boolean isLocation = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ADDRESS);
+
+      assertThat(isLocation).isTrue();
+   }
+
+   @Test
+   public void testHasLocationWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--location", "hostname"});
+      final boolean isLocation = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ADDRESS);
+
+      assertThat(isLocation).isTrue();
+   }
+
+   @Test
+   public void testtHasPasswordWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-p", "very-complex-password"});
+      final boolean isPassword = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_KEYPASS);
+
+      assertThat(isPassword).isTrue();
+   }
+
+   @Test
+   public void testHasPasswordWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--password", "very-complex-password"});
+      final boolean isPassword = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_KEYPASS);
+
+      assertThat(isPassword).isTrue();
+   }
+
+   @Test
+   public void testHasSslPortWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-t", "2443"});
+      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_SSLPORT);
+
+      assertThat(isSslGiven).isTrue();
+   }
+
+   @Test
+   public void testHasSslPortWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--ssl", "2443"});
+      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_SSLPORT);
+
+      assertThat(isSslGiven).isTrue();
    }
 
    @Test
@@ -70,14 +234,6 @@ public class CommandLineIntepreterTest {
       assertThat(actualConsoleOutput).isEqualTo(expectedConsoleOutput);
    }
 
-   @Test
-   public void shouldBeTrueWhenYamlIsProvided() throws Exception {
-      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-      commandLineInterpreter.parseCommandLine(new String[]{"--data", "somefilename.yaml"});
-      final boolean isYamlProvided = commandLineInterpreter.isYamlProvided();
-
-      assertThat(isYamlProvided).isTrue();
-   }
 
    @Test
    public void shouldBeFalseThatYamlIsNotProvided() throws Exception {
@@ -112,23 +268,6 @@ public class CommandLineIntepreterTest {
       commandLineInterpreter.parseCommandLine(new String[]{"--data"});
    }
 
-   @Test
-   public void testIsHelpWhenLongOptionGiven() throws Exception {
-      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-      commandLineInterpreter.parseCommandLine(new String[]{"--help"});
-      final boolean isHelp = commandLineInterpreter.isHelp();
-
-      assertThat(isHelp).isTrue();
-   }
-
-   @Test
-   public void testIsHelpWhenShortOptionGiven() throws Exception {
-      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-      commandLineInterpreter.parseCommandLine(new String[]{"-h"});
-      final boolean isHelp = commandLineInterpreter.isHelp();
-
-      assertThat(isHelp).isTrue();
-   }
 
    @Test
    public void shouldReturnOneCommandlineParamWhenHelpArgPresent() throws Exception {
