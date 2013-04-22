@@ -653,7 +653,7 @@ When creating stubbed request/response data for stubby4j, the config data should
 ```
 
 
-## How to Start stubby4j Programmatically
+### How to Start stubby4j Programmatically
 
 ```java
 private static StubbyClient stubbyClient;
@@ -707,7 +707,7 @@ public static void afterClass() throws Exception {
 }
 ```
 
-## How to Make HTTP Request to stubby4j at Runtime Using Client
+### How to Make HTTP Request to stubby4j at Runtime Using Client
 
 ```java
  @Test
@@ -848,7 +848,7 @@ public static void afterClass() throws Exception {
    }
 ```
 
-## How to Make HTTP Request with Basic Authorization to stubby4j at Runtime Using Client
+### How to Make HTTP Request with Basic Authorization to stubby4j at Runtime Using Client
 
 
 In order to configure Basic Authorization, you need to specify username followed by `:`, followed by password
@@ -899,7 +899,7 @@ will be prepended with the word "Basic". The final result will conform to HTTP h
    }
 ```
 
-## How to Configure HTTP Stub Data at Runtime
+### How to Configure HTTP Stub Data at Runtime
 
 In order to configure HTTP request and response stubs at runtime, you need to POST
 stub config data to the following end point: `http://<host>:<admin_port>/stubdata/new`
