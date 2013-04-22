@@ -43,6 +43,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Change Log](#change-log)
 * [Authors](#authors)
 * [Kudos](#kudos)
+* [See Also](#see-also)
 
 
 ## Building
@@ -1011,10 +1012,6 @@ documentation or developing software.
 2. Eric Mrak <enmrak@gmail.com>
 
 
-## See Also
-**[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
-
-
 ## Kudos
 A number of people have contributed to stubby4j by reporting problems, suggesting improvements or submitting changes. Special thanks fly out to the following **Ninjas** for their help, support and feedback
 
@@ -1026,6 +1023,10 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 * Ed Hewell
 * Kenny Lin
 * Logan McGrath
+
+
+## See Also
+**[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
 
 
 ## Copyright
