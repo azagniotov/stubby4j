@@ -36,11 +36,13 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 * [Building](#building)
 * [Dependencies](#dependencies)
-* [Maven Central](#maven-entral)
+* [Maven Central](#maven-central)
 * [Command-line Switches](#command-line-switches)
 * [YAML Configuration Explained](#yaml-configuration-explained)
 * [How to Start stubby4j Programmatically](#how-to-start-stubby4j-programmatically)
 * [Change Log](#change-log)
+* [Authors](#authors)
+* [Kudos](#kudos)
 
 
 ## Building
@@ -1000,16 +1002,31 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 * Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
 
+
 ## Authors
-See AUTHORS.md for details.
+A number of people have contributed directly to stubby4j by writing
+documentation or developing software.
 
-
-## Kudos
-See THANKS.md for details.
+1. Alexander Zagniotov <azagniotov@gmail.com>
+2. Eric Mrak <enmrak@gmail.com>
 
 
 ## See Also
 **[stubby4node](https://github.com/mrak/stubby4node):** A NodeJS implementation of stubby
+
+
+## Kudos
+A number of people have contributed to stubby4j by reporting problems, suggesting improvements or submitting changes. Special thanks fly out to the following **Ninjas** for their help, support and feedback
+
+* Isa Goksu
+* Eric Mrak
+* Oleksandr Berezianskyi
+* Sankalp Saxena
+* Simon Brunning
+* Ed Hewell
+* Kenny Lin
+* Logan McGrath
+
 
 ## Copyright
 See COPYRIGHT for details.
