@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml;
 
-import by.stub.cli.ANSITerminal;
+import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
@@ -49,22 +49,36 @@ public final class YamlParser {
       SNAKE_YAML = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
    }
 
+   private static final class YamlParserResolver extends Resolver {
+
+      YamlParserResolver() {
+         super();
+      }
+
+      @Override
+      protected void addImplicitResolvers() {
+         // no implicit resolvers - resolve everything to String
+      }
+   }
+
    private static final String YAML_NODE_REQUEST = "request";
 
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
+
+      final Object loadedYaml = SNAKE_YAML.load(yamlReader);
+      if (!(loadedYaml instanceof List)) {
+         throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+      }
+
       this.dataConfigHomeDirectory = dataConfigHomeDirectory;
+      final List<?> loadedYamlData = (List) loadedYaml;
 
       final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
-      final List<?> loadedYamlData = loadYamlData(yamlReader);
-
       for (final Object rawParentNode : loadedYamlData) {
 
-         final Map<String, Object> parentNode = (Map<String, Object>) rawParentNode;
-         final StubHttpLifecycle parentStub = unmarshallYamlNodeToHttpLifeCycle(parentNode);
-
-         httpLifecycles.add(parentStub);
-         reportToConsole(parentStub);
+         final Map<String, Object> parentNodePropertiesMap = (Map<String, Object>) rawParentNode;
+         httpLifecycles.add(unmarshallYamlNodeToHttpLifeCycle(parentNodePropertiesMap));
       }
 
       return httpLifecycles;
@@ -99,6 +113,8 @@ public final class YamlParser {
          final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequest.class);
          stubHttpLifecycle.setRequest(targetStub);
 
+         ConsoleUtils.logUnmarshalledStubRequest(targetStub);
+
       } else {
          final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponse.class);
          stubHttpLifecycle.setResponse(targetStub);
@@ -125,14 +141,14 @@ public final class YamlParser {
 
          } else if (pairKey.toLowerCase().equals("method")) {
             massagedPairValue = new ArrayList<String>(1) {{
-               add(pairValueToString(rawPairValue));
+               add(StringUtils.objectToString(rawPairValue));
             }};
 
          } else if (pairKey.toLowerCase().equals("file")) {
-            massagedPairValue = extractBytesFromFilecontent(rawPairValue);
+            massagedPairValue = FileUtils.fileToBytes(dataConfigHomeDirectory, StringUtils.objectToString(rawPairValue));
 
          } else {
-            massagedPairValue = pairValueToString(rawPairValue);
+            massagedPairValue = StringUtils.objectToString(rawPairValue);
          }
 
          ReflectionUtils.setPropertyValue(targetStub, pairKey, massagedPairValue);
@@ -170,32 +186,8 @@ public final class YamlParser {
       return targetStubList;
    }
 
-   private void reportToConsole(final StubHttpLifecycle parentStub) {
-      final List<String> method = parentStub.getRequest().getMethod();
-      final String url = parentStub.getRequest().getUrl();
-      final String loadedMsg = String.format("Loaded: %s %s", method, url);
-      ANSITerminal.loaded(loadedMsg);
-   }
 
-   private byte[] extractBytesFromFilecontent(final Object rawPairValue) throws IOException {
-
-      final String relativeFilePath = pairValueToString(rawPairValue);
-      final String extension = StringUtils.extractFilenameExtension(relativeFilePath);
-
-      if (FileUtils.ASCII_TYPES.contains(extension)) {
-         return FileUtils.asciiFileToUtf8Bytes(dataConfigHomeDirectory, relativeFilePath);
-      }
-
-      return FileUtils.binaryFileToBytes(dataConfigHomeDirectory, relativeFilePath);
-   }
-
-   private String pairValueToString(final Object value) throws IOException {
-      final String rawValue = value != null ? value.toString() : "";
-
-      return rawValue.trim();
-   }
-
-   protected Map<String, String> encodeAuthorizationHeader(final Object value) {
+   private Map<String, String> encodeAuthorizationHeader(final Object value) {
 
       final Map<String, String> pairValue = (Map<String, String>) value;
       if (!pairValue.containsKey(StubRequest.AUTH_HEADER)) {
@@ -207,29 +199,5 @@ public final class YamlParser {
       pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
 
       return pairValue;
-   }
-
-   protected List loadYamlData(final Reader io) throws IOException {
-
-      final Object loadedYaml = SNAKE_YAML.load(io);
-
-      if (loadedYaml instanceof List) {
-         return (List) loadedYaml;
-      }
-
-      throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
-   }
-
-
-   private static final class YamlParserResolver extends Resolver {
-
-      public YamlParserResolver() {
-         super();
-      }
-
-      @Override
-      protected void addImplicitResolvers() {
-         // no implicit resolvers - resolve everything to String
-      }
    }
 }

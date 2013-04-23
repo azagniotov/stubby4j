@@ -21,11 +21,12 @@ package by.stub.utils;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -84,6 +85,14 @@ public final class ConsoleUtils {
       } else {
          ANSITerminal.log(logMessage);
       }
+   }
+
+   public static void logUnmarshalledStubRequest(final StubRequest parsedStubRequest) {
+      final List<String> method = parsedStubRequest.getMethod();
+      final String url = parsedStubRequest.getUrl();
+      final String loadedMsg = String.format("Loaded: %s %s", method, url);
+
+      ANSITerminal.loaded(loadedMsg);
    }
 
    private static String getTime() {

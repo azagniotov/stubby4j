@@ -21,6 +21,7 @@ package by.stub.utils;
 
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -126,5 +127,9 @@ public final class StringUtils {
 
    public static String encodeBase64(final String toEncode) {
       return Base64.encodeBase64String(StringUtils.getBytesUtf8(toEncode));
+   }
+
+   public static String objectToString(final Object value) throws IOException {
+      return (value != null ? value.toString().trim() : "");
    }
 }

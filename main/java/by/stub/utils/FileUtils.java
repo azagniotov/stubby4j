@@ -22,7 +22,6 @@ package by.stub.utils;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.*;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -100,6 +99,17 @@ public final class FileUtils {
       final String loadedContent = FileUtils.asciiFileToString(dataYamlConfigParentDir, relativePath);
 
       return loadedContent.getBytes(StringUtils.charsetUTF8());
+   }
+
+   public static  byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {
+
+      final String extension = StringUtils.extractFilenameExtension(filePath);
+
+      if (FileUtils.ASCII_TYPES.contains(extension)) {
+         return FileUtils.asciiFileToUtf8Bytes(fileParentDirectory, filePath);
+      }
+
+      return FileUtils.binaryFileToBytes(fileParentDirectory, filePath);
    }
 
 
