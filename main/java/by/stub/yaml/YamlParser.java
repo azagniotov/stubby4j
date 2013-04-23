@@ -46,23 +46,25 @@ public final class YamlParser {
    private final static Yaml SNAKE_YAML;
 
    static {
+
+      final class YamlParserResolver extends Resolver {
+
+         YamlParserResolver() {
+            super();
+         }
+
+         @Override
+         protected void addImplicitResolvers() {
+            // no implicit resolvers - resolve everything to String
+         }
+      }
+
       SNAKE_YAML = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
    }
 
-   private static final class YamlParserResolver extends Resolver {
-
-      YamlParserResolver() {
-         super();
-      }
-
-      @Override
-      protected void addImplicitResolvers() {
-         // no implicit resolvers - resolve everything to String
-      }
-   }
-
    private static final String YAML_NODE_REQUEST = "request";
-
+   private static final String YAML_NODE_METHOD = "method";
+   private static final String YAML_NODE_FILE = "file";
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
 
@@ -139,12 +141,12 @@ public final class YamlParser {
          } else if (rawPairValue instanceof Map) {
             massagedPairValue = encodeAuthorizationHeader(rawPairValue);
 
-         } else if (pairKey.toLowerCase().equals("method")) {
+         } else if (pairKey.toLowerCase().equals(YAML_NODE_METHOD)) {
             massagedPairValue = new ArrayList<String>(1) {{
                add(StringUtils.objectToString(rawPairValue));
             }};
 
-         } else if (pairKey.toLowerCase().equals("file")) {
+         } else if (pairKey.toLowerCase().equals(YAML_NODE_FILE)) {
             massagedPairValue = FileUtils.fileToBytes(dataConfigHomeDirectory, StringUtils.objectToString(rawPairValue));
 
          } else {

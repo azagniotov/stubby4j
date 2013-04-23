@@ -1,7 +1,6 @@
 package by.stub.yaml;
 
 import by.stub.builder.yaml.YamlBuilder;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -9,12 +8,10 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import com.google.api.client.http.HttpMethods;
 import org.fest.assertions.data.MapEntry;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -473,59 +470,7 @@ public class YamlParserTest {
    }
 
 
-   @Test
-   public void loadTest_shouldUnmarshallHugeYamlIntoObjectTree_WhenYAMLValid() throws Exception {
-
-      final String baseRequestUrl = "/some/uri";
-
-      final String expectedHeaderKey = "location";
-      final String expectedHeaderValue = "/invoice/123";
-
-      final String expectedParamOne = "paramOne";
-      final String expectedParamTwo = "paramTwo";
-
-      final String stubbedResponseBody = "Hello, this is a response body";
-      final String stubbedResponseStatus = "301";
-
-      final int NUMBER_OF_HTTPCYCLES = 1000;
-      final StringBuilder BUILDER = new StringBuilder();
-
-      for (int idx = 1; idx <= NUMBER_OF_HTTPCYCLES; idx++) {
-         String expectedUrl = String.format("%s/%s", baseRequestUrl, idx);
-
-         String yaml = YAML_BUILDER.newStubbedRequest()
-            .withMethodGet()
-            .withUrl(expectedUrl)
-            .withQuery(expectedParamOne, String.valueOf(idx))
-            .withQuery(expectedParamTwo, String.valueOf(idx))
-            .newStubbedResponse()
-            .withStatus(stubbedResponseStatus)
-            .withHeaders(expectedHeaderKey, expectedHeaderValue)
-            .withLiteralBody(stubbedResponseBody).build();
-
-         BUILDER.append(yaml).append("\n\n");
-      }
-
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(BUILDER.toString());
-      assertThat(loadedHttpCycles.size()).isEqualTo(NUMBER_OF_HTTPCYCLES);
-
-      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(989);
-      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
-
-      assertThat(actualRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 990));
-      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 990));
-      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 990));
-
-      final MapEntry headerEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
-      assertThat(actualResponse.getHeaders()).contains(headerEntry);
-   }
-
-
    private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
-
-      final YamlParser yamlParser = new YamlParser();
-
-      return yamlParser.parse(".", FileUtils.constructReader(yaml));
+      return new YamlParser().parse(".", FileUtils.constructReader(yaml));
    }
 }
