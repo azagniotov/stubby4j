@@ -1,5 +1,6 @@
 package by.stub.handlers.strategy;
 
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -15,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -51,7 +53,7 @@ public class DefaultResponseHandlingStrategyTest {
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
 
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
@@ -72,7 +74,7 @@ public class DefaultResponseHandlingStrategyTest {
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
 
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
@@ -86,7 +88,7 @@ public class DefaultResponseHandlingStrategyTest {
          }
       });
 
-
+      when(mockAssertionRequest.getQuery()).thenReturn(new HashMap<String, String>());
       defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
@@ -97,7 +99,7 @@ public class DefaultResponseHandlingStrategyTest {
    public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);

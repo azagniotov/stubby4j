@@ -1,5 +1,6 @@
 package by.stub.handlers.strategy;
 
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -46,7 +47,7 @@ public class RedirectResponseHandlingStrategyTest {
    public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("301");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
@@ -64,7 +65,7 @@ public class RedirectResponseHandlingStrategyTest {
    public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("301");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);

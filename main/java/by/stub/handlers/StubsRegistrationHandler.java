@@ -82,7 +82,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
          response.setStatus(HttpStatus.CREATED_201);
          response.getWriter().println("Configuration created successfully");
 
-         ConsoleUtils.logOutgoingResponse(request, new HttpServletResponseWithGetStatus(response), NAME);
+         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), new HttpServletResponseWithGetStatus(response), NAME);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
       }

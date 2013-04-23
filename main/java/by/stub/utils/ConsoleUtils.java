@@ -62,7 +62,7 @@ public final class ConsoleUtils {
       ANSITerminal.incoming(logMessage);
    }
 
-   public static void logOutgoingResponse(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final String source) {
+   public static void logOutgoingResponse(final String url, final HttpServletResponseWithGetStatus wrapper, final String source) {
 
       final int status = wrapper.getStatus();
 
@@ -70,7 +70,7 @@ public final class ConsoleUtils {
          getTime(),
          status,
          source,
-         request.getRequestURI(),
+         url,
          HttpStatus.getMessage(status)
       );
 

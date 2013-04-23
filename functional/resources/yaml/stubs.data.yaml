@@ -1,5 +1,17 @@
 -  request:
       method: [GET, POST, PUT]
+      url: ^/resources/asn/
+
+   response:
+      status: 200
+      body: >
+         {"status": "ASN found!"}
+      headers:
+         content-type: application/json
+
+
+-  request:
+      method: [GET, POST, PUT]
       url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
 
    response:

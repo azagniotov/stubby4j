@@ -19,11 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy;
 
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface StubResponseHandlingStrategy {
-   void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException;
+   void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException;
 }

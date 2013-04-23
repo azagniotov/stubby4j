@@ -28,6 +28,7 @@ import org.eclipse.jetty.http.HttpMethods;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -37,6 +38,7 @@ import java.util.regex.Pattern;
 public class StubRequest {
 
    private static final String REGEX_START = "^";
+   private static final String REGEX_END = "$";
    public static final String AUTH_HEADER = "authorization";
 
    private String url;
@@ -73,7 +75,7 @@ public class StubRequest {
    }
 
    public final String getUrl() {
-      if (query.isEmpty()) {
+      if (getQuery().isEmpty()) {
          return url;
       }
 
@@ -148,9 +150,18 @@ public class StubRequest {
    }
 
    private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
-      final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
 
-      return pattern.matcher(assertingUrl).matches();
+      final Pattern pattern = Pattern.compile(dataStoreRequestUrl);
+      final Matcher matcher = pattern.matcher(assertingUrl);
+
+      final boolean isRegexStart = dataStoreRequestUrl.startsWith(REGEX_START);
+      final boolean isRegexEnd = dataStoreRequestUrl.endsWith(REGEX_END);
+
+      if (isRegexStart || isRegexEnd) {
+         return matcher.find();
+      }
+
+      return matcher.matches();
    }
 
    private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
@@ -180,7 +191,7 @@ public class StubRequest {
    }
 
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
-      if (dataStoreMap.isEmpty() && thisAssertingMap.isEmpty()) {
+      if (dataStoreMap.isEmpty()) {
          return true;
       }
 
@@ -192,13 +203,18 @@ public class StubRequest {
    }
 
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-      final boolean isRegexUrl = StringUtils.isSet(dataStoreUrl) && dataStoreUrl.startsWith(REGEX_START);
 
-      return stringsMatch(dataStoreUrl, thisAssertingUrl) || (isRegexUrl && regexMatch(dataStoreUrl, getUrl()));
+      if (!StringUtils.isSet(dataStoreUrl)) {
+         return true;
+      } else if (!StringUtils.isSet(thisAssertingUrl)) {
+         return false;
+      }
+
+      return regexMatch(dataStoreUrl, thisAssertingUrl);
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return !StringUtils.isSet(dataStorePostBody) || stringsMatch(dataStorePostBody, thisAssertingPostBody);
+      return stringsMatch(dataStorePostBody, thisAssertingPostBody);
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
@@ -214,7 +230,7 @@ public class StubRequest {
 
    @Override
    public int hashCode() {
-      int result = url.hashCode();
+      int result = (url != null ? url.hashCode() : 0);
       result = 31 * result + method.hashCode();
       result = 31 * result + (post != null ? post.hashCode() : 0);
       result = 31 * result + (file != null ? Arrays.hashCode(file) : 0);

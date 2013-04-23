@@ -1,7 +1,6 @@
 package by.stub;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.client.StubbyClient;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.ByteArrayContent;
@@ -78,6 +77,29 @@ public class StubsTest {
    }
 
    @Test
+   public void shouldMatchRequest_WhenStubbedUrlRegexBeginsWith_ButGoodAssertionSent() throws Exception {
+
+      //^/resources/asn/
+
+      final List<String> assertingRequests = new LinkedList<String>() {{
+         add("/resources/asn/");
+         add("/resources/asn/123");
+         add("/resources/asn/eew97we9");
+      }};
+
+      for (final String assertingRequest : assertingRequests) {
+
+         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
+         HttpResponse response = request.execute();
+         String responseContent = response.parseAsString().trim();
+
+         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+         assertThat("{\"status\": \"ASN found!\"}").isEqualTo(responseContent);
+      }
+   }
+
+   @Test
    public void shouldMatchRequest_WhenStubbedUrlRegexified_ButGoodAssertionSent() throws Exception {
 
       //^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
@@ -101,7 +123,7 @@ public class StubsTest {
    }
 
    @Test
-   public void shouldMatchRequest_WhenStubbedUrlAndQueryRegexified_ButGoodAssertionSent() throws Exception {
+   public void shouldMatchRequest_WhenStubbedUrlRegexifiedAndNoStubbedQueryParams() throws Exception {
 
       // ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
 
@@ -119,32 +141,7 @@ public class StubsTest {
          String responseContent = response.parseAsString().trim();
 
          assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-         assertThat("{\"status\": \"The regex with query params works!\"}").isEqualTo(responseContent);
-      }
-   }
-
-   @Test
-   public void shouldNotMatchRequest_WhenStubbedUrlAndQueryRegexified_ButBadAssertionSent() throws Exception {
-
-      // ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
-
-      final List<String> assertingRequests = new LinkedList<String>() {{
-         add("/abc-efg/12/KM/jhgjkhg234234l2?paramOne=valueOne&paramThree=valueTwo");
-         add("/abc-efg/12/KM/23423?paramOne=aaaBLaH&paramTwo=6WERTYUI");
-         add("/abc-efg/12/KM/23423?paramOne=aaaBffewfefergergrgergergregLaH&paramTwo=WERTYUI");
-         add("/aaa-aaa/00/AA/qwerty?paramOne=fk&paramTwo=Two");
-      }};
-
-      for (final String assertingRequest : assertingRequests) {
-
-         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
-         HttpRequest request = constructHttpRequest(HttpMethods.GET, requestUrl);
-         HttpResponse response = request.execute();
-         String responseContent = response.parseAsString().trim();
-
-         final String errorMessage = String.format("No data found for GET request at URI %s", assertingRequest.replaceAll("&", "&amp;"));
-         assertThat(responseContent).contains(errorMessage);
-         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+         assertThat("{\"status\": \"The regex works!\"}").isEqualTo(responseContent);
       }
    }
 

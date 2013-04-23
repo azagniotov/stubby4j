@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers.strategy;
 
 import by.stub.exception.Stubby4JException;
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
+import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -40,7 +42,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    }
 
    @Override
-   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws IOException {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
       setStubResponseHeaders(foundStubResponse, response);
 

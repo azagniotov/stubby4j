@@ -57,13 +57,15 @@ public class StubsHandler extends AbstractHandler {
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertionStubRequest);
       final StubResponseHandlingStrategy strategyStubResponse = HandlingStrategyFactory.identifyHandlingStrategyFor(foundStubResponse);
+      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 
       try {
-         strategyStubResponse.handle(response, assertionStubRequest);
-         ConsoleUtils.logOutgoingResponse(request, new HttpServletResponseWithGetStatus(response), NAME);
-
+         strategyStubResponse.handle(wrapper, assertionStubRequest);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
+
+      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper, "stubs");
+
    }
 }

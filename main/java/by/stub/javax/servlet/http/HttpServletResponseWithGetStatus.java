@@ -31,7 +31,7 @@ import java.io.IOException;
  * @author Alexander Zagniotov
  * @since 10/23/12, 2:29 PM
  */
-public final class HttpServletResponseWithGetStatus extends HttpServletResponseWrapper {
+public class HttpServletResponseWithGetStatus extends HttpServletResponseWrapper {
 
    private int status = HttpStatus.OK_200;
 

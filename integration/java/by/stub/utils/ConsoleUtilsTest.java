@@ -58,7 +58,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -76,7 +76,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -94,7 +94,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -112,7 +112,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -130,7 +130,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -147,7 +147,7 @@ public class ConsoleUtilsTest {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock, wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
