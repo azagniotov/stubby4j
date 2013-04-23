@@ -963,7 +963,7 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 ### 2.0.1
 
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
-* Console was logging only HTTP requests with status 200 [BUG]
+* ANSI logging in the terminal was working only for HTTP requests with status 200 [BUG]
 
 ### 2.0.0
 
