@@ -728,10 +728,6 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 
 ## Change Log
-### 2.0.2 (SNAPSHOT)
-
-* Updated to Jetty v8.1.10.v20130312 [ENHANCEMENT]
-
 ### 2.0.1
 
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
