@@ -12,7 +12,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Dependencies](#dependencies)
 * [Maven Central](#maven-central)
 * [Command-line Switches](#command-line-switches)
-* [YAML Configuration Explained](#yaml-configuration-explained)
+* [Endpoint Configuration](#endpoint-configuration)
 * [How to Start stubby4j Programmatically](#how-to-start-stubby4j-programmatically)
 * [Change Log](#change-log)
 * [Authors](#authors)
@@ -129,6 +129,7 @@ Here is a fully-populated, unrealistic endpoint:
             <unaryTag/>
          </envelope>
       file: tryMyFirst.xml
+
    response:
       status: 200
       latency: 5000
@@ -164,6 +165,12 @@ This is the simplest you can get:
       url: /
 ```
 
+A demonstration when not using regular expressions:
+```yaml
+-  request:
+      url: /some/resource/that/will/be/fully/matched
+```
+
 A demonstration using regular expressions:
 ```yaml
 -  request:
@@ -174,6 +181,9 @@ A demonstration using regular expressions:
 
 -  request:
       url: ^/must/be/this/exactly/with/optional/trailing/slash/?$
+
+-  request:
+      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 ```
 
 #### method
@@ -201,13 +211,6 @@ A demonstration using regular expressions:
 -  request:
       url: /anything
       method: [GET, HEAD]
-
--  request:
-      url: ^/yonder
-      method:
-         -  GET
-         -  HEAD
-         -  POST
 ```
 
 #### query
