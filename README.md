@@ -109,7 +109,6 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h]
  -w,--watch            Reload datafile when changes are made.
 ```
 
-## YAML Configuration Explained
 ## Endpoint Configuration
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
@@ -714,6 +713,7 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
 * ANSI logging in the terminal was working only for HTTP requests with status 200 [BUG]
+* Documentation refinement [COSMETICS]
 
 ### 2.0.0
 
