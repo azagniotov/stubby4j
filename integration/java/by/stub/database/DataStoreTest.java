@@ -247,7 +247,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationHeaderSet() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationHeaderSubmitted() throws Exception {
 
       final String url = "/invoice/555";
 
@@ -283,7 +283,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderMissing() throws Exception {
+   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderNotSubmitted() throws Exception {
 
       final String url = "/invoice/555";
       final String expectedStatus = "200";
@@ -317,7 +317,7 @@ public class DataStoreTest {
 
 
    @Test
-   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderSetWithBadCredentials() throws Exception {
+   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderSubmittedWithBadCredentials() throws Exception {
 
       final String url = "/invoice/555";
 
@@ -336,6 +336,36 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet()
             .withHeaders(StubRequest.AUTH_HEADER, "Basic BadCredentials").build();
+
+      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
+      assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+      assertThat(foundStubResponse.getBody()).isEqualTo("");
+   }
+
+   @Test
+   public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderSubmittedWithNull() throws Exception {
+
+      final String url = "/invoice/555";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .withHeaders("authorization", "'bob:secret'")
+         .newStubbedResponse()
+         .withStatus("200")
+         .withLiteralBody("This is a response for 555").build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders(StubRequest.AUTH_HEADER, null).build();
 
       final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
 

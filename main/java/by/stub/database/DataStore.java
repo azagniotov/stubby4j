@@ -29,7 +29,6 @@ import by.stub.yaml.stubs.UnauthorizedStubResponse;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class DataStore {
 
@@ -51,32 +50,23 @@ public class DataStore {
 
    private StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
 
-      final int indexOf = stubHttpLifecycles.indexOf(assertingLifecycle);
-      if (indexOf < 0) {
+      final int listIndex = stubHttpLifecycles.indexOf(assertingLifecycle);
+      if (listIndex < 0) {
          return new NotFoundStubResponse();
       }
 
-      final StubHttpLifecycle matchedLifecycle = stubHttpLifecycles.get(indexOf);
+      final StubHttpLifecycle matchedLifecycle = stubHttpLifecycles.get(listIndex);
+      final StubResponse stubResponse = matchedLifecycle.getResponse();
 
-      final Map<String, String> headers = matchedLifecycle.getRequest().getHeaders();
-      if (headers.containsKey(StubRequest.AUTH_HEADER)) {
-         final String foundAuthorization = headers.get(StubRequest.AUTH_HEADER);
-         final String givenAuthorization = assertingLifecycle.getRequestAuthorizationHeader();
-
-         if (!foundAuthorization.equals(givenAuthorization)) {
-            return new UnauthorizedStubResponse();
-         }
+      if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {
+         return new UnauthorizedStubResponse();
       }
 
-      final StubResponse stubResponse = matchedLifecycle.getResponse();
       if (stubResponse.hasHeader("location")) {
-         final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
-
-         return redirectStubResponse.configure(stubResponse);
+         return new RedirectStubResponse().configure(stubResponse);
       }
 
       return stubResponse;
-
    }
 
    public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {

@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 
+import by.stub.utils.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,8 +68,18 @@ public final class StubHttpLifecycle {
       return (LinkedList<StubResponse>) response;
    }
 
+   public boolean isRestricted() {
+      return StringUtils.isSet(getAuthorizationHeader());
+   }
 
-   public String getRequestAuthorizationHeader() {
+   public boolean hasNotAuthorized(final StubHttpLifecycle assertingLifecycle) {
+      final String stubbedAuthorization = getAuthorizationHeader();
+      final String assertingAuthorization = assertingLifecycle.getAuthorizationHeader();
+
+      return !stubbedAuthorization.equals(assertingAuthorization);
+   }
+
+   private String getAuthorizationHeader() {
       return request.getHeaders().get(StubRequest.AUTH_HEADER);
    }
 

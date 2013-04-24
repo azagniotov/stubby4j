@@ -210,6 +210,12 @@ A demonstration using regular expressions:
 -  request:
       url: /anything
       method: [GET, HEAD]
+
+-  request:
+      url: /anything
+      method:
+         -  GET
+         -  HEAD
 ```
 
 #### query

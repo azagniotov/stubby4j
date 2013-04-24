@@ -1,5 +1,8 @@
 -  request:
-      method: [GET, POST, PUT]
+      method:
+         -  GET
+         -  POST
+         -  PUT 
       url: ^/resources/asn/
 
    response:
