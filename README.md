@@ -13,7 +13,9 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Maven Central](#maven-central)
 * [Command-line Switches](#command-line-switches)
 * [Endpoint Configuration](#endpoint-configuration)
-* [How to Start stubby4j Programmatically](#how-to-start-stubby4j-programmatically)
+* [The Admin Portal](#the-admin-portal)
+* [The Stubs Portal](#the-stubs-portal)
+* [Programmatic API](#programmatic-api)
 * [Change Log](#change-log)
 * [Authors](#authors)
 * [Kudos](#kudos)
@@ -425,7 +427,111 @@ Assuming a match has been made against the given `request` object, data from `re
 ```
 
 
-## How to Start stubby4j Programmatically
+## The Admin Portal
+
+The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line options.
+
+### The Status Page
+
+You can also view the currently configured endpoints by going to `localhost:8889/ping`
+
+### Supplying Endpoints to Stubby
+
+Submit `POST` requests to `localhost:8889/stubdata/new` or load a data-file (-d / --data) with the following structure for each endpoint:
+
+* `request`: describes the client's call to the server
+   * `method`: GET/POST/PUT/DELETE/etc.
+   * `url`: the URI regex string. GET parameters should also be included inline here
+   * `query`: a key/value map of query string parameters included with the request
+   * `headers`: a key/value map of headers the server should respond to
+   * `post`: a string matching the textual body of the response.
+   * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
+* `response`: describes the server's response to the client
+   * `headers`: a key/value map of headers the server should use in it's response
+   * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
+   * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
+   * `body`: the textual body of the server's response to the client
+   * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+
+#### YAML (file only)
+```yaml
+-  request:
+      url: ^/path/to/something$
+      method: POST
+      headers:
+         authorization: "Basic usernamez:passwordinBase64"
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      latency: 1000
+      status: 200
+      body: You're request was successfully processed!
+
+-  request:
+      url: ^/path/to/anotherThing
+      query:
+         a: anything
+         b: more
+      method: GET
+      headers:
+         Content-Type: application/json
+      post:
+   response:
+      headers:
+         Content-Type: application/json
+         Access-Control-Allow-Origin: "*"
+      status: 204
+      file: path/to/page.html
+
+-  request:
+      url: ^/path/to/thing$
+      method: POST
+      headers:
+         Content-Type: application/json
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      status: 304
+```
+
+
+## The Stubs Portal
+
+Requests sent to any url at `localhost:8882` (or wherever you told stubby to run) will search through the available endpoints and, if a match is found, respond with that endpoint's `response` data
+
+### How Endpoints Are Matched
+
+For a given endpoint, stubby only cares about matching the properties of the request that have been defined in the YAML. The exception to this rule is `method`; if it is omitted it is defaulted to `GET`.
+
+For instance, the following will match any `POST` request to the root url:
+
+```yaml
+-  request:
+      url: /
+      method: POST
+   response: {}
+```
+
+The request could have any headers and any post body it wants. It will match the above.
+
+Pseudocode:
+
+```
+for each <endpoint> of stored endpoints {
+
+   for each <property> of <endpoint> {
+      if <endpoint>.<property> != <incoming request>.<property>
+         next endpoint
+   }
+
+   return <endpoint>
+}
+```
+
+
+## Programmatic API
 
 ```java
 private static StubbyClient stubbyClient;
