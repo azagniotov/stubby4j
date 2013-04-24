@@ -56,7 +56,7 @@ public class YamlBuilderTest {
          .withLineBreak()
          .build();
 
-      assertThat(expectedYaml).isEqualTo(actualYaml);
+      assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
 
@@ -104,7 +104,7 @@ public class YamlBuilderTest {
          .withLineBreak()
          .build();
 
-      assertThat(expectedYaml).isEqualTo(actualYaml);
+      assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
 
@@ -130,7 +130,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withLiteralBody("OK").build();
 
-      assertThat(expectedYaml).isEqualTo(actualYaml);
+      assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
 
@@ -164,7 +164,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withFile("../json/systemtest-body-response-as-file.json").build();
 
-      assertThat(expectedYaml).isEqualTo(actualYaml);
+      assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
 
@@ -202,7 +202,7 @@ public class YamlBuilderTest {
          withStatus("200").
          withFoldedBody("{\"id\": \"123\", \"status\": \"updated\"}").build();
 
-      assertThat(expectedYaml).isEqualTo(actualYaml);
+      assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
 }

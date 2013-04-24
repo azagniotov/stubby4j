@@ -16,12 +16,11 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public final class YamlBuilder {
 
-   private static final String TWO_SPACE = "  ";
-   private static final String THREE_SPACE = "   ";
+   private static final String TWO_SPACE = String.format("%1$2s", "");
+   private static final String THREE_SPACE = String.format("%1$3s", "");
    private static final String SIX_SPACE = String.format("%s%s", THREE_SPACE, THREE_SPACE);
    private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
    private static final String TWELVE_SPACE = String.format("%s%s", NINE_SPACE, THREE_SPACE);
-   private static final String FIFTEEN_SPACE = String.format("%s%s", TWELVE_SPACE, THREE_SPACE);
 
    private final static String REQUEST = String.format("-%s%s", TWO_SPACE, "request:");
    private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");

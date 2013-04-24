@@ -238,7 +238,7 @@ public class StubsTest {
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
       assertThat(response.getHeaders()).containsKey("content-type");
-      assertThat(response.getHeaders()).containsValue("application/pdf;charset=UTF-8");
+      assertThat(response.getHeaders().getContentType()).contains("application/pdf;charset=UTF-8");
       assertThat(response.getHeaders()).containsKey("content-disposition");
    }
 

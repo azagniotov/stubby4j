@@ -70,13 +70,13 @@ stubby4j is a fat JAR, which contains the following dependencies:
 * commons-cli-1.2.jar
 * snakeyaml-1.11.jar
 * javax.servlet-3.0.0.v201112011016.jar
-* jetty-server-8.1.7.v20120910.jar
-* jetty-continuation-8.1.7.v20120910.jar
-* jetty-util-8.1.7.v20120910.jar
-* jetty-io-8.1.7.v20120910.jar
-* jetty-http-8.1.7.v20120910.jar
+* jetty-server-8.1.10.v20130312.jar
+* jetty-continuation-8.1.10.v20130312.jar
+* jetty-util-8.1.10.v20130312.jar
+* jetty-io-8.1.10.v20130312.jar
+* jetty-http-8.1.10.v20130312.jar
 
-**stubby4j is also compatible with Jetty 7.x.x and servlet API v3.0**
+**stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
 
 
 ## Maven Central
@@ -728,6 +728,10 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 
 ## Change Log
+### 2.0.2 (SNAPSHOT)
+
+* Updated to Jetty v8.1.10.v20130312 [ENHANCEMENT]
+
 ### 2.0.1
 
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
