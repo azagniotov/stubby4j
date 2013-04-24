@@ -119,15 +119,70 @@ public final class YamlBuilder {
 
       public Request withHeaders(final String key, final String value) {
 
-         if (unusedNodes.contains(REQUEST_HEADERS_KEY)) {
-            REQUEST_STRING_BUILDER.append(HEADERS).append(NL);
-            unusedNodes.remove(REQUEST_HEADERS_KEY);
-         }
+         checkHeadersNodeRequired();
 
          final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
          REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
+      }
+
+      public Request withHeaderContentType(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-type");
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderContentLength(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-length");
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderContentLanguage(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-language");
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderContentEncoding(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-encoding");
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+
+      public Request withHeaderAuthorization(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "authorization");
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      private void checkHeadersNodeRequired() {
+         if (unusedNodes.contains(REQUEST_HEADERS_KEY)) {
+            REQUEST_STRING_BUILDER.append(HEADERS).append(NL);
+            unusedNodes.remove(REQUEST_HEADERS_KEY);
+         }
       }
 
       public Request withLiteralPost(final String post) {
@@ -241,6 +296,73 @@ public final class YamlBuilder {
          RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
+      }
+
+      public Response withHeaderContentType(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-type");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Response withHeaderPragma(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "pragma");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Response withHeaderContentLength(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-length");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Response withHeaderContentLanguage(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-language");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Response withHeaderContentEncoding(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-encoding");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Response withHeaderLocation(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "location");
+         RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      private void checkHeadersNodeRequired() {
+         if (unusedNodes.contains(RESPONSE_HEADERS_KEY)) {
+            RESPONSE_STRING_BUILDER.append(HEADERS).append(NL);
+            unusedNodes.remove(RESPONSE_HEADERS_KEY);
+         }
       }
 
       public Response withSequenceResponseHeaders(final String key, final String value) {

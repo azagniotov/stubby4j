@@ -349,13 +349,12 @@ public class YamlParserTest {
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeader() throws Exception {
 
-      final String headerOneKey = "authorization";
-      final String headerOneValue = "bob:secret";
+      final String authorization = "bob:secret";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaders(headerOneKey, headerOneValue)
+         .withHeaderAuthorization(authorization)
          .newStubbedResponse()
          .withStatus("301").build();
 
@@ -364,8 +363,8 @@ public class YamlParserTest {
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(headerOneValue));
-      final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, encodedAuthorizationHeader);
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
+      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
@@ -373,13 +372,12 @@ public class YamlParserTest {
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeader() throws Exception {
 
-      final String headerOneKey = "authorization";
-      final String headerOneValue = "";
+      final String authorization = "";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaders(headerOneKey, headerOneValue)
+         .withHeaderAuthorization("")
          .newStubbedResponse()
          .withStatus("301").build();
 
@@ -388,8 +386,8 @@ public class YamlParserTest {
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(headerOneValue));
-      final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, encodedAuthorizationHeader);
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
+      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
@@ -398,25 +396,22 @@ public class YamlParserTest {
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithMultipleHeaders() throws Exception {
 
-      final String headerOneKey = "location";
-      final String headerOneValue = "/invoice/123";
-
-      final String headerTwoKey = "content-type";
-      final String headerTwoValue = "application-json";
+      final String location = "/invoice/123";
+      final String contentType = "application-json";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
          .newStubbedResponse()
-         .withHeaders(headerOneKey, headerOneValue)
-         .withHeaders(headerTwoKey, headerTwoValue).build();
+         .withHeaderContentType(contentType)
+         .withHeaderLocation(location).build();
 
 
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
-      final MapEntry headerOneEntry = MapEntry.entry(headerOneKey, headerOneValue);
-      final MapEntry headerTwoEntry = MapEntry.entry(headerTwoKey, headerTwoValue);
+      final MapEntry headerOneEntry = MapEntry.entry("location", location);
+      final MapEntry headerTwoEntry = MapEntry.entry("content-type", contentType);
 
       assertThat(actualResponse.getHeaders()).contains(headerOneEntry);
       assertThat(actualResponse.getHeaders()).contains(headerTwoEntry);

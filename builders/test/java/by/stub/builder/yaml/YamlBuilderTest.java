@@ -205,4 +205,45 @@ public class YamlBuilderTest {
       assertThat(actualYaml).isEqualTo(expectedYaml);
 
    }
+
+
+   @Test
+   public void shouldBuildStubbedRequestWithStubbedResponseWhenBothHaveManyHeaders() throws Exception {
+      final String expectedYaml =
+         "-  request:\n" +
+            "      headers:\n" +
+            "         content-type: application/json\n" +
+            "         content-language: US-en\n" +
+            "         content-length: 30\n" +
+            "         authorization: bob:secret\n" +
+            "      method: [GET]\n" +
+            "      url: /invoice\n" +
+            "\n" +
+            "   response:\n" +
+            "      headers:\n" +
+            "         content-type: application/json\n" +
+            "         content-language: US-en\n" +
+            "         content-length: 30\n" +
+            "         pragma: no-cache\n" +
+            "         location: /invoice/exit";
+
+      final YamlBuilder yamlBuilder = new YamlBuilder();
+      final String actualYaml = yamlBuilder.
+         newStubbedRequest().
+         withHeaderContentType("application/json").
+         withHeaderContentLanguage("US-en").
+         withHeaderContentLength("30").
+         withHeaderAuthorization("bob:secret").
+         withMethodGet().
+         withUrl("/invoice").
+         newStubbedResponse().
+         withHeaderContentType("application/json").
+         withHeaderContentLanguage("US-en").
+         withHeaderContentLength("30").
+         withHeaderPragma("no-cache").
+         withHeaderLocation("/invoice/exit").build();
+
+      assertThat(actualYaml).isEqualTo(expectedYaml);
+
+   }
 }

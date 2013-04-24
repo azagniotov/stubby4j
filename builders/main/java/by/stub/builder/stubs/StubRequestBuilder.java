@@ -70,6 +70,48 @@ public final class StubRequestBuilder {
       return this;
    }
 
+   public StubRequestBuilder withHeaderContentType(final String value) {
+      this.headers.put("content-type", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderContentLength(final String value) {
+      this.headers.put("content-length", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderContentLanguage(final String value) {
+      this.headers.put("content-language", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderContentEncoding(final String value) {
+      this.headers.put("content-encoding", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderPragma(final String value) {
+      this.headers.put("pragma", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderAuthorization(final String value) {
+      this.headers.put("authorization", value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderLocation(final String value) {
+      this.headers.put("location", value);
+
+      return this;
+   }
+
    public StubRequestBuilder withPost(final String post) {
       this.post = post;
 

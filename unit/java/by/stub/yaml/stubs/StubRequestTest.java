@@ -368,30 +368,23 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenAllHttpHeadersMatch() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
       final String url = "/invoice/123";
-
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -400,23 +393,14 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenHeadersWereStubbed_ButNoHeadersSetToAssert() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType("application/xml")
+            .withHeaderContentLength("30")
+            .withHeaderContentLanguage("en-US").build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
@@ -429,15 +413,6 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenNoHeadersWereStubbed_ButHeadersWereSetToAssert() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
@@ -447,9 +422,9 @@ public class StubRequestTest {
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType("application/xml")
+            .withHeaderContentLength("30")
+            .withHeaderContentLanguage("en-US").build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -458,30 +433,24 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenAllHeadersSubmittedCamelCased() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders("Content-Type", headerOneValue)
-            .withHeaders("Content-Length", headerTwoValue)
-            .withHeaders("Content-Language", headerThreeValue).build();
+            .withHeaders("Content-Type", contentType)
+            .withHeaders("Content-Length", contentLength)
+            .withHeaders("Content-Language", contentLanguage).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -490,30 +459,23 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenSomeHeadersMismatches() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType("application/xml")
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, "application/json")
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType("application/json")
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
@@ -522,29 +484,22 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenNotAllHeadersSetToAssert() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType("application/xml")
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
@@ -553,32 +508,26 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenAllStubbedHeadersMatch() throws Exception {
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
-
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
       final String url = "/invoice/123";
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue)
-            .withHeaders("content-encoding", "UTF-8")
-            .withHeaders("Pragma", "no-cache").build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage)
+            .withHeaderContentEncoding("UTF-8")
+            .withHeaderPragma("no-cache").build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -914,14 +863,9 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
 
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
@@ -934,9 +878,9 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
@@ -944,11 +888,11 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue)
-            .withHeaders("content-encoding", "UTF-8")
-            .withHeaders("Pragma", "no-cache").build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage)
+            .withHeaderContentEncoding("UTF-8")
+            .withHeaderPragma("no-cache").build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -962,14 +906,9 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
 
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
@@ -982,9 +921,9 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
@@ -992,11 +931,11 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, "888")
-            .withHeaders(headerThree, headerThreeValue)
-            .withHeaders("content-encoding", "UTF-8")
-            .withHeaders("Pragma", "no-cache").build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength("888")
+            .withHeaderContentLanguage(contentLanguage)
+            .withHeaderContentEncoding("UTF-8")
+            .withHeaderPragma("no-cache").build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
@@ -1304,14 +1243,9 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
 
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
@@ -1325,9 +1259,9 @@ public class StubRequestTest {
             .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest requestTwo =
          BUILDER.withUrl(url)
@@ -1338,9 +1272,9 @@ public class StubRequestTest {
             .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(requestOne.hashCode()).isEqualTo(requestTwo.hashCode());
    }
@@ -1354,14 +1288,9 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
 
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
@@ -1374,9 +1303,9 @@ public class StubRequestTest {
             .withPost(null)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest requestTwo =
          BUILDER.withUrl(url)
@@ -1386,9 +1315,9 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(requestOne.hashCode()).isNotEqualTo(requestTwo.hashCode());
    }
@@ -1402,14 +1331,9 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String headerOne = "content-type";
-      final String headerOneValue = "application/xml";
-
-      final String headerTwo = "content-length";
-      final String headerTwoValue = "30";
-
-      final String headerThree = "content-language";
-      final String headerThreeValue = "en-US";
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
 
       final String url = "/invoice/123";
       final String postBody = "this is a post body";
@@ -1422,9 +1346,9 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue)
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
 
       final StubRequest requestTwo =
          BUILDER.withUrl(url)
@@ -1434,9 +1358,9 @@ public class StubRequestTest {
             .withPost(postBody)
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
-            .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, "31")
-            .withHeaders(headerThree, headerThreeValue).build();
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength("31")
+            .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(requestOne.hashCode()).isNotEqualTo(requestTwo.hashCode());
    }
