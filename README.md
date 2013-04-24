@@ -214,9 +214,22 @@ A demonstration using regular expressions:
 
 #### query
 
-* if ommitted, stubby ignores query parameters for the given url.
+* if omitted, stubby ignores query parameters for the given url.
 * a yaml hashmap of variable/value pairs.
 * allows the query parameters to appear in any order in a uri
+* query params can also be an array with double/single quoted/un-quoted elements: ```attributes=["id","uuid"]``` or ```attributes=[id,uuid]```. Please note no spaces between the CSV
+
+```yaml
+-  request:
+      method: GET
+      url: ^/with/parameters$
+      query:
+         type_name: user
+         client_id: id
+         client_secret: secret
+         attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
+
+```
 
 * The following will match either of these:
     * `/with/parameters?search=search+terms&filter=month`
