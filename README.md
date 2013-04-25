@@ -834,6 +834,14 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 
 ## Change Log
+### 2.0.2
+
+* URI for registering new stub data programatically via POST was changed from `/stubdata/new` to `/endpoint` [COSMETICS]
+* URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
+* Added new endpoint on Admin portal `/yaml` to dump the loaded stub data in a YAML format to the browser [ENHANCEMENT]
+* When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning sent to the terminal [ENHANCEMENT]
+* Documentation refinement [COSMETICS]
+
 ### 2.0.1
 
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]

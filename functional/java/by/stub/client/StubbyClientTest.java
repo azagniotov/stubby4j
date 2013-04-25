@@ -324,7 +324,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final String uri = StubsRegistrationHandler.ENDPOINT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, content);
@@ -336,7 +336,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final String uri = StubsRegistrationHandler.ENDPOINT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "");
@@ -348,7 +348,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.RESOURCE_STUBDATA_NEW;
+      final String uri = StubsRegistrationHandler.ENDPOINT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, null);

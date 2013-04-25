@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public final class PingHandler extends AbstractHandler {
+public final class StatusHandler extends AbstractHandler {
 
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
@@ -55,7 +55,7 @@ public final class PingHandler extends AbstractHandler {
    private final DataStore dataStore;
    private final JettyContext jettyContext;
 
-   public PingHandler(final JettyContext newContext, final DataStore newDataStore) {
+   public StatusHandler(final JettyContext newContext, final DataStore newDataStore) {
       this.jettyContext = newContext;
       this.dataStore = newDataStore;
    }
@@ -121,7 +121,7 @@ public final class PingHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, dataStore.getDataYaml().getAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
-         StubsRegistrationHandler.RESOURCE_STUBDATA_NEW, host, adminPort);
+         StubsRegistrationHandler.ENDPOINT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");

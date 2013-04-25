@@ -44,7 +44,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
    private static final String NAME = "admin";
 
    //Do not remove this constant without changing the example in documentation
-   public static final String RESOURCE_STUBDATA_NEW = "/stubdata/new";
+   public static final String ENDPOINT = "/endpoint";
    private final DataStore dataStore;
 
    public StubsRegistrationHandler(final DataStore dataStore) {
@@ -61,7 +61,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
       response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       if (!request.getMethod().equalsIgnoreCase("post")) {
-         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), RESOURCE_STUBDATA_NEW);
+         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), ENDPOINT);
          HandlerUtils.configureErrorResponse(response, HttpStatus.METHOD_NOT_ALLOWED_405, errorMessage);
          return;
       }

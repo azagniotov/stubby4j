@@ -23,9 +23,10 @@ import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.DataStore;
 import by.stub.exception.Stubby4JException;
-import by.stub.handlers.PingHandler;
+import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.handlers.StubsRegistrationHandler;
+import by.stub.handlers.YamlDumpHandler;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -94,8 +95,9 @@ public final class JettyFactory {
             constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
             constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/stubdata/new", new StubsRegistrationHandler(dataStore)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ping", new PingHandler(jettyContext, dataStore)),
+            constructHandler(ADMIN_CONNECTOR_NAME, StubsRegistrationHandler.ENDPOINT, new StubsRegistrationHandler(dataStore)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, dataStore)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/yaml", new YamlDumpHandler(dataStore)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))

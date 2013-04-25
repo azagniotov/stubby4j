@@ -1,12 +1,10 @@
 package by.stub.utils;
 
-import by.stub.cli.CommandLineInterpreter;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.IOException;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author: Alexander Zagniotov
@@ -14,16 +12,11 @@ import java.io.IOException;
  */
 public class FileUtilsTest {
 
-   @Rule
-   public ExpectedException expectedException = ExpectedException.none();
-
 
    @Test
    public void shouldNotConvertFileToBytesWhenEmptyFilenameGiven() throws Exception {
+      final byte[] actualBytes = FileUtils.binaryFileToBytes(".", "bad/file/path");
 
-      expectedException.expect(IOException.class);
-      expectedException.expectMessage("Could not load file from path: bad/file/path");
-
-      FileUtils.binaryFileToBytes(".", "bad/file/path");
+      assertThat(actualBytes).isEqualTo(new byte[]{});
    }
 }

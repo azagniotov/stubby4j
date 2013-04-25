@@ -12,7 +12,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -212,9 +214,6 @@ public class YamlParserTest {
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileAndBodySet() throws Exception {
 
-      expectedException.expect(IOException.class);
-      expectedException.expectMessage("Could not load file from path: ../../very.big.soap.response.xml");
-
       final String stubbedResponseFile = "../../very.big.soap.response.xml";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
@@ -225,7 +224,21 @@ public class YamlParserTest {
          .withFile(stubbedResponseFile)
          .withStatus("201").build();
 
-      loadYamlToDataStore(yaml);
+      final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
+      final boolean NO_AUTO_FLUSH = false;
+      System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+
+      System.setOut(System.out);
+
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+      final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
+
+      assertThat(actualRequest.getPostBody()).isEqualTo("");
+      assertThat(actualConsoleOutput).contains("[31mCould not load file from path: ../../very.big.soap.response.xml\u001B[0");
+
    }
 
    @Test

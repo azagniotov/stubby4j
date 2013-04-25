@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -77,7 +78,8 @@ public final class FileUtils {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", relativePath));
+         ANSITerminal.error(String.format("Could not load file from path: %s", relativePath));
+         return new byte[]{};
       }
 
       return IOUtils.toByteArray(new FileInputStream(contentFile));
@@ -87,7 +89,8 @@ public final class FileUtils {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", relativePath));
+         ANSITerminal.error(String.format("Could not load file from path: %s", relativePath));
+         return "";
       }
 
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
@@ -101,7 +104,14 @@ public final class FileUtils {
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
-   public static  byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {
+   public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
+      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
+      final String cleansedContent = FileUtils.enforceSystemLineSeparator(loadedContent);
+
+      return cleansedContent.getBytes(StringUtils.charsetUTF8());
+   }
+
+   public static byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {
 
       final String extension = StringUtils.extractFilenameExtension(filePath);
 
