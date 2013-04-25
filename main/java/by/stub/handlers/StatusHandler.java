@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers;
 
 import by.stub.database.DataStore;
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
@@ -64,16 +65,20 @@ public final class StatusHandler extends AbstractHandler {
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request, NAME);
 
+      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
+
       baseRequest.setHandled(true);
-      response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
-      response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
+      wrapper.setStatus(HttpStatus.OK_200);
+      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       try {
-         response.getWriter().println(getConfigDataPresentation());
+         wrapper.getWriter().println(getConfigDataPresentation());
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
+
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, NAME);
    }
 
    private String getConfigDataPresentation() throws Exception {
@@ -121,7 +126,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, dataStore.getDataYaml().getAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
-         StubsRegistrationHandler.ENDPOINT, host, adminPort);
+         StubsRegistrationHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");

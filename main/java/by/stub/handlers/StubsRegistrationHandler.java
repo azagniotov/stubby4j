@@ -44,7 +44,7 @@ public class StubsRegistrationHandler extends AbstractHandler {
    private static final String NAME = "admin";
 
    //Do not remove this constant without changing the example in documentation
-   public static final String ENDPOINT = "/endpoint";
+   public static final String ADMIN_ROOT = "/";
    private final DataStore dataStore;
 
    public StubsRegistrationHandler(final DataStore dataStore) {
@@ -55,21 +55,36 @@ public class StubsRegistrationHandler extends AbstractHandler {
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request, NAME);
 
-      baseRequest.setHandled(true);
-      response.setContentType(MimeTypes.TEXT_HTML_UTF_8);
-      response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 
-      if (!request.getMethod().equalsIgnoreCase("post")) {
-         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), ENDPOINT);
-         HandlerUtils.configureErrorResponse(response, HttpStatus.METHOD_NOT_ALLOWED_405, errorMessage);
+      baseRequest.setHandled(true);
+      wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
+      wrapper.setStatus(HttpStatus.OK_200);
+      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+
+      if (request.getRequestURI().equals("/") && !request.getMethod().equalsIgnoreCase("post")) {
+
+         wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
+
+         final String errorMessage = String.format("Method %s is not allowed on URI %s", request.getMethod(), ADMIN_ROOT);
+         final String adminIndex = HandlerUtils.getHtmlResourceByName("admin-index");
+         final String populatedAdminIndex = String.format(adminIndex, errorMessage, errorMessage);
+
+         try {
+            wrapper.getWriter().println(populatedAdminIndex);
+         } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         }
+
+         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, NAME);
          return;
       }
 
       final String post = HandlerUtils.extractPostRequestBody(request, NAME);
       if (!StringUtils.isSet(post)) {
-         final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getPathInfo());
-         HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
+         final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
+         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
+         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, NAME);
          return;
       }
 
@@ -79,12 +94,13 @@ public class StubsRegistrationHandler extends AbstractHandler {
 
          dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
 
-         response.setStatus(HttpStatus.CREATED_201);
-         response.getWriter().println("Configuration created successfully");
+         wrapper.setStatus(HttpStatus.CREATED_201);
+         wrapper.getWriter().println("Configuration created successfully");
 
-         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), new HttpServletResponseWithGetStatus(response), NAME);
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
+         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, "Could not parse POSTed YAML configuration: " + ex.toString());
       }
+
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, NAME);
    }
 }

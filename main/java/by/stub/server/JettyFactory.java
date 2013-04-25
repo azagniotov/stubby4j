@@ -95,12 +95,12 @@ public final class JettyFactory {
             constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
             constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, StubsRegistrationHandler.ENDPOINT, new StubsRegistrationHandler(dataStore)),
+            //constructHandler(ADMIN_CONNECTOR_NAME, StubsRegistrationHandler.ADMIN_ROOT, new StubsRegistrationHandler(dataStore)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, dataStore)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/yaml", new YamlDumpHandler(dataStore)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "admin-index.html")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico"))
+            constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", staticResourceHandler("ui/images/", "favicon.ico")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/", new StubsRegistrationHandler(dataStore))
          }
       );
 

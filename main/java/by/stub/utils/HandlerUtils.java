@@ -91,7 +91,10 @@ public final class HandlerUtils {
          add("post");
          add("put");
       }};
-      if (!httpMethodsContainingBody.contains(request.getMethod().toLowerCase())) return null;
+
+      if (!httpMethodsContainingBody.contains(request.getMethod().toLowerCase())) {
+         return null;
+      }
 
       try {
          return StringUtils.inputStreamToString(request.getInputStream());

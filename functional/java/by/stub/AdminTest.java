@@ -78,7 +78,7 @@ public class AdminTest {
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       assertThat(url).isNotNull();
 
-      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ENDPOINT);
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ADMIN_ROOT);
       final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
@@ -105,7 +105,7 @@ public class AdminTest {
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       assertThat(url).isNotNull();
 
-      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ENDPOINT);
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ADMIN_ROOT);
       final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
@@ -130,7 +130,7 @@ public class AdminTest {
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       assertThat(url).isNotNull();
 
-      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ENDPOINT);
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ADMIN_ROOT);
       final HttpRequest adminRequest = constructHttpRequest(HttpMethods.PUT, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();
@@ -146,7 +146,7 @@ public class AdminTest {
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.inavlid.data.yaml");
       assertThat(url).isNotNull();
 
-      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ENDPOINT);
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, StubsRegistrationHandler.ADMIN_ROOT);
       final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
 
       final HttpResponse adminResponse = adminRequest.execute();

@@ -94,7 +94,7 @@
          content-disposition: attachment; filename=hello-world.pdf
          pragma: no-cache
       status: 200
-      file: ../binary/hello-world.pdf
+      file: ../../../../binary/hello-world.pdf
 
 -  request:
       method: GET

@@ -433,11 +433,15 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 
 ### The Status Page
 
-You can also view the currently configured endpoints by going to `localhost:8889/ping`
+You can view the currently configured endpoints by going to `localhost:8889/status`
+
+### Dumping Loaded Data
+
+You can dump the currently configured endpoints as YAML in browser by going to `localhost:8889/yaml`
 
 ### Supplying Endpoints to Stubby
 
-Submit `POST` requests to `localhost:8889/stubdata/new` or load a data-file (-d / --data) with the following structure for each endpoint:
+Submit `POST` requests to `localhost:8889/` or load a data-file using (-d / --data) command-line argument with the following structure for each endpoint:
 
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
@@ -834,12 +838,12 @@ Just tweak the file and stubbed data will be refreshed within 3 seconds (assumin
 
 
 ## Change Log
-### 2.0.2
+### 2.0.2 - SNAPSHOT
 
-* URI for registering new stub data programatically via POST was changed from `/stubdata/new` to `/endpoint` [COSMETICS]
+* URI for registering new stub data programatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
 * URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
-* Added new endpoint on Admin portal `/yaml` to dump the loaded stub data in a YAML format to the browser [ENHANCEMENT]
-* When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning sent to the terminal [ENHANCEMENT]
+* Added new endpoint on Admin portal `/yaml` to display the loaded stub data in a YAML format in the browser [ENHANCEMENT]
+* When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning recorded in the terminal [ENHANCEMENT]
 * Documentation refinement [COSMETICS]
 
 ### 2.0.1

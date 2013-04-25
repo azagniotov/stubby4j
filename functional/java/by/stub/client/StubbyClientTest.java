@@ -10,6 +10,7 @@ import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URL;
@@ -21,7 +22,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author Alexander Zagniotov
  * @since 6/28/12, 2:54 PM
  */
-
 public class StubbyClientTest {
 
    private static String content;
@@ -324,7 +324,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.ENDPOINT;
+      final String uri = StubsRegistrationHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, content);
@@ -336,25 +336,25 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.ENDPOINT;
+      final String uri = StubsRegistrationHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, "");
 
       assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(stubbyResponse.getResponseCode());
-      assertThat("POST request on URI null was empty").isEqualTo(stubbyResponse.getContent());
+      assertThat("POST request on URI / was empty").isEqualTo(stubbyResponse.getContent());
    }
 
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
       final String host = "localhost";
-      final String uri = StubsRegistrationHandler.ENDPOINT;
+      final String uri = StubsRegistrationHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = stubbyClient.doPost(host, uri, port, null);
 
       assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(stubbyResponse.getResponseCode());
-      assertThat("POST request on URI null was empty").isEqualTo(stubbyResponse.getContent());
+      assertThat("POST request on URI / was empty").isEqualTo(stubbyResponse.getContent());
    }
 
    @Test
