@@ -39,6 +39,9 @@ public class YamlDumpHandler extends AbstractHandler {
 
       try {
 
+
+         //TODO Reply with 204 if no stubs are saved
+
          HandlerUtils.setResponseMainHeaders(wrapper);
          wrapper.setContentType("text/plain");
          wrapper.setCharacterEncoding(StringUtils.UTF_8);
