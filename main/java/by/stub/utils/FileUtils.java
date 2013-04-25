@@ -78,8 +78,7 @@ public final class FileUtils {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         ANSITerminal.error(String.format("Could not load file from path: %s", relativePath));
-         return new byte[]{};
+         throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
       return IOUtils.toByteArray(new FileInputStream(contentFile));
@@ -89,8 +88,7 @@ public final class FileUtils {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
-         ANSITerminal.error(String.format("Could not load file from path: %s", relativePath));
-         return "";
+         throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));

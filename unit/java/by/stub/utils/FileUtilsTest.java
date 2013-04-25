@@ -4,6 +4,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -12,11 +14,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class FileUtilsTest {
 
+   @Rule
+   public ExpectedException expectedException = ExpectedException.none();
+
 
    @Test
    public void shouldNotConvertFileToBytesWhenEmptyFilenameGiven() throws Exception {
-      final byte[] actualBytes = FileUtils.binaryFileToBytes(".", "bad/file/path");
 
-      assertThat(actualBytes).isEqualTo(new byte[]{});
+      expectedException.expect(IOException.class);
+      expectedException.expectMessage("Could not load file from path: bad/file/path");
+
+      FileUtils.binaryFileToBytes(".", "bad/file/path");
    }
 }

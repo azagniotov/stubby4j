@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ReflectionUtils;
@@ -147,8 +148,16 @@ public final class YamlParser {
             }};
 
          } else if (pairKey.toLowerCase().equals(YAML_NODE_FILE)) {
-            massagedPairValue = FileUtils.fileToBytes(dataConfigHomeDirectory, StringUtils.objectToString(rawPairValue));
 
+            final String filePath = StringUtils.objectToString(rawPairValue);
+            byte[] bytes = StringUtils.getBytesUtf8(StringUtils.FAILED);
+
+            try {
+               bytes = FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
+            } catch (final IOException ex) {
+               ANSITerminal.error(ex.getMessage());
+            }
+            massagedPairValue = bytes;
          } else {
             massagedPairValue = StringUtils.objectToString(rawPairValue);
          }

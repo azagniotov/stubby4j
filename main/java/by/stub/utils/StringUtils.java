@@ -35,6 +35,7 @@ import java.util.Scanner;
 public final class StringUtils {
 
    public static final String UTF_8 = "UTF-8";
+   public static final String FAILED = "FAILED";
 
    private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
