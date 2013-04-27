@@ -427,8 +427,6 @@ Assuming a match has been made against the given `request` object, data from `re
 ```
 
 
-## The Admin Portal
-
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's options.
 
 ### Supplying Endpoints to Stubby
@@ -449,7 +447,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (-d) with the fol
    * `body`: the textual body of the server's response to the client
    * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
-#### YAML (file only)
+#### YAML (file or POST)
 ```yaml
 -  request:
       url: ^/path/to/something$
@@ -492,15 +490,20 @@ Submit `POST` requests to `localhost:8889` or load a data-file (-d) with the fol
       status: 304
 ```
 
+
 If you want to load more than one endpoint via file, use YAML list (-) syntax.
 
 ### Getting the Current List of Stubbed Endpoints
 
-Performing a `GET` request on `localhost:8889/yaml` will return a YAML of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
+Performing a `GET` request on `localhost:8889` will return YAML of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
 
 #### The Status Page
 
 You can also view the currently configured endpoints by going to `localhost:8889/status`
+
+### Deleting Endpoints
+
+Send a `DELETE` request to `localhost:8889/<id>`
 
 
 ## The Stubs Portal
@@ -546,7 +549,8 @@ To be added soon ...
 
 * URI for registering new stub data programatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
 * URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
-* Added new endpoint on Admin portal `/yaml` to display the loaded stub data in a YAML format in the browser [ENHANCEMENT]
+* Doing GET on Admin portal `/` will display the loaded stub data in a YAML format in the browser [ENHANCEMENT]
+* Doing DELETE on Admin portal `/<id>` will delete stubbed request from the list of loaded stub requests using the index provided [ENHANCEMENT]
 * When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning recorded in the terminal [ENHANCEMENT]
 * Documentation refinement [COSMETICS]
 

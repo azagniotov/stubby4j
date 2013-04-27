@@ -126,7 +126,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, dataStore.getDataYaml().getAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
-         StubsRegistrationHandler.ADMIN_ROOT, host, adminPort);
+         AdminHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");

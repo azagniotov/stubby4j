@@ -1,5 +1,7 @@
 package by.stub.handlers.strategy;
 
+import by.stub.handlers.strategy.stubs.RedirectResponseHandlingStrategy;
+import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;

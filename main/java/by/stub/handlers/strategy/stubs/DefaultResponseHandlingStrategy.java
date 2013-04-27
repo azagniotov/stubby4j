@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.handlers.strategy;
+package by.stub.handlers.strategy.stubs;
 
 import by.stub.exception.Stubby4JException;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
-import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;

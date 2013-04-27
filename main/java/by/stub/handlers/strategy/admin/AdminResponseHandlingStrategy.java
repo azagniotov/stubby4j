@@ -17,31 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.handlers.strategy;
+package by.stub.handlers.strategy.admin;
 
-import by.stub.yaml.stubs.StubResponse;
+import by.stub.database.DataStore;
+import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 
-public final class HandlingStrategyFactory {
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
-   private HandlingStrategyFactory() {
-
-   }
-
-   public static StubResponseHandlingStrategy identifyHandlingStrategyFor(final StubResponse foundStubResponse) {
-
-      switch (foundStubResponse.getStubResponseType()) {
-         case NOTFOUND:
-            return new NotFoundResponseHandlingStrategy();
-
-         case UNAUTHORIZED:
-            return new UnauthorizedResponseHandlingStrategy();
-
-         case REDIRECT:
-            return new RedirectResponseHandlingStrategy(foundStubResponse);
-
-         default:
-            return new DefaultResponseHandlingStrategy(foundStubResponse);
-
-      }
-   }
+public interface AdminResponseHandlingStrategy {
+   void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws Exception;
 }
