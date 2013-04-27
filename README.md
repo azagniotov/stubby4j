@@ -426,6 +426,7 @@ Assuming a match has been made against the given `request` object, data from `re
       body: Hello, World!
 ```
 
+## The Admin Portal
 
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's options.
 
