@@ -45,16 +45,13 @@ public final class ConfigurationScanner implements Runnable {
                final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataYaml.getParent(), FileUtils.constructReader(dataYaml));
 
                dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
-               ANSITerminal.ok(String.format("%sSuccessfully performed live reload of YAML configuration from: %s%s",
+               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of YAML configuration from: %s%s",
                   "\n",
                   dataYaml.getAbsolutePath(),
                   "\n"));
             } catch (final Exception ex) {
-               ANSITerminal.warn("Could not reload YAML configuration: " + ex.toString());
-               ANSITerminal.error(String.format("%sFailed to perform live reload of YAML configuration from: %s%s",
-                  "\n",
-                  dataYaml.getAbsolutePath(),
-                  "\n"));
+               ANSITerminal.error("Could not refresh YAML configuration: " + ex.toString());
+               ANSITerminal.warn(String.format("YAML refresh aborted, previously loaded stubs remain untouched"));
             }
          }
 

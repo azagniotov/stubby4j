@@ -105,6 +105,8 @@ public final class YamlParser {
          }
       }
 
+      httpLifecycle.setMarshalledYaml(marshallNodeMapToYamlSnippet(parentNodesMap));
+
       return httpLifecycle;
    }
 
@@ -197,6 +199,13 @@ public final class YamlParser {
       return targetStubList;
    }
 
+   private String marshallNodeMapToYamlSnippet(final Map<String, Object> parentNodesMap) {
+      final ArrayList<Map<String, Object>> placeholder = new ArrayList<Map<String, Object>>() {{
+         add(parentNodesMap);
+      }};
+
+      return SNAKE_YAML.dumpAs(placeholder, null, DumperOptions.FlowStyle.BLOCK);
+   }
 
    private Map<String, String> encodeAuthorizationHeader(final Object value) {
 

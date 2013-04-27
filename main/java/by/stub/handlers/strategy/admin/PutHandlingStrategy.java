@@ -14,7 +14,7 @@ import java.io.IOException;
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
    public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws IOException {
-      wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-      wrapper.getWriter().println("Method PUT is not allowed on URI " + request.getRequestURI());
+      wrapper.setStatus(HttpStatus.NOT_IMPLEMENTED_501);
+      wrapper.getWriter().println(String.format("Support for method %s is not implemented on URI ", request.getMethod(), request.getRequestURI()));
    }
 }

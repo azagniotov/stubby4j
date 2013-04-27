@@ -2,14 +2,15 @@ package by.stub.handlers.strategy.admin;
 
 import by.stub.database.DataStore;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
-import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * @author: Alexander Zagniotov
@@ -29,8 +30,14 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
       wrapper.setContentType("text/plain");
       wrapper.setCharacterEncoding(StringUtils.UTF_8);
 
+      final StringBuilder yamlAppender = new StringBuilder();
+      final List<StubHttpLifecycle> stubbedCycles = dataStore.getStubHttpLifecycles();
+      for (final StubHttpLifecycle cycle : stubbedCycles) {
+         yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
+      }
+
       final OutputStream streamOut = wrapper.getOutputStream();
-      streamOut.write(FileUtils.asciiFileToUtf8Bytes(dataStore.getDataYaml()));
+      streamOut.write(StringUtils.getBytesUtf8(yamlAppender.toString()));
       streamOut.flush();
       streamOut.close();
    }

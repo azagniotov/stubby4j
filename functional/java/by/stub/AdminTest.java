@@ -125,7 +125,7 @@ public class AdminTest {
    }
 
    @Test
-   public void should_FailToUpdateStubData_WhenMethodIsPut() throws Exception {
+   public void should_ReturnNotImplemented_WhenMethodIsPut() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       assertThat(url).isNotNull();
@@ -136,8 +136,21 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
+      assertThat(HttpStatus.NOT_IMPLEMENTED_501).isEqualTo(adminResponse.getStatusCode());
+      assertThat(responseContentAsString).contains("Support for method PUT is not implemented on URI");
+   }
+
+   @Test
+   public void should_ReturnNotAllowed_WhenMethodIsUnsupported() throws Exception {
+
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, AdminHandler.ADMIN_ROOT);
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.TRACE, adminRequestUrl, "");
+
+      final HttpResponse adminResponse = adminRequest.execute();
+      final String responseContentAsString = adminResponse.parseAsString().trim();
+
       assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(adminResponse.getStatusCode());
-      assertThat(responseContentAsString).contains("Method PUT is not allowed on URI");
+      assertThat(responseContentAsString).contains("Method TRACE is not allowed on URI /");
    }
 
    @Test
@@ -183,6 +196,42 @@ public class AdminTest {
       assertThat(HttpStatus.OK_200).isEqualTo(adminDeleteResponse.getStatusCode());
       assertThat(deleteResponseContentAsString).contains(successDeletion);
    }
+
+   @Test
+   public void should_NotDeleteAfterSecondAttemptStubData_WhenOnlyOneRequestStubbed() throws Exception {
+
+      final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
+      assertThat(url).isNotNull();
+
+      final String adminRequestUrl = String.format("%s%s", adminUrlAsString, AdminHandler.ADMIN_ROOT);
+      final HttpRequest adminRequest = constructHttpRequest(HttpMethods.POST, adminRequestUrl, StringUtils.inputStreamToString(url.openStream()));
+
+      final HttpResponse adminResponse = adminRequest.execute();
+      final String responseContentAsString = adminResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(adminResponse.getStatusCode());
+      assertThat("Configuration created successfully").isEqualTo(responseContentAsString);
+
+      int indexToDelete = 0;
+      String requestUriToDelete = String.format("%s%s", AdminHandler.ADMIN_ROOT, indexToDelete);
+      String adminRequestDeleteUrl = String.format("%s%s", adminUrlAsString, requestUriToDelete);
+      HttpRequest adminDeleteRequest = constructHttpRequest(HttpMethods.DELETE, adminRequestDeleteUrl);
+      adminDeleteRequest.execute();
+
+      indexToDelete = 1;
+      requestUriToDelete = String.format("%s%s", AdminHandler.ADMIN_ROOT, indexToDelete);
+      adminRequestDeleteUrl = String.format("%s%s", adminUrlAsString, requestUriToDelete);
+      adminDeleteRequest = constructHttpRequest(HttpMethods.DELETE, adminRequestDeleteUrl);
+
+      final HttpResponse adminDeleteResponse = adminDeleteRequest.execute();
+      final String deleteResponseContentAsString = adminDeleteResponse.getStatusMessage().trim();
+
+      final String statusMessage = String.format("Stub request index#%s does not exist, cannot delete", indexToDelete);
+
+      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(adminDeleteResponse.getStatusCode());
+      assertThat(deleteResponseContentAsString).contains(statusMessage);
+   }
+
 
    @Test
    public void should_NotDeleteStubData_WhenIdToDeleteIsGreaterThanListSize() throws Exception {

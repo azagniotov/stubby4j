@@ -30,7 +30,12 @@ public final class AdminResponseHandlingStrategyFactory {
    public static AdminResponseHandlingStrategy getStrategy(final HttpServletRequest request) {
 
       final String method = request.getMethod();
-      final HttpVerbsEnum verbEnum = HttpVerbsEnum.valueOf(method);
+      HttpVerbsEnum verbEnum = HttpVerbsEnum.UNSUPPORTED;
+
+      try {
+         verbEnum = HttpVerbsEnum.valueOf(method);
+      } catch (final IllegalArgumentException ex) {
+      }
 
       switch (verbEnum) {
          case POST:

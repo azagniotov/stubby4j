@@ -32,6 +32,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public final class StubHttpLifecycle {
 
+   private String marshalledYaml;
    private StubRequest request;
    private Object response;
    private int responseSequenceCounter = 0;
@@ -98,6 +99,14 @@ public final class StubHttpLifecycle {
       responseSequenceCounter = (responseSequenceCounter + 1 == responses.size() ? responseSequenceCounter = 0 : ++responseSequenceCounter);
 
       return sequenceStubResponse;
+   }
+
+   public String getMarshalledYaml() {
+      return marshalledYaml;
+   }
+
+   public void setMarshalledYaml(final String marshalledYaml) {
+      this.marshalledYaml = marshalledYaml;
    }
 
    @Override
