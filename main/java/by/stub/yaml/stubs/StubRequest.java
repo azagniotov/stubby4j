@@ -102,15 +102,17 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      return headers;
+      final Map<String, String> headersCopy = new HashMap<String, String>();
+      final Set<Map.Entry<String, String>> entrySet = headers.entrySet();
+      for (final Map.Entry<String, String> entry : entrySet) {
+         headersCopy.put(StringUtils.toLower(entry.getKey()), entry.getValue());
+      }
+
+      return headersCopy;
    }
 
    public void setHeaders(final Map<String, String> headers) {
-
-      final Set<Map.Entry<String, String>> entrySet = headers.entrySet();
-      for (final Map.Entry<String, String> entry : entrySet) {
-         this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
-      }
+      this.headers = headers;
    }
 
    public void setQuery(final Map<String, String> query) {
@@ -247,9 +249,9 @@ public class StubRequest {
       } else if (o instanceof StubRequest) {
          final StubRequest dataStoreRequest = (StubRequest) o;
 
-         return postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
+         return urlsMatch(dataStoreRequest.url, this.url)
             && arraysIntersect(dataStoreRequest.getMethod(), getMethod())
-            && urlsMatch(dataStoreRequest.url, this.url)
+            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
             && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
             && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
       }
@@ -268,7 +270,7 @@ public class StubRequest {
          sb.append(", post=").append(post);
       }
       sb.append(", query=").append(query);
-      sb.append(", headers=").append(headers);
+      sb.append(", headers=").append(getHeaders());
       sb.append('}');
 
       return sb.toString();

@@ -546,13 +546,18 @@ To be added soon ...
 
 
 ## Change Log
-### 2.0.2 - SNAPSHOT
+### 2.0.2 (in process)
 
-* URI for registering new stub data programatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
-* URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
+* Stubbed request HTTP header names were not lower-cased at the time of match [BUG]
 * Doing GET on Admin portal `/` will display the loaded stub data in a YAML format in the browser [ENHANCEMENT]
 * Doing DELETE on Admin portal `/<id>` will delete stubbed request from the list of loaded stub requests using the index provided [ENHANCEMENT]
+* Doing PUT on Admin portal `/<id>` will update stubbed request in the list of loaded stub requests using the index provided [ENHANCEMENT]
 * When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning recorded in the terminal [ENHANCEMENT]
+* When could not match submitted HTTP request to stubbed requests, the not found message is much more descriptive [ENHANCEMENT]
+* URI for registering new stub data programmatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
+* URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
+* Updated to SnakeYAML v1.12 [COSMETICS]
+* Updated default response message when response cntent could not be loaded from `file` [COSMETICS]
 * Documentation refinement [COSMETICS]
 
 ### 2.0.1

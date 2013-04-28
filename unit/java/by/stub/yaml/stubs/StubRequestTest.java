@@ -457,6 +457,33 @@ public class StubRequestTest {
 
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenAllHeadersStubbedCamelCased() throws Exception {
+
+      final String contentType = "application/xml";
+      final String contentLength = "30";
+      final String contentLanguage = "en-US";
+      final String url = "/invoice/123";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withHeaders("Content-Type", contentType)
+            .withHeaders("Content-Length", contentLength)
+            .withHeaders("Content-Language", contentLanguage).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withHeaderContentType(contentType)
+            .withHeaderContentLength(contentLength)
+            .withHeaderContentLanguage(contentLanguage).build();
+
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+
+   @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenSomeHeadersMismatches() throws Exception {
 
       final String contentLength = "30";

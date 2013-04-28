@@ -80,8 +80,8 @@ public final class ReflectionUtils {
 
          if (!StringUtils.isUSAscii(toTest)) {
             return "Local binary file, not able to display";
-         }  else if (toTest.equals(StringUtils.FAILED)) {
-            return "Failed to load file during YAML parse time. Check that the file exists in the filesystem and terminal for warnings";
+         } else if (toTest.equals(StringUtils.FAILED)) {
+            return StringUtils.FAILED;
          }
 
          return new String(objectBytes, StringUtils.UTF_8);

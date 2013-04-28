@@ -74,7 +74,6 @@ public class StubsHandlerTest {
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for GET request at URI /path/1");
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 
@@ -102,7 +101,6 @@ public class StubsHandlerTest {
       stubsHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.NOT_FOUND_404, "No data found for POST request at URI /path/1 for post data: " + postData);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 

@@ -35,7 +35,7 @@ import java.util.Scanner;
 public final class StringUtils {
 
    public static final String UTF_8 = "UTF-8";
-   public static final String FAILED = "FAILED";
+   public static final String FAILED = "Failed to load response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
    private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
@@ -131,6 +131,8 @@ public final class StringUtils {
    }
 
    public static String objectToString(final Object value) throws IOException {
-      return (value != null ? value.toString().trim() : "");
+      final String valueAsstr = (value != null ? value.toString().trim() : "");
+
+      return (!valueAsstr.equalsIgnoreCase("null") ? valueAsstr : "");
    }
 }
