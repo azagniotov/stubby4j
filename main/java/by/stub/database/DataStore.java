@@ -85,4 +85,13 @@ public class DataStore {
    public String getMarshalledYamlByIndex(final int httpLifecycleIndex) {
       return stubHttpLifecycles.get(httpLifecycleIndex).getMarshalledYaml();
    }
+
+   public String getYamlParentDirectory() {
+      return dataYaml.getParent();
+   }
+
+   public void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
+      stubHttpLifecycles.remove(httpLifecycleIndex);
+      stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+   }
 }

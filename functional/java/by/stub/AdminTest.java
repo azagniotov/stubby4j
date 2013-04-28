@@ -125,7 +125,7 @@ public class AdminTest {
    }
 
    @Test
-   public void should_ReturnNotImplemented_WhenMethodIsPut() throws Exception {
+   public void should_ReturnNotAllowed_WhenPutRequestMadeToRoot() throws Exception {
 
       final URL url = AdminTest.class.getResource("/yaml/admin.test.class.data.yaml");
       assertThat(url).isNotNull();
@@ -136,8 +136,8 @@ public class AdminTest {
       final HttpResponse adminResponse = adminRequest.execute();
       final String responseContentAsString = adminResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_IMPLEMENTED_501).isEqualTo(adminResponse.getStatusCode());
-      assertThat(responseContentAsString).contains("Support for method PUT is not implemented on URI");
+      assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(adminResponse.getStatusCode());
+      assertThat(responseContentAsString).contains("Method PUT is not allowed on URI ");
    }
 
    @Test

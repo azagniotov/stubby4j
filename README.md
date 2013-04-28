@@ -554,7 +554,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
 ]
 ```
 
-If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax.
+If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax. When creating or updating one stubbed request, the response will contain `Location` in the header with the newly created resources' location
 
 ### Getting the Current List of Stubbed Endpoints
 
@@ -625,7 +625,7 @@ To be added soon ...
 * URI for registering new stub data programmatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
 * URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
 * Updated to SnakeYAML v1.12 [COSMETICS]
-* Updated default response message when response cntent could not be loaded from `file` [COSMETICS]
+* Updated default response message when response content could not be loaded from `file` [COSMETICS]
 * Documentation refinement [COSMETICS]
 
 ### 2.0.1
