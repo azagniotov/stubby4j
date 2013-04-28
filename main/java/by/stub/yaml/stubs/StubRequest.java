@@ -102,13 +102,14 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      final Map<String, String> headersCopy = new HashMap<String, String>();
-      final Set<Map.Entry<String, String>> entrySet = headers.entrySet();
+      final Map<String, String> headersCopy = new HashMap<String, String>(headers);
+      final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
+      this.headers.clear();
       for (final Map.Entry<String, String> entry : entrySet) {
-         headersCopy.put(StringUtils.toLower(entry.getKey()), entry.getValue());
+         this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
       }
 
-      return headersCopy;
+      return headers;
    }
 
    public void setHeaders(final Map<String, String> headers) {

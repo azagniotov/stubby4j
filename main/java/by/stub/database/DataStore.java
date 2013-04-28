@@ -81,4 +81,8 @@ public class DataStore {
    public File getDataYaml() {
       return dataYaml;
    }
+
+   public String getMarshalledYamlByIndex(final int httpLifecycleIndex) {
+      return stubHttpLifecycles.get(httpLifecycleIndex).getMarshalledYaml();
+   }
 }

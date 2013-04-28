@@ -1,6 +1,7 @@
 package by.stub.handlers.strategy.admin;
 
 import by.stub.database.DataStore;
+import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -31,9 +32,25 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
       wrapper.setCharacterEncoding(StringUtils.UTF_8);
 
       final StringBuilder yamlAppender = new StringBuilder();
-      final List<StubHttpLifecycle> stubbedCycles = dataStore.getStubHttpLifecycles();
-      for (final StubHttpLifecycle cycle : stubbedCycles) {
-         yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
+      final int contextPathLength = AdminHandler.ADMIN_ROOT.length();
+      final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
+
+      if (StringUtils.isSet(pathInfoNoHeadingSlash)) {
+         final int targetHttpStubCycleIndex = Integer.parseInt(pathInfoNoHeadingSlash);
+
+         if (dataStore.getStubHttpLifecycles().size() - 1 < targetHttpStubCycleIndex) {
+            final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
+            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
+            return;
+         }
+
+         yamlAppender.append(dataStore.getMarshalledYamlByIndex(targetHttpStubCycleIndex));
+
+      } else {
+         final List<StubHttpLifecycle> stubbedCycles = dataStore.getStubHttpLifecycles();
+         for (final StubHttpLifecycle cycle : stubbedCycles) {
+            yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
+         }
       }
 
       final OutputStream streamOut = wrapper.getOutputStream();

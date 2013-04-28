@@ -432,7 +432,7 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 
 ### Supplying Endpoints to Stubby
 
-Submit `POST` requests to `localhost:8889` or load a data-file (-d) with the following structure for each endpoint:
+Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --data flags) with the following structure for each endpoint:
 
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
@@ -441,20 +441,21 @@ Submit `POST` requests to `localhost:8889` or load a data-file (-d) with the fol
    * `headers`: a key/value map of headers the server should respond to
    * `post`: a string matching the textual body of the response.
    * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
-* `response`: describes the server's response to the client
+* `response`: describes the server's response (or array of responses, refer to the examples) to the client
    * `headers`: a key/value map of headers the server should use in it's response
    * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
    * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
    * `body`: the textual body of the server's response to the client
    * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
-#### YAML (file or POST)
+
+#### YAML (file only or POST/PUT)
 ```yaml
 -  request:
       url: ^/path/to/something$
       method: POST
       headers:
-         authorization: "Basic usernamez:passwordinBase64"
+         authorization: "bob:password"
       post: this is some post data in textual format
    response:
       headers:
@@ -492,15 +493,82 @@ Submit `POST` requests to `localhost:8889` or load a data-file (-d) with the fol
 ```
 
 
-If you want to load more than one endpoint via file, use YAML list (-) syntax.
+#### JSON (file or POST/PUT)
+```json
+[
+  {
+    "request": {
+      "url": "^/path/to/something$",
+      "post": "this is some post data in textual format",
+      "headers": {
+         "authorization": "bob:password"
+      },
+      "method": "POST"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "latency": 1000,
+      "body": "You're request was successfully processed!"
+    }
+  },
+  {
+    "request": {
+      "url": "^/path/to/anotherThing",
+      "query": {
+         "a": "anything",
+         "b": "more"
+      },
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET"
+    },
+    "response": {
+      "status": 204,
+      "headers": {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      "file": "path/to/page.html"
+    }
+  },
+  {
+    "request": {
+      "url": "^/path/to/thing$",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "post": "this is some post data in textual format",
+      "method": "POST"
+    },
+    "response": {
+      "status": 304,
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  }
+]
+```
+
+If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax.
 
 ### Getting the Current List of Stubbed Endpoints
 
-Performing a `GET` request on `localhost:8889` will return YAML of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
+Performing a `GET` request on `localhost:8889` will return a YAML list of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
+
+Performing a `GET` request on `localhost:8889/<id>` will return the YAML object representing the response with the supplied id.
 
 #### The Status Page
 
 You can also view the currently configured endpoints by going to `localhost:8889/status`
+
+### Changing Existing Endpoints
+
+Perform `PUT` requests in the same format as using `POST`, only this time supply the id in the path. For instance, to update the response with id 4 you would `PUT` to `localhost:8889/4`.
 
 ### Deleting Endpoints
 
