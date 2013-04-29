@@ -812,7 +812,7 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
-### 2.0.2 (in process)
+### 2.0.2
 
 * Stubbed request HTTP header names were not lower-cased at the time of match [BUG]
 * Doing GET on Admin portal `/` will display all loaded stub data in a YAML format in the browser [FEATURE]
