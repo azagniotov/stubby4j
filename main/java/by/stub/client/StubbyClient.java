@@ -38,20 +38,50 @@ public final class StubbyClient {
 
    }
 
+   /**
+    * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443)
+    *
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
    public void startJetty(final String yamlConfigurationFilename) throws Exception {
       startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
 
-   public void startJetty(final int clientPort, final String yamlConfigurationFilename) throws Exception {
-      startJetty(clientPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
+   /**
+    * Starts stubby using default ports of Admin (8889) and SslStubs portals (7443), and given Stubs portal port
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
 
-   public void startJetty(final int clientPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
-      startJetty(clientPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, yamlConfigurationFilename);
+   /**
+    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, yamlConfigurationFilename);
    }
 
-   public void startJetty(final int clientPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
-      final String clientPortString = String.format("%s", clientPort);
+   /**
+    * Starts stubby using given Stubs, SslStubs and Admin portals ports
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param sslPort                   SSL Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      final String clientPortString = String.format("%s", stubsPort);
       final String sslPortString = String.format("%s", sslPort);
       final String adminPortString = String.format("%s", adminPort);
 
@@ -67,6 +97,11 @@ public final class StubbyClient {
       jettyManager.startJetty();
    }
 
+   /**
+    * Stops Jetty if it is up
+    *
+    * @throws Exception
+    */
    public void stopJetty() throws Exception {
       if (jettyManager != null && jettyManager.isJettyUp()) {
          jettyManager.stopJetty();

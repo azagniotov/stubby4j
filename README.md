@@ -610,7 +610,205 @@ for each <endpoint> of stored endpoints {
 
 
 ## Programmatic API
-To be added soon ...
+
+### Starting and using stubby4j with the help of StubbyClient
+
+```java
+   /**
+    * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443)
+    *
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final String yamlConfigurationFilename) throws Exception
+
+   /**
+    * Starts stubby using default ports of Admin (8889) and SslStubs portals (7443), and given Stubs portal port
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final String yamlConfigurationFilename) throws Exception
+
+   /**
+    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception
+
+   /**
+    * Starts stubby using given Stubs, SslStubs and Admin portals ports
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param sslPort                   SSL Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception
+
+   /**
+    * Stops Jetty if it is up
+    *
+    * @throws Exception
+    */
+   public void stopJetty() throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby
+    *
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    *
+    * @param host host that stubby4j is running on
+    * @param uri  URI for the HTTP request
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGetOverSsl(final String host, final String uri) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j
+    *
+    * @param host host that stubby4j is running on
+    * @param uri  URI for the HTTP request
+    * @param port SSL port
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param port               SSL port
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param stubsPort          port that stubby4j Stubs is running on
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby running on default host and port - localhost:8882
+    *
+    * @param uri URI for the HTTP request
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGetUsingDefaults(final String uri) throws Exception
+
+   /**
+    * Makes GET HTTP request to stubby running on default host and port - localhost:8882.
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param uri                URI for the HTTP request
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception
+
+   /**
+    * Makes POST HTTP request to stubby
+    *
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @param post      data to POST to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception
+
+   /**
+    * Makes POST HTTP request to stubby
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host               host that stubby4j is running on
+    * @param uri                URI for the HTTP request
+    * @param stubsPort          port that stubby4j Stubs is running on
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param post               data to POST to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception
+
+   /**
+    * Makes POST HTTP request to stubby running on default host and port - localhost:8882
+    *
+    * @param uri  URI for the HTTP request
+    * @param post data to POST to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post) throws Exception
+
+   /**
+    * Makes POST HTTP request to stubby running on default host and port - localhost:8882.
+    * Also sets basic authorisation HTTP header using provided encoded credentials.
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param uri                URI for the HTTP request
+    * @param post               data to POST to the server
+    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception
+
+   /**
+    * Makes HTTP request to stubby.
+    *
+    * @param scheme    HTTP protocol scheme, HTTP or HTTPS
+    * @param method    HTTP method, currently supported: GET, HEAD, TRACE, OPTIONS, POST
+    * @param host      host that stubby4j is running on
+    * @param uri       URI for the HTTP request
+    * @param stubsPort port that stubby4j Stubs is running on
+    * @param post      data to POST to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+    public StubbyResponse makeRequest(final String scheme,
+                                     final String method,
+                                     final String host,
+                                     final String uri,
+                                     final int stubsPort,
+                                     final String post) throws Exception
+```
 
 
 ## Change Log
