@@ -7,6 +7,7 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.MimeTypes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -21,15 +22,6 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
    @Override
    public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws IOException {
-
-      if (dataStore.getStubHttpLifecycles().size() == 0) {
-         final String errorMessage = String.format("There were n stub request found when doing %s request on URI %s", request.getMethod(), request.getRequestURI());
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
-      }
-
-      HandlerUtils.setResponseMainHeaders(wrapper);
-      wrapper.setContentType("text/plain");
-      wrapper.setCharacterEncoding(StringUtils.UTF_8);
 
       final StringBuilder yamlAppender = new StringBuilder();
       final int contextPathLength = AdminHandler.ADMIN_ROOT.length();
@@ -52,6 +44,8 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
             yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
          }
       }
+
+      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
 
       final OutputStream streamOut = wrapper.getOutputStream();
       streamOut.write(StringUtils.getBytesUtf8(yamlAppender.toString()));

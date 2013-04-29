@@ -35,6 +35,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 public class AdminHandler extends AbstractHandler {
 
@@ -58,6 +59,10 @@ public class AdminHandler extends AbstractHandler {
       wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
       wrapper.setStatus(HttpStatus.OK_200);
       wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      wrapper.setHeader(HttpHeaders.DATE, new Date().toString());
+      wrapper.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      wrapper.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
+      wrapper.setDateHeader(HttpHeaders.EXPIRES, 0);
 
       final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
       try {

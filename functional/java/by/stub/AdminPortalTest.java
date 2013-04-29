@@ -165,6 +165,19 @@ public class AdminPortalTest {
    }
 
    @Test
+   public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRoot() throws Exception {
+
+      final String requestUrl = String.format("%s/1", ADMIN_URL);
+      final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
+
+      final HttpResponse httpResponse = httpPuttRequest.execute();
+      final String statusMessage = httpResponse.getStatusMessage().trim();
+
+      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
+   }
+
+   @Test
    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithInvalidIndexURI() throws Exception {
 
       final int invalidIndex = 88888888;
@@ -209,8 +222,10 @@ public class AdminPortalTest {
 
       final HttpResponse httpPutResponse = httpPutRequest.execute();
       final String putResponseContent = httpPutResponse.parseAsString().trim();
+      final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
       assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
       assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
 
@@ -359,8 +374,10 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpPuttRequest.execute();
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
+      final String responseLocationHeader = httpResponse.getHeaders().getLocation();
 
       assertThat(HttpStatus.CREATED_201).isEqualTo(httpResponse.getStatusCode());
+      assertThat(responseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
       assertThat(statusMessage).isEqualTo("Created");
       assertThat(responseMessage).contains("Configuration created successfully");
    }
