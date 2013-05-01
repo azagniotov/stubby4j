@@ -812,6 +812,10 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.3 (SNAPSHOT)
+
+* Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
+
 ### 2.0.2
 
 * Stubbed request HTTP header names were not lower-cased at the time of match [BUG]

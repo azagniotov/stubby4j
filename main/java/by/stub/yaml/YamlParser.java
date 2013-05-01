@@ -43,6 +43,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class YamlParser {
 
+   public static final String FAILED_TO_LOAD_FILE_CONTENT_ERROR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
    private String dataConfigHomeDirectory;
    private final static Yaml SNAKE_YAML;
 
@@ -88,8 +89,7 @@ public final class YamlParser {
    }
 
 
-   @SuppressWarnings("unchecked")
-   protected StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
+   private StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
 
       final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
 
@@ -127,8 +127,7 @@ public final class YamlParser {
    }
 
 
-   @SuppressWarnings("unchecked")
-   protected <T> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
+   private <T> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
 
       final T targetStub = targetStubClass.newInstance();
 
@@ -152,12 +151,12 @@ public final class YamlParser {
          } else if (pairKey.toLowerCase().equals(YAML_NODE_FILE)) {
 
             final String filePath = StringUtils.objectToString(rawPairValue);
-            byte[] bytes = StringUtils.getBytesUtf8(StringUtils.FAILED);
+            byte[] bytes = new byte[]{};
 
             try {
                bytes = FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
             } catch (final IOException ex) {
-               ANSITerminal.error(ex.getMessage());
+               ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_CONTENT_ERROR);
             }
             massagedPairValue = bytes;
          } else {
@@ -177,7 +176,6 @@ public final class YamlParser {
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
-   @SuppressWarnings("unchecked")
    private <T> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<T> targetStubClass) throws Exception {
 
       final List<T> targetStubList = new LinkedList<T>();

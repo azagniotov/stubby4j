@@ -210,18 +210,19 @@ public class YamlParserTest {
       assertThat(actualRequest.getPost()).isEqualTo(stubbedRequestPost);
    }
 
-
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileAndBodySet() throws Exception {
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileFailedToLoadAndPostSet() throws Exception {
 
-      final String stubbedResponseFile = "../../very.big.soap.response.xml";
+      final String stubbedRequestFile = "../../very.big.soap.request.xml";
 
+      final String expectedPost = "{\"message\", \"Hello, this is HTTP request post\"}";
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
+         .withFile(stubbedRequestFile)
+         .withFoldedPost(expectedPost)
          .newStubbedResponse()
-         .withFoldedBody("{\"message\", \"Hello, this is a request post\"}")
-         .withFile(stubbedResponseFile)
+         .withLiteralBody("OK")
          .withStatus("201").build();
 
       final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
@@ -236,9 +237,43 @@ public class YamlParserTest {
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
-      assertThat(actualRequest.getPostBody()).isEqualTo("");
-      assertThat(actualConsoleOutput).contains("[31mCould not load file from path: ../../very.big.soap.response.xml\u001B[0");
+      assertThat(actualRequest.getFile()).isEqualTo(new byte[]{});
+      assertThat(actualRequest.getPostBody()).isEqualTo(expectedPost);
+      assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.request.xml");
+      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_CONTENT_ERROR);
+   }
 
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileFailedToLoadAndBodySet() throws Exception {
+
+      final String stubbedResponseFile = "../../very.big.soap.response.xml";
+
+      final String expectedBody = "{\"message\", \"Hello, this is HTTP response body\"}";
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .newStubbedResponse()
+         .withFoldedBody(expectedBody)
+         .withFile(stubbedResponseFile)
+         .withStatus("201").build();
+
+      final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
+      final boolean NO_AUTO_FLUSH = false;
+      System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
+
+      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+
+      System.setOut(System.out);
+
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubResponse actualResponse = actualHttpLifecycle.getActualStubbedResponse();
+      final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
+
+      assertThat(actualResponse.getFile()).isEqualTo(new byte[]{});
+      assertThat(StringUtils.newStringUtf8(actualResponse.getResponseBody())).isEqualTo(expectedBody);
+      assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.response.xml");
+      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_CONTENT_ERROR);
    }
 
    @Test

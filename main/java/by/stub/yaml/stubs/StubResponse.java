@@ -23,8 +23,6 @@ import by.stub.utils.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -86,7 +84,8 @@ public class StubResponse {
    }
 
    public byte[] getResponseBody() {
-      if (file == null) {
+
+      if (file == null || file.length == 0) {
          return getBody().getBytes(StringUtils.charsetUTF8());
       }
       return file;

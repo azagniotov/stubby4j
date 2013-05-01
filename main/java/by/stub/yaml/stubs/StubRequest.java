@@ -27,7 +27,16 @@ import org.eclipse.jetty.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,10 +94,10 @@ public class StubRequest {
    }
 
    public String getPostBody() {
-      if (file == null) {
+      if (file == null || file.length == 0) {
          return FileUtils.enforceSystemLineSeparator(post);
       }
-      final String utf8FileContent = new String(file, StringUtils.charsetUTF8());
+      final String utf8FileContent = StringUtils.newStringUtf8(file);
       return FileUtils.enforceSystemLineSeparator(utf8FileContent);
    }
 

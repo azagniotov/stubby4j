@@ -198,6 +198,12 @@ public final class YamlBuilder {
          return this;
       }
 
+      public Request withFile(final String value) {
+         REQUEST_STRING_BUILDER.append(FILE).append(value).append(NL);
+
+         return this;
+      }
+
       public Request withQuery(final String key, final String value) {
 
          if (unusedNodes.contains(REQUEST_QUERY_KEY)) {

@@ -1,3 +1,9 @@
+def doSign = !"${version}".contains('SNAPSHOT')
+if (!doSign) {
+   println "::::: ATTENTION: Upload archives cancelled - cannot sign SNAPSHOT version! :::::"
+   return
+}
+
 apply plugin: 'maven'
 apply plugin: 'nexus'
 apply plugin: 'signing'

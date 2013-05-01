@@ -273,7 +273,7 @@ public class StubRequestTest {
 
 
    @Test
-   public void shouldGetPostBody_WhenPostProvided_ButFileNotSet() throws Exception {
+   public void shouldGetPostBody_WhenPostProvided_ButFileIsNull() throws Exception {
 
       final String url = "/invoice/789";
 
@@ -281,6 +281,21 @@ public class StubRequestTest {
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withPost(postBody)
+            .withMethodGet().build();
+
+      assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
+   }
+
+   @Test
+   public void shouldGetPostBody_WhenPostProvided_ButFileIsEmpty() throws Exception {
+
+      final String url = "/invoice/789";
+
+      final String postBody = "Hello";
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withPost(postBody)
+            .withFileBytes(new byte[] {})
             .withMethodGet().build();
 
       assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
