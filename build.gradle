@@ -13,12 +13,48 @@ buildscript {
 
 }
 
+def totalTestCounter = 0
 allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
-   apply plugin: 'project-report'
    project.buildDir = 'target'
+
+   if (project.name != 'main') {
+      tasks.withType(Test) {
+         Task testTask ->
+            def totalSuiteCount = 0
+            def successSuiteCount = 0
+            testReport = false
+            testLogging {
+               events "passed", "skipped", "failed"
+               exceptionFormat "full"
+               showExceptions true
+               showCauses true
+               showStackTraces true
+            }
+            doFirst {
+               println ""
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               println ":::::                 Running " + project.name.toUpperCase() + " Module Tests"
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+            }
+            afterSuite { testDescriptor, testResult ->
+               if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
+                  totalSuiteCount += testResult.getTestCount()
+                  totalTestCounter += testResult.getTestCount()
+                  successSuiteCount += testResult.getSuccessfulTestCount()
+               }
+            }
+            doLast {
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               println ":::::                        Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") " + project.name.toLowerCase() + " tests"
+               println ":::::               Total tests executed in $stubbyProjectName project so far " + totalTestCounter
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               println ""
+            } 
+      }
+   }
 }
 
 apply from: "$rootDir/conf/gradle/ides.gradle"
@@ -37,39 +73,6 @@ subprojects {
       repositories {
          mavenCentral()
          mavenLocal()
-      }
-
-      test {
-         testReport = false
-         testLogging {
-            events "passed", "skipped", "failed"
-            exceptionFormat "full"
-            showExceptions true
-            showCauses true
-            showStackTraces true
-
-            if (subproject.name != 'main') {
-                def testCounter = 0
-                afterSuite { testDescriptor, testResult ->
-                  if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-                     testCounter += testResult.getTestCount()
-                  }
-               }
-               doFirst {
-                  println ""
-                  println "*******************************************************************************************"
-                  println "********                 Running " + subproject.name.toUpperCase() + " Module Tests"
-                  println "*******************************************************************************************"
-               }
-
-               doLast {
-                  println "*******************************************************************************************"
-                  println "********                 Finished " + (testCounter + 3) + " " + subproject.name.toUpperCase() + " Tests!"
-                  println "*******************************************************************************************"
-                  println ""
-               }
-            }
-         }
       }
 
       apply from: "$rootDir/conf/gradle/dependencies.gradle"
