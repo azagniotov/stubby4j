@@ -1,6 +1,11 @@
 def doSign = !"${version}".contains('SNAPSHOT')
 if (!doSign) {
-   println "::::: ATTENTION: Upload archives cancelled - cannot sign SNAPSHOT version! :::::"
+   println ""
+   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+   println ":::     ATTENTION: Latest development version is ${version}     :::"
+   println ":::         Remove the '-SNAPSHOT' before signing artifacts         :::"
+   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+   println ""
    return
 }
 
