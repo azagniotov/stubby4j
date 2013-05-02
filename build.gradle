@@ -27,7 +27,7 @@ allprojects {
             def successSuiteCount = 0
             testReport = false
             testLogging {
-               events "passed", "skipped", "failed"
+               events "skipped", "failed"
                exceptionFormat "full"
                showExceptions true
                showCauses true
@@ -36,7 +36,7 @@ allprojects {
             doFirst {
                println ""
                println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                 Running " + project.name.toUpperCase() + " Module Tests"
+               println ":::::                         Running " + project.name.toUpperCase() + " module tests"
                println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
             }
             afterSuite { testDescriptor, testResult ->
@@ -47,8 +47,7 @@ allprojects {
                }
             }
             doLast {
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                        Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") " + project.name.toLowerCase() + " tests"
+               println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
                println ":::::               Total tests executed in $stubbyProjectName project so far " + totalTestCounter
                println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
                println ""
