@@ -9,7 +9,6 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -22,42 +21,31 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class StubsPortalTest {
 
    private static final String HEADER_APPLICATION_JSON = "application/json";
-   private static StubbyClient stubbyClient;
-   private static String stubsUrlAsString;
-   private static String stubsSslUrlAsString;
-   private static String contentAsString;
+
+   private static final int STUBS_PORT = 5992;
+   private static final int STUBS_SSL_PORT = 5993;
+   private static final int ADMIN_PORT = 5999;
+
+   private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
+   private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
+   private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
 
    @BeforeClass
    public static void beforeClass() throws Exception {
 
       ANSITerminal.muteConsole(true);
 
-      final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response.json");
-      assertThat(jsonContentUrl).isNotNull();
-      contentAsString = StringUtils.inputStreamToString(jsonContentUrl.openStream());
-
-      int clientPort = 5992;
-      int sslPort = 5993;
-      int adminPort = 5999;
-      final URL url = StubsPortalTest.class.getResource("/yaml/stubs.data.yaml");
+      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.data.yaml");
       assertThat(url).isNotNull();
 
-      stubbyClient = new StubbyClient();
-      stubbyClient.startJetty(clientPort, sslPort, adminPort, url.getFile());
-
-      stubsUrlAsString = String.format("http://localhost:%s", clientPort);
-      stubsSslUrlAsString = String.format("https://localhost:%s", sslPort);
+      STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
    }
 
    @AfterClass
    public static void afterClass() throws Exception {
-      stubbyClient.stopJetty();
+      STUBBY_CLIENT.stopJetty();
    }
 
-   @Before
-   public void beforeEach() {
-
-   }
 
    @Test
    public void shouldMatchRequest_WhenStubbedUrlRegexBeginsWith_ButGoodAssertionSent() throws Exception {
@@ -72,7 +60,7 @@ public class StubsPortalTest {
 
       for (final String assertingRequest : assertingRequests) {
 
-         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
          HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
          HttpResponse response = request.execute();
          String responseContent = response.parseAsString().trim();
@@ -95,7 +83,7 @@ public class StubsPortalTest {
 
       for (final String assertingRequest : assertingRequests) {
 
-         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
          HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
          HttpResponse response = request.execute();
          String responseContent = response.parseAsString().trim();
@@ -118,7 +106,7 @@ public class StubsPortalTest {
 
       for (final String assertingRequest : assertingRequests) {
 
-         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
          HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
          HttpResponse response = request.execute();
          String responseContent = response.parseAsString().trim();
@@ -144,7 +132,7 @@ public class StubsPortalTest {
 
       for (final String assertingRequest : assertingRequests) {
 
-         String requestUrl = String.format("%s%s", stubsUrlAsString, assertingRequest);
+         String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
          HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
          HttpResponse response = request.execute();
          String responseContent = response.parseAsString().trim();
@@ -157,7 +145,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpResponse response = request.execute();
@@ -170,7 +158,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpResponse response = request.execute();
@@ -182,7 +170,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArray() throws Exception {
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpResponse response = request.execute();
@@ -194,7 +182,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_ReactToPostRequest_WithoutPost_AndPostNotSupplied() throws Exception {
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new/no/post");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl);
 
       final HttpResponse response = request.execute();
@@ -204,7 +192,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_ReactToPostRequest_WithoutPost_AndPostSupplied() throws Exception {
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new/no/post");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new/no/post");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -216,7 +204,7 @@ public class StubsPortalTest {
    @Test
    public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/pdf/hello-world");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/pdf/hello-world");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
@@ -228,21 +216,25 @@ public class StubsPortalTest {
    @Test
    public void should_ReturnAllProducts_WhenGetRequestMade() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice?status=active&type=full");
+      final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response.json");
+      assertThat(jsonContentUrl).isNotNull();
+      final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active&type=full");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       final String contentTypeHeader = response.getContentType();
       final String responseContent = response.parseAsString().trim();
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
-      assertThat(contentAsString).isEqualTo(responseContent);
+      assertThat(expectedContent).isEqualTo(responseContent);
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
    public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryString() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice?status=active");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
@@ -253,20 +245,24 @@ public class StubsPortalTest {
    @Test
    public void should_ReturnAllProducts_WhenGetRequestMadeOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice?status=active&type=full");
+      final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response.json");
+      assertThat(jsonContentUrl).isNotNull();
+      final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
       final String contentTypeHeader = response.getContentType();
 
       assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
-      assertThat(contentAsString).isEqualTo(response.parseAsString().trim());
+      assertThat(expectedContent).isEqualTo(response.parseAsString().trim());
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
 
    @Test
    public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryStringOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice?status=active");
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
@@ -278,7 +274,7 @@ public class StubsPortalTest {
    @Test
    public void should_UpdateProduct_WhenPutRequestMade() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/123");
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
@@ -298,7 +294,7 @@ public class StubsPortalTest {
    @Test
    public void should_UpdateProduct_WhenPutRequestMadeOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/123");
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice/123");
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
@@ -318,7 +314,7 @@ public class StubsPortalTest {
    @Test
    public void should_UpdateProduct_WhenPutRequestMadeWithWrongPost() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/123");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/123");
       final String content = "{\"wrong\": \"post\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
@@ -337,7 +333,7 @@ public class StubsPortalTest {
    @Test
    public void should_UpdateProduct_WhenPutRequestMadeWithWrongPostOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/123");
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice/123");
       final String content = "{\"wrong\": \"post\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
@@ -356,7 +352,7 @@ public class StubsPortalTest {
    @Test
    public void should_CreateNewProduct_WhenPostRequestMade() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -377,7 +373,7 @@ public class StubsPortalTest {
    @Test
    public void should_CreateNewProduct_WhenPostRequestMadeOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/new");
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -398,7 +394,7 @@ public class StubsPortalTest {
    @Test
    public void should_FailtToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSet() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/invoice/new");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -417,7 +413,7 @@ public class StubsPortalTest {
    @Test
    public void should_FailtToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSetOverSsl() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsSslUrlAsString, "/invoice/new");
+      final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -436,7 +432,7 @@ public class StubsPortalTest {
    @Test
    public void should_MakeSuccesfulRequest_AndReturnSingleSequencedResponse() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/uri/with/single/sequenced/response");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/single/sequenced/response");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       HttpResponse firstSequenceResponse = request.execute();
@@ -455,7 +451,7 @@ public class StubsPortalTest {
    @Test
    public void should_MakeSuccesfulRequest_AndReturnMultipleSequencedResponses() throws Exception {
 
-      final String requestUrl = String.format("%s%s", stubsUrlAsString, "/uri/with/sequenced/responses");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       HttpResponse firstSequenceResponse = request.execute();

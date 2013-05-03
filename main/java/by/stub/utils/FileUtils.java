@@ -101,11 +101,10 @@ public final class FileUtils {
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
-   public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
+   public static String asciiFileToString(final File file) throws IOException {
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
-      final String cleansedContent = FileUtils.enforceSystemLineSeparator(loadedContent);
 
-      return cleansedContent.getBytes(StringUtils.charsetUTF8());
+      return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
 
    public static byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {

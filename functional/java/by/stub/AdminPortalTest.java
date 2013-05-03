@@ -1,6 +1,7 @@
 package by.stub;
 
 import by.stub.builder.yaml.YamlBuilder;
+import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
@@ -27,6 +28,8 @@ public class AdminPortalTest {
 
    @BeforeClass
    public static void beforeClass() throws Exception {
+
+      ANSITerminal.muteConsole(true);
 
       final URL url = AdminPortalTest.class.getResource("/yaml/stubs.data.yaml");
       assertThat(url).isNotNull();
