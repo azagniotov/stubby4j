@@ -3,11 +3,14 @@ package by.stub;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
+import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
+import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,6 +38,16 @@ public class AdminPortalTest {
       assertThat(url).isNotNull();
 
       STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
+   }
+
+   @Before
+   public void beforeEach() throws Exception {
+
+      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
+      assertThat(url).isNotNull();
+
+      final String stubsData = StringUtils.inputStreamToString(url.openStream());
+      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", STUBS_PORT, stubsData);
    }
 
    @AfterClass
