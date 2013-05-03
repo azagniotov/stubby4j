@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -46,8 +47,11 @@ public class AdminPortalTest {
       final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
       assertThat(url).isNotNull();
 
-      final String stubsData = StringUtils.inputStreamToString(url.openStream());
+      final InputStream stubsDatanputStream = url.openStream();
+      final String stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
       STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", STUBS_PORT, stubsData);
+
+      stubsDatanputStream.close();
    }
 
    @AfterClass
