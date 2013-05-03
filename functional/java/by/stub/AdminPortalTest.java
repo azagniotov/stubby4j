@@ -51,7 +51,7 @@ public class AdminPortalTest {
       final String stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
       stubsDatanputStream.close();
 
-      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", STUBS_PORT, stubsData);
+      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", ADMIN_PORT, stubsData);
    }
 
    @AfterClass
