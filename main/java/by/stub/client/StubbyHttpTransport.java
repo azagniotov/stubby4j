@@ -6,8 +6,8 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.MimeTypes;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
@@ -86,12 +86,12 @@ final class StubbyHttpTransport {
    }
 
    private void writeOutputStream(final HttpURLConnection connection) throws IOException {
-      final DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+      final OutputStreamWriter streamWriter = new OutputStreamWriter(connection.getOutputStream(), StringUtils.charsetUTF8());
       try {
-         dataOutputStream.writeBytes(stubbyRequest.getPost());
-         dataOutputStream.flush();
+         streamWriter.write(stubbyRequest.getPost());
+         streamWriter.flush();
       } finally {
-         dataOutputStream.close();
+         streamWriter.close();
       }
    }
 }

@@ -24,7 +24,10 @@ final class StubbyResponseFactory {
 
       if (responseCode == HttpStatus.OK_200 || responseCode == HttpStatus.CREATED_201) {
          final InputStream inputStream = connection.getInputStream();
-         return new StubbyResponse(responseCode, StringUtils.inputStreamToString(inputStream));
+         final String responseContent = StringUtils.inputStreamToString(inputStream);
+         inputStream.close();
+
+         return new StubbyResponse(responseCode, responseContent);
       }
 
       //final InputStream errorStream = connection.getErrorStream();

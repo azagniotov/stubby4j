@@ -27,7 +27,7 @@ allprojects {
             def successSuiteCount = 0
             testReport = false
             testLogging {
-               events "passed", "skipped", "failed"
+               events /*"passed", */"skipped", "failed"
                exceptionFormat "full"
                showExceptions true
                showCauses true

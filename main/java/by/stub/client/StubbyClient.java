@@ -27,6 +27,7 @@ import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -269,14 +270,26 @@ public final class StubbyClient {
    }
 
    /**
+    * Updated stubbed data with new data. This method creates a POST request to Admin portal
+    *
+    * @param url       fully constructed URL which included HTTP scheme, host and port
+    * @param stubsData data to post
+    */
+   public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception {
+      final URL adminUrl = new URL(url);
+
+      return makeRequest(adminUrl.getProtocol(), HttpMethods.POST, adminUrl.getHost(), adminUrl.getPath(), adminUrl.getPort(), stubsData);
+   }
+
+   /**
     * Makes HTTP request to stubby.
     *
-    * @param scheme    HTTP protocol scheme, HTTP or HTTPS
-    * @param method    HTTP method, currently supported: GET, HEAD, TRACE, OPTIONS, POST
-    * @param host      host that stubby4j is running on
-    * @param uri       URI for the HTTP request
-    * @param stubsPort port that stubby4j Stubs is running on
-    * @param post      data to POST to the server
+    * @param scheme HTTP protocol scheme, HTTP or HTTPS
+    * @param method HTTP method, currently supported: GET, HEAD, PUT, POST
+    * @param host   host that stubby4j is running on
+    * @param uri    URI for the HTTP request
+    * @param port   port that stubby4j Stubs is running on
+    * @param post   data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -284,9 +297,9 @@ public final class StubbyClient {
                                      final String method,
                                      final String host,
                                      final String uri,
-                                     final int stubsPort,
+                                     final int port,
                                      final String post) throws Exception {
-      final StubbyRequest stubbyRequest = new StubbyRequest(scheme, method, uri, host, stubsPort, null, post);
+      final StubbyRequest stubbyRequest = new StubbyRequest(scheme, method, uri, host, port, null, post);
 
       return makeRequest(stubbyRequest);
    }
@@ -304,4 +317,5 @@ public final class StubbyClient {
          connection.disconnect();
       }
    }
+
 }

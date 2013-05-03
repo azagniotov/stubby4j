@@ -2,6 +2,7 @@ package by.stub;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
+import by.stub.client.StubbyResponse;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -9,9 +10,11 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,23 +25,33 @@ public class StubsPortalTest {
 
    private static final String HEADER_APPLICATION_JSON = "application/json";
 
-   private static final int STUBS_PORT = 5992;
-   private static final int STUBS_SSL_PORT = 5993;
-   private static final int ADMIN_PORT = 5999;
+   private static final int STUBS_PORT = 5892;
+   private static final int STUBS_SSL_PORT = 5893;
+   private static final int ADMIN_PORT = 5899;
 
    private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
+   private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
    private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
    private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
+   private static String stubsData;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
 
       ANSITerminal.muteConsole(true);
 
-      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
-      assertThat(url).isNotNull();
+      final URL url = StubsPortalTest.class.getResource("/yaml/stubs.yaml");
+      final InputStream stubsDatanputStream = url.openStream();
+      stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
+      stubsDatanputStream.close();
 
       STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
+   }
+
+   @Before
+   public void beforeEach() throws Exception {
+      final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
+      assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
    }
 
    @AfterClass

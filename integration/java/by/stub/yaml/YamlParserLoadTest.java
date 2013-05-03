@@ -35,7 +35,7 @@ public class YamlParserLoadTest {
       final String stubbedResponseBody = "Hello, this is a response body";
       final String stubbedResponseStatus = "301";
 
-      final int NUMBER_OF_HTTPCYCLES = 8000;
+      final int NUMBER_OF_HTTPCYCLES = 500;
       final StringBuilder BUILDER = new StringBuilder(128);
 
       for (int idx = 1; idx <= NUMBER_OF_HTTPCYCLES; idx++) {
@@ -61,13 +61,13 @@ public class YamlParserLoadTest {
       final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(rawYaml);
       assertThat(loadedHttpCycles.size()).isEqualTo(NUMBER_OF_HTTPCYCLES);
 
-      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(989);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(498);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
-      assertThat(actualRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 990));
-      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 990));
-      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 990));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 499));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 499));
+      assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 499));
 
       final MapEntry headerEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
       assertThat(actualResponse.getHeaders()).contains(headerEntry);

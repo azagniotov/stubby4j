@@ -3,11 +3,11 @@ package by.stub;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
+import by.stub.client.StubbyResponse;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,6 +29,7 @@ public class AdminPortalTest {
    private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
 
    private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
+   private static String stubsData;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
@@ -36,22 +37,17 @@ public class AdminPortalTest {
       ANSITerminal.muteConsole(true);
 
       final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
-      assertThat(url).isNotNull();
+      final InputStream stubsDatanputStream = url.openStream();
+      stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
+      stubsDatanputStream.close();
 
       STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
    }
 
    @Before
    public void beforeEach() throws Exception {
-
-      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
-      assertThat(url).isNotNull();
-
-      final InputStream stubsDatanputStream = url.openStream();
-      final String stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
-      stubsDatanputStream.close();
-
-      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", ADMIN_PORT, stubsData);
+      final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
+      assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
    }
 
    @AfterClass

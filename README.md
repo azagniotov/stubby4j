@@ -793,22 +793,31 @@ for each <endpoint> of stored endpoints {
    public StubbyResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception
 
    /**
+    * Updated stubbed data with new data. This method creates a POST request to Admin portal
+    *
+    * @param url       fully constructed URL which included HTTP scheme, host and port
+    * @param stubsData data to post
+    */
+   public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception
+
+
+   /**
     * Makes HTTP request to stubby.
     *
-    * @param scheme    HTTP protocol scheme, HTTP or HTTPS
-    * @param method    HTTP method, currently supported: GET, HEAD, TRACE, OPTIONS, POST
-    * @param host      host that stubby4j is running on
-    * @param uri       URI for the HTTP request
-    * @param stubsPort port that stubby4j Stubs is running on
-    * @param post      data to POST to the server
+    * @param scheme HTTP protocol scheme, HTTP or HTTPS
+    * @param method HTTP method, currently supported: GET, HEAD, PUT, POST
+    * @param host   host that stubby4j is running on
+    * @param uri    URI for the HTTP request
+    * @param port   port that stubby4j Stubs is running on
+    * @param post   data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-    public StubbyResponse makeRequest(final String scheme,
+   public StubbyResponse makeRequest(final String scheme,
                                      final String method,
                                      final String host,
                                      final String uri,
-                                     final int stubsPort,
+                                     final int port,
                                      final String post) throws Exception
 ```
 
@@ -817,6 +826,8 @@ for each <endpoint> of stored endpoints {
 ### 2.0.3 (SNAPSHOT)
 
 * Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
+* Eliminated implicit test to test dependencies in AdminPortalTest that was causing issues when running the tests under JDK 1.7 [BUG]
+* Added convenience method in StubbyClient `updateStubbedData` [ENHANCEMENT]
 
 ### 2.0.2
 
