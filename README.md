@@ -823,7 +823,7 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
-### 2.0.3 (SNAPSHOT)
+### 2.0.3
 
 * Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
 * Eliminated implicit test to test dependencies in AdminPortalTest that was causing issues when running the tests under JDK 1.7 [BUG]
