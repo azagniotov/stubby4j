@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import by.stub.cli.ANSITerminal;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -102,6 +104,7 @@ public final class ReflectionUtils {
          });
          field.set(object, value);
       } catch (NoSuchFieldException ignored) {
+         ANSITerminal.warn(ignored.toString());
       }
    }
 

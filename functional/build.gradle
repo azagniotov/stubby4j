@@ -1,6 +1,6 @@
 dependencies {
    compile project(':main')
-   compile project(':builders')
+   testCompile project(':builders')
 }
 
 sourceSets {

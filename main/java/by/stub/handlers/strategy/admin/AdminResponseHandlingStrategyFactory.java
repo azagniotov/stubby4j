@@ -30,11 +30,12 @@ public final class AdminResponseHandlingStrategyFactory {
    public static AdminResponseHandlingStrategy getStrategy(final HttpServletRequest request) {
 
       final String method = request.getMethod();
-      HttpVerbsEnum verbEnum = HttpVerbsEnum.UNSUPPORTED;
+      final HttpVerbsEnum verbEnum;
 
       try {
          verbEnum = HttpVerbsEnum.valueOf(method);
       } catch (final IllegalArgumentException ex) {
+         return new NullHandlingStrategy();
       }
 
       switch (verbEnum) {
@@ -47,12 +48,8 @@ public final class AdminResponseHandlingStrategyFactory {
          case DELETE:
             return new DeleteHandlingStrategy();
 
-         case GET:
-            return new GetHandlingStrategy();
-
          default:
-            return new NullHandlingStrategy();
-
+            return new GetHandlingStrategy();
       }
    }
 }

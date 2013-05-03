@@ -1,12 +1,7 @@
 package by.stub.yaml.stubs;
 
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.StringUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

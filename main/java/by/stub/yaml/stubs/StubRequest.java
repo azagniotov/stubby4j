@@ -27,16 +27,7 @@ import org.eclipse.jetty.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,6 +131,18 @@ public class StubRequest {
 
    public void setFile(final byte[] file) {
       this.file = file;
+   }
+
+   public boolean hasHeaders() {
+      return !getHeaders().isEmpty();
+   }
+
+   public boolean hasQuery() {
+      return !getQuery().isEmpty();
+   }
+
+   public boolean hasPostBody() {
+      return StringUtils.isSet(getPostBody());
    }
 
    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {

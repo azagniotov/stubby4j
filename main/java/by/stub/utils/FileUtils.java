@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import by.stub.cli.ANSITerminal;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.*;

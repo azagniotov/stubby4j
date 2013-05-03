@@ -91,7 +91,7 @@ public final class StubHttpLifecycle {
       }
 
       final List<StubResponse> responses = (LinkedList<StubResponse>) response;
-      if (responses.size() == 0) {
+      if (responses.isEmpty()) {
          return new StubResponse();
       }
 
@@ -111,12 +111,18 @@ public final class StubHttpLifecycle {
 
    @Override
    public boolean equals(final Object o) {
-      if (this == o) return true;
-      if (!(o instanceof StubHttpLifecycle)) return false;
+      if (this == o) {
+         return true;
+      }
+
+      if (!(o instanceof StubHttpLifecycle)) {
+         return false;
+      }
 
       final StubHttpLifecycle that = (StubHttpLifecycle) o;
-
-      if (!request.equals(that.request)) return false;
+      if (!request.equals(that.request)) {
+         return false;
+      }
 
       return true;
    }

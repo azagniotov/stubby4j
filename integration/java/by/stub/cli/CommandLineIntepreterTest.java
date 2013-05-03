@@ -1,13 +1,10 @@
 package by.stub.cli;
 
 import by.stub.utils.StringUtils;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.ParseException;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

@@ -9,6 +9,5 @@ public enum HttpVerbsEnum {
    GET,
    PUT,
    POST,
-   DELETE,
-   UNSUPPORTED;
+   DELETE;
 }

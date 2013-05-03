@@ -23,7 +23,6 @@ import by.stub.database.DataStore;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 public interface AdminResponseHandlingStrategy {
    void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws Exception;

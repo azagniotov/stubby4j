@@ -46,7 +46,8 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
          return;
       }
       final String expectedbase64encodedHeader = authorizationHeader.substring("Basic ".length());
-      final String expectedbase64decodedHeader = new String(Base64.decodeBase64(expectedbase64encodedHeader), StringUtils.charsetUTF8());
+      final byte[] decodedHeaderBytes = Base64.decodeBase64(expectedbase64encodedHeader);
+      final String expectedbase64decodedHeader = StringUtils.newStringUtf8(decodedHeaderBytes);
 
       final String template = "Unauthorized with supplied encoded credentials: '%s' which decodes to '%s'";
       error = String.format(template, expectedbase64encodedHeader, expectedbase64decodedHeader);

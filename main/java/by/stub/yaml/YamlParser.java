@@ -144,9 +144,10 @@ public final class YamlParser {
             massagedPairValue = encodeAuthorizationHeader(rawPairValue);
 
          } else if (pairKey.toLowerCase().equals(YAML_NODE_METHOD)) {
-            massagedPairValue = new ArrayList<String>(1) {{
-               add(StringUtils.objectToString(rawPairValue));
-            }};
+
+            final ArrayList<String> methods = new ArrayList<String>(1);
+            methods.add(StringUtils.objectToString(rawPairValue));
+            massagedPairValue = methods;
 
          } else if (pairKey.toLowerCase().equals(YAML_NODE_FILE)) {
 

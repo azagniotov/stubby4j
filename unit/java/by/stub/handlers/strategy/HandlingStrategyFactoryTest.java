@@ -1,10 +1,10 @@
 package by.stub.handlers.strategy;
 
 import by.stub.handlers.strategy.stubs.DefaultResponseHandlingStrategy;
-import by.stub.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import by.stub.handlers.strategy.stubs.NotFoundResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.RedirectResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
+import by.stub.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import by.stub.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;

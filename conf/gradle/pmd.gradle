@@ -3,17 +3,16 @@ apply plugin: 'pmd'
 logger.info "Configuring Cobertura Plugin"
 
 dependencies {
-   pmd 'net.sourceforge.pmd:pmd:5.0.3'
+   pmd 'net.sourceforge.pmd:pmd:5.0.4'
 }
 
 pmd {
-   toolVersion = "5.0.3"
+   toolVersion = "5.0.4"
    sourceSets = [sourceSets.main]
    ignoreFailures = true
    ruleSets = []
    ruleSetFiles = files("$rootDir/conf/pmd/pmd-rulesets.xml")
 }
-//excludes = ["by/stub/repackaged/**/*.java", "by/stub/repackaged/**/*.class", "**/Base64.class", "**/Base64.java", "**/*Base64.class", "**/*Base64.java"]
 pmdMain {
    excludes = ["by/stub/repackaged/**/*.java", "by/stub/cli/**/*.java", "**/ConsoleUtils.java", "**/FakeX509TrustManager.java", "**/ConfigurationScanner.java", "**/Stubby4JException.java", "**/Main.java", "**/HttpServletResponseWithGetStatus.java"]
    reports {

@@ -6,8 +6,6 @@ import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-
 /**
  * @author: Alexander Zagniotov
  * Created: 4/21/13 2:17 PM

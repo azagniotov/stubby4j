@@ -2,7 +2,6 @@ package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;

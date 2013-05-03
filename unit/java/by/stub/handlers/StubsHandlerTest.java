@@ -1,7 +1,6 @@
 package by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.DataStore;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.StubRequest;

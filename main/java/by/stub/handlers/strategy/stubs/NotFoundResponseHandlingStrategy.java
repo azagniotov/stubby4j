@@ -21,7 +21,6 @@ package by.stub.handlers.strategy.stubs;
 
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -34,21 +33,15 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertion) throws IOException {
 
       HandlerUtils.setResponseMainHeaders(response);
 
-      final String postMessage = (StringUtils.isSet(assertionStubRequest.getPostBody().toString())
-         ? String.format("\n\t%s%s", "With post data: ", assertionStubRequest.getPostBody()) : "");
+      final String postMessage = assertion.hasPostBody() ? String.format("\n\t%s%s", "With post data: ", assertion.getPostBody()) : "";
+      final String headersMessage = assertion.hasHeaders() ? String.format("\n\t%s%s", "With headers: ", assertion.getHeaders()) : "";
+      final String queryMessage = (assertion.hasQuery() ? String.format("\n\t%s%s", "With query params: ", assertion.getQuery()) : "");
 
-      final String headersMessage = (assertionStubRequest.getHeaders().size() > 0
-         ? String.format("\n\t%s%s", "With headers: ", assertionStubRequest.getHeaders()) : "");
-
-      final String queryMessage = (assertionStubRequest.getQuery().size() > 0
-         ? String.format("\n\t%s%s", "With query params: ", assertionStubRequest.getQuery()) : "");
-
-      final String error = String.format("No data found for %s request at URI %s%s%s%s",
-         assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage, headersMessage, queryMessage);
+      final String error = String.format("No data found for %s request at URI %s%s%s%s", assertion.getMethod().get(0), assertion.getUrl(), postMessage, headersMessage, queryMessage);
 
       HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
    }
