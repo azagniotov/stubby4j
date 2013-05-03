@@ -49,9 +49,9 @@ public class AdminPortalTest {
 
       final InputStream stubsDatanputStream = url.openStream();
       final String stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
-      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", STUBS_PORT, stubsData);
-
       stubsDatanputStream.close();
+
+      STUBBY_CLIENT.makeRequest(HttpSchemes.HTTP, HttpMethods.POST, "localhost", "/", STUBS_PORT, stubsData);
    }
 
    @AfterClass
