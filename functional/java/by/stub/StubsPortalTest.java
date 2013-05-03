@@ -35,7 +35,7 @@ public class StubsPortalTest {
 
       ANSITerminal.muteConsole(true);
 
-      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.data.yaml");
+      final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
       assertThat(url).isNotNull();
 
       STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
