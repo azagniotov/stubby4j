@@ -27,6 +27,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## Why would a developer use stubby4j?
 ####You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
+* Third party web service your application suppose to contract with is not ready yet
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP error codes
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
