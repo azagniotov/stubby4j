@@ -118,7 +118,7 @@ public final class YamlParser {
          final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequest.class);
          stubHttpLifecycle.setRequest(targetStub);
 
-         ConsoleUtils.logUnmarshalledStubRequest(targetStub);
+         ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
 
       } else {
          final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponse.class);
