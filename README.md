@@ -11,8 +11,8 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
-* [Dependencies](#dependencies)
-* [Maven Central](#maven-central)
+* [stubby4j dependencies](#stubby4j-dependencies)
+* [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
 * [Command-line Switches](#command-line-switches)
 * [Endpoint Configuration](#endpoint-configuration)
 * [The Admin Portal](#the-admin-portal)
@@ -84,16 +84,32 @@ stubby4j is a fat JAR, which contains the following dependencies:
 **stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
 
 
-## Maven Central
+## Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
 Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j
 
+#### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
     <version>x.x.xx</version>
 </dependency>
+```
+
+#### Apache Ivy
+```xml
+<dependency org="by.stub" name="stubby4j" rev="x.x.xx" />
+```
+
+#### Apache Buildr
+```xml
+'by.stub:stubby4j:jar:x.x.xx'
+```
+
+#### Gradle
+```xml
+compile 'by.stub:stubby4j:x.x.xx'
 ```
 
 ## Command-line Switches
