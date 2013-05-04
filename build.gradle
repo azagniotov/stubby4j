@@ -94,3 +94,16 @@ project(":").tasks.each {
          println ":" + task.name + " => Disabling task.." 
       }
 }
+
+def projects = [project(":unit"), project(":integration"), project(":functional") ]
+projects.each {
+   project ->
+      project.tasks.each {
+         task ->
+            def taskNameLowerCase = task.name.toLowerCase()
+            if (taskNameLowerCase.contains("jar")) {
+               task.enabled = false
+               println ":" + project.name + ":" + task.name + " => Disabling task.."
+            }
+         }
+}
