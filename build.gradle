@@ -34,10 +34,10 @@ allprojects {
                showStackTraces true
             }
             doFirst {
-               println ""
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                         Running " + project.name.toUpperCase() + " module tests"
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               //println ""
+               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               //println ":::::                         Running " + project.name.toUpperCase() + " module tests"
+               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
             }
             afterSuite { testDescriptor, testResult ->
                if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
@@ -47,6 +47,10 @@ allprojects {
                }
             }
             doLast {
+               println ""
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+               println ":::::                         Ran " + project.name.toUpperCase() + " module tests"
+               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
                println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
                println ":::::               Total tests executed in $stubbyProjectName project so far " + totalTestCounter
                println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
