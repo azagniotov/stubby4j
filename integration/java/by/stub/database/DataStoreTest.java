@@ -591,7 +591,7 @@ public class DataStoreTest {
          .withFoldedBody(expectedBody)
          .withHeaders("content-type", "application/json").build();
 
-      final List<StubHttpLifecycle> parsedHttpLifecycles = parseYamlToStubHttpLifecycles(yaml);
+      final List<StubHttpLifecycle> parsedHttpLifecycles = unmarshall(yaml);
       dataStore.resetStubHttpLifecycles(parsedHttpLifecycles);
 
       final List<StubHttpLifecycle> expectedHttpLifecycles = new LinkedList<StubHttpLifecycle>(parsedHttpLifecycles);
@@ -697,7 +697,7 @@ public class DataStoreTest {
       dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
-   private List<StubHttpLifecycle> parseYamlToStubHttpLifecycles(final String yaml) throws Exception {
+   private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
       return new YamlParser().parse(".", FileUtils.constructReader(yaml));
    }
 

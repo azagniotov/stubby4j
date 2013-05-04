@@ -17,7 +17,8 @@ public class StubResponseTest {
       final StubResponse stubResponse = new StubResponse();
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("this is some body").isEqualTo(actualResponseBody);
    }
 
    @Test
@@ -27,17 +28,19 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("this is some body").isEqualTo(actualResponseBody);
    }
 
    @Test
    public void shouldReturnBody_WhenFileIsEmpty() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile(new byte[] {});
+      stubResponse.setFile(new byte[]{});
       stubResponse.setBody("this is some body");
 
-      assertThat("this is some body").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("this is some body").isEqualTo(actualResponseBody);
    }
 
    @Test
@@ -47,7 +50,8 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody(null);
 
-      assertThat("").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("").isEqualTo(actualResponseBody);
    }
 
    @Test
@@ -57,17 +61,19 @@ public class StubResponseTest {
       stubResponse.setFile(null);
       stubResponse.setBody("");
 
-      assertThat("").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("").isEqualTo(actualResponseBody);
    }
 
    @Test
    public void shouldReturnEmptyBody_WhenBodyIsEmpty_AndFileIsEmpty() throws Exception {
 
       final StubResponse stubResponse = new StubResponse();
-      stubResponse.setFile(new byte[] {});
+      stubResponse.setFile(new byte[]{});
       stubResponse.setBody("");
 
-      assertThat("").isEqualTo(StringUtils.newStringUtf8(stubResponse.getResponseBody()));
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat("").isEqualTo(actualResponseBody);
    }
 
    @Test
@@ -78,6 +84,7 @@ public class StubResponseTest {
       stubResponse.setFile(StringUtils.getBytesUtf8(expectedResponseBody));
       stubResponse.setBody("something");
 
-      assertThat(StringUtils.newStringUtf8(stubResponse.getResponseBody())).isEqualTo(expectedResponseBody);
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      assertThat(expectedResponseBody).isEqualTo(actualResponseBody);
    }
 }

@@ -1,18 +1,3 @@
-def doSign = !"${version}".contains('SNAPSHOT')
-if (!doSign) {
-   println ""
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ":::     ATTENTION: Latest development version is ${version}     :::"
-   println ":::         Remove the '-SNAPSHOT' before signing artifacts         :::"
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ""
-   return
-}
-
-apply plugin: 'maven'
-apply plugin: 'nexus'
-apply plugin: 'signing'
-
 def dependencies = configurations.compile.resolve().findAll { file ->
    return !file.name.contains("servlet-api") && !file.name.contains("-sources")
 }
@@ -30,6 +15,39 @@ project.ext.projectManifest = manifest {
                'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
                'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
 }
+
+jar {
+   description = 'Creates a shaded/uberjar/fatjar of stubby4j'
+   archiveName = "${stubbyProjectName}-${version}.jar"
+   manifest = project.ext.projectManifest
+   from sourceSets.main.output
+
+   from (dependencies.collect { zipTree(it) }) {
+      exclude 'META-INF/*.SF'
+      exclude 'META-INF/*.DSA'
+      exclude 'META-INF/*.RSA'
+      exclude 'META-INF/*.INF'
+      exclude 'META-INF/*.inf'
+   }
+   doLast {
+      println ":" + name + " Packaged the following dependencies: " + dependencies.collect { File file -> file.name }
+   }
+}
+
+def doSign = !"${version}".contains('SNAPSHOT')
+if (!doSign) {
+   println ""
+   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+   println ":::     ATTENTION: Latest development version is ${version}     :::"
+   println ":::         Remove the '-SNAPSHOT' before signing artifacts         :::"
+   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+   println ""
+   return
+}
+
+apply plugin: 'maven'
+apply plugin: 'nexus'
+apply plugin: 'signing'
 
 sourcesJar {
    dependsOn = ['classes']
@@ -64,24 +82,6 @@ task skinnyJar(type: Jar) {
 
    doLast {
       println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDir
-   }
-}
-
-jar {
-   description = 'Creates a shaded/uberjar/fatjar of stubby4j'
-   archiveName = "${stubbyProjectName}-${version}.jar"
-   manifest = project.ext.projectManifest
-   from sourceSets.main.output
-
-   from (dependencies.collect { zipTree(it) }) {
-      exclude 'META-INF/*.SF'
-      exclude 'META-INF/*.DSA'
-      exclude 'META-INF/*.RSA'
-      exclude 'META-INF/*.INF'
-      exclude 'META-INF/*.inf'
-   }
-   doLast {
-      println ":" + name + " Packaged the following dependencies: " + dependencies.collect { File file -> file.name }
    }
 }
 

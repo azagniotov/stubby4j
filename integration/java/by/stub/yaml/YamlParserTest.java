@@ -36,7 +36,7 @@ public class YamlParserTest {
       expectedException.expect(IOException.class);
       expectedException.expectMessage("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
 
-      loadYamlToDataStore("");
+      unmarshall("");
    }
 
    @Test
@@ -49,7 +49,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
       assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
@@ -67,7 +67,7 @@ public class YamlParserTest {
          .withStatus(expectedStatus)
          .build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
@@ -93,7 +93,7 @@ public class YamlParserTest {
          .withSequenceResponseLiteralBody(sequenceResponseBody)
          .build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
@@ -128,7 +128,7 @@ public class YamlParserTest {
          .withSequenceResponseFoldedBody(sequenceResponseBody)
          .build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
       final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse();
@@ -153,7 +153,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("301").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -169,7 +169,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("301").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -184,7 +184,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withLiteralBody("hello").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
@@ -203,7 +203,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -225,7 +225,7 @@ public class YamlParserTest {
          .withLiteralBody("OK")
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
 
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
@@ -253,7 +253,7 @@ public class YamlParserTest {
       final boolean NO_AUTO_FLUSH = false;
       System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
 
-      loadYamlToDataStore(yaml);
+      unmarshall(yaml);
 
       System.setOut(System.out);
 
@@ -278,7 +278,7 @@ public class YamlParserTest {
          .withFile(stubbedResponseFile)
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
 
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getActualStubbedResponse();
@@ -305,7 +305,7 @@ public class YamlParserTest {
       final boolean NO_AUTO_FLUSH = false;
       System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
 
-      loadYamlToDataStore(yaml);
+      unmarshall(yaml);
 
       System.setOut(System.out);
 
@@ -327,7 +327,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -347,7 +347,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("201").build();
 
-      loadYamlToDataStore(yaml);
+      unmarshall(yaml);
    }
 
 
@@ -362,7 +362,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withFoldedBody(stubbedResponseBody).build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
@@ -381,7 +381,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withLiteralBody("{\"message\", \"Hello, this is a response body\"}").build();
 
-      loadYamlToDataStore(yaml);
+      unmarshall(yaml);
    }
 
    @Test
@@ -395,7 +395,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withLiteralBody(stubbedResponseBody).build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
 
@@ -422,7 +422,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("500").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
@@ -446,7 +446,7 @@ public class YamlParserTest {
          .withStatus("301").build();
 
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -469,7 +469,7 @@ public class YamlParserTest {
          .withStatus("301").build();
 
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -494,7 +494,7 @@ public class YamlParserTest {
          .withHeaderLocation(location).build();
 
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse();
       final MapEntry headerOneEntry = MapEntry.entry("location", location);
@@ -519,7 +519,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
@@ -542,7 +542,7 @@ public class YamlParserTest {
          .newStubbedResponse()
          .withStatus("201").build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(yaml);
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
       final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
@@ -552,7 +552,7 @@ public class YamlParserTest {
    }
 
 
-   private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
+   private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
       return new YamlParser().parse(".", FileUtils.constructReader(yaml));
    }
 }
