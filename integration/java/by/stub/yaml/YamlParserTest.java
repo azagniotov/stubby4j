@@ -260,7 +260,7 @@ public class YamlParserTest {
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.request.xml");
-      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_CONTENT_ERROR);
+      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
    }
 
 
@@ -312,7 +312,7 @@ public class YamlParserTest {
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.response.xml");
-      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_CONTENT_ERROR);
+      assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
    }
 
    @Test

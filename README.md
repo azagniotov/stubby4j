@@ -55,17 +55,24 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 
 ## Building
-stubby4j is a multi-module Gradle project. IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files. Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files.
+stubby4j is a multi-module Gradle project
+
+* IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files
+* Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files
 
 Run `gradle` command to:
 * Clean
+* Run unit, integration and functional tests without Cobertura
 * Build
 
-Run `gradle testAll` command to:
+Run `gradle cobertura` command to:
 * Clean
-* Run unit, integration and functional tests in the specified order without Cobertura
+* Generate Cobertura report under the ```main``` module
 
-Run `gradle clean cobertura` command to:
+Run `gradle clean check` command to:
+* Clean
+* Generate PMD report under the ```main``` module
+* Generate JDepend report under the ```main``` module
 * Generate Cobertura report under the ```main``` module
 
 
@@ -73,7 +80,7 @@ Run `gradle clean cobertura` command to:
 stubby4j is a fat JAR, which contains the following dependencies:
 
 * commons-cli-1.2.jar
-* snakeyaml-1.11.jar
+* snakeyaml-1.12.jar
 * javax.servlet-3.0.0.v201112011016.jar
 * jetty-server-8.1.7.v20120910.jar
 * jetty-continuation-8.1.7.v20120910.jar
@@ -93,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>x.x.xx</version>
+    <version>2.0.3</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="x.x.xx" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.3" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:x.x.xx'
+'by.stub:stubby4j:jar:2.0.3'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:x.x.xx'
+compile 'by.stub:stubby4j:2.0.3'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.3.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1

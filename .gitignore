@@ -21,6 +21,12 @@ builders/builders.iml
 unit/unit.iml
 integration/integration.iml
 functional/functional.iml
+.classpath
+builders/.classpath
+functional/.classpath
+integration/.classpath
+main/.classpath
+unit/.classpath
 build/*
 out/*
 .idea/*
