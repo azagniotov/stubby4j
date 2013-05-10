@@ -1,6 +1,6 @@
 package by.stub.handlers.strategy.admin;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.FileUtils;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws Exception {
+   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws Exception {
 
       if (!request.getRequestURI().equals(AdminHandler.ADMIN_ROOT)) {
          wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -35,8 +35,8 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
          return;
       }
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataStore.getYamlParentDirectory(), FileUtils.constructReader(post));
-      dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(post));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       if (stubHttpLifecycles.size() == 1) {
          wrapper.addHeader(HttpHeaders.LOCATION, stubHttpLifecycles.get(0).getRequest().getUrl());

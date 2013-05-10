@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
@@ -43,10 +43,10 @@ public class AdminHandler extends AbstractHandler {
 
    //Do not remove this constant without changing the example in documentation
    public static final String ADMIN_ROOT = "/";
-   private final DataStore dataStore;
+   private final StubbedDataManager stubbedDataManager;
 
-   public AdminHandler(final DataStore dataStore) {
-      this.dataStore = dataStore;
+   public AdminHandler(final StubbedDataManager stubbedDataManager) {
+      this.stubbedDataManager = stubbedDataManager;
    }
 
    @Override
@@ -66,7 +66,7 @@ public class AdminHandler extends AbstractHandler {
 
       final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
       try {
-         strategyStubResponse.handle(request, wrapper, dataStore);
+         strategyStubResponse.handle(request, wrapper, stubbedDataManager);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
       }

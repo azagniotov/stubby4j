@@ -21,7 +21,7 @@ package by.stub.server;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminHandler;
 import by.stub.handlers.StatusHandler;
@@ -60,15 +60,15 @@ public final class JettyFactory {
    static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
    static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
    private final Map<String, String> commandLineArgs;
-   private final DataStore dataStore;
+   private final StubbedDataManager stubbedDataManager;
    private String currentHost;
    private int currentStubsPort;
    private int currentAdminPort;
    private int currentStubsSslPort;
 
-   public JettyFactory(final Map<String, String> commandLineArgs, final DataStore dataStore) {
+   public JettyFactory(final Map<String, String> commandLineArgs, final StubbedDataManager stubbedDataManager) {
       this.commandLineArgs = commandLineArgs;
-      this.dataStore = dataStore;
+      this.stubbedDataManager = stubbedDataManager;
    }
 
    public Server construct() throws IOException {
@@ -88,15 +88,15 @@ public final class JettyFactory {
          {
             constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
             constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
+            constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(stubbedDataManager)),
 
             constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
             constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(dataStore)),
+            constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(stubbedDataManager)),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, dataStore)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/", new AdminHandler(dataStore))
+            constructHandler(ADMIN_CONNECTOR_NAME, "/", new AdminHandler(stubbedDataManager))
          }
       );
 

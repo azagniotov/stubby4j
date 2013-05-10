@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
@@ -39,10 +39,10 @@ import java.io.IOException;
 public class StubsHandler extends AbstractHandler {
 
    private static final String NAME = "stubs";
-   private final DataStore dataStore;
+   private final StubbedDataManager stubbedDataManager;
 
-   public StubsHandler(final DataStore dataStore) {
-      this.dataStore = dataStore;
+   public StubsHandler(final StubbedDataManager stubbedDataManager) {
+      this.stubbedDataManager = stubbedDataManager;
    }
 
    @Override
@@ -55,7 +55,7 @@ public class StubsHandler extends AbstractHandler {
       baseRequest.setHandled(true);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertionStubRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
       final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 

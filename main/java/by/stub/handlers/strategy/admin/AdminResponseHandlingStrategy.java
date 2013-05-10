@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.admin;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface AdminResponseHandlingStrategy {
-   void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws Exception;
+   void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws Exception;
 }

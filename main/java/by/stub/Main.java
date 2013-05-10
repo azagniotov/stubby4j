@@ -22,8 +22,8 @@ package by.stub;
 import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.exception.Stubby4JException;
-import by.stub.server.JettyManager;
-import by.stub.server.JettyManagerFactory;
+import by.stub.server.StubbyManager;
+import by.stub.server.StubbyManagerFactory;
 import org.apache.commons.cli.ParseException;
 
 import java.util.Map;
@@ -90,9 +90,9 @@ public final class Main {
 
          ANSITerminal.muteConsole(commandLineInterpreter.isMute());
 
-         final JettyManagerFactory factory = new JettyManagerFactory();
-         final JettyManager jettyManager = factory.construct(yamlConfigFilename, commandLineArgs);
-         jettyManager.startJetty();
+         final StubbyManagerFactory factory = new StubbyManagerFactory();
+         final StubbyManager stubbyManager = factory.construct(yamlConfigFilename, commandLineArgs);
+         stubbyManager.startJetty();
 
       } catch (final Exception ex) {
          final String msg =

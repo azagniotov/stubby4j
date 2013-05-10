@@ -1,6 +1,6 @@
 package by.stub.handlers.strategy.admin;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
@@ -21,7 +21,7 @@ import java.util.List;
 public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws IOException {
+   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws IOException {
 
       final StringBuilder yamlAppender = new StringBuilder();
       final int contextPathLength = AdminHandler.ADMIN_ROOT.length();
@@ -30,16 +30,16 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
       if (StringUtils.isSet(pathInfoNoHeadingSlash)) {
          final int targetHttpStubCycleIndex = Integer.parseInt(pathInfoNoHeadingSlash);
 
-         if (dataStore.getStubHttpLifecycles().size() - 1 < targetHttpStubCycleIndex) {
+         if (stubbedDataManager.getStubHttpLifecycles().size() - 1 < targetHttpStubCycleIndex) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
             HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
          }
 
-         yamlAppender.append(dataStore.getMarshalledYamlByIndex(targetHttpStubCycleIndex));
+         yamlAppender.append(stubbedDataManager.getMarshalledYamlByIndex(targetHttpStubCycleIndex));
 
       } else {
-         final List<StubHttpLifecycle> stubbedCycles = dataStore.getStubHttpLifecycles();
+         final List<StubHttpLifecycle> stubbedCycles = stubbedDataManager.getStubHttpLifecycles();
          for (final StubHttpLifecycle cycle : stubbedCycles) {
             yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
          }

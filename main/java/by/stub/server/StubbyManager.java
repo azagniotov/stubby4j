@@ -21,18 +21,25 @@ package by.stub.server;
 
 
 import by.stub.cli.ANSITerminal;
+import by.stub.database.StubbedDataManager;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 
-public final class JettyManager {
+import java.io.File;
+import java.util.List;
+
+public final class StubbyManager {
 
    private final Server server;
+   private final StubbedDataManager stubbedDataManager;
 
-   public JettyManager(final Server server) {
+   public StubbyManager(final Server server, final StubbedDataManager stubbedDataManager) {
       this.server = server;
+      this.stubbedDataManager = stubbedDataManager;
    }
 
    public void startJetty() throws Exception {
-      synchronized (JettyManager.class) {
+      synchronized (StubbyManager.class) {
          if (server.isStarted() || server.isStarting() || server.isRunning()) {
             return;
          }
@@ -44,7 +51,7 @@ public final class JettyManager {
    }
 
    public void stopJetty() throws Exception {
-      synchronized (JettyManager.class) {
+      synchronized (StubbyManager.class) {
          if (server.isStopped() || server.isStopping() || !server.isRunning()) {
             return;
          }
@@ -57,12 +64,20 @@ public final class JettyManager {
    }
 
    public boolean isJettyUp() throws Exception {
-      synchronized (JettyManager.class) {
+      synchronized (StubbyManager.class) {
          if (server.isStarting() || server.isRunning()) {
             return true;
          }
 
          return false;
       }
+   }
+
+   public File getDataYaml() {
+      return stubbedDataManager.getDataYaml();
+   }
+
+   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 }

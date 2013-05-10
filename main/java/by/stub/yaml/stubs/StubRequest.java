@@ -238,7 +238,7 @@ public class StubRequest {
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in DataStore after request was matched
+      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
    }

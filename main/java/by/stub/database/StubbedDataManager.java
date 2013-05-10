@@ -30,12 +30,12 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class DataStore {
+public class StubbedDataManager {
 
    private final File dataYaml;
    private final List<StubHttpLifecycle> stubHttpLifecycles;
 
-   public DataStore(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public StubbedDataManager(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.dataYaml = dataYaml;
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }

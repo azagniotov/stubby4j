@@ -21,7 +21,7 @@ package by.stub.server;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.database.thread.ConfigurationScanner;
 import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
@@ -33,13 +33,13 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class JettyManagerFactory {
+public class StubbyManagerFactory {
 
-   public JettyManagerFactory() {
+   public StubbyManagerFactory() {
 
    }
 
-   public JettyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
+   public StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
 
       Log.setLog(new EmptyLogger());
@@ -49,19 +49,19 @@ public class JettyManagerFactory {
 
       System.out.println();
 
-      final DataStore dataStore = new DataStore(dataYamlFile, httpLifecycles);
-      final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, dataStore);
+      final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, httpLifecycles);
+      final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubbedDataManager);
       final Server server = jettyFactory.construct();
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
-         watchDataStore(dataStore);
+         watchDataStore(stubbedDataManager);
       }
 
-      return new JettyManager(server);
+      return new StubbyManager(server, stubbedDataManager);
    }
 
-   public void watchDataStore(final DataStore dataStore) {
-      final ConfigurationScanner configurationScanner = new ConfigurationScanner(dataStore);
+   private void watchDataStore(final StubbedDataManager stubbedDataManager) {
+      final ConfigurationScanner configurationScanner = new ConfigurationScanner(stubbedDataManager);
       new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
    }
 }

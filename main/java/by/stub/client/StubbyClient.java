@@ -21,8 +21,8 @@ package by.stub.client;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.server.JettyFactory;
-import by.stub.server.JettyManager;
-import by.stub.server.JettyManagerFactory;
+import by.stub.server.StubbyManager;
+import by.stub.server.StubbyManagerFactory;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
@@ -33,11 +33,127 @@ import java.util.Map;
 
 public final class StubbyClient {
 
-   private JettyManager jettyManager;
+   private StubbyManager stubbyManager;
 
    public StubbyClient() {
 
    }
+
+   /*
+   public StubRequestBuilder stubRequest() {
+      return new StubRequestBuilder();
+   }
+
+   public final class StubRequestBuilder {
+
+      private String url = null;
+      private ArrayList<String> methods = new ArrayList<String>();
+      private String post = null;
+
+      public StubRequestBuilder() {
+
+      }
+
+      public StubRequestBuilder withMethodGet() {
+         this.methods.add(HttpMethods.GET);
+
+         return this;
+      }
+
+      public StubRequestBuilder withMethodPut() {
+         this.methods.add(HttpMethods.PUT);
+
+         return this;
+      }
+
+      public StubRequestBuilder withMethodPost() {
+         this.methods.add(HttpMethods.POST);
+
+         return this;
+      }
+
+      public StubRequestBuilder withMethodHead() {
+         this.methods.add(HttpMethods.HEAD);
+
+         return this;
+      }
+
+      public StubRequestBuilder withUrl(final String value) {
+         this.url = value;
+
+         return this;
+      }
+
+      public StubRequestBuilder withPost(final String post) {
+         this.post = post;
+
+         return this;
+      }
+
+      public StubResponseBuilder stubResponse() {
+         return new StubResponseBuilder(this);
+      }
+
+      public final class StubResponseBuilder {
+
+         private String status;
+         private Map<String, String> headers = new HashMap<String, String>();
+         private String body = null;
+         private final StubRequestBuilder stubRequestBuilder;
+
+         public StubResponseBuilder(final StubRequestBuilder stubRequestBuilder) {
+            this.stubRequestBuilder = stubRequestBuilder;
+         }
+
+         public StubResponseBuilder withStatus(final String status) {
+            this.status = status;
+
+            return this;
+         }
+
+         public StubResponseBuilder withBody(final String body) {
+            this.body = body;
+
+            return this;
+         }
+
+         public StubResponseBuilder withHeaders(final String key, final String value) {
+            this.headers.put(key, value);
+
+            return this;
+         }
+
+         public void build() {
+            final StubRequest stubRequest = new StubRequest();
+            stubRequest.setPost(stubRequestBuilder.post);
+            stubRequest.setUrl(stubRequestBuilder.url);
+            try {
+               final Field field = stubRequest.getClass().getDeclaredField("method");
+               AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                  public Boolean run() {
+                     field.setAccessible(true);
+                     return true;
+                  }
+               });
+               field.set(stubRequest, stubRequestBuilder.methods);
+            } catch (Exception ignored) {
+            }
+
+            final StubResponse stubResponse = new StubResponse();
+            stubResponse.setStatus(status);
+            stubResponse.setBody(body);
+            stubResponse.setHeaders(headers);
+
+            final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
+            httpLifecycle.setRequest(stubRequest);
+            httpLifecycle.setResponse(stubResponse);
+
+            stubHttpLifecycles.add(httpLifecycle);
+         }
+      }
+   }
+
+   /*
 
    /**
     * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443)
@@ -94,9 +210,11 @@ public final class StubbyClient {
       final String[] args = new String[]{"-m", "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
       new CommandLineInterpreter().parseCommandLine(args);
 
-      jettyManager = new JettyManagerFactory().construct(yamlConfigurationFilename, params);
-      jettyManager.startJetty();
+      stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, params);
+      stubbyManager.startJetty();
    }
+
+   //stubbyManager.addStubHttpLifecycles(httpLifecycle);
 
    /**
     * Stops Jetty if it is up
@@ -104,8 +222,8 @@ public final class StubbyClient {
     * @throws Exception
     */
    public void stopJetty() throws Exception {
-      if (jettyManager != null && jettyManager.isJettyUp()) {
-         jettyManager.stopJetty();
+      if (stubbyManager != null && stubbyManager.isJettyUp()) {
+         stubbyManager.stopJetty();
       }
    }
 

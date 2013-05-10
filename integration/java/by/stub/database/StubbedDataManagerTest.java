@@ -33,20 +33,20 @@ import static org.mockito.Mockito.when;
 
 
 @SuppressWarnings("serial")
-public class DataStoreTest {
+public class StubbedDataManagerTest {
 
-   private static DataStore dataStore;
+   private static StubbedDataManager stubbedDataManager;
    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
 
    @BeforeClass
    public static void beforeClass() throws Exception {
-      dataStore = new DataStore(new File("."), new LinkedList<StubHttpLifecycle>());
+      stubbedDataManager = new StubbedDataManager(new File("."), new LinkedList<StubHttpLifecycle>());
    }
 
    @Before
    public void beforeEach() throws Exception {
-      dataStore.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
+      stubbedDataManager.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
    }
 
 
@@ -76,7 +76,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
       assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
 
@@ -118,8 +118,8 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse irrelevantFirstSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse irrelevantFirstSequenceResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
       assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
@@ -162,9 +162,9 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse irrelevantFirstSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
-      final StubResponse irrelevantLastSequenceResponse = dataStore.findStubResponseFor(assertingRequest);
-      final StubResponse firstSequenceResponseRestarted = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse irrelevantFirstSequenceResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
+      final StubResponse irrelevantLastSequenceResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
+      final StubResponse firstSequenceResponseRestarted = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(firstSequenceResponseRestarted).isInstanceOf(StubResponse.class);
       assertThat(StubResponseTypes.OK_200).isSameAs(firstSequenceResponseRestarted.getStubResponseType());
@@ -200,7 +200,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(RedirectStubResponse.class);
       assertThat(StubResponseTypes.REDIRECT).isSameAs(foundStubResponse.getStubResponseType());
@@ -234,7 +234,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
@@ -270,7 +270,7 @@ public class DataStoreTest {
             .withMethodGet()
             .withHeaders(StubRequest.AUTH_HEADER, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
@@ -305,7 +305,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodGet().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
       assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
@@ -336,7 +336,7 @@ public class DataStoreTest {
             .withMethodGet()
             .withHeaders(StubRequest.AUTH_HEADER, "Basic BadCredentials").build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
       assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
@@ -366,7 +366,7 @@ public class DataStoreTest {
             .withMethodGet()
             .withHeaders(StubRequest.AUTH_HEADER, null).build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
       assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
@@ -393,7 +393,7 @@ public class DataStoreTest {
             .withUrl("/invoice/300")
             .withMethodGet().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
@@ -427,7 +427,7 @@ public class DataStoreTest {
             .withMethodPost()
             .withPost(postData).build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
@@ -458,7 +458,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodPost().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
@@ -487,7 +487,7 @@ public class DataStoreTest {
             .withUrl(url)
             .withMethodPost().build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
@@ -519,7 +519,7 @@ public class DataStoreTest {
             .withMethodPost()
             .withPost(postData).build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
@@ -560,7 +560,7 @@ public class DataStoreTest {
             .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
             .build();
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
@@ -592,7 +592,7 @@ public class DataStoreTest {
          .withHeaders("content-type", "application/json").build();
 
       final List<StubHttpLifecycle> parsedHttpLifecycles = unmarshall(yaml);
-      dataStore.resetStubHttpLifecycles(parsedHttpLifecycles);
+      stubbedDataManager.resetStubHttpLifecycles(parsedHttpLifecycles);
 
       final List<StubHttpLifecycle> expectedHttpLifecycles = new LinkedList<StubHttpLifecycle>(parsedHttpLifecycles);
 
@@ -607,9 +607,9 @@ public class DataStoreTest {
             .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
             .build();
 
-      dataStore.findStubResponseFor(assertingRequest);
+      stubbedDataManager.findStubResponseFor(assertingRequest);
 
-      assertThat(dataStore.getStubHttpLifecycles()).isEqualTo(expectedHttpLifecycles);
+      assertThat(stubbedDataManager.getStubHttpLifecycles()).isEqualTo(expectedHttpLifecycles);
    }
 
    @Test
@@ -643,7 +643,7 @@ public class DataStoreTest {
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
       assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
@@ -682,7 +682,7 @@ public class DataStoreTest {
          );
 
       final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      final StubResponse foundStubResponse = dataStore.findStubResponseFor(assertingRequest);
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
       assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
       assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
@@ -694,7 +694,7 @@ public class DataStoreTest {
    private void loadYamlToDataStore(final String yaml) throws Exception {
       final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(yaml));
 
-      dataStore.resetStubHttpLifecycles(stubHttpLifecycles);
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {

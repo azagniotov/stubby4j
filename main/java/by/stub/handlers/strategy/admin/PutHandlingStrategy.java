@@ -1,6 +1,6 @@
 package by.stub.handlers.strategy.admin;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.FileUtils;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws Exception {
+   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws Exception {
 
       if (request.getRequestURI().equals(AdminHandler.ADMIN_ROOT)) {
          wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -32,7 +32,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
       final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
       final int stubIndexToUpdate = Integer.parseInt(pathInfoNoHeadingSlash);
 
-      if (dataStore.getStubHttpLifecycles().size() - 1 < stubIndexToUpdate) {
+      if (stubbedDataManager.getStubHttpLifecycles().size() - 1 < stubIndexToUpdate) {
          final String errorMessage = String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
          return;
@@ -45,9 +45,9 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
          return;
       }
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataStore.getYamlParentDirectory(), FileUtils.constructReader(put));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(put));
       final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
-      dataStore.updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
+      stubbedDataManager.updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
 
       wrapper.setStatus(HttpStatus.CREATED_201);
       wrapper.addHeader(HttpHeaders.LOCATION, newStubHttpLifecycle.getRequest().getUrl());

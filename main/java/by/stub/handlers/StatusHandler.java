@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
@@ -53,12 +53,12 @@ public final class StatusHandler extends AbstractHandler {
    private static final String NAME = "admin";
    private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
    private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList("file", "body", "post"));
-   private final DataStore dataStore;
+   private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
 
-   public StatusHandler(final JettyContext newContext, final DataStore newDataStore) {
+   public StatusHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
       this.jettyContext = newContext;
-      this.dataStore = newDataStore;
+      this.stubbedDataManager = newStubbedDataManager;
    }
 
    @Override
@@ -83,7 +83,7 @@ public final class StatusHandler extends AbstractHandler {
 
    private String getConfigDataPresentation() throws Exception {
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = dataStore.getStubHttpLifecycles();
+      final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
 
       final StringBuilder builder = new StringBuilder();
       builder.append(buildSystemStatusHtmlTable());
@@ -123,7 +123,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, sslPort));
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
-      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, dataStore.getDataYaml().getAbsolutePath()));
+      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getDataYaml().getAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
          AdminHandler.ADMIN_ROOT, host, adminPort);

@@ -1,6 +1,6 @@
 package by.stub.handlers.strategy.admin;
 
-import by.stub.database.DataStore;
+import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final DataStore dataStore) throws IOException {
+   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws IOException {
 
       if (request.getRequestURI().equals(AdminHandler.ADMIN_ROOT)) {
          wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -27,13 +27,13 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
       final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
       final int stubIndexToDelete = Integer.parseInt(pathInfoNoHeadingSlash);
 
-      if (dataStore.getStubHttpLifecycles().size() - 1 < stubIndexToDelete) {
+      if (stubbedDataManager.getStubHttpLifecycles().size() - 1 < stubIndexToDelete) {
          final String errorMessage = String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
          return;
       }
 
-      dataStore.getStubHttpLifecycles().remove(stubIndexToDelete);
+      stubbedDataManager.getStubHttpLifecycles().remove(stubIndexToDelete);
       wrapper.setStatus(HttpStatus.OK_200);
       wrapper.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
    }
