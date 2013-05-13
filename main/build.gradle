@@ -1,5 +1,5 @@
-apply from: "$rootDir/conf/gradle/pmd.gradle"
-apply from: "$rootDir/conf/gradle/jdepend.gradle"
+//apply from: "$rootDir/conf/gradle/pmd.gradle"
+//apply from: "$rootDir/conf/gradle/jdepend.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"
 
 sourceSets {
