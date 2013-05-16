@@ -69,9 +69,9 @@ public class StubbedDataManager {
       return stubResponse;
    }
 
-   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
-      this.stubHttpLifecycles.addAll(stubHttpLifecycles);
+      return this.stubHttpLifecycles.addAll(stubHttpLifecycles);
    }
 
    public List<StubHttpLifecycle> getStubHttpLifecycles() {
@@ -91,7 +91,9 @@ public class StubbedDataManager {
    }
 
    public void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
-      stubHttpLifecycles.remove(httpLifecycleIndex);
-      stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+      final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
+      if (removedLifecycle != null) {
+         stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+      }
    }
 }

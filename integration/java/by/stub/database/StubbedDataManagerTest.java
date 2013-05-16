@@ -572,47 +572,6 @@ public class StubbedDataManagerTest {
 
 
    @Test
-   public void shouldFindHttpCycleListUnchanged_WhenMatchIsdone() throws Exception {
-
-      final String url = "/entity.find";
-      final String expectedStatus = "200";
-      final String expectedBody = "{\"status\": \"hello world\"}";
-
-      final String yaml = YAML_BUILDER.newStubbedRequest()
-         .withMethodGet()
-         .withUrl(url)
-         .withHeaders("content-type", "application/json")
-         .withQuery("type_name", "user")
-         .withQuery("client_id", "id")
-         .withQuery("client_secret", "secret")
-         .withQuery("attributes", "'[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]'")
-         .newStubbedResponse()
-         .withStatus(expectedStatus)
-         .withFoldedBody(expectedBody)
-         .withHeaders("content-type", "application/json").build();
-
-      final List<StubHttpLifecycle> parsedHttpLifecycles = unmarshall(yaml);
-      stubbedDataManager.resetStubHttpLifecycles(parsedHttpLifecycles);
-
-      final List<StubHttpLifecycle> expectedHttpLifecycles = new LinkedList<StubHttpLifecycle>(parsedHttpLifecycles);
-
-      final StubRequest assertingRequest =
-         REQUEST_BUILDER
-            .withUrl(url)
-            .withMethodGet()
-            .withHeaders("content-type", "application/json")
-            .withQuery("type_name", "user")
-            .withQuery("client_id", "id")
-            .withQuery("client_secret", "secret")
-            .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
-            .build();
-
-      stubbedDataManager.findStubResponseFor(assertingRequest);
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles()).isEqualTo(expectedHttpLifecycles);
-   }
-
-   @Test
    public void shouldReturnMatchingStubbedResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String url = "/entity.find";

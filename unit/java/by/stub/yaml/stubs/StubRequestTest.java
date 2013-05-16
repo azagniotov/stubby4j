@@ -1256,7 +1256,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldfindStubRequestEqual_WhenComparedToSameObject() throws Exception {
+   public void shouldfindStubRequestEqual_WhenComparedToDifferentObjectWithSameProperties() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
       final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
