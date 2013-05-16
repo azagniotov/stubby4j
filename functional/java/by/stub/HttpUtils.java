@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author: Alexander Zagniotov
  * Created: 4/28/13 8:53 PM
  */
-final class HttpUtils {
+public final class HttpUtils {
 
    private static final HttpRequestFactory WEB_CLIENT;
 
@@ -33,14 +33,14 @@ final class HttpUtils {
 
    }
 
-   static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
+   public static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
 
       return WEB_CLIENT.buildRequest(method,
          new GenericUrl(targetUrl),
          null);
    }
 
-   static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
+   public static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
 
       return WEB_CLIENT.buildRequest(method,
          new GenericUrl(targetUrl),
