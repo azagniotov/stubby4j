@@ -264,3 +264,38 @@
          headers:
             content-stype: application/json
          body: Still going strong!
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+      content-type: application/json
+      post: >
+         {"foo": "12", "bar" : {"hello" : "world"}}
+
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matches foo and bar
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+      content-type: application/json
+      post: >
+         {"foo": "12"}
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matches foo
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matched none
+
