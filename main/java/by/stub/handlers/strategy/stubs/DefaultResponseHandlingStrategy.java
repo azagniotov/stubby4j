@@ -25,10 +25,19 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -56,10 +65,32 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
       final byte[] responseBody = foundStubResponse.getResponseBody();
+
+      String evaluatedResponseBody = templatizeResponse(new String(responseBody), assertionStubRequest);
+
       final OutputStream streamOut = response.getOutputStream();
-      streamOut.write(responseBody);
+      streamOut.write(evaluatedResponseBody.getBytes());
       streamOut.flush();
       streamOut.close();
+   }
+
+   private String templatizeResponse(final String response, StubRequest request) {
+      Configuration cfg = new Configuration();
+      cfg.setObjectWrapper(new DefaultObjectWrapper());
+      cfg.setDefaultEncoding("UTF-8");
+
+      Map root = new HashMap();
+      root.put("requestBody", request.getPostBody());
+      root.put("requestParams", request.getQuery());
+      try {
+         Template temp = new Template("stub", new StringReader(response), new Configuration());
+         Writer out = new StringWriter();
+         temp.process(root, out);
+         return out.toString();
+      } catch (Exception
+         e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {

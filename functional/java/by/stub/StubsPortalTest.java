@@ -519,6 +519,38 @@ public class StubsPortalTest {
    }
 
 
+
+   @Test
+   public void shouldBeAbleToTemplatizeResponseBody() throws Exception {
+      final String content = "{\"foo\": \"bar\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/templatize/response");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(firstSequenceResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(firstResponseContent).isEqualTo(content);
+   }
+
+
+   @Test
+   public void shouldBeAbleToTemplatizeResponseBodyWithQueryParams() throws Exception {
+      final String content = "{\"foo\": \"bar\"}";
+      final String expectedContent = "{\"foo\": \"bar\",\"bar\": \"bq\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/templatize/response/with/query/params?bar=bq");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(firstSequenceResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(firstResponseContent).isEqualTo(expectedContent);
+   }
+
+
    private void setContentTypeAsJson(final HttpRequest request) {
       final HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(HEADER_APPLICATION_JSON);
