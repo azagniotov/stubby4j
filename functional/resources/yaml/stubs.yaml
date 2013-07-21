@@ -264,3 +264,74 @@
          headers:
             content-stype: application/json
          body: Still going strong!
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+      content-type: application/json
+      post: >
+         {"foo": "12", "bar" : {"hello" : "world"}}
+
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matches foo and bar
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+      content-type: application/json
+      post: >
+         {"foo": "12"}
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matches foo
+
+-  request:
+      method: POST
+      url: /json/matcher/test
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: Matched none
+
+
+-  request:
+      method: POST
+      url: /echo/response
+   response:
+      -  status: 200
+         headers:
+            content-type: text/plain
+         body: ${requestBody}
+
+
+-  request:
+      method: POST
+      url: /templatize/response
+   response:
+      -  status: 200
+         headers:
+            content-type: application/json
+         body: >
+               <#assign requestBodyJson = requestBody?eval>
+               {"foo": "${requestBodyJson.foo}"}
+
+
+-  request:
+      method: POST
+      url: /templatize/response/with/query/params
+   response:
+      -  status: 200
+         headers:
+            content-type: application/json
+         body: >
+               <#assign requestBodyJson = requestBody?eval>
+               {"foo": "${requestBodyJson.foo}","bar": "${requestParams.bar}"}
+
+
+

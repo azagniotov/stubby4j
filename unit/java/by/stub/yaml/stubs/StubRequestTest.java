@@ -1528,4 +1528,20 @@ public class StubRequestTest {
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
+
+   @Test
+   public void shouldCheckIfContentTypeIsJson() throws Exception {
+      final String url = "/invoice/123";
+
+      final StubRequest jsonRequest =
+         BUILDER.withUrl(url)
+            .withHeaderContentType("application/json").build();
+
+      final StubRequest xmlRequest =
+         BUILDER.withUrl(url).withHeaderContentType("application/xml").build();
+
+      assertThat(jsonRequest.isContentTypeJson()).isEqualTo(true);
+      assertThat(xmlRequest.isContentTypeJson()).isEqualTo(false);
+   }
+
 }

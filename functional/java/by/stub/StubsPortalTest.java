@@ -291,10 +291,7 @@ public class StubsPortalTest {
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
@@ -311,10 +308,7 @@ public class StubsPortalTest {
       final String content = "{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
@@ -331,10 +325,7 @@ public class StubsPortalTest {
       final String content = "{\"wrong\": \"post\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
@@ -350,10 +341,7 @@ public class StubsPortalTest {
       final String content = "{\"wrong\": \"post\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
@@ -369,10 +357,7 @@ public class StubsPortalTest {
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
@@ -390,10 +375,7 @@ public class StubsPortalTest {
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
-      final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-      request.setHeaders(httpHeaders);
+      setContentTypeAsJson(request);
 
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
@@ -491,4 +473,89 @@ public class StubsPortalTest {
       assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
       assertThat(firstResponseContent).isEqualTo("OK");
    }
+
+   @Test
+   public void shouldMatchJsonRequestBodyEntirely() throws Exception {
+      final String content = "{\"foo\": \"12\", \"bar\" :  {\"hello\" : \"world\"}}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/json/matcher/test");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("Matches foo and bar");
+   }
+
+
+   @Test
+   public void shouldIgnoreMissingParamsInJsonRequest() throws Exception {
+      final String content = "{\"foo\": \"12\", \"something\" : \"else\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/json/matcher/test");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("Matches foo");
+   }
+
+
+   @Test
+   public void shouldMatchEmptyJsonRequestBody() throws Exception {
+      final String content = "{\"foo\": \"13\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/json/matcher/test");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("Matched none");
+   }
+
+
+
+   @Test
+   public void shouldBeAbleToTemplatizeResponseBody() throws Exception {
+      final String content = "{\"foo\": \"bar\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/templatize/response");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(firstSequenceResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(firstResponseContent).isEqualTo(content);
+   }
+
+
+   @Test
+   public void shouldBeAbleToTemplatizeResponseBodyWithQueryParams() throws Exception {
+      final String content = "{\"foo\": \"bar\"}";
+      final String expectedContent = "{\"foo\": \"bar\",\"bar\": \"bq\"}";
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/templatize/response/with/query/params?bar=bq");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(firstSequenceResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(firstResponseContent).isEqualTo(expectedContent);
+   }
+
+
+   private void setContentTypeAsJson(final HttpRequest request) {
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+
+      request.setHeaders(httpHeaders);
+   }
+
 }

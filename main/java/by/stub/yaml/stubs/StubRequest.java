@@ -23,6 +23,7 @@ import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.matcher.JsonBodyMatcher;
 import org.eclipse.jetty.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
@@ -229,7 +230,15 @@ public class StubRequest {
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
+      if (jsonMatch(dataStorePostBody, thisAssertingPostBody)) return true;
       return stringsMatch(dataStorePostBody, thisAssertingPostBody);
+   }
+
+   private boolean jsonMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
+      if(isContentTypeJson()){
+         return new JsonBodyMatcher().matches(dataStorePostBody, thisAssertingPostBody);
+      }
+      return false;
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
@@ -289,4 +298,7 @@ public class StubRequest {
       return sb.toString();
    }
 
+   public boolean isContentTypeJson() {
+      return "application/json".equals(headers.get("content-type"));
+   }
 }
