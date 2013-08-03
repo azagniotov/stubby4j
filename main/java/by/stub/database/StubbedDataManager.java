@@ -48,7 +48,7 @@ public class StubbedDataManager {
       return identifyStubResponseType(assertingLifecycle);
    }
 
-   private StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
+   private synchronized StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
 
       final int listIndex = stubHttpLifecycles.indexOf(assertingLifecycle);
       if (listIndex < 0) {
@@ -69,7 +69,7 @@ public class StubbedDataManager {
       return stubResponse;
    }
 
-   public boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
+   public synchronized boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
       return this.stubHttpLifecycles.addAll(stubHttpLifecycles);
    }
@@ -90,7 +90,7 @@ public class StubbedDataManager {
       return dataYaml.getParent();
    }
 
-   public void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
+   public synchronized void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
       final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
       if (removedLifecycle != null) {
          stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);

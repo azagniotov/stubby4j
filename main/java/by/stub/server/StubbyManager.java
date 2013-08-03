@@ -50,27 +50,22 @@ public final class StubbyManager {
       }
    }
 
-   public void stopJetty() throws Exception {
-      synchronized (StubbyManager.class) {
-         if (server.isStopped() || server.isStopping() || !server.isRunning()) {
-            return;
-         }
-
-         final int timeoutMilliseconds = 100;
-         server.setGracefulShutdown(timeoutMilliseconds);
-         server.setStopAtShutdown(true);
-         server.stop();
+   public synchronized void stopJetty() throws Exception {
+      if (server.isStopped() || server.isStopping() || !server.isRunning()) {
+         return;
       }
+
+      final int timeoutMilliseconds = 100;
+      server.setGracefulShutdown(timeoutMilliseconds);
+      server.setStopAtShutdown(true);
+      server.stop();
    }
 
-   public boolean isJettyUp() throws Exception {
-      synchronized (StubbyManager.class) {
-         if (server.isStarting() || server.isRunning()) {
-            return true;
-         }
-
-         return false;
+   public synchronized boolean isJettyUp() throws Exception {
+      if (server.isStarting() || server.isRunning()) {
+         return true;
       }
+      return false;
    }
 
    public File getDataYaml() {
