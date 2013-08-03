@@ -63,7 +63,7 @@ stubby4j is a multi-module Gradle project
 Run `gradle` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
-* Build
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
 
 Run `gradle cobertura` command to:
 * Clean
