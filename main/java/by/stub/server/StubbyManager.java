@@ -38,16 +38,14 @@ public final class StubbyManager {
       this.stubbedDataManager = stubbedDataManager;
    }
 
-   public void startJetty() throws Exception {
-      synchronized (StubbyManager.class) {
-         if (server.isStarted() || server.isStarting() || server.isRunning()) {
-            return;
-         }
-
-         server.start();
-
-         ANSITerminal.info("\nQuit: ctrl-c\n");
+   public synchronized void startJetty() throws Exception {
+      if (server.isStarted() || server.isStarting() || server.isRunning()) {
+         return;
       }
+
+      server.start();
+
+      ANSITerminal.info("\nQuit: ctrl-c\n");
    }
 
    public synchronized void stopJetty() throws Exception {

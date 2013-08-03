@@ -847,6 +847,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.4
+* Making sure that operations starting up stubby and managing stubbed data are atomic  [ENHANCEMENT]
+
 ### 2.0.3
 
 * Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]

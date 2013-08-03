@@ -39,8 +39,7 @@ public class StubbyManagerFactory {
 
    }
 
-   public StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
-
+   public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
       Log.setLog(new EmptyLogger());
 
