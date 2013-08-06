@@ -550,6 +550,18 @@ public class StubsPortalTest {
       assertThat(firstResponseContent).isEqualTo(expectedContent);
    }
 
+   @Test
+   public void shouldBeAbleToTemplatizeCurrentDate() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/templatize/current_date");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      setContentTypeAsJson(request);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      System.out.println(firstResponseContent);
+   }
+
 
    private void setContentTypeAsJson(final HttpRequest request) {
       final HttpHeaders httpHeaders = new HttpHeaders();

@@ -335,3 +335,15 @@
 
 
 
+-  request:
+      method: GET
+      url: /templatize/current_date
+   response:
+      -  status: 200
+         headers:
+            content-type: application/json
+         body: >
+               {"current_date": " ${.now?string("yyyy-MM-dd HH:mm:00")}"}
+
+
+
