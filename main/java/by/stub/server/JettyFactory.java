@@ -59,6 +59,7 @@ public final class JettyFactory {
    static final String ADMIN_CONNECTOR_NAME = "stubbyAdminConnector";
    static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
    static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
+   private static final String ROOT_PATH_INFO = "/";
    private final Map<String, String> commandLineArgs;
    private final StubbedDataManager stubbedDataManager;
    private String currentHost;
@@ -86,17 +87,17 @@ public final class JettyFactory {
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
          {
-            constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
-            constructHandler(STUBS_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(STUBS_CONNECTOR_NAME, "/", new StubsHandler(stubbedDataManager)),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
 
-            constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/html/templates/", "default404.html")),
-            constructHandler(SSL_CONNECTOR_NAME, "/", staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(SSL_CONNECTOR_NAME, "/", new StubsHandler(stubbedDataManager)),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
 
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/", new AdminHandler(stubbedDataManager))
+            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, new AdminHandler(stubbedDataManager))
          }
       );
 

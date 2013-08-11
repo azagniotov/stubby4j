@@ -5,14 +5,12 @@ import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**
  * @author: Alexander Zagniotov
@@ -30,19 +28,15 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
       if (StringUtils.isSet(pathInfoNoHeadingSlash)) {
          final int targetHttpStubCycleIndex = Integer.parseInt(pathInfoNoHeadingSlash);
 
-         if (stubbedDataManager.getStubHttpLifecycles().size() - 1 < targetHttpStubCycleIndex) {
+         if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(targetHttpStubCycleIndex)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
             HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
          }
 
          yamlAppender.append(stubbedDataManager.getMarshalledYamlByIndex(targetHttpStubCycleIndex));
-
       } else {
-         final List<StubHttpLifecycle> stubbedCycles = stubbedDataManager.getStubHttpLifecycles();
-         for (final StubHttpLifecycle cycle : stubbedCycles) {
-            yamlAppender.append(cycle.getMarshalledYaml()).append("\n\n");
-         }
+         yamlAppender.append(stubbedDataManager.getMarshalledYaml());
       }
 
       wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);

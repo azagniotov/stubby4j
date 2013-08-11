@@ -32,6 +32,8 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public final class StubHttpLifecycle {
 
+   public static final StubHttpLifecycle NOT_FOUND = null;
+
    private String marshalledYaml;
    private StubRequest request;
    private Object response;

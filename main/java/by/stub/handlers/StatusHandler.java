@@ -123,7 +123,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, sslPort));
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
-      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getDataYaml().getAbsolutePath()));
+      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getYamlAbsolutePath()));
 
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
          AdminHandler.ADMIN_ROOT, host, adminPort);

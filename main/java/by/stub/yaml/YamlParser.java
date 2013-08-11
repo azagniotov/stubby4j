@@ -149,8 +149,8 @@ public final class YamlParser {
             methods.add(StringUtils.objectToString(rawPairValue));
             massagedPairValue = methods;
 
-         } else if (isDataProvidedInFile(pairKey)) {
-             massagedPairValue = readDataFromFile(rawPairValue);
+         } else if (isPairKeyEqualsToYamlNodeFile(pairKey)) {
+             massagedPairValue = loadFileContentFromFileUrl(rawPairValue);
          } else {
             massagedPairValue = StringUtils.objectToString(rawPairValue);
          }
@@ -160,24 +160,6 @@ public final class YamlParser {
 
       return targetStub;
    }
-
-    private boolean isDataProvidedInFile(String pairKey) {
-        return pairKey.toLowerCase().equals(YAML_NODE_FILE);
-    }
-
-    private Object readDataFromFile(Object rawPairValue) throws IOException {
-        Object massagedPairValue;
-        final String filePath = StringUtils.objectToString(rawPairValue);
-        byte[] bytes = new byte[]{};
-
-        try {
-           bytes = FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
-        } catch (final IOException ex) {
-           ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
-        }
-        massagedPairValue = bytes;
-        return massagedPairValue;
-    }
 
     private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
@@ -197,8 +179,8 @@ public final class YamlParser {
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
             final String rawSequenceEntryKey = mapEntry.getKey();
              Object rawSequenceEntryValue = mapEntry.getValue();
-             if(isDataProvidedInFile(rawSequenceEntryKey)){
-                 rawSequenceEntryValue = readDataFromFile(rawSequenceEntryValue);
+             if(isPairKeyEqualsToYamlNodeFile(rawSequenceEntryKey)){
+                 rawSequenceEntryValue = loadFileContentFromFileUrl(rawSequenceEntryValue);
              }
             ReflectionUtils.setPropertyValue(targetStub, rawSequenceEntryKey, rawSequenceEntryValue);
          }
@@ -207,6 +189,20 @@ public final class YamlParser {
       }
 
       return targetStubList;
+   }
+
+   private boolean isPairKeyEqualsToYamlNodeFile(final String pairKey) {
+      return pairKey.toLowerCase().equals(YAML_NODE_FILE);
+   }
+
+   private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
+      final String filePath = StringUtils.objectToString(rawPairValue);
+      try {
+         return FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
+      } catch (final IOException ex) {
+         ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
+      }
+      return new byte[]{};
    }
 
    private String marshallNodeMapToYamlSnippet(final Map<String, Object> parentNodesMap) {

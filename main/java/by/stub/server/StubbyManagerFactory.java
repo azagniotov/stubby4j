@@ -56,7 +56,7 @@ public class StubbyManagerFactory {
          watchDataStore(stubbedDataManager);
       }
 
-      return new StubbyManager(server, stubbedDataManager);
+      return new StubbyManager(server);
    }
 
    private void watchDataStore(final StubbedDataManager stubbedDataManager) {

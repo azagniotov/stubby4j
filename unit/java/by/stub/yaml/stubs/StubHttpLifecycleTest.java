@@ -14,6 +14,14 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class StubHttpLifecycleTest {
 
    @Test
+   public void shouldfindStubHttpLifecycleEqual_WhenComparedToItself() throws Exception {
+      final StubHttpLifecycle expectedStubHttpLifecycle = new StubHttpLifecycle();
+
+      final boolean assertionResult = expectedStubHttpLifecycle.equals(expectedStubHttpLifecycle);
+      assertThat(assertionResult).isTrue();
+   }
+
+   @Test
    public void shouldfindStubHttpLifecycleNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
       final StubHttpLifecycle expectedStubHttpLifecycle = new StubHttpLifecycle();
       final Object assertingObject = new StubResponse();

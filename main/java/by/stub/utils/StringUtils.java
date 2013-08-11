@@ -135,8 +135,8 @@ public final class StringUtils {
    }
 
    public static String objectToString(final Object value) throws IOException {
-      final String valueAsstr = (value != null ? value.toString().trim() : "");
+      final String valueAsStr = (value != null ? value.toString().trim() : "");
 
-      return (!valueAsstr.equalsIgnoreCase("null") ? valueAsstr : "");
+      return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
    }
 }

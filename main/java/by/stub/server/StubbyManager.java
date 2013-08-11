@@ -31,11 +31,9 @@ import java.util.List;
 public final class StubbyManager {
 
    private final Server server;
-   private final StubbedDataManager stubbedDataManager;
 
-   public StubbyManager(final Server server, final StubbedDataManager stubbedDataManager) {
+   public StubbyManager(final Server server) {
       this.server = server;
-      this.stubbedDataManager = stubbedDataManager;
    }
 
    public synchronized void startJetty() throws Exception {
@@ -64,13 +62,5 @@ public final class StubbyManager {
          return true;
       }
       return false;
-   }
-
-   public File getDataYaml() {
-      return stubbedDataManager.getDataYaml();
-   }
-
-   public void resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
    }
 }

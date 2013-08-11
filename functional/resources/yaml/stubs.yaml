@@ -262,17 +262,38 @@
       -  status: 201
          headers:
             content-type: application/json
-         file: ../json/ok.json
+         file: ../json/sequenced.response.ok.json
 
       -  status: 201
          headers:
             content-stype: application/json
-         file: ../json/goingstrong.json
+         file: ../json/sequenced.response.goingstrong.json
 
       -  status: 500
          headers:
             content-type: application/json
-         file: ../json/omfg.json
+         file: ../json/sequenced.response.omfg.json
+
+
+-  request:
+      method: [GET]
+      url: /uri/with/sequenced/responses/infile/withbadurls
+
+   response:
+      -  status: 201
+         headers:
+            content-type: application/json
+         file: ../json/this.file.does.not.exist.json
+
+      -  status: 201
+         headers:
+            content-stype: application/json
+         file: ../json/sequenced.response.goingstrong.json
+
+      -  status: 500
+         headers:
+            content-type: application/json
+         file: ../json/this.file.does.not.exist.either.json
 
 
 

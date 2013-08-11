@@ -19,7 +19,7 @@ public final class ConfigurationScanner implements Runnable {
 
    public ConfigurationScanner(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
-      ANSITerminal.status(String.format("Configuration scan enabled, watching %s", stubbedDataManager.getDataYaml().getAbsolutePath()));
+      ANSITerminal.status(String.format("Configuration scan enabled, watching %s", stubbedDataManager.getYamlAbsolutePath()));
    }
 
    @Override
@@ -38,7 +38,7 @@ public final class ConfigurationScanner implements Runnable {
                continue;
             }
 
-            ANSITerminal.info(String.format("\nConfiguration scan detected change in %s\n", stubbedDataManager.getDataYaml().getAbsolutePath()));
+            ANSITerminal.info(String.format("\nConfiguration scan detected change in %s\n", stubbedDataManager.getYamlAbsolutePath()));
 
             try {
                lastModified = currentFileModified;

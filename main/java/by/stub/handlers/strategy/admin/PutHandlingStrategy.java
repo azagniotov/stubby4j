@@ -32,7 +32,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
       final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
       final int stubIndexToUpdate = Integer.parseInt(pathInfoNoHeadingSlash);
 
-      if (stubbedDataManager.getStubHttpLifecycles().size() - 1 < stubIndexToUpdate) {
+      if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(stubIndexToUpdate)) {
          final String errorMessage = String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
          return;

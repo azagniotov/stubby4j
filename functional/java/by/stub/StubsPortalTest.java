@@ -405,7 +405,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_FailtToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSet() throws Exception {
+   public void should_FailedToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSet() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
@@ -424,7 +424,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_FailtToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSetOverSsl() throws Exception {
+   public void should_FailedToCreateNewProduct_WhenPostRequestMadeWhenWrongHeaderSetOverSsl() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice/new");
       final String content = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
@@ -443,7 +443,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_MakeSuccesfulRequest_AndReturnSingleSequencedResponse() throws Exception {
+   public void should_MakeSuccessfulRequest_AndReturnSingleSequencedResponse() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/single/sequenced/response");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -462,7 +462,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_MakeSuccesfulRequest_AndReturnMultipleSequencedResponses() throws Exception {
+   public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -493,7 +493,7 @@ public class StubsPortalTest {
    }
 
     @Test
-    public void should_MakeSuccesfulRequest_AndReturnMultipleSequencedResponses_FromFile() throws Exception {
+    public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -510,10 +510,10 @@ public class StubsPortalTest {
         assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
         assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
-        final HttpResponse thridSequenceResponse = request.execute();
-        final String thirdResponseContent = thridSequenceResponse.parseAsString().trim();
+        final HttpResponse thirdSequenceResponse = request.execute();
+        final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
 
-        assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thridSequenceResponse.getStatusCode());
+        assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
         assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
 
         firstSequenceResponse = request.execute();
@@ -522,4 +522,35 @@ public class StubsPortalTest {
         assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
         assertThat(firstResponseContent).isEqualTo("OK");
     }
+
+   @Test
+   public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile_WithBadUrls() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile/withbadurls");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEmpty();
+
+      final HttpResponse secondSequenceResponse = request.execute();
+      final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
+      assertThat(secondResponseContent).isEqualTo("Still going strong!");
+
+      final HttpResponse thirdSequenceResponse = request.execute();
+      final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
+      assertThat(thirdResponseContent).isEmpty();
+
+      firstSequenceResponse = request.execute();
+      firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEmpty();
+   }
 }

@@ -100,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.4" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.5" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.4'
+'by.stub:stubby4j:jar:2.0.5'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.4'
+compile 'by.stub:stubby4j:2.0.5'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.4.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.5.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -365,6 +365,26 @@ Assuming a match has been made against the given `request` object, data from `re
             content-type: application/json
          body: OMG!!!
 
+
+-  request:
+      method: [GET]
+      url: /uri/with/sequenced/responses/infile
+
+   response:
+      -  status: 201
+         headers:
+            content-type: application/json
+         file: ../json/sequenced.response.ok.json
+
+      -  status: 201
+         headers:
+            content-stype: application/json
+         file: ../json/sequenced.response.goingstrong.json
+
+      -  status: 500
+         headers:
+            content-type: application/json
+         file: ../json/sequenced.response.omfg.json
 
 
 -  request:
@@ -847,6 +867,11 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.5
+* Added ability to specify sequence of responses on the same URI using `file` (Prakash Kandavel) [ENHANCEMENT]
+* Minor code clean up [COSMETICS]
+* Documentation update [COSMETICS]
+
 ### 2.0.4
 * Making sure that operations starting up stubby and managing stubbed data are atomic  [ENHANCEMENT]
 
