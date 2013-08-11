@@ -491,4 +491,35 @@ public class StubsPortalTest {
       assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
       assertThat(firstResponseContent).isEqualTo("OK");
    }
+
+    @Test
+    public void should_MakeSuccesfulRequest_AndReturnMultipleSequencedResponses_FromFile() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        HttpResponse firstSequenceResponse = request.execute();
+        String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+        assertThat(firstResponseContent).isEqualTo("OK");
+
+        final HttpResponse secondSequenceResponse = request.execute();
+        final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
+        assertThat(secondResponseContent).isEqualTo("Still going strong!");
+
+        final HttpResponse thridSequenceResponse = request.execute();
+        final String thirdResponseContent = thridSequenceResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thridSequenceResponse.getStatusCode());
+        assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
+
+        firstSequenceResponse = request.execute();
+        firstResponseContent = firstSequenceResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+        assertThat(firstResponseContent).isEqualTo("OK");
+    }
 }
