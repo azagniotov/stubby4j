@@ -148,7 +148,11 @@ public final class JettyFactory {
          adminChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
       }
 
-      final String status = String.format("Admin portal configured at http://%s:%s",
+      final String configured = String.format("Admin portal configured at http://%s:%s",
+         adminChannel.getHost(), adminChannel.getPort());
+      ANSITerminal.status(configured);
+
+      final String status = String.format("Admin portal status enabled at http://%s:%s/status",
          adminChannel.getHost(), adminChannel.getPort());
       ANSITerminal.status(status);
 
