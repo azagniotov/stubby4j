@@ -254,6 +254,27 @@
          body: OMFG!!!
 
 
+-  request:
+      method: [GET]
+      url: /uri/with/sequenced/responses/infile
+
+   response:
+      -  status: 201
+         headers:
+            content-type: application/json
+         file: ../json/ok.json
+
+      -  status: 201
+         headers:
+            content-stype: application/json
+         file: ../json/goingstrong.json
+
+      -  status: 500
+         headers:
+            content-type: application/json
+         file: ../json/omfg.json
+
+
 
 -  request:
       method: [GET]

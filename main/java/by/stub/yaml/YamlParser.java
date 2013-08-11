@@ -149,17 +149,8 @@ public final class YamlParser {
             methods.add(StringUtils.objectToString(rawPairValue));
             massagedPairValue = methods;
 
-         } else if (pairKey.toLowerCase().equals(YAML_NODE_FILE)) {
-
-            final String filePath = StringUtils.objectToString(rawPairValue);
-            byte[] bytes = new byte[]{};
-
-            try {
-               bytes = FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
-            } catch (final IOException ex) {
-               ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
-            }
-            massagedPairValue = bytes;
+         } else if (isDataProvidedInFile(pairKey)) {
+             massagedPairValue = readDataFromFile(rawPairValue);
          } else {
             massagedPairValue = StringUtils.objectToString(rawPairValue);
          }
@@ -170,7 +161,25 @@ public final class YamlParser {
       return targetStub;
    }
 
-   private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+    private boolean isDataProvidedInFile(String pairKey) {
+        return pairKey.toLowerCase().equals(YAML_NODE_FILE);
+    }
+
+    private Object readDataFromFile(Object rawPairValue) throws IOException {
+        Object massagedPairValue;
+        final String filePath = StringUtils.objectToString(rawPairValue);
+        byte[] bytes = new byte[]{};
+
+        try {
+           bytes = FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
+        } catch (final IOException ex) {
+           ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
+        }
+        massagedPairValue = bytes;
+        return massagedPairValue;
+    }
+
+    private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
       final List yamlProperties = (List) parentNode.getValue();
       final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, StubResponse.class);
@@ -187,8 +196,10 @@ public final class YamlParser {
 
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
             final String rawSequenceEntryKey = mapEntry.getKey();
-            final Object rawSequenceEntryValue = mapEntry.getValue();
-
+             Object rawSequenceEntryValue = mapEntry.getValue();
+             if(isDataProvidedInFile(rawSequenceEntryKey)){
+                 rawSequenceEntryValue = readDataFromFile(rawSequenceEntryValue);
+             }
             ReflectionUtils.setPropertyValue(targetStub, rawSequenceEntryKey, rawSequenceEntryValue);
          }
 
