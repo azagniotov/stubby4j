@@ -26,6 +26,7 @@ import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminHandler;
 import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -206,7 +207,7 @@ public final class JettyFactory {
       }
 
       final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
-         sslConnector.getHost(), sslConnector.getPort(), (keystorePath == null ? "internal" : "provided " + keystorePath));
+         sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
       currentStubsSslPort = sslConnector.getPort();
@@ -222,7 +223,7 @@ public final class JettyFactory {
 
       relaxSslTrustManager();
 
-      if (keystorePath == null) {
+      if (ObjectUtils.isNull(keystorePath)) {
          final URL keyURL = this.getClass().getResource("/ssl/localhost.jks");
          final Resource keyStoreResource = Resource.newResource(keyURL);
          sslFactory.setKeyStoreResource(keyStoreResource);

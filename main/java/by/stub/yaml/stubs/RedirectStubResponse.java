@@ -19,13 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.utils.ObjectUtils;
+
 /**
  * @author Alexander Zagniotov
  * @since 7/2/12, 12:03 AM
  */
 public class RedirectStubResponse extends StubResponse {
 
-   public RedirectStubResponse() {
+   private RedirectStubResponse() {
       super();
    }
 
@@ -34,13 +36,18 @@ public class RedirectStubResponse extends StubResponse {
       return StubResponseTypes.REDIRECT;
    }
 
-   public RedirectStubResponse configure(final StubResponse stubResponse) {
-      setLatency(stubResponse.getLatency());
-      setBody(stubResponse.getBody());
-      setStatus(stubResponse.getStatus());
-      setHeaders(stubResponse.getHeaders());
-      setFile(stubResponse.getFile());
+   public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
+      final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
 
-      return this;
+      if (ObjectUtils.isNull(stubResponse)) {
+          return redirectStubResponse;
+      }
+      redirectStubResponse.setLatency(stubResponse.getLatency());
+      redirectStubResponse.setBody(stubResponse.getBody());
+      redirectStubResponse.setStatus(stubResponse.getStatus());
+      redirectStubResponse.setHeaders(stubResponse.getHeaders());
+      redirectStubResponse.setFile(stubResponse.getFile());
+
+      return redirectStubResponse;
    }
 }

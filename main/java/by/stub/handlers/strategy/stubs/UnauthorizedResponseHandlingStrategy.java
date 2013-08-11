@@ -22,6 +22,7 @@ package by.stub.handlers.strategy.stubs;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
@@ -39,9 +40,8 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
    public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException {
       HandlerUtils.setResponseMainHeaders(response);
       final String authorizationHeader = assertionStubRequest.getHeaders().get(StubRequest.AUTH_HEADER);
-      String error;
-      if (authorizationHeader == null) {
-         error = "You are not authorized to view this page without supplied 'Authorization' HTTP header";
+      if (ObjectUtils.isNull(authorizationHeader)) {
+         String error = "You are not authorized to view this page without supplied 'Authorization' HTTP header";
          HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, error);
          return;
       }
@@ -50,7 +50,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
       final String expectedbase64decodedHeader = StringUtils.newStringUtf8(decodedHeaderBytes);
 
       final String template = "Unauthorized with supplied encoded credentials: '%s' which decodes to '%s'";
-      error = String.format(template, expectedbase64encodedHeader, expectedbase64decodedHeader);
+      String error = String.format(template, expectedbase64encodedHeader, expectedbase64decodedHeader);
       HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, error);
    }
 }

@@ -65,7 +65,7 @@ public class StubsHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper, NAME);
 
    }
 }

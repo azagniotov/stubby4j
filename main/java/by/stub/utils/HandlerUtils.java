@@ -51,7 +51,7 @@ public final class HandlerUtils {
    public static String getHtmlResourceByName(final String templateSuffix) {
       final String htmlTemplatePath = String.format("/ui/html/templates/%s.html", templateSuffix);
       final InputStream inputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
-      if (inputStream == null) {
+      if (ObjectUtils.isNull(inputStream)) {
          throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
       }
       return StringUtils.inputStreamToString(inputStream);

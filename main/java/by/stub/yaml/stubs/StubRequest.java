@@ -22,6 +22,7 @@ package by.stub.yaml.stubs;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethods;
 
@@ -85,7 +86,7 @@ public class StubRequest {
    }
 
    public String getPostBody() {
-      if (file == null || file.length == 0) {
+      if (ObjectUtils.isNull(file) || file.length == 0) {
          return FileUtils.enforceSystemLineSeparator(post);
       }
       final String utf8FileContent = StringUtils.newStringUtf8(file);
@@ -153,7 +154,8 @@ public class StubRequest {
       assertionRequest.setPost(HandlerUtils.extractPostRequestBody(request, "stubs"));
 
       final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-      final List<String> headerNames = headerNamesEnumeration == null ? new LinkedList<String>() : Collections.list(request.getHeaderNames());
+      final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
+         ? Collections.list(request.getHeaderNames()) : new LinkedList<String>();
       for (final String headerName : headerNames) {
          final String headerValue = request.getHeader(headerName);
          assertionRequest.getHeaders().put(StringUtils.toLower(headerName), headerValue);
@@ -245,10 +247,10 @@ public class StubRequest {
 
    @Override
    public int hashCode() {
-      int result = (url != null ? url.hashCode() : 0);
+      int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
       result = 31 * result + method.hashCode();
-      result = 31 * result + (post != null ? post.hashCode() : 0);
-      result = 31 * result + (file != null ? Arrays.hashCode(file) : 0);
+      result = 31 * result + (ObjectUtils.isNotNull(post) ? post.hashCode() : 0);
+      result = 31 * result + (ObjectUtils.isNotNull(file) ? Arrays.hashCode(file) : 0);
       result = 31 * result + headers.hashCode();
       result = 31 * result + query.hashCode();
 
@@ -279,7 +281,7 @@ public class StubRequest {
       sb.append("{url=").append(url);
       sb.append(", method=").append(method);
 
-      if (post != null) {
+      if (!ObjectUtils.isNull(post)) {
          sb.append(", post=").append(post);
       }
       sb.append(", query=").append(query);

@@ -23,6 +23,7 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
+import by.stub.utils.ObjectUtils;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
@@ -106,7 +107,7 @@ public final class StubbyClient {
     * @throws Exception
     */
    public void stopJetty() throws Exception {
-      if (stubbyManager != null && stubbyManager.isJettyUp()) {
+      if (ObjectUtils.isNotNull(stubbyManager) && stubbyManager.isJettyUp()) {
          stubbyManager.stopJetty();
       }
    }

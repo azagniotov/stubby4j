@@ -72,7 +72,7 @@ public final class ReflectionUtils {
    }
 
    private static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
-      if (fieldObject == null) {
+      if (ObjectUtils.isNull(fieldObject)) {
          return "Not provided";
       }
 

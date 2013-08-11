@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
 import java.util.Collections;
@@ -85,14 +86,14 @@ public class StubResponse {
 
    public byte[] getResponseBody() {
 
-      if (file == null || file.length == 0) {
+      if (ObjectUtils.isNull(file) || file.length == 0) {
          return getBody().getBytes(StringUtils.charsetUTF8());
       }
       return file;
    }
 
-   public boolean hasHeader(final String headerName) {
-      return getHeaders().containsKey(headerName);
+   public boolean hasHeaderLocation() {
+      return getHeaders().containsKey("location");
    }
 
    public StubResponseTypes getStubResponseType() {

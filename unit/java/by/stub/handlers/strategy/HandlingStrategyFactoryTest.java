@@ -47,7 +47,7 @@ public class HandlingStrategyFactoryTest {
 
    @Test
    public void shouldIdentifyResponseStrategyForRedirectResponse() throws Exception {
-      final StubResponse stubResponse = new RedirectStubResponse();
+      final StubResponse stubResponse = RedirectStubResponse.newRedirectStubResponse(null);
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
       assertThat(stubResponseHandlingStrategy).isInstanceOf(RedirectResponseHandlingStrategy.class);

@@ -155,7 +155,7 @@ public final class FileUtils {
 
       @Override
       public void write(char[] value, int offset, int length) {
-         if (value != null) {
+         if (ObjectUtils.isNotNull(value)) {
             builder.append(value, offset, length);
          }
       }

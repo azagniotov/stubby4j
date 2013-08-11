@@ -48,7 +48,7 @@ public final class StringUtils {
    }
 
    public static boolean isSet(final String toTest) {
-      return (toTest != null && toTest.trim().length() > 0);
+      return (ObjectUtils.isNotNull(toTest) && toTest.trim().length() > 0);
    }
 
    public static String toUpper(final String toUpper) {
@@ -78,7 +78,7 @@ public final class StringUtils {
    }
 
    public static String inputStreamToString(final InputStream inputStream) {
-      if (inputStream == null) {
+      if (ObjectUtils.isNull(inputStream)) {
          return "Could not convert empty or null input stream to string";
       }
       // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
@@ -135,7 +135,7 @@ public final class StringUtils {
    }
 
    public static String objectToString(final Object value) throws IOException {
-      final String valueAsStr = (value != null ? value.toString().trim() : "");
+      final String valueAsStr = (ObjectUtils.isNotNull(value) ? value.toString().trim() : "");
 
       return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
    }

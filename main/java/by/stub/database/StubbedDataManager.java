@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.database;
 
+import by.stub.utils.ObjectUtils;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -56,7 +57,7 @@ public class StubbedDataManager {
    private StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
 
       final StubHttpLifecycle matchedLifecycle = getMatchedStubHttpLifecycle(assertingLifecycle);
-      if (matchedLifecycle == StubHttpLifecycle.NOT_FOUND) {
+      if (ObjectUtils.isNull(matchedLifecycle)) {
          return new NotFoundStubResponse();
       }
 
@@ -65,8 +66,8 @@ public class StubbedDataManager {
          return new UnauthorizedStubResponse();
       }
 
-      if (stubResponse.hasHeader("location")) {
-         return new RedirectStubResponse().configure(stubResponse);
+      if (stubResponse.hasHeaderLocation()) {
+         return RedirectStubResponse.newRedirectStubResponse(stubResponse);
       }
 
       return stubResponse;
@@ -75,7 +76,7 @@ public class StubbedDataManager {
    private synchronized StubHttpLifecycle getMatchedStubHttpLifecycle(final StubHttpLifecycle assertingLifecycle) {
       final int listIndex = stubHttpLifecycles.indexOf(assertingLifecycle);
       if (listIndex < 0) {
-         return StubHttpLifecycle.NOT_FOUND;
+         return StubHttpLifecycle.NULL;
       }
       return stubHttpLifecycles.get(listIndex);
    }
@@ -116,8 +117,8 @@ public class StubbedDataManager {
    }
 
    public synchronized void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
-      final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
-      if (removedLifecycle != null) {
+      final StubHttpLifecycle removedLifecycle = deleteStubHttpLifecycleByIndex(httpLifecycleIndex);
+      if (ObjectUtils.isNotNull(removedLifecycle)) {
          stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
       }
    }
@@ -126,7 +127,7 @@ public class StubbedDataManager {
       return stubHttpLifecycles.size() - 1 >= httpLifecycleIndex;
    }
 
-   public synchronized void deleteStubHttpLifecycleByIndex(final int httpLifecycleIndex) {
-      stubHttpLifecycles.remove(httpLifecycleIndex);
+   public synchronized StubHttpLifecycle deleteStubHttpLifecycleByIndex(final int httpLifecycleIndex) {
+      return stubHttpLifecycles.remove(httpLifecycleIndex);
    }
 }
