@@ -24,6 +24,7 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminHandler;
+import by.stub.handlers.ReloadStubDataHandler;
 import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.utils.ObjectUtils;
@@ -97,6 +98,7 @@ public final class JettyFactory {
             constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
 
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/reload", new ReloadStubDataHandler(stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
             constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, new AdminHandler(stubbedDataManager))
          }
