@@ -23,8 +23,8 @@ import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
+import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
-import org.eclipse.jetty.http.HttpMethods;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -43,13 +43,11 @@ public class StubRequest {
    public static final String AUTH_HEADER = "authorization";
 
    private String url;
-   private ArrayList<String> method = new ArrayList<String>(1) {{
-      add(HttpMethods.GET);
-   }};
    private String post;
    private byte[] file;
-   private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new LinkedHashMap<String, String>();
+   private final List<String> method = new ArrayList<String>();
+   private final Map<String, String> headers = new HashMap<String, String>();
+   private final Map<String, String> query = new LinkedHashMap<String, String>();
 
    public StubRequest() {
 
@@ -65,17 +63,13 @@ public class StubRequest {
       return uppercase;
    }
 
-   public void setMethod(final String newMethod) {
-      this.method = new ArrayList<String>(1) {{
-         add((StringUtils.isSet(newMethod) ? newMethod : HttpMethods.GET));
-      }};
+   public void addMethod(final String newMethod) {
+      if (StringUtils.isSet(newMethod)) {
+         method.add(newMethod);
+      }
    }
 
-   public void setUrl(final String url) {
-      this.url = url;
-   }
-
-   public final String getUrl() {
+   public String getUrl() {
       if (getQuery().isEmpty()) {
          return url;
       }
@@ -91,10 +85,6 @@ public class StubRequest {
       }
       final String utf8FileContent = StringUtils.newStringUtf8(file);
       return FileUtils.enforceSystemLineSeparator(utf8FileContent);
-   }
-
-   public void setPost(final String post) {
-      this.post = post;
    }
 
    //Used by reflection when populating stubby admin page with stubbed information
@@ -113,14 +103,6 @@ public class StubRequest {
       return headers;
    }
 
-   public void setHeaders(final Map<String, String> headers) {
-      this.headers = headers;
-   }
-
-   public void setQuery(final Map<String, String> query) {
-      this.query = query;
-   }
-
    public Map<String, String> getQuery() {
       return query;
    }
@@ -128,10 +110,6 @@ public class StubRequest {
 
    public byte[] getFile() {
       return file;
-   }
-
-   public void setFile(final byte[] file) {
-      this.file = file;
    }
 
    public boolean hasHeaders() {
@@ -148,10 +126,13 @@ public class StubRequest {
 
    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
       final StubRequest assertionRequest = new StubRequest();
+      assertionRequest.addMethod(request.getMethod());
 
-      assertionRequest.setMethod(request.getMethod());
-      assertionRequest.setUrl(request.getPathInfo());
-      assertionRequest.setPost(HandlerUtils.extractPostRequestBody(request, "stubs"));
+      try {
+         ReflectionUtils.setPropertyValue(assertionRequest, "post", HandlerUtils.extractPostRequestBody(request, "stubs"));
+         ReflectionUtils.setPropertyValue(assertionRequest, "url", request.getPathInfo());
+      } catch (Exception ignored) {
+      }
 
       final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
       final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)

@@ -19,7 +19,7 @@ public class ReflectionUtilsTest {
    public void shouldGetObjectPropertiesAndValues() throws Exception {
       final int totalOfStubRequestMemberFields = 6;
       final StubRequest stubRequest = new StubRequest();
-      stubRequest.setMethod(HttpMethods.POST);
+      stubRequest.addMethod(HttpMethods.POST);
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
       assertThat(totalOfStubRequestMemberFields).isEqualTo(properties.size());
