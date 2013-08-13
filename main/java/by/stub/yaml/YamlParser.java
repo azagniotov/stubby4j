@@ -22,7 +22,6 @@ package by.stub.yaml;
 import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
-import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -36,7 +35,6 @@ import org.yaml.snakeyaml.resolver.Resolver;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +128,6 @@ public final class YamlParser {
 
    private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
-      final Map<String, Object> methodsAndValues = new HashMap<String, Object>();
       final B stubBuilder = stubBuilderClass.newInstance();
       for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
@@ -155,10 +152,8 @@ public final class YamlParser {
          } else {
             massagedPairValue = StringUtils.objectToString(rawPairValue);
          }
-
-         methodsAndValues.put(String.format("with%s", pairKey).toLowerCase(), massagedPairValue);
+         stubBuilder.store(pairKey, massagedPairValue);
       }
-      ReflectionUtils.setMethodValue(stubBuilder, methodsAndValues);
 
       return stubBuilder.build();
    }
@@ -176,7 +171,6 @@ public final class YamlParser {
       final List<T> targetStubList = new LinkedList<T>();
       for (final Object arrayListEntry : yamlProperties) {
 
-         final Map<String, Object> methodsAndValues = new HashMap<String, Object>();
          final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
 
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
@@ -185,10 +179,9 @@ public final class YamlParser {
             if (isPairKeyEqualsToYamlNodeFile(rawSequenceEntryKey)) {
                rawSequenceEntryValue = loadFileContentFromFileUrl(rawSequenceEntryValue);
             }
-            methodsAndValues.put(String.format("with%s", rawSequenceEntryKey).toLowerCase(), rawSequenceEntryValue);
+            stubBuilder.store(rawSequenceEntryKey, rawSequenceEntryValue);
          }
 
-         ReflectionUtils.setMethodValue(stubBuilder, methodsAndValues);
          targetStubList.add(stubBuilder.build());
       }
 

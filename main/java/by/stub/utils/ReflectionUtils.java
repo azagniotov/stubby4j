@@ -100,7 +100,9 @@ public final class ReflectionUtils {
          final Field field = object.getClass().getDeclaredField(fieldName);
          AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
             public Boolean run() {
-               field.setAccessible(true);
+               if (!field.isAccessible()) {
+                  field.setAccessible(true);
+               }
                return true;
             }
          });
@@ -110,12 +112,21 @@ public final class ReflectionUtils {
       }
    }
 
-   public static void setMethodValue(final Object object, final Map<String, Object> methodsAndValues) throws InvocationTargetException, IllegalAccessException {
-      for (final Method method : object.getClass().getDeclaredMethods()) {
-         final String methodName = method.getName().toLowerCase();
-         if (methodsAndValues.containsKey(methodName)) {
-            final Object methodArgument = methodsAndValues.get(methodName);
-            method.invoke(object, methodArgument);
+   public static void setValuesToObjectFields(final Object object, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
+
+      for (final Field field : object.getClass().getDeclaredFields()) {
+         final String fieldName = field.getName().toLowerCase();
+         if (fieldsAndValues.containsKey(fieldName)) {
+            AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+               public Boolean run() {
+                  if (!field.isAccessible()) {
+                     field.setAccessible(true);
+                  }
+                  return true;
+               }
+            });
+
+            field.set(object, fieldsAndValues.get(fieldName));
          }
       }
    }

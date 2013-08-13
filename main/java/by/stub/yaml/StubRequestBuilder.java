@@ -1,5 +1,6 @@
 package by.stub.yaml;
 
+import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubRequest;
 
 import java.util.ArrayList;
@@ -14,64 +15,32 @@ import java.util.Map;
  */
 final class StubRequestBuilder implements StubBuilder<StubRequest> {
 
-   private String url = null;
-   private List<String> methods = new ArrayList<String>();
-   private String post = null;
-   private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new LinkedHashMap<String, String>();
-   private byte[] fileBytes;
+   private final Map<String, Object> fieldNameAndValues;
+   private String url;
+   private List<String> method;
+   private String post;
+   private Map<String, String> headers;
+   private Map<String, String> query;
+   private byte[] file;
 
    StubRequestBuilder() {
-
-   }
-
-   StubRequestBuilder withMethod(final List<String> value) {
-      this.methods = value;
-
-      return this;
-   }
-
-   StubRequestBuilder withUrl(final String value) {
-      this.url = value;
-
-      return this;
-   }
-
-   StubRequestBuilder withHeaders(final Map<String, String> headers) {
-      this.headers = headers;
-
-      return this;
-   }
-
-   StubRequestBuilder withPost(final String post) {
-      this.post = post;
-
-      return this;
-   }
-
-   StubRequestBuilder withFile(final byte[] fileBytes) {
-      this.fileBytes = fileBytes;
-
-      return this;
-   }
-
-   StubRequestBuilder withQuery(final Map<String, String> query) {
-      this.query = query;
-
-      return this;
+      this.url = null;
+      this.method = new ArrayList<String>();
+      this.post = null;
+      this.file = null;
+      this.headers = new HashMap<String, String>();
+      this.query = new LinkedHashMap<String, String>();
+      this.fieldNameAndValues = new HashMap<String, Object>();
    }
 
    @Override
-   public StubRequest build() {
-      final StubRequest stubRequest = new StubRequest(url, post, fileBytes, methods, headers, query);
+   public void store(final String fieldName, final Object fieldValue) {
+      fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
+   }
 
-      this.url = null;
-      this.methods = new ArrayList<String>();
-      this.post = null;
-      this.fileBytes = null;
-      this.headers = new HashMap<String, String>();
-      this.query = new LinkedHashMap<String, String>();
-
-      return stubRequest;
+   @Override
+   public StubRequest build() throws Exception {
+      ReflectionUtils.setValuesToObjectFields(this, fieldNameAndValues);
+      return new StubRequest(url, post, file, method, headers, query);
    }
 }
