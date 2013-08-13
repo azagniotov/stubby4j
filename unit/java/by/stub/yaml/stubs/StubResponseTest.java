@@ -1,5 +1,6 @@
 package by.stub.yaml.stubs;
 
+import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class StubResponseTest {
    @Test
    public void shouldReturnBody_WhenFileIsEmpty() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse("200", "this is some body", new byte[] {}, null, null);
+      final StubResponse stubResponse = new StubResponse("200", "this is some body", null, null, null);
 
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
       assertThat("this is some body").isEqualTo(actualResponseBody);
@@ -50,7 +51,7 @@ public class StubResponseTest {
    @Test
    public void shouldReturnEmptyBody_WhenBodyIsEmpty_AndFileIsEmpty() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse("200", "", new byte[] {}, null, null);
+      final StubResponse stubResponse = new StubResponse("200", "", null, null, null);
 
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
       assertThat("").isEqualTo(actualResponseBody);
@@ -60,7 +61,7 @@ public class StubResponseTest {
    public void shouldReturnFile_WhenFileNotEmpty_AndRegardlessOfBody() throws Exception {
 
       final String expectedResponseBody = "content";
-      final StubResponse stubResponse = new StubResponse("200", "something", StringUtils.getBytesUtf8(expectedResponseBody), null, null);
+      final StubResponse stubResponse = new StubResponse("200", "something", FileUtils.fileFromString(expectedResponseBody), null, null);
 
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
       assertThat(expectedResponseBody).isEqualTo(actualResponseBody);

@@ -1,6 +1,7 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
+import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
@@ -295,7 +296,7 @@ public class StubRequestTest {
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withPost(postBody)
-            .withFileBytes(new byte[] {})
+            .withFile(null)
             .withMethodGet().build();
 
       assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
@@ -309,7 +310,7 @@ public class StubRequestTest {
       final String fileContent = "Hello World!";
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
-            .withFileBytes(fileContent.getBytes(StringUtils.charsetUTF8()))
+            .withFile(FileUtils.fileFromString(fileContent))
             .withMethodGet().build();
 
       assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
@@ -1298,7 +1299,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
-            .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
+            .withFile(FileUtils.fileFromString("bytes"))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaderContentType(contentType)
@@ -1311,7 +1312,7 @@ public class StubRequestTest {
             .withMethodPost()
             .withMethodPut()
             .withPost(postBody)
-            .withFileBytes("bytes".getBytes(StringUtils.charsetUTF8()))
+            .withFile(FileUtils.fileFromString("bytes"))
             .withQuery(paramOne, paramOneValue)
             .withQuery(paramTwo, paramTwoValue)
             .withHeaderContentType(contentType)

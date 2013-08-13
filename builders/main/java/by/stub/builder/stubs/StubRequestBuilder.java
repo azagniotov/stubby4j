@@ -3,6 +3,7 @@ package by.stub.builder.stubs;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethods;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +20,7 @@ public final class StubRequestBuilder {
    private String post = null;
    private Map<String, String> headers = new HashMap<String, String>();
    private Map<String, String> query = new LinkedHashMap<String, String>();
-   private byte[] fileBytes;
+   private File file;
 
    public StubRequestBuilder() {
 
@@ -115,8 +116,8 @@ public final class StubRequestBuilder {
       return this;
    }
 
-   public StubRequestBuilder withFileBytes(final byte[] fileBytes) {
-      this.fileBytes = fileBytes;
+   public StubRequestBuilder withFile(final File file) {
+      this.file = file;
 
       return this;
    }
@@ -128,12 +129,12 @@ public final class StubRequestBuilder {
    }
 
    public StubRequest build() {
-      final StubRequest stubRequest = new StubRequest(url, post, fileBytes, methods, headers, query);
+      final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
 
       this.url = null;
       this.methods = new ArrayList<String>();
       this.post = null;
-      this.fileBytes = null;
+      this.file = null;
       this.headers = new HashMap<String, String>();
       this.query = new LinkedHashMap<String, String>();
 

@@ -21,6 +21,7 @@ package by.stub.yaml.stubs;
 
 import by.stub.utils.ObjectUtils;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -31,7 +32,7 @@ public class RedirectStubResponse extends StubResponse {
 
    public RedirectStubResponse(final String status,
                        final String body,
-                       final byte[] file,
+                       final File file,
                        final String latency,
                        final Map<String, String> headers) {
       super(status, body, file, latency, headers);
@@ -49,7 +50,7 @@ public class RedirectStubResponse extends StubResponse {
       final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
          stubResponse.getStatus(),
          stubResponse.getBody(),
-         stubResponse.getFile(),
+         stubResponse.getRawFile(),
          stubResponse.getLatency(),
          stubResponse.getHeaders()
       );

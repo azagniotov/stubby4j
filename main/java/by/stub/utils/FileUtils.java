@@ -72,15 +72,26 @@ public final class FileUtils {
 
    }
 
-
-   public static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+   public static File uriToFile(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
       if (!contentFile.isFile()) {
          throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
-      return IOUtils.toByteArray(new FileInputStream(contentFile));
+      return contentFile;
+   }
+
+   public static File fileFromString(final String content) {
+      try {
+         final File temp = File.createTempFile("tmp", ".tmp");
+         temp.deleteOnExit();
+         final BufferedWriter out = new BufferedWriter(new FileWriter(temp));
+         out.write(content);
+         out.close();
+         return temp;
+      } catch (IOException e) {}
+      return null;
    }
 
    public static String asciiFileToString(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
@@ -90,7 +101,11 @@ public final class FileUtils {
          throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
-      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(contentFile));
+      return FileUtils.asciiFileToString(contentFile);
+   }
+
+   public static String asciiFileToString(final File file) throws IOException {
+      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
 
       return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
@@ -101,10 +116,10 @@ public final class FileUtils {
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
-   public static String asciiFileToString(final File file) throws IOException {
-      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
+   public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
+      final String loadedContent = FileUtils.asciiFileToString(file);
 
-      return FileUtils.enforceSystemLineSeparator(loadedContent);
+      return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
    public static byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {
@@ -116,6 +131,33 @@ public final class FileUtils {
       }
 
       return FileUtils.binaryFileToBytes(fileParentDirectory, filePath);
+   }
+
+   public static byte[] fileToBytes(final File file) throws IOException {
+
+      final String extension = StringUtils.extractFilenameExtension(file.getName());
+
+      if (FileUtils.ASCII_TYPES.contains(extension)) {
+         return FileUtils.asciiFileToUtf8Bytes(file);
+      }
+
+      return FileUtils.binaryFileToBytes(file);
+   }
+
+
+   public static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+      final File contentFile = new File(dataYamlConfigParentDir, relativePath);
+
+      if (!contentFile.isFile()) {
+         throw new IOException(String.format("Could not load file from path: %s", relativePath));
+      }
+
+      return IOUtils.toByteArray(new FileInputStream(contentFile));
+   }
+
+
+   public static byte[] binaryFileToBytes(final File file) throws IOException {
+      return IOUtils.toByteArray(new FileInputStream(file));
    }
 
 

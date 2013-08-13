@@ -3,6 +3,7 @@ package by.stub.yaml;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubResponse;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
    private final Map<String, Object> fieldNameAndValues;
    private String status;
    private String body;
-   private byte[] file;
+   private File file;
    private String latency;
    private Map<String, String> headers = new HashMap<String, String>();
 

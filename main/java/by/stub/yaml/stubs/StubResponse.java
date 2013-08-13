@@ -19,9 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,18 +36,20 @@ public class StubResponse {
 
    private final String status;
    private final String body;
-   private final byte[] file;
+   private final File file;
+   private final byte[] fileBytes;
    private final String latency;
    private final Map<String, String> headers;
 
    public StubResponse(final String status,
                        final String body,
-                       final byte[] file,
+                       final File file,
                        final String latency,
                        final Map<String, String> headers) {
       this.status = ObjectUtils.isNull(status) ? "200" : status;
       this.body = body;
       this.file = file;
+      this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
       this.latency = latency;
       this.headers =  ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
    }
@@ -67,15 +72,27 @@ public class StubResponse {
 
    //Used by reflection when populating stubby admin page with stubbed information
    public byte[] getFile() {
+      return fileBytes;
+   }
+
+   public File getRawFile() {
       return file;
    }
 
    public byte[] getResponseBody() {
 
-      if (ObjectUtils.isNull(file) || file.length == 0) {
+      if (ObjectUtils.isNull(fileBytes) || fileBytes.length == 0) {
          return getBody().getBytes(StringUtils.charsetUTF8());
       }
-      return file;
+      return fileBytes;
+   }
+
+   private byte[] getFileBytes() {
+      try {
+         return FileUtils.fileToBytes(file);
+      } catch (IOException e) {
+      }
+      return new byte[]{};
    }
 
    public boolean hasHeaderLocation() {

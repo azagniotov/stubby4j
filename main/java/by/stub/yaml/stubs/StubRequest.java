@@ -26,6 +26,7 @@ import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -43,23 +44,25 @@ public class StubRequest {
 
    private final String url;
    private final String post;
-   private final byte[] file;
+   private final File file;
+   private final byte[] fileBytes;
    private final List<String> method;
    private final Map<String, String> headers;
    private final Map<String, String> query;
 
    public StubRequest(final String url,
                       final String post,
-                      final byte[] file,
+                      final File file,
                       final List<String> method,
                       final Map<String, String> headers,
                       final Map<String, String> query) {
       this.url = url;
       this.post = post;
       this.file = file;
-      this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;;
-      this.headers =  ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
-      this.query =  ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
+      this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
+      this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
+      this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
+      this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
 
    }
 
@@ -89,11 +92,19 @@ public class StubRequest {
       return String.format("%s?%s", url, queryString);
    }
 
+   private byte[] getFileBytes() {
+      try {
+         return FileUtils.fileToBytes(file);
+      } catch (IOException e) {
+      }
+      return new byte[]{};
+   }
+
    public String getPostBody() {
-      if (ObjectUtils.isNull(file) || file.length == 0) {
+      if (ObjectUtils.isNull(fileBytes) || fileBytes.length == 0) {
          return FileUtils.enforceSystemLineSeparator(post);
       }
-      final String utf8FileContent = StringUtils.newStringUtf8(file);
+      final String utf8FileContent = StringUtils.newStringUtf8(fileBytes);
       return FileUtils.enforceSystemLineSeparator(utf8FileContent);
    }
 
@@ -117,8 +128,11 @@ public class StubRequest {
       return query;
    }
 
-
    public byte[] getFile() {
+      return fileBytes;
+   }
+
+   public File getRawFile() {
       return file;
    }
 
@@ -135,7 +149,7 @@ public class StubRequest {
    }
 
    public static StubRequest newStubRequest() {
-     return new StubRequest(null, null, null, null, null, null);
+      return new StubRequest(null, null, null, null, null, null);
    }
 
    public static StubRequest newStubRequest(final String url, final String post) {
@@ -244,7 +258,7 @@ public class StubRequest {
       int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
       result = 31 * result + method.hashCode();
       result = 31 * result + (ObjectUtils.isNotNull(post) ? post.hashCode() : 0);
-      result = 31 * result + (ObjectUtils.isNotNull(file) ? Arrays.hashCode(file) : 0);
+      result = 31 * result + (ObjectUtils.isNotNull(fileBytes) ? Arrays.hashCode(fileBytes) : 0);
       result = 31 * result + headers.hashCode();
       result = 31 * result + query.hashCode();
 

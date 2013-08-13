@@ -32,6 +32,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -195,11 +196,14 @@ public final class YamlParser {
    private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
       final String filePath = StringUtils.objectToString(rawPairValue);
       try {
-         return FileUtils.fileToBytes(dataConfigHomeDirectory, filePath);
+         return FileUtils.uriToFile(dataConfigHomeDirectory, filePath);
       } catch (final IOException ex) {
          ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
       }
-      return new byte[]{};
+      File temp = File.createTempFile("tmp", ".tmp");
+      temp.deleteOnExit();
+
+      return temp;
    }
 
    private String marshallNodeMapToYamlSnippet(final Map<String, Object> parentNodesMap) {

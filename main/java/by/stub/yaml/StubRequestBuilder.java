@@ -3,6 +3,7 @@ package by.stub.yaml;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubRequest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,7 +22,7 @@ final class StubRequestBuilder implements StubBuilder<StubRequest> {
    private String post;
    private Map<String, String> headers;
    private Map<String, String> query;
-   private byte[] file;
+   private File file;
 
    StubRequestBuilder() {
       this.url = null;
