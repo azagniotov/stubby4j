@@ -28,7 +28,6 @@ import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

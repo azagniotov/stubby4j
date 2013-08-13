@@ -18,7 +18,7 @@ public class ReflectionUtilsTest {
    @Test
    public void shouldGetObjectPropertiesAndValues() throws Exception {
       final int totalOfStubRequestMemberFields = 6;
-      final StubRequest stubRequest = new StubRequest();
+      final StubRequest stubRequest = StubRequest.newStubRequest();
       stubRequest.addMethod(HttpMethods.POST);
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
@@ -31,7 +31,7 @@ public class ReflectionUtilsTest {
 
    @Test
    public void shouldSetValueOnObjectProperty_WhenCorrectPropertyNameGiven() throws Exception {
-      final StubRequest stubRequest = new StubRequest();
+      final StubRequest stubRequest = StubRequest.newStubRequest();
       assertThat(stubRequest.getUrl()).isNull();
 
       ReflectionUtils.setPropertyValue(stubRequest, "url", "google.com");
@@ -41,7 +41,7 @@ public class ReflectionUtilsTest {
 
    @Test
    public void shouldNotSetValueOnObjectProperty_WhenIncorrectPropertyNameGiven() throws Exception {
-      final StubRequest stubRequest = new StubRequest();
+      final StubRequest stubRequest = StubRequest.newStubRequest();
       assertThat(stubRequest.getUrl()).isNull();
 
       ReflectionUtils.setPropertyValue(stubRequest, "nonExistentProperty", "google.com");

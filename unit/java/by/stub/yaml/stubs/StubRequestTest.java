@@ -1231,14 +1231,14 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldfindStubRequestNotEqual_WhenComparedToNull() throws Exception {
+   public void shouldFindStubRequestNotEqual_WhenComparedToNull() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isNotEqualTo(null);
    }
 
    @Test
-   public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
+   public void shouldFindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
       final Object assertingObject = StubResponse.newStubResponse();
 
@@ -1247,12 +1247,12 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldfindStubRequestEqual_WhenComparedToSameInstanceClass() throws Exception {
+   public void shouldFindStubRequesEqual_WhenComparedToSameInstanceClass() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-      final Object assertingObject = new StubRequest();
+      final StubRequest assertingObject = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
       final boolean assertionResult = assertingObject.equals(expectedRequest);
-      assertThat(assertionResult).isFalse();
+      assertThat(assertionResult).isTrue();
    }
 
    @Test

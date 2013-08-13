@@ -21,12 +21,7 @@ package by.stub.server;
 
 
 import by.stub.cli.ANSITerminal;
-import by.stub.database.StubbedDataManager;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
-
-import java.io.File;
-import java.util.List;
 
 public final class StubbyManager {
 

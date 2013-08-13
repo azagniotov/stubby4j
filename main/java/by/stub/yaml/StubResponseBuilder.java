@@ -1,7 +1,5 @@
 package by.stub.yaml;
 
-import by.stub.utils.ObjectUtils;
-import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubResponse;
 
 import java.util.HashMap;
@@ -11,7 +9,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 4/14/13, 4:54 PM
  */
-public final class StubResponseBuilder implements StubBuilder<StubResponse> {
+final class StubResponseBuilder implements StubBuilder<StubResponse> {
 
    private String status;
    private String body;
@@ -19,35 +17,35 @@ public final class StubResponseBuilder implements StubBuilder<StubResponse> {
    private String latency;
    private Map<String, String> headers = new HashMap<String, String>();
 
-   public StubResponseBuilder() {
+   StubResponseBuilder() {
 
    }
 
-   public StubResponseBuilder withStatus(final String value) {
+   StubResponseBuilder withStatus(final String value) {
       this.status = value;
 
       return this;
    }
 
-   public StubResponseBuilder withBody(final String value) {
+   StubResponseBuilder withBody(final String value) {
       this.body = value;
 
       return this;
    }
 
-   public StubResponseBuilder withHeaders(final Map<String, String> headers) {
+   StubResponseBuilder withHeaders(final Map<String, String> headers) {
       this.headers = headers;
 
       return this;
    }
 
-   public StubResponseBuilder withFile(final byte[] file) {
+   StubResponseBuilder withFile(final byte[] file) {
       this.file = file;
 
       return this;
    }
 
-   public StubResponseBuilder withLatency(final String latency) {
+   StubResponseBuilder withLatency(final String latency) {
       this.latency = latency;
 
       return this;

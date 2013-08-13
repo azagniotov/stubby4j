@@ -1,12 +1,8 @@
 package by.stub.builder.stubs;
 
-import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethods;
 
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -132,16 +128,7 @@ public final class StubRequestBuilder {
    }
 
    public StubRequest build() {
-      final StubRequest stubRequest = new StubRequest();
-
-      try {
-         ReflectionUtils.setPropertyValue(stubRequest, "post", post);
-         ReflectionUtils.setPropertyValue(stubRequest, "file", fileBytes);
-         ReflectionUtils.setPropertyValue(stubRequest, "url", url);
-         ReflectionUtils.setPropertyValue(stubRequest, "headers", new HashMap<String, String>(headers));
-         ReflectionUtils.setPropertyValue(stubRequest, "query", new LinkedHashMap<String, String>(query));
-         ReflectionUtils.setPropertyValue(stubRequest, "method", methods);
-      } catch (Exception ignored) {}
+      final StubRequest stubRequest = new StubRequest(url, post, fileBytes, methods, headers, query);
 
       this.url = null;
       this.methods = new ArrayList<String>();

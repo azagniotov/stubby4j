@@ -1,8 +1,6 @@
 package by.stub.yaml;
 
-import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpMethods;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +12,7 @@ import java.util.Map;
  * @author Alexander Zagniotov
  * @since 4/14/13, 4:54 PM
  */
-public final class StubRequestBuilder implements StubBuilder<StubRequest> {
+final class StubRequestBuilder implements StubBuilder<StubRequest> {
 
    private String url = null;
    private List<String> methods = new ArrayList<String>();
@@ -23,41 +21,41 @@ public final class StubRequestBuilder implements StubBuilder<StubRequest> {
    private Map<String, String> query = new LinkedHashMap<String, String>();
    private byte[] fileBytes;
 
-   public StubRequestBuilder() {
+   StubRequestBuilder() {
 
    }
 
-   public StubRequestBuilder withMethod(final List<String> value) {
+   StubRequestBuilder withMethod(final List<String> value) {
       this.methods = value;
 
       return this;
    }
 
-   public StubRequestBuilder withUrl(final String value) {
+   StubRequestBuilder withUrl(final String value) {
       this.url = value;
 
       return this;
    }
 
-   public StubRequestBuilder withHeaders(final Map<String, String> headers) {
+   StubRequestBuilder withHeaders(final Map<String, String> headers) {
       this.headers = headers;
 
       return this;
    }
 
-   public StubRequestBuilder withPost(final String post) {
+   StubRequestBuilder withPost(final String post) {
       this.post = post;
 
       return this;
    }
 
-   public StubRequestBuilder withFile(final byte[] fileBytes) {
+   StubRequestBuilder withFile(final byte[] fileBytes) {
       this.fileBytes = fileBytes;
 
       return this;
    }
 
-   public StubRequestBuilder withQuery(final Map<String, String> query) {
+   StubRequestBuilder withQuery(final Map<String, String> query) {
       this.query = query;
 
       return this;
@@ -65,16 +63,7 @@ public final class StubRequestBuilder implements StubBuilder<StubRequest> {
 
    @Override
    public StubRequest build() {
-      final StubRequest stubRequest = new StubRequest();
-
-      try {
-         ReflectionUtils.setPropertyValue(stubRequest, "post", post);
-         ReflectionUtils.setPropertyValue(stubRequest, "file", fileBytes);
-         ReflectionUtils.setPropertyValue(stubRequest, "url", url);
-         ReflectionUtils.setPropertyValue(stubRequest, "headers", new HashMap<String, String>(headers));
-         ReflectionUtils.setPropertyValue(stubRequest, "query", new LinkedHashMap<String, String>(query));
-         ReflectionUtils.setPropertyValue(stubRequest, "method", methods);
-      } catch (Exception ignored) {}
+      final StubRequest stubRequest = new StubRequest(url, post, fileBytes, methods, headers, query);
 
       this.url = null;
       this.methods = new ArrayList<String>();

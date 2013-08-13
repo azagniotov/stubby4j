@@ -23,7 +23,6 @@ import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
-import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,14 +41,25 @@ public class StubRequest {
    private static final String REGEX_END = "$";
    public static final String AUTH_HEADER = "authorization";
 
-   private String url;
-   private String post;
-   private byte[] file;
-   private final List<String> method = new ArrayList<String>();
-   private final Map<String, String> headers = new HashMap<String, String>();
-   private final Map<String, String> query = new LinkedHashMap<String, String>();
+   private final String url;
+   private final String post;
+   private final byte[] file;
+   private final List<String> method;
+   private final Map<String, String> headers;
+   private final Map<String, String> query;
 
-   public StubRequest() {
+   public StubRequest(final String url,
+                      final String post,
+                      final byte[] file,
+                      final List<String> method,
+                      final Map<String, String> headers,
+                      final Map<String, String> query) {
+      this.url = url;
+      this.post = post;
+      this.file = file;
+      this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;;
+      this.headers =  ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
+      this.query =  ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
 
    }
 
@@ -124,15 +134,18 @@ public class StubRequest {
       return StringUtils.isSet(getPostBody());
    }
 
-   public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
-      final StubRequest assertionRequest = new StubRequest();
-      assertionRequest.addMethod(request.getMethod());
+   public static StubRequest newStubRequest() {
+     return new StubRequest(null, null, null, null, null, null);
+   }
 
-      try {
-         ReflectionUtils.setPropertyValue(assertionRequest, "post", HandlerUtils.extractPostRequestBody(request, "stubs"));
-         ReflectionUtils.setPropertyValue(assertionRequest, "url", request.getPathInfo());
-      } catch (Exception ignored) {
-      }
+   public static StubRequest newStubRequest(final String url, final String post) {
+      return new StubRequest(url, post, null, null, null, null);
+   }
+
+   public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
+      final StubRequest assertionRequest = StubRequest.newStubRequest(request.getPathInfo(),
+         HandlerUtils.extractPostRequestBody(request, "stubs"));
+      assertionRequest.addMethod(request.getMethod());
 
       final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
       final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
