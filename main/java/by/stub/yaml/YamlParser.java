@@ -131,28 +131,28 @@ public final class YamlParser {
       final B stubBuilder = stubBuilderClass.newInstance();
       for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
-         final Object rawPairValue = pair.getValue();
-         final String pairKey = pair.getKey();
-         final Object massagedPairValue;
+         final Object rawFieldName = pair.getValue();
+         final String fieldName = pair.getKey();
+         final Object massagedFieldValue;
 
-         if (rawPairValue instanceof List) {
-            massagedPairValue = rawPairValue;
+         if (rawFieldName instanceof List) {
+            massagedFieldValue = rawFieldName;
 
-         } else if (rawPairValue instanceof Map) {
-            massagedPairValue = encodeAuthorizationHeader(rawPairValue);
+         } else if (rawFieldName instanceof Map) {
+            massagedFieldValue = encodeAuthorizationHeader(rawFieldName);
 
-         } else if (pairKey.toLowerCase().equals(YAML_NODE_METHOD)) {
+         } else if (fieldName.toLowerCase().equals(YAML_NODE_METHOD)) {
 
             final ArrayList<String> methods = new ArrayList<String>(1);
-            methods.add(StringUtils.objectToString(rawPairValue));
-            massagedPairValue = methods;
+            methods.add(StringUtils.objectToString(rawFieldName));
+            massagedFieldValue = methods;
 
-         } else if (isPairKeyEqualsToYamlNodeFile(pairKey)) {
-            massagedPairValue = loadFileContentFromFileUrl(rawPairValue);
+         } else if (isPairKeyEqualsToYamlNodeFile(fieldName)) {
+            massagedFieldValue = loadFileContentFromFileUrl(rawFieldName);
          } else {
-            massagedPairValue = StringUtils.objectToString(rawPairValue);
+            massagedFieldValue = StringUtils.objectToString(rawFieldName);
          }
-         stubBuilder.store(pairKey, massagedPairValue);
+         stubBuilder.store(fieldName, massagedFieldValue);
       }
 
       return stubBuilder.build();
@@ -174,12 +174,12 @@ public final class YamlParser {
          final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
 
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
-            final String rawSequenceEntryKey = mapEntry.getKey();
-            Object rawSequenceEntryValue = mapEntry.getValue();
-            if (isPairKeyEqualsToYamlNodeFile(rawSequenceEntryKey)) {
-               rawSequenceEntryValue = loadFileContentFromFileUrl(rawSequenceEntryValue);
+            final String rawFieldName = mapEntry.getKey();
+            Object rawFieldValue = mapEntry.getValue();
+            if (isPairKeyEqualsToYamlNodeFile(rawFieldName)) {
+               rawFieldValue = loadFileContentFromFileUrl(rawFieldValue);
             }
-            stubBuilder.store(rawSequenceEntryKey, rawSequenceEntryValue);
+            stubBuilder.store(rawFieldName, rawFieldValue);
          }
 
          targetStubList.add(stubBuilder.build());
