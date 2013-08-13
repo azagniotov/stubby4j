@@ -36,6 +36,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -115,22 +116,22 @@ public final class YamlParser {
       final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
       if (parentNode.getKey().equals(YAML_NODE_REQUEST)) {
-         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequest.class);
+         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequestBuilder.class);
          stubHttpLifecycle.setRequest(targetStub);
 
          ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
 
       } else {
-         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponse.class);
+         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponseBuilder.class);
          stubHttpLifecycle.setResponse(targetStub);
       }
    }
 
 
-   private <T> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<T> targetStubClass) throws Exception {
+   private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
-      final T targetStub = targetStubClass.newInstance();
-
+      final Map<String, Object> methodsAndValues = new HashMap<String, Object>();
+      final B stubBuilder = stubBuilderClass.newInstance();
       for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
          final Object rawPairValue = pair.getValue();
@@ -150,42 +151,45 @@ public final class YamlParser {
             massagedPairValue = methods;
 
          } else if (isPairKeyEqualsToYamlNodeFile(pairKey)) {
-             massagedPairValue = loadFileContentFromFileUrl(rawPairValue);
+            massagedPairValue = loadFileContentFromFileUrl(rawPairValue);
          } else {
             massagedPairValue = StringUtils.objectToString(rawPairValue);
          }
 
-         ReflectionUtils.setPropertyValue(targetStub, pairKey, massagedPairValue);
+         methodsAndValues.put(String.format("with%s", pairKey).toLowerCase(), massagedPairValue);
       }
+      ReflectionUtils.setMethodValue(stubBuilder, methodsAndValues);
 
-      return targetStub;
+      return stubBuilder.build();
    }
 
-    private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+   private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
       final List yamlProperties = (List) parentNode.getValue();
-      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, StubResponse.class);
+      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, StubResponseBuilder.class);
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
-   private <T> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<T> targetStubClass) throws Exception {
+   private  <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
+      final B stubBuilder = stubBuilderClass.newInstance();
       final List<T> targetStubList = new LinkedList<T>();
       for (final Object arrayListEntry : yamlProperties) {
 
+         final Map<String, Object> methodsAndValues = new HashMap<String, Object>();
          final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
-         final T targetStub = targetStubClass.newInstance();
 
          for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
             final String rawSequenceEntryKey = mapEntry.getKey();
-             Object rawSequenceEntryValue = mapEntry.getValue();
-             if(isPairKeyEqualsToYamlNodeFile(rawSequenceEntryKey)){
-                 rawSequenceEntryValue = loadFileContentFromFileUrl(rawSequenceEntryValue);
-             }
-            ReflectionUtils.setPropertyValue(targetStub, rawSequenceEntryKey, rawSequenceEntryValue);
+            Object rawSequenceEntryValue = mapEntry.getValue();
+            if (isPairKeyEqualsToYamlNodeFile(rawSequenceEntryKey)) {
+               rawSequenceEntryValue = loadFileContentFromFileUrl(rawSequenceEntryValue);
+            }
+            methodsAndValues.put(String.format("with%s", rawSequenceEntryKey).toLowerCase(), rawSequenceEntryValue);
          }
 
-         targetStubList.add(targetStub);
+         ReflectionUtils.setMethodValue(stubBuilder, methodsAndValues);
+         targetStubList.add(stubBuilder.build());
       }
 
       return targetStubList;

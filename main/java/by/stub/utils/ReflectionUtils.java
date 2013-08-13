@@ -53,7 +53,9 @@ public final class ReflectionUtils {
 
          AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
             public Boolean run() {
-               field.setAccessible(true);
+               if (!field.isAccessible()) {
+                  field.setAccessible(true);
+               }
                return true;
             }
          });
@@ -105,6 +107,16 @@ public final class ReflectionUtils {
          field.set(object, value);
       } catch (NoSuchFieldException ignored) {
          ANSITerminal.warn(ignored.toString());
+      }
+   }
+
+   public static void setMethodValue(final Object object, final Map<String, Object> methodsAndValues) throws InvocationTargetException, IllegalAccessException {
+      for (final Method method : object.getClass().getDeclaredMethods()) {
+         final String methodName = method.getName().toLowerCase();
+         if (methodsAndValues.containsKey(methodName)) {
+            final Object methodArgument = methodsAndValues.get(methodName);
+            method.invoke(object, methodArgument);
+         }
       }
    }
 

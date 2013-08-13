@@ -21,14 +21,20 @@ package by.stub.yaml.stubs;
 
 import by.stub.utils.ObjectUtils;
 
+import java.util.Map;
+
 /**
  * @author Alexander Zagniotov
  * @since 7/2/12, 12:03 AM
  */
 public class RedirectStubResponse extends StubResponse {
 
-   private RedirectStubResponse() {
-      super();
+   public RedirectStubResponse(final String status,
+                       final String body,
+                       final byte[] file,
+                       final String latency,
+                       final Map<String, String> headers) {
+      super(status, body, file, latency, headers);
    }
 
    @Override
@@ -37,16 +43,16 @@ public class RedirectStubResponse extends StubResponse {
    }
 
    public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
-      final RedirectStubResponse redirectStubResponse = new RedirectStubResponse();
-
       if (ObjectUtils.isNull(stubResponse)) {
-          return redirectStubResponse;
+         return new RedirectStubResponse(null, null, null, null, null);
       }
-      redirectStubResponse.setLatency(stubResponse.getLatency());
-      redirectStubResponse.setBody(stubResponse.getBody());
-      redirectStubResponse.setStatus(stubResponse.getStatus());
-      redirectStubResponse.setHeaders(stubResponse.getHeaders());
-      redirectStubResponse.setFile(stubResponse.getFile());
+      final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
+         stubResponse.getStatus(),
+         stubResponse.getBody(),
+         stubResponse.getFile(),
+         stubResponse.getLatency(),
+         stubResponse.getHeaders()
+      );
 
       return redirectStubResponse;
    }

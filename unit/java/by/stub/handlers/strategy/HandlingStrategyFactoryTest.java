@@ -23,7 +23,7 @@ public class HandlingStrategyFactoryTest {
 
    @Test
    public void shouldIdentifyResponseStrategyForDefaultResponse() throws Exception {
-      final StubResponse stubResponse = new StubResponse();
+      final StubResponse stubResponse = StubResponse.newStubResponse();
 
       final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
       assertThat(stubResponseHandlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);

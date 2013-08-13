@@ -655,9 +655,4 @@ public class StubbedDataManagerTest {
 
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
    }
-
-   private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
-      return new YamlParser().parse(".", FileUtils.constructReader(yaml));
-   }
-
 }

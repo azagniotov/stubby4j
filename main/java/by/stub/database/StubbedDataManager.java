@@ -49,7 +49,7 @@ public class StubbedDataManager {
    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
       final StubHttpLifecycle assertingLifecycle = new StubHttpLifecycle();
       assertingLifecycle.setRequest(assertingRequest);
-      assertingLifecycle.setResponse(new StubResponse());
+      assertingLifecycle.setResponse(StubResponse.newStubResponse());
 
       return identifyStubResponseType(assertingLifecycle);
    }

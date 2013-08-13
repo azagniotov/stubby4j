@@ -338,7 +338,7 @@ public class YamlParserTest {
    public void shouldFailUnmarshallYamlIntoObjectTree_WithJsonAsLiteralPost() throws Exception {
 
       expectedException.expect(IllegalArgumentException.class);
-      expectedException.expectMessage("Can not set java.lang.String field by.stub.yaml.stubs.StubRequest.post to java.util.LinkedHashMap");
+      expectedException.expectMessage("argument type mismatch");
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
@@ -373,7 +373,6 @@ public class YamlParserTest {
    public void shouldFailUnmarshallYamlIntoObjectTree_WithJsonAsLiteralBody() throws Exception {
 
       expectedException.expect(IllegalArgumentException.class);
-      expectedException.expectMessage("Can not set java.lang.String field by.stub.yaml.stubs.StubResponse.body to java.util.LinkedHashMap");
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()

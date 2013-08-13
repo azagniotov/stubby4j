@@ -24,7 +24,7 @@ public class StubHttpLifecycleTest {
    @Test
    public void shouldfindStubHttpLifecycleNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
       final StubHttpLifecycle expectedStubHttpLifecycle = new StubHttpLifecycle();
-      final Object assertingObject = new StubResponse();
+      final Object assertingObject = StubResponse.newStubResponse();
 
       final boolean assertionResult = expectedStubHttpLifecycle.equals(assertingObject);
       assertThat(assertionResult).isFalse();
@@ -33,9 +33,7 @@ public class StubHttpLifecycleTest {
    @Test
    public void shouldReturnStubResponse_WhenNoSequenceResponses() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse();
-      stubResponse.setStatus("201");
-      stubResponse.setBody("SELF");
+      final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
 
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(stubResponse);
@@ -59,18 +57,13 @@ public class StubHttpLifecycleTest {
    @Test
    public void shouldReturnSequenceResponse_WhenOneSequenceResponsePresent() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse();
-      stubResponse.setStatus("201");
-      stubResponse.setBody("SELF");
+      final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
 
       final String expectedStatus = "200";
       final String expectedBody = "This is a sequence response #1";
 
       final List<StubResponse> sequence = new LinkedList<StubResponse>() {{
-         final StubResponse stubResponse = new StubResponse();
-         stubResponse.setStatus(expectedStatus);
-         stubResponse.setBody(expectedBody);
-         add(stubResponse);
+         add(StubResponse.newStubResponse(expectedStatus, expectedBody));
       }};
 
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
@@ -85,23 +78,14 @@ public class StubHttpLifecycleTest {
    @Test
    public void shouldReturnSecondSequenceResponseAfterSecondCall_WhenTwoSequenceResponsePresent() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse();
-      stubResponse.setStatus("201");
-      stubResponse.setBody("SELF");
+      final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
 
       final String expectedStatus = "500";
       final String expectedBody = "This is a sequence response #2";
 
       final List<StubResponse> sequence = new LinkedList<StubResponse>() {{
-         final StubResponse sequenceResponseOne = new StubResponse();
-         sequenceResponseOne.setStatus("200");
-         sequenceResponseOne.setBody("This is a sequence response #1");
-         add(sequenceResponseOne);
-
-         final StubResponse sequenceResponseTwo = new StubResponse();
-         sequenceResponseTwo.setStatus(expectedStatus);
-         sequenceResponseTwo.setBody(expectedBody);
-         add(sequenceResponseTwo);
+         add(StubResponse.newStubResponse("200", "This is a sequence response #1"));
+         add(StubResponse.newStubResponse(expectedStatus, expectedBody));
       }};
 
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();

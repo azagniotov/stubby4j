@@ -22,7 +22,6 @@ package by.stub.yaml.stubs;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,51 +31,38 @@ import java.util.Map;
  */
 public class StubResponse {
 
-   private String status = "200";
-   private String body;
-   private byte[] file;
-   private String latency;
-   private Map<String, String> headers = Collections.synchronizedMap(new HashMap<String, String>());
+   private final String status;
+   private final String body;
+   private final byte[] file;
+   private final String latency;
+   private final Map<String, String> headers;
 
-   public StubResponse() {
-
+   public StubResponse(final String status,
+                       final String body,
+                       final byte[] file,
+                       final String latency,
+                       final Map<String, String> headers) {
+      this.status = ObjectUtils.isNull(status) ? "200" : status;
+      this.body = body;
+      this.file = file;
+      this.latency = latency;
+      this.headers =  ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
    }
 
    public String getStatus() {
       return status;
    }
 
-   public void setStatus(final String status) {
-      this.status = status;
-   }
-
    public String getBody() {
       return (StringUtils.isSet(body) ? body : "");
-   }
-
-
-   public void setBody(final String body) {
-      this.body = body;
    }
 
    public Map<String, String> getHeaders() {
       return headers;
    }
 
-   public void setHeaders(final Map<String, String> headers) {
-      this.headers = headers;
-   }
-
    public String getLatency() {
       return latency;
-   }
-
-   public void setLatency(final String latency) {
-      this.latency = latency;
-   }
-
-   public void setFile(final byte[] file) {
-      this.file = file;
    }
 
    //Used by reflection when populating stubby admin page with stubbed information
@@ -98,5 +84,13 @@ public class StubResponse {
 
    public StubResponseTypes getStubResponseType() {
       return StubResponseTypes.OK_200;
+   }
+
+   public static StubResponse newStubResponse() {
+      return new StubResponse(null, null, null, null, null);
+   }
+
+   public static StubResponse newStubResponse(final String status, final String body) {
+      return new StubResponse(status, body, null, null, null);
    }
 }

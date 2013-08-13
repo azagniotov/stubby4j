@@ -1240,7 +1240,7 @@ public class StubRequestTest {
    @Test
    public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-      final Object assertingObject = new StubResponse();
+      final Object assertingObject = StubResponse.newStubResponse();
 
       final boolean assertionResult = expectedRequest.equals(assertingObject);
       assertThat(assertionResult).isFalse();

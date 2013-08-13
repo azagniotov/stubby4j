@@ -39,7 +39,7 @@ public final class StubHttpLifecycle {
    private int responseSequenceCounter = 0;
 
    public StubHttpLifecycle() {
-      response = new StubResponse();
+      response = StubResponse.newStubResponse();
    }
 
    public void setRequest(final StubRequest request) {
@@ -93,7 +93,7 @@ public final class StubHttpLifecycle {
 
       final List<StubResponse> responses = (LinkedList<StubResponse>) response;
       if (responses.isEmpty()) {
-         return new StubResponse();
+         return StubResponse.newStubResponse();
       }
 
       final StubResponse sequenceStubResponse = responses.get(responseSequenceCounter);

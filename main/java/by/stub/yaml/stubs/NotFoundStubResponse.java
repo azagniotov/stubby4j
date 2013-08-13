@@ -26,8 +26,7 @@ package by.stub.yaml.stubs;
 public class NotFoundStubResponse extends StubResponse {
 
    public NotFoundStubResponse() {
-      super();
-      setStatus("404");
+      super("404", null, null, null, null);
    }
 
    @Override
