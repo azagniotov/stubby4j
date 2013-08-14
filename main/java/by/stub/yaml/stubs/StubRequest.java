@@ -58,7 +58,7 @@ public class StubRequest {
                       final Map<String, String> headers,
                       final Map<String, String> query) {
       this.url = url;
-      this.urlPattern = Pattern.compile(ObjectUtils.isNull(this.url ) ? "" : this.url);
+      this.urlPattern = Pattern.compile(ObjectUtils.isNull(this.url ) ? "" : this.url, Pattern.MULTILINE);
       this.post = post;
       this.file = file;
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
