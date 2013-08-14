@@ -200,10 +200,8 @@ public final class YamlParser {
       } catch (final IOException ex) {
          ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
       }
-      File temp = File.createTempFile("tmp", ".tmp");
-      temp.deleteOnExit();
 
-      return temp;
+      return null;
    }
 
    private String marshallNodeMapToYamlSnippet(final Map<String, Object> parentNodesMap) {

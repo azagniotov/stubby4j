@@ -3,6 +3,7 @@ package by.stub.database;
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.utils.FileUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
@@ -19,8 +20,13 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -648,6 +654,152 @@ public class StubbedDataManagerTest {
 
       assertThat(foundStubResponse.getStatus()).isEqualTo("404");
       assertThat(foundStubResponse.getBody()).isEqualTo("");
+   }
+
+   @Test
+   public void shouldReturnRequestAndResponseExternalFiles() throws Exception {
+
+      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.external.files.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+
+      assertThat(externalFiles.size()).isEqualTo(2);
+      assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
+      assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
+
+      final Set<String> filenames = new HashSet<String>();
+      for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
+         filenames.add(entry.getKey().getName());
+      }
+
+      assertThat(filenames.size()).isEqualTo(externalFiles.size());
+      assertThat(filenames.contains(expectedRequestFile.getName())).isTrue();
+      assertThat(filenames.contains(expectedResponseFile.getName())).isTrue();
+   }
+
+   @Test
+   public void shouldReturnOnlyResponseExternalFile() throws Exception {
+
+      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/one.external.files.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+
+      assertThat(externalFiles.size()).isEqualTo(1);
+      assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
+
+      final Set<String> filenames = new HashSet<String>();
+      for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
+         filenames.add(entry.getKey().getName());
+      }
+
+      assertThat(filenames.size()).isEqualTo(externalFiles.size());
+      assertThat(filenames.contains(expectedRequestFile.getName())).isFalse();
+      assertThat(filenames.contains(expectedResponseFile.getName())).isTrue();
+   }
+
+   @Test
+   public void shouldReturnDedupedExternalFile() throws Exception {
+
+      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/same.external.files.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+
+      assertThat(externalFiles.size()).isEqualTo(1);
+      assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
+
+      final Set<String> filenames = new HashSet<String>();
+      for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
+         filenames.add(entry.getKey().getName());
+      }
+
+      assertThat(filenames.size()).isEqualTo(externalFiles.size());
+      assertThat(filenames.contains(expectedRequestFile.getName())).isTrue();
+      assertThat(filenames.contains(expectedResponseFile.getName())).isFalse();
+   }
+
+   @Test
+   public void shouldReturnOnlyResponseExternalFileWhenRequestFileFailedToLoad() throws Exception {
+
+      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/request.null.external.files.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+
+      assertThat(externalFiles.size()).isEqualTo(1);
+      assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
+
+      final Set<String> filenames = new HashSet<String>();
+      for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
+         filenames.add(entry.getKey().getName());
+      }
+
+      assertThat(filenames.size()).isEqualTo(externalFiles.size());
+      assertThat(filenames.contains(expectedRequestFile.getName())).isFalse();
+      assertThat(filenames.contains(expectedResponseFile.getName())).isTrue();
+   }
+
+   @Test
+   public void shouldReturnOnlyRequestExternalFileWhenResponseFileFailedToLoad() throws Exception {
+
+      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/response.null.external.files.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+
+      assertThat(externalFiles.size()).isEqualTo(1);
+      assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
+
+      final Set<String> filenames = new HashSet<String>();
+      for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
+         filenames.add(entry.getKey().getName());
+      }
+
+      assertThat(filenames.size()).isEqualTo(externalFiles.size());
+      assertThat(filenames.contains(expectedRequestFile.getName())).isTrue();
+      assertThat(filenames.contains(expectedResponseFile.getName())).isFalse();
    }
 
    private void loadYamlToDataStore(final String yaml) throws Exception {

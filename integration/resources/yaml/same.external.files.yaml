@@ -1,0 +1,13 @@
+-  request:
+      method: GET
+      url: /invoice
+      query:
+         status: active
+         type: full
+      file: ../json/request.external.file.json
+   response:
+      headers:
+         content-type: application/json
+         pragma: no-cache
+      status: 200
+      file: ../json/request.external.file.json

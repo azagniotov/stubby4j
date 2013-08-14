@@ -82,6 +82,16 @@ public final class FileUtils {
       return contentFile;
    }
 
+   public static File uriToFile(final String absolutePath) throws IOException {
+      final File contentFile = new File(absolutePath);
+
+      if (!contentFile.isFile()) {
+         throw new IOException(String.format("Could not load file from path: %s", absolutePath));
+      }
+
+      return contentFile;
+   }
+
    public static File fileFromString(final String content) {
       try {
          final File temp = File.createTempFile("tmp", ".tmp");

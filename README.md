@@ -100,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.5" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.6" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.5'
+'by.stub:stubby4j:jar:2.0.6'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.5'
+compile 'by.stub:stubby4j:2.0.6'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.5.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.6.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -867,6 +867,11 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.6
+* Live YAML scan now also check for modifications to external files referenced from main YAML [ENHANCEMENT]
+* YAML parsing logic revisited [COSMETICS]
+* Code cleanup [COSMETICS]
+
 ### 2.0.5
 * Added ability to specify sequence of responses on the same URI using `file` (Prakash Kandavel) [ENHANCEMENT]
 * Minor code clean up [COSMETICS]
