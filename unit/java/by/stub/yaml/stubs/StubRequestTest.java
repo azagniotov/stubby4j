@@ -139,7 +139,7 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexBeginsWith() throws Exception {
 
-      final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123").withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123.*").withMethodGet().build();
       final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -184,7 +184,7 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexEndsWith_AndSubmittedUrlHasExtraBeggining() throws Exception {
 
-      final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123$").withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123$").withMethodGet().build();
       final StubRequest assertingRequest = BUILDER.withUrl("/some/beggining/invoice/123").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -802,6 +802,35 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamIsRegex() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoRegex = "^this/is/\\d/test";
+      final String paramTwoValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String paramOne = "names";
@@ -936,6 +965,58 @@ public class StubRequestTest {
             .withHeaderContentLanguage(contentLanguage)
             .withHeaderContentEncoding("UTF-8")
             .withHeaderPragma("no-cache").build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenHeaderContainsRegex() throws Exception {
+
+      final String headerOne = "headerOne";
+      final String headerOneValue = "one";
+
+      final String headerTwo = "headerTwo";
+      final String headerTwoRegex = "^this/is/\\d/test";
+      final String headerTwoValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostContainsRegex() throws Exception {
+
+      final String postRegex = "^this/is/\\d/test";
+      final String postValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postValue).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
