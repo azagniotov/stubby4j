@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -100,7 +100,43 @@ public class AdminPortalTest {
       assertThat(responseMessage).isEqualTo("Method TRACE is not implemented on URI /");
    }
 
-   @Test
+
+    @Test
+    public void should_ReturnResponseReloadedFromFile_WhenRequestMadePostReload() throws Exception {
+        final URL url = AdminPortalTest.class.getResource("/json/dynamic.json");
+        File file = new File(url.getFile());
+
+        final String stubsRequestUrl = String.format("%s%s", STUBS_URL, "/dynamic/respose/post/reload");
+        final HttpRequest stubsGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
+        HttpResponse stubsGetResponse = stubsGetRequest.execute();
+        String responseContentAsString = stubsGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(stubsGetResponse.getStatusCode());
+        assertThat(responseContentAsString).contains("Initial Value!!!");
+
+        modifyStubDataFile(file, "File Modified Externally!!!");
+
+        final String reloadRequestUrl = String.format("%s%s", ADMIN_URL, "/reload");
+        final HttpRequest reloadStubDataRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, reloadRequestUrl);
+        HttpResponse reloadResponse = reloadStubDataRequest.execute();
+        assertThat(HttpStatus.OK_200).isEqualTo(reloadResponse.getStatusCode());
+
+
+        stubsGetResponse = stubsGetRequest.execute();
+        responseContentAsString = stubsGetResponse.parseAsString().trim();
+        assertThat(responseContentAsString).contains("File Modified Externally!!!");
+        modifyStubDataFile(file, "Initial Value!!!");
+
+
+    }
+
+    private void modifyStubDataFile(File file, String stubData) throws IOException {
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(stubData);
+        fileWriter.close();
+    }
+
+    @Test
    public void shouldMakeSuccessfulGetRequestToStatusPage() throws Exception {
 
       final String requestUrl = String.format("%s%s", ADMIN_URL, "/status");

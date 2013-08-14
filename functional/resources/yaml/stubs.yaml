@@ -306,3 +306,14 @@
          headers:
             content-stype: application/json
          body: Still going strong!
+
+
+-  request:
+      method: GET
+      url: /dynamic/respose/post/reload
+   response:
+      headers:
+         content-type: application/json
+         pragma: no-cache
+      status: 200
+      file: ../json/dynamic.json
