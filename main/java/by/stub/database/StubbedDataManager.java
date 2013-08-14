@@ -28,8 +28,13 @@ import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StubbedDataManager {
 
@@ -92,6 +97,27 @@ public class StubbedDataManager {
 
    public File getDataYaml() {
       return dataYaml;
+   }
+
+   public synchronized Map<File, Long> getExternalFiles() {
+      final Set<String> escrow = new HashSet<String>();
+      final Map<File, Long> externalFiles = new HashMap<File, Long>();
+      for (StubHttpLifecycle cycle: stubHttpLifecycles) {
+
+         final File requestFile = cycle.getRequest().getRawFile();
+         if (ObjectUtils.isNotNull(requestFile) && !escrow.contains(requestFile.getName())) {
+            escrow.add(requestFile.getName());
+            externalFiles.put(requestFile, requestFile.lastModified());
+         }
+
+         final File responseFile = cycle.getResponse().getRawFile();
+         if (ObjectUtils.isNotNull(responseFile) && !escrow.contains(responseFile.getName())) {
+            escrow.add(responseFile.getName());
+            externalFiles.put(responseFile, responseFile.lastModified());
+         }
+      }
+
+      return externalFiles;
    }
 
    public String getYamlAbsolutePath() {

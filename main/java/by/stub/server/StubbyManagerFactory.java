@@ -22,7 +22,8 @@ package by.stub.server;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
 import by.stub.database.StubbedDataManager;
-import by.stub.database.thread.ConfigurationScanner;
+import by.stub.database.thread.ExternalFilesScanner;
+import by.stub.database.thread.MainYamlScanner;
 import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -60,7 +61,10 @@ public class StubbyManagerFactory {
    }
 
    private void watchDataStore(final StubbedDataManager stubbedDataManager) {
-      final ConfigurationScanner configurationScanner = new ConfigurationScanner(stubbedDataManager);
-      new Thread(configurationScanner, ConfigurationScanner.class.getCanonicalName()).start();
+      final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubbedDataManager);
+      new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
+
+      final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubbedDataManager);
+      new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
    }
 }

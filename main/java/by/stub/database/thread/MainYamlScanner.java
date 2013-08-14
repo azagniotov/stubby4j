@@ -13,13 +13,13 @@ import java.util.List;
  * @author Alexander Zagniotov
  * @since 11/6/12, 8:01 AM
  */
-public final class ConfigurationScanner implements Runnable {
+public final class MainYamlScanner implements Runnable {
 
    private final StubbedDataManager stubbedDataManager;
 
-   public ConfigurationScanner(final StubbedDataManager stubbedDataManager) {
+   public MainYamlScanner(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
-      ANSITerminal.status(String.format("Configuration scan enabled, watching %s", stubbedDataManager.getYamlAbsolutePath()));
+      ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYamlAbsolutePath()));
    }
 
    @Override
@@ -27,35 +27,36 @@ public final class ConfigurationScanner implements Runnable {
 
       try {
          final File dataYaml = stubbedDataManager.getDataYaml();
-         long lastModified = dataYaml.lastModified();
+         long mainYamlLastModified = dataYaml.lastModified();
 
          while (!Thread.currentThread().isInterrupted()) {
 
             Thread.sleep(3000);
 
             final long currentFileModified = dataYaml.lastModified();
-            if (lastModified >= currentFileModified) {
+            if (mainYamlLastModified >= currentFileModified) {
                continue;
             }
 
-            ANSITerminal.info(String.format("\nConfiguration scan detected change in %s\n", stubbedDataManager.getYamlAbsolutePath()));
+            ANSITerminal.info(String.format("\nMain YAML scan detected change in %s\n", stubbedDataManager.getYamlAbsolutePath()));
 
             try {
-               lastModified = currentFileModified;
+               mainYamlLastModified = currentFileModified;
                final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataYaml.getParent(), FileUtils.constructReader(dataYaml));
 
                stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of YAML configuration from: %s%s",
+               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s%s",
                   "\n",
                   dataYaml.getAbsolutePath(),
                   "\n"));
             } catch (final Exception ex) {
-               ANSITerminal.error("Could not refresh YAML configuration: " + ex.toString());
-               ANSITerminal.warn(String.format("YAML refresh aborted, previously loaded stubs remain untouched"));
+               ANSITerminal.error("Could not refresh YAML file: " + ex.toString());
+               ANSITerminal.warn(String.format("YAML refresh aborted, in-memory stubs remain untouched"));
             }
          }
 
       } catch (final Exception ex) {
+         ex.printStackTrace();
          ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
       }
    }
