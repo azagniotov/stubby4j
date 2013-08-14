@@ -12,7 +12,9 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +24,9 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsPortalTest {
+
+   @Rule
+   public ExpectedException expectedException = ExpectedException.none();
 
    private static final String HEADER_APPLICATION_JSON = "application/json";
 
@@ -58,7 +63,6 @@ public class StubsPortalTest {
    public static void afterClass() throws Exception {
       STUBBY_CLIENT.stopJetty();
    }
-
 
    @Test
    public void shouldMatchRequest_WhenStubbedUrlRegexBeginsWith_ButGoodAssertionSent() throws Exception {

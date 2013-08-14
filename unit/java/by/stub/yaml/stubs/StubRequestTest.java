@@ -2,13 +2,15 @@ package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.utils.FileUtils;
-import by.stub.utils.StringUtils;
 import com.google.api.client.http.HttpMethods;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -20,6 +22,9 @@ import static org.mockito.Mockito.when;
  */
 @SuppressWarnings("serial")
 public class StubRequestTest {
+
+   @Rule
+   public ExpectedException expectedException = ExpectedException.none();
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
 
@@ -1528,5 +1533,17 @@ public class StubRequestTest {
          "headers={}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldThrowExceptionWhenUrlRegexPatternCannotBeCompiled() throws Exception {
+
+      expectedException.expect(PatternSyntaxException.class);
+      expectedException.expectMessage("Unclosed character class near index 30");
+
+      final String url = "/some/uri/with?param=[one,two\\]";
+      BUILDER.withUrl(url)
+            .withMethodPost()
+            .withPost("some post").build();
    }
 }
