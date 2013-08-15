@@ -4,6 +4,7 @@ import by.stub.yaml.stubs.StubRequest;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -34,7 +35,9 @@ public class ReflectionUtilsTest {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       assertThat(stubRequest.getUrl()).isNull();
 
-      ReflectionUtils.setPropertyValue(stubRequest, "url", "google.com");
+      final Map<String, Object> values = new HashMap<String, Object>();
+      values.put("url", "google.com");
+      ReflectionUtils.injectObjectFields(stubRequest, values);
 
       assertThat(stubRequest.getUrl()).isEqualTo("google.com");
    }
@@ -44,7 +47,9 @@ public class ReflectionUtilsTest {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       assertThat(stubRequest.getUrl()).isNull();
 
-      ReflectionUtils.setPropertyValue(stubRequest, "nonExistentProperty", "google.com");
+      final Map<String, Object> values = new HashMap<String, Object>();
+      values.put("nonExistentProperty", "google.com");
+      ReflectionUtils.injectObjectFields(stubRequest, values);
 
       assertThat(stubRequest.getUrl()).isNull();
    }

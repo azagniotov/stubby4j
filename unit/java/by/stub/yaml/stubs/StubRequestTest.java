@@ -800,34 +800,6 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
-   @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamIsRegex() throws Exception {
-
-      final String paramOne = "paramOne";
-      final String paramOneValue = "one";
-
-      final String paramTwo = "paramTwo";
-      final String paramTwoRegex = "^this/is/\\d/test";
-      final String paramTwoValue = "this/is/1/test";
-
-      final String url = "/invoice/789";
-
-      final StubRequest expectedRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet()
-            .withMethodHead()
-            .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoRegex).build();
-
-      final StubRequest assertingRequest =
-         BUILDER.withUrl(url)
-            .withMethodGet()
-            .withMethodHead()
-            .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoValue).build();
-
-      assertThat(expectedRequest).isEqualTo(assertingRequest);
-   }
 
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
@@ -968,15 +940,74 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
+
    @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenHeaderContainsRegex() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamRegexIsMatching() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "session_id";
+      final String paramTwoRegex = "^user_\\d{32}_(local|remote)";
+      final String paramTwoAssertingValue = "user_29898678635097503927398653027523_remote";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoAssertingValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamRegexDoesNotMatch() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "session_id";
+      final String paramTwoRegex = "^user_\\d{32}_local";
+      final String paramTwoAssertingValue = "user_12345_local";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoAssertingValue).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenHeaderRegexIsMatching() throws Exception {
 
       final String headerOne = "headerOne";
       final String headerOneValue = "one";
 
       final String headerTwo = "headerTwo";
-      final String headerTwoRegex = "^this/is/\\d/test";
-      final String headerTwoValue = "this/is/1/test";
+      final String headerTwoRegex = "^[a-z]{4}_\\d{32}_(local|remote)";
+      final String headerTwoAssertingValue = "user_29898678635097503927398653027523_remote";
 
       final String url = "/invoice/789";
 
@@ -992,16 +1023,175 @@ public class StubRequestTest {
             .withMethodGet()
             .withMethodHead()
             .withHeaders(headerOne, headerOneValue)
-            .withHeaders(headerTwo, headerTwoValue).build();
+            .withHeaders(headerTwo, headerTwoAssertingValue).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenPostContainsRegex() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenHeaderRegexDoesNotMatch() throws Exception {
 
-      final String postRegex = "^this/is/\\d/test";
-      final String postValue = "this/is/1/test";
+      final String headerOne = "headerOne";
+      final String headerOneValue = "one";
+
+      final String headerTwo = "headerTwo";
+      final String headerTwoRegex = "^[a-z]{4}_\\d{32}_(local|remote)";
+      final String headerTwoAssertingValue = "usEr_29898678635097503927398653027523_remote";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoAssertingValue).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingAnyPostWithoutNewLineCharacter() throws Exception {
+
+      final String postRegex = ".*";
+
+      final String postAssertingValue =
+         "Here's the story of a lovely lady, " +
+         "Who was bringing up three very lovely girls. " +
+         "All of them had hair of gold, like their mother, " +
+         "The youngest one in curls. " +
+         "Here's the story, of a man named Brady, " +
+         "Who was busy with three boys of his own. " +
+         "They were four men, living all together, " +
+         "Yet they were all alone.";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postAssertingValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexNotMatchingPostWithLineChar() throws Exception {
+
+      final String postRegex = ".*";
+
+      final String postAssertingValue =
+         "Here's the story of a lovely lady,\n" +
+            "Who was bringing up three very lovely girls.\n" +
+            "All of them had hair of gold, like their mother,\n" +
+            "The youngest one in curls.\n" +
+            "Here's the story, of a man named Brady,\n" +
+            "Who was busy with three boys of his own.\n" +
+            "They were four men, living all together,\n" +
+            "Yet they were all alone.";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postAssertingValue).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexNotMatchingPostWithCarriageReturnChar() throws Exception {
+
+      final String postRegex = ".*";
+
+      final String postAssertingValue =
+         "Here's the story of a lovely lady,\r" +
+            "Who was bringing up three very lovely girls.\r" +
+            "All of them had hair of gold, like their mother,\r" +
+            "The youngest one in curls.\r" +
+            "Here's the story, of a man named Brady,\r" +
+            "Who was busy with three boys of his own.\r" +
+            "They were four men, living all together,\r" +
+            "Yet they were all alone.";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postAssertingValue).build();
+
+      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingSubsectionOfMultiLineJsonPost() throws Exception {
+
+      final String postRegex = ".*(\"id\": \"123\").*";
+
+      final String postAssertingValue =
+            "{" +
+            "   \"products\": [" +
+            "      {" +
+            "      \"id\": \"123\"," +
+            "      }," +
+            "      {" +
+            "      \"id\": \"789\"," +
+            "      }" +
+            "   ]" +
+            "}";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postAssertingValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingSingleLinePost() throws Exception {
+
+      final String postRegex = "^This is an invoice: \\d{3} from today";
+      final String postValue = "This is an invoice: 889 from today";
 
       final String url = "/invoice/789";
 

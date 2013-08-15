@@ -41,7 +41,7 @@ final class StubRequestBuilder implements StubBuilder<StubRequest> {
 
    @Override
    public StubRequest build() throws Exception {
-      ReflectionUtils.setValuesToObjectFields(this, fieldNameAndValues);
+      ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
       return new StubRequest(url, post, file, method, headers, query);
    }
 }

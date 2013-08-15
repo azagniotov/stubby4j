@@ -36,7 +36,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
 
    @Override
    public StubResponse build()  throws Exception {
-      ReflectionUtils.setValuesToObjectFields(this, fieldNameAndValues);
+      ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
       return new StubResponse(status, body, file, latency, headers);
    }
 }

@@ -104,43 +104,16 @@ public final class FileUtils {
       return null;
    }
 
-   public static String asciiFileToString(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
-      final File contentFile = new File(dataYamlConfigParentDir, relativePath);
-
-      if (!contentFile.isFile()) {
-         throw new IOException(String.format("Could not load file from path: %s", relativePath));
-      }
-
-      return FileUtils.asciiFileToString(contentFile);
-   }
-
    public static String asciiFileToString(final File file) throws IOException {
       final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
 
       return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
 
-   public static byte[] asciiFileToUtf8Bytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
-      final String loadedContent = FileUtils.asciiFileToString(dataYamlConfigParentDir, relativePath);
-
-      return loadedContent.getBytes(StringUtils.charsetUTF8());
-   }
-
    public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
       final String loadedContent = FileUtils.asciiFileToString(file);
 
       return loadedContent.getBytes(StringUtils.charsetUTF8());
-   }
-
-   public static byte[] fileToBytes(final String fileParentDirectory, final String filePath) throws IOException {
-
-      final String extension = StringUtils.extractFilenameExtension(filePath);
-
-      if (FileUtils.ASCII_TYPES.contains(extension)) {
-         return FileUtils.asciiFileToUtf8Bytes(fileParentDirectory, filePath);
-      }
-
-      return FileUtils.binaryFileToBytes(fileParentDirectory, filePath);
    }
 
    public static byte[] fileToBytes(final File file) throws IOException {

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -252,6 +253,24 @@ public class StubRequest {
          return dataStoreValue.equals(thisAssertingValue);
       }
    }
+
+   /*
+   private boolean regexMatchForPost(final String stubbedPostRegex, final String assertingPost) {
+      try {
+         final Pattern pattern = Pattern.compile(stubbedPostRegex, Pattern.MULTILINE);
+         final Matcher matcher = pattern.matcher(assertingPost);
+
+         if (matcher.matches()) {
+            return true;
+         } else if (matcher.find()) {
+            return true;
+         }
+         return false;
+      } catch (PatternSyntaxException e) {
+         return stubbedPostRegex.equals(assertingPost);
+      }
+   }
+   */
 
    private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
       if (dataStoreArray.isEmpty()) {
