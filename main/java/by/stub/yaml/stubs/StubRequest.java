@@ -42,7 +42,6 @@ public class StubRequest {
    private static final String REGEX_END = "$";
    public static final String AUTH_HEADER = "authorization";
 
-   private final Pattern urlPattern;
    private final String url;
    private final String post;
    private final File file;
@@ -58,7 +57,6 @@ public class StubRequest {
                       final Map<String, String> headers,
                       final Map<String, String> query) {
       this.url = url;
-      this.urlPattern = Pattern.compile(ObjectUtils.isNull(this.url ) ? "" : this.url, Pattern.MULTILINE);
       this.post = post;
       this.file = file;
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
@@ -82,10 +80,6 @@ public class StubRequest {
       if (StringUtils.isSet(newMethod)) {
          method.add(newMethod);
       }
-   }
-
-   public Pattern getUrlPattern() {
-      return urlPattern;
    }
 
    public String getUrl() {
@@ -180,8 +174,9 @@ public class StubRequest {
       return assertionRequest;
    }
 
-   private boolean regexMatch(final Pattern dataStoreRequestUrlPattern, final String dataStoreRequestUrl, final String assertingUrl) {
+   private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
 
+      Pattern dataStoreRequestUrlPattern = Pattern.compile(dataStoreRequestUrl, Pattern.MULTILINE);
       final Matcher matcher = dataStoreRequestUrlPattern.matcher(assertingUrl);
 
       final boolean isRegexStart = dataStoreRequestUrl.startsWith(REGEX_START);
@@ -232,7 +227,7 @@ public class StubRequest {
       return dataStoreMapCopy.isEmpty();
    }
 
-   private boolean urlsMatch(final Pattern dataStoreRequestUrlPattern, final String dataStoreUrl, final String thisAssertingUrl) {
+   private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
 
       if (!StringUtils.isSet(dataStoreUrl)) {
          return true;
@@ -240,7 +235,7 @@ public class StubRequest {
          return false;
       }
 
-      return regexMatch(dataStoreRequestUrlPattern, dataStoreUrl, thisAssertingUrl);
+      return regexMatch(dataStoreUrl, thisAssertingUrl);
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
@@ -276,9 +271,8 @@ public class StubRequest {
          return true;
       } else if (o instanceof StubRequest) {
          final StubRequest dataStoreRequest = (StubRequest) o;
-         final Pattern dataStoreRequestUrlPattern = dataStoreRequest.getUrlPattern();
 
-         return urlsMatch(dataStoreRequestUrlPattern, dataStoreRequest.url, this.url)
+         return urlsMatch(dataStoreRequest.url, this.url)
             && arraysIntersect(dataStoreRequest.getMethod(), getMethod())
             && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
             && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
