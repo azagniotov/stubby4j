@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -550,23 +549,6 @@ public class YamlParserTest {
       assertThat(actualRequest.getUrl()).contains(fullQueryOne);
       assertThat(actualRequest.getQuery()).contains(queryEntryOne);
    }
-
-   @Test
-   public void shouldThrowExceptionWhenUrlRegexPatternCannotBeCompiled() throws Exception {
-
-      expectedException.expect(PatternSyntaxException.class);
-      expectedException.expectMessage("Unclosed character class near index 30");
-
-      final String url = "/some/uri/with?param=[one,two\\]";
-      final String yaml = YAML_BUILDER.newStubbedRequest()
-         .withMethodGet()
-         .withUrl(url)
-         .newStubbedResponse()
-         .withStatus("201").build();
-
-      unmarshall(yaml);
-   }
-
 
    private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
       return new YamlParser().parse(".", FileUtils.constructReader(yaml));

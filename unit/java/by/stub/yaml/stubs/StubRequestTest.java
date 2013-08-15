@@ -3,14 +3,11 @@ package by.stub.yaml.stubs;
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.utils.FileUtils;
 import com.google.api.client.http.HttpMethods;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,9 +19,6 @@ import static org.mockito.Mockito.when;
  */
 @SuppressWarnings("serial")
 public class StubRequestTest {
-
-   @Rule
-   public ExpectedException expectedException = ExpectedException.none();
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
 
@@ -144,7 +138,7 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexBeginsWith() throws Exception {
 
-      final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123").withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123.*").withMethodGet().build();
       final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -189,7 +183,7 @@ public class StubRequestTest {
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexEndsWith_AndSubmittedUrlHasExtraBeggining() throws Exception {
 
-      final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123$").withMethodGet().build();
+      final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123$").withMethodGet().build();
       final StubRequest assertingRequest = BUILDER.withUrl("/some/beggining/invoice/123").withMethodGet().build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -807,6 +801,35 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenQueryParamIsRegex() throws Exception {
+
+      final String paramOne = "paramOne";
+      final String paramOneValue = "one";
+
+      final String paramTwo = "paramTwo";
+      final String paramTwoRegex = "^this/is/\\d/test";
+      final String paramTwoValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withQuery(paramOne, paramOneValue)
+            .withQuery(paramTwo, paramTwoValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
       final String paramOne = "names";
@@ -941,6 +964,58 @@ public class StubRequestTest {
             .withHeaderContentLanguage(contentLanguage)
             .withHeaderContentEncoding("UTF-8")
             .withHeaderPragma("no-cache").build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenHeaderContainsRegex() throws Exception {
+
+      final String headerOne = "headerOne";
+      final String headerOneValue = "one";
+
+      final String headerTwo = "headerTwo";
+      final String headerTwoRegex = "^this/is/\\d/test";
+      final String headerTwoValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withHeaders(headerOne, headerOneValue)
+            .withHeaders(headerTwo, headerTwoValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostContainsRegex() throws Exception {
+
+      final String postRegex = "^this/is/\\d/test";
+      final String postValue = "this/is/1/test";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postValue).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -1237,14 +1312,14 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldFindStubRequestNotEqual_WhenComparedToNull() throws Exception {
+   public void shouldfindStubRequestNotEqual_WhenComparedToNull() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
       assertThat(expectedRequest).isNotEqualTo(null);
    }
 
    @Test
-   public void shouldFindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
+   public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
       final Object assertingObject = StubResponse.newStubResponse();
 
@@ -1253,12 +1328,12 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldFindStubRequesEqual_WhenComparedToSameInstanceClass() throws Exception {
+   public void shouldfindStubRequestEqual_WhenComparedToSameInstanceClass() throws Exception {
       final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-      final StubRequest assertingObject = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+      final Object assertingObject = StubRequest.newStubRequest();
 
       final boolean assertionResult = assertingObject.equals(expectedRequest);
-      assertThat(assertionResult).isTrue();
+      assertThat(assertionResult).isFalse();
    }
 
    @Test
@@ -1533,17 +1608,5 @@ public class StubRequestTest {
          "headers={}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
-   }
-
-   @Test
-   public void shouldThrowExceptionWhenUrlRegexPatternCannotBeCompiled() throws Exception {
-
-      expectedException.expect(PatternSyntaxException.class);
-      expectedException.expectMessage("Unclosed character class near index 30");
-
-      final String url = "/some/uri/with?param=[one,two\\]";
-      BUILDER.withUrl(url)
-            .withMethodPost()
-            .withPost("some post").build();
    }
 }

@@ -12,9 +12,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -24,9 +22,6 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsPortalTest {
-
-   @Rule
-   public ExpectedException expectedException = ExpectedException.none();
 
    private static final String HEADER_APPLICATION_JSON = "application/json";
 
@@ -64,10 +59,11 @@ public class StubsPortalTest {
       STUBBY_CLIENT.stopJetty();
    }
 
+
    @Test
    public void shouldMatchRequest_WhenStubbedUrlRegexBeginsWith_ButGoodAssertionSent() throws Exception {
 
-      //^/resources/asn/
+      //^/resources/asn/.*$
 
       final List<String> assertingRequests = new LinkedList<String>() {{
          add("/resources/asn/");
@@ -181,7 +177,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"status\": \"hello world\"}").isEqualTo(responseContent);
    }
 
@@ -193,7 +189,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContent = response.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"status\": \"hello world\"}").isEqualTo(responseContent);
    }
 
@@ -204,7 +200,7 @@ public class StubsPortalTest {
 
       final HttpResponse response = request.execute();
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
    }
 
    @Test
@@ -215,7 +211,7 @@ public class StubsPortalTest {
 
       final HttpResponse response = request.execute();
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
    }
 
    @Test
@@ -224,7 +220,7 @@ public class StubsPortalTest {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/pdf/hello-world");
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(response.getHeaders()).containsKey("content-type");
       assertThat(response.getHeaders().getContentType()).contains("application/pdf;charset=UTF-8");
       assertThat(response.getHeaders()).containsKey("content-disposition");
@@ -243,7 +239,7 @@ public class StubsPortalTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContent = response.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(expectedContent).isEqualTo(responseContent);
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -255,7 +251,7 @@ public class StubsPortalTest {
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
    }
 
@@ -271,7 +267,7 @@ public class StubsPortalTest {
 
       final String contentTypeHeader = response.getContentType();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(expectedContent).isEqualTo(response.parseAsString().trim());
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -283,7 +279,7 @@ public class StubsPortalTest {
       final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
 
    }
@@ -303,7 +299,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -323,7 +319,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String contentTypeHeader = response.getContentType();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -343,7 +339,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
    }
 
@@ -362,7 +358,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
    }
 
@@ -382,7 +378,7 @@ public class StubsPortalTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.CREATED_201).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -403,7 +399,7 @@ public class StubsPortalTest {
       final String contentTypeHeader = response.getContentType();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.CREATED_201).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
       assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
    }
@@ -423,7 +419,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
    }
 
@@ -442,7 +438,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
       final String responseContentAsString = response.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_FOUND_404).isEqualTo(response.getStatusCode());
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
    }
 
@@ -496,36 +492,36 @@ public class StubsPortalTest {
       assertThat(firstResponseContent).isEqualTo("OK");
    }
 
-    @Test
-    public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile() throws Exception {
+   @Test
+   public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile() throws Exception {
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile");
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
-        HttpResponse firstSequenceResponse = request.execute();
-        String firstResponseContent = firstSequenceResponse.parseAsString().trim();
+      HttpResponse firstSequenceResponse = request.execute();
+      String firstResponseContent = firstSequenceResponse.parseAsString().trim();
 
-        assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
-        assertThat(firstResponseContent).isEqualTo("OK");
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("OK");
 
-        final HttpResponse secondSequenceResponse = request.execute();
-        final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+      final HttpResponse secondSequenceResponse = request.execute();
+      final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
 
-        assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
-        assertThat(secondResponseContent).isEqualTo("Still going strong!");
+      assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
+      assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
-        final HttpResponse thirdSequenceResponse = request.execute();
-        final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
+      final HttpResponse thirdSequenceResponse = request.execute();
+      final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
 
-        assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
-        assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
+      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
+      assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
 
-        firstSequenceResponse = request.execute();
-        firstResponseContent = firstSequenceResponse.parseAsString().trim();
+      firstSequenceResponse = request.execute();
+      firstResponseContent = firstSequenceResponse.parseAsString().trim();
 
-        assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
-        assertThat(firstResponseContent).isEqualTo("OK");
-    }
+      assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
+      assertThat(firstResponseContent).isEqualTo("OK");
+   }
 
    @Test
    public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile_WithBadUrls() throws Exception {

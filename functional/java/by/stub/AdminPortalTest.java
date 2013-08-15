@@ -65,7 +65,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_IMPLEMENTED_501).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_IMPLEMENTED_501);
       assertThat(statusMessage).isEqualTo("Not Implemented");
       assertThat(responseMessage).isEqualTo("Method OPTIONS is not implemented on URI /");
    }
@@ -80,7 +80,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_IMPLEMENTED_501).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_IMPLEMENTED_501);
       assertThat(statusMessage).isEqualTo("Not Implemented");
       assertThat(responseMessage).isEqualTo("");
    }
@@ -95,7 +95,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.NOT_IMPLEMENTED_501).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_IMPLEMENTED_501);
       assertThat(statusMessage).isEqualTo("Not Implemented");
       assertThat(responseMessage).isEqualTo("Method TRACE is not implemented on URI /");
    }
@@ -109,7 +109,7 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpGetRequest.execute();
       final String responseContentAsString = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContentAsString).contains("Live Tweaks to YAML Configuration");
       assertThat(responseContentAsString).contains("/pdf/hello-world");
       assertThat(responseContentAsString).contains("STATUS");
@@ -125,7 +125,7 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpGetRequest.execute();
       final String responseContentAsString = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContentAsString).contains("request");
       assertThat(responseContentAsString).contains("url: ^/resources/asn/");
       assertThat(responseContentAsString).contains("content-disposition: attachment; filename=hello-world.pdf");
@@ -142,7 +142,7 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpGetRequest.execute();
       final String responseContentAsString = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContentAsString).containsOnlyOnce("request");
       assertThat(responseContentAsString).containsOnlyOnce("url: ^/resources/asn/");
       assertThat(responseContentAsString).containsOnlyOnce("response");
@@ -161,7 +161,7 @@ public class AdminPortalTest {
 
       final String expectedMessage = String.format("Stub request index#%s does not exist, cannot display", invalidIndex);
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
       assertThat(statusMessage).isEqualTo(expectedMessage);
    }
 
@@ -175,7 +175,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
       assertThat(statusMessage).isEqualTo("Method Not Allowed");
       assertThat(responseMessage).isEqualTo("Method PUT is not allowed on URI /");
    }
@@ -189,7 +189,7 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpPuttRequest.execute();
       final String statusMessage = httpResponse.getStatusMessage().trim();
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
       assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
    }
 
@@ -205,7 +205,7 @@ public class AdminPortalTest {
 
       final String expectedMessage = String.format("Stub request index#%s does not exist, cannot update", invalidIndex);
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
       assertThat(statusMessage).isEqualTo(expectedMessage);
    }
 
@@ -271,7 +271,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
       assertThat(statusMessage).isEqualTo("Method Not Allowed");
       assertThat(responseMessage).isEqualTo("Method DELETE is not allowed on URI /");
    }
@@ -288,7 +288,7 @@ public class AdminPortalTest {
 
       final String expectedMessage = String.format("Stub request index#%s does not exist, cannot delete", invalidIndex);
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
       assertThat(statusMessage).isEqualTo(expectedMessage);
    }
 
@@ -335,7 +335,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.METHOD_NOT_ALLOWED_405).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
       assertThat(statusMessage).isEqualTo("Method Not Allowed");
       assertThat(responseMessage).isEqualTo("Method POST is not allowed on URI /5");
    }
@@ -349,7 +349,7 @@ public class AdminPortalTest {
       final HttpResponse httpResponse = httpPuttRequest.execute();
       final String statusMessage = httpResponse.getStatusMessage().trim();
 
-      assertThat(HttpStatus.NO_CONTENT_204).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
       assertThat(statusMessage).isEqualTo("POST request on URI / was empty");
    }
 
@@ -365,7 +365,7 @@ public class AdminPortalTest {
 
       final String expectedMessage = "Problem handling request in Admin handler: java.io.IOException: Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML";
 
-      assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
       assertThat(statusMessage).isEqualTo(expectedMessage);
       assertThat(responseMessage).contains(expectedMessage);
    }
@@ -392,7 +392,7 @@ public class AdminPortalTest {
       final String responseMessage = httpResponse.parseAsString().trim();
       final String responseLocationHeader = httpResponse.getHeaders().getLocation();
 
-      assertThat(HttpStatus.CREATED_201).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat(responseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
       assertThat(statusMessage).isEqualTo("Created");
       assertThat(responseMessage).contains("Configuration created successfully");
@@ -403,7 +403,7 @@ public class AdminPortalTest {
 
       final String yamlToUpdate = new YamlBuilder()
          .newStubbedRequest()
-         .withUrl("^/new/resource")
+         .withUrl("^/new/resource/.*$")
          .withMethodGet()
          .withQuery("someKey", "someValue")
          .newStubbedResponse()
@@ -419,7 +419,7 @@ public class AdminPortalTest {
       final String statusMessage = httpResponse.getStatusMessage().trim();
       final String responseMessage = httpResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.CREATED_201).isEqualTo(httpResponse.getStatusCode());
+      assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat(statusMessage).isEqualTo("Created");
       assertThat(responseMessage).contains("Configuration created successfully");
 
@@ -430,7 +430,7 @@ public class AdminPortalTest {
       final String stubsGetResponseContentTypeHeader = stubsGetResponse.getContentType();
       final String stubsGetResponseContent = stubsGetResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(stubsGetResponse.getStatusCode());
+      assertThat(stubsGetResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(stubsGetResponseContent).isEqualTo("OK");
       assertThat(stubsGetResponseContentTypeHeader).contains("application/xml");
    }

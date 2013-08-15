@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @author Alexander Zagniotov
@@ -38,8 +38,6 @@ import java.util.regex.Pattern;
  */
 public class StubRequest {
 
-   private static final String REGEX_START = "^";
-   private static final String REGEX_END = "$";
    public static final String AUTH_HEADER = "authorization";
 
    private final String url;
@@ -63,7 +61,6 @@ public class StubRequest {
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
       this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
-
    }
 
    public final ArrayList<String> getMethod() {
@@ -174,68 +171,25 @@ public class StubRequest {
       return assertionRequest;
    }
 
-   private boolean regexMatch(final String dataStoreRequestUrl, final String assertingUrl) {
-
-      Pattern dataStoreRequestUrlPattern = Pattern.compile(dataStoreRequestUrl, Pattern.MULTILINE);
-      final Matcher matcher = dataStoreRequestUrlPattern.matcher(assertingUrl);
-
-      final boolean isRegexStart = dataStoreRequestUrl.startsWith(REGEX_START);
-      final boolean isRegexEnd = dataStoreRequestUrl.endsWith(REGEX_END);
-
-      if (isRegexStart || isRegexEnd) {
-         return matcher.find();
-      }
-
-      return matcher.matches();
-   }
-
-   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
-      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
-      final boolean isDatastoreValueSet = StringUtils.isSet(dataStoreValue);
-
-      if (!isDatastoreValueSet) {
+   @Override
+   public boolean equals(final Object o) {
+      if (this == o) {
          return true;
-      } else if (isAssertingValueSet) {
-         return dataStoreValue.equals(thisAssertingValue);
+      } else if (o instanceof StubRequest) {
+         final StubRequest dataStoreRequest = (StubRequest) o;
+
+         return urlsMatch(dataStoreRequest.url, this.url)
+            && arraysIntersect(dataStoreRequest.getMethod(), this.getMethod())
+            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
+            && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
+            && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
       }
 
       return false;
-   }
-
-   private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-      if (dataStoreArray.isEmpty()) {
-         return true;
-      } else if (!thisAssertingArray.isEmpty()) {
-         for (final String entry : thisAssertingArray) {
-            if (dataStoreArray.contains(entry)) {
-               return true;
-            }
-         }
-      }
-      return false;
-   }
-
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
-      if (dataStoreMap.isEmpty()) {
-         return true;
-      }
-
-      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
-      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-      dataStoreMapCopy.entrySet().removeAll(assertingMapCopy.entrySet());
-
-      return dataStoreMapCopy.isEmpty();
    }
 
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-
-      if (!StringUtils.isSet(dataStoreUrl)) {
-         return true;
-      } else if (!StringUtils.isSet(thisAssertingUrl)) {
-         return false;
-      }
-
-      return regexMatch(dataStoreUrl, thisAssertingUrl);
+      return stringsMatch(dataStoreUrl, thisAssertingUrl);
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
@@ -253,6 +207,65 @@ public class StubRequest {
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
    }
 
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
+      if (dataStoreMap.isEmpty()) {
+         return true;
+      }
+
+      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+
+      for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
+         final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());
+         if (!containsRequiredParam) {
+            return false;
+         } else {
+            String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
+            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue)) {
+               return false;
+            }
+         }
+      }
+
+      return true;
+   }
+
+   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
+      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+      final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
+
+      if (!isDataStoreValueSet) {
+         return true;
+      } else if (!isAssertingValueSet) {
+         return false;
+      } else if (StringUtils.isWithinSquareBrackets(dataStoreValue)) {
+         return dataStoreValue.equals(thisAssertingValue);
+      } else {
+         return regexMatch(dataStoreValue, thisAssertingValue);
+      }
+   }
+
+   private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue) {
+      try {
+         return Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue).matches();
+      } catch (PatternSyntaxException e) {
+         return dataStoreValue.equals(thisAssertingValue);
+      }
+   }
+
+   private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
+      if (dataStoreArray.isEmpty()) {
+         return true;
+      } else if (!thisAssertingArray.isEmpty()) {
+         for (final String entry : thisAssertingArray) {
+            if (dataStoreArray.contains(entry)) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
    @Override
    public int hashCode() {
       int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
@@ -263,23 +276,6 @@ public class StubRequest {
       result = 31 * result + query.hashCode();
 
       return result;
-   }
-
-   @Override
-   public boolean equals(final Object o) {
-      if (this == o) {
-         return true;
-      } else if (o instanceof StubRequest) {
-         final StubRequest dataStoreRequest = (StubRequest) o;
-
-         return urlsMatch(dataStoreRequest.url, this.url)
-            && arraysIntersect(dataStoreRequest.getMethod(), getMethod())
-            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
-            && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
-            && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
-      }
-
-      return false;
    }
 
    @Override
