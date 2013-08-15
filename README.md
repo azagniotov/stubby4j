@@ -261,6 +261,7 @@ A demonstration using regular expressions:
          type_name: user
          client_id: id
          client_secret: secret
+         random_id: "^sequence/-/\\d/"
          attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
 
 ```
@@ -286,6 +287,12 @@ A demonstration using regular expressions:
 -  request:
       url: ^/post/form/data$
       post: name=John&email=john@example.com
+```
+
+```yaml
+-  request:
+      url: ^/post/form/data$
+      post: "^this/is/\\d/post/body"
 ```
 
 #### file
@@ -324,6 +331,7 @@ The following endpoint only accepts requests with `application/json` post values
       method: post
       headers:
          content-type: application/json
+         x-custom-header: "^this/is/\d/test"
 ```
 
 ### response
