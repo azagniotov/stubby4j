@@ -100,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.6</version>
+    <version>2.0.7</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.6" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.7" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.6'
+'by.stub:stubby4j:jar:2.0.7'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.6'
+compile 'by.stub:stubby4j:2.0.7'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.6.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.7.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -483,12 +483,12 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
    * `url`: the URI regex string. GET parameters should also be included inline here
-   * `query`: a key/value map of query string parameters included with the request
-   * `headers`: a key/value map of headers the server should respond to
-   * `post`: a string matching the textual body of the response.
+   * `query`: a key/value map of query string parameters included with the request. Query param value can be regex.
+   * `headers`: a key/value map of headers the server should respond to. Header value can be regex.
+   * `post`: a string matching the textual body of the response. Post value can be regex.
    * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
 * `response`: describes the server's response (or array of responses, refer to the examples) to the client
-   * `headers`: a key/value map of headers the server should use in it's response
+   * `headers`: a key/value map of headers the server should use in it's response.
    * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
    * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
    * `body`: the textual body of the server's response to the client
@@ -502,6 +502,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       method: POST
       headers:
          authorization: "bob:password"
+         x-custom-header: "^this/is/\d/test"
       post: this is some post data in textual format
    response:
       headers:
@@ -515,6 +516,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       query:
          a: anything
          b: more
+         custom: "^this/is/\d/test"
       method: GET
       headers:
          Content-Type: application/json
@@ -867,6 +869,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.7
+* Force regex matching only to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
+
 ### 2.0.6
 * Live YAML scan now also check for modifications to external files referenced from main YAML [ENHANCEMENT]
 * YAML parsing logic revisited [COSMETICS]
