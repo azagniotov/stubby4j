@@ -57,7 +57,7 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
-      OPTIONS.addOption("w", OPTION_WATCH, false, "Reload datafile when changes are made.");
+      OPTIONS.addOption("w", OPTION_WATCH, false, "Reload and refresh stubbed data when changes are made to main YAML or referenced external files.");
    }
 
 
