@@ -248,29 +248,15 @@ public class StubRequest {
 
    private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue) {
       try {
+         // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
+         // it does not mean that newline feeds and carriage return will be matched by default
+         // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
+         // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
          return Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue).matches();
       } catch (PatternSyntaxException e) {
          return dataStoreValue.equals(thisAssertingValue);
       }
    }
-
-   /*
-   private boolean regexMatchForPost(final String stubbedPostRegex, final String assertingPost) {
-      try {
-         final Pattern pattern = Pattern.compile(stubbedPostRegex, Pattern.MULTILINE);
-         final Matcher matcher = pattern.matcher(assertingPost);
-
-         if (matcher.matches()) {
-            return true;
-         } else if (matcher.find()) {
-            return true;
-         }
-         return false;
-      } catch (PatternSyntaxException e) {
-         return stubbedPostRegex.equals(assertingPost);
-      }
-   }
-   */
 
    private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
       if (dataStoreArray.isEmpty()) {

@@ -1090,7 +1090,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexNotMatchingPostWithLineChar() throws Exception {
+   public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexDoesNotMatchLineChar() throws Exception {
 
       final String postRegex = ".*";
 
@@ -1122,9 +1122,41 @@ public class StubRequestTest {
    }
 
    @Test
-   public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexNotMatchingPostWithCarriageReturnChar() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithLineChar() throws Exception {
 
-      final String postRegex = ".*";
+      final String postRegex = "^[\\.,'a-zA-Z\\s+]*$";
+
+      final String postAssertingValue =
+         "Here's the story of a lovely lady,\n" +
+            "Who was bringing up three very lovely girls.\n" +
+            "All of them had hair of gold, like their mother,\n" +
+            "The youngest one in curls.\n" +
+            "Here's the story, of a man named Brady,\n" +
+            "Who was busy with three boys of his own.\n" +
+            "They were four men, living all together,\n" +
+            "Yet they were all alone.";
+
+      final String url = "/invoice/789";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postRegex).build();
+
+      final StubRequest assertingRequest =
+         BUILDER.withUrl(url)
+            .withMethodGet()
+            .withMethodHead()
+            .withPost(postAssertingValue).build();
+
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithCarriageReturnChar() throws Exception {
+
+      final String postRegex = "^[\\.,'a-zA-Z\\s+]*$";
 
       final String postAssertingValue =
          "Here's the story of a lovely lady,\r" +
@@ -1150,7 +1182,7 @@ public class StubRequestTest {
             .withMethodHead()
             .withPost(postAssertingValue).build();
 
-      assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
    @Test
