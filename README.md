@@ -100,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.8</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.7" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.8" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.7'
+'by.stub:stubby4j:jar:2.0.8'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.7'
+compile 'by.stub:stubby4j:2.0.8'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.7.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.8.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -450,6 +450,7 @@ Assuming a match has been made against the given `request` object, data from `re
 #### headers
 
 * similar to `request.headers` except that these are sent back to the client.
+* by default, header `x-stubby-resource-id` containing resource ID is returned with each stubbed response. The ID is useful if the returned resource needs to be updated at run time by ID via Admin portal
 
 ```yaml
 -  request:
@@ -877,6 +878,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.8
+* Making sure that every stubbed response returned to the client contains its resource ID. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
+
 ### 2.0.7
 * Force regex matching only to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
 

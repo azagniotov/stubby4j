@@ -295,7 +295,7 @@ public class AdminPortalTest {
    @Test
    public void should_DeleteStubbedRequest_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
 
-      final String requestUrl = String.format("%s%s", ADMIN_URL, "/1");
+      final String requestUrl = String.format("%s%s", ADMIN_URL, "/2");
       HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
       HttpResponse httpGetResponse = httpGetRequest.execute();
       String getResponseContent = httpGetResponse.parseAsString().trim();
@@ -313,7 +313,7 @@ public class AdminPortalTest {
       final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
 
       assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-      assertThat(deleteResponseContent).isEqualTo("Stub request index#1 deleted successfully");
+      assertThat(deleteResponseContent).isEqualTo("Stub request index#2 deleted successfully");
 
       httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
       httpGetResponse = httpGetRequest.execute();

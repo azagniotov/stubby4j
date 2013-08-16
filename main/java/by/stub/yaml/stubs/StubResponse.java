@@ -34,6 +34,8 @@ import java.util.Map;
  */
 public class StubResponse {
 
+   public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
+
    private final String status;
    private final String body;
    private final File file;
@@ -51,7 +53,7 @@ public class StubResponse {
       this.file = file;
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
       this.latency = latency;
-      this.headers =  ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
+      this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
    }
 
    public String getStatus() {
@@ -97,6 +99,10 @@ public class StubResponse {
 
    public boolean hasHeaderLocation() {
       return getHeaders().containsKey("location");
+   }
+
+   void addResourceIDHeader(final int httplifeCycleIndex) {
+      getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
    }
 
    public StubResponseTypes getStubResponseType() {

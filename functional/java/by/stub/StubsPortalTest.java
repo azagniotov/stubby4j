@@ -4,6 +4,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubResponse;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
@@ -573,5 +574,20 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(response.parseAsString().trim()).isEqualTo("OK");
+   }
+
+   @Test
+   public void should_ReturnExpectedResourceIdHeader_WhenSuccessfulRequestMade() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/this/stub/should/always/be/second/in/this/file");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+
+      final HttpHeaders headers = response.getHeaders();
+      assertThat(headers.getContentType().contains("application/json")).isTrue();
+      assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
+      final List<String> headerValues = (List<String>) headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+      assertThat(headerValues.get(0)).isEqualTo("1");
    }
 }

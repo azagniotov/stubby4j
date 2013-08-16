@@ -81,7 +81,10 @@ public class StubbedDataManager {
       if (listIndex < 0) {
          return StubHttpLifecycle.NULL;
       }
-      return stubHttpLifecycles.get(listIndex);
+      final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(listIndex);
+      foundStubHttpLifecycle.setResourceId(listIndex);
+
+      return foundStubHttpLifecycle;
    }
 
    public synchronized boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
