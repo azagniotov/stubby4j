@@ -306,3 +306,15 @@
          headers:
             content-stype: application/json
          body: Still going strong!
+
+
+-  request:
+      method: [POST]
+      url: /uri/with/post/regex
+      post: "^[\\.,'a-zA-Z\\s+]*$"
+
+   response:
+      -  status: 200
+         headers:
+            content-stype: application/json
+         body: OK

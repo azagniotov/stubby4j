@@ -553,4 +553,25 @@ public class StubsPortalTest {
       assertThat(HttpStatus.CREATED_201).isEqualTo(firstSequenceResponse.getStatusCode());
       assertThat(firstResponseContent).isEmpty();
    }
+
+   @Test
+   public void should_MakeSuccessfulRequest_WhenPostRegexMatchingPostWithLineChars() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/post/regex");
+      final String content =
+         "Here's the story of a lovely lady,\n" +
+         "Who was bringing up three very lovely girls.\n" +
+         "All of them had hair of gold, like their mother,\n" +
+         "The youngest one in curls.\n" +
+         "Here's the story, of a man named Brady,\n" +
+         "Who was busy with three boys of his own.\n" +
+         "They were four men, living all together,\n" +
+         "Yet they were all alone.";
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(response.parseAsString().trim()).isEqualTo("OK");
+   }
 }
