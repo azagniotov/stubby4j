@@ -24,6 +24,7 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminHandler;
+import by.stub.handlers.AjaxHandler;
 import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.utils.ObjectUtils;
@@ -88,16 +89,18 @@ public final class JettyFactory {
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
          {
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/", "default404.html")),
             constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
             constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
 
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/templates/", "default404.html")),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/", "default404.html")),
             constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
             constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
 
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/html/highlight/")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/js/highlight/")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/minified", staticResourceHandler("ui/js/minified/")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", new AjaxHandler(stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, new AdminHandler(stubbedDataManager))
          }
       );
