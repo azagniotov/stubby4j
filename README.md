@@ -879,7 +879,7 @@ for each <endpoint> of stored endpoints {
 
 ## Change Log
 ### 2.0.8
-* Making sure that every stubbed response returned to the client contains its resource ID. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
+* Making sure that every stubbed response returned to the client contains its resource ID in the header `x-stubby-resource-id`. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
 
 ### 2.0.7
 * Force regex matching only to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
