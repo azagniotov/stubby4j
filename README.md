@@ -134,7 +134,7 @@ java -jar stubby4j-2.0.7.jar [-a <arg>] [-d <arg>] [-h]
  -p,--password <arg>   Password for the provided keystore file.
  -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
  -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.
- -w,--watch            Reload and refresh stubbed data when changes are made to main YAML or referenced external files.
+ -w,--watch            Reloads stub data upon changes to the main YAML or referenced external files.
 ```
 
 ## Endpoint Configuration

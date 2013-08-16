@@ -42,7 +42,8 @@ public class CommandLineIntepreterTest {
          " -p,--password <arg>   Password for the provided keystore file.\n" +
          " -s,--stubs <arg>      Port for stub portal. Defaults to 8882.\n" +
          " -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.\n" +
-         " -w,--watch            Reload datafile when changes are made.";
+         " -w,--watch            Reloads stub data upon changes to the main YAML or\n" +
+         "                       referenced external files.";
 
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
