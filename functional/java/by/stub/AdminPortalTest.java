@@ -5,6 +5,8 @@ import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubResponse;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -312,7 +314,7 @@ public class AdminPortalTest {
       final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
       final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
 
-      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
       assertThat(deleteResponseContent).isEqualTo("Stub request index#2 deleted successfully");
 
       httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -434,4 +436,28 @@ public class AdminPortalTest {
       assertThat(stubsGetResponseContent).isEqualTo("OK");
       assertThat(stubsGetResponseContentTypeHeader).contains("application/xml");
    }
+
+   @Test
+   public void should_AdjustResourceIdHeaderAccordingly_WhenSuccessfulDeleteMade() throws Exception {
+
+      final String stubsRequestUrl = String.format("%s%s", STUBS_URL, "/this/stub/should/always/be/second/in/this/file");
+      final HttpRequest stubsGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
+      final HttpResponse preDeletionStubGetResponse = stubsGetRequest.execute();
+      final HttpHeaders preDeletionResponseHeaders = preDeletionStubGetResponse.getHeaders();
+      assertThat(preDeletionResponseHeaders.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
+      assertThat(preDeletionResponseHeaders.getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo("1");
+
+      final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, String.format("%s%s", ADMIN_URL, "/0"));
+      final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+      final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
+      assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
+      assertThat(deleteResponseContent).isEqualTo("Stub request index#0 deleted successfully");
+
+      final HttpRequest postDeletionStubGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
+      final HttpResponse postDeletionStubGetResponse = postDeletionStubGetRequest.execute();
+      final HttpHeaders postDeletionResponseHeaders = postDeletionStubGetResponse.getHeaders();
+      assertThat(postDeletionResponseHeaders.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
+      assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo("0");
+   }
+
 }

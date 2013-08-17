@@ -61,40 +61,38 @@ public class AjaxHandler extends AbstractHandler {
 
       final String[] uriFragments = request.getRequestURI().split("/");
       final int urlFragmentsLength = uriFragments.length;
-      final int urlLastFragmentIndex = urlFragmentsLength - 1;
-      final String urlLastFragment = uriFragments[urlLastFragmentIndex];
+      final String targetFieldName = uriFragments[urlFragmentsLength - 1];
+      final String stubType = uriFragments[urlFragmentsLength - 2];
 
-      if (REGEX_REQUEST_OR_RESPONSE.matcher(urlLastFragment).matches()) {
+      if (REGEX_REQUEST_OR_RESPONSE.matcher(stubType).matches()) {
 
-         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 2]);
-         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
-         renderAjaxResponseContent(request, wrapper, urlLastFragment, foundStubHttpLifecycle);
-
-      } else if (REGEX_NUMERIC.matcher(urlLastFragment).matches()) {
-
-         final int sequencedResponseId = Integer.parseInt(urlLastFragment);
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
          final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
-         renderAjaxResponseContent(request, wrapper, sequencedResponseId, foundStubHttpLifecycle);
+         renderAjaxResponseContent(wrapper, stubType, targetFieldName, foundStubHttpLifecycle);
+
+      } else if (REGEX_NUMERIC.matcher(stubType).matches()) {
+
+         final int sequencedResponseId = Integer.parseInt(stubType);
+         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
+         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
+         renderAjaxResponseContent(wrapper, targetFieldName, sequencedResponseId, foundStubHttpLifecycle);
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
-   private void renderAjaxResponseContent(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final String stubType, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+   private void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
-         final String propertyName = request.getParameter(StatusHandler.QUERY_PARAM_PROPERTY_NAME);
-         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, propertyName);
+         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
          wrapper.getWriter().println(ajaxResponse);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
    }
 
-   private void renderAjaxResponseContent(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final int sequencedResponseId, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+   private void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String targetFieldName, final int sequencedResponseId, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
-         final String propertyName = request.getParameter(StatusHandler.QUERY_PARAM_PROPERTY_NAME);
-         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(propertyName, sequencedResponseId);
+         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
          wrapper.getWriter().println(ajaxResponse);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

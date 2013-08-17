@@ -48,7 +48,6 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class StatusHandler extends AbstractHandler {
 
-   public static final String QUERY_PARAM_PROPERTY_NAME = "propertyName";
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
    private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
@@ -161,8 +160,8 @@ public final class StatusHandler extends AbstractHandler {
             return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
          }
          final String ajaxifiedLinkToResource =
-            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s?%s=%s'>[Click to View]</a></strong>&nbsp;",
-               resourceId, tableName, QUERY_PARAM_PROPERTY_NAME, fieldName);
+            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;",
+               resourceId, tableName, fieldName);
          return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 
