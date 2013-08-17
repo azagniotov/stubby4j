@@ -802,6 +802,138 @@ public class StubbedDataManagerTest {
       assertThat(filenames.contains(expectedResponseFile.getName())).isFalse();
    }
 
+   @Test
+   public void shouldAdjustResourceIDHeadersAccordingly_WhenSomeHttpCycleWasDeleted() throws Exception {
+      final String cycleOne = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/1")
+         .withQuery("paramName1", "paramValue1")
+         .newStubbedResponse()
+         .withStatus("200")
+         .build();
+
+      final String cycleTwo = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerOne", "valueOne")
+         .withSequenceResponseLiteralBody("BodyContent")
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerTwo", "valueTwo")
+         .withSequenceResponseLiteralBody("BodyContentTwo")
+         .build();
+
+      final String cycleThree = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/2")
+         .withQuery("paramName2", "paramValue2")
+         .newStubbedResponse()
+         .withStatus("201")
+         .build();
+
+      loadYamlToDataStore(String.format("%s\n%s\n%s", cycleOne, cycleTwo, cycleThree));
+
+      List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+      assertThat(beforeDeletionLoadedHttpCycles.size()).isEqualTo(3);
+
+      for (int resourceId = 0; resourceId < beforeDeletionLoadedHttpCycles.size(); resourceId++) {
+         final StubHttpLifecycle cycle = beforeDeletionLoadedHttpCycles.get(resourceId);
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+
+         for (int sequence = 0; sequence < allResponses.size(); sequence++) {
+            final StubResponse sequenceStubResponse = allResponses.get(sequence);
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+         }
+      }
+
+      stubbedDataManager.deleteStubHttpLifecycleByIndex(1);
+
+      List<StubHttpLifecycle> afterDeletionLoadedHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+      assertThat(afterDeletionLoadedHttpCycles.size()).isEqualTo(2);
+
+      for (int resourceId = 0; resourceId < afterDeletionLoadedHttpCycles.size(); resourceId++) {
+         final StubHttpLifecycle cycle = afterDeletionLoadedHttpCycles.get(resourceId);
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+
+         for (int sequence = 0; sequence < allResponses.size(); sequence++) {
+            final StubResponse sequenceStubResponse = allResponses.get(sequence);
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+         }
+      }
+   }
+
+   @Test
+   public void shouldAdjustResourceIDHeadersAccordingly_WhenHttpCyclesWereReset() throws Exception {
+      final String cycleOne = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/1")
+         .withQuery("paramName1", "paramValue1")
+         .newStubbedResponse()
+         .withStatus("200")
+         .build();
+
+      loadYamlToDataStore(cycleOne);
+
+      List<StubHttpLifecycle> beforeResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+      assertThat(beforeResetHttpCycles.size()).isEqualTo(1);
+
+      for (int resourceId = 0; resourceId < beforeResetHttpCycles.size(); resourceId++) {
+         final StubHttpLifecycle cycle = beforeResetHttpCycles.get(resourceId);
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+
+         for (int sequence = 0; sequence < allResponses.size(); sequence++) {
+            final StubResponse sequenceStubResponse = allResponses.get(sequence);
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+         }
+      }
+
+      final String cycleTwo = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerOne", "valueOne")
+         .withSequenceResponseLiteralBody("BodyContent")
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerTwo", "valueTwo")
+         .withSequenceResponseLiteralBody("BodyContentTwo")
+         .build();
+
+      final String cycleThree = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/2")
+         .withQuery("paramName2", "paramValue2")
+         .newStubbedResponse()
+         .withStatus("201")
+         .build();
+
+      loadYamlToDataStore(String.format("%s\n%s", cycleTwo, cycleThree));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(String.format("%s\n%s", cycleTwo, cycleThree)));
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+
+      List<StubHttpLifecycle> afterResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+      assertThat(afterResetHttpCycles.size()).isEqualTo(2);
+
+      for (int resourceId = 0; resourceId < afterResetHttpCycles.size(); resourceId++) {
+         final StubHttpLifecycle cycle = afterResetHttpCycles.get(resourceId);
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+
+         for (int sequence = 0; sequence < allResponses.size(); sequence++) {
+            final StubResponse sequenceStubResponse = allResponses.get(sequence);
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+         }
+      }
+   }
+
    private void loadYamlToDataStore(final String yaml) throws Exception {
       final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(yaml));
 
