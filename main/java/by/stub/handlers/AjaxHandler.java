@@ -86,6 +86,26 @@ public class AjaxHandler extends AbstractHandler {
          } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
          }
+      } else {
+         final int sequencedResponseId = Integer.parseInt(uriFragments[urlFragmentsLength - 1]);
+         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+
+         final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
+         if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
+            try {
+               wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
+            } catch (final Exception ex) {
+               HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+            }
+         }
+
+         try {
+            final String propertyName = request.getParameter("propertyName");
+            final String displayableContent = foundStubHttpLifecycle.getDisplayableContent(propertyName, sequencedResponseId);
+            wrapper.getWriter().println(displayableContent);
+         } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         }
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, AjaxHandler.AJAX_ROOT);

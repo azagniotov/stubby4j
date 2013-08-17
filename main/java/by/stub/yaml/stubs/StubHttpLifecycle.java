@@ -131,6 +131,11 @@ public final class StubHttpLifecycle {
       }
    }
 
+   public String getDisplayableContent(final String propertyName, final int sequencedResponseId) throws Exception {
+      final List<StubResponse> allResponses = getAllResponses();
+      return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(allResponses.get(sequencedResponseId), propertyName));
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) {
