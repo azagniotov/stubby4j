@@ -157,11 +157,9 @@ public class StubbedDataManager {
    }
 
    public synchronized void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
-      final StubHttpLifecycle removedLifecycle = deleteStubHttpLifecycleByIndex(httpLifecycleIndex);
-      if (ObjectUtils.isNotNull(removedLifecycle)) {
-         stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
-         updateResourceIDHeaders();
-      }
+      deleteStubHttpLifecycleByIndex(httpLifecycleIndex);
+      stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+      updateResourceIDHeaders();
    }
 
    public synchronized boolean isStubHttpLifecycleExistsByIndex(final int httpLifecycleIndex) {
@@ -170,9 +168,7 @@ public class StubbedDataManager {
 
    public synchronized StubHttpLifecycle deleteStubHttpLifecycleByIndex(final int httpLifecycleIndex) {
       final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
-      if (ObjectUtils.isNotNull(removedLifecycle)) {
-         updateResourceIDHeaders();
-      }
+      updateResourceIDHeaders();
 
       return removedLifecycle;
    }

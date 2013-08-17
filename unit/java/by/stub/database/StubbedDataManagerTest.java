@@ -34,7 +34,7 @@ public class StubbedDataManagerTest {
    }
 
    @Test
-   public void shouldExpangeOriginalHttpCycleList_WhenNewHttpCyclesGiven() throws Exception {
+   public void shouldExpungeOriginalHttpCycleList_WhenNewHttpCyclesGiven() throws Exception {
 
       assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
 
@@ -43,6 +43,62 @@ public class StubbedDataManagerTest {
 
       assertThat(resetResult).isTrue();
       assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isNotZero();
+   }
+
+   @Test
+   public void shouldMatchHttplifecycle_WhenValidIndexGiven() throws Exception {
+
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
+
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
+      final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+      assertThat(resetResult).isTrue();
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isNotZero();
+
+      final StubHttpLifecycle matchedHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(0);
+      assertThat(matchedHttpLifecycle).isNotNull();
+   }
+
+   @Test
+   public void shouldNotMatchHttplifecycle_WhenInvalidIndexGiven() throws Exception {
+
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
+
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
+      final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+      assertThat(resetResult).isTrue();
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isNotZero();
+
+      final StubHttpLifecycle matchedHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(9999);
+      assertThat(matchedHttpLifecycle).isNull();
+   }
+
+   @Test
+   public void shouldDeleteOriginalHttpCycleList_WhenValidIndexGiven() throws Exception {
+
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
+
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
+      final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+      assertThat(resetResult).isTrue();
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isNotZero();
+
+      final StubHttpLifecycle deletedHttpLifecycle = stubbedDataManager.deleteStubHttpLifecycleByIndex(0);
+      assertThat(deletedHttpLifecycle).isNotNull();
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
+   }
+
+   @Test(expected = IndexOutOfBoundsException.class)
+   public void shouldDeleteOriginalHttpCycleList_WhenInvalidIndexGiven() throws Exception {
+
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
+
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
+      final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+      assertThat(resetResult).isTrue();
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isNotZero();
+
+      stubbedDataManager.deleteStubHttpLifecycleByIndex(9999);
    }
 
 
