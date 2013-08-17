@@ -100,28 +100,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.8</version>
+    <version>2.0.9</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.8" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.9" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.8'
+'by.stub:stubby4j:jar:2.0.9'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.8'
+compile 'by.stub:stubby4j:2.0.9'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.8.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.9.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
