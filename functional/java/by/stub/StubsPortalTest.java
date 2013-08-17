@@ -576,6 +576,7 @@ public class StubsPortalTest {
       assertThat(response.parseAsString().trim()).isEqualTo("OK");
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void should_ReturnExpectedResourceIdHeader_WhenSuccessfulRequestMade() throws Exception {
 
