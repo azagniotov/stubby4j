@@ -882,6 +882,7 @@ for each <endpoint> of stored endpoints {
 * Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]
 * Pre-setting header `x-stubby-resource-id` during YAML parse time, instead of on demand. This way resource IDs are viewable on Admin status page [ENHANCEMENT]
 * Added date stamp to live reload success message [COSMETICS]
+* Making sure that resource ID is adjusted accordingly after stubbed data in memory has changed (due to reset, or deletion etc.) [BUG]
 
 ### 2.0.8
 * Making sure that every stubbed response returned to the client contains its resource ID in the header `x-stubby-resource-id`. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
