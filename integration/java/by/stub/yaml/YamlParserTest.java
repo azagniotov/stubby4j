@@ -550,6 +550,116 @@ public class YamlParserTest {
       assertThat(actualRequest.getQuery()).contains(queryEntryOne);
    }
 
+   @Test
+   public void shouldContainExpectedResourceIdHeaderUponSuccessfulYamlMarshall_WhenMultipleResponses() throws Exception {
+
+      final String cycleOne = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/1")
+         .withQuery("paramName1", "paramValue1")
+         .newStubbedResponse()
+         .withStatus("200")
+         .build();
+
+      final String cycleTwo = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/2")
+         .withQuery("paramName2", "paramValue2")
+         .newStubbedResponse()
+         .withStatus("201")
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s\n%s", cycleOne, cycleTwo));
+      assertThat(loadedHttpCycles.size()).isEqualTo(2);
+
+      for (int idx = 0; idx < loadedHttpCycles.size(); idx++) {
+         final StubHttpLifecycle cycle = loadedHttpCycles.get(idx);
+         final StubResponse cycleResponse = cycle.getResponse();
+
+         assertThat(cycleResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+         assertThat(cycleResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(idx));
+      }
+   }
+
+   @Test
+   public void shouldContainTheSameResourceIdHeader_ForEachSequencedResponse() throws Exception {
+
+      final String yaml = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerOne", "valueOne")
+         .withSequenceResponseLiteralBody("BodyContent")
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerTwo", "valueTwo")
+         .withSequenceResponseLiteralBody("BodyContentTwo")
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      assertThat(loadedHttpCycles.size()).isEqualTo(1);
+
+      final StubHttpLifecycle cycle = loadedHttpCycles.get(0);
+      final List<StubResponse> allResponses = cycle.getAllResponses();
+
+      for (int idx = 0; idx < allResponses.size(); idx++) {
+         final StubResponse sequenceStubResponse = allResponses.get(idx);
+         assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+         assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(0));
+      }
+   }
+
+   @Test
+   public void shouldContainExpectedResourceIdHeaderUponSuccessfulYamlMarshall_WhenMultipleAndSqequencedResponses() throws Exception {
+
+      final String cycleOne = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/1")
+         .withQuery("paramName1", "paramValue1")
+         .newStubbedResponse()
+         .withStatus("200")
+         .build();
+
+      final String cycleTwo = YAML_BUILDER
+         .newStubbedRequest()
+         .withMethodPut()
+         .withUrl("/invoice")
+         .newStubbedResponse()
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerOne", "valueOne")
+         .withSequenceResponseLiteralBody("BodyContent")
+         .withSequenceResponseStatus("200")
+         .withSequenceResponseHeaders("headerTwo", "valueTwo")
+         .withSequenceResponseLiteralBody("BodyContentTwo")
+         .build();
+
+      final String cycleThree = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri/2")
+         .withQuery("paramName2", "paramValue2")
+         .newStubbedResponse()
+         .withStatus("201")
+         .build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s\n%s\n%s", cycleOne, cycleTwo, cycleThree));
+      assertThat(loadedHttpCycles.size()).isEqualTo(3);
+
+      for (int resourceId = 0; resourceId < loadedHttpCycles.size(); resourceId++) {
+         final StubHttpLifecycle cycle = loadedHttpCycles.get(resourceId);
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+
+         for (int sequence = 0; sequence < allResponses.size(); sequence++) {
+            final StubResponse sequenceStubResponse = allResponses.get(sequence);
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+         }
+      }
+   }
+
+
    private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
       return new YamlParser().parse(".", FileUtils.constructReader(yaml));
    }

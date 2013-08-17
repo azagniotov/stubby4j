@@ -98,22 +98,4 @@ public class StubHttpLifecycleTest {
       assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
       assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
    }
-
-   /*
-   @Test
-   public void shouldReturnResourceIdHeader_WhenResponseReturned() throws Exception {
-
-      final int resourceId = 8;
-      final StubResponse stubResponse = StubResponse.newStubResponse();
-      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
-      stubHttpLifecycle.setResourceId(resourceId);
-      stubHttpLifecycle.setResponse(stubResponse);
-
-      final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse();
-      final Map<String,String> headers = actualStubbedResponse.getHeaders();
-      assertThat(headers.size()).isEqualTo(1);
-      assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
-      assertThat(headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
-   }
-   */
 }

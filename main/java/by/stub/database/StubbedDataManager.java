@@ -28,6 +28,7 @@ import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public class StubbedDataManager {
       this.dataYaml = dataYaml;
       this.dataYamlAbsolutePath = this.dataYaml.getAbsolutePath();
       this.dataYamlParentDirectory = this.dataYaml.getParent();
-      this.stubHttpLifecycles = new LinkedList<StubHttpLifecycle>(stubHttpLifecycles);
+      this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
    }
 
    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
@@ -177,10 +178,8 @@ public class StubbedDataManager {
    }
 
    private void updateResourceIDHeaders() {
-      synchronized (stubHttpLifecycles) {
-         for (int index = 0; index < stubHttpLifecycles.size(); index++) {
-            stubHttpLifecycles.get(index).setResourceId(index);
-         }
+      for (int index = 0; index < stubHttpLifecycles.size(); index++) {
+         stubHttpLifecycles.get(index).setResourceId(index);
       }
    }
 }
