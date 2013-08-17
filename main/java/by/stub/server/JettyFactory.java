@@ -100,6 +100,7 @@ public final class JettyFactory {
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/highlight", staticResourceHandler("ui/js/highlight/")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/minified", staticResourceHandler("ui/js/minified/")),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/images", staticResourceHandler("ui/images/")),
             constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", new AjaxHandler(stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, new AdminHandler(stubbedDataManager))
          }

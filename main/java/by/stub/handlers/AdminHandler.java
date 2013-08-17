@@ -51,7 +51,7 @@ public class AdminHandler extends AbstractHandler {
 
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request);
 
       baseRequest.setHandled(true);
 
@@ -71,6 +71,6 @@ public class AdminHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, AdminHandler.ADMIN_ROOT);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 }

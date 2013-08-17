@@ -38,7 +38,6 @@ import java.io.IOException;
 
 public class StubsHandler extends AbstractHandler {
 
-   private static final String NAME = "stubs";
    private final StubbedDataManager stubbedDataManager;
 
    public StubsHandler(final StubbedDataManager stubbedDataManager) {
@@ -50,7 +49,7 @@ public class StubsHandler extends AbstractHandler {
                       final Request baseRequest,
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request);
 
       baseRequest.setHandled(true);
 
@@ -65,7 +64,7 @@ public class StubsHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper, NAME);
+      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper);
 
    }
 }

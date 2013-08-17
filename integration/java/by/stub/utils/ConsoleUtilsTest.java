@@ -51,14 +51,13 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_500() throws Exception {
 
       final int expectedStatus = 500;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s Server Error\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] Server Error\u001B[0m", expectedStatus, URI);
       final String expectedConsoleColor = "[31m";
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -69,14 +68,13 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_301() throws Exception {
 
       final int expectedStatus = 301;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s Moved Permanently\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] Moved Permanently\u001B[0m", expectedStatus, URI);
       final String expectedConsoleColor = "[33m";
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -87,14 +85,13 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_201() throws Exception {
 
       final int expectedStatus = 201;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s Created\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] Created\u001B[0m", expectedStatus, URI);
       final String expectedConsoleColor = "[32m";
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -105,14 +102,13 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_200() throws Exception {
 
       final int expectedStatus = 200;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s OK\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] OK\u001B[0m", expectedStatus, URI);
       final String expectedConsoleColor = "[32m";
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -123,14 +119,13 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_100() throws Exception {
 
       final int expectedStatus = 100;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s Continue\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] Continue\u001B[0m", expectedStatus, URI);
       final String expectedConsoleColor = "[34m";
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);
@@ -141,13 +136,12 @@ public class ConsoleUtilsTest {
    public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_LessThan100() throws Exception {
 
       final int expectedStatus = 99;
-      final String expectedHandlerName = "stubs";
-      final String expectedConsoleOutput = String.format("%s [%s]%s 99\u001B[0m", expectedStatus, expectedHandlerName, URI);
+      final String expectedConsoleOutput = String.format("%s [%s] 99\u001B[0m", expectedStatus, URI);
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(httpServletResponseMock);
       wrapper.setStatus(expectedStatus);
 
-      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper, "stubs");
+      ConsoleUtils.logOutgoingResponse(httpServletRequestMock.getRequestURI(), wrapper);
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
       assertThat(actualConsoleOutput).contains(expectedConsoleOutput);

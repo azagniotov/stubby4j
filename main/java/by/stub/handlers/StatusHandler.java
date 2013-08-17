@@ -50,7 +50,6 @@ public final class StatusHandler extends AbstractHandler {
 
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
-   private static final String NAME = "admin";
    private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
    private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList("file", "body", "post"));
    private final StubbedDataManager stubbedDataManager;
@@ -63,7 +62,7 @@ public final class StatusHandler extends AbstractHandler {
 
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request);
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 
@@ -78,7 +77,7 @@ public final class StatusHandler extends AbstractHandler {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, NAME);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
    private String getConfigDataPresentation() throws Exception {

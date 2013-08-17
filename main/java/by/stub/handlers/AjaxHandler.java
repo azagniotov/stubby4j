@@ -36,13 +36,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class AjaxHandler extends AbstractHandler {
 
-   public static final String NAME = "ajax";
+   private static final Pattern PATTERN_REQUEST_OR_RESPONSE = Pattern.compile("^(request|response)$");
+   private static final Pattern PATTERN_NUMERIC = Pattern.compile("^[0-9]+$");
 
-   //Do not remove this constant without changing the example in documentation
-   public static final String AJAX_ROOT = "/ajax/resource";
    private final StubbedDataManager stubbedDataManager;
 
    public AjaxHandler(final StubbedDataManager stubbedDataManager) {
@@ -51,7 +51,7 @@ public class AjaxHandler extends AbstractHandler {
 
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request, NAME);
+      ConsoleUtils.logIncomingRequest(request);
 
       baseRequest.setHandled(true);
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
@@ -64,9 +64,8 @@ public class AjaxHandler extends AbstractHandler {
       wrapper.setDateHeader(HttpHeaders.EXPIRES, 0);
 
       final String[] uriFragments = request.getRequestURI().split("/");
-
       final int urlFragmentsLength = uriFragments.length;
-      if (uriFragments[urlFragmentsLength - 1] instanceof String) {
+      if (PATTERN_REQUEST_OR_RESPONSE.matcher(uriFragments[urlFragmentsLength - 1]).matches()) {
          final String stubType = uriFragments[urlFragmentsLength - 1];
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 2]);
 
@@ -86,8 +85,8 @@ public class AjaxHandler extends AbstractHandler {
          } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
          }
-      } else {
-         final int sequencedResponseId = Integer.parseInt(uriFragments[urlFragmentsLength - 1]);
+      } else if (PATTERN_NUMERIC.matcher(uriFragments[urlFragmentsLength - 1]).matches()) {
+         final int sequencedResponseId = Integer.parseInt(uriFragments[urlFragmentsLength - 1]) - 1;
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
 
          final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
@@ -108,6 +107,6 @@ public class AjaxHandler extends AbstractHandler {
          }
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, AjaxHandler.AJAX_ROOT);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 }

@@ -50,25 +50,23 @@ public final class ConsoleUtils {
       ANSITerminal.error(logMessage);
    }
 
-   public static void logIncomingRequest(final HttpServletRequest request, final String source) {
+   public static void logIncomingRequest(final HttpServletRequest request) {
 
-      final String logMessage = String.format("[%s] -> %s [%s]%s",
+      final String logMessage = String.format("[%s] -> %s [%s]",
          getTime(),
          request.getMethod(),
-         source,
          request.getRequestURI()
       );
       ANSITerminal.incoming(logMessage);
    }
 
-   public static void logOutgoingResponse(final String url, final HttpServletResponseWithGetStatus wrapper, final String source) {
+   public static void logOutgoingResponse(final String url, final HttpServletResponseWithGetStatus wrapper) {
 
       final int status = wrapper.getStatus();
 
-      final String logMessage = String.format("[%s] <- %s [%s]%s %s",
+      final String logMessage = String.format("[%s] <- %s [%s] %s",
          getTime(),
          status,
-         source,
          url,
          HttpStatus.getMessage(status)
       );

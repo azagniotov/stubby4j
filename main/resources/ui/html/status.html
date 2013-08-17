@@ -74,15 +74,20 @@
       var $ = MINI.$, $$=MINI.$$, EE=MINI.EE;
       $(function() {
          $.ready(function() {
+            var highlighted = {};
             $('.ajaxable').on('click', function() {
                var thisLink = $$(this);
+               var parentTD = thisLink.parentNode.parentNode;
+               $(parentTD).set("innerHTML", "<img src='/images/loading.gif' border='0' />");
                $.request('get', thisLink.href).then(
                   function success(content) {
                      var wrapped = "<pre><code>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>";
-                     var parentTD = thisLink.parentNode.parentNode;
                      $(parentTD).set('innerHTML', wrapped);
                      $('pre code').each(function(item, index) {
-                        hljs.highlightBlock(item)
+                        if (typeof highlighted[index] === "undefined") {
+                           hljs.highlightBlock(item)
+                           highlighted[index] = true;
+                        }
                      });
                },
                   function error(status, statusText, responseText) {

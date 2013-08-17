@@ -882,7 +882,7 @@ for each <endpoint> of stored endpoints {
 * Making sure that every stubbed response returned to the client contains its resource ID in the header `x-stubby-resource-id`. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
 
 ### 2.0.7
-* Force regex matching only to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
+* Force regex matching only everywhere (url, query, post, headers, etc.) to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
 
 ### 2.0.6
 * Live YAML scan now also check for modifications to external files referenced from main YAML [ENHANCEMENT]
