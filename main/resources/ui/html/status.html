@@ -82,8 +82,6 @@
                      var parentTD = thisLink.parentNode.parentNode;
                      $(parentTD).set('innerHTML', wrapped);
                      $('pre code').each(function(item, index) {
-                        console.log(item);
-                        console.log(item.innerHTML);
                         hljs.highlightBlock(item)
                      });
                },
@@ -102,7 +100,7 @@
 <strong>Live Tweaks to YAML Configuration</strong>
 <p>
    If you want to live tweak the loaded YAML config file, just make any changes to the file and it will reload within 3 seconds.<br />
-   Keep in mind, for the live reload to work, stubby4j JAR MUST be started with <b><i>--watch</i></b> command line argument.
+   Keep in mind, for the live reload to work, stubby4j MUST be started with <b><i>--watch</i></b> command line argument.
 </p>
 <strong>Current Stub Data</strong>
 <p>Have total of %s requests:</p>
