@@ -117,7 +117,7 @@ public final class StubHttpLifecycle {
       }
    }
 
-   public String getDisplayableContent(final String stubType, final String propertyName) throws Exception {
+   public String getAjaxResponseContent(final String stubType, final String propertyName) throws Exception {
       if (stubType.equals("request")) {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(request, propertyName));
       } else if (stubType.equals("response")) {
@@ -127,7 +127,7 @@ public final class StubHttpLifecycle {
       }
    }
 
-   public String getDisplayableContent(final String propertyName, final int sequencedResponseId) throws Exception {
+   public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
       final List<StubResponse> allResponses = getAllResponses();
       return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(allResponses.get(sequencedResponseId), propertyName));
    }

@@ -60,7 +60,7 @@ public final class ExternalFilesScanner implements Runnable {
                   new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(stubbedDataManager.getDataYaml()));
 
                stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s%s on [" + new Date().toString() + "]",
+               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + new Date().toString().trim() + "]%s",
                   "\n",
                   stubbedDataManager.getDataYaml(),
                   "\n"));

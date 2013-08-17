@@ -25,7 +25,6 @@ import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
-import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
@@ -35,13 +34,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.regex.Pattern;
 
 public class AjaxHandler extends AbstractHandler {
 
-   private static final Pattern PATTERN_REQUEST_OR_RESPONSE = Pattern.compile("^(request|response)$");
-   private static final Pattern PATTERN_NUMERIC = Pattern.compile("^[0-9]+$");
+   private static final Pattern REGEX_REQUEST_OR_RESPONSE = Pattern.compile("^(request|response)$");
+   private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
 
    private final StubbedDataManager stubbedDataManager;
 
@@ -54,59 +52,64 @@ public class AjaxHandler extends AbstractHandler {
       ConsoleUtils.logIncomingRequest(request);
 
       baseRequest.setHandled(true);
+
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-      wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
+      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
       wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      wrapper.setHeader(HttpHeaders.DATE, new Date().toString());
-      wrapper.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      wrapper.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      wrapper.setDateHeader(HttpHeaders.EXPIRES, 0);
+
+      HandlerUtils.setResponseMainHeaders(wrapper);
 
       final String[] uriFragments = request.getRequestURI().split("/");
       final int urlFragmentsLength = uriFragments.length;
-      if (PATTERN_REQUEST_OR_RESPONSE.matcher(uriFragments[urlFragmentsLength - 1]).matches()) {
-         final String stubType = uriFragments[urlFragmentsLength - 1];
+      final int urlLastFragmentIndex = urlFragmentsLength - 1;
+      final String urlLastFragment = uriFragments[urlLastFragmentIndex];
+
+      if (REGEX_REQUEST_OR_RESPONSE.matcher(urlLastFragment).matches()) {
+
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 2]);
+         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
+         renderAjaxResponseContent(request, wrapper, urlLastFragment, foundStubHttpLifecycle);
 
-         final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
-         if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
-            try {
-               wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
-            } catch (final Exception ex) {
-               HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-            }
-         }
+      } else if (REGEX_NUMERIC.matcher(urlLastFragment).matches()) {
 
-         try {
-            final String propertyName = request.getParameter("propertyName");
-            final String displayableContent = foundStubHttpLifecycle.getDisplayableContent(stubType, propertyName);
-            wrapper.getWriter().println(displayableContent);
-         } catch (final Exception ex) {
-            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-         }
-      } else if (PATTERN_NUMERIC.matcher(uriFragments[urlFragmentsLength - 1]).matches()) {
-         final int sequencedResponseId = Integer.parseInt(uriFragments[urlFragmentsLength - 1]) - 1;
+         final int sequencedResponseId = Integer.parseInt(urlLastFragment);
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
+         renderAjaxResponseContent(request, wrapper, sequencedResponseId, foundStubHttpLifecycle);
+      }
 
-         final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
-         if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
-            try {
-               wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
-            } catch (final Exception ex) {
-               HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-            }
-         }
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+   }
 
+   private void renderAjaxResponseContent(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final String stubType, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+      try {
+         final String propertyName = request.getParameter(StatusHandler.QUERY_PARAM_PROPERTY_NAME);
+         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, propertyName);
+         wrapper.getWriter().println(ajaxResponse);
+      } catch (final Exception ex) {
+         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      }
+   }
+
+   private void renderAjaxResponseContent(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final int sequencedResponseId, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+      try {
+         final String propertyName = request.getParameter(StatusHandler.QUERY_PARAM_PROPERTY_NAME);
+         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(propertyName, sequencedResponseId);
+         wrapper.getWriter().println(ajaxResponse);
+      } catch (final Exception ex) {
+         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      }
+   }
+
+   private StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponseWithGetStatus wrapper, final int stubHttpCycleIndex) throws IOException {
+      final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
+      if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
          try {
-            final String propertyName = request.getParameter("propertyName");
-            final String displayableContent = foundStubHttpLifecycle.getDisplayableContent(propertyName, sequencedResponseId);
-            wrapper.getWriter().println(displayableContent);
+            wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
          } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
          }
       }
-
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      return foundStubHttpLifecycle;
    }
 }

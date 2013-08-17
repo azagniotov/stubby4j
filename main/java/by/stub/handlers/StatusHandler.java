@@ -48,6 +48,7 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class StatusHandler extends AbstractHandler {
 
+   public static final String QUERY_PARAM_PROPERTY_NAME = "propertyName";
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
    private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
@@ -99,7 +100,7 @@ public final class StatusHandler extends AbstractHandler {
          final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
          for (int idx = 0; idx < allResponses.size(); idx++) {
 
-            String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", (1 + idx)));
+            String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", idx));
 
             final StubResponse stubResponse = allResponses.get(idx);
             final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
@@ -152,25 +153,30 @@ public final class StatusHandler extends AbstractHandler {
       return String.format(htmlTemplateContent, tableName, builder.toString());
    }
 
-   private String constructHtmlTableRow(final int resouceId, final String tableName, final String key, final String value) {
+   private String constructHtmlTableRow(final int resourceId, final String tableName, final String fieldName, final String value) {
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
 
-      if (highlightableProperties.contains(key)) {
-         final String ajaxifiedLinkToResource = String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s?propertyName=%s'>[Click to View]</a></strong>&nbsp;", resouceId, tableName, key);
-         return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
+      if (highlightableProperties.contains(fieldName)) {
+         if (escapedValue.equals("Not provided")) {
+            return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
+         }
+         final String ajaxifiedLinkToResource =
+            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s?%s=%s'>[Click to View]</a></strong>&nbsp;",
+               resourceId, tableName, QUERY_PARAM_PROPERTY_NAME, fieldName);
+         return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 
-      if (key.equals("url")) {
+      if (fieldName.equals("url")) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
          final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsSslPort());
 
-         final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
-         final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
+         final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
+         final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
 
          return String.format("%s%s", tableRowWithUrl, tableRowWithSslUrl);
       }
 
-      return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
+      return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
    }
 
    private String populateTableRowTemplate(final Object... tokens) {
