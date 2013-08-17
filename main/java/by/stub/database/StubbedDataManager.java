@@ -92,15 +92,16 @@ public class StubbedDataManager {
       if (!isStubHttpLifecycleExistsByIndex(index)) {
          return StubHttpLifecycle.NULL;
       }
-      final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(index);
-      foundStubHttpLifecycle.setResourceId(index);
-
-      return foundStubHttpLifecycle;
+      return stubHttpLifecycles.get(index);
    }
 
    public synchronized boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
-      return this.stubHttpLifecycles.addAll(stubHttpLifecycles);
+      final boolean added = this.stubHttpLifecycles.addAll(stubHttpLifecycles);
+      if (added) {
+         updateResourceIDHeaders();
+      }
+      return added;
    }
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
@@ -115,7 +116,7 @@ public class StubbedDataManager {
    public synchronized Map<File, Long> getExternalFiles() {
       final Set<String> escrow = new HashSet<String>();
       final Map<File, Long> externalFiles = new HashMap<File, Long>();
-      for (StubHttpLifecycle cycle: stubHttpLifecycles) {
+      for (StubHttpLifecycle cycle : stubHttpLifecycles) {
 
          final File requestFile = cycle.getRequest().getRawFile();
          if (ObjectUtils.isNotNull(requestFile) && !escrow.contains(requestFile.getName())) {
@@ -158,6 +159,7 @@ public class StubbedDataManager {
       final StubHttpLifecycle removedLifecycle = deleteStubHttpLifecycleByIndex(httpLifecycleIndex);
       if (ObjectUtils.isNotNull(removedLifecycle)) {
          stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+         updateResourceIDHeaders();
       }
    }
 
@@ -166,6 +168,19 @@ public class StubbedDataManager {
    }
 
    public synchronized StubHttpLifecycle deleteStubHttpLifecycleByIndex(final int httpLifecycleIndex) {
-      return stubHttpLifecycles.remove(httpLifecycleIndex);
+      final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
+      if (ObjectUtils.isNotNull(removedLifecycle)) {
+         updateResourceIDHeaders();
+      }
+
+      return removedLifecycle;
+   }
+
+   private void updateResourceIDHeaders() {
+      synchronized (stubHttpLifecycles) {
+         for (int index = 0; index < stubHttpLifecycles.size(); index++) {
+            stubHttpLifecycles.get(index).setResourceId(index);
+         }
+      }
    }
 }
