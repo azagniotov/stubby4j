@@ -7,6 +7,7 @@ import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public final class ExternalFilesScanner implements Runnable {
                   new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(stubbedDataManager.getDataYaml()));
 
                stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s%s",
+               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s%s on [" + new Date().toString() + "]",
                   "\n",
                   stubbedDataManager.getDataYaml(),
                   "\n"));

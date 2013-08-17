@@ -7,6 +7,7 @@ import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public final class MainYamlScanner implements Runnable {
                final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(dataYaml.getParent(), FileUtils.constructReader(dataYaml));
 
                stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s%s",
+               ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s%s on [" + new Date().toString() + "]",
                   "\n",
                   dataYaml.getAbsolutePath(),
                   "\n"));
