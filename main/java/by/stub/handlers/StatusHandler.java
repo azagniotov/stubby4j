@@ -91,23 +91,26 @@ public final class StatusHandler extends AbstractHandler {
 
       final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
 
-      for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
+      for (int resourceId = 0; resourceId < stubHttpLifecycles.size(); resourceId ++) {
+
+         final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(resourceId);
          final StubRequest stubRequest = stubHttpLifecycle.getRequest();
-         builder.append(buildPageBodyHtml(htmlTemplateContent, "Request", ReflectionUtils.getProperties(stubRequest)));
+         builder.append(buildPageBodyHtml(resourceId, htmlTemplateContent, "request", ReflectionUtils.getProperties(stubRequest)));
 
          final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
          for (int idx = 0; idx < allResponses.size(); idx++) {
 
-            String responseTableTitle = (allResponses.size() == 1 ? "Response" : String.format("Response #%s", (1 + idx)));
+            String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", (1 + idx)));
 
             final StubResponse stubResponse = allResponses.get(idx);
-            builder.append(buildPageBodyHtml(htmlTemplateContent, responseTableTitle, ReflectionUtils.getProperties(stubResponse)));
+            final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
+            builder.append(buildPageBodyHtml(resourceId, htmlTemplateContent, responseTableTitle, stubResponseProperties));
          }
 
          builder.append("<br /><br />");
       }
 
-      return HandlerUtils.populateHtmlTemplate("ping", stubHttpLifecycles.size(), builder.toString());
+      return HandlerUtils.populateHtmlTemplate("status", stubHttpLifecycles.size(), builder.toString());
    }
 
    private String buildSystemStatusHtmlTable() throws Exception {
@@ -134,7 +137,7 @@ public final class StatusHandler extends AbstractHandler {
       return String.format(systemStatusTable, builder.toString());
    }
 
-   private String buildPageBodyHtml(final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
+   private String buildPageBodyHtml(final int resouceId, final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
       final StringBuilder builder = new StringBuilder();
 
       for (final Map.Entry<String, String> keyValue : stubObjectProperties.entrySet()) {
@@ -145,18 +148,17 @@ public final class StatusHandler extends AbstractHandler {
             continue;
          }
 
-         builder.append(constructHtmlTableRow(key, value));
+         builder.append(constructHtmlTableRow(resouceId, tableName, key, value));
       }
       return String.format(htmlTemplateContent, tableName, builder.toString());
    }
 
-   private String constructHtmlTableRow(final String key, final String value) {
+   private String constructHtmlTableRow(final int resouceId, final String tableName, final String key, final String value) {
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
 
       if (highlightableProperties.contains(key)) {
-         final String row = String.format("%s%s%s", "<pre><code>", escapedValue, "</code></pre>");
-
-         return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, row);
+         final String ajaxifiedLinkToResource = String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s?propertyName=%s'>[Click to View]</a></strong>&nbsp;", resouceId, tableName, key);
+         return populateTableRowTemplate(StringUtils.toUpper(key), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 
       if (key.equals("url")) {

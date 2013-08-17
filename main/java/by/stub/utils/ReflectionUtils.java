@@ -39,7 +39,7 @@ import java.util.Map;
 public final class ReflectionUtils {
 
    private static List<String> skipableProperties =
-      Collections.unmodifiableList(Arrays.asList("AUTH_HEADER", "REGEX_START", "REGEX_END", "responseSequenceCounter", "fileBytes"));
+      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "AUTH_HEADER", "REGEX_START", "REGEX_END", "responseSequenceCounter", "fileBytes"));
 
    private ReflectionUtils() {
 
@@ -64,34 +64,12 @@ public final class ReflectionUtils {
          }
 
          final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
-         final String value = determineObjectStringValue(fieldObject);
+         final String value = StringUtils.determineObjectStringValue(fieldObject);
 
          properties.put(StringUtils.toLower(field.getName()), value);
       }
 
       return properties;
-   }
-
-   private static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
-      if (ObjectUtils.isNull(fieldObject)) {
-         return "Not provided";
-      }
-
-      if (fieldObject instanceof byte[]) {
-         final byte[] objectBytes = (byte[]) fieldObject;
-         final String toTest = StringUtils.newStringUtf8(objectBytes);
-
-         if (!StringUtils.isUSAscii(toTest)) {
-            return "Local binary file, not able to display";
-         } else if (toTest.equals(StringUtils.FAILED)) {
-            return StringUtils.FAILED;
-         }
-
-         return new String(objectBytes, StringUtils.UTF_8);
-      }
-
-      return fieldObject.toString();
-
    }
 
    public static void injectObjectFields(final Object object, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {

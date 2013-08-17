@@ -23,6 +23,8 @@ import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
+import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
@@ -52,7 +54,6 @@ public class AjaxHandler extends AbstractHandler {
       ConsoleUtils.logIncomingRequest(request, NAME);
 
       baseRequest.setHandled(true);
-
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
       wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
       wrapper.setStatus(HttpStatus.OK_200);
@@ -62,10 +63,29 @@ public class AjaxHandler extends AbstractHandler {
       wrapper.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
       wrapper.setDateHeader(HttpHeaders.EXPIRES, 0);
 
-      try {
-         wrapper.getWriter().println("OK");
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      final String[] uriFragments = request.getRequestURI().split("/");
+
+      final int urlFragmentsLength = uriFragments.length;
+      if (uriFragments[urlFragmentsLength - 1] instanceof String) {
+         final String stubType = uriFragments[urlFragmentsLength - 1];
+         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 2]);
+
+         final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
+         if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
+            try {
+               wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
+            } catch (final Exception ex) {
+               HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+            }
+         }
+
+         try {
+            final String propertyName = request.getParameter("propertyName");
+            final String displayableContent = foundStubHttpLifecycle.getDisplayableContent(stubType, propertyName);
+            wrapper.getWriter().println(displayableContent);
+         } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         }
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper, AjaxHandler.AJAX_ROOT);

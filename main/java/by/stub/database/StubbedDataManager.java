@@ -87,6 +87,17 @@ public class StubbedDataManager {
       return foundStubHttpLifecycle;
    }
 
+   public synchronized StubHttpLifecycle getMatchedStubHttpLifecycle(final int index) {
+
+      if (!isStubHttpLifecycleExistsByIndex(index)) {
+         return StubHttpLifecycle.NULL;
+      }
+      final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(index);
+      foundStubHttpLifecycle.setResourceId(index);
+
+      return foundStubHttpLifecycle;
+   }
+
    public synchronized boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.stubHttpLifecycles.clear();
       return this.stubHttpLifecycles.addAll(stubHttpLifecycles);

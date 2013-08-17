@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 
+import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 
 import java.util.LinkedList;
@@ -120,6 +121,16 @@ public final class StubHttpLifecycle {
       resourceId.set(listIndex);
    }
 
+   public String getDisplayableContent(final String stubType, final String propertyName) throws Exception {
+      if (stubType.equals("request")) {
+         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(request, propertyName));
+      } else if (stubType.equals("response")) {
+         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
+      } else {
+         return "Unknown staub type: " + stubType;
+      }
+   }
+
    @Override
    public boolean equals(final Object o) {
       if (this == o) {
@@ -136,5 +147,15 @@ public final class StubHttpLifecycle {
       }
 
       return true;
+   }
+
+   @Override
+   public String toString() {
+      final StringBuffer sb = new StringBuffer();
+      sb.append("StubHttpLifecycle");
+      sb.append("{StubRequest=").append(request.toString());
+      sb.append(", StubResponse=").append(getAllResponses().toString());
+      sb.append('}');
+      return sb.toString();
    }
 }

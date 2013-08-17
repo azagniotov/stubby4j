@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-   <title>Pong!</title>
+   <title>Status</title>
    <style type='text/css'>
       body {
          color: #404040;
@@ -60,19 +60,45 @@
       td.highlightable pre code {
          font-family: Monaco, Andale Mono, Courier New, monospace;
          white-space: pre-wrap;
-         font-size: 1.1em;
+         font-size: 0.9em;
       }
    </style>
+   <link type="text/css" href="/highlight/styles/solarized_light.min.css" media="screen" rel="stylesheet"/>
    <script type="text/javascript" src="/minified/minified.js"></script>
-   <link type="text/css" href="/highlight/styles/solarized_light.css" media="screen" rel="stylesheet"/>
    <script type="text/javascript" src="/highlight/highlight.pack.js"></script>
    <script type="text/javascript">
-      hljs.tabReplace = '   ';
-      hljs.initHighlightingOnLoad();
+      //hljs.tabReplace = '    ';
+      //hljs.initHighlightingOnLoad();
+
+      var MINI = require('minified');
+      var $ = MINI.$, $$=MINI.$$, EE=MINI.EE;
+      $(function() {
+         $.ready(function() {
+            $('.ajaxable').on('click', function() {
+               var thisLink = $$(this);
+               $.request('get', thisLink.href).then(
+                  function success(content) {
+                     var wrapped = "<pre><code>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>";
+                     var parentTD = thisLink.parentNode.parentNode;
+                     $(parentTD).set('innerHTML', wrapped);
+                     $('pre code').each(function(item, index) {
+                        console.log(item);
+                        console.log(item.innerHTML);
+                        hljs.highlightBlock(item)
+                     });
+               },
+                  function error(status, statusText, responseText) {
+                     alert("Error fetching resource on URL:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+                  }
+               );
+               return false;
+            });
+         });
+      });
    </script>
 </head>
 <body>
-<h2>Pong!</h2>
+<h2>Status</h2>
 <strong>Live Tweaks to YAML Configuration</strong>
 <p>
    If you want to live tweak the loaded YAML config file, just make any changes to the file and it will reload within 3 seconds.<br />

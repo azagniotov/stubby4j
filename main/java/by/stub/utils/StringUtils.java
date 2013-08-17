@@ -23,6 +23,7 @@ import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Locale;
@@ -138,5 +139,27 @@ public final class StringUtils {
       final String valueAsStr = (ObjectUtils.isNotNull(value) ? value.toString().trim() : "");
 
       return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
+   }
+
+   public static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
+      if (ObjectUtils.isNull(fieldObject)) {
+         return "Not provided";
+      }
+
+      if (fieldObject instanceof byte[]) {
+         final byte[] objectBytes = (byte[]) fieldObject;
+         final String toTest = StringUtils.newStringUtf8(objectBytes);
+
+         if (!StringUtils.isUSAscii(toTest)) {
+            return "Local binary file, not able to display";
+         } else if (toTest.equals(StringUtils.FAILED)) {
+            return StringUtils.FAILED;
+         }
+
+         return new String(objectBytes, StringUtils.UTF_8);
+      }
+
+      return fieldObject.toString();
+
    }
 }
