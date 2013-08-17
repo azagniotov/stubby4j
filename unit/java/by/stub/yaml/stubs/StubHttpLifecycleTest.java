@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -100,6 +99,7 @@ public class StubHttpLifecycleTest {
       assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
    }
 
+   /*
    @Test
    public void shouldReturnResourceIdHeader_WhenResponseReturned() throws Exception {
 
@@ -115,4 +115,5 @@ public class StubHttpLifecycleTest {
       assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
       assertThat(headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
    }
+   */
 }

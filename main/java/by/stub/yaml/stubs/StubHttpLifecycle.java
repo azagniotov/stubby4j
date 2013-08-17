@@ -25,7 +25,6 @@ import by.stub.utils.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Alexander Zagniotov
@@ -33,8 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings("unchecked")
 public final class StubHttpLifecycle {
-
-   private final AtomicInteger resourceId = new AtomicInteger(-1);
 
    public static final StubHttpLifecycle NULL = null;
    private String marshalledYaml;
@@ -59,10 +56,7 @@ public final class StubHttpLifecycle {
    }
 
    public StubResponse getResponse() {
-      final StubResponse actualStubbedResponse = getActualStubbedResponse();
-      actualStubbedResponse.addResourceIDHeader(resourceId.get());
-
-      return actualStubbedResponse;
+      return getActualStubbedResponse();
    }
 
 
@@ -118,7 +112,9 @@ public final class StubHttpLifecycle {
    }
 
    public void setResourceId(final int listIndex) {
-      resourceId.set(listIndex);
+      for (final StubResponse response : getAllResponses()) {
+         response.addResourceIDHeader(listIndex);
+      }
    }
 
    public String getDisplayableContent(final String stubType, final String propertyName) throws Exception {
