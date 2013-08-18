@@ -53,8 +53,10 @@ public class StubsHandlerTest {
 
    @Before
    public void beforeEach() throws Exception {
+      mockRequest = Mockito.mock(Request.class);
       mockStubbedDataManager = Mockito.mock(StubbedDataManager.class);
       mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
+      mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
    }
 
    @Test

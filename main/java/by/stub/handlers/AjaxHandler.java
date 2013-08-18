@@ -75,13 +75,13 @@ public class AjaxHandler extends AbstractHandler {
          final int sequencedResponseId = Integer.parseInt(stubType);
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
          final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
-         renderAjaxResponseContent(wrapper, targetFieldName, sequencedResponseId, foundStubHttpLifecycle);
+         renderAjaxResponseContent(wrapper, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
-   private void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+   void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
          wrapper.getWriter().println(ajaxResponse);
@@ -90,7 +90,7 @@ public class AjaxHandler extends AbstractHandler {
       }
    }
 
-   private void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String targetFieldName, final int sequencedResponseId, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+   void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
          wrapper.getWriter().println(ajaxResponse);
@@ -99,7 +99,7 @@ public class AjaxHandler extends AbstractHandler {
       }
    }
 
-   private StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponseWithGetStatus wrapper, final int stubHttpCycleIndex) throws IOException {
+   StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponseWithGetStatus wrapper, final int stubHttpCycleIndex) throws IOException {
       final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
       if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
          try {

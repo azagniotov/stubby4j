@@ -31,7 +31,7 @@ import java.util.List;
  * @since 6/14/12, 1:21 AM
  */
 @SuppressWarnings("unchecked")
-public final class StubHttpLifecycle {
+public class StubHttpLifecycle {
 
    public static final StubHttpLifecycle NULL = null;
    private String marshalledYaml;
