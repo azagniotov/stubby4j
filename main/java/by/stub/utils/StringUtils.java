@@ -35,6 +35,8 @@ import java.util.Scanner;
  */
 public final class StringUtils {
 
+   public static final String NOT_PROVIDED = "Not provided";
+
    private StringUtils() {
 
    }
@@ -143,7 +145,7 @@ public final class StringUtils {
 
    public static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
       if (ObjectUtils.isNull(fieldObject)) {
-         return "Not provided";
+         return NOT_PROVIDED;
       }
 
       if (fieldObject instanceof byte[]) {

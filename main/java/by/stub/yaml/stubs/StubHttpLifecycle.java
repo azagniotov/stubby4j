@@ -86,6 +86,10 @@ public class StubHttpLifecycle {
       return request.getHeaders().get(StubRequest.AUTH_HEADER);
    }
 
+   public String getResourceId() {
+      return getAllResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+   }
+
    public StubResponse getActualStubbedResponse() {
 
       if (response instanceof StubResponse) {

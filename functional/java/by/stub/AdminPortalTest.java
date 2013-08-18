@@ -460,4 +460,70 @@ public class AdminPortalTest {
       assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo("0");
    }
 
+   @Test
+   public void should_ReturnAjaxRequestContent_WhenSuccessfulRequestMade() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
+      final String postContent = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType("application/json");
+
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+
+      final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+      final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/request/post");
+      final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
+
+      final HttpResponse ajaxResponse = ajaxRequest.execute();
+      assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo(postContent);
+   }
+
+   @Test
+   public void should_ReturnAjaxResponseContent_WhenSuccessfulRequestMade() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
+      final String postContent = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType("application/json");
+
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+
+      final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+      final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/body");
+      final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
+
+      final HttpResponse ajaxResponse = ajaxRequest.execute();
+      assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo(responseContent);
+   }
+
+   @Test
+   public void should_ReturnAjaxSequencedResponseContent_WhenSuccessfulRequestMade() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+
+      final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+      final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/1/file");
+      final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
+
+      final HttpResponse ajaxResponse = ajaxRequest.execute();
+      assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo("Still going strong!");
+   }
 }

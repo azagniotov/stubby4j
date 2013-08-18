@@ -25,8 +25,8 @@ public class ReflectionUtilsTest {
 
       assertThat(properties.size()).isEqualTo(totalOfStubRequestMemberFields);
       assertThat("[POST]").isEqualTo(properties.get("method"));
-      assertThat("Not provided").isEqualTo(properties.get("url"));
-      assertThat("Not provided").isEqualTo(properties.get("post"));
+      assertThat(StringUtils.NOT_PROVIDED).isEqualTo(properties.get("url"));
+      assertThat(StringUtils.NOT_PROVIDED).isEqualTo(properties.get("post"));
       assertThat("{}").isEqualTo(properties.get("headers"));
    }
 
