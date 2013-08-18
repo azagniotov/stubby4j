@@ -102,6 +102,7 @@
 -  request:
       method: GET
       url: /pdf/hello-world
+
    response:
       headers:
          content-type: application/pdf

@@ -14,7 +14,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [stubby4j dependencies](#stubby4j-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
 * [Command-line Switches](#command-line-switches)
-* [Endpoint Configuration](#endpoint-configuration)
+* [Endpoint Configuration HOWTO](#endpoint-configuration)
 * [The Admin Portal](#the-admin-portal)
 * [The Stubs Portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
@@ -248,9 +248,9 @@ A demonstration using regular expressions:
 
 #### query
 
-* if omitted, stubby ignores query parameters for the given url.
-* a yaml hashmap of variable/value pairs.
-* allows the query parameters to appear in any order in a uri
+* is can be a full-fledged __regular expression__
+* if not stubbed, stubby ignores query parameters on incoming request and will match only request URL
+* query params can be specified regardless of their order in incoming request. In other words - order agnostic
 * query params can also be an array with double/single quoted/un-quoted elements: ```attributes=["id","uuid"]``` or ```attributes=[id,uuid]```. Please note no spaces between the CSV
 
 ```yaml
@@ -262,6 +262,7 @@ A demonstration using regular expressions:
          client_id: id
          client_secret: secret
          random_id: "^sequence/-/\\d/"
+         session_id: "^user_\\d{32}_local"
          attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
 
 ```
@@ -280,13 +281,21 @@ A demonstration using regular expressions:
 
 #### post
 
-* if ommitted, any post data is ignored.
-* the body contents of the server request, such as form data.
+* Represents the body POST of incoming request, ie.: form data
+* is can be a full-fledged __regular expression__
+* if not stubbed, any POSTed data on incoming request is ignored
 
 ```yaml
 -  request:
       url: ^/post/form/data$
       post: name=John&email=john@example.com
+```
+
+```yaml
+-  request:
+      method: [POST]
+      url: /uri/with/post/regex
+      post: "^[\\.,'a-zA-Z\\s+]*$"
 ```
 
 ```yaml
@@ -297,11 +306,11 @@ A demonstration using regular expressions:
 
 #### file
 
-* if supplied, replaces `post` with the contents of the locally given file.
-    * an absolute path or path relative to the YAML specified -d or --data
-* if the file is not found when the request is made, falls back to `post` for matching.
-* allows you to split up stubby data across multiple files
-* please keep in mind: ```SnakeYAML``` library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for request using `file` property. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match
+* holds a path to a local file (absolute or relative to the YAML specified in `-d` or `--data`)
+* if supplied, replaces `post` with the contents from the provided file
+* if the local file could not be loaded for whatever reason (ie.: not found), stubby falls back to `post` for matching.
+* allows you to split up stubby data across multiple files instead of making one huge bloated main YAML
+* please keep in mind: ```SnakeYAML``` library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for request using `file` property. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match. Alternatively you can consider using regular expression in `post`
 
 ```yaml
 -  request:
@@ -315,12 +324,14 @@ postedData.json
 {"fileContents":"match against this if the file is here"}
 ```
 
-* if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is requested, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
+* if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is matched in incoming request, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
 
 #### headers
 
-* if ommitted, stubby ignores headers for the given url.
-* case-insensitive matching of header names.
+* is can be a full-fledged __regular expression__
+* if not stubbed, stubby ignores headers on incoming request and will match only request URL
+* if stubbed, stubby will try to match __only__ the supplied headers and will ignore other headers of incoming request. In other words, the incoming request __must__ contain stubbed header values
+* headers are case-insensitive during matching
 * a hashmap of header/value pairs similar to `query`.
 
 The following endpoint only accepts requests with `application/json` post values:
@@ -332,6 +343,7 @@ The following endpoint only accepts requests with `application/json` post values
       headers:
          content-type: application/json
          x-custom-header: "^this/is/\d/test"
+         x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
 
 ### response
@@ -339,7 +351,7 @@ The following endpoint only accepts requests with `application/json` post values
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
 * Can be a single response or a sequence of responses.
-* When sequenced responses configured, on each request to a URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next request.
+* When sequenced responses configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
 
 ```yaml
 -  request:
@@ -434,10 +446,10 @@ Assuming a match has been made against the given `request` object, data from `re
 
 #### file
 
-* similar to `request.file`, but the contents of the file are used as the `body`.
-* if the file was not provided, stubby fallsback to value from `body` property
-* if `body` was not provided, an empty string is returned by default
-* can be ascii of binary file (PDF, images, etc.). Please keep in mind, that file is preloaded upon stubby4j startup and its content is kept in byte array in memory. In other words, response files are not read from the disk on demand, but preloaded.
+* similar to `request.file`, but the contents of the file are used as the response `body`
+* if the file could not be loaded, stubby falls back to the value stubbed in `body`
+* if `body` was not stubbed, an empty string is returned by default
+* it can be ascii of binary file (PDF, images, etc.). Please keep in mind, that file is preloaded upon stubby4j startup and its content is kept as a byte array in memory. In other words, response files are not read from the disk on demand, but preloaded.
 
 
 ```yaml
