@@ -19,12 +19,35 @@ public class StringUtilsTest {
    public ExpectedException expectedException = ExpectedException.none();
 
    @Test
-   public void shouldConvertObjectToString() throws Exception {
+   public void shouldConvertObjectToString_WhenObjectIsNotNull() throws Exception {
 
-      final Object object = new Object();
-      final String result = StringUtils.objectToString(object);
+      final String result = StringUtils.objectToString(new Integer(888));
 
-      assertThat(result).isNotEmpty();
+      assertThat(result).isEqualTo("888");
+   }
+
+   @Test
+   public void shouldConvertObjectToString_WhenObjectIsNull() throws Exception {
+
+      final String result = StringUtils.objectToString(null);
+
+      assertThat(result).isEqualTo("");
+   }
+
+   @Test
+   public void shouldConvertObjectToString_WhenObjectIsStringNull() throws Exception {
+
+      final String result = StringUtils.objectToString("null");
+
+      assertThat(result).isEqualTo("");
+   }
+
+   @Test
+   public void shouldDetermineObjectStringValue_WhenObjectIsFailedMessage() throws Exception {
+
+      final String result = StringUtils.determineObjectStringValue(StringUtils.getBytesUtf8(StringUtils.FAILED));
+
+      assertThat(result).isEqualTo(StringUtils.FAILED);
    }
 
    @Test
