@@ -19,6 +19,15 @@ public class StringUtilsTest {
    public ExpectedException expectedException = ExpectedException.none();
 
    @Test
+   public void shouldConvertObjectToString() throws Exception {
+
+      final Object object = new Object();
+      final String result = StringUtils.objectToString(object);
+
+      assertThat(result).isNotEmpty();
+   }
+
+   @Test
    public void shouldFilterOutSpacesBetweenElementsWithQuotes() throws Exception {
 
       final String originalElementsWithQuotes = "[\"alex\", \"tracy\", \"logan\", \"charlie\", \"isa\"]";
