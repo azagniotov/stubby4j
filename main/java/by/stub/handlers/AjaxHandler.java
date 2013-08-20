@@ -54,10 +54,9 @@ public class AjaxHandler extends AbstractHandler {
       baseRequest.setHandled(true);
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
+      HandlerUtils.setResponseMainHeaders(wrapper);
       wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
       wrapper.setStatus(HttpStatus.OK_200);
-
-      HandlerUtils.setResponseMainHeaders(wrapper);
 
       final String[] uriFragments = request.getRequestURI().split("/");
       final int urlFragmentsLength = uriFragments.length;

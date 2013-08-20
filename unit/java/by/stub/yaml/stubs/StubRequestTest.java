@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -271,6 +272,41 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
+   @Test
+   public void shouldAddMethod_WhenGivenMethodArgumentSet() throws Exception {
+
+      final StubRequest expectedRequest = StubRequest.newStubRequest();
+      expectedRequest.addMethod("GET");
+      expectedRequest.addMethod("POST");
+      expectedRequest.addMethod("HEAD");
+
+      assertThat(expectedRequest.getMethod().size()).isEqualTo(3);
+      assertThat(expectedRequest.getMethod()).contains("GET", "POST", "HEAD");
+   }
+
+   @Test
+   public void shouldAddMethod_WhenGivenMethodArgumentEmpty() throws Exception {
+
+      final StubRequest expectedRequest = StubRequest.newStubRequest();
+      expectedRequest.addMethod("GET");
+      expectedRequest.addMethod("");
+      expectedRequest.addMethod("HEAD");
+
+      assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
+      assertThat(expectedRequest.getMethod()).contains("GET", "HEAD");
+   }
+
+   @Test
+   public void shouldAddMethod_WhenGivenMethodArgumentNull() throws Exception {
+
+      final StubRequest expectedRequest = StubRequest.newStubRequest();
+      expectedRequest.addMethod("GET");
+      expectedRequest.addMethod(null);
+      expectedRequest.addMethod("HEAD");
+
+      assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
+      assertThat(expectedRequest.getMethod()).contains("GET", "HEAD");
+   }
 
    @Test
    public void shouldGetPostBody_WhenPostProvided_ButFileIsNull() throws Exception {
@@ -295,7 +331,7 @@ public class StubRequestTest {
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withPost(postBody)
-            .withFile(null)
+            .withFile(File.createTempFile("tmp", "tmp"))
             .withMethodGet().build();
 
       assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);

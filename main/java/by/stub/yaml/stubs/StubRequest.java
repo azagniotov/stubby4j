@@ -92,13 +92,13 @@ public class StubRequest {
    private byte[] getFileBytes() {
       try {
          return FileUtils.fileToBytes(file);
-      } catch (IOException e) {
+      } catch (Exception e) {
+         return new byte[]{};
       }
-      return new byte[]{};
    }
 
    public String getPostBody() {
-      if (ObjectUtils.isNull(fileBytes) || fileBytes.length == 0) {
+      if (fileBytes.length == 0) {
          return FileUtils.enforceSystemLineSeparator(post);
       }
       final String utf8FileContent = StringUtils.newStringUtf8(fileBytes);
@@ -275,7 +275,7 @@ public class StubRequest {
       int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
       result = 31 * result + method.hashCode();
       result = 31 * result + (ObjectUtils.isNotNull(post) ? post.hashCode() : 0);
-      result = 31 * result + (ObjectUtils.isNotNull(fileBytes) ? Arrays.hashCode(fileBytes) : 0);
+      result = 31 * result + (ObjectUtils.isNotNull(fileBytes) && fileBytes.length != 0 ? Arrays.hashCode(fileBytes) : 0);
       result = 31 * result + headers.hashCode();
       result = 31 * result + query.hashCode();
 

@@ -127,7 +127,7 @@ public class StubHttpLifecycle {
       } else if (stubType.equals("response")) {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
       } else {
-         return "Unknown staub type: " + stubType;
+         return "Unknown stub type: " + stubType;
       }
    }
 
@@ -152,15 +152,5 @@ public class StubHttpLifecycle {
       }
 
       return true;
-   }
-
-   @Override
-   public String toString() {
-      final StringBuffer sb = new StringBuffer();
-      sb.append("StubHttpLifecycle");
-      sb.append("{StubRequest=").append(request.toString());
-      sb.append(", StubResponse=").append(getAllResponses().toString());
-      sb.append('}');
-      return sb.toString();
    }
 }

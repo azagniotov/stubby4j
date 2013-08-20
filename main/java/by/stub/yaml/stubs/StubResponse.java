@@ -24,7 +24,6 @@ import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +82,7 @@ public class StubResponse {
 
    public byte[] getResponseBody() {
 
-      if (ObjectUtils.isNull(fileBytes) || fileBytes.length == 0) {
+      if (fileBytes.length == 0) {
          return getBody().getBytes(StringUtils.charsetUTF8());
       }
       return fileBytes;
@@ -92,9 +91,9 @@ public class StubResponse {
    private byte[] getFileBytes() {
       try {
          return FileUtils.fileToBytes(file);
-      } catch (IOException e) {
+      } catch (Exception e) {
+         return new byte[]{};
       }
-      return new byte[]{};
    }
 
    public boolean hasHeaderLocation() {

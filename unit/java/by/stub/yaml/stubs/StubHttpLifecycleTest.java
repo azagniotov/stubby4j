@@ -98,4 +98,41 @@ public class StubHttpLifecycleTest {
       assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
       assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
    }
+
+   @Test
+   public void shouldReturnAjaxResponseContent_WhenStubTypeRequest() throws Exception {
+
+      final String expectedPost = "this is a POST";
+      final StubRequest stubRequest = StubRequest.newStubRequest("/some/resource/uri", expectedPost);
+
+      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+      stubHttpLifecycle.setRequest(stubRequest);
+
+      final String actualPost = stubHttpLifecycle.getAjaxResponseContent("request", "post");
+
+      assertThat(expectedPost).isEqualTo(actualPost);
+   }
+
+   @Test
+   public void shouldReturnAjaxResponseContent_WhenStubTypeResponse() throws Exception {
+
+      final String expectedBody = "this is a response body";
+      final StubResponse stubResponse = StubResponse.newStubResponse("201", expectedBody);
+
+      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+      stubHttpLifecycle.setResponse(stubResponse);
+
+      final String actualBody = stubHttpLifecycle.getAjaxResponseContent("response", "body");
+
+      assertThat(expectedBody).isEqualTo(actualBody);
+   }
+
+   @Test
+   public void shouldReturnAjaxResponseContent_WhenStubTypeUnknown() throws Exception {
+
+      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+      final String actualBody = stubHttpLifecycle.getAjaxResponseContent("blahblahblah", "body");
+
+      assertThat("Unknown stub type: blahblahblah").isEqualTo(actualBody);
+   }
 }

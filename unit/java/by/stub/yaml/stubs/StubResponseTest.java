@@ -4,6 +4,8 @@ import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -24,7 +26,7 @@ public class StubResponseTest {
    @Test
    public void shouldReturnBody_WhenFileIsEmpty() throws Exception {
 
-      final StubResponse stubResponse = new StubResponse("200", "this is some body", null, null, null);
+      final StubResponse stubResponse = new StubResponse("200", "this is some body", File.createTempFile("tmp", "tmp"), null, null);
 
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
       assertThat("this is some body").isEqualTo(actualResponseBody);
