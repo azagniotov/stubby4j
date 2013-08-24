@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -34,6 +35,7 @@ public class AjaxHandlerTest {
    private Request mockRequest = Mockito.mock(Request.class);
    private HttpServletRequest mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
    private HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+   private PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
 
    @BeforeClass
    public static void beforeClass() throws Exception {
@@ -46,10 +48,13 @@ public class AjaxHandlerTest {
       mockStubbedDataManager = Mockito.mock(StubbedDataManager.class);
       mockHttpServletRequest = Mockito.mock(HttpServletRequest.class);
       mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
+
+      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
    }
 
    @Test
-   public void verifyBehaviourWhenAjaxSubmittedForStubbedRequestContent() throws Exception {
+   public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedRequestContent() throws Exception {
 
       ArgumentCaptor<String> fieldCaptor = ArgumentCaptor.forClass(String.class);
       ArgumentCaptor<String> stubTypeCaptor = ArgumentCaptor.forClass(String.class);
@@ -59,7 +64,6 @@ public class AjaxHandlerTest {
       final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
       final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
       spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -74,7 +78,7 @@ public class AjaxHandlerTest {
    }
 
    @Test
-   public void verifyBehaviourWhenAjaxSubmittedForStubbedResponseContent() throws Exception {
+   public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedResponseContent() throws Exception {
 
       ArgumentCaptor<String> fieldCaptor = ArgumentCaptor.forClass(String.class);
       ArgumentCaptor<String> stubTypeCaptor = ArgumentCaptor.forClass(String.class);
@@ -84,7 +88,6 @@ public class AjaxHandlerTest {
       final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
       final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
       spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -99,7 +102,7 @@ public class AjaxHandlerTest {
    }
 
    @Test
-   public void verifyBehaviourWhenAjaxSubmittedForStubbedSequencedResponseContent() throws Exception {
+   public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedSequencedResponseContent() throws Exception {
 
       ArgumentCaptor<String> fieldCaptor = ArgumentCaptor.forClass(String.class);
       ArgumentCaptor<Integer> responseSequenceCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -109,7 +112,6 @@ public class AjaxHandlerTest {
       final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
       final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
       spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -121,5 +123,22 @@ public class AjaxHandlerTest {
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(responseSequenceCaptor.getValue()).isEqualTo(8);
       assertThat(fieldCaptor.getValue()).isEqualTo("file");
+   }
+
+   @Test
+   public void verifyBehaviourWhenAjaxSubmittedToFetchContentForWrongStubType() throws Exception {
+
+      final String requestURI = "/ajax/resource/5/WRONG-STUB-TYPE/post";
+      final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
+      final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
+
+      when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
+
+      spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verify(spyAjaxHandler, never()).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
+      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyString(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(mockPrintWriter, times(1)).println("Could not fetch the content for stub type: WRONG-STUB-TYPE");
    }
 }

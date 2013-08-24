@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import by.stub.cobertura.CoberturaIgnore;
 import by.stub.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -92,6 +93,7 @@ public final class FileUtils {
       return contentFile;
    }
 
+   @CoberturaIgnore
    public static File fileFromString(final String content) {
       try {
          final File temp = File.createTempFile("tmp", ".tmp");
@@ -128,6 +130,7 @@ public final class FileUtils {
    }
 
 
+   @CoberturaIgnore
    public static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
       final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 

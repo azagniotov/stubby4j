@@ -24,8 +24,6 @@ import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
-import java.io.IOException;
-
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
    public NotFoundResponseHandlingStrategy() {
@@ -33,7 +31,7 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertion) throws IOException {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertion) throws Exception {
 
       HandlerUtils.setResponseMainHeaders(response);
 

@@ -75,6 +75,8 @@ public class AjaxHandler extends AbstractHandler {
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
          final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
          renderAjaxResponseContent(wrapper, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
+      } else {
+         wrapper.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
@@ -101,11 +103,7 @@ public class AjaxHandler extends AbstractHandler {
    StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponseWithGetStatus wrapper, final int stubHttpCycleIndex) throws IOException {
       final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
       if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
-         try {
-            wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
-         } catch (final Exception ex) {
-            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-         }
+         wrapper.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
       }
       return foundStubHttpLifecycle;
    }

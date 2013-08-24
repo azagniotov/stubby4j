@@ -27,8 +27,6 @@ import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
-import java.io.IOException;
-
 
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
@@ -37,7 +35,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
       final String authorizationHeader = assertionStubRequest.getHeaders().get(StubRequest.AUTH_HEADER);
       if (ObjectUtils.isNull(authorizationHeader)) {

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.cobertura.CoberturaIgnore;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -271,6 +272,7 @@ public class StubRequest {
    }
 
    @Override
+   @CoberturaIgnore
    public int hashCode() {
       int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
       result = 31 * result + method.hashCode();
@@ -283,6 +285,7 @@ public class StubRequest {
    }
 
    @Override
+   @CoberturaIgnore
    public final String toString() {
       final StringBuffer sb = new StringBuffer();
       sb.append("StubRequest");

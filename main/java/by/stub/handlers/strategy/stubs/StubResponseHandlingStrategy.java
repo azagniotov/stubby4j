@@ -22,8 +22,6 @@ package by.stub.handlers.strategy.stubs;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubRequest;
 
-import java.io.IOException;
-
 public interface StubResponseHandlingStrategy {
-   void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException;
+   void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception;
 }

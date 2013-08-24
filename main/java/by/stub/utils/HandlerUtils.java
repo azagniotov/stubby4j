@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
+import by.stub.cobertura.CoberturaIgnore;
 import by.stub.exception.Stubby4JException;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.MimeTypes;
@@ -57,6 +58,7 @@ public final class HandlerUtils {
       return StringUtils.inputStreamToString(inputStream);
    }
 
+   @CoberturaIgnore
    public static String constructHeaderServerName() {
       final Package pkg = HandlerUtils.class.getPackage();
       final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?

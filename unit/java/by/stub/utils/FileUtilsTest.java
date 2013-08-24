@@ -4,7 +4,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.File;
 import java.io.IOException;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author: Alexander Zagniotov
@@ -15,13 +18,21 @@ public class FileUtilsTest {
    @Rule
    public ExpectedException expectedException = ExpectedException.none();
 
-
    @Test
-   public void shouldNotConvertFileToBytesWhenEmptyFilenameGiven() throws Exception {
+   public void shouldNotConvertFileToBytesWhenBadFilenameGiven() throws Exception {
 
       expectedException.expect(IOException.class);
       expectedException.expectMessage("Could not load file from path: bad/file/path");
 
       FileUtils.binaryFileToBytes(".", "bad/file/path");
+   }
+
+   @Test
+   public void shouldNotLoadFileFromURWhenBadFilenameGiven() throws Exception {
+
+      expectedException.expect(IOException.class);
+      expectedException.expectMessage("Could not load file from path: bad/file/path");
+
+      FileUtils.uriToFile("bad/file/path");
    }
 }

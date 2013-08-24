@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-   coberturaRuntime 'net.sourceforge.cobertura:cobertura:1.9.4.1'
+   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3'
 }
 
 task coberturaPrepare() {
@@ -27,8 +27,12 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
    ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
    doLast {
       ant.coberturaInstrument(
+         ignoreTrivial: true,
          todir: outputDir, 
          datafile: coberturaPrepare.datafileLocation) {
+            ignoreMethodAnnotation(
+               annotationName: "by.stub.cobertura.CoberturaIgnore"
+            )
             fileset(
                dir: project(':main').sourceSets.main.output.classesDir, 
                includes: "by/stub/client/**/*.class, by/stub/cli/CommandLineInterpreter.class, by/stub/database/*.class, by/stub/utils/*.class, by/stub/yaml/**/*.class, by/stub/handlers/AjaxHandler.class, by/stub/handlers/strategy/**/*.class",

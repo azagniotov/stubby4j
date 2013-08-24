@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.exception.Stubby4JException;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -27,7 +26,6 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class RedirectResponseHandlingStrategy implements StubResponseHandlingStrategy {
@@ -39,16 +37,12 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws IOException {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
 
       if (StringUtils.isSet(foundStubResponse.getLatency())) {
-         try {
-            final long latency = Long.parseLong(foundStubResponse.getLatency());
-            TimeUnit.MILLISECONDS.sleep(latency);
-         } catch (final InterruptedException e) {
-            throw new Stubby4JException(e);
-         }
+         final long latency = Long.parseLong(foundStubResponse.getLatency());
+         TimeUnit.MILLISECONDS.sleep(latency);
       }
 
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
