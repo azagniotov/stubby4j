@@ -58,7 +58,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 stubby4j is a multi-module Gradle project
 
 * IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files
-* Eclipse users should run ```cleanEclipse eclipse``` in order to generate Eclipse project files
+* Eclipse users should run ```gradle cleanEclipse eclipse``` in order to generate Eclipse project files
 
 Run `gradle` command to:
 * Clean
@@ -248,7 +248,7 @@ A demonstration using regular expressions:
 
 #### query
 
-* is can be a full-fledged __regular expression__
+* can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores query parameters on incoming request and will match only request URL
 * query params can be specified regardless of their order in incoming request. In other words - order agnostic
 * query params can also be an array with double/single quoted/un-quoted elements: ```attributes=["id","uuid"]``` or ```attributes=[id,uuid]```. Please note no spaces between the CSV
@@ -282,7 +282,7 @@ A demonstration using regular expressions:
 #### post
 
 * Represents the body POST of incoming request, ie.: form data
-* is can be a full-fledged __regular expression__
+* can be a full-fledged __regular expression__
 * if not stubbed, any POSTed data on incoming request is ignored
 
 ```yaml
@@ -310,7 +310,7 @@ A demonstration using regular expressions:
 * if supplied, replaces `post` with the contents from the provided file
 * if the local file could not be loaded for whatever reason (ie.: not found), stubby falls back to `post` for matching.
 * allows you to split up stubby data across multiple files instead of making one huge bloated main YAML
-* please keep in mind: ```SnakeYAML``` library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore its better to load big POST content for request using `file` property. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (ie:. don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match. Alternatively you can consider using regular expression in `post`
+* please keep in mind: ```SnakeYAML``` library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore it's better to load big POST content for request using `file` property. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (i.e.: don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match. Alternatively you can consider using regular expression in `post`
 
 ```yaml
 -  request:
@@ -328,7 +328,7 @@ postedData.json
 
 #### headers
 
-* is can be a full-fledged __regular expression__
+* can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores headers on incoming request and will match only request URL
 * if stubbed, stubby will try to match __only__ the supplied headers and will ignore other headers of incoming request. In other words, the incoming request __must__ contain stubbed header values
 * headers are case-insensitive during matching
@@ -351,7 +351,7 @@ The following endpoint only accepts requests with `application/json` post values
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
 * Can be a single response or a sequence of responses.
-* When sequenced responses configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
+* When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
 
 ```yaml
 -  request:
