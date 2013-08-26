@@ -49,7 +49,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       }
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
-      final byte[] responseBody = foundStubResponse.getResponseBody();
+      final byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       final OutputStream streamOut = response.getOutputStream();
       streamOut.write(responseBody);
       streamOut.flush();

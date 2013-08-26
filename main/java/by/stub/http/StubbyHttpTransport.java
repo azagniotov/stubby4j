@@ -1,4 +1,4 @@
-package by.stub.client;
+package by.stub.http;
 
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;
@@ -17,7 +17,7 @@ import java.util.Set;
  * @author Alexander Zagniotov
  * @since 11/4/12, 11:03 AM
  */
-final class StubbyHttpTransport {
+public final class StubbyHttpTransport {
 
    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
       add(HttpMethods.GET);
@@ -32,40 +32,45 @@ final class StubbyHttpTransport {
       add(HttpMethods.POST);
    }};
 
-   private final StubbyRequest stubbyRequest;
+   private StubbyHttpTransport() {
 
-   StubbyHttpTransport(final StubbyRequest stubbyRequest) {
-      this.stubbyRequest = stubbyRequest;
    }
 
-   HttpURLConnection constructHttpConnection() throws IOException {
+   public static HttpURLConnection constructHttpConnection(final String method,
+                                                           final String fullUrl) throws IOException {
+      return StubbyHttpTransport.constructHttpConnection(method, fullUrl, null, null, -1);
+   }
 
-      final String stubbyRequestMethod = stubbyRequest.getMethod();
+   public static HttpURLConnection constructHttpConnection(final String method,
+                                                           final String fullUrl,
+                                                           final String post,
+                                                           final String encodedCredentials,
+                                                           final int postLength) throws IOException {
 
-      if (!SUPPORTED_METHODS.contains(stubbyRequestMethod)) {
-         throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", stubbyRequestMethod));
+      if (!SUPPORTED_METHODS.contains(method)) {
+         throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));
       }
 
-      final URL url = new URL(stubbyRequest.constructFullUrl());
+      final URL url = new URL(fullUrl);
       final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-      connection.setRequestMethod(stubbyRequestMethod);
+      connection.setRequestMethod(method);
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);
-      setRequestHeaders(connection);
+      setRequestHeaders(connection, encodedCredentials, postLength);
 
-      if (POSTING_METHODS.contains(stubbyRequestMethod)) {
-         writeOutputStream(connection);
+      if (POSTING_METHODS.contains(method)) {
+         writeOutputStream(connection, post);
       }
 
       return connection;
    }
 
-   private void setRequestHeaders(final HttpURLConnection connection) {
+   private static void setRequestHeaders(final HttpURLConnection connection, final String encodedCredentials, final int postLength) {
 
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
-      if (StringUtils.isSet(stubbyRequest.getBase64encodedCredentials())) {
-         connection.setRequestProperty("Authorization", "Basic " + stubbyRequest.getBase64encodedCredentials());
+      if (StringUtils.isSet(encodedCredentials)) {
+         connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
       }
 
       final String requestMethod = connection.getRequestMethod();
@@ -75,20 +80,19 @@ final class StubbyHttpTransport {
          connection.setRequestProperty(HttpHeaders.CONTENT_LANGUAGE, "en-US");
          connection.setRequestProperty(HttpHeaders.CONTENT_ENCODING, StringUtils.UTF_8);
 
-         final int contentLength = stubbyRequest.calculatePostLength();
-         connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(contentLength));
-         if (contentLength > 0) {
-            connection.setFixedLengthStreamingMode(contentLength);
+         connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(postLength));
+         if (postLength > 0) {
+            connection.setFixedLengthStreamingMode(postLength);
          } else {
             connection.setChunkedStreamingMode(0);
          }
       }
    }
 
-   private void writeOutputStream(final HttpURLConnection connection) throws IOException {
+   private static void writeOutputStream(final HttpURLConnection connection, final String post) throws IOException {
       final OutputStreamWriter streamWriter = new OutputStreamWriter(connection.getOutputStream(), StringUtils.charsetUTF8());
       try {
-         streamWriter.write(stubbyRequest.getPost());
+         streamWriter.write(post);
          streamWriter.flush();
       } finally {
          streamWriter.close();

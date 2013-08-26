@@ -591,4 +591,20 @@ public class StubsPortalTest {
       final List<String> headerValues = (List<String>) headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
       assertThat(headerValues.get(0)).isEqualTo("1");
    }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void should_ReturnExpectedRecordedResponse_FromAnotherValidUrl() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+
+      final HttpHeaders headers = response.getHeaders();
+      assertThat(headers.getContentType().contains("application/xml")).isTrue();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode>");
+   }
 }

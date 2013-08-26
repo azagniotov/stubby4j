@@ -19,7 +19,7 @@ public class StubResponseTest {
 
       final StubResponse stubResponse = StubResponse.newStubResponse("200", "this is some body");
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat("this is some body").isEqualTo(actualResponseBody);
    }
 
@@ -28,7 +28,7 @@ public class StubResponseTest {
 
       final StubResponse stubResponse = new StubResponse("200", "this is some body", File.createTempFile("tmp", "tmp"), null, null);
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat("this is some body").isEqualTo(actualResponseBody);
    }
 
@@ -37,7 +37,7 @@ public class StubResponseTest {
 
       final StubResponse stubResponse = StubResponse.newStubResponse("200", null);
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat("").isEqualTo(actualResponseBody);
    }
 
@@ -46,7 +46,7 @@ public class StubResponseTest {
 
       final StubResponse stubResponse = StubResponse.newStubResponse("200", "");
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat("").isEqualTo(actualResponseBody);
    }
 
@@ -55,7 +55,7 @@ public class StubResponseTest {
 
       final StubResponse stubResponse = new StubResponse("200", "", null, null, null);
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat("").isEqualTo(actualResponseBody);
    }
 
@@ -65,7 +65,7 @@ public class StubResponseTest {
       final String expectedResponseBody = "content";
       final StubResponse stubResponse = new StubResponse("200", "something", FileUtils.fileFromString(expectedResponseBody), null, null);
 
-      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBody());
+      final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat(expectedResponseBody).isEqualTo(actualResponseBody);
    }
 }

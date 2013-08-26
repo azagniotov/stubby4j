@@ -19,15 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.database;
 
+import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
+import by.stub.utils.ReflectionUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
+import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpStatus;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +79,33 @@ public class StubbedDataManager {
 
       if (stubResponse.hasHeaderLocation()) {
          return RedirectStubResponse.newRedirectStubResponse(stubResponse);
+      }
+
+      if (stubResponse.isRecordingRequired()) {
+         String recordedResponseContent = "";
+         try {
+            final HttpURLConnection connection = StubbyHttpTransport.constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
+            try {
+               connection.connect();
+               final int responseCode = connection.getResponseCode();
+
+               if (responseCode == HttpStatus.OK_200) {
+                  final InputStream inputStream = connection.getInputStream();
+                  recordedResponseContent = StringUtils.inputStreamToString(inputStream);
+                  inputStream.close();
+               } else {
+                  recordedResponseContent = connection.getResponseMessage();
+               }
+            } finally {
+               connection.disconnect();
+            }
+         } catch (Exception e) {
+            recordedResponseContent = String.format("Could not record response from URL: %s, got: %s", stubResponse.getBody(), e.getMessage());
+         }
+         try {
+            ReflectionUtils.injectObjectFields(stubResponse, "body", recordedResponseContent);
+         } catch (Exception e) {
+         }
       }
 
       return stubResponse;

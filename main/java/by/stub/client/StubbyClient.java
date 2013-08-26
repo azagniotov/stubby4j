@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.client;
 
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.http.StubbyHttpTransport;
 import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
@@ -308,8 +309,13 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
-      final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport(stubbyRequest);
-      final HttpURLConnection connection = stubbyHttpTransport.constructHttpConnection();
+      final HttpURLConnection connection =
+         StubbyHttpTransport.constructHttpConnection(
+            stubbyRequest.getMethod(),
+            stubbyRequest.constructFullUrl(),
+            stubbyRequest.getPost(),
+            stubbyRequest.getBase64encodedCredentials(),
+            stubbyRequest.calculatePostLength());
 
       try {
          connection.connect();

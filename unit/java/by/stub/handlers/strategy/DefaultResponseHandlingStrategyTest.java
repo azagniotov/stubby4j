@@ -58,7 +58,7 @@ public class DefaultResponseHandlingStrategyTest {
       final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
       Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
 
          @Override
@@ -79,7 +79,7 @@ public class DefaultResponseHandlingStrategyTest {
       final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
-      when(mockStubResponse.getResponseBody()).thenReturn(new byte[]{});
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
       when(mockStubResponse.getLatency()).thenReturn("100");
 
       Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
@@ -105,7 +105,7 @@ public class DefaultResponseHandlingStrategyTest {
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getResponseBody()).thenReturn(someResultsMessage.getBytes(StringUtils.UTF_8));
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(someResultsMessage.getBytes(StringUtils.UTF_8));
       when(mockStubResponse.getLatency()).thenReturn("100");
       Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
 

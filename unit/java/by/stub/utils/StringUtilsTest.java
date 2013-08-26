@@ -137,12 +137,12 @@ public class StringUtilsTest {
 
    @Test
    public void shouldReturnNullWhenTryingTolowerEmptyString() throws Exception {
-      assertThat(StringUtils.toLower("")).isNull();
+      assertThat(StringUtils.toLower("")).isEmpty();
    }
 
    @Test
    public void shouldReturnNullWhenTryingToUpperEmptyString() throws Exception {
-      assertThat(StringUtils.toUpper("")).isNull();
+      assertThat(StringUtils.toUpper("")).isEmpty();
    }
 
    @Test

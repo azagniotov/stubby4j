@@ -63,6 +63,15 @@ public class StubResponse {
       return (StringUtils.isSet(body) ? body : "");
    }
 
+   public boolean isRecordingRequired() {
+      final String body = getBody();
+      if (StringUtils.toLower(body).startsWith("http")) {
+         return true;
+      }
+
+      return false;
+   }
+
    public Map<String, String> getHeaders() {
       return headers;
    }
@@ -80,7 +89,7 @@ public class StubResponse {
       return file;
    }
 
-   public byte[] getResponseBody() {
+   public byte[] getResponseBodyAsBytes() {
 
       if (fileBytes.length == 0) {
          return getBody().getBytes(StringUtils.charsetUTF8());

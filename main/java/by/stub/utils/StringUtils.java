@@ -57,14 +57,14 @@ public final class StringUtils {
 
    public static String toUpper(final String toUpper) {
       if (!isSet(toUpper)) {
-         return null;
+         return "";
       }
       return toUpper.toUpperCase(Locale.US);
    }
 
    public static String toLower(final String toLower) {
       if (!isSet(toLower)) {
-         return null;
+         return "";
       }
       return toLower.toLowerCase(Locale.US);
    }

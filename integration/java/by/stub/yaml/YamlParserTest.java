@@ -284,7 +284,7 @@ public class YamlParserTest {
       final StubResponse actualResponse = actualHttpLifecycle.getActualStubbedResponse();
 
       assertThat(actualResponse.getFile()).isEqualTo(new byte[]{});
-      assertThat(StringUtils.newStringUtf8(actualResponse.getResponseBody())).isEqualTo(expectedBody);
+      assertThat(StringUtils.newStringUtf8(actualResponse.getResponseBodyAsBytes())).isEqualTo(expectedBody);
    }
 
    @Test
