@@ -24,7 +24,6 @@ import by.stub.client.StubbyResponseFactory;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -32,10 +31,8 @@ import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
 import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.http.HttpStatus;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,24 +81,15 @@ public class StubbedDataManager {
       }
 
       if (stubResponse.isRecordingRequired()) {
-         String recordedResponseContent = "";
          try {
-            final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport();
-            final HttpURLConnection connection = stubbyHttpTransport.constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
-
+            final HttpURLConnection connection = new StubbyHttpTransport().constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
             try {
                connection.connect();
-               final StubbyResponseFactory stubbyResponseFactory = new StubbyResponseFactory(connection);
-               final StubbyResponse stubbyResponse = stubbyResponseFactory.construct();
-               recordedResponseContent = stubbyResponse.getContent();
+               final StubbyResponse stubbyResponse = new StubbyResponseFactory(connection).construct();
+               ReflectionUtils.injectObjectFields(stubResponse, "body", stubbyResponse.getContent());
             } finally {
                connection.disconnect();
             }
-         } catch (Exception e) {
-            recordedResponseContent = String.format("Could not record response from URL: %s, got: %s", stubResponse.getBody(), e.getMessage());
-         }
-         try {
-            ReflectionUtils.injectObjectFields(stubResponse, "body", recordedResponseContent);
          } catch (Exception e) {
          }
       }
