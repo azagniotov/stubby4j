@@ -309,23 +309,18 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
-      final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport();
       final HttpURLConnection connection =
-         stubbyHttpTransport.constructHttpConnection(
+         new StubbyHttpTransport().constructHttpConnection(
             stubbyRequest.getMethod(),
             stubbyRequest.constructFullUrl(),
             stubbyRequest.getPost(),
             stubbyRequest.getBase64encodedCredentials(),
             stubbyRequest.calculatePostLength());
-
       try {
          connection.connect();
-         final StubbyResponseFactory responseFactory = new StubbyResponseFactory(connection);
-
-         return responseFactory.construct();
+         return new StubbyResponseFactory(connection).construct();
       } finally {
          connection.disconnect();
       }
    }
-
 }
