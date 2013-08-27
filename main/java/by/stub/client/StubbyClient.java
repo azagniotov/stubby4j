@@ -309,8 +309,9 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
+      final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport();
       final HttpURLConnection connection =
-         StubbyHttpTransport.constructHttpConnection(
+         stubbyHttpTransport.constructHttpConnection(
             stubbyRequest.getMethod(),
             stubbyRequest.constructFullUrl(),
             stubbyRequest.getPost(),

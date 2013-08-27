@@ -32,16 +32,15 @@ public final class StubbyHttpTransport {
       add(HttpMethods.POST);
    }};
 
-   private StubbyHttpTransport() {
+   public StubbyHttpTransport() {
 
    }
 
-   public static HttpURLConnection constructHttpConnection(final String method,
-                                                           final String fullUrl) throws IOException {
-      return StubbyHttpTransport.constructHttpConnection(method, fullUrl, null, null, -1);
+   public HttpURLConnection constructHttpConnection(final String method, final String fullUrl) throws IOException {
+      return constructHttpConnection(method, fullUrl, null, null, -1);
    }
 
-   public static HttpURLConnection constructHttpConnection(final String method,
+   public HttpURLConnection constructHttpConnection(final String method,
                                                            final String fullUrl,
                                                            final String post,
                                                            final String encodedCredentials,
@@ -66,7 +65,7 @@ public final class StubbyHttpTransport {
       return connection;
    }
 
-   private static void setRequestHeaders(final HttpURLConnection connection, final String encodedCredentials, final int postLength) {
+   private void setRequestHeaders(final HttpURLConnection connection, final String encodedCredentials, final int postLength) {
 
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
       if (StringUtils.isSet(encodedCredentials)) {
@@ -89,7 +88,7 @@ public final class StubbyHttpTransport {
       }
    }
 
-   private static void writeOutputStream(final HttpURLConnection connection, final String post) throws IOException {
+   private void writeOutputStream(final HttpURLConnection connection, final String post) throws IOException {
       final OutputStreamWriter streamWriter = new OutputStreamWriter(connection.getOutputStream(), StringUtils.charsetUTF8());
       try {
          streamWriter.write(post);

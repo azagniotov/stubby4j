@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.database;
 
+import by.stub.client.StubbyResponse;
+import by.stub.client.StubbyResponseFactory;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
@@ -84,18 +86,14 @@ public class StubbedDataManager {
       if (stubResponse.isRecordingRequired()) {
          String recordedResponseContent = "";
          try {
-            final HttpURLConnection connection = StubbyHttpTransport.constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
+            final StubbyHttpTransport stubbyHttpTransport = new StubbyHttpTransport();
+            final HttpURLConnection connection = stubbyHttpTransport.constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
+
             try {
                connection.connect();
-               final int responseCode = connection.getResponseCode();
-
-               if (responseCode == HttpStatus.OK_200) {
-                  final InputStream inputStream = connection.getInputStream();
-                  recordedResponseContent = StringUtils.inputStreamToString(inputStream);
-                  inputStream.close();
-               } else {
-                  recordedResponseContent = connection.getResponseMessage();
-               }
+               final StubbyResponseFactory stubbyResponseFactory = new StubbyResponseFactory(connection);
+               final StubbyResponse stubbyResponse = stubbyResponseFactory.construct();
+               recordedResponseContent = stubbyResponse.getContent();
             } finally {
                connection.disconnect();
             }
@@ -107,7 +105,6 @@ public class StubbedDataManager {
          } catch (Exception e) {
          }
       }
-
       return stubResponse;
    }
 
