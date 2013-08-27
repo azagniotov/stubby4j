@@ -68,4 +68,40 @@ public class StubResponseTest {
       final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
       assertThat(expectedResponseBody).isEqualTo(actualResponseBody);
    }
+
+   @Test
+   public void shouldRequireRecording_WhenBodyStartsWithHttp() throws Exception {
+
+      final String expectedResponseBody = "http://someurl.com";
+      final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
+
+      assertThat(stubResponse.isRecordingRequired()).isTrue();
+   }
+
+   @Test
+   public void shouldRequireRecording_WhenBodyStartsWithHttpUpperCase() throws Exception {
+
+      final String expectedResponseBody = "HTtP://someurl.com";
+      final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
+
+      assertThat(stubResponse.isRecordingRequired()).isTrue();
+   }
+
+   @Test
+   public void shouldRequireRecording_WhenBodyStartsWithHtt() throws Exception {
+
+      final String expectedResponseBody = "htt://someurl.com";
+      final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
+
+      assertThat(stubResponse.isRecordingRequired()).isFalse();
+   }
+
+   @Test
+   public void shouldNotRequireRecording_WhenBodyDoesnotStartWithHttp() throws Exception {
+
+      final String expectedResponseBody = "some body content";
+      final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
+
+      assertThat(stubResponse.isRecordingRequired()).isFalse();
+   }
 }
