@@ -898,7 +898,7 @@ for each <endpoint> of stored endpoints {
 
 ## Change Log
 ### 2.0.10-SNAPSHOT
-* Added ability to record a scenario by specifying a third-party URL in the stubbed response `body`. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
+* Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
 
 ### 2.0.9
 * Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]
