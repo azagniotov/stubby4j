@@ -46,7 +46,7 @@ public class StubbedDataManager {
    private final String dataYamlAbsolutePath;
    private final String dataYamlParentDirectory;
    private final List<StubHttpLifecycle> stubHttpLifecycles;
-   private final StubbyHttpTransport stubbyHttpTransport;
+   private StubbyHttpTransport stubbyHttpTransport;
 
    public StubbedDataManager(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.dataYaml = dataYaml;

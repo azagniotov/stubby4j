@@ -1,18 +1,26 @@
 package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
+import by.stub.client.StubbyResponse;
+import by.stub.http.StubbyHttpTransport;
+import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
+import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * @author: Alexander Zagniotov
@@ -23,6 +31,8 @@ public class StubbedDataManagerTest {
    private static StubbedDataManager stubbedDataManager;
    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
 
+   private StubbyHttpTransport mockStubbyHttpTransport;
+
    @BeforeClass
    public static void beforeClass() throws Exception {
       stubbedDataManager = new StubbedDataManager(new File("."), new LinkedList<StubHttpLifecycle>());
@@ -30,7 +40,9 @@ public class StubbedDataManagerTest {
 
    @Before
    public void beforeEach() throws Exception {
+      mockStubbyHttpTransport = Mockito.mock(StubbyHttpTransport.class);
       stubbedDataManager.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
+      ReflectionUtils.injectObjectFields(stubbedDataManager, "stubbyHttpTransport", mockStubbyHttpTransport);
    }
 
    @Test
@@ -155,6 +167,27 @@ public class StubbedDataManagerTest {
       final List<StubHttpLifecycle> newHttpLifecycles = buildHttpLifeCycles(expectedNewUrl);
       final StubHttpLifecycle newStubHttpLifecycle = newHttpLifecycles.get(0);
       stubbedDataManager.updateStubHttpLifecycleByIndex(10, newStubHttpLifecycle);
+   }
+
+   @Test
+   public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
+
+      final String expectedOriginalUrl = "/resource/item/1";
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
+
+      final String recordingSource = "http://google.com";
+      originalHttpLifecycles.get(0).setResponse(StubResponse.newStubResponse("200", recordingSource));
+      stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+
+      final StubResponse expectedResponse = stubbedDataManager.getStubHttpLifecycles().get(0).getResponse();
+      assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
+
+      final String actualResponseText = "OK, this is recorded response text!";
+      when(mockStubbyHttpTransport.getResponse(eq(HttpMethods.GET), anyString())).thenReturn(new StubbyResponse(200, actualResponseText));
+
+      final StubResponse actualResponse = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
+      assertThat(expectedResponse.getBody()).isEqualTo(actualResponseText);
+      assertThat(actualResponse.getBody()).isEqualTo(actualResponseText);
    }
 
    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) {

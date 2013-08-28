@@ -74,7 +74,7 @@ public final class ReflectionUtils {
 
    public static void injectObjectFields(final Object target, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
       final Map<String, Object> fieldAndValue = new HashMap<String, Object>();
-      fieldAndValue.put(fieldName, value);
+      fieldAndValue.put(fieldName.toLowerCase(), value);
       injectObjectFields(target, fieldAndValue);
    }
 

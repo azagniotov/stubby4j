@@ -20,7 +20,7 @@ import java.util.Set;
  * @author Alexander Zagniotov
  * @since 11/4/12, 11:03 AM
  */
-public final class StubbyHttpTransport {
+public class StubbyHttpTransport {
 
    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
       add(HttpMethods.GET);
