@@ -132,21 +132,18 @@ public class StubbedDataManager {
       final Set<String> escrow = new HashSet<String>();
       final Map<File, Long> externalFiles = new HashMap<File, Long>();
       for (StubHttpLifecycle cycle : stubHttpLifecycles) {
-
-         final File requestFile = cycle.getRequest().getRawFile();
-         if (ObjectUtils.isNotNull(requestFile) && !escrow.contains(requestFile.getName())) {
-            escrow.add(requestFile.getName());
-            externalFiles.put(requestFile, requestFile.lastModified());
-         }
-
-         final File responseFile = cycle.getResponse().getRawFile();
-         if (ObjectUtils.isNotNull(responseFile) && !escrow.contains(responseFile.getName())) {
-            escrow.add(responseFile.getName());
-            externalFiles.put(responseFile, responseFile.lastModified());
-         }
+         storeFile(escrow, externalFiles, cycle.getRequest().getRawFile());
+         storeFile(escrow, externalFiles, cycle.getResponse().getRawFile());
       }
 
       return externalFiles;
+   }
+
+   private void storeFile(final Set<String> escrow, final Map<File, Long> externalFiles, final File file) {
+      if (ObjectUtils.isNotNull(file) && !escrow.contains(file.getName())) {
+         escrow.add(file.getName());
+         externalFiles.put(file, file.lastModified());
+      }
    }
 
    public String getYamlAbsolutePath() {

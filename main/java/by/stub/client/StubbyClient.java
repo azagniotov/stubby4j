@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.client;
 
 import by.stub.cli.CommandLineInterpreter;
+import by.stub.cobertura.CoberturaIgnore;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
@@ -46,6 +47,7 @@ public final class StubbyClient {
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
+   @CoberturaIgnore
    public void startJetty(final String yamlConfigurationFilename) throws Exception {
       startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
@@ -57,6 +59,7 @@ public final class StubbyClient {
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
+   @CoberturaIgnore
    public void startJetty(final int stubsPort, final String yamlConfigurationFilename) throws Exception {
       startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
    }
@@ -69,6 +72,7 @@ public final class StubbyClient {
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
+   @CoberturaIgnore
    public void startJetty(final int stubsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
       startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, yamlConfigurationFilename);
    }
@@ -99,13 +103,12 @@ public final class StubbyClient {
       stubbyManager.startJetty();
    }
 
-   //stubbyManager.addStubHttpLifecycles(httpLifecycle);
-
    /**
     * Stops Jetty if it is up
     *
     * @throws Exception
     */
+   @CoberturaIgnore
    public void stopJetty() throws Exception {
       if (ObjectUtils.isNotNull(stubbyManager) && stubbyManager.isJettyUp()) {
          stubbyManager.stopJetty();
@@ -133,6 +136,7 @@ public final class StubbyClient {
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
+   @CoberturaIgnore
    public StubbyResponse doGetOverSsl(final String host, final String uri) throws Exception {
       return doGetOverSsl(host, uri, JettyFactory.DEFAULT_SSL_PORT, null);
    }

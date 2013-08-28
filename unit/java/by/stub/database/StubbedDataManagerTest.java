@@ -211,6 +211,7 @@ public class StubbedDataManagerTest {
    }
 
    @Test
+   @SuppressWarnings("unchecked")
    public void shouldNotUpdateStubResponseBody_WhenResponseIsRecordableButExceptionThrown() throws Exception {
 
       final String expectedOriginalUrl = "/resource/item/1";
