@@ -108,28 +108,28 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.10</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.9" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.10" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.9'
+'by.stub:stubby4j:jar:2.0.10'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.9'
+compile 'by.stub:stubby4j:2.0.10'
 ```
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.9.jar [-a <arg>] [-d <arg>] [-h]
+java -jar stubby4j-2.0.10.jar [-a <arg>] [-d <arg>] [-h]
        [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -484,6 +484,8 @@ Assuming a match has been made against the given `request` object, data from `re
          since_id: 240136858829479935
          count: 1
    response:
+      headers:
+         content-type: application/json
       body: https://api.twitter.com/1.1/direct_messages.json?since_id=240136858829479935&count=1
 ```
 
@@ -933,7 +935,7 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
-### 2.0.10-SNAPSHOT
+### 2.0.10
 * Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
 
 ### 2.0.9
