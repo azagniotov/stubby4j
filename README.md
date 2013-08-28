@@ -444,12 +444,47 @@ Assuming a match has been made against the given `request` object, data from `re
 
 * contents of the response body
 * defaults to an empty content body
+* can be a URL (OAUTH is not supported) to record & replay. The HTTP response is recorded on the first call to stubbed `url`, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 
 ```yaml
 -  request:
       url: ^/give/me/a/smile$
    response:
       body: ':)'
+```
+
+```yaml
+-  request:
+      url: ^/give/me/a/smile$
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world with single quote"}
+      headers:
+         content-type: application/json
+```
+
+```yaml
+-  request:
+      method: GET
+      url: /atomfeed/1
+
+   response:
+      headers:
+         content-type: application/xml
+      status: 200
+      body: <?xml version="1.0" encoding="UTF-8"?><payment><paymentDetail><invoiceTypeLookupCode/></paymentDetail></payment>
+```
+
+```yaml
+-  request:
+      url: /1.1/direct_messages.json
+      query:
+         since_id: 240136858829479935
+         count: 1
+   response:
+      body: https://api.twitter.com/1.1/direct_messages.json?since_id=240136858829479935&count=1
 ```
 
 #### file
