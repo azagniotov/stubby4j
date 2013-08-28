@@ -29,6 +29,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * Multiple stubbed responses on the same stubbed URI (sequenced responses)
+* Serve binary files as stubbed response (images, PDFs. etc.)
 * Main YAML configuration can specify external files in the file system containing stubbed response body/stubbed request POST. Useful when trying to avoid polluting main YAML
 * Live reload of main YAML configuration and external files on any changes, without the need to restart the app
 * Programmatic API to manage stubbed data at runtime via REST-full endpoints
