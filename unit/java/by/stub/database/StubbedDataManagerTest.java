@@ -190,6 +190,46 @@ public class StubbedDataManagerTest {
       assertThat(actualResponse.getBody()).isEqualTo(actualResponseText);
    }
 
+   @Test
+   public void shouldNotUpdateStubResponseBody_WhenResponseIsNotRecordable() throws Exception {
+
+      final String expectedOriginalUrl = "/resource/item/1";
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
+
+      final String recordingSource = "htt://google.com";
+      originalHttpLifecycles.get(0).setResponse(StubResponse.newStubResponse("200", recordingSource));
+      stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+
+      final StubResponse expectedResponse = stubbedDataManager.getStubHttpLifecycles().get(0).getResponse();
+      assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
+
+      when(mockStubbyHttpTransport.getResponse(eq(HttpMethods.GET), anyString())).thenReturn(new StubbyResponse(200, "OK, this is recorded response text!"));
+
+      final StubResponse actualResponse = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
+      assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
+      assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
+   }
+
+   @Test
+   public void shouldNotUpdateStubResponseBody_WhenResponseIsRecordableButExceptionThrown() throws Exception {
+
+      final String expectedOriginalUrl = "/resource/item/1";
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
+
+      final String recordingSource = "http://google.com";
+      originalHttpLifecycles.get(0).setResponse(StubResponse.newStubResponse("200", recordingSource));
+      stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
+
+      final StubResponse expectedResponse = stubbedDataManager.getStubHttpLifecycles().get(0).getResponse();
+      assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
+
+      when(mockStubbyHttpTransport.getResponse(eq(HttpMethods.GET), anyString())).thenThrow(Exception.class);
+
+      final StubResponse actualResponse = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
+      assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
+      assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
+   }
+
    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) {
       final StubRequest originalRequest =
          REQUEST_BUILDER
