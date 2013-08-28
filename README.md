@@ -20,6 +20,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [The Stubs Portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
 * [Change Log](#change-log)
+* [Roadmap](#roadmap)
 * [Authors](#authors)
 * [Kudos](#kudos)
 * [See Also](#see-also)
@@ -933,7 +934,6 @@ for each <endpoint> of stored endpoints {
                                      final String post) throws Exception
 ```
 
-
 ## Change Log
 ### 2.0.10
 * Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
@@ -964,13 +964,11 @@ for each <endpoint> of stored endpoints {
 * Making sure that operations starting up stubby and managing stubbed data are atomic  [ENHANCEMENT]
 
 ### 2.0.3
-
 * Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
 * Eliminated implicit test to test dependencies in AdminPortalTest that was causing issues when running the tests under JDK 1.7 [BUG]
 * Added convenience method in StubbyClient `updateStubbedData` [ENHANCEMENT]
 
 ### 2.0.2
-
 * Stubbed request HTTP header names were not lower-cased at the time of match [BUG]
 * Doing GET on Admin portal `/` will display all loaded stub data in a YAML format in the browser [FEATURE]
 * Doing GET on Admin portal `/<id>` will display loaded stub data matched by provided index in a YAML format in the browser [FEATURE]
@@ -985,62 +983,54 @@ for each <endpoint> of stored endpoints {
 * Documentation refinement [COSMETICS]
 
 ### 2.0.1
-
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
 * ANSI logging in the terminal was working only for HTTP requests with status 200 [BUG]
 * Documentation refinement [COSMETICS]
 
 ### 2.0.0
-
 * Mainly backend code improvements: A lot of refactoring for better code readability, expanding test coverage [COSMETICS]
 
 ### 1.0.63
-
 * Added ability to specify sequence of stub responses for the same URI, that are sent to the client in the loop [FEATURE]
 * Configuration scan was not enabled, even if the ```--watch``` command line argument was passed [BUG]
 
 ### 1.0.62
-
 * Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
 * A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
 * Documentation revisited and rewritten into a much clearer format [ENHANCEMENT]
 
 ### 1.0.61
-
 * Just some changes around unit, integration and functional tests. Code cleanup [COSMETICS]
 
 ### 1.0.60
-
 * stubby's admin page was generating broken hyper links if URL had single quotes [BUG]
 * stubby is able to match URL when query string param was an array with elements within single quotes, ie: ```attributes=['id','uuid']``` [ENHANCEMENT]
 
 ### 1.0.59
-
 * stubby's admin page was not able to display the contents of stubbed response/request ```body```, ```post``` or ```file``` [BUG]
 * stubby was not able to match URL when query string param was an array with quoted elements, ie: ```attributes=["id","uuid","created","lastUpdated","displayName","email"]``` [BUG]
 
 ### 1.0.58
-
 * Making sure that stubby can serve binary files as well as ascii files, when response is loaded using the ```file``` property [ENHANCEMENT]
 
 ### 1.0.57
-
 * Migrated the project from Maven to Gradle (thanks to [Logan McGrath](https://github.com/lmcgrath) for his feedback and assistance). The project has now a multi-module setup [ENHANCEMENT]
 
 ### 1.0.56
-
 * If `request.post` was left out of the configuration, stubby would ONLY match requests without a post body to it [BUG]
 * Fixing `See Also` section of readme [COSMETICS]
 
 ### 1.0.55
-
 * Updated YAML example documentation [COSMETICS]
 * Bug fix where command line options `mute`, `debug` and `watch` were overlooked [BUG]
 
 ### 1.0.54
-
 * Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
 
+## Roadmap
+* Add support for OAuth in Record & Replay feature
+* Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state
+* Use dynamically generated identifier in the response
 
 ## Authors
 A number of people have contributed directly to stubby4j by writing
