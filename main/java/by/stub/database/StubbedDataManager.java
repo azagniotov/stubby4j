@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.database;
 
 import by.stub.client.StubbyResponse;
-import by.stub.client.StubbyResponseFactory;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
@@ -33,7 +32,6 @@ import by.stub.yaml.stubs.UnauthorizedStubResponse;
 import org.eclipse.jetty.http.HttpMethods;
 
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,15 +82,10 @@ public class StubbedDataManager {
 
       if (stubResponse.isRecordingRequired()) {
          try {
-            final HttpURLConnection connection = stubbyHttpTransport.constructHttpConnection(HttpMethods.GET, stubResponse.getBody());
-            try {
-               connection.connect();
-               final StubbyResponse stubbyResponse = new StubbyResponseFactory(connection).construct();
-               ReflectionUtils.injectObjectFields(stubResponse, "body", stubbyResponse.getContent());
-            } finally {
-               connection.disconnect();
-            }
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(HttpMethods.GET, stubResponse.getBody());
+            ReflectionUtils.injectObjectFields(stubResponse, "body", stubbyResponse.getContent());
          } catch (Exception e) {
+
          }
       }
       return stubResponse;

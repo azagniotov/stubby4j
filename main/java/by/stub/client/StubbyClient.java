@@ -28,7 +28,6 @@ import by.stub.utils.ObjectUtils;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -309,18 +308,11 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
-      final HttpURLConnection connection =
-         new StubbyHttpTransport().constructHttpConnection(
-            stubbyRequest.getMethod(),
-            stubbyRequest.constructFullUrl(),
-            stubbyRequest.getPost(),
-            stubbyRequest.getBase64encodedCredentials(),
-            stubbyRequest.calculatePostLength());
-      try {
-         connection.connect();
-         return new StubbyResponseFactory(connection).construct();
-      } finally {
-         connection.disconnect();
-      }
+      return new StubbyHttpTransport().getResponse(
+         stubbyRequest.getMethod(),
+         stubbyRequest.constructFullUrl(),
+         stubbyRequest.getPost(),
+         stubbyRequest.getBase64encodedCredentials(),
+         stubbyRequest.calculatePostLength());
    }
 }

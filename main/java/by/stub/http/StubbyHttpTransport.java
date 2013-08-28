@@ -1,12 +1,15 @@
 package by.stub.http;
 
+import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -36,15 +39,15 @@ public final class StubbyHttpTransport {
 
    }
 
-   public HttpURLConnection constructHttpConnection(final String method, final String fullUrl) throws IOException {
-      return constructHttpConnection(method, fullUrl, null, null, -1);
+   public StubbyResponse getResponse(final String method, final String fullUrl) throws IOException {
+      return getResponse(method, fullUrl, null, null, -1);
    }
 
-   public HttpURLConnection constructHttpConnection(final String method,
-                                                           final String fullUrl,
-                                                           final String post,
-                                                           final String encodedCredentials,
-                                                           final int postLength) throws IOException {
+   public StubbyResponse getResponse(final String method,
+                                     final String fullUrl,
+                                     final String post,
+                                     final String encodedCredentials,
+                                     final int postLength) throws IOException {
 
       if (!SUPPORTED_METHODS.contains(method)) {
          throw new Stubby4JException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));
@@ -62,7 +65,24 @@ public final class StubbyHttpTransport {
          writeOutputStream(connection, post);
       }
 
-      return connection;
+      return buildStubbyResponse(connection);
+   }
+
+   private StubbyResponse buildStubbyResponse(final HttpURLConnection connection) throws IOException {
+      try {
+         connection.connect();
+         final int responseCode = connection.getResponseCode();
+         if (responseCode == HttpStatus.OK_200 || responseCode == HttpStatus.CREATED_201) {
+            final InputStream inputStream = connection.getInputStream();
+            final String responseContent = StringUtils.inputStreamToString(inputStream);
+            inputStream.close();
+
+            return new StubbyResponse(responseCode, responseContent);
+         }
+         return new StubbyResponse(responseCode, connection.getResponseMessage());
+      } finally {
+         connection.disconnect();
+      }
    }
 
    private void setRequestHeaders(final HttpURLConnection connection, final String encodedCredentials, final int postLength) {
