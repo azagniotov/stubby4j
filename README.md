@@ -8,6 +8,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 ## Table of Contents
 
+* [Key Features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
@@ -23,6 +24,17 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Kudos](#kudos)
 * [See Also](#see-also)
 
+## Key Features
+* Easy to understand and clean way to define stub data in a file using YAML syntax
+* Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
+* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
+* Multiple stubbed responses on the same stubbed URI (sequenced responses)
+* Main YAML configuration can specify external files in the file system containing stubbed response body/stubbed request POST. Useful when trying to avoid polluting main YAML
+* Live reload of main YAML configuration and external files on any changes, without the need to restart the app
+* Programmatic API to manage stubbed data at runtime via REST-full endpoints
+* Admin portal that lets you currently loaded stub data
+* Internal keystore included for stubbing URLs over SSL connection
+* Over 96% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
 
 ## Why would a developer use stubby4j?
 ####You want to:
@@ -34,11 +46,6 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Support for any of the available HTTP methods
 * Simulate support for Basic Authorization
 * Support for HTTP 30x redirects
-* Support for regular expressions (like mod_rewrite in Apache) in stubbed URIs for dynamic matching
-* Trigger multiple responses based on multiple requests on the same URI
-* Configure stub data using configuration file
-* Configure stub data at runtime, without restarting the server by making a POST to an exposed endpoint
-* Live tweak previously loaded and parsed configuration file to auto refresh the stub data WITHOUT restarting the server
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
 * Avoid to spend time coding for the above requirements
@@ -890,6 +897,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.10-SNAPSHOT
+* Added ability to record a scenario by specifying a third-party URL in the stubbed response `body`. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
+
 ### 2.0.9
 * Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]
 * Pre-setting header `x-stubby-resource-id` during YAML parse time, instead of on demand. This way resource IDs are viewable on Admin status page [ENHANCEMENT]
