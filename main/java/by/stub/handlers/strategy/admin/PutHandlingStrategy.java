@@ -45,12 +45,10 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
          return;
       }
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(put));
-      final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
-      stubbedDataManager.updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
+      final String updatedCycleUrl = stubbedDataManager.refreshStubbedData(new YamlParser(), put, stubIndexToUpdate);
 
       wrapper.setStatus(HttpStatus.CREATED_201);
-      wrapper.addHeader(HttpHeaders.LOCATION, newStubHttpLifecycle.getRequest().getUrl());
+      wrapper.addHeader(HttpHeaders.LOCATION, updatedCycleUrl);
       final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
       wrapper.getWriter().println(successfulMessage);
    }

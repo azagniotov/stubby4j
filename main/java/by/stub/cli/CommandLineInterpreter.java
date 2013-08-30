@@ -41,6 +41,7 @@ public final class CommandLineInterpreter {
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
    public static final String OPTION_WATCH = "watch";
+   public static final String OPTION_WATCH_SLEEP_TIME = "watch_sleep_time";
    public static final String OPTION_HELP = "help";
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
@@ -58,6 +59,7 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
       OPTIONS.addOption("w", OPTION_WATCH, false, "Reloads stub data upon changes to the main YAML or referenced external files.");
+      OPTIONS.addOption("wt", OPTION_WATCH_SLEEP_TIME, true, "Thread sleep time when watch is enabled in milliseconds. Defaults to 100ms");
    }
 
 

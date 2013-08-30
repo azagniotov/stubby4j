@@ -2,13 +2,10 @@ package by.stub.database.thread;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
-import by.stub.utils.FileUtils;
 import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,9 +14,11 @@ import java.util.Map;
  */
 public final class ExternalFilesScanner implements Runnable {
 
+   private final long sleepTime;
    private final StubbedDataManager stubbedDataManager;
 
-   public ExternalFilesScanner(final StubbedDataManager stubbedDataManager) {
+   public ExternalFilesScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
+      this.sleepTime = sleepTime;
       this.stubbedDataManager = stubbedDataManager;
       ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubbedDataManager.getYamlAbsolutePath()));
    }
@@ -32,7 +31,7 @@ public final class ExternalFilesScanner implements Runnable {
 
          while (!Thread.currentThread().isInterrupted()) {
 
-            Thread.sleep(3000);
+            Thread.sleep(sleepTime);
 
             boolean isContinue = true;
             String offendingFilename = "";
@@ -56,10 +55,7 @@ public final class ExternalFilesScanner implements Runnable {
             ANSITerminal.info(String.format("\nExternal file scan detected change in %s\n", offendingFilename));
 
             try {
-               final List<StubHttpLifecycle> stubHttpLifecycles =
-                  new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(stubbedDataManager.getDataYaml()));
-
-               stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+               stubbedDataManager.refreshStubbedData(new YamlParser());
                ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + new Date().toString().trim() + "]%s",
                   "\n",
                   stubbedDataManager.getDataYaml(),

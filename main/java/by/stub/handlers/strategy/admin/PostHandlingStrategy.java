@@ -3,16 +3,13 @@ package by.stub.handlers.strategy.admin;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
-import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * @author: Alexander Zagniotov
@@ -35,11 +32,10 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
          return;
       }
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(stubbedDataManager.getYamlParentDirectory(), FileUtils.constructReader(post));
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+      stubbedDataManager.refreshStubbedData(new YamlParser(), post);
 
-      if (stubHttpLifecycles.size() == 1) {
-         wrapper.addHeader(HttpHeaders.LOCATION, stubHttpLifecycles.get(0).getRequest().getUrl());
+      if (stubbedDataManager.getStubHttpLifecycles().size() == 1) {
+         wrapper.addHeader(HttpHeaders.LOCATION, stubbedDataManager.getOnlyStubRequestUrl());
       }
 
       wrapper.setStatus(HttpStatus.CREATED_201);

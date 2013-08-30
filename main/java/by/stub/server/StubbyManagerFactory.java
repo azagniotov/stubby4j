@@ -54,17 +54,23 @@ public class StubbyManagerFactory {
       final Server server = jettyFactory.construct();
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
-         watchDataStore(stubbedDataManager);
+         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH_SLEEP_TIME)) {
+            final long sleepTime = Long.parseLong(commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH_SLEEP_TIME));
+            watchDataStore(stubbedDataManager, sleepTime);
+         } else {
+            watchDataStore(stubbedDataManager, 100);
+         }
       }
 
       return new StubbyManager(server);
    }
 
-   private void watchDataStore(final StubbedDataManager stubbedDataManager) {
-      final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubbedDataManager);
+   private void watchDataStore(final StubbedDataManager stubbedDataManager, final long sleepTime) {
+
+      final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubbedDataManager, sleepTime);
       new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
 
-      final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubbedDataManager);
+      final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubbedDataManager, sleepTime);
       new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
    }
 }

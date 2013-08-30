@@ -21,8 +21,10 @@ package by.stub.database;
 
 import by.stub.client.StubbyResponse;
 import by.stub.http.StubbyHttpTransport;
+import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
+import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -119,9 +121,31 @@ public class StubbedDataManager {
       return added;
    }
 
+   public synchronized void refreshStubbedData(final YamlParser yamlParser) throws Exception {
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(dataYaml));
+      resetStubHttpLifecycles(stubHttpLifecycles);
+   }
+
+   public synchronized void refreshStubbedData(final YamlParser yamlParser, final String post) throws Exception {
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(post));
+      resetStubHttpLifecycles(stubHttpLifecycles);
+   }
+
+   public synchronized String refreshStubbedData(final YamlParser yamlParser, final String put, final int stubIndexToUpdate) throws Exception {
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(put));
+      final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
+      updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
+
+      return newStubHttpLifecycle.getRequest().getUrl();
+   }
+
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public List<StubHttpLifecycle> getStubHttpLifecycles() {
       return new LinkedList<StubHttpLifecycle>(stubHttpLifecycles);
+   }
+
+   public synchronized String getOnlyStubRequestUrl() {
+      return stubHttpLifecycles.get(0).getRequest().getUrl();
    }
 
    public File getDataYaml() {
