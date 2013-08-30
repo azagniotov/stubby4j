@@ -174,10 +174,6 @@ public class StubbedDataManager {
       return dataYamlAbsolutePath;
    }
 
-   public String getYamlParentDirectory() {
-      return dataYamlParentDirectory;
-   }
-
    public synchronized String getMarshalledYaml() {
       final StringBuilder builder = new StringBuilder();
       for (final StubHttpLifecycle cycle : stubHttpLifecycles) {
