@@ -1,7 +1,8 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 
 # stubby4j
-A stub HTTP server written in Java with embedded Jetty server
+A flexible tool for testing your application's interactions over HTTP(S) and with web services, specifically web applications that consume XML, JSON, and HTML.
+It is an actual HTTP server (uses embedded Jetty) that acts like a real web service that your code can consume.
 
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
@@ -26,17 +27,18 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [See Also](#see-also)
 
 ## Key Features
-* Easy to understand and clean way to define stub data in a file using YAML syntax
+* Run webservice endpoints that your application is consuming in a SANDBOX
+* HTTP request verification and HTTP response stubbing
+* Define stub data using using YAML syntax, which is clean and easy to understand
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * Multiple stubbed responses on the same stubbed URI (sequenced responses)
-* Serve binary files as stubbed response (images, PDFs. etc.)
-* Main YAML configuration can specify external files in the file system containing stubbed response body/stubbed request POST. Useful when trying to avoid polluting main YAML
-* Live reload of main YAML configuration and external files on any changes, without the need to restart the app
-* Programmatic API to manage stubbed data at runtime via REST-full endpoints
-* Admin portal that lets you currently loaded stub data
-* Internal keystore included for stubbing URLs over SSL connection
-* Over 96% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
+* Fault injection, where after X good responses on the same URI you get a bad one (sequenced responses)
+* Serve binary files as stubbed response content (images, PDFs. etc.)
+* Admin portal that lets you see currently loaded stub data
+* Auto-reload of stub data on any changes to YAML configuration
+* Internal keystore included for HTTP request verification over SSL connection
+* Over 98% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
 
 ## Why would a developer use stubby4j?
 ####You want to:
