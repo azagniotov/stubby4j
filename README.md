@@ -109,29 +109,29 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.10</version>
+    <version>2.0.11</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.10" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.11" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.10'
+'by.stub:stubby4j:jar:2.0.11'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.10'
+compile 'by.stub:stubby4j:2.0.11'
 ```
 
 ## Command-line Switches
 ```
 usage:
-       java -jar stubby4j-2.0.10.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.11.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w] [-wt <arg>]
  -a,--admin <arg>               Port for admin portal. Defaults to 8889.
  -d,--data <arg>                Data file to pre-load endpoints. Valid
@@ -945,6 +945,10 @@ for each <endpoint> of stored endpoints {
 ```
 
 ## Change Log
+### 2.0.11
+* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` is `--watch_sleep_time` is not provided
+* Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data
+
 ### 2.0.10
 * Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
 
