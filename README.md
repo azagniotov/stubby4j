@@ -147,7 +147,7 @@ usage:
  -t,--ssl <arg>                 Port for SSL connection. Defaults to 7443.
  -w,--watch                     Reloads stub data upon changes to the main
                                 YAML or referenced external files.
- -wt,--watch_sleep_time <arg>   Thread sleep time when watch is enabled in
+ -wt,--watch_sleep_time <arg>   Thread sleep time when watch flag is enabled in
                                 milliseconds. Defaults to 100ms
 ```
 
@@ -688,8 +688,8 @@ You can also view the currently configured endpoints by going to `localhost:8889
 
 #### The Refresh Stubbed Data Endpoint
 
-If for some reason you do not want to use `--watch` flag when starting stubby4j,
-you can submit `GET` request to `localhost:<ADMIN_PORT>/refresh` (or load it in a browser) in order to refresh stubbed data.
+If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart),
+you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
 
 ### Changing Existing Endpoints
 

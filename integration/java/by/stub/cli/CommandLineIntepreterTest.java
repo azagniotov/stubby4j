@@ -45,8 +45,9 @@ public class CommandLineIntepreterTest {
          " -t,--ssl <arg>                 Port for SSL connection. Defaults to 7443.\n" +
          " -w,--watch                     Reloads stub data upon changes to the main\n" +
          "                                YAML or referenced external files.\n" +
-         " -wt,--watch_sleep_time <arg>   Thread sleep time when watch is enabled in\n" +
-         "                                milliseconds. Defaults to 100ms";
+         " -wt,--watch_sleep_time <arg>   Thread sleep time when watch flag is\n" +
+         "                                enabled in milliseconds. When not\n" +
+         "                                provided, stubby defaults to 100ms";
 
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 

@@ -59,7 +59,7 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
       OPTIONS.addOption("w", OPTION_WATCH, false, "Reloads stub data upon changes to the main YAML or referenced external files.");
-      OPTIONS.addOption("wt", OPTION_WATCH_SLEEP_TIME, true, "Thread sleep time when watch is enabled in milliseconds. Defaults to 100ms");
+      OPTIONS.addOption("wt", OPTION_WATCH_SLEEP_TIME, true, "Thread sleep time when watch flag is enabled in milliseconds. When not provided, stubby defaults to 100ms");
    }
 
 
