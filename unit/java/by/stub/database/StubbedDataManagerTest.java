@@ -4,6 +4,7 @@ import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.client.StubbyResponse;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ReflectionUtils;
+import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -11,6 +12,7 @@ import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -18,8 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -32,6 +37,7 @@ public class StubbedDataManagerTest {
    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
 
    private StubbyHttpTransport mockStubbyHttpTransport;
+   private YamlParser mockYamlParser;
 
    @BeforeClass
    public static void beforeClass() throws Exception {
@@ -41,6 +47,7 @@ public class StubbedDataManagerTest {
    @Before
    public void beforeEach() throws Exception {
       mockStubbyHttpTransport = Mockito.mock(StubbyHttpTransport.class);
+      mockYamlParser = Mockito.mock(YamlParser.class);
       stubbedDataManager.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
       ReflectionUtils.injectObjectFields(stubbedDataManager, "stubbyHttpTransport", mockStubbyHttpTransport);
    }
@@ -229,6 +236,25 @@ public class StubbedDataManagerTest {
       final StubResponse actualResponse = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
       assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
       assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void shouldVerifyExpectedHttpLifeCycles_WhenRefreshingStubbedData() throws Exception {
+
+      ArgumentCaptor<List> httpCycleCaptor = ArgumentCaptor.forClass(List.class);
+
+      final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
+
+      when(mockYamlParser.parse(anyString(), any(File.class))).thenReturn(originalHttpLifecycles);
+
+      final StubbedDataManager spyStubbedDataManager = Mockito.spy(stubbedDataManager);
+
+      spyStubbedDataManager.refreshStubbedData(mockYamlParser);
+
+      verify(spyStubbedDataManager, times(1)).resetStubHttpLifecycles(httpCycleCaptor.capture());
+
+      assertThat(httpCycleCaptor.getValue()).isEqualTo(originalHttpLifecycles);
    }
 
    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) {

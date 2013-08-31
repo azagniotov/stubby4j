@@ -667,7 +667,7 @@ public class StubbedDataManagerTest {
       final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
       final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
@@ -697,7 +697,7 @@ public class StubbedDataManagerTest {
       final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
       final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
@@ -726,7 +726,7 @@ public class StubbedDataManagerTest {
       final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
       final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
@@ -755,7 +755,7 @@ public class StubbedDataManagerTest {
       final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
       final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
@@ -784,7 +784,7 @@ public class StubbedDataManagerTest {
       final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
       final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
@@ -915,7 +915,7 @@ public class StubbedDataManagerTest {
          .withStatus("201")
          .build();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(String.format("%s\n%s", cycleTwo, cycleThree)));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", String.format("%s\n%s", cycleTwo, cycleThree));
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       List<StubHttpLifecycle> afterResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
@@ -983,7 +983,7 @@ public class StubbedDataManagerTest {
          .withStatus("200")
          .build();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(cycleOne));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", cycleOne);
       final StubHttpLifecycle updatingStubHttpLifecycle = stubHttpLifecycles.get(0);
 
       stubbedDataManager.updateStubHttpLifecycleByIndex(0, updatingStubHttpLifecycle);
@@ -1006,7 +1006,7 @@ public class StubbedDataManagerTest {
    }
 
    private void loadYamlToDataStore(final String yaml) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", FileUtils.constructReader(yaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", yaml);
 
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
    }

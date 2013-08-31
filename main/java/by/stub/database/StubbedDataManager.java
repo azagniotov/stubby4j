@@ -122,17 +122,17 @@ public class StubbedDataManager {
    }
 
    public synchronized void refreshStubbedData(final YamlParser yamlParser) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(dataYaml));
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, dataYaml);
       resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    public synchronized void refreshStubbedData(final YamlParser yamlParser, final String post) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(post));
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, post);
       resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    public synchronized String refreshStubbedData(final YamlParser yamlParser, final String put, final int stubIndexToUpdate) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, FileUtils.constructReader(put));
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, put);
       final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
       updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
 

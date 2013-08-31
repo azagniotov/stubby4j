@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.cobertura.CoberturaIgnore;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
@@ -32,6 +33,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public final class YamlParser {
+public class YamlParser {
 
    public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
    private String dataConfigHomeDirectory;
@@ -67,8 +69,16 @@ public final class YamlParser {
    private static final String YAML_NODE_METHOD = "method";
    private static final String YAML_NODE_FILE = "file";
 
-   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
+   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
+      return parse(dataConfigHomeDirectory, FileUtils.constructReader(yaml));
+   }
 
+   @CoberturaIgnore
+   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File yamlFile) throws Exception {
+      return parse(dataConfigHomeDirectory, FileUtils.constructReader(yamlFile));
+   }
+
+   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
       final Object loadedYaml = SNAKE_YAML.load(yamlReader);
       if (!(loadedYaml instanceof List)) {
          throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
@@ -167,7 +177,7 @@ public final class YamlParser {
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
-   private  <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
+   private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
 
       final B stubBuilder = stubBuilderClass.newInstance();
       final List<T> targetStubList = new LinkedList<T>();
