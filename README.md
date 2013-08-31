@@ -1,8 +1,8 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 
 # stubby4j
-A flexible tool for testing your application's interactions over HTTP(S) and with web services, specifically web applications that consume XML, JSON, and HTML.
-It is an actual HTTP server (uses embedded Jetty) that acts like a real web service that your code can consume.
+A flexible tool for testing interactions of your application with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.
+It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code.
 
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
