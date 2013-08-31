@@ -130,20 +130,25 @@ compile 'by.stub:stubby4j:2.0.10'
 
 ## Command-line Switches
 ```
-java -jar stubby4j-2.0.10.jar [-a <arg>] [-d <arg>] [-h]
-       [-k <arg>] [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
- -a,--admin <arg>      Port for admin portal. Defaults to 8889.
- -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
-                       expected.
- -h,--help             This help text.
- -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is
-                       enabled using internal keystore.
- -l,--location <arg>   Hostname at which to bind stubby.
- -m,--mute             Prevent stubby from printing to the console.
- -p,--password <arg>   Password for the provided keystore file.
- -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
- -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.
- -w,--watch            Reloads stub data upon changes to the main YAML or referenced external files.
+usage:
+       java -jar stubby4j-2.0.10.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w] [-wt <arg>]
+ -a,--admin <arg>               Port for admin portal. Defaults to 8889.
+ -d,--data <arg>                Data file to pre-load endpoints. Valid
+                                YAML 1.1 expected.
+ -h,--help                      This help text.
+ -k,--keystore <arg>            Keystore file for custom SSL. By default
+                                SSL is enabled using internal keystore.
+ -l,--location <arg>            Hostname at which to bind stubby.
+ -m,--mute                      Prevent stubby from printing to the
+                                console.
+ -p,--password <arg>            Password for the provided keystore file.
+ -s,--stubs <arg>               Port for stub portal. Defaults to 8882.
+ -t,--ssl <arg>                 Port for SSL connection. Defaults to 7443.
+ -w,--watch                     Reloads stub data upon changes to the main
+                                YAML or referenced external files.
+ -wt,--watch_sleep_time <arg>   Thread sleep time when watch is enabled in
+                                milliseconds. Defaults to 100ms
 ```
 
 ## Endpoint Configuration
@@ -680,6 +685,11 @@ Performing a `GET` request on `localhost:8889/<id>` will return the YAML object 
 #### The Status Page
 
 You can also view the currently configured endpoints by going to `localhost:8889/status`
+
+#### The Refresh Stubbed Data Endpoint
+
+If for some reason you do not want to use `--watch` flag when starting stubby4j,
+you can submit `GET` request to `localhost:<ADMIN_PORT>/refresh` (or load it in a browser) in order to refresh stubbed data.
 
 ### Changing Existing Endpoints
 
