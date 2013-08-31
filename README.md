@@ -946,7 +946,7 @@ for each <endpoint> of stored endpoints {
 
 ## Change Log
 ### 2.0.11
-* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` is `--watch_sleep_time` is not provided
+* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided
 * Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data
 
 ### 2.0.10
