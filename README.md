@@ -36,6 +36,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Fault injection, where after X good responses on the same URI you get a bad one (sequenced responses)
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Admin portal that lets you see currently loaded stub data
+* Embed stubby4j to create web service SANDBOX for your integration test suite
 * Auto-reload of stub data on any changes to YAML configuration
 * Internal keystore included for HTTP request verification over SSL connection
 * Over 98% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
