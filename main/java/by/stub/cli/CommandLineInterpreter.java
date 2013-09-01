@@ -23,6 +23,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -58,8 +59,13 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
-      OPTIONS.addOption("w", OPTION_WATCH, false, "Reloads stub data upon changes to the main YAML or referenced external files.");
-      OPTIONS.addOption("wt", OPTION_WATCH_SLEEP_TIME, true, "Thread sleep time when watch flag is enabled in milliseconds. When not provided, stubby defaults to 100ms");
+      Option watch =
+         OptionBuilder
+            .withDescription("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
+            .withLongOpt(OPTION_WATCH)
+            .hasOptionalArg()
+            .create("w");
+      OPTIONS.addOption(watch);
    }
 
 

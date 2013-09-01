@@ -25,6 +25,7 @@ import by.stub.database.StubbedDataManager;
 import by.stub.database.thread.ExternalFilesScanner;
 import by.stub.database.thread.MainYamlScanner;
 import by.stub.utils.FileUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
@@ -54,12 +55,9 @@ public class StubbyManagerFactory {
       final Server server = jettyFactory.construct();
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
-         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH_SLEEP_TIME)) {
-            final long sleepTime = Long.parseLong(commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH_SLEEP_TIME));
-            watchDataStore(stubbedDataManager, sleepTime);
-         } else {
-            watchDataStore(stubbedDataManager, 100);
-         }
+         final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
+         final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
+         watchDataStore(stubbedDataManager, watchScanTime);
       }
 
       return new StubbyManager(server);

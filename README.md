@@ -29,7 +29,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## Key Features
 * Run webservice endpoints that your application is consuming in a SANDBOX
 * HTTP request verification and HTTP response stubbing
-* Define stub data using using YAML syntax, which is clean and easy to understand
+* Define stub data using YAML syntax, which is clean and easy to understand
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * Multiple stubbed responses on the same stubbed URI (sequenced responses)
@@ -134,23 +134,26 @@ compile 'by.stub:stubby4j:2.0.11'
 ```
 usage:
        java -jar stubby4j-2.0.11.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
-       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w] [-wt <arg>]
- -a,--admin <arg>               Port for admin portal. Defaults to 8889.
- -d,--data <arg>                Data file to pre-load endpoints. Valid
-                                YAML 1.1 expected.
- -h,--help                      This help text.
- -k,--keystore <arg>            Keystore file for custom SSL. By default
-                                SSL is enabled using internal keystore.
- -l,--location <arg>            Hostname at which to bind stubby.
- -m,--mute                      Prevent stubby from printing to the
-                                console.
- -p,--password <arg>            Password for the provided keystore file.
- -s,--stubs <arg>               Port for stub portal. Defaults to 8882.
- -t,--ssl <arg>                 Port for SSL connection. Defaults to 7443.
- -w,--watch                     Reloads stub data upon changes to the main
-                                YAML or referenced external files.
- -wt,--watch_sleep_time <arg>   Thread sleep time when watch flag is enabled in
-                                milliseconds. Defaults to 100ms
+       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
+ -a,--admin <arg>      Port for admin portal. Defaults to 8889.
+ -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
+                       expected.
+ -h,--help             This help text.
+ -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is
+                       enabled using internal keystore.
+ -l,--location <arg>   Hostname at which to bind stubby.
+ -m,--mute             Prevent stubby from printing to the console.
+ -p,--password <arg>   Password for the provided keystore file.
+ -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
+ -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.
+ -w,--watch            Periodically scans for changes in last modification
+                       date of the main YAML and referenced external files
+                       (if any). The flag can accept an optional arg value
+                       which is the watch scan time in milliseconds. If
+                       milliseconds is not provided, the watch scans every
+                       100ms. If last modification date changed since the
+                       last scan period, the stub configuration is
+                       reloaded
 ```
 
 ## Endpoint Configuration
@@ -947,6 +950,9 @@ for each <endpoint> of stored endpoints {
 ```
 
 ## Change Log
+### 2.0.12-SNAPSHOT
+* Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms.
+
 ### 2.0.11
 * `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided
 * Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data

@@ -30,24 +30,26 @@ public class CommandLineIntepreterTest {
 
       final String expectedConsoleOutput = "usage:\n" +
          "       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]\n" +
-         "       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w] [-wt <arg>]\n" +
-         " -a,--admin <arg>               Port for admin portal. Defaults to 8889.\n" +
-         " -d,--data <arg>                Data file to pre-load endpoints. Valid\n" +
-         "                                YAML 1.1 expected.\n" +
-         " -h,--help                      This help text.\n" +
-         " -k,--keystore <arg>            Keystore file for custom SSL. By default\n" +
-         "                                SSL is enabled using internal keystore.\n" +
-         " -l,--location <arg>            Hostname at which to bind stubby.\n" +
-         " -m,--mute                      Prevent stubby from printing to the\n" +
-         "                                console.\n" +
-         " -p,--password <arg>            Password for the provided keystore file.\n" +
-         " -s,--stubs <arg>               Port for stub portal. Defaults to 8882.\n" +
-         " -t,--ssl <arg>                 Port for SSL connection. Defaults to 7443.\n" +
-         " -w,--watch                     Reloads stub data upon changes to the main\n" +
-         "                                YAML or referenced external files.\n" +
-         " -wt,--watch_sleep_time <arg>   Thread sleep time when watch flag is\n" +
-         "                                enabled in milliseconds. When not\n" +
-         "                                provided, stubby defaults to 100ms";
+         "       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]\n" +
+         " -a,--admin <arg>      Port for admin portal. Defaults to 8889.\n" +
+         " -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1\n" +
+         "                       expected.\n" +
+         " -h,--help             This help text.\n" +
+         " -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is\n" +
+         "                       enabled using internal keystore.\n" +
+         " -l,--location <arg>   Hostname at which to bind stubby.\n" +
+         " -m,--mute             Prevent stubby from printing to the console.\n" +
+         " -p,--password <arg>   Password for the provided keystore file.\n" +
+         " -s,--stubs <arg>      Port for stub portal. Defaults to 8882.\n" +
+         " -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.\n" +
+         " -w,--watch            Periodically scans for changes in last modification\n" +
+         "                       date of the main YAML and referenced external files\n" +
+         "                       (if any). The flag can accept an optional arg value\n" +
+         "                       which is the watch scan time in milliseconds. If\n" +
+         "                       milliseconds is not provided, the watch scans every\n" +
+         "                       100ms. If last modification date changed since the\n" +
+         "                       last scan period, the stub configuration is\n" +
+         "                       reloaded";
 
       final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
