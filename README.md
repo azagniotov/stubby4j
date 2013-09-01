@@ -27,7 +27,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [See Also](#see-also)
 
 ## Key Features
-* Run webservice endpoints that your application is consuming in a SANDBOX
+* Run webservice endpoint SANDBOX for your application to consume
 * HTTP request verification and HTTP response stubbing
 * Define stub data using YAML syntax, which is clean and easy to understand
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
