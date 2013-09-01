@@ -1,7 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 
 # stubby4j
-A flexible tool for testing interactions of your application with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.
+A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.
 It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code.
 
 ##### Why the word "stubby"?
