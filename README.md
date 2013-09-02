@@ -27,18 +27,14 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [See Also](#see-also)
 
 ## Key Features
-* Run webservice endpoint SANDBOX for your application to consume
+* Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
-* Define stub data using YAML syntax, which is clean and easy to understand
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
-* Multiple stubbed responses on the same stubbed URI (sequenced responses)
-* Fault injection, where after X good responses on the same URI you get a bad one (sequenced responses)
+* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
+* Fault injection, where after X good responses on the same URI you get a bad one
 * Serve binary files as stubbed response content (images, PDFs. etc.)
-* Admin portal that lets you see currently loaded stub data
-* Embed stubby4j to create web service SANDBOX for your integration test suite
-* Auto-reload of stub data on any changes to YAML configuration
-* Internal keystore included for HTTP request verification over SSL connection
+* Embed stubby4j to create a web service SANDBOX for your integration test suite
 * Over 98% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
 
 ## Why would a developer use stubby4j?
