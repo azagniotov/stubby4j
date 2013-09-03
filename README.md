@@ -970,8 +970,9 @@ for each <endpoint> of stored endpoints {
 ```
 
 ## Change Log
-### 2.0.12-SNAPSHOT
+### 2.0.12
 * Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms.
+* Added additional API to start Jetty via stubbyClient by specifying an address to bind
 
 ### 2.0.11
 * `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided
