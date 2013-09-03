@@ -1,4 +1,4 @@
-package by.stub.cobertura;
+package by.stub.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

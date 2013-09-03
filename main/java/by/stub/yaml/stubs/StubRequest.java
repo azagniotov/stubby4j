@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.cobertura.CoberturaIgnore;
+import by.stub.annotations.CoberturaIgnore;
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -48,6 +50,7 @@ public class StubRequest {
    private final List<String> method;
    private final Map<String, String> headers;
    private final Map<String, String> query;
+   private final Map<String, List<String>> regexGroups;
 
    public StubRequest(final String url,
                       final String post,
@@ -62,6 +65,7 @@ public class StubRequest {
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
       this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
+      this.regexGroups = new HashMap<String, List<String>>();
    }
 
    public final ArrayList<String> getMethod() {
@@ -130,6 +134,11 @@ public class StubRequest {
       return fileBytes;
    }
 
+   // Just a shallow copy that protects collection from modification, the points themselves are not copied
+   public Map<String, List<String>> getRegexGroups() {
+      return new HashMap<String, List<String>>(regexGroups);
+   }
+
    public File getRawFile() {
       return file;
    }
@@ -190,25 +199,25 @@ public class StubRequest {
    }
 
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-      return stringsMatch(dataStoreUrl, thisAssertingUrl);
+      return stringsMatch(dataStoreUrl, thisAssertingUrl, "url");
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody);
+      return stringsMatch(dataStorePostBody, thisAssertingPostBody, "post");
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery);
+      return mapsMatch(dataStoreQuery, thisAssertingQuery, "query");
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 
-      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
+      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, "headers");
    }
 
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String yamlPropertyName) {
       if (dataStoreMap.isEmpty()) {
          return true;
       }
@@ -222,7 +231,7 @@ public class StubRequest {
             return false;
          } else {
             String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
-            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue)) {
+            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, yamlPropertyName)) {
                return false;
             }
          }
@@ -231,7 +240,7 @@ public class StubRequest {
       return true;
    }
 
-   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue) {
+   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
       final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
       final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
 
@@ -242,17 +251,31 @@ public class StubRequest {
       } else if (StringUtils.isWithinSquareBrackets(dataStoreValue)) {
          return dataStoreValue.equals(thisAssertingValue);
       } else {
-         return regexMatch(dataStoreValue, thisAssertingValue);
+         return regexMatch(dataStoreValue, thisAssertingValue, yamlPropertyName);
       }
    }
 
-   private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue) {
+   @VisibleForTesting
+   boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
       try {
          // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
          // it does not mean that newline feeds and carriage return will be matched by default
          // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
          // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
-         return Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue).matches();
+         final Matcher matcher = Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue);
+         final boolean matches = matcher.matches();
+         if (matches) {
+            final int groupCount = matcher.groupCount();
+            if (groupCount > 0) {
+               final List<String> groups = new ArrayList<String>();
+               for (int idx = 0; idx < groupCount; idx++) {
+                  groups.add(matcher.group(idx));
+               }
+               regexGroups.put(yamlPropertyName, groups);
+            }
+         }
+
+         return matches;
       } catch (PatternSyntaxException e) {
          return dataStoreValue.equals(thisAssertingValue);
       }

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.client;
 
 import by.stub.cli.CommandLineInterpreter;
-import by.stub.cobertura.CoberturaIgnore;
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;

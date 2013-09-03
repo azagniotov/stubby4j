@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.utils;
 
-import by.stub.cobertura.CoberturaIgnore;
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 
 import java.io.IOException;

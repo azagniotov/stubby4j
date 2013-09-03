@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.cobertura.CoberturaIgnore;
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
