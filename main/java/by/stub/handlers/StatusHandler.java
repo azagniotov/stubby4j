@@ -52,7 +52,8 @@ public final class StatusHandler extends AbstractHandler {
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
    private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
-   private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList("file", "body", "post"));
+   private static final List<String> highlightableProperties =
+      Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
 
@@ -111,7 +112,7 @@ public final class StatusHandler extends AbstractHandler {
          builder.append("<br /><br />");
       }
 
-      return HandlerUtils.populateHtmlTemplate("status", stubHttpLifecycles.size(), builder.toString());
+      return HandlerUtils.populateHtmlTemplate(YamlProperties.STATUS, stubHttpLifecycles.size(), builder.toString());
    }
 
    private String buildSystemStatusHtmlTable() throws Exception {

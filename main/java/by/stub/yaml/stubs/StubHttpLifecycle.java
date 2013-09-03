@@ -22,6 +22,7 @@ package by.stub.yaml.stubs;
 
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.YamlProperties;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -122,9 +123,9 @@ public class StubHttpLifecycle {
    }
 
    public String getAjaxResponseContent(final String stubType, final String propertyName) throws Exception {
-      if (stubType.equals("request")) {
+      if (stubType.equals(YamlProperties.REQUEST)) {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(request, propertyName));
-      } else if (stubType.equals("response")) {
+      } else if (stubType.equals(YamlProperties.RESPONSE)) {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
       } else {
          return "Unknown stub type: " + stubType;
