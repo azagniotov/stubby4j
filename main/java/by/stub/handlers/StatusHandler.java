@@ -26,6 +26,7 @@ import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.YamlProperties;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -166,7 +167,7 @@ public final class StatusHandler extends AbstractHandler {
          return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 
-      if (fieldName.equals("url")) {
+      if (fieldName.equals(YamlProperties.URL)) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
          final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsSslPort());
 

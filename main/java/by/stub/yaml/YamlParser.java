@@ -65,10 +65,6 @@ public class YamlParser {
       SNAKE_YAML = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
    }
 
-   private static final String YAML_NODE_REQUEST = "request";
-   private static final String YAML_NODE_METHOD = "method";
-   private static final String YAML_NODE_FILE = "file";
-
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
       return parse(dataConfigHomeDirectory, FileUtils.constructReader(yaml));
    }
@@ -125,7 +121,7 @@ public class YamlParser {
 
       final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
-      if (parentNode.getKey().equals(YAML_NODE_REQUEST)) {
+      if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
          final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequestBuilder.class);
          stubHttpLifecycle.setRequest(targetStub);
 
@@ -153,7 +149,7 @@ public class YamlParser {
          } else if (rawFieldName instanceof Map) {
             massagedFieldValue = encodeAuthorizationHeader(rawFieldName);
 
-         } else if (fieldName.toLowerCase().equals(YAML_NODE_METHOD)) {
+         } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
 
             final ArrayList<String> methods = new ArrayList<String>(1);
             methods.add(StringUtils.objectToString(rawFieldName));
@@ -201,7 +197,7 @@ public class YamlParser {
    }
 
    private boolean isPairKeyEqualsToYamlNodeFile(final String pairKey) {
-      return pairKey.toLowerCase().equals(YAML_NODE_FILE);
+      return pairKey.toLowerCase().equals(YamlProperties.FILE);
    }
 
    private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {

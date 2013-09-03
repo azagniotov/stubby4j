@@ -26,6 +26,7 @@ import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.YamlProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -199,22 +200,22 @@ public class StubRequest {
    }
 
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-      return stringsMatch(dataStoreUrl, thisAssertingUrl, "url");
+      return stringsMatch(dataStoreUrl, thisAssertingUrl, YamlProperties.URL);
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody, "post");
+      return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery, "query");
+      return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 
-      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, "headers");
+      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
 
    private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String yamlPropertyName) {
@@ -266,9 +267,10 @@ public class StubRequest {
          final boolean matches = matcher.matches();
          if (matches) {
             final int groupCount = matcher.groupCount();
-            if (groupCount > 0) {
+            // group(0) holds the full match, we are interested in sub groups, therefore we don't check for  > 0
+            if (groupCount > 1) {
                final List<String> groups = new ArrayList<String>();
-               for (int idx = 0; idx < groupCount; idx++) {
+               for (int idx = 1; idx < groupCount; idx++) {
                   groups.add(matcher.group(idx));
                }
                regexGroups.put(yamlPropertyName, groups);
