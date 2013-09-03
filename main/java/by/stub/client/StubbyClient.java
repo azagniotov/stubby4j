@@ -42,9 +42,9 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443)
+    * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443) on localhost.
     *
-    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
    @CoberturaIgnore
@@ -53,10 +53,10 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default ports of Admin (8889) and SslStubs portals (7443), and given Stubs portal port
+    * Starts stubby using default ports of Admin (8889) and SslStubs portals (7443), and given Stubs portal port  on localhost.
     *
     * @param stubsPort                 Stubs portal port
-    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
    @CoberturaIgnore
@@ -65,11 +65,11 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports
+    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports  on localhost.
     *
     * @param stubsPort                 Stubs portal port
     * @param adminPort                 Admin portal port
-    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
    @CoberturaIgnore
@@ -78,26 +78,12 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports
-    *
-    * @param stubsPort                 Stubs portal port
-    * @param adminPort                 Admin portal port
-    * @param addressToBind             Address to bind Jetty
-    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
-    * @throws Exception
-    */
-   @CoberturaIgnore
-   public void startJetty(final int stubsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
-      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, addressToBind, yamlConfigurationFilename);
-   }
-
-   /**
-    * Starts stubby using given Stubs, SslStubs and Admin portals ports
+    * Starts stubby using given Stubs, SslStubs and Admin portals ports on localhost.
     *
     * @param stubsPort                 Stubs portal port
     * @param sslPort                   SSL Stubs portal port
     * @param adminPort                 Admin portal port
-    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
    @CoberturaIgnore
@@ -106,7 +92,21 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using given Stubs, SslStubs, Admin portals ports and address to bind Jetty on
+    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports on a given host address.
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public void startJetty(final int stubsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, addressToBind, yamlConfigurationFilename);
+   }
+
+   /**
+    * Starts stubby using given Stubs, SslStubs, Admin portals ports and host address.
     *
     * @param stubsPort                 Stubs portal port
     * @param sslPort                   SSL Stubs portal port
