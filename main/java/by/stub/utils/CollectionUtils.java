@@ -1,6 +1,7 @@
 package by.stub.utils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -61,5 +62,14 @@ public final class CollectionUtils {
       }
 
       return queryStringBuilder.toString();
+   }
+
+   public static int getValuesCount(Collection<?> valuesToCount) {
+      int total = 0;
+      Iterator<?> iterator = valuesToCount.iterator();
+      while (iterator.hasNext()) {
+         total += ((Collection<?>) iterator.next()).size();
+      }
+      return total;
    }
 }

@@ -39,9 +39,9 @@ public class StubsAdminPortalsTest {
       ANSITerminal.muteConsole(true);
 
       final URL url = StubsAdminPortalsTest.class.getResource("/yaml/stubs.yaml");
-      final InputStream stubsDatanputStream = url.openStream();
-      stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
-      stubsDatanputStream.close();
+      final InputStream stubsDataInputStream = url.openStream();
+      stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
+      stubsDataInputStream.close();
 
       STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
    }

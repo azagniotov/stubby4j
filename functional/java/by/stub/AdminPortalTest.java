@@ -5,8 +5,6 @@ import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.stubs.StubResponse;
-import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;

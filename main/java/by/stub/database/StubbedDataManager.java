@@ -21,7 +21,6 @@ package by.stub.database;
 
 import by.stub.client.StubbyResponse;
 import by.stub.http.StubbyHttpTransport;
-import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.YamlParser;

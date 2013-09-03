@@ -3,16 +3,13 @@ package by.stub.handlers.strategy.admin;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
-import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
-import by.stub.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * @author: Alexander Zagniotov

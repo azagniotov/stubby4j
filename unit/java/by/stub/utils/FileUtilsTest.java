@@ -4,10 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.File;
 import java.io.IOException;
-
-import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author: Alexander Zagniotov

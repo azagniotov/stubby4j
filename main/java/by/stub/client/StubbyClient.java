@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.client;
 
-import by.stub.cli.CommandLineInterpreter;
 import by.stub.annotations.CoberturaIgnore;
+import by.stub.cli.CommandLineInterpreter;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
@@ -49,7 +49,7 @@ public final class StubbyClient {
     */
    @CoberturaIgnore
    public void startJetty(final String yamlConfigurationFilename) throws Exception {
-      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
+      startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
    }
 
    /**
@@ -61,7 +61,7 @@ public final class StubbyClient {
     */
    @CoberturaIgnore
    public void startJetty(final int stubsPort, final String yamlConfigurationFilename) throws Exception {
-      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, yamlConfigurationFilename);
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
    }
 
    /**
@@ -74,7 +74,21 @@ public final class StubbyClient {
     */
    @CoberturaIgnore
    public void startJetty(final int stubsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
-      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, yamlConfigurationFilename);
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
+   }
+
+   /**
+    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public void startJetty(final int stubsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, addressToBind, yamlConfigurationFilename);
    }
 
    /**
@@ -86,7 +100,22 @@ public final class StubbyClient {
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
+   @CoberturaIgnore
    public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, sslPort, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
+   }
+
+   /**
+    * Starts stubby using given Stubs, SslStubs, Admin portals ports and address to bind Jetty on
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param sslPort                   SSL Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+    * @throws Exception
+    */
+   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
       final String clientPortString = String.format("%s", stubsPort);
       final String sslPortString = String.format("%s", sslPort);
       final String adminPortString = String.format("%s", adminPort);
@@ -95,8 +124,9 @@ public final class StubbyClient {
       params.put(CommandLineInterpreter.OPTION_CLIENTPORT, clientPortString);
       params.put(CommandLineInterpreter.OPTION_SSLPORT, sslPortString);
       params.put(CommandLineInterpreter.OPTION_ADMINPORT, adminPortString);
+      params.put(CommandLineInterpreter.OPTION_ADDRESS, addressToBind);
 
-      final String[] args = new String[]{"-m", "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
+      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
       new CommandLineInterpreter().parseCommandLine(args);
 
       stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, params);

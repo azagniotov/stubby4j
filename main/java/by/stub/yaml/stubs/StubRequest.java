@@ -266,11 +266,13 @@ public class StubRequest {
          final Matcher matcher = Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue);
          final boolean matches = matcher.matches();
          if (matches) {
+            //Matcher.groupCount() returns the number of capturing groups in the pattern regardless
+            // of whether the capturing groups actually participated in the match.
             final int groupCount = matcher.groupCount();
-            // group(0) holds the full match, we are interested in sub groups, therefore we don't check for  > 0
-            if (groupCount > 1) {
+            // group(0) holds the full match, we are interested in sub groups, therefore we don't care about group#0
+            if (groupCount > 0) {
                final List<String> groups = new ArrayList<String>();
-               for (int idx = 1; idx < groupCount; idx++) {
+               for (int idx = 1; idx <= groupCount; idx++) {
                   groups.add(matcher.group(idx));
                }
                regexGroups.put(yamlPropertyName, groups);

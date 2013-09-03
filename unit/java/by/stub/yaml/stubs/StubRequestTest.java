@@ -1,6 +1,7 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
+import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
@@ -1456,6 +1457,65 @@ public class StubRequestTest {
       }
    }
 
+   @Test
+   public void stubbedRequestShouldReturnEmptyRegexGroup_WhenValidRegexHasNoMatcherGroups() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().size()).isZero();
+   }
+
+   @Test
+   public void stubbedRequestShouldReturnOneRegexGroup_WhenValidRegexHasMatcherGroups() throws Exception {
+
+      final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
+      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(1);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url=[jhgjkhg234234l2]}");
+   }
+
+   @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasMatcherGroups() throws Exception {
+
+      final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
+      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url=[abc-efg, jhgjkhg234234l2]}");
+   }
+
+   @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasMatcherGroupsInMultipleProperties() throws Exception {
+
+      final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").build();
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
+      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(3);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{query=[12345], url=[abc-efg, jhgjkhg234234l2]}");
+   }
 
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedDoesNotAccomodateForQueryString() throws Exception {
@@ -1510,6 +1570,35 @@ public class StubRequestTest {
 
       for (final StubRequest assertingRequest : assertingRequests) {
          assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+      }
+   }
+
+   @Test
+   public void stubbedRequestEqualsAssertingRequest_WhenStaticUrlHasRegexifiedQueryString() throws Exception {
+
+      final StubRequest expectedRequest = BUILDER.withUrl("/atom/feed")
+         .withMethodGet()
+         .withQuery("min-results", "\\d+")
+         .withQuery("max-results", "\\d+").build();
+
+      final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
+         add(BUILDER
+            .withUrl("/atom/feed")
+            .withMethodGet()
+            .withQuery("min-results", "0")
+            .withQuery("max-results", "0").build());
+         add(BUILDER.withUrl("/atom/feed")
+            .withMethodGet()
+            .withQuery("min-results", "1")
+            .withQuery("max-results", "5").build());
+         add(BUILDER.withUrl("/atom/feed")
+            .withMethodGet()
+            .withQuery("min-results", "4654645756756")
+            .withQuery("max-results", "5675675686786786785675464564564").build());
+      }};
+
+      for (final StubRequest assertingRequest : assertingRequests) {
+         assertThat(expectedRequest).isEqualTo(assertingRequest);
       }
    }
 

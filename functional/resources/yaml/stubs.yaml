@@ -235,6 +235,20 @@
 
 
 -  request:
+      method: [GET]
+      url: ^/feeds/payment[sz]$
+      query:
+         start-index: \d+
+         max-records: \d+
+
+   response:
+      headers:
+         content-type: text/plain
+      status: 200
+      body: Got response
+
+
+-  request:
       headers:
          authorization: bob:secret
       method: POST

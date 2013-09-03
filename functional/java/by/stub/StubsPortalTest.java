@@ -158,7 +158,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
+   public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -169,9 +169,21 @@ public class StubsPortalTest {
       assertThat("{\"status\": \"hello world with single quote\"}").isEqualTo(responseContent);
    }
 
+   @Test
+   public void should_MakeSuccessfulRequest_WhenUrlAndQueryParamsAreRegexified() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/feeds/paymentz?start-index=12&max-records=500");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("Got response").isEqualTo(responseContent);
+   }
+
 
    @Test
-   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
+   public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -183,7 +195,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_MakeSuccesfulRequest_WhenQueryParamsAreAnArray() throws Exception {
+   public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArray() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
