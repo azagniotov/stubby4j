@@ -30,6 +30,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
+* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
 * Fault injection, where after X good responses on the same URI you get a bad one
@@ -108,29 +109,29 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.12</version>
+    <version>2.0.13</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.12" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.13" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.12'
+'by.stub:stubby4j:jar:2.0.13'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.12'
+compile 'by.stub:stubby4j:2.0.13'
 ```
 
 ## Command-line Switches
 ```
 usage:
-       java -jar stubby4j-2.0.12.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.13.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -971,19 +972,19 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
-### 2.0.13-SNAPSHOT
-* Now supporting dynamic token replacement in the stubbed response, by leveraging regex functionality during stubbed request verification where each token replaced by regex capturing group
+### 2.0.13
+* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
 
 ### 2.0.12
-* Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms.
-* Added additional API to start Jetty via StubbyClient by specifying an address to bind
+* Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms [ENHANCEMENT]
+* Added additional API to start Jetty via StubbyClient by specifying an address to bind [ENHANCEMENT]
 
 ### 2.0.11
-* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided
-* Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data
+* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided [ENHANCEMENT]
+* Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data [ENHANCEMENT]
 
 ### 2.0.10
-* Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server
+* Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server [FEATURE]
 
 ### 2.0.9
 * Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]

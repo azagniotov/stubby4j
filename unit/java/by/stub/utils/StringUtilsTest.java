@@ -203,7 +203,7 @@ public class StringUtilsTest {
    }
 
    @Test
-   public void shouldReplaceTokensInATemplateWhenNotAllTokensPresent() throws Exception {
+   public void shouldReplaceTokensInATemplateWhenNotAllTokenValuesPresent() throws Exception {
 
       final Map<String, String> tokensAndValues = new HashMap<String, String>();
       tokensAndValues.put("@@url.1@@", "ALEX");
