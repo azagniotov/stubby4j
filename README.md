@@ -102,7 +102,8 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ## Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
-Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j
+Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j.
+Keep in mind that it takes 6-9 hours for the new release to appear on live Maven Central repo. In other words, if you don't see the v2.0.13 there yet, its probably on its way ;)
 
 #### Apache Maven
 ```xml
