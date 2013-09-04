@@ -51,7 +51,7 @@ public class StubRequest {
    private final List<String> method;
    private final Map<String, String> headers;
    private final Map<String, String> query;
-   private final Map<String, List<String>> regexGroups;
+   private final Map<String, String> regexGroups;
 
    public StubRequest(final String url,
                       final String post,
@@ -66,7 +66,7 @@ public class StubRequest {
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
       this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
-      this.regexGroups = new HashMap<String, List<String>>();
+      this.regexGroups = new TreeMap<String, String>();
    }
 
    public final ArrayList<String> getMethod() {
@@ -136,8 +136,8 @@ public class StubRequest {
    }
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
-   public Map<String, List<String>> getRegexGroups() {
-      return new HashMap<String, List<String>>(regexGroups);
+   public Map<String, String> getRegexGroups() {
+      return new TreeMap<String, String>(regexGroups);
    }
 
    public File getRawFile() {
@@ -271,11 +271,10 @@ public class StubRequest {
             final int groupCount = matcher.groupCount();
             // group(0) holds the full match, we are interested in sub groups, therefore we don't care about group#0
             if (groupCount > 0) {
-               final List<String> groups = new ArrayList<String>();
                for (int idx = 1; idx <= groupCount; idx++) {
-                  groups.add(matcher.group(idx));
+                  final String regexKey = String.format("%s.%s", yamlPropertyName, idx);
+                  regexGroups.put(regexKey, matcher.group(idx));
                }
-               regexGroups.put(yamlPropertyName, groups);
             }
          }
 

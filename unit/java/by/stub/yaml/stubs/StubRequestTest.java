@@ -1,7 +1,6 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
-import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 11/6/12, 3:44 PM
  */
-@SuppressWarnings("serial")
 public class StubRequestTest {
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
@@ -1101,13 +1099,13 @@ public class StubRequestTest {
 
       final String postAssertingValue =
          "Here's the story of a lovely lady, " +
-         "Who was bringing up three very lovely girls. " +
-         "All of them had hair of gold, like their mother, " +
-         "The youngest one in curls. " +
-         "Here's the story, of a man named Brady, " +
-         "Who was busy with three boys of his own. " +
-         "They were four men, living all together, " +
-         "Yet they were all alone.";
+            "Who was bringing up three very lovely girls. " +
+            "All of them had hair of gold, like their mother, " +
+            "The youngest one in curls. " +
+            "Here's the story, of a man named Brady, " +
+            "Who was busy with three boys of his own. " +
+            "They were four men, living all together, " +
+            "Yet they were all alone.";
 
       final String url = "/invoice/789";
 
@@ -1228,7 +1226,7 @@ public class StubRequestTest {
       final String postRegex = ".*(\"id\": \"123\").*";
 
       final String postAssertingValue =
-            "{" +
+         "{" +
             "   \"products\": [" +
             "      {" +
             "      \"id\": \"123\"," +
@@ -1481,8 +1479,8 @@ public class StubRequestTest {
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
-      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(1);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url=[jhgjkhg234234l2]}");
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(1);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url.1=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1495,9 +1493,9 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
-      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(2);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url=[abc-efg, jhgjkhg234234l2]}");
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url.1=abc-efg, url.2=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1512,9 +1510,9 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
-      assertThat(CollectionUtils.getValuesCount(assertingRequest.getRegexGroups().values())).isEqualTo(3);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{query=[12345], url=[abc-efg, jhgjkhg234234l2]}");
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(3);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(3);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{query.1=12345, url.1=abc-efg, url.2=jhgjkhg234234l2}");
    }
 
    @Test
