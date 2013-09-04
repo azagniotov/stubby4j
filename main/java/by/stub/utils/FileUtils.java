@@ -108,7 +108,7 @@ public final class FileUtils {
    }
 
    public static String asciiFileToString(final File file) throws IOException {
-      final String loadedContent = StringUtils.inputStreamToString(new FileInputStream(file));
+      final String loadedContent = StringUtils.inputStreamToString(new BufferedInputStream(new FileInputStream(file)));
 
       return FileUtils.enforceSystemLineSeparator(loadedContent);
    }
@@ -146,12 +146,12 @@ public final class FileUtils {
          throw new IOException(String.format("Could not load file from path: %s", relativePath));
       }
 
-      return IOUtils.toByteArray(new FileInputStream(contentFile));
+      return IOUtils.toByteArray(new BufferedInputStream(new FileInputStream(contentFile)));
    }
 
 
    public static byte[] binaryFileToBytes(final File file) throws IOException {
-      return IOUtils.toByteArray(new FileInputStream(file));
+      return IOUtils.toByteArray(new BufferedInputStream(new FileInputStream(file)));
    }
 
 
@@ -176,7 +176,7 @@ public final class FileUtils {
 
 
    public static BufferedReader constructReader(final File file) throws FileNotFoundException {
-      final Reader reader = new InputStreamReader(new FileInputStream(file), StringUtils.charsetUTF8());
+      final Reader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)), StringUtils.charsetUTF8());
 
       return new BufferedReader(reader);
    }
