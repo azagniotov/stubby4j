@@ -198,7 +198,7 @@ public class StringUtilsTest {
       tokensAndValues.put("@@query.1@@", "KOKO");
       final String template = "This is a response @@url.1@@ content @@url.2@@ that going to be @@query.1@@ returned";
 
-      final String replacedTemplate = StringUtils.replaceTokens(template, tokensAndValues);
+      final String replacedTemplate = StringUtils.replaceTokens(StringUtils.getBytesUtf8(template), tokensAndValues);
       assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be KOKO returned");
    }
 
@@ -210,7 +210,7 @@ public class StringUtilsTest {
       tokensAndValues.put("@@url.2@@", "JOHN");
       final String template = "This is a response @@url.1@@ content @@url.2@@ that going to be @@query.1@@ returned";
 
-      final String replacedTemplate = StringUtils.replaceTokens(template, tokensAndValues);
+      final String replacedTemplate = StringUtils.replaceTokens(StringUtils.getBytesUtf8(template), tokensAndValues);
       assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be @@query.1@@ returned");
    }
 }

@@ -92,12 +92,12 @@ public final class StringUtils {
       return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
    }
 
-   public static String replaceTokens(final String template, Map<String, String> tokensAndValues) {
-      String replacedTemplate = template;
+   public static String replaceTokens(final byte[] stringBytes, Map<String, String> tokensAndValues) {
+      String template = StringUtils.newStringUtf8(stringBytes);
       for (Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
-         replacedTemplate = replacedTemplate.replaceAll(entry.getKey(), entry.getValue());
+         template = template.replaceAll(entry.getKey(), entry.getValue());
       }
-      return replacedTemplate;
+      return template;
    }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {

@@ -51,8 +51,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
 
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       if (foundStubResponse.isContainsTemplateTokens()) {
-         final String template = StringUtils.newStringUtf8(responseBody);
-         final String replacedTemplate = StringUtils.replaceTokens(template, assertionStubRequest.getRegexGroups());
+         final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
          responseBody = StringUtils.getBytesUtf8(replacedTemplate);
       }
 
