@@ -573,13 +573,13 @@ public class StubsPortalTest {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/post/regex");
       final String content =
          "Here's the story of a lovely lady,\n" +
-         "Who was bringing up three very lovely girls.\n" +
-         "All of them had hair of gold, like their mother,\n" +
-         "The youngest one in curls.\n" +
-         "Here's the story, of a man named Brady,\n" +
-         "Who was busy with three boys of his own.\n" +
-         "They were four men, living all together,\n" +
-         "Yet they were all alone.";
+            "Who was bringing up three very lovely girls.\n" +
+            "All of them had hair of gold, like their mother,\n" +
+            "The youngest one in curls.\n" +
+            "Here's the story, of a man named Brady,\n" +
+            "Who was busy with three boys of his own.\n" +
+            "They were four men, living all together,\n" +
+            "Yet they were all alone.";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpResponse response = request.execute();
@@ -618,5 +618,37 @@ public class StubsPortalTest {
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode>");
+   }
+
+   @Test
+   public void should_ReturnReplacedTokenizedResponse_WhenMatcherGroupsEqualToNumberOfTokens() throws Exception {
+      String requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/12345/category/milk");
+      HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      HttpResponse response = request.execute();
+      String responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned invoice number# 12345 in category 'milk'");
+
+
+      requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/88888/category/army");
+      request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      response = request.execute();
+      responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned invoice number# 88888 in category 'army'");
+   }
+
+   @Test
+   public void should_ReturnReplacedTokenizedResponse_WhenMatcherGroupsNotEqualsToNumberOfTokens() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/22222");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned invoice number# 22222 in category '@@url.2@@'");
    }
 }

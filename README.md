@@ -969,7 +969,11 @@ for each <endpoint> of stored endpoints {
                                      final String post) throws Exception
 ```
 
+
 ## Change Log
+### 2.0.13-SNAPSHOT
+* Now supporting dynamic token replacement in the stubbed response, by leveraging regex functionality during stubbed request verification
+
 ### 2.0.12
 * Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms.
 * Added additional API to start Jetty via StubbyClient by specifying an address to bind

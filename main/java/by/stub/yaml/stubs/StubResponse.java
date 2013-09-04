@@ -51,7 +51,7 @@ public class StubResponse {
       this.status = ObjectUtils.isNull(status) ? "200" : status;
       this.body = body;
       this.file = file;
-      this.isTemplateFile = ObjectUtils.isNull(file) ? false : isTemplateFile();
+      this.isTemplateFile = ObjectUtils.isNull(file) ? false : setIsTemplateFile();
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
       this.latency = latency;
       this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
@@ -99,7 +99,11 @@ public class StubResponse {
       return fileBytes;
    }
 
-   public boolean isTemplateFile() {
+   public boolean isContainsTemplateTokens() {
+      return isTemplateFile || getBody().contains(StringUtils.TEMPLATE_TOKEN);
+   }
+
+   private boolean setIsTemplateFile() {
       try {
          return FileUtils.isTemplateFile(file);
       } catch (Exception e) {
