@@ -568,7 +568,7 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 ```
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two capturing groups: `(\d{5})` and `([a-zA-Z]+)`, while `query` regex has one capturing group `([a-zA-Z]+)`. Please note that capturing group has parenthesis around it.
 
-The tokens in `response` `body` follow the format of `@@<PROPERTY_NAME>.<CAPTURING_GROUP_ID>@@`. In other words `@@url.1@@` and `@@url.2@@` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `@@query.1@@` token corresponds to one capturing group `([a-zA-Z]+)`. __Keep in mind__, when counting capturing groups, you should start from `1`, not zero.
+The tokens in `response` `body` follow the format of `@@<PROPERTY_NAME>.<CAPTURING_GROUP_ID>@@`. In other words `@@url.1@@` and `@@url.2@@` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `@@query.1@@` token corresponds to one capturing group `([a-zA-Z]+)`. __Keep in mind__, when counting capturing groups, you should start from `1`, not zero. Capturing group ID zero which is entire regex match (ie. token `@@url.0@@`) is __not__ used at the moment.
 
 You can specify template with tokens in both `body` as a string or using `file` by specifying external local file. After successful HTTP request verification, if your `body` or `file` contains tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 
