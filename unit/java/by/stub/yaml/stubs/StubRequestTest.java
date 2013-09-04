@@ -1480,7 +1480,7 @@ public class StubRequestTest {
       assertThat(equals).isTrue();
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(1);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url.1=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{@@url.1@@=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1495,7 +1495,7 @@ public class StubRequestTest {
       assertThat(equals).isTrue();
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(2);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{url.1=abc-efg, url.2=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{@@url.1@@=abc-efg, @@url.2@@=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1512,7 +1512,7 @@ public class StubRequestTest {
       assertThat(equals).isTrue();
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(3);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(3);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{query.1=12345, url.1=abc-efg, url.2=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{@@query.1@@=12345, @@url.1@@=abc-efg, @@url.2@@=jhgjkhg234234l2}");
    }
 
    @Test

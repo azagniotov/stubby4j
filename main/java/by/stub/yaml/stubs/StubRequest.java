@@ -272,7 +272,8 @@ public class StubRequest {
             // group(0) holds the full match, we are interested in sub groups, therefore we don't care about group#0
             if (groupCount > 0) {
                for (int idx = 1; idx <= groupCount; idx++) {
-                  final String regexKey = String.format("%s.%s", yamlPropertyName, idx);
+                  final String regexKey = String.format("%s%s.%s%s",
+                     StringUtils.TEMPLATE_TOKEN, yamlPropertyName, idx, StringUtils.TEMPLATE_TOKEN);
                   regexGroups.put(regexKey, matcher.group(idx));
                }
             }

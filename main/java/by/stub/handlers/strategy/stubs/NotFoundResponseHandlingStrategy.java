@@ -31,15 +31,15 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertion) throws Exception {
+   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
 
       HandlerUtils.setResponseMainHeaders(response);
 
-      final String postMessage = assertion.hasPostBody() ? String.format("\n\t%s%s", "With post data: ", assertion.getPostBody()) : "";
-      final String headersMessage = assertion.hasHeaders() ? String.format("\n\t%s%s", "With headers: ", assertion.getHeaders()) : "";
-      final String queryMessage = (assertion.hasQuery() ? String.format("\n\t%s%s", "With query params: ", assertion.getQuery()) : "");
+      final String postMessage = assertionStubRequest.hasPostBody() ? String.format("\n\t%s%s", "With post data: ", assertionStubRequest.getPostBody()) : "";
+      final String headersMessage = assertionStubRequest.hasHeaders() ? String.format("\n\t%s%s", "With headers: ", assertionStubRequest.getHeaders()) : "";
+      final String queryMessage = (assertionStubRequest.hasQuery() ? String.format("\n\t%s%s", "With query params: ", assertionStubRequest.getQuery()) : "");
 
-      final String error = String.format("No data found for %s request at URI %s%s%s%s", assertion.getMethod().get(0), assertion.getUrl(), postMessage, headersMessage, queryMessage);
+      final String error = String.format("No data found for %s request at URI %s%s%s%s", assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage, headersMessage, queryMessage);
 
       HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
    }

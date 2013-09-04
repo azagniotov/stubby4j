@@ -102,7 +102,8 @@ public final class FileUtils {
          out.write(content);
          out.close();
          return temp;
-      } catch (IOException e) {}
+      } catch (IOException e) {
+      }
       return null;
    }
 
@@ -118,14 +119,21 @@ public final class FileUtils {
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
+   public static boolean isAsciiFile(final File file) throws IOException {
+      return FileUtils.ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
+   }
+
+   public static boolean isTemplateFile(final File file) throws IOException {
+      if (FileUtils.isAsciiFile(file)) {
+         return FileUtils.asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN);
+      }
+      return false;
+   }
+
    public static byte[] fileToBytes(final File file) throws IOException {
-
-      final String extension = StringUtils.extractFilenameExtension(file.getName());
-
-      if (FileUtils.ASCII_TYPES.contains(extension)) {
+      if (FileUtils.isAsciiFile(file)) {
          return FileUtils.asciiFileToUtf8Bytes(file);
       }
-
       return FileUtils.binaryFileToBytes(file);
    }
 

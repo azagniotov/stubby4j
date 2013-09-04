@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -42,6 +43,7 @@ public final class StringUtils {
 
    }
 
+   public static final String TEMPLATE_TOKEN = "@@";
    public static final String UTF_8 = "UTF-8";
    public static final String FAILED = "Failed to load response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
@@ -90,6 +92,13 @@ public final class StringUtils {
       return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
    }
 
+   public static String replaceTokens(final String template, Map<String, String> tokensAndValues) {
+      String replacedTemplate = template;
+      for (Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
+         replacedTemplate = replacedTemplate.replaceAll(entry.getKey(), entry.getValue());
+      }
+      return replacedTemplate;
+   }
 
    public static String escapeHtmlEntities(final String toBeEscaped) {
       return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");

@@ -49,7 +49,13 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       }
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
-      final byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
+      byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
+      if (foundStubResponse.isTemplateFile()) {
+         final String template = StringUtils.newStringUtf8(responseBody);
+         final String replacedTemplate = StringUtils.replaceTokens(template, assertionStubRequest.getRegexGroups());
+         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+      }
+
       final OutputStream streamOut = response.getOutputStream();
       streamOut.write(responseBody);
       streamOut.flush();

@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -184,5 +186,31 @@ public class StringUtilsTest {
 
       assertThat(userAgentName).contains("stubby4j");
       assertThat(userAgentName).contains("(HTTP stub client request)");
+   }
+
+   @Test
+   public void shouldReplaceTokensInATemplateWhenAllTokensPresent() throws Exception {
+
+      final Map<String, String> tokensAndValues = new HashMap<String, String>();
+      tokensAndValues.put("@@url.1@@", "ALEX");
+      tokensAndValues.put("@@url.2@@", "JOHN");
+      tokensAndValues.put("@@url.3@@", "TRACY");
+      tokensAndValues.put("@@query.1@@", "KOKO");
+      final String template = "This is a response @@url.1@@ content @@url.2@@ that going to be @@query.1@@ returned";
+
+      final String replacedTemplate = StringUtils.replaceTokens(template, tokensAndValues);
+      assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be KOKO returned");
+   }
+
+   @Test
+   public void shouldReplaceTokensInATemplateWhenNotAllTokensPresent() throws Exception {
+
+      final Map<String, String> tokensAndValues = new HashMap<String, String>();
+      tokensAndValues.put("@@url.1@@", "ALEX");
+      tokensAndValues.put("@@url.2@@", "JOHN");
+      final String template = "This is a response @@url.1@@ content @@url.2@@ that going to be @@query.1@@ returned";
+
+      final String replacedTemplate = StringUtils.replaceTokens(template, tokensAndValues);
+      assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be @@query.1@@ returned");
    }
 }
