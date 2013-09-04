@@ -570,7 +570,7 @@ The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two capturing group
 
 The tokens in `response` `body` follow the format of `@@<PROPERTY_NAME>.<CAPTURING_GROUP_ID>@@`. In other words `@@url.1@@` and `@@url.2@@` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `@@query.1@@` token corresponds to one capturing group `([a-zA-Z]+)`. __Keep in mind__, when counting capturing groups, you should start from `1`, not zero. Capturing group ID zero which is the entire regex match (ie. token `@@url.0@@`) is __not__ used at the moment.
 
-You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or `file` contains tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
+You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or `file` contains tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 
 ### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
