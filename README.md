@@ -568,14 +568,14 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 ```
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two capturing groups: `(\d{5})` and `([a-zA-Z]+)`, while `query` regex has one capturing group `([a-zA-Z]+)`. Please note that capturing group has parenthesis around it.
 
-The tokens in `response` `body` follow the format of `@@<PROPERTY_NAME>.<CAPTURING_GROUP_ID>@@`. In other words `@@url.1@@` and `@@url.2@@` correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `@@query.1@@` corresponds to one capturing group `([a-zA-Z]+)`.
+The tokens in `response` `body` follow the format of `@@<PROPERTY_NAME>.<CAPTURING_GROUP_ID>@@`. In other words `@@url.1@@` and `@@url.2@@` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `@@query.1@@` token corresponds to one capturing group `([a-zA-Z]+)`.
 
-You can specify template with tokens in both `body` as a string or using `file` by specifying external local file
+You can specify template with tokens in both `body` as a string or using `file` by specifying external local file. After successful HTTP request verification, if your `body` or `file` contains tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 
 ### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex
-* Make sure that the token names you used in your template, correspond to regex capturing groups. In other words if you have `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` with two capturing groups: `(\d{5})` and `([a-zA-Z]+)`, the token names in your template should be `@@url.1@@` and `@@url.2@@`. Based on the latter, the `@@url.1@@` will be replaced with value from `(\d{5})` and `@@url.2@@` will be replaced with value from `([a-zA-Z]+)`
+* Make sure that the token names you used in your template, correspond to regex capturing groups (check property name, capturing group IDs)
 
 
 ## The Admin Portal
