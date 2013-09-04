@@ -108,29 +108,29 @@ Check Maven Central for the [latest version](http://search.maven.org/#search|ga|
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.11</version>
+    <version>2.0.12</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.11" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.12" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.11'
+'by.stub:stubby4j:jar:2.0.12'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.11'
+compile 'by.stub:stubby4j:2.0.12'
 ```
 
 ## Command-line Switches
 ```
 usage:
-       java -jar stubby4j-2.0.11.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.12.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -972,7 +972,7 @@ for each <endpoint> of stored endpoints {
 ## Change Log
 ### 2.0.12
 * Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms.
-* Added additional API to start Jetty via stubbyClient by specifying an address to bind
+* Added additional API to start Jetty via StubbyClient by specifying an address to bind
 
 ### 2.0.11
 * `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided
