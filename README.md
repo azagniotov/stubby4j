@@ -17,6 +17,8 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
 * [Command-line Switches](#command-line-switches)
 * [Endpoint Configuration HOWTO](#endpoint-configuration)
+   * [Request](#request)
+   * [Response](#response)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
 * [The Admin Portal](#the-admin-portal)
 * [The Stubs Portal](#the-stubs-portal)
