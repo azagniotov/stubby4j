@@ -42,7 +42,6 @@ public final class CommandLineInterpreter {
    public static final String OPTION_KEYPASS = "password";
    public static final String OPTION_MUTE = "mute";
    public static final String OPTION_WATCH = "watch";
-   public static final String OPTION_WATCH_SLEEP_TIME = "watch_sleep_time";
    public static final String OPTION_HELP = "help";
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
