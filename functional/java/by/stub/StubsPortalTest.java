@@ -641,6 +641,26 @@ public class StubsPortalTest {
    }
 
    @Test
+   public void should_ReturnReplacedTokenizedResponse_WhenUsingExternalFile() throws Exception {
+      String requestUrl = String.format("%s%s", STUBS_URL, "/account/12345/category/milk?date=Saturday");
+      HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      HttpResponse response = request.execute();
+      String responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned invoice number# 12345 in category 'milk' on the date 'Saturday'");
+
+
+      requestUrl = String.format("%s%s", STUBS_URL, "/account/88888/category/army?date=NOW");
+      request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      response = request.execute();
+      responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned invoice number# 88888 in category 'army' on the date 'NOW'");
+   }
+
+   @Test
    public void should_ReturnReplacedTokenizedResponse_WhenMatcherGroupsNotEqualsToNumberOfTokens() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/22222");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);

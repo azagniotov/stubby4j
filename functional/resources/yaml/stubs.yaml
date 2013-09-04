@@ -376,3 +376,14 @@
    response:
       status: 200
       body: Returned invoice number# @@url.1@@ in category '@@url.2@@'
+
+
+-  request:
+      method: [GET]
+      url: ^/account/(\d{5})/category/([a-zA-Z]+)
+      query:
+         date: "([a-zA-Z]+)"
+
+   response:
+      status: 200
+      file: ../json/template.json
