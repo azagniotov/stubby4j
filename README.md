@@ -554,9 +554,9 @@ Assuming a match has been made against the given `request` object, data from `re
 ## Dynamic token replacement in stubbed response
 
 ### Troubleshooting
-* Make sure that the regex expression you used in your stubby4j configuration actually does what it suppose to
-* Make sure that the regex expression has capturing groups for the parts of regex you want to capture as a token value. In other words, make sure that you did not forget the parenthesis
-* Make sure that the token names correspond to regex capturing groups. In other words if you have `url` regex with two capturing groups: `^/account/(\d{5})/category/([a-zA-Z]+)`, the token names in your template should be `@@url.1@@` and `@@url.2@@`
+* Make sure that the regex expression you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
+* Make sure that the regex expression has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex
+* Make sure that the token names you used in your template, correspond to regex capturing groups. In other words if you have `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` with two capturing groups: `(\d{5})` and `([a-zA-Z]+)`, the token names in your template should be `@@url.1@@` and `@@url.2@@`
 
 
 ## The Admin Portal
