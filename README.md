@@ -577,7 +577,7 @@ You can specify template with tokens in both `body` as a string or using `file` 
 #### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex
-* Make sure that the token names you used in your template, correspond to regex capturing groups (check property name, capturing group IDs)
+* Make sure that the token names you used in your template, correspond to regex capturing groups (check property name, capturing group IDs, the `<%` and `%>`)
 
 
 ## The Admin Portal
