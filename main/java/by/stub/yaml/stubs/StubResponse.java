@@ -99,7 +99,7 @@ public class StubResponse {
 
    public boolean isContainsTemplateTokens() {
       final boolean isFileTemplate = fileBytes.length == 0 ? false : isTemplateFile();
-      return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN);
+      return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
    }
 
    private boolean isTemplateFile() {

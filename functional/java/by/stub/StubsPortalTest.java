@@ -669,6 +669,6 @@ public class StubsPortalTest {
 
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(responseContent).isEqualTo("Returned invoice number# 22222 in category '@@url.2@@'");
+      assertThat(responseContent).isEqualTo("Returned invoice number# 22222 in category '<%url.2%>'");
    }
 }

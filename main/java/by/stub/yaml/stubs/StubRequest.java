@@ -273,7 +273,7 @@ public class StubRequest {
             if (groupCount > 0) {
                for (int idx = 1; idx <= groupCount; idx++) {
                   final String regexKey = String.format("%s%s.%s%s",
-                     StringUtils.TEMPLATE_TOKEN, yamlPropertyName, idx, StringUtils.TEMPLATE_TOKEN);
+                     StringUtils.TEMPLATE_TOKEN_LEFT, yamlPropertyName, idx, StringUtils.TEMPLATE_TOKEN_RIGHT);
                   regexGroups.put(regexKey, matcher.group(idx));
                }
             }

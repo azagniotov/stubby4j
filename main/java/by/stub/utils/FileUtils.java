@@ -125,7 +125,7 @@ public final class FileUtils {
 
    public static boolean isTemplateFile(final File file) throws IOException {
       if (FileUtils.isAsciiFile(file)) {
-         return FileUtils.asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN);
+         return FileUtils.asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN_LEFT);
       }
       return false;
    }

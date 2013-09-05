@@ -366,7 +366,7 @@
 
    response:
       status: 200
-      body: Returned invoice number# @@url.1@@ in category '@@url.2@@'
+      body: Returned invoice number# <%url.1%> in category '<%url.2%>'
 
 
 -  request:
@@ -375,7 +375,7 @@
 
    response:
       status: 200
-      body: Returned invoice number# @@url.1@@ in category '@@url.2@@'
+      body: Returned invoice number# <%url.1%> in category '<%url.2%>'
 
 
 -  request:

@@ -43,7 +43,8 @@ public final class StringUtils {
 
    }
 
-   public static final String TEMPLATE_TOKEN = "@@";
+   public static final String TEMPLATE_TOKEN_LEFT = "<%";
+   public static final String TEMPLATE_TOKEN_RIGHT = "%>";
    public static final String UTF_8 = "UTF-8";
    public static final String FAILED = "Failed to load response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
