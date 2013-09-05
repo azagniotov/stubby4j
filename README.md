@@ -594,9 +594,9 @@ After successful HTTP request verification, if your `body` or contents of local 
 
 #### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
-* Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex
-* Make sure that you are using token ID zero, when using __full__ regex match as the token value
-* Make sure that the token names you used in your template, correspond to regex capturing groups (check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<%` and `%>`)
+* Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
+* Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
+* Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<%` and `%>`
 
 
 ## The Admin Portal
