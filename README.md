@@ -587,7 +587,10 @@ Although, in the above example the `headers` regex does not have capturing group
 It is also worth to mention, that the __full__ regex match replacing token `<%query.0%>` would be the same value when replacing token `<%query.1%>`. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
 
 ##### Where to specify the template
-You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
+You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path.
+
+##### When token interpolation happens
+After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
 
 #### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
