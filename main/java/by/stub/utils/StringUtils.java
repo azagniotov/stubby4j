@@ -93,10 +93,17 @@ public final class StringUtils {
       return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
    }
 
+   public static String buildToken(final String propertyName, final int capturingGroupIdx) {
+      return String.format("%s.%s", propertyName, capturingGroupIdx);
+   }
+
    public static String replaceTokens(final byte[] stringBytes, Map<String, String> tokensAndValues) {
       String template = StringUtils.newStringUtf8(stringBytes);
+      //template = template.replaceAll("<%\\s+", StringUtils.TEMPLATE_TOKEN_LEFT);
+      //template = template.replaceAll("\\s+%>", StringUtils.TEMPLATE_TOKEN_RIGHT);
       for (Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
-         template = template.replaceAll(entry.getKey(), entry.getValue());
+         final String regexifiedKey = String.format("%s\\s{0,}%s\\s{0,}%s", StringUtils.TEMPLATE_TOKEN_LEFT, entry.getKey(), StringUtils.TEMPLATE_TOKEN_RIGHT);
+         template = template.replaceAll(regexifiedKey, entry.getValue());
       }
       return template;
    }
@@ -120,10 +127,6 @@ public final class StringUtils {
       }
 
       return toCheck.startsWith("[") && toCheck.endsWith("]");
-   }
-
-   public static String buildToken(final String propertyName, final int capturingGroupIdx) {
-      return String.format("%s%s.%s%s", StringUtils.TEMPLATE_TOKEN_LEFT, propertyName, capturingGroupIdx, StringUtils.TEMPLATE_TOKEN_RIGHT);
    }
 
    public static String decodeUrlEncodedQuotes(final String toBeFiltered) {

@@ -1014,6 +1014,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
+### 2.0.14-SNAPSHOT
+* Allowing whitespace when specifying template tokens between the `<%` & `%>` and what's inside [BUG]
+
 ### 2.0.13
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
 
