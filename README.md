@@ -562,7 +562,7 @@ During HTTP request verification, you can leverage regex capturing groups as tok
       query:
          date: "([a-zA-Z]+)"
       headers:
-         custom-header: "[a-zA-Z]+"
+         custom-header: "[0-9]+"
 
    response:
       status: 200
@@ -573,7 +573,7 @@ __Keep in mind__, when counting manually defined capturing groups, you should st
 
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), you can still access its matched value by using token `<%headers.0%>`. Token ID zero holds the __full__ regex match.
 
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[a-zA-Z]+`.
+The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`.
 
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 
