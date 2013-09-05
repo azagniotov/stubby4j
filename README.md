@@ -568,7 +568,9 @@ During HTTP request verification, you can leverage regex capturing groups as tok
       status: 200
       body: Returned invoice number# <%url.1%> in category '<%url.2%>' on the date '<%query.1%>'
 ```
-The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. Please note that a capturing group has parenthesis around it. In contrast, `headers` regex does not have capturing groups at all, but you can still can access its matched value by specifying token `<%headers.0%>`.
+The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. Please note that a capturing group has parenthesis around it.
+
+In contrast, `headers` regex does not have capturing groups at all, but you can still can access its matched value by specifying token `<%headers.0%>`.
 
 The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
