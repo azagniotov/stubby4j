@@ -579,7 +579,7 @@ It is also worth to mention, that `<%query.0%>` would correspond to `query` __fu
 ##### Token structure
 The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. No whitespace is allowed between the `<%` & `%>` and what's inside
 
-##### Numbering the tokens
+##### Numbering the tokens based on capturing groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
 
 ##### Template content location
