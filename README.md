@@ -570,26 +570,27 @@ During HTTP request verification, you can leverage regex capturing groups as tok
       body: Returned invoice number# <%url.1%> in category '<%url.2%>' on the date '<%query.1%>', using header <%headers.0%>
 ```
 ##### Example explained
-The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a capturing group has parenthesis around it.
+The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a manually defined capturing group has parenthesis around it.
 __Keep in mind__, when counting manually defined capturing groups, you should start from `1`, not zero.
 
-Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), you can still access its matched value by using token `<%headers.0%>`. Token ID zero holds the __full__ regex match.
+Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template when using token `<%headers.0%>`. Tokens with ID zero hold the __full__ regex match for any given regex, ie.: `<%url.0%>` or `<%query.0%>`.
 
-##### Token structure
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
+##### Template token structure
+The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template. It is also worth to mention, that `<%query.0%>` would correspond to `query` __full__ regex match, which would be the same value when using `<%query.1%>` token to access the match from the capturing group `([a-zA-Z]+)`. This is due to how the `query` regex is defined - the capturing group is the full regex.
 
-##### Template location
+##### Template content location
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 
-##### Troubleshooting
+#### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex
-* Make sure that the token names you used in your template, correspond to regex capturing groups (check property name, capturing group IDs, the `<%` and `%>`)
+* Make sure that you are using token ID zero, when using __full__ regex match as the token value
+* Make sure that the token names you used in your template, correspond to regex capturing groups (check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<%` and `%>`)
 
 
 ## The Admin Portal
 
-The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's options.
+The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
 
 ### Supplying Endpoints to Stubby
 
