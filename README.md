@@ -571,14 +571,13 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 ```
 ##### Example explained
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a manually defined capturing group has parenthesis around it.
-__Keep in mind__, when counting manually defined capturing groups, you should start from `1`, not zero.
 
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template when using token `<%headers.0%>`. Tokens with ID zero hold the __full__ regex match for any given regex, ie.: `<%url.0%>` or `<%query.0%>`.
 
 It is also worth to mention, that `<%query.0%>` would correspond to `query` __full__ regex match, which would be the same value when using token `<%query.1%>` in order to get the match value from the capturing group `([a-zA-Z]+)`. This is due to how the `query` regex is defined - the one and only capturing group is also the full regex itself.
 
 ##### Template token structure
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
+The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. __Keep in mind__, when counting manually defined capturing groups, you should start from `1`, not zero. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
 
 ##### Template content location
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
