@@ -571,7 +571,7 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a capturing group has parenthesis around it.
 __Keep in mind__, when counting manually defined capturing groups, you should start from `1`, not zero.
 
-Although, the `headers` regex does not have defined capturing groups (no regex sections within parenthesis), you can still access its matched value by using token `<%headers.0%>`. Token ID zero holds the __full__ regex match.
+Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), you can still access its matched value by using token `<%headers.0%>`. Token ID zero holds the __full__ regex match.
 
 The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`, while `<%headers.0%>` token corresponds to the __full__ match of regex `[a-zA-Z]+`.
 
