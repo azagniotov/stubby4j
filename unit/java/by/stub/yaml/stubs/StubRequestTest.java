@@ -1500,6 +1500,21 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenRegexHasCapturingGroupWhichIsAlsoFullRegex() throws Exception {
+
+      final String url = "^([a-z]{3})$";
+
+      final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest = BUILDER.withUrl("abc").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.0%>=abc, <%url.1%>=abc}");
+   }
+
+   @Test
    public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasMatcherGroupsInMultipleProperties() throws Exception {
 
       final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
