@@ -671,4 +671,20 @@ public class StubsPortalTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContent).isEqualTo("Returned invoice number# 22222 in category '<%url.2%>'");
    }
+
+   @Test
+   public void should_ReturnReplacedTokenizedResponse_WhenFullMatacherGroupsAreUsed() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/no/explicit/groups/22222?param=ABC");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.set("custom-header", "XYZ");
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned content with URL /no/explicit/groups/22222, query ABC and headers XYZ");
+   }
 }

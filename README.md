@@ -561,16 +561,18 @@ During HTTP request verification, you can leverage regex capturing groups as tok
       url: ^/account/(\d{5})/category/([a-zA-Z]+)
       query:
          date: "([a-zA-Z]+)"
+      headers:
+         custom-header: "[a-zA-Z]+"
 
    response:
       status: 200
       body: Returned invoice number# <%url.1%> in category '<%url.2%>' on the date '<%query.1%>'
 ```
-The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two capturing groups: `(\d{5})` and `([a-zA-Z]+)`, while `query` regex has one capturing group `([a-zA-Z]+)`. Please note that a capturing group has parenthesis around it.
+The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. Please note that a capturing group has parenthesis around it. In contrast, `headers` regex does not have capturing groups at all, but you can still can access its matched value by specifying token `<%headers.0%>`.
 
 The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
-__Keep in mind__, when counting capturing groups, you should start from `1`, not zero. Capturing group ID zero which is the entire regex match (ie. token `<%url.0%>`) is __not__ used at the moment.
+__Keep in mind__, when counting manually defined capturing groups, you should start from `1`, not zero. Capturing group ID zero holds the __entire__ regex match (ie. token `<%headers.0%>`).
 
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
 

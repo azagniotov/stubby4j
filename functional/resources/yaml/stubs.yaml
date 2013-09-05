@@ -387,3 +387,16 @@
    response:
       status: 200
       file: ../json/template.json
+
+
+-  request:
+      method: [GET]
+      url: ^/no/explicit/groups/\d{5}
+      query:
+         param: "[a-zA-Z]+"
+      headers:
+         custom-header: "[a-zA-Z]+"
+
+   response:
+      status: 200
+      body: Returned content with URL <%url.0%>, query <%query.0%> and headers <%headers.0%>
