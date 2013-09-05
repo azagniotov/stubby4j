@@ -587,7 +587,7 @@ Although, in the above example the `headers` regex does not have capturing group
 It is also worth to mention, that the __full__ regex match replacing token `<%query.0%>` would be the same value when token `<%query.1%>` is defined. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
 
 ##### Where to specify the template
-You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path.
+You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced, __not__ the path to local file defined in `file`.
 
 ##### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
