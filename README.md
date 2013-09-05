@@ -575,13 +575,13 @@ The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturi
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template (keep on reading!).
 
 ##### Token structure
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. No whitespace is allowed between the `<%` & `%>` and what's inside
+The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. No whitespace is allowed between the `<%` & `%>` and what's inside.
 
 ##### Numbering the tokens based on capturing groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match). In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
 ##### Token with ID zero
-Tokens with ID zero hold the full regex match for any given regex, ie.: <%url.0%> or <%query.0%>. when using token `<%headers.0%>`.
+Tokens with ID zero hold the __full__ regex match for any given regex, ie.: `<%url.0%>` or `<%query.0%>`.
 Although, the `headers` regex does not have capturing groups defined explicitly, the `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template. It is also worth to mention, that `<%query.0%>` would correspond to `query` __full__ regex match, which would be the same value when using token `<%query.1%>` in order to get the match value from the capturing group `([a-zA-Z]+)`. This is due to how the `query` regex is defined - the one and only capturing group is also the full regex itself.
 
 ##### Where to specify the template
