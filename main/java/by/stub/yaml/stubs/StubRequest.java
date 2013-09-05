@@ -266,19 +266,18 @@ public class StubRequest {
          final Matcher matcher = Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue);
          final boolean matches = matcher.matches();
          if (matches) {
-            //Matcher.groupCount() returns the number of capturing groups in the pattern regardless
-            // of whether the capturing groups actually participated in the match.
+            // group(0) holds the full regex match
+            regexGroups.put(StringUtils.buildToken(yamlPropertyName, 0), matcher.group(0));
+
+            //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
+            // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
             final int groupCount = matcher.groupCount();
-            // group(0) holds the full match, we are interested in sub groups, therefore we don't care about group#0
             if (groupCount > 0) {
                for (int idx = 1; idx <= groupCount; idx++) {
-                  final String regexKey = String.format("%s%s.%s%s",
-                     StringUtils.TEMPLATE_TOKEN_LEFT, yamlPropertyName, idx, StringUtils.TEMPLATE_TOKEN_RIGHT);
-                  regexGroups.put(regexKey, matcher.group(idx));
+                  regexGroups.put(StringUtils.buildToken(yamlPropertyName, idx), matcher.group(idx));
                }
             }
          }
-
          return matches;
       } catch (PatternSyntaxException e) {
          return dataStoreValue.equals(thisAssertingValue);

@@ -1465,7 +1465,8 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().size()).isZero();
+      assertThat(assertingRequest.getRegexGroups().size()).isEqualTo(1);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.0%>=/abc-efg/12/KM/jhgjkhg234234l2}");
    }
 
    @Test
@@ -1478,9 +1479,9 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(1);
-      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(1);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.1%>=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(2);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.0%>=/abc-efg/12/KM/jhgjkhg234234l2, <%url.1%>=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1493,9 +1494,9 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(2);
-      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(2);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.1%>=abc-efg, <%url.2%>=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(3);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(3);
+      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%url.0%>=/abc-efg/12/KM/jhgjkhg234234l2, <%url.1%>=abc-efg, <%url.2%>=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1510,13 +1511,14 @@ public class StubRequestTest {
 
       final boolean equals = assertingRequest.equals(expectedRequest);
       assertThat(equals).isTrue();
-      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(3);
-      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(3);
-      assertThat(assertingRequest.getRegexGroups().toString()).isEqualTo("{<%query.1%>=12345, <%url.1%>=abc-efg, <%url.2%>=jhgjkhg234234l2}");
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(5);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(5);
+      assertThat(assertingRequest.getRegexGroups()
+         .toString()).isEqualTo("{<%query.0%>=12345, <%query.1%>=12345, <%url.0%>=/abc-efg/12/KM/jhgjkhg234234l2, <%url.1%>=abc-efg, <%url.2%>=jhgjkhg234234l2}");
    }
 
    @Test
-   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedDoesNotAccomodateForQueryString() throws Exception {
+   public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedDoesNotAccommodateForQueryString() throws Exception {
 
       final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+";
 

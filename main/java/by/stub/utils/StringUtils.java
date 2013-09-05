@@ -122,6 +122,10 @@ public final class StringUtils {
       return toCheck.startsWith("[") && toCheck.endsWith("]");
    }
 
+   public static String buildToken(final String propertyName, final int capturingGroupIdx) {
+      return String.format("%s%s.%s%s", StringUtils.TEMPLATE_TOKEN_LEFT, propertyName, capturingGroupIdx, StringUtils.TEMPLATE_TOKEN_RIGHT);
+   }
+
    public static String decodeUrlEncodedQuotes(final String toBeFiltered) {
       return toBeFiltered.replaceAll("%22", "\"").replaceAll("%27", "'");
    }
