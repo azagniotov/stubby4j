@@ -553,8 +553,9 @@ Assuming a match has been made against the given `request` object, data from `re
 
 ## Dynamic token replacement in stubbed response
 
-During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response. Consider the following example:
+During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response.
 
+##### Example
 ```yaml
 -  request:
       method: [GET]
