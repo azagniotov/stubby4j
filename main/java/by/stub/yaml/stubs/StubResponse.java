@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
@@ -102,6 +103,7 @@ public class StubResponse {
       return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
    }
 
+   @CoberturaIgnore
    private boolean isTemplateFile() {
       try {
          return FileUtils.isTemplateFile(file);
@@ -110,6 +112,7 @@ public class StubResponse {
       }
    }
 
+   @CoberturaIgnore
    private byte[] getFileBytes() {
       try {
          return FileUtils.fileToBytes(file);
