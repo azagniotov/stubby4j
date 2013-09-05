@@ -584,7 +584,7 @@ When giving tokens their ID based on the count of manually defined capturing gro
 Tokens with ID zero hold the __full__ regex match for any given regex, ie.: `<%url.0%>` or `<%query.0%>`.
 Although, in the above example the `headers` regex does not have capturing groups defined within, the `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
 
-It is also worth to mention, that regex match value replacing token `<%query.0%>` would be the same value when replacing token `<%query.1%>`. This is due to how the `query` regex is defined - the one and only capturing group holds the same match value as the __full__ regex match.
+It is also worth to mention, that the __full__ regex match replacing token `<%query.0%>` would be the same value when replacing token `<%query.1%>`. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
 
 ##### Where to specify the template
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of the template from `file` will be replaced, __not__ the `file` path. After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens and your regex has capturing groups - the tokens will be replaced before rendering HTTP response content.
