@@ -592,7 +592,7 @@ You can specify template with tokens in both `body` as a string or using `file` 
 ##### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
 
-#### Troubleshooting
+##### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
