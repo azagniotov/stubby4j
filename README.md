@@ -578,7 +578,7 @@ Although, the `headers` regex does not have capturing groups defined explicitly 
 The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. No whitespace is allowed between the `<%` & `%>` and what's inside
 
 ##### Numbering the tokens based on capturing groups
-When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
+When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match). In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
 ##### Token with ID zero
 Tokens with ID zero hold the full regex match for any given regex, ie.: <%url.0%> or <%query.0%>. when using token `<%headers.0%>`.
