@@ -581,9 +581,9 @@ The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPT
 ##### Numbering the tokens based on capturing groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match). In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
-##### Token with ID zero
-Tokens with ID zero hold the __full__ regex match for any given regex, ie.: `<%url.0%>` or `<%query.0%>`.
-Although, in the above example the `headers` regex does not have capturing groups defined within, the `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
+##### Tokens with ID zero
+Tokens with ID zero can obtain the value from the __full__ regex match, ie.: `<%url.0%>` will be replaced with __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`.
+Although, in the earlier example the `headers` regex does not have capturing groups defined within, the `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`. If you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
 
 It is also worth to mention, that the __full__ regex match replacing token `<%query.0%>` would be the same value when token `<%query.1%>` is defined. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
 
