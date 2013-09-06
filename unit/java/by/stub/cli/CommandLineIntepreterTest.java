@@ -34,6 +34,24 @@ public class CommandLineIntepreterTest {
       assertThat(isHelp).isTrue();
    }
 
+   @Test
+   public void testIsVersionWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-v"});
+      final boolean isVersion = commandLineInterpreter.isVersion();
+
+      assertThat(isVersion).isTrue();
+   }
+
+   @Test
+   public void testIsVersionWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--version"});
+      final boolean isVersion = commandLineInterpreter.isVersion();
+
+      assertThat(isVersion).isTrue();
+   }
+
 
    @Test
    public void testIsMuteWhenShortOptionGiven() throws Exception {

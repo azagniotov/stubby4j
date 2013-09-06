@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.cli;
 
+import by.stub.annotations.CoberturaIgnore;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -126,6 +127,7 @@ public final class CommandLineInterpreter {
    /**
     * Prints current stubby4j version to the console
     */
+   @CoberturaIgnore
    public void printVersion() {
       String version = String.format("\nstubby4j v%s", "x.x.xx");
       final URLClassLoader classLoader = (URLClassLoader) getClass().getClassLoader();
