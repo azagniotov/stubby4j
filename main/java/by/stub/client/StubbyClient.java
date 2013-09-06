@@ -42,7 +42,7 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default ports of Stubs (8882), Admin (8889) and SslStubs portals (7443) on localhost.
+    * Starts stubby using default ports of Stubs (8882), Admin (8889) and TlsStubs portals (7443) on localhost.
     *
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
@@ -53,7 +53,7 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default ports of Admin (8889) and SslStubs portals (7443), and given Stubs portal port  on localhost.
+    * Starts stubby using default ports of Admin (8889) and TlsStubs portals (7443), and given Stubs portal port  on localhost.
     *
     * @param stubsPort                 Stubs portal port
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
@@ -65,7 +65,7 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports  on localhost.
+    * Starts stubby using default port of TlsStubs (7443), and given Stubs and Admin portals ports  on localhost.
     *
     * @param stubsPort                 Stubs portal port
     * @param adminPort                 Admin portal port
@@ -78,21 +78,21 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using given Stubs, SslStubs and Admin portals ports on localhost.
+    * Starts stubby using given Stubs, TlsStubs and Admin portals ports on localhost.
     *
     * @param stubsPort                 Stubs portal port
-    * @param sslPort                   SSL Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
     * @param adminPort                 Admin portal port
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
    @CoberturaIgnore
-   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
-      startJetty(stubsPort, sslPort, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
+   public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
+      startJetty(stubsPort, tlsPort, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
    }
 
    /**
-    * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports on a given host address.
+    * Starts stubby using default port of TlsStubs (7443), and given Stubs and Admin portals ports on a given host address.
     *
     * @param stubsPort                 Stubs portal port
     * @param adminPort                 Admin portal port
@@ -106,27 +106,27 @@ public final class StubbyClient {
    }
 
    /**
-    * Starts stubby using given Stubs, SslStubs, Admin portals ports and host address.
+    * Starts stubby using given Stubs, TlsStubs, Admin portals ports and host address.
     *
     * @param stubsPort                 Stubs portal port
-    * @param sslPort                   SSL Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
     * @param adminPort                 Admin portal port
     * @param addressToBind             Address to bind Jetty
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
-   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
+   public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
       final String clientPortString = String.format("%s", stubsPort);
-      final String sslPortString = String.format("%s", sslPort);
+      final String tlsPortString = String.format("%s", tlsPort);
       final String adminPortString = String.format("%s", adminPort);
 
       final Map<String, String> params = new HashMap<String, String>();
       params.put(CommandLineInterpreter.OPTION_CLIENTPORT, clientPortString);
-      params.put(CommandLineInterpreter.OPTION_SSLPORT, sslPortString);
+      params.put(CommandLineInterpreter.OPTION_TLSPORT, tlsPortString);
       params.put(CommandLineInterpreter.OPTION_ADMINPORT, adminPortString);
       params.put(CommandLineInterpreter.OPTION_ADDRESS, addressToBind);
 
-      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", clientPortString, "-a", adminPortString, "-t", sslPortString, "-d", yamlConfigurationFilename};
+      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", clientPortString, "-a", adminPortString, "-t", tlsPortString, "-d", yamlConfigurationFilename};
       new CommandLineInterpreter().parseCommandLine(args);
 
       stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, params);
@@ -159,7 +159,7 @@ public final class StubbyClient {
    }
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Makes GET HTTP request to stubby over TLS on stubby4j default TLS port: 7443
     *
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
@@ -172,11 +172,11 @@ public final class StubbyClient {
    }
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j
+    * Makes GET HTTP request to stubby over TLS on stubby4j
     *
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
-    * @param port SSL port
+    * @param port TLS port
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -185,13 +185,13 @@ public final class StubbyClient {
    }
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Makes GET HTTP request to stubby over TLS on stubby4j default TLS port: 7443
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
     * @param host               host that stubby4j is running on
     * @param uri                URI for the HTTP request
-    * @param port               SSL port
+    * @param port               TLS port
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception

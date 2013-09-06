@@ -35,13 +35,13 @@ public class CommandLineIntepreterTest {
          " -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1\n" +
          "                       expected.\n" +
          " -h,--help             This help text.\n" +
-         " -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is\n" +
+         " -k,--keystore <arg>   Keystore file for custom TLS. By default TLS is\n" +
          "                       enabled using internal keystore.\n" +
          " -l,--location <arg>   Hostname at which to bind stubby.\n" +
          " -m,--mute             Prevent stubby from printing to the console.\n" +
          " -p,--password <arg>   Password for the provided keystore file.\n" +
          " -s,--stubs <arg>      Port for stub portal. Defaults to 8882.\n" +
-         " -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.\n" +
+         " -t,--tls <arg>        Port for TLS connection. Defaults to 7443.\n" +
          " -w,--watch            Periodically scans for changes in last modification\n" +
          "                       date of the main YAML and referenced external files\n" +
          "                       (if any). The flag can accept an optional arg value\n" +

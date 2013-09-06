@@ -37,7 +37,7 @@ public final class JettyContext {
       this.adminPort = adminPort;
    }
 
-   public int getStubsSslPort() {
+   public int getStubsTlsPort() {
       return stubsSslPort;
    }
 

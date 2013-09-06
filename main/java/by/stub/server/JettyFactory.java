@@ -212,7 +212,7 @@ public final class JettyFactory {
          sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
       }
 
-      final String status = String.format("Stubs portal configured with SSL at https://%s:%s using %s keystore",
+      final String status = String.format("Stubs portal configured with TLS at https://%s:%s using %s keystore",
          sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal" : "provided " + keystorePath));
       ANSITerminal.status(status);
 
@@ -258,8 +258,8 @@ public final class JettyFactory {
    }
 
    private int getStubsSslPort(final Map<String, String> commandLineArgs) {
-      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_SSLPORT)) {
-         return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_SSLPORT));
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_TLSPORT)) {
+         return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_TLSPORT));
       }
       return DEFAULT_SSL_PORT;
    }

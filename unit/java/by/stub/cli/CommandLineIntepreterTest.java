@@ -184,7 +184,7 @@ public class CommandLineIntepreterTest {
    public void testHasSslPortWhenShortOptionGiven() throws Exception {
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
       commandLineInterpreter.parseCommandLine(new String[]{"-t", "2443"});
-      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_SSLPORT);
+      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_TLSPORT);
 
       assertThat(isSslGiven).isTrue();
    }
@@ -192,8 +192,8 @@ public class CommandLineIntepreterTest {
    @Test
    public void testHasSslPortWhenLongOptionGiven() throws Exception {
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-      commandLineInterpreter.parseCommandLine(new String[]{"--ssl", "2443"});
-      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_SSLPORT);
+      commandLineInterpreter.parseCommandLine(new String[]{"--tls", "2443"});
+      final boolean isSslGiven = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_TLSPORT);
 
       assertThat(isSslGiven).isTrue();
    }

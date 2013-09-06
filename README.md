@@ -141,13 +141,13 @@ usage:
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
                        expected.
  -h,--help             This help text.
- -k,--keystore <arg>   Keystore file for custom SSL. By default SSL is
+ -k,--keystore <arg>   Keystore file for custom TLS. By default TLS is
                        enabled using internal keystore.
  -l,--location <arg>   Hostname at which to bind stubby.
  -m,--mute             Prevent stubby from printing to the console.
  -p,--password <arg>   Password for the provided keystore file.
  -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
- -t,--ssl <arg>        Port for SSL connection. Defaults to 7443.
+ -t,--tls <arg>        Port for TLS connection. Defaults to 7443.
  -w,--watch            Periodically scans for changes in last modification
                        date of the main YAML and referenced external files
                        (if any). The flag can accept an optional arg value
@@ -825,12 +825,12 @@ for each <endpoint> of stored endpoints {
     * Starts stubby using given Stubs, SslStubs and Admin portals ports on localhost.
     *
     * @param stubsPort                 Stubs portal port
-    * @param sslPort                   SSL Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
     * @param adminPort                 Admin portal port
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
     * @throws Exception
     */
-   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String yamlConfigurationFilename) throws Exception
+   public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception
 
    /**
     * Starts stubby using default port of SslStubs (7443), and given Stubs and Admin portals ports on a given host address.
@@ -847,13 +847,13 @@ for each <endpoint> of stored endpoints {
     * Starts stubby using given Stubs, SslStubs, Admin portals ports and host address.
     *
     * @param stubsPort                 Stubs portal port
-    * @param sslPort                   SSL Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
     * @param adminPort                 Admin portal port
     * @param addressToBind             Address to bind Jetty
     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
     * @throws Exception
     */
-   public void startJetty(final int stubsPort, final int sslPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception
+   public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception
 
    /**
     * Stops Jetty if it is up
@@ -874,7 +874,7 @@ for each <endpoint> of stored endpoints {
    public StubbyResponse doGet(final String host, final String uri, final int stubsPort) throws Exception
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Makes GET HTTP request to stubby over TLS on stubby4j default TLS port: 7443
     *
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
@@ -884,24 +884,24 @@ for each <endpoint> of stored endpoints {
    public StubbyResponse doGetOverSsl(final String host, final String uri) throws Exception
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j
+    * Makes GET HTTP request to stubby over TLS on stubby4j
     *
     * @param host host that stubby4j is running on
     * @param uri  URI for the HTTP request
-    * @param port SSL port
+    * @param port TLS port
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
    public StubbyResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception
 
    /**
-    * Makes GET HTTP request to stubby over SSL on stubby4j default SSL port: 7443
+    * Makes GET HTTP request to stubby over TLS on stubby4j default TLS port: 7443
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
     * @param host               host that stubby4j is running on
     * @param uri                URI for the HTTP request
-    * @param port               SSL port
+    * @param port               TLS port
     * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
@@ -1026,6 +1026,7 @@ for each <endpoint> of stored endpoints {
 ## Change Log
 ### 2.0.14-SNAPSHOT
 * Whitespace was not allowed between the `<%` & `%>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
+* Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
 
 ### 2.0.13
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
@@ -1132,8 +1133,7 @@ for each <endpoint> of stored endpoints {
 
 ## Roadmap
 * Add support for OAuth in Record & Replay feature
-* Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state
-* Use dynamically generated identifier in the response
+* Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state (maybe?)
 
 ## Authors
 A number of people have contributed directly to stubby4j by writing

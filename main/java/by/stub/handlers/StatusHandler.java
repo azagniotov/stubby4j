@@ -121,12 +121,12 @@ public final class StatusHandler extends AbstractHandler {
 
       final String host = jettyContext.getHost();
       final int clientPort = jettyContext.getStubsPort();
-      final int sslPort = jettyContext.getStubsSslPort();
+      final int tlsPort = jettyContext.getStubsTlsPort();
       final int adminPort = jettyContext.getAdminPort();
 
-      builder.append(populateTableRowTemplate("CLIENT PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
+      builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
+      builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
-      builder.append(populateTableRowTemplate("SSL PORT", CSS_CLASS_NO_HIGHLIGHTABLE, sslPort));
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
       builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getYamlAbsolutePath()));
 
@@ -170,7 +170,7 @@ public final class StatusHandler extends AbstractHandler {
 
       if (fieldName.equals(YamlProperties.URL)) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
-         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsSslPort());
+         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 
          final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
          final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);

@@ -35,7 +35,7 @@ public final class CommandLineInterpreter {
 
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
-   public static final String OPTION_SSLPORT = "ssl";
+   public static final String OPTION_TLSPORT = "tls";
    public static final String OPTION_ADMINPORT = "admin";
    public static final String OPTION_CONFIG = "data";
    public static final String OPTION_KEYSTORE = "keystore";
@@ -52,9 +52,9 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
       OPTIONS.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
       OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
-      OPTIONS.addOption("t", OPTION_SSLPORT, true, "Port for SSL connection. Defaults to 7443.");
+      OPTIONS.addOption("t", OPTION_TLSPORT, true, "Port for TLS connection. Defaults to 7443.");
       OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Valid YAML 1.1 expected.");
-      OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom SSL. By default SSL is enabled using internal keystore.");
+      OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom TLS. By default TLS is enabled using internal keystore.");
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
