@@ -41,7 +41,7 @@ public final class Main {
       commandLineInterpreter = new CommandLineInterpreter();
 
       parseCommandLineArgs(args);
-      if (printHelpIfRequested()) {
+      if (printHelpIfRequested() || printVersionIfRequested()) {
          return;
       }
 
@@ -67,6 +67,16 @@ public final class Main {
       }
 
       commandLineInterpreter.printHelp();
+
+      return true;
+   }
+
+   private static boolean printVersionIfRequested() {
+      if (!commandLineInterpreter.isVersion()) {
+         return false;
+      }
+
+      commandLineInterpreter.printVersion();
 
       return true;
    }

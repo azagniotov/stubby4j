@@ -28,8 +28,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Manifest;
 
 public final class CommandLineInterpreter {
 
@@ -43,6 +47,7 @@ public final class CommandLineInterpreter {
    public static final String OPTION_MUTE = "mute";
    public static final String OPTION_WATCH = "watch";
    public static final String OPTION_HELP = "help";
+   public static final String OPTION_VERSION = "version";
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
    private static final Options OPTIONS = new Options();
@@ -58,6 +63,7 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
+      OPTIONS.addOption("v", OPTION_VERSION, false, "Prints out to console stubby version.");
       Option watch =
          OptionBuilder
             .withDescription("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
@@ -100,13 +106,44 @@ public final class CommandLineInterpreter {
    }
 
    /**
-    * Prints 'help' message which describes avilable command line arguments
+    * Checks if version option was provided
+    *
+    * @return true if the user has provided 'version' command line arg
+    */
+   public boolean isVersion() {
+      return line.hasOption(OPTION_VERSION);
+   }
+
+   /**
+    * Prints 'help' message which describes available command line arguments
     */
    public void printHelp() {
       final HelpFormatter formatter = new HelpFormatter();
       final String command = String.format("%sjava -jar stubby4j-x.x.xx.jar", "\n");
       formatter.printHelp(command, OPTIONS, true);
    }
+
+   /**
+    * Prints current stubby4j version to the console
+    */
+   public void printVersion() {
+      String version = String.format("\nstubby4j v%s", "x.x.xx");
+      final URLClassLoader classLoader = (URLClassLoader) getClass().getClassLoader();
+      try {
+         final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
+         final Manifest manifest = new Manifest(url.openStream());
+         final String rawVersion = manifest.getMainAttributes().getValue("Implementation-Version");
+         version = String.format("\nstubby4j v%s", rawVersion);
+      } catch (Exception e) {
+         //Do nothing
+      }
+
+      final HelpFormatter formatter = new HelpFormatter();
+      PrintWriter pw = new PrintWriter(System.out);
+      formatter.printWrapped(pw, HelpFormatter.DEFAULT_WIDTH, version);
+      pw.flush();
+   }
+
 
    /**
     * Identifies what command line arguments that have been passed by user are matching available options

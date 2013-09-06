@@ -30,7 +30,7 @@ public class CommandLineIntepreterTest {
 
       final String expectedConsoleOutput = "usage:\n" +
          "       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]\n" +
-         "       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]\n" +
+         "       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]\n" +
          " -a,--admin <arg>      Port for admin portal. Defaults to 8889.\n" +
          " -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1\n" +
          "                       expected.\n" +
@@ -42,6 +42,7 @@ public class CommandLineIntepreterTest {
          " -p,--password <arg>   Password for the provided keystore file.\n" +
          " -s,--stubs <arg>      Port for stub portal. Defaults to 8882.\n" +
          " -t,--tls <arg>        Port for TLS connection. Defaults to 7443.\n" +
+         " -v,--version          Prints out to console stubby version.\n" +
          " -w,--watch            Periodically scans for changes in last modification\n" +
          "                       date of the main YAML and referenced external files\n" +
          "                       (if any). The flag can accept an optional arg value\n" +

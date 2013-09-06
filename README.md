@@ -136,7 +136,7 @@ compile 'by.stub:stubby4j:2.0.13'
 ```
 usage:
        java -jar stubby4j-2.0.13.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
-       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-w]
+       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
                        expected.
@@ -148,6 +148,7 @@ usage:
  -p,--password <arg>   Password for the provided keystore file.
  -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
  -t,--tls <arg>        Port for TLS connection. Defaults to 7443.
+ -v,--version          Prints out to console stubby version.
  -w,--watch            Periodically scans for changes in last modification
                        date of the main YAML and referenced external files
                        (if any). The flag can accept an optional arg value
@@ -1027,6 +1028,7 @@ for each <endpoint> of stored endpoints {
 ### 2.0.14-SNAPSHOT
 * Whitespace was not allowed between the `<%` & `%>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
 * Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
+* Added command line arg `--version` that prints current stubby4j version to the console [ENHANCEMENT]
 
 ### 2.0.13
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
