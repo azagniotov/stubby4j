@@ -595,7 +595,7 @@ Tokens with ID zero can obtain __full__ match value from the regex they referenc
 
 Another example, would be the earlier case where `headers` `custom-header` property regex does not have capturing groups defined within. Which is fine, since the `<% custom-header.0 %>` token corresponds to the __full__ regex match in the `header` `custom-header` property regex: `[0-9]+`.
 
-It is also worth to mention, that the __full__ regex match value replacing token `<% date.0 %>`, would be equal to the capturing group value replacing `<% date.1 %>`. This is due to how the `query` `date` property regex is defined - the one and only capturing group in the `query` property `date` regex, holds the same value as the __full__ regex match.
+It is also worth to mention, that the __full__ regex match value replacing token `<% date.0 %>`, would be equal to the regex capturing group value replacing `<% date.1 %>`. This is due to how the `query` `date` property regex is defined - the one and only capturing group in the `query` `date` regex, holds the same value as the __full__ regex match.
 
 ##### Where to specify the template
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced, __not__ the path to local file defined in `file`.
