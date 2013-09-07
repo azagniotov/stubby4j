@@ -207,17 +207,17 @@ public class StubRequest {
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
+      return mapsMatch(dataStoreQuery, thisAssertingQuery);
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 
-      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
+      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
    }
 
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String yamlPropertyName) {
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
       if (dataStoreMap.isEmpty()) {
          return true;
       }
@@ -230,8 +230,8 @@ public class StubRequest {
          if (!containsRequiredParam) {
             return false;
          } else {
-            String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
-            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, yamlPropertyName)) {
+            final String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
+            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, dataStoreParam.getKey())) {
                return false;
             }
          }
@@ -240,7 +240,7 @@ public class StubRequest {
       return true;
    }
 
-   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
+   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
       final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
       final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
 
@@ -251,11 +251,11 @@ public class StubRequest {
       } else if (StringUtils.isWithinSquareBrackets(dataStoreValue)) {
          return dataStoreValue.equals(thisAssertingValue);
       } else {
-         return regexMatch(dataStoreValue, thisAssertingValue, yamlPropertyName);
+         return regexMatch(dataStoreValue, thisAssertingValue, templateTokenName);
       }
    }
 
-   private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
+   private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
       try {
          // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
          // it does not mean that newline feeds and carriage return will be matched by default
@@ -265,17 +265,14 @@ public class StubRequest {
          final boolean matches = matcher.matches();
          if (matches) {
             // group(0) holds the full regex match
-            regexGroups.put(StringUtils.buildToken(yamlPropertyName, 0), matcher.group(0));
+            regexGroups.put(StringUtils.buildToken(templateTokenName, 0), matcher.group(0));
 
             //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
             // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
             final int groupCount = matcher.groupCount();
-
-            // TODO If headers or query maps have more than one item, the last item in the map
-            // TODO - will take precedence when building a token name: query.0 or headers.0
             if (groupCount > 0) {
                for (int idx = 1; idx <= groupCount; idx++) {
-                  regexGroups.put(StringUtils.buildToken(yamlPropertyName, idx), matcher.group(idx));
+                  regexGroups.put(StringUtils.buildToken(templateTokenName, idx), matcher.group(idx));
                }
             }
          }

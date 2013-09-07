@@ -1515,7 +1515,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasMatcherGroupsInMultipleProperties() throws Exception {
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasCapturingGroupsInMultipleProperties() throws Exception {
 
       final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
 
@@ -1529,7 +1529,25 @@ public class StubRequestTest {
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(5);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(5);
       assertThat(assertingRequest.getRegexGroups()
-         .toString()).isEqualTo("{query.0=12345, query.1=12345, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
+         .toString()).isEqualTo("{paramOne.0=12345, paramOne.1=12345, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
+   }
+
+   @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasCapturingGroupsInQuery() throws Exception {
+
+      final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").withQuery("paramTwo", "([A-Z]{5})").build();
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withQuery("paramTwo", "ABCDE").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(7);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(7);
+      assertThat(assertingRequest.getRegexGroups()
+         .toString()).isEqualTo("{paramOne.0=12345, paramOne.1=12345, paramTwo.0=ABCDE, paramTwo.1=ABCDE, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
    }
 
    @Test

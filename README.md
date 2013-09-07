@@ -568,7 +568,7 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 
    response:
       status: 200
-      body: Returned invoice number# <%url.1%> in category '<%url.2%>' on the date '<%query.1%>', using header <%headers.0%>
+      body: Returned invoice number# <% url.1 %> in category '<% url.2 %>' on the date '<% date.1 %>', using header custom-header <% custom-header.0 %>
 ```
 ##### Example explained
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a manually defined capturing group has parenthesis around it.
@@ -576,26 +576,26 @@ The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturi
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template (keep on reading!).
 
 ##### Token structure
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. No whitespace is allowed between the `<%` & `%>` and what's inside.
+The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. If it is a token that should correspond to `headers` or `query` regex, then the token structure would be as follows `<%``HEADERS_OR_QUERY_KEY_NAME``.``CAPTURING_GROUP_ID``%>`. Whitespace is __allowed__ between the `<% ` & ` %>` and what's inside.
 
 ##### Numbering the tokens based on capturing groups without sub-groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. So the leftmost capturing group would be `1` and the next one to the right of it would be `2`, etc.
 
-In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
+In other words `<% url.1 %>` and `<% url.2 %>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<% date.1 %>` token corresponds to one capturing group `([a-zA-Z]+)` in `query` regex.
 
 ##### Numbering the tokens based on capturing groups with sub-groups
 In regex world capturing groups can contain capturing sub-groups, ie `url` regex: `^/resource/``(``([a-z]{3})``-``([0-9]{3})``)``$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups `([a-z]{3})` & `([0-9]{3})`.
 
 When giving tokens their ID based on the count of capturing groups, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. If a group has sub-group within, you count the sub-group(s) first (also from left to right) before counting next one to the right of the parent group.
 
-In other words tokens `<%url.1%>`, `<%url.2%>` and `<%url.3%>` correspond to three capturing groups from the `url` regex: `([a-z]{3}-[0-9]{3})`, `([a-z]{3})` and `([0-9]{3})`.
+In other words tokens `<% url.1 %>`, `<% url.2 %>` and `<% url.3 %>` correspond to three capturing groups from the `url` regex: `([a-z]{3}-[0-9]{3})`, `([a-z]{3})` and `([0-9]{3})`.
 
 ##### Tokens with ID zero
-Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<%url.0%>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
+Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<% url.0 %>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<% url.0 %>` in your template.
 
-Another example, would be the earlier case where `headers` regex does not have capturing groups defined within. Which is fine, since `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`.
+Another example, would be the earlier case where `headers` regex does not have capturing groups defined within. Which is fine, since `<% headers.0 %>` token corresponds to the __full__ match of regex `[0-9]+`.
 
-It is also worth to mention, that the __full__ regex match replacing token `<%query.0%>` would be the same value when token `<%query.1%>` is defined. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
+It is also worth to mention, that the __full__ regex match replacing token `<% query.0 %>` would be the same value when token `<% query.1 %>` is defined. This is due to how the `query` regex is defined - the one and only defined capturing group holds the same match value as the __full__ regex match.
 
 ##### Where to specify the template
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced, __not__ the path to local file defined in `file`.
@@ -607,7 +607,7 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
-* Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<%` and `%>`
+* Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
 
 ## The Admin Portal
@@ -1036,7 +1036,7 @@ for each <endpoint> of stored endpoints {
 
 ## Change Log
 ### 2.0.14-SNAPSHOT
-* Whitespace was not allowed between the `<%` & `%>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
+* Whitespace was not allowed between the `<% ` & ` %>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
 * Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
 * Added command line arg `--version` that prints current stubby4j version to the console [ENHANCEMENT]
 

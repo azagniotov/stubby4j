@@ -399,4 +399,13 @@
 
    response:
       status: 200
-      body: Returned content with URL <%url.0%>, query <%query.0%> and headers <%headers.0%>
+      body: Returned content with URL <% url.0 %>, query param <% param.0 %> and custom-header <% custom-header.0 %>
+
+
+-  request:
+      method: [GET]
+      url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
+
+   response:
+      status: 200
+      body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>

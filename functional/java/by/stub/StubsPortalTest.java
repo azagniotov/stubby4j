@@ -621,7 +621,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_ReturnReplacedTokenizedResponse_WhenMatcherGroupsEqualToNumberOfTokens() throws Exception {
+   public void should_ReturnReplacedTokenizedResponse_WhenCapturingGroupsEqualToNumberOfTokens() throws Exception {
       String requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/12345/category/milk");
       HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
       HttpResponse response = request.execute();
@@ -661,7 +661,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_ReturnReplacedTokenizedResponse_WhenMatcherGroupsNotEqualsToNumberOfTokens() throws Exception {
+   public void should_ReturnReplacedTokenizedResponse_WhenCapturingGroupsNotEqualsToNumberOfTokens() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/22222");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -673,7 +673,7 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_ReturnReplacedTokenizedResponse_WhenFullMatacherGroupsAreUsed() throws Exception {
+   public void should_ReturnReplacedTokenizedResponse_WhenFullMatchCapturingGroupsAreUsed() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/no/explicit/groups/22222?param=ABC");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -685,6 +685,17 @@ public class StubsPortalTest {
 
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(responseContent).isEqualTo("Returned content with URL /no/explicit/groups/22222, query ABC and headers XYZ");
+      assertThat(responseContent).isEqualTo("Returned content with URL /no/explicit/groups/22222, query param ABC and custom-header XYZ");
+   }
+
+   @Test
+   public void should_ReturnReplacedTokenizedResponse_WhenCapturingGroupHasSubgroups() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/groups/with/sub/groups/abc-123");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      final HttpResponse response = request.execute();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).isEqualTo("Returned content with URL /groups/with/sub/groups/abc-123, parent group abc-123 and two sub-groups abc & 123");
    }
 }
