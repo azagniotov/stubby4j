@@ -581,7 +581,7 @@ The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPT
 ##### Numbering the tokens based on capturing groups without sub-groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. So the leftmost capturing group would be `1` and the next one to the right of it would be `2`, etc.
 
-In other words `<% url.1 %>` and `<% url.2 %>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<% date.1 %>` token corresponds to one capturing group `([a-zA-Z]+)` from the `query` `date` property regex.
+In other words `<% url.1 %>` and `<% url.2 %>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `<% date.1 %>` token corresponds to one capturing group `([a-zA-Z]+)` from the `query` `date` property regex.
 
 ##### Numbering the tokens based on capturing groups with sub-groups
 In regex world capturing groups can contain capturing sub-groups, ie `url` regex: `^/resource/``(``([a-z]{3})``-``([0-9]{3})``)``$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups `([a-z]{3})` & `([0-9]{3})`.
