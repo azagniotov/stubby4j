@@ -1533,6 +1533,42 @@ public class StubRequestTest {
    }
 
    @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasOneSubCapturingGroup() throws Exception {
+
+      final String url = "^/([a-z]{3}-([a-z]{3}))/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(4);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(4);
+      assertThat(assertingRequest.getRegexGroups()
+         .toString()).isEqualTo("{url.0=/abc-efg/jhgjkhg234234l2, url.1=abc-efg, url.2=efg, url.3=jhgjkhg234234l2}");
+   }
+
+   @Test
+   public void stubbedRequestShouldReturnMultipleRegexGroups_WhenValidRegexHasMultipleSubCapturingGroups() throws Exception {
+
+      final String url = "^/(([a-z]{3})-([a-z]{3}))/([a-z0-9]+)$";
+
+      final StubRequest expectedRequest =
+         BUILDER.withUrl(url).withMethodGet().build();
+      final StubRequest assertingRequest =
+         BUILDER.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
+
+      final boolean equals = assertingRequest.equals(expectedRequest);
+      assertThat(equals).isTrue();
+      assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(5);
+      assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(5);
+      assertThat(assertingRequest.getRegexGroups()
+         .toString()).isEqualTo("{url.0=/abc-efg/jhgjkhg234234l2, url.1=abc-efg, url.2=abc, url.3=efg, url.4=jhgjkhg234234l2}");
+   }
+
+   @Test
    public void stubbedRequestEqualsAssertingRequest_WhenUrlRegexifiedDoesNotAccommodateForQueryString() throws Exception {
 
       final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+";

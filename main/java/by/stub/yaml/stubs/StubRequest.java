@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
-import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -256,8 +255,7 @@ public class StubRequest {
       }
    }
 
-   @VisibleForTesting
-   boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
+   private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String yamlPropertyName) {
       try {
          // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
          // it does not mean that newline feeds and carriage return will be matched by default
@@ -272,6 +270,9 @@ public class StubRequest {
             //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
             // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
             final int groupCount = matcher.groupCount();
+
+            // TODO If headers or query maps have more than one item, the last item in the map
+            // TODO - will take precedence when building a token name: query.0 or headers.0
             if (groupCount > 0) {
                for (int idx = 1; idx <= groupCount; idx++) {
                   regexGroups.put(StringUtils.buildToken(yamlPropertyName, idx), matcher.group(idx));
