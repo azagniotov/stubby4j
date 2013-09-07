@@ -585,7 +585,7 @@ When giving tokens their ID based on the count of manually defined capturing gro
 Coming soon...
 
 ##### Tokens with ID zero
-Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<%url.0%>` will be replaced with `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
+Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<%url.0%>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
 
 Another example, would be the earlier case where `headers` regex does not have capturing groups defined within. Which is fine, since `<%headers.0%>` token corresponds to the __full__ match of regex `[0-9]+`.
 
