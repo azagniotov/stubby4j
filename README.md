@@ -584,7 +584,7 @@ When giving tokens their ID based on the count of manually defined capturing gro
 In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
 ##### Numbering the tokens based on capturing groups with sub-groups
-In regex world capturing groups can contain capturing sub-groups, ie `url` regex: `^/resource/` `(`   `([a-z]{3})`  `-`  `([0-9]{3})`    `)` `$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups `([a-z]{3})` & `([0-9]{3})`.
+In regex world capturing groups can contain capturing sub-groups, ie `url` regex: `^/resource/``(``([a-z]{3})``-``([0-9]{3})``)``$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups `([a-z]{3})` & `([0-9]{3})`.
 
 When giving tokens their ID based on the count of capturing groups, you should start from `1`, not zero (zero reserved for token that holds full regex match) from left to right. If a group has sub-group within, you count the sub-group first before counting next one to the right of the parent group.
 
