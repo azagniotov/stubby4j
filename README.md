@@ -582,7 +582,7 @@ The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPT
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. So the leftmost capturing group would be `1` and the next one to the right of it would be `2`, etc. In other words `<%url.1%>` and `<%url.2%>` tokens correspond to two capturing groups from `url` regex `(\d{5})` and `([a-zA-Z]+)`, `<%query.1%>` token corresponds to one capturing group `([a-zA-Z]+)`.
 
 ##### Numbering the tokens based on capturing groups with sub-groups
-Coming soon...
+In regex world capturing groups can contain capturing sub-groups, ie: `^/resource/(([a-z]{3})-([0-9]{3}))$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups `([a-z]{3})` & `([0-9]{3})`.
 
 ##### Tokens with ID zero
 Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<%url.0%>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<%url.0%>` in your template.
