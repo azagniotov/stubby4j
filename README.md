@@ -106,36 +106,36 @@ stubby4j is a fat JAR, which contains the following dependencies:
 ## Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
 Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j.
-Keep in mind that __it takes 6-9 hours for the new release to appear on live Maven Central repo__. In other words, if you don't see the v2.0.13 there yet, its probably on its way ;)
+Keep in mind that __it takes 6-9 hours for the new release to appear on live Maven Central repo__. In other words, if you don't see the v.2.0.14 there yet, its probably on its way ;)
 
 #### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.13</version>
+    <version>2.0.14</version>
 </dependency>
 ```
 
 #### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.13" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.14" />
 ```
 
 #### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.13'
+'by.stub:stubby4j:jar:2.0.14'
 ```
 
 #### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.13'
+compile 'by.stub:stubby4j:2.0.14'
 ```
 
 ## Command-line Switches
 ```
 usage:
-       java -jar stubby4j-2.0.13.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.14.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -1035,8 +1035,9 @@ for each <endpoint> of stored endpoints {
 
 
 ## Change Log
-### 2.0.14-SNAPSHOT
+### 2.0.14
 * Whitespace was not allowed between the `<% ` & ` %>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
+* Regex matches were stored against incorrect token names for `query` and `headers` regexes [BUG]
 * Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
 * Added command line arg `--version` that prints current stubby4j version to the console [ENHANCEMENT]
 
