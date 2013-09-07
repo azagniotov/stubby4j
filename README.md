@@ -588,7 +588,7 @@ In regex world, capturing groups can contain capturing sub-groups, as an example
 
 When giving tokens their ID based on the count of capturing groups, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. If a group has sub-group within, you count the sub-group(s) first (also from left to right) before counting the next one to the right of the parent group.
 
-In other words tokens `<% url.1 %>`, `<% url.2 %>` and `<% url.3 %>` correspond to three capturing groups from the `url` regex starting from left to right: `([a-z]{3}-[0-9]{3})`, `([a-z]{3})` and `([0-9]{3})`.
+In other words tokens `<% url.1 %>`, `<% url.2 %>` and `<% url.3 %>` correspond to three capturing groups from the `url` regex, starting from left to right: `([a-z]{3}-[0-9]{3})`, `([a-z]{3})` and `([0-9]{3})`.
 
 ##### Tokens with ID zero
 Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<% url.0 %>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<% url.0 %>` in your template.
