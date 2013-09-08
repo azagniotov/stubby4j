@@ -7,29 +7,30 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## Table of Contents
+## User manual for stubby4j v2.0.15
+### Table of contents
 
-* [Key Features](#key-features)
+* [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
 * [stubby4j dependencies](#stubby4j-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
-* [Command-line Switches](#command-line-switches)
-* [Endpoint Configuration HOWTO](#endpoint-configuration)
+* [Command-line switches](#command-line-switches)
+* [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
    * [Response](#response)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
-* [The Admin Portal](#the-admin-portal)
-* [The Stubs Portal](#the-stubs-portal)
+* [The admin portal](#the-admin-portal)
+* [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
-* [Change Log](#change-log)
+* [Change log](#change-log)
 * [Roadmap](#roadmap)
 * [Authors](#authors)
 * [Kudos](#kudos)
-* [See Also](#see-also)
+* [See also](#see-also)
 
-## Key Features
+### Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
 * Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
@@ -41,7 +42,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 * Over 98% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
 
-## Why would a developer use stubby4j?
+### Why would a developer use stubby4j?
 ####You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
 * Third party web service your application suppose to contract with is not ready yet
@@ -57,7 +58,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * Concentrate on the task at hand
 
 
-## Why would a QA use stubby4j?
+### Why would a QA use stubby4j?
 * Specifiable mock responses to simulate page conditions without real data.
 * Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
 * Easily swappable data config files to run different data sets and responses.
@@ -66,7 +67,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ###### All this goodness in just under 1.5MB
 
 
-## Building
+### Building
 stubby4j is a multi-module Gradle project
 
 * IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files
@@ -88,7 +89,7 @@ Run `gradle clean check` command to:
 * Generate Cobertura report under the ```main``` module
 
 
-## Dependencies
+### Dependencies
 stubby4j is a fat JAR, which contains the following dependencies:
 
 * commons-cli-1.2.jar
@@ -103,7 +104,7 @@ stubby4j is a fat JAR, which contains the following dependencies:
 **stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
 
 
-## Adding stubby4j to your project
+### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
 Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j.
 Keep in mind that __it takes 6-9 hours for the new release to appear on live Maven Central repo__. In other words, if you don't see the v.2.0.15 there yet, its probably on its way ;)
@@ -132,7 +133,7 @@ Keep in mind that __it takes 6-9 hours for the new release to appear on live Mav
 compile 'by.stub:stubby4j:2.0.15'
 ```
 
-## Command-line Switches
+### Command-line switches
 ```
 usage:
        java -jar stubby4j-2.0.15.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
@@ -159,7 +160,7 @@ usage:
                        reloaded
 ```
 
-## Endpoint Configuration
+### Endpoint configuration HOWTO
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
@@ -193,7 +194,7 @@ Here is a fully-populated, unrealistic endpoint:
       file: responseData.xml
 ```
 
-### request
+### Request
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
 
@@ -368,7 +369,7 @@ The following endpoint only accepts requests with `application/json` post values
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
 
-### response
+### Response
 
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
@@ -552,7 +553,7 @@ Assuming a match has been made against the given `request` object, data from `re
       body: Hello, World!
 ```
 
-## Dynamic token replacement in stubbed response
+### Dynamic token replacement in stubbed response
 
 During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response.
 
@@ -610,11 +611,11 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
 
-## The Admin Portal
+### The admin portal
 
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
 
-### Supplying Endpoints to Stubby
+#### Supplying Endpoints to Stubby
 
 Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --data flags) with the following structure for each endpoint:
 
@@ -757,20 +758,20 @@ You can also view the currently configured endpoints by going to `localhost:8889
 If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart),
 you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
 
-### Changing Existing Endpoints
+#### Changing Existing Endpoints
 
 Perform `PUT` requests in the same format as using `POST`, only this time supply the id in the path. For instance, to update the response with id 4 you would `PUT` to `localhost:8889/4`.
 
-### Deleting Endpoints
+#### Deleting Endpoints
 
 Send a `DELETE` request to `localhost:8889/<id>`
 
 
-## The Stubs Portal
+### The stubs portal
 
 Requests sent to any url at `localhost:8882` (or wherever you told stubby to run) will search through the available endpoints and, if a match is found, respond with that endpoint's `response` data
 
-### How Endpoints Are Matched
+#### How endpoints are matched
 
 For a given endpoint, stubby only cares about matching the properties of the request that have been defined in the YAML. The exception to this rule is `method`; if it is omitted it is defaulted to `GET`.
 
@@ -800,9 +801,9 @@ for each <endpoint> of stored endpoints {
 ```
 
 
-## Programmatic API
+### Programmatic API
 
-### Starting and using stubby4j with the help of StubbyClient
+#### Starting and using stubby4j with the help of StubbyClient
 
 ```java
    /**
@@ -1034,20 +1035,20 @@ for each <endpoint> of stored endpoints {
 ```
 
 
-## Change Log
-### 2.0.15
+### Change log
+#### 2.0.15
 * When creating regex token names for `query` or `headers`, enforcing format of `headers.key_name.ID` [ENHANCEMENT]
 
-### 2.0.14
+#### 2.0.14
 * Whitespace was not allowed between the `<% ` & ` %>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
 * Regex matches were stored against incorrect token names for `query` and `headers` regexes [BUG]
 * Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
 * Added command line arg `--version` that prints current stubby4j version to the console [ENHANCEMENT]
 
-### 2.0.13
+#### 2.0.13
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
 
-### 2.0.12
+#### 2.0.12
 * Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms [ENHANCEMENT]
 * Added additional API to start Jetty via StubbyClient by specifying an address to bind [ENHANCEMENT]
 
@@ -1133,25 +1134,25 @@ for each <endpoint> of stored endpoints {
 ### 1.0.58
 * Making sure that stubby can serve binary files as well as ascii files, when response is loaded using the ```file``` property [ENHANCEMENT]
 
-### 1.0.57
+#### 1.0.57
 * Migrated the project from Maven to Gradle (thanks to [Logan McGrath](https://github.com/lmcgrath) for his feedback and assistance). The project has now a multi-module setup [ENHANCEMENT]
 
-### 1.0.56
+#### 1.0.56
 * If `request.post` was left out of the configuration, stubby would ONLY match requests without a post body to it [BUG]
 * Fixing `See Also` section of readme [COSMETICS]
 
-### 1.0.55
+#### 1.0.55
 * Updated YAML example documentation [COSMETICS]
 * Bug fix where command line options `mute`, `debug` and `watch` were overlooked [BUG]
 
-### 1.0.54
+#### 1.0.54
 * Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
 
-## Roadmap
+### Roadmap
 * Add support for OAuth in Record & Replay feature
 * Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state (maybe?)
 
-## Authors
+### Authors
 A number of people have contributed directly to stubby4j by writing
 documentation or developing software.
 
@@ -1159,7 +1160,7 @@ documentation or developing software.
 2. Eric Mrak <enmrak@gmail.com>
 
 
-## Kudos
+### Kudos
 A number of people have contributed to stubby4j by reporting problems, suggesting improvements or submitting changes. Special thanks fly out to the following **Ninjas** for their help, support and feedback
 
 * Isa Goksu
@@ -1172,10 +1173,10 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 * Logan McGrath
 
 
-## See Also
+### See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
 * **[stubby4node](https://github.com/mrak/stubby4node):** A node.js implementation of stubby
 
 
-## Copyright
+### Copyright
 See COPYRIGHT for details.
