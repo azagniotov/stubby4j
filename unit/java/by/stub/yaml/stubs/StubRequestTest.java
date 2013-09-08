@@ -1529,7 +1529,7 @@ public class StubRequestTest {
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(5);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(5);
       assertThat(assertingRequest.getRegexGroups()
-         .toString()).isEqualTo("{paramOne.0=12345, paramOne.1=12345, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
+         .toString()).isEqualTo("{query.paramOne.0=12345, query.paramOne.1=12345, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
    }
 
    @Test
@@ -1547,7 +1547,7 @@ public class StubRequestTest {
       assertThat(assertingRequest.getRegexGroups().keySet().size()).isEqualTo(7);
       assertThat(assertingRequest.getRegexGroups().values().size()).isEqualTo(7);
       assertThat(assertingRequest.getRegexGroups()
-         .toString()).isEqualTo("{paramOne.0=12345, paramOne.1=12345, paramTwo.0=ABCDE, paramTwo.1=ABCDE, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
+         .toString()).isEqualTo("{query.paramOne.0=12345, query.paramOne.1=12345, query.paramTwo.0=ABCDE, query.paramTwo.1=ABCDE, url.0=/abc-efg/12/KM/jhgjkhg234234l2, url.1=abc-efg, url.2=jhgjkhg234234l2}");
    }
 
    @Test

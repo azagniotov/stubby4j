@@ -207,17 +207,17 @@ public class StubRequest {
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery);
+      return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 
-      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders);
+      return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
 
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap) {
+   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
       if (dataStoreMap.isEmpty()) {
          return true;
       }
@@ -231,7 +231,8 @@ public class StubRequest {
             return false;
          } else {
             final String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
-            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, dataStoreParam.getKey())) {
+            final String templateTokenName = String.format("%s.%s", mapName, dataStoreParam.getKey());
+            if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, templateTokenName)) {
                return false;
             }
          }

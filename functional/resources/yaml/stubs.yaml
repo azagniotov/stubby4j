@@ -399,7 +399,7 @@
 
    response:
       status: 200
-      body: Returned content with URL <% url.0 %>, query param <% param.0 %> and custom-header <% custom-header.0 %>
+      body: Returned content with URL <% url.0 %>, query param <% query.param.0 %> and custom-header <% headers.custom-header.0 %>
 
 
 -  request:
