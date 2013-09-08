@@ -743,7 +743,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
 
 If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax. When creating or updating one stubbed request, the response will contain `Location` in the header with the newly created resources' location
 
-### Getting the Current List of Stubbed Endpoints
+#### Getting the current list of stubbed endpoints
 
 Performing a `GET` request on `localhost:8889` will return a YAML list of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
 
@@ -753,16 +753,16 @@ Performing a `GET` request on `localhost:8889/<id>` will return the YAML object 
 
 You can also view the currently configured endpoints by going to `localhost:8889/status`
 
-#### The Refresh Stubbed Data Endpoint
+#### Refreshing stubbed data via an endpoint
 
-If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart),
+If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart stubby),
 you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
 
-#### Changing Existing Endpoints
+#### Changing existing endpoints
 
 Perform `PUT` requests in the same format as using `POST`, only this time supply the id in the path. For instance, to update the response with id 4 you would `PUT` to `localhost:8889/4`.
 
-#### Deleting Endpoints
+#### Deleting endpoints
 
 Send a `DELETE` request to `localhost:8889/<id>`
 
@@ -1052,44 +1052,44 @@ for each <endpoint> of stored endpoints {
 * Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms [ENHANCEMENT]
 * Added additional API to start Jetty via StubbyClient by specifying an address to bind [ENHANCEMENT]
 
-### 2.0.11
+#### 2.0.11
 * `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided [ENHANCEMENT]
 * Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data [ENHANCEMENT]
 
-### 2.0.10
+#### 2.0.10
 * Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server [FEATURE]
 
-### 2.0.9
+#### 2.0.9
 * Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]
 * Pre-setting header `x-stubby-resource-id` during YAML parse time, instead of on demand. This way resource IDs are viewable on Admin status page [ENHANCEMENT]
 * Making sure that header `x-stubby-resource-id` is recalculated accordingly after stubbed data in memory has changed (due to reset, or deletion etc.) [BUG]
 * Added date stamp to live reload success message [COSMETICS]
 
-### 2.0.8
+#### 2.0.8
 * Making sure that every stubbed response returned to the client contains its resource ID in the header `x-stubby-resource-id`. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
 
-### 2.0.7
+#### 2.0.7
 * Force regex matching only everywhere (url, query, post, headers, etc.) to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
 
-### 2.0.6
+#### 2.0.6
 * Live YAML scan now also check for modifications to external files referenced from main YAML [ENHANCEMENT]
 * YAML parsing logic revisited [COSMETICS]
 * Code cleanup [COSMETICS]
 
-### 2.0.5
+#### 2.0.5
 * Added ability to specify sequence of responses on the same URI using `file` (Prakash Kandavel) [ENHANCEMENT]
 * Minor code clean up [COSMETICS]
 * Documentation update [COSMETICS]
 
-### 2.0.4
+#### 2.0.4
 * Making sure that operations starting up stubby and managing stubbed data are atomic  [ENHANCEMENT]
 
-### 2.0.3
+#### 2.0.3
 * Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
 * Eliminated implicit test to test dependencies in AdminPortalTest that was causing issues when running the tests under JDK 1.7 [BUG]
 * Added convenience method in StubbyClient `updateStubbedData` [ENHANCEMENT]
 
-### 2.0.2
+#### 2.0.2
 * Stubbed request HTTP header names were not lower-cased at the time of match [BUG]
 * Doing GET on Admin portal `/` will display all loaded stub data in a YAML format in the browser [FEATURE]
 * Doing GET on Admin portal `/<id>` will display loaded stub data matched by provided index in a YAML format in the browser [FEATURE]
@@ -1103,35 +1103,35 @@ for each <endpoint> of stored endpoints {
 * Updated default response message when response content could not be loaded from `file` [ENHANCEMENT]
 * Documentation refinement [COSMETICS]
 
-### 2.0.1
+#### 2.0.1
 * Every ```url``` is treated as a regular expression now [ENHANCEMENT]
 * ANSI logging in the terminal was working only for HTTP requests with status 200 [BUG]
 * Documentation refinement [COSMETICS]
 
-### 2.0.0
+#### 2.0.0
 * Mainly backend code improvements: A lot of refactoring for better code readability, expanding test coverage [COSMETICS]
 
-### 1.0.63
+#### 1.0.63
 * Added ability to specify sequence of stub responses for the same URI, that are sent to the client in the loop [FEATURE]
 * Configuration scan was not enabled, even if the ```--watch``` command line argument was passed [BUG]
 
-### 1.0.62
+#### 1.0.62
 * Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
 * A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
 * Documentation revisited and rewritten into a much clearer format [ENHANCEMENT]
 
-### 1.0.61
+#### 1.0.61
 * Just some changes around unit, integration and functional tests. Code cleanup [COSMETICS]
 
-### 1.0.60
+#### 1.0.60
 * stubby's admin page was generating broken hyper links if URL had single quotes [BUG]
 * stubby is able to match URL when query string param was an array with elements within single quotes, ie: ```attributes=['id','uuid']``` [ENHANCEMENT]
 
-### 1.0.59
+#### 1.0.59
 * stubby's admin page was not able to display the contents of stubbed response/request ```body```, ```post``` or ```file``` [BUG]
 * stubby was not able to match URL when query string param was an array with quoted elements, ie: ```attributes=["id","uuid","created","lastUpdated","displayName","email"]``` [BUG]
 
-### 1.0.58
+#### 1.0.58
 * Making sure that stubby can serve binary files as well as ascii files, when response is loaded using the ```file``` property [ENHANCEMENT]
 
 #### 1.0.57
