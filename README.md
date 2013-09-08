@@ -1037,7 +1037,7 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 #### 2.0.15
-* When creating regex token names for `query` or `headers`, enforcing format of `headers.key_name.ID` [ENHANCEMENT]
+* When creating template token names for `query` or `headers` regex matches, the name format to be followed should be `headers.key_name.ID` or `query.key_name.ID` [ENHANCEMENT]
 
 #### 2.0.14
 * Whitespace was not allowed between the `<% ` & ` %>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
