@@ -101,12 +101,9 @@ stubby4j is a fat JAR, which contains the following dependencies:
 * jetty-io-8.1.7.v20120910.jar
 * jetty-http-8.1.7.v20120910.jar
 
-**stubby4j is also compatible with Jetty 7.x.x and servlet API v2.5**
-
 
 ### Adding stubby4j to your project
-stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your POM.
-Check Maven Central for the [latest version](http://search.maven.org/#search|ga|1|stubby4j) of stubby4j.
+stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
 Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch v.2.0.15 as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 #### Apache Maven
@@ -131,6 +128,11 @@ Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven
 #### Gradle
 ```xml
 compile 'by.stub:stubby4j:2.0.15'
+```
+
+#### Scala SBT
+```xml
+libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 ```
 
 ### Command-line switches
