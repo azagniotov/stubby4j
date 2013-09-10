@@ -2,7 +2,7 @@
 
 # stubby4j
 A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.
-It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code.
+It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code. Allows stubbing of external systems with ease for integration testing
 
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
