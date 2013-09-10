@@ -617,7 +617,7 @@ After successful HTTP request verification, if your `body` or contents of local 
 
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
 
-#### Supplying Endpoints to Stubby
+#### Supplying endpoints to stubby
 
 Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --data flags) with the following structure for each endpoint:
 
@@ -751,7 +751,7 @@ Performing a `GET` request on `localhost:8889` will return a YAML list of all cu
 
 Performing a `GET` request on `localhost:8889/<id>` will return the YAML object representing the response with the supplied id.
 
-#### The Status Page
+#### The status page
 
 You can also view the currently configured endpoints by going to `localhost:8889/status`
 
