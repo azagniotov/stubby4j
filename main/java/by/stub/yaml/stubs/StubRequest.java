@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -217,9 +218,12 @@ public class StubRequest {
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
 
-   private boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
+   @VisibleForTesting
+   boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
       if (dataStoreMap.isEmpty()) {
          return true;
+      } else if (!dataStoreMap.isEmpty() && thisAssertingMap.isEmpty()) {
+         return false;
       }
 
       final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
@@ -241,9 +245,10 @@ public class StubRequest {
       return true;
    }
 
-   private boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
-      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+   @VisibleForTesting
+   boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
       final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
+      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
 
       if (!isDataStoreValueSet) {
          return true;
@@ -263,8 +268,8 @@ public class StubRequest {
          // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
          // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
          final Matcher matcher = Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue);
-         final boolean matches = matcher.matches();
-         if (matches) {
+         final boolean isMatch = matcher.matches();
+         if (isMatch) {
             // group(0) holds the full regex match
             regexGroups.put(StringUtils.buildToken(templateTokenName, 0), matcher.group(0));
 
@@ -277,13 +282,14 @@ public class StubRequest {
                }
             }
          }
-         return matches;
+         return isMatch;
       } catch (PatternSyntaxException e) {
          return dataStoreValue.equals(thisAssertingValue);
       }
    }
 
-   private boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
+   @VisibleForTesting
+   boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
       if (dataStoreArray.isEmpty()) {
          return true;
       } else if (!thisAssertingArray.isEmpty()) {

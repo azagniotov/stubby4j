@@ -7,8 +7,11 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -207,6 +210,144 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
+
+   @Test
+   public void arraysIntersect_ShouldReturnTrue_WhenDataStoreArrayEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final boolean isArraysIntersect = stubRequest.arraysIntersect(new ArrayList<String>(), new ArrayList<String>() {{
+         add("apple");
+      }});
+
+      assertThat(isArraysIntersect).isTrue();
+   }
+
+   @Test
+   public void arraysIntersect_ShouldReturnFalse_WhenAssertingArrayEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final boolean isArraysIntersect = stubRequest.arraysIntersect(new ArrayList<String>() {{
+         add("apple");
+      }}, new ArrayList<String>());
+
+      assertThat(isArraysIntersect).isFalse();
+   }
+
+   @Test
+   public void arraysIntersect_ShouldReturnTrue_WhenTwoArraysHaveTheSameElements() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final boolean isArraysIntersect = stubRequest.arraysIntersect(
+         new ArrayList<String>() {{
+            add("apple");
+         }}, new ArrayList<String>() {{
+            add("apple");
+         }}
+      );
+
+      assertThat(isArraysIntersect).isTrue();
+   }
+
+   @Test
+   public void arraysIntersect_ShouldReturnFalse_WhenTwoArraysDontHaveTheSameElements() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final boolean isArraysIntersect = stubRequest.arraysIntersect(
+         new ArrayList<String>() {{
+            add("apple");
+         }}, new ArrayList<String>() {{
+            add("orange");
+         }}
+      );
+
+      assertThat(isArraysIntersect).isFalse();
+   }
+
+   @Test
+   public void stringsMatch_ShouldReturnTrue_WhenDataStoreValueNull() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final String dataStoreVlaue = null;
+      final String assertingValue = "blah";
+      final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
+
+      assertThat(isStringsMatch).isTrue();
+   }
+
+   @Test
+   public void stringsMatch_ShouldReturnTrue_WhenDataStoreValueEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final String dataStoreVlaue = "";
+      final String assertingValue = "blah";
+      final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
+
+      assertThat(isStringsMatch).isTrue();
+   }
+
+   @Test
+   public void stringsMatch_ShouldReturnFalse_WhenAssertingValueNull() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final String dataStoreVlaue = "stubbedValue";
+      final String assertingValue = null;
+      final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
+
+      assertThat(isStringsMatch).isFalse();
+   }
+
+   @Test
+   public void stringsMatch_ShouldReturnFalse_WhenAssertingValueEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final String dataStoreVlaue = "stubbedValue";
+      final String assertingValue = "";
+      final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
+
+      assertThat(isStringsMatch).isFalse();
+   }
+
+   @Test
+   public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>();
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isTrue();
+   }
+
+   @Test
+   public void mapsMatch_ShouldReturnFalse_WhenAssertingMapEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>();
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isFalse();
+   }
+
+   @Test
+   public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreKey() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("someKey", "someValue");}};
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isFalse();
+   }
+
+   @Test
+   public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreValue() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "someValue");}};
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isFalse();
+   }
+
+   @Test
+   public void mapsMatch_ShouldReturnTrue_WhenAssertingMapMatchesDataStoreMap() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isTrue();
+   }
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenDifferentUri() throws Exception {
