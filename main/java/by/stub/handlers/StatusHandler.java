@@ -24,6 +24,7 @@ import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.JarUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
@@ -124,6 +125,7 @@ public final class StatusHandler extends AbstractHandler {
       final int tlsPort = jettyContext.getStubsTlsPort();
       final int adminPort = jettyContext.getAdminPort();
 
+      builder.append(populateTableRowTemplate("STUBBY VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
       builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
       builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));

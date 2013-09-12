@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.cli;
 
 import by.stub.annotations.CoberturaIgnore;
+import by.stub.utils.JarUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -30,11 +31,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.Manifest;
 
 public final class CommandLineInterpreter {
 
@@ -129,20 +127,9 @@ public final class CommandLineInterpreter {
     */
    @CoberturaIgnore
    public void printVersion() {
-      String version = String.format("\nstubby4j v%s", "x.x.xx");
-      final URLClassLoader classLoader = (URLClassLoader) getClass().getClassLoader();
-      try {
-         final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
-         final Manifest manifest = new Manifest(url.openStream());
-         final String rawVersion = manifest.getMainAttributes().getValue("Implementation-Version");
-         version = String.format("\nstubby4j v%s", rawVersion);
-      } catch (Exception e) {
-         //Do nothing
-      }
-
       final HelpFormatter formatter = new HelpFormatter();
       PrintWriter pw = new PrintWriter(System.out);
-      formatter.printWrapped(pw, HelpFormatter.DEFAULT_WIDTH, version);
+      formatter.printWrapped(pw, HelpFormatter.DEFAULT_WIDTH, JarUtils.readManifestImplementationVersion());
       pw.flush();
    }
 

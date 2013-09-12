@@ -1038,6 +1038,10 @@ for each <endpoint> of stored endpoints {
 
 
 ### Change log
+
+##### 2.0.16
+* Displaying stubby version on admin portal status page [ENHANCEMENT]
+
 ##### 2.0.15
 * When creating template token names for `query` or `headers` regex matches, the name format to be followed should be `headers.key_name.ID` or `query.key_name.ID` [ENHANCEMENT]
 
