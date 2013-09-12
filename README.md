@@ -1039,7 +1039,7 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 2.0.16
+##### 2.0.16-SNAPSHOT
 * Displaying stubby version on admin portal status page [ENHANCEMENT]
 
 ##### 2.0.15
