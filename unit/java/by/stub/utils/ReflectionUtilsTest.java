@@ -18,16 +18,14 @@ public class ReflectionUtilsTest {
 
    @Test
    public void shouldGetObjectPropertiesAndValues() throws Exception {
-      final int totalOfStubRequestMemberFields = 6;
       final StubRequest stubRequest = StubRequest.newStubRequest();
       stubRequest.addMethod(HttpMethods.POST);
       final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
-      //assertThat(properties.size()).isEqualTo(totalOfStubRequestMemberFields);
       assertThat("[POST]").isEqualTo(properties.get("method"));
-      assertThat(StringUtils.NOT_PROVIDED).isEqualTo(properties.get("url"));
-      assertThat(StringUtils.NOT_PROVIDED).isEqualTo(properties.get("post"));
-      assertThat("{}").isEqualTo(properties.get("headers"));
+      assertThat(properties.get("url")).isNull();
+      assertThat(properties.get("post")).isNull();
+      assertThat(properties.get("headers")).isNull();
    }
 
    @Test

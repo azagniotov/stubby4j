@@ -91,7 +91,12 @@
                      });
                },
                   function error(status, statusText, responseText) {
-                     alert("Error fetching resource on URL:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+                     var status = parseInt(status);
+                     if (status === 0) {
+                        alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
+                     } else {
+                        alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+                     }
                   }
                );
                return false;
@@ -101,14 +106,6 @@
    </script>
 </head>
 <body>
-<h2>Status</h2>
-<strong>Live Tweaks to YAML Configuration</strong>
-<p>
-   If you want to live tweak the loaded YAML config file, just make any changes to the file and it will reload within 3 seconds.<br />
-   Keep in mind, for the live reload to work, stubby4j MUST be started with <b><i>--watch</i></b> command line argument.
-</p>
-<strong>Current Stub Data</strong>
-<p>Have total of %s requests:</p>
 %s
 </body>
 </html>

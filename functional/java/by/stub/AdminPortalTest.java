@@ -109,7 +109,6 @@ public class AdminPortalTest {
       final String responseContentAsString = httpResponse.parseAsString().trim();
 
       assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(responseContentAsString).contains("Live Tweaks to YAML Configuration");
       assertThat(responseContentAsString).contains("/pdf/hello-world");
       assertThat(responseContentAsString).contains("STATUS");
       assertThat(responseContentAsString).contains("/uri/with/single/sequenced/response");

@@ -29,7 +29,7 @@ final class StubRequestBuilder implements StubBuilder<StubRequest> {
       this.method = new ArrayList<String>();
       this.post = null;
       this.file = null;
-      this.headers = new HashMap<String, String>();
+      this.headers = new LinkedHashMap<String, String>();
       this.query = new LinkedHashMap<String, String>();
       this.fieldNameAndValues = new HashMap<String, Object>();
    }

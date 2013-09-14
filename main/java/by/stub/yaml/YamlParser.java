@@ -122,21 +122,20 @@ public class YamlParser {
       final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
       if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
-         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubRequestBuilder.class);
+         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
          stubHttpLifecycle.setRequest(targetStub);
 
          ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
 
       } else {
-         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, StubResponseBuilder.class);
+         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubResponseBuilder());
          stubHttpLifecycle.setResponse(targetStub);
       }
    }
 
 
-   private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final Class<B> stubBuilderClass) throws Exception {
+   private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final B stubBuilder) throws Exception {
 
-      final B stubBuilder = stubBuilderClass.newInstance();
       for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
          final Object rawFieldName = pair.getValue();
@@ -169,13 +168,12 @@ public class YamlParser {
    private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
       final List yamlProperties = (List) parentNode.getValue();
-      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, StubResponseBuilder.class);
+      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, new StubResponseBuilder());
       stubHttpLifecycle.setResponse(populatedResponseStub);
    }
 
-   private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final Class<B> stubBuilderClass) throws Exception {
+   private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final B stubBuilder) throws Exception {
 
-      final B stubBuilder = stubBuilderClass.newInstance();
       final List<T> targetStubList = new LinkedList<T>();
       for (final Object arrayListEntry : yamlProperties) {
 

@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -88,10 +89,12 @@ public final class StatusHandler extends AbstractHandler {
       final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
 
       final StringBuilder builder = new StringBuilder();
+      builder.append(buildJettyParametersHtmlTable());
+      builder.append("<br />");
       builder.append(buildSystemStatusHtmlTable());
       builder.append("<br /><br />");
 
-      final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_request_response_tables");
+      final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
       for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex ++) {
 
@@ -113,10 +116,10 @@ public final class StatusHandler extends AbstractHandler {
          builder.append("<br /><br />");
       }
 
-      return HandlerUtils.populateHtmlTemplate(YamlProperties.STATUS, stubHttpLifecycles.size(), builder.toString());
+      return HandlerUtils.populateHtmlTemplate("status", builder.toString());
    }
 
-   private String buildSystemStatusHtmlTable() throws Exception {
+   private String buildJettyParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
 
@@ -125,20 +128,35 @@ public final class StatusHandler extends AbstractHandler {
       final int tlsPort = jettyContext.getStubsTlsPort();
       final int adminPort = jettyContext.getAdminPort();
 
-      builder.append(populateTableRowTemplate("STUBBY VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
+      builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
+      builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
       builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
-      builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
-      builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
-      builder.append(populateTableRowTemplate("CONFIGURATION", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getYamlAbsolutePath()));
 
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP,
-         AdminHandler.ADMIN_ROOT, host, adminPort);
+      final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
+
+      return String.format(jettyParametersTable, "jetty parameters", builder.toString());
+   }
+
+   private String buildSystemStatusHtmlTable() throws Exception {
+
+      final StringBuilder builder = new StringBuilder();
+
+      final String host = jettyContext.getHost();
+      final int adminPort = jettyContext.getAdminPort();
+
+      builder.append(populateTableRowTemplate("STUBBY VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
+      final String yamlLocalUri =  String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
+      builder.append(populateTableRowTemplate("YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
+      builder.append(populateTableRowTemplate("YAML LAST MODIFIED", CSS_CLASS_NO_HIGHLIGHTABLE, new Date(stubbedDataManager.getDataYaml().lastModified())));
+
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
+      builder.append(populateTableRowTemplate("STUBBED ENDPOINTS", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getStubHttpLifecycles().size()));
 
-      final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_system_status_table");
+      final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
-      return String.format(systemStatusTable, builder.toString());
+      return String.format(systemStatusTable, "system status", builder.toString());
    }
 
    private String buildPageBodyHtml(final String resourceId, final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {

@@ -134,7 +134,8 @@ public class StubHttpLifecycle {
 
    public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
       final List<StubResponse> allResponses = getAllResponses();
-      return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(allResponses.get(sequencedResponseId), propertyName));
+      final StubResponse sequencedResponse = allResponses.get(sequencedResponseId);
+      return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
    }
 
    @Override

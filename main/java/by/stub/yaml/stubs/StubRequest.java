@@ -64,7 +64,7 @@ public class StubRequest {
       this.file = file;
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
-      this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
+      this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
       this.regexGroups = new TreeMap<String, String>();
    }
@@ -117,7 +117,7 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      final Map<String, String> headersCopy = new HashMap<String, String>(headers);
+      final Map<String, String> headersCopy = new LinkedHashMap<String, String>(headers);
       final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
       this.headers.clear();
       for (final Map.Entry<String, String> entry : entrySet) {

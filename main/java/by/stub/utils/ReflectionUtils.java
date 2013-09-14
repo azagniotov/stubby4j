@@ -39,7 +39,7 @@ import java.util.Map;
 public final class ReflectionUtils {
 
    private static List<String> skipableProperties =
-      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "AUTH_HEADER", "REGEX_START", "REGEX_END", "responseSequenceCounter", "fileBytes"));
+      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "AUTH_HEADER", "REGEX_START", "REGEX_END", "regexGroups", "responseSequenceCounter", "fileBytes"));
 
    private ReflectionUtils() {
 
@@ -66,7 +66,9 @@ public final class ReflectionUtils {
          final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
          final String value = StringUtils.determineObjectStringValue(fieldObject);
 
-         properties.put(StringUtils.toLower(field.getName()), value);
+         if (!value.equals(StringUtils.NOT_PROVIDED) && !value.equals("{}")) {
+            properties.put(StringUtils.toLower(field.getName()), value);
+         }
       }
 
       return properties;

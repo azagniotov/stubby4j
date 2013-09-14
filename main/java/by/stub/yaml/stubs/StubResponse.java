@@ -25,7 +25,7 @@ import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +53,7 @@ public class StubResponse {
       this.file = file;
       this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
       this.latency = latency;
-      this.headers = ObjectUtils.isNull(headers) ? new HashMap<String, String>() : headers;
+      this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
    }
 
    public String getStatus() {
@@ -126,7 +126,12 @@ public class StubResponse {
    }
 
    void addResourceIDHeader(final int httplifeCycleIndex) {
-      getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
+      getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
+      final Map<String, String> shuffledHeaders = new LinkedHashMap<String, String>();
+      shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
+      shuffledHeaders.putAll(new LinkedHashMap<String, String>(getHeaders()));
+      getHeaders().clear();
+      getHeaders().putAll(shuffledHeaders);
    }
 
    public StubResponseTypes getStubResponseType() {

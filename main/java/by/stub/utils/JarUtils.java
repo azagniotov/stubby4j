@@ -20,11 +20,11 @@ public final class JarUtils {
          final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
          final Manifest manifest = new Manifest(url.openStream());
          final String rawVersion = manifest.getMainAttributes().getValue("Implementation-Version");
-         return String.format("\n%s", rawVersion);
+         return String.format("%s", rawVersion);
       } catch (Exception e) {
          //Do nothing
       }
 
-      return String.format("\n%s", "x.x.xx");
+      return String.format("%s", "x.x.xx");
    }
 }
