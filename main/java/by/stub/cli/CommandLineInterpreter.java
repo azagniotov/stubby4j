@@ -36,6 +36,7 @@ import java.util.Map;
 
 public final class CommandLineInterpreter {
 
+   public static final String[] PROVIDED_OPTIONS = new String[1];
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
    public static final String OPTION_TLSPORT = "tls";
@@ -147,6 +148,7 @@ public final class CommandLineInterpreter {
          for (final Option option : options) {
             put(option.getLongOpt(), option.getValue());
          }
+         PROVIDED_OPTIONS[0] = this.toString();
       }};
    }
 }

@@ -19,12 +19,24 @@ public final class JarUtils {
       try {
          final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
          final Manifest manifest = new Manifest(url.openStream());
-         final String rawVersion = manifest.getMainAttributes().getValue("Implementation-Version");
-         return String.format("%s", rawVersion);
+         return manifest.getMainAttributes().getValue("Implementation-Version");
       } catch (Exception e) {
          //Do nothing
       }
 
-      return String.format("%s", "x.x.xx");
+      return "x.x.xx";
+   }
+
+   public static String readManifestBuiltDate() {
+      final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
+      try {
+         final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
+         final Manifest manifest = new Manifest(url.openStream());
+         return manifest.getMainAttributes().getValue("Built-Date");
+      } catch (Exception e) {
+         //Do nothing
+      }
+
+      return "Thu, 01 Jan 1970 00:00:00 GMT";
    }
 }

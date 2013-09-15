@@ -11,7 +11,7 @@ project.ext.projectManifest = manifest {
                'Implementation-Version': "${version}",
                'Implementation-Vendor' : 'Alexander Zagniotov',
                'Built-By': 'Alexander Zagniotov',
-               'Built-Date': new Date().getDateTimeString(),
+               'Built-Date': new Date().toString(),
                'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
                'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
 }
