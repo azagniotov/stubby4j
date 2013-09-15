@@ -115,7 +115,7 @@ public final class StatusHandler extends AbstractHandler {
 
          final String ajaxifiedLinkToResource =
             String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;", resourceId, "httplifecycle", "marshalledYaml");
-         final String marshalledYamlRow = populateTableRowTemplate(StringUtils.toUpper("REQUEST&RESPONSE BLOCK"), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
+         final String marshalledYamlRow = populateTableRowTemplate(StringUtils.toUpper("REQUEST & RESPONSE"), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
          builder.append(String.format(htmlTemplateContent, "yaml", marshalledYamlRow));
          builder.append("<br /><br />");
       }
