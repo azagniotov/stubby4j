@@ -151,7 +151,7 @@ public final class StatusHandler extends AbstractHandler {
 
       builder.append(populateTableRowTemplate("STUBBY JAR BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
       builder.append(populateTableRowTemplate("STUBBY JAR VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
-      builder.append(populateTableRowTemplate("STUBBY JAR ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS[0]));
+      builder.append(populateTableRowTemplate("STUBBY JAR ACTIVE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS[0]));
 
       final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
       builder.append(populateTableRowTemplate("YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
