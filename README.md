@@ -1041,6 +1041,9 @@ for each <endpoint> of stored endpoints {
 
 ##### 2.0.16-SNAPSHOT
 * Displaying stubby version on admin portal status page [ENHANCEMENT]
+* Added an option on admin status page to display YAML snippet for a given request & response pair [ENHANCEMENT]
+* Making sure that 'x-stubby-resource-id' header is always the first item in the stubbed headers on status page [ENHANCEMENT]
+* Changed colors of status page [COSMETICS]
 
 ##### 2.0.15
 * When creating template token names for `query` or `headers` regex matches, the name format to be followed should be `headers.key_name.ID` or `query.key_name.ID` [ENHANCEMENT]
