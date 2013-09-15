@@ -1040,7 +1040,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.16-SNAPSHOT
-* Displaying stubby version on admin portal status page [ENHANCEMENT]
+* Displaying stubby JAR: version, built date and passed command line args on status page [ENHANCEMENT]
 * Added an option on admin status page to display YAML snippet for a given request & response pair [ENHANCEMENT]
 * Making sure that 'x-stubby-resource-id' header is always the first item in the stubbed headers on status page [ENHANCEMENT]
 * Changed colors of status page [COSMETICS]
