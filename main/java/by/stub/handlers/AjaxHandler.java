@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 public class AjaxHandler extends AbstractHandler {
 
    private static final Pattern REGEX_REQUEST_OR_RESPONSE = Pattern.compile("^(request|response)$");
+   private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
 
    private final StubbedDataManager stubbedDataManager;
@@ -68,6 +69,12 @@ public class AjaxHandler extends AbstractHandler {
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
          final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
          renderAjaxResponseContent(wrapper, stubType, targetFieldName, foundStubHttpLifecycle);
+
+      } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
+
+         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
+         renderAjaxResponseContent(wrapper, "this", targetFieldName, foundStubHttpLifecycle);
 
       } else if (REGEX_NUMERIC.matcher(stubType).matches()) {
 

@@ -96,7 +96,7 @@ public final class StatusHandler extends AbstractHandler {
 
       final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
-      for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex ++) {
+      for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
 
          final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
          final String resourceId = stubHttpLifecycle.getResourceId();
@@ -113,6 +113,10 @@ public final class StatusHandler extends AbstractHandler {
             builder.append(buildPageBodyHtml(resourceId, htmlTemplateContent, responseTableTitle, stubResponseProperties));
          }
 
+         final String ajaxifiedLinkToResource =
+            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;", resourceId, "httplifecycle", "marshalledYaml");
+         final String marshalledYamlRow = populateTableRowTemplate(StringUtils.toUpper("REQUEST&RESPONSE BLOCK"), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
+         builder.append(String.format(htmlTemplateContent, "yaml", marshalledYamlRow));
          builder.append("<br /><br />");
       }
 
@@ -146,7 +150,7 @@ public final class StatusHandler extends AbstractHandler {
       final int adminPort = jettyContext.getAdminPort();
 
       builder.append(populateTableRowTemplate("STUBBY VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
-      final String yamlLocalUri =  String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
+      final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
       builder.append(populateTableRowTemplate("YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
       builder.append(populateTableRowTemplate("YAML LAST MODIFIED", CSS_CLASS_NO_HIGHLIGHTABLE, new Date(stubbedDataManager.getDataYaml().lastModified())));
 
@@ -176,18 +180,15 @@ public final class StatusHandler extends AbstractHandler {
    }
 
    private String constructHtmlTableRow(final String resourceId, final String tableName, final String fieldName, final String value) {
-      final String escapedValue = StringUtils.escapeHtmlEntities(value);
 
       if (highlightableProperties.contains(fieldName)) {
-         if (escapedValue.equals(StringUtils.NOT_PROVIDED)) {
-            return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
-         }
          final String ajaxifiedLinkToResource =
             String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;",
                resourceId, tableName, fieldName);
          return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 
+      final String escapedValue = StringUtils.escapeHtmlEntities(value);
       if (fieldName.equals(YamlProperties.URL)) {
          final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
          final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());

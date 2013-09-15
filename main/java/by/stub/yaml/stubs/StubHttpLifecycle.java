@@ -127,6 +127,8 @@ public class StubHttpLifecycle {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(request, propertyName));
       } else if (stubType.equals(YamlProperties.RESPONSE)) {
          return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
+      } else if (stubType.equals("this")) {
+         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(this, propertyName));
       } else {
          return "Unknown stub type: " + stubType;
       }
