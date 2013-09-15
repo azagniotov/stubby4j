@@ -90,7 +90,6 @@ public final class StatusHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
       builder.append(buildJettyParametersHtmlTable());
-      builder.append("<br />");
       builder.append(buildSystemStatusHtmlTable());
       builder.append("<br /><br />");
 
