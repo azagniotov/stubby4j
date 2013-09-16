@@ -153,7 +153,7 @@ public final class StatusHandler extends AbstractHandler {
       final StringBuilder builder = new StringBuilder();
 
       builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
-      builder.append(populateTableRowTemplate("CLASSPATH", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getClassPath()));
+      builder.append(populateTableRowTemplate("RUNTIME CLASSPATH", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getClassPath()));
       builder.append(populateTableRowTemplate("BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
       builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, calculateStubbyUpTime()));
       builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
