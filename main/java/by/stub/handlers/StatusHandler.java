@@ -162,13 +162,13 @@ public final class StatusHandler extends AbstractHandler {
          seconds == 1 ? String.format("%d sec", seconds) : String.format("%d secs", seconds)
       );
 
-      builder.append(populateTableRowTemplate("STUBBY JAR UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, stubbyUpTime));
-      builder.append(populateTableRowTemplate("STUBBY JAR VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
-      builder.append(populateTableRowTemplate("STUBBY JAR BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
-      builder.append(populateTableRowTemplate("STUBBY JAR ACTIVE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
+      builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, stubbyUpTime));
+      builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
+      builder.append(populateTableRowTemplate("BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
+      builder.append(populateTableRowTemplate("COMMANDLINE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
 
       final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
-      builder.append(populateTableRowTemplate("YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
+      builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
       builder.append(populateTableRowTemplate("YAML LAST MODIFIED", CSS_CLASS_NO_HIGHLIGHTABLE, new Date(stubbedDataManager.getDataYaml().lastModified())));
 
       builder.append(populateTableRowTemplate("STUBBED ENDPOINTS", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getStubHttpLifecycles().size()));
