@@ -43,11 +43,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("serial")
 public final class StatusHandler extends AbstractHandler {
@@ -59,6 +62,7 @@ public final class StatusHandler extends AbstractHandler {
       Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
+   private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
 
    public StatusHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
       this.jettyContext = newContext;
@@ -136,6 +140,8 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
       builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
+      builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
       final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
@@ -146,19 +152,25 @@ public final class StatusHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
 
-      final String host = jettyContext.getHost();
-      final int adminPort = jettyContext.getAdminPort();
+      final long jvmUpTime = RUNTIME_MX_BEAN.getUptime();
+      final long hours = TimeUnit.MILLISECONDS.toHours(jvmUpTime);
+      final long minutes = TimeUnit.MILLISECONDS.toMinutes(jvmUpTime) - TimeUnit.MINUTES.toMinutes(TimeUnit.MILLISECONDS.toHours(jvmUpTime));
+      final long seconds = TimeUnit.MILLISECONDS.toSeconds(jvmUpTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(jvmUpTime));
+      final String stubbyUpTime = String.format("%s, %s, %s",
+         hours == 1 ? String.format("%d hour", hours) : String.format("%d hours", hours),
+         minutes == 1 ? String.format("%d min", minutes) : String.format("%d mins", minutes),
+         seconds == 1 ? String.format("%d sec", seconds) : String.format("%d secs", seconds)
+      );
 
-      builder.append(populateTableRowTemplate("STUBBY JAR BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
+      builder.append(populateTableRowTemplate("STUBBY JAR UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, stubbyUpTime));
       builder.append(populateTableRowTemplate("STUBBY JAR VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
-      builder.append(populateTableRowTemplate("STUBBY JAR ACTIVE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS[0]));
+      builder.append(populateTableRowTemplate("STUBBY JAR BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
+      builder.append(populateTableRowTemplate("STUBBY JAR ACTIVE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
 
       final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
       builder.append(populateTableRowTemplate("YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
       builder.append(populateTableRowTemplate("YAML LAST MODIFIED", CSS_CLASS_NO_HIGHLIGHTABLE, new Date(stubbedDataManager.getDataYaml().lastModified())));
 
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
-      builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
       builder.append(populateTableRowTemplate("STUBBED ENDPOINTS", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getStubHttpLifecycles().size()));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");

@@ -31,12 +31,14 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class CommandLineInterpreter {
 
-   public static final String[] PROVIDED_OPTIONS = new String[1];
+   public static final Map<String, String> PROVIDED_OPTIONS = Collections.synchronizedMap(new LinkedHashMap<String, String>());
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
    public static final String OPTION_TLSPORT = "tls";
@@ -148,7 +150,7 @@ public final class CommandLineInterpreter {
          for (final Option option : options) {
             put(option.getLongOpt(), option.getValue());
          }
-         PROVIDED_OPTIONS[0] = this.toString();
+         PROVIDED_OPTIONS.putAll(this);
       }};
    }
 }
