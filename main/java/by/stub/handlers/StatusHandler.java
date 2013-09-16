@@ -152,19 +152,7 @@ public final class StatusHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
 
-      final long jvmUpTime = RUNTIME_MX_BEAN.getUptime();
-      final long days = TimeUnit.MILLISECONDS.toDays(jvmUpTime);
-      final long hours = TimeUnit.MILLISECONDS.toHours(jvmUpTime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(jvmUpTime));
-      final long minutes = TimeUnit.MILLISECONDS.toMinutes(jvmUpTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(jvmUpTime));
-      final long seconds = TimeUnit.MILLISECONDS.toSeconds(jvmUpTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(jvmUpTime));
-      final String stubbyUpTime = String.format("%s, %s, %s, %s",
-         days == 1 ? String.format("%d day", days) : String.format("%d days", days),
-         hours == 1 ? String.format("%d hour", hours) : String.format("%d hours", hours),
-         minutes == 1 ? String.format("%d min", minutes) : String.format("%d mins", minutes),
-         seconds == 1 ? String.format("%d sec", seconds) : String.format("%d secs", seconds)
-      );
-
-      builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, stubbyUpTime));
+      builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, calculateStubbyUpTime()));
       builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
       builder.append(populateTableRowTemplate("BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
       builder.append(populateTableRowTemplate("COMMANDLINE ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
@@ -178,6 +166,21 @@ public final class StatusHandler extends AbstractHandler {
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
       return String.format(systemStatusTable, "system status", builder.toString());
+   }
+
+   private String calculateStubbyUpTime() {
+      final long jvmUpTime = RUNTIME_MX_BEAN.getUptime();
+      final long days = TimeUnit.MILLISECONDS.toDays(jvmUpTime);
+      final long hours = TimeUnit.MILLISECONDS.toHours(jvmUpTime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(jvmUpTime));
+      final long mins = TimeUnit.MILLISECONDS.toMinutes(jvmUpTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(jvmUpTime));
+      final long secs = TimeUnit.MILLISECONDS.toSeconds(jvmUpTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(jvmUpTime));
+
+      return String.format("%d day%s, %d hour%s, %d min%s, %d sec%s",
+         days, pluralize(days), hours, pluralize(hours), mins, pluralize(mins), secs, pluralize(secs));
+   }
+
+   private String pluralize(final long timeUnit) {
+      return timeUnit == 1 ? "" : "s";
    }
 
    private String buildPageBodyHtml(final String resourceId, final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
