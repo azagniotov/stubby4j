@@ -34,11 +34,13 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public final class CommandLineInterpreter {
 
-   public static final Map<String, String> PROVIDED_OPTIONS = Collections.synchronizedMap(new LinkedHashMap<String, String>());
+   public static final List<String> PROVIDED_OPTIONS = Collections.synchronizedList(new LinkedList<String>());
    public static final String OPTION_ADDRESS = "location";
    public static final String OPTION_CLIENTPORT = "stubs";
    public static final String OPTION_TLSPORT = "tls";
@@ -66,6 +68,7 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
       OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
       OPTIONS.addOption("v", OPTION_VERSION, false, "Prints out to console stubby version.");
+      @SuppressWarnings("static-access")
       Option watch =
          OptionBuilder
             .withDescription("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
@@ -142,6 +145,7 @@ public final class CommandLineInterpreter {
     *
     * @return a map of passed command line arguments where key is the name of the argument
     */
+   @SuppressWarnings("unchecked")
    public Map<String, String> getCommandlineParams() {
 
       final Option[] options = line.getOptions();
@@ -150,7 +154,7 @@ public final class CommandLineInterpreter {
          for (final Option option : options) {
             put(option.getLongOpt(), option.getValue());
          }
-         PROVIDED_OPTIONS.putAll(this);
+         PROVIDED_OPTIONS.addAll(new LinkedList(this.entrySet()));
       }};
    }
 }
