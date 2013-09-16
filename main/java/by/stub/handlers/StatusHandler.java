@@ -153,10 +153,12 @@ public final class StatusHandler extends AbstractHandler {
       final StringBuilder builder = new StringBuilder();
 
       final long jvmUpTime = RUNTIME_MX_BEAN.getUptime();
-      final long hours = TimeUnit.MILLISECONDS.toHours(jvmUpTime);
+      final long days = TimeUnit.MILLISECONDS.toDays(jvmUpTime);
+      final long hours = TimeUnit.MILLISECONDS.toHours(jvmUpTime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(jvmUpTime));
       final long minutes = TimeUnit.MILLISECONDS.toMinutes(jvmUpTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(jvmUpTime));
       final long seconds = TimeUnit.MILLISECONDS.toSeconds(jvmUpTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(jvmUpTime));
-      final String stubbyUpTime = String.format("%s, %s, %s",
+      final String stubbyUpTime = String.format("%s, %s, %s, %s",
+         days == 1 ? String.format("%d day", days) : String.format("%d days", days),
          hours == 1 ? String.format("%d hour", hours) : String.format("%d hours", hours),
          minutes == 1 ? String.format("%d min", minutes) : String.format("%d mins", minutes),
          seconds == 1 ? String.format("%d sec", seconds) : String.format("%d secs", seconds)
