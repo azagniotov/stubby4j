@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Alexander Zagniotov
@@ -105,5 +106,19 @@ public final class HandlerUtils {
          ConsoleUtils.logIncomingRequestError(request, source, err);
          return null;
       }
+   }
+
+   public static String calculateStubbyUpTime(final long timestamp) {
+      final long days = TimeUnit.MILLISECONDS.toDays(timestamp);
+      final long hours = TimeUnit.MILLISECONDS.toHours(timestamp) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(timestamp));
+      final long mins = TimeUnit.MILLISECONDS.toMinutes(timestamp) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timestamp));
+      final long secs = TimeUnit.MILLISECONDS.toSeconds(timestamp) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timestamp));
+
+      return String.format("%d day%s, %d hour%s, %d min%s, %d sec%s",
+         days, pluralize(days), hours, pluralize(hours), mins, pluralize(mins), secs, pluralize(secs));
+   }
+
+   private static String pluralize(final long timeUnit) {
+      return timeUnit == 1 ? "" : "s";
    }
 }
