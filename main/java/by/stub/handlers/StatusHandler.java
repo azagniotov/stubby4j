@@ -43,7 +43,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,6 +65,7 @@ public final class StatusHandler extends AbstractHandler {
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
    private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
+   private static final MemoryMXBean MEMORY_MX_BEAN = ManagementFactory.getMemoryMXBean();
 
    public StatusHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
       this.jettyContext = newContext;
@@ -93,6 +97,7 @@ public final class StatusHandler extends AbstractHandler {
       final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
 
       final StringBuilder builder = new StringBuilder();
+      builder.append(buildJvmParametersHtmlTable());
       builder.append(buildJettyParametersHtmlTable());
       builder.append(buildSystemStatusHtmlTable());
       builder.append("<br /><br />");
@@ -126,6 +131,19 @@ public final class StatusHandler extends AbstractHandler {
       return HandlerUtils.populateHtmlTemplate("status", builder.toString());
    }
 
+   private String buildJvmParametersHtmlTable() throws Exception {
+
+      final StringBuilder builder = new StringBuilder();
+
+      builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getInputArguments()));
+      builder.append(populateTableRowTemplate("HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getHeapMemoryUsage()));
+      builder.append(populateTableRowTemplate("NON-HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getNonHeapMemoryUsage()));
+
+      final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
+
+      return String.format(jettyParametersTable, "jvm", builder.toString());
+   }
+
    private String buildJettyParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
@@ -156,7 +174,6 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
       builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
       builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
-      builder.append(populateTableRowTemplate("JAVA INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getInputArguments()));
 
       final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
       builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
@@ -166,7 +183,7 @@ public final class StatusHandler extends AbstractHandler {
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
-      return String.format(systemStatusTable, "system status", builder.toString());
+      return String.format(systemStatusTable, "stubby4j parameters", builder.toString());
    }
 
    private String buildPageBodyHtml(final String resourceId, final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
