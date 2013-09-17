@@ -7,7 +7,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v2.0.15
+## User manual for stubby4j v2.0.16
 ### Table of contents
 
 * [Key features](#key-features)
@@ -104,30 +104,30 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.15` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.16` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.15</version>
+    <version>2.0.16</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.15" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.16" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.15'
+'by.stub:stubby4j:jar:2.0.16'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.15'
+compile 'by.stub:stubby4j:2.0.16'
 ```
 
 ##### Scala SBT
@@ -138,7 +138,7 @@ libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 ### Command-line switches
 ```
 usage:
-       java -jar stubby4j-2.0.15.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.16.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -1039,7 +1039,9 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 2.0.16-SNAPSHOT
+##### 2.0.17-SNAPSHOT
+
+##### 2.0.16
 * Displaying stubby JAR: version, its classpath location, built date, up-time, its input args and Java input args on status page [ENHANCEMENT]
 * Displaying stubby heap/non-heap memory usage on status page [ENHANCEMENT]
 * Added an option on admin status page to display YAML snippet for a given request & response pair [ENHANCEMENT]
