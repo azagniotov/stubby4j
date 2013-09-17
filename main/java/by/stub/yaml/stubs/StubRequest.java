@@ -222,7 +222,7 @@ public class StubRequest {
    boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
       if (dataStoreMap.isEmpty()) {
          return true;
-      } else if (!dataStoreMap.isEmpty() && thisAssertingMap.isEmpty()) {
+      } else if (thisAssertingMap.isEmpty()) {
          return false;
       }
 

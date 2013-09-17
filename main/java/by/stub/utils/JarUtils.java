@@ -1,5 +1,7 @@
 package by.stub.utils;
 
+import by.stub.annotations.CoberturaIgnore;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.Manifest;
@@ -14,6 +16,7 @@ public final class JarUtils {
 
    }
 
+   @CoberturaIgnore
    public static String readManifestImplementationVersion() {
       final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
       try {
@@ -27,6 +30,7 @@ public final class JarUtils {
       return "x.x.xx";
    }
 
+   @CoberturaIgnore
    public static String readManifestBuiltDate() {
       final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
       try {

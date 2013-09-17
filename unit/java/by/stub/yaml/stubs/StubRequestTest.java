@@ -300,6 +300,16 @@ public class StubRequestTest {
    }
 
    @Test
+   public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmptyAndAssertingMapEmpty() throws Exception {
+      final StubRequest stubRequest = StubRequest.newStubRequest();
+      final Map<String, String> dataStoreMap = new HashMap<String, String>();
+      final Map<String, String> assertingMap = new HashMap<String, String>();
+      final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
+
+      assertThat(isMapsMatch).isTrue();
+   }
+
+   @Test
    public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       final Map<String, String> dataStoreMap = new HashMap<String, String>();
@@ -310,7 +320,7 @@ public class StubRequestTest {
    }
 
    @Test
-   public void mapsMatch_ShouldReturnFalse_WhenAssertingMapEmpty() throws Exception {
+   public void mapsMatch_ShouldReturnFalse_WhenDataStoreMapNotEmptyAndAssertingMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("key", "value");}};
       final Map<String, String> assertingMap = new HashMap<String, String>();
