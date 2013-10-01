@@ -60,31 +60,19 @@ public final class StubbyManager {
       }
    }
 
-   public synchronized boolean isJettyStarting() throws Exception {
-      if (server.isStarting()) {
-         return true;
-      }
-      return false;
+   private boolean isJettyStarting() throws Exception {
+      return server.isStarting();
    }
 
-   public synchronized boolean isJettyUp() throws Exception {
-      if (server.isStarted() && server.isRunning()) {
-         return true;
-      }
-      return false;
+   private boolean isJettyUp() throws Exception {
+      return (server.isStarted() && server.isRunning());
    }
 
-   public synchronized boolean isJettyStopping() throws Exception {
-      if (server.isStopping()) {
-         return true;
-      }
-      return false;
+   private boolean isJettyStopping() throws Exception {
+      return server.isStopping();
    }
 
-   public synchronized boolean isJettyDown() throws Exception {
-      if (server.isStopped() && !server.isRunning()) {
-         return true;
-      }
-      return false;
+   private boolean isJettyDown() throws Exception {
+      return (server.isStopped() && !server.isRunning());
    }
 }

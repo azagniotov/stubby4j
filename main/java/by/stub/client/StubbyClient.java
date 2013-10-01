@@ -30,8 +30,6 @@ import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class StubbyClient {
 
@@ -116,20 +114,10 @@ public final class StubbyClient {
     * @throws Exception
     */
    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
-      final String clientPortString = String.format("%s", stubsPort);
-      final String tlsPortString = String.format("%s", tlsPort);
-      final String adminPortString = String.format("%s", adminPort);
-
-      final Map<String, String> params = new HashMap<String, String>();
-      params.put(CommandLineInterpreter.OPTION_CLIENTPORT, clientPortString);
-      params.put(CommandLineInterpreter.OPTION_TLSPORT, tlsPortString);
-      params.put(CommandLineInterpreter.OPTION_ADMINPORT, adminPortString);
-      params.put(CommandLineInterpreter.OPTION_ADDRESS, addressToBind);
-
-      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", clientPortString, "-a", adminPortString, "-t", tlsPortString, "-d", yamlConfigurationFilename};
-      new CommandLineInterpreter().parseCommandLine(args);
-
-      stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, params);
+      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort), "-d", yamlConfigurationFilename};
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(args);
+      stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, commandLineInterpreter.getCommandlineParams());
       stubbyManager.startJetty();
    }
 
@@ -140,7 +128,7 @@ public final class StubbyClient {
     */
    @CoberturaIgnore
    public void stopJetty() throws Exception {
-      if (ObjectUtils.isNotNull(stubbyManager) && stubbyManager.isJettyUp()) {
+      if (ObjectUtils.isNotNull(stubbyManager)) {
          stubbyManager.stopJetty();
       }
    }

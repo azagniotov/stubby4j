@@ -100,8 +100,7 @@ public final class Main {
 
          ANSITerminal.muteConsole(commandLineInterpreter.isMute());
 
-         final StubbyManagerFactory factory = new StubbyManagerFactory();
-         final StubbyManager stubbyManager = factory.construct(yamlConfigFilename, commandLineArgs);
+         final StubbyManager stubbyManager = new StubbyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
          stubbyManager.startJetty();
 
       } catch (final Exception ex) {
