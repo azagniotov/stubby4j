@@ -32,17 +32,21 @@ public final class StubbyManager {
    }
 
    public synchronized void startJetty() throws Exception {
-      if (server.isStarted() || server.isStarting() || server.isRunning()) {
+      if (isJettyStarting() || isJettyUp()) {
          return;
       }
 
       server.start();
 
+      while (!isJettyUp()) {
+         Thread.sleep(250);
+      }
+
       ANSITerminal.info("\nQuit: ctrl-c\n");
    }
 
    public synchronized void stopJetty() throws Exception {
-      if (server.isStopped() || server.isStopping() || !server.isRunning()) {
+      if (isJettyStopping() || isJettyDown()) {
          return;
       }
 
@@ -50,10 +54,35 @@ public final class StubbyManager {
       server.setGracefulShutdown(timeoutMilliseconds);
       server.setStopAtShutdown(true);
       server.stop();
+
+      while (!isJettyDown()) {
+         Thread.sleep(250);
+      }
+   }
+
+   public synchronized boolean isJettyStarting() throws Exception {
+      if (server.isStarting()) {
+         return true;
+      }
+      return false;
    }
 
    public synchronized boolean isJettyUp() throws Exception {
-      if (server.isStarting() || server.isRunning()) {
+      if (server.isStarted() && server.isRunning()) {
+         return true;
+      }
+      return false;
+   }
+
+   public synchronized boolean isJettyStopping() throws Exception {
+      if (server.isStopping()) {
+         return true;
+      }
+      return false;
+   }
+
+   public synchronized boolean isJettyDown() throws Exception {
+      if (server.isStopped() && !server.isRunning()) {
          return true;
       }
       return false;
