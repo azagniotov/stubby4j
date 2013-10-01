@@ -20,7 +20,7 @@ public final class ExternalFilesScanner implements Runnable {
    public ExternalFilesScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
       this.sleepTime = sleepTime;
       this.stubbedDataManager = stubbedDataManager;
-      ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubbedDataManager.getYamlAbsolutePath()));
+      ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubbedDataManager.getYamlCanonicalPath()));
    }
 
    @Override

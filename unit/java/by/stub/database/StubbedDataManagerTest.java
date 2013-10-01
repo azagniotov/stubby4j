@@ -268,7 +268,7 @@ public class StubbedDataManagerTest {
       originalHttpLifecycle.setRequest(originalRequest);
       originalHttpLifecycle.setResponse(StubResponse.newStubResponse());
       final String expectedMarshalledYaml = "This is marshalled yaml snippet";
-      originalHttpLifecycle.setMarshalledYaml(expectedMarshalledYaml);
+      originalHttpLifecycle.setHttpLifeCycleAsYaml(expectedMarshalledYaml);
 
       return new LinkedList<StubHttpLifecycle>() {{
          add(originalHttpLifecycle);

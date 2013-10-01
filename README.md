@@ -14,7 +14,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
-* [stubby4j dependencies](#stubby4j-dependencies)
+* [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
@@ -89,11 +89,11 @@ Run `gradle clean check` command to:
 * Generate Cobertura report under the ```main``` module
 
 
-### Dependencies
+### Third-party dependencies
 stubby4j is a fat JAR, which contains the following dependencies:
 
 * commons-cli-1.2.jar
-* snakeyaml-1.12.jar
+* snakeyaml-1.13.jar
 * javax.servlet-3.0.0.v201112011016.jar
 * jetty-server-8.1.7.v20120910.jar
 * jetty-continuation-8.1.7.v20120910.jar
@@ -1040,6 +1040,9 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.17-SNAPSHOT
+* Upgraded SnakeYAML dependency library to v1.13 [ENHANCEMENT]
+* On admin status page now displaying YAML snippet for a given `request` or `response` separately instead of for a pair  [ENHANCEMENT]
+* On admin status page now displaying loaded external files (if any) [ENHANCEMENT]
 
 ##### 2.0.16
 * Displaying stubby JAR: version, its classpath location, built date, up-time, its input args and Java input args on status page [ENHANCEMENT]

@@ -30,7 +30,6 @@ import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
 import by.stub.yaml.stubs.StubHttpLifecycle;
-import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpSchemes;
@@ -42,12 +41,12 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
-import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -59,9 +58,10 @@ public final class StatusHandler extends AbstractHandler {
 
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
-   private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='200px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
-   private static final List<String> highlightableProperties =
-      Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
+   private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='250px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
+   private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
+   private static final String AJAXABLE_ANCHOR = "&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;";
+
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
    private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
@@ -108,23 +108,26 @@ public final class StatusHandler extends AbstractHandler {
 
          final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
          final String resourceId = stubHttpLifecycle.getResourceId();
-         final StubRequest stubRequest = stubHttpLifecycle.getRequest();
-         builder.append(buildPageBodyHtml(resourceId, htmlTemplateContent, "request", ReflectionUtils.getProperties(stubRequest)));
+
+         final String ajaxLinkToRequestAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, "httplifecycle", "requestAsYaml");
+         final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, "request", ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
+         requestTableBuilder.append(populateTableRowTemplate(StringUtils.toUpper("RAW YAML"), CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
+
+         builder.append(String.format(htmlTemplateContent, "request", requestTableBuilder.toString()));
 
          final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
          for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
-            String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", sequenceId));
-
+            final String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", sequenceId));
             final StubResponse stubResponse = allResponses.get(sequenceId);
             final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
-            builder.append(buildPageBodyHtml(resourceId, htmlTemplateContent, responseTableTitle, stubResponseProperties));
+            final StringBuilder responseTableBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
+            final String ajaxLinkToResponseAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, "httplifecycle", "responseAsYaml");
+            responseTableBuilder.append(populateTableRowTemplate(StringUtils.toUpper("RAW YAML"), CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
+
+            builder.append(String.format(htmlTemplateContent, responseTableTitle, responseTableBuilder.toString()));
          }
 
-         final String ajaxifiedLinkToResource =
-            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;", resourceId, "httplifecycle", "marshalledYaml");
-         final String marshalledYamlRow = populateTableRowTemplate(StringUtils.toUpper("REQUEST & RESPONSE"), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
-         builder.append(String.format(htmlTemplateContent, "yaml", marshalledYamlRow));
          builder.append("<br /><br />");
       }
 
@@ -171,22 +174,42 @@ public final class StatusHandler extends AbstractHandler {
 
       builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
       builder.append(populateTableRowTemplate("RUNTIME CLASSPATH", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getClassPath()));
-      builder.append(populateTableRowTemplate("BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
+      builder.append(populateTableRowTemplate("LOCAL BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
       builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
       builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
-
-      final String yamlLocalUri = String.format("<a href='file://%s'>%s</a>", stubbedDataManager.getYamlAbsolutePath(), stubbedDataManager.getYamlAbsolutePath());
-      builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlLocalUri));
-      builder.append(populateTableRowTemplate("YAML LAST MODIFIED", CSS_CLASS_NO_HIGHLIGHTABLE, new Date(stubbedDataManager.getDataYaml().lastModified())));
-
       builder.append(populateTableRowTemplate("STUBBED ENDPOINTS", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getStubHttpLifecycles().size()));
+
+      final String yamlFileDataDataFormatted = constructFileDataList(stubbedDataManager.getDataYaml()).toString().replaceAll(", ", "<br />").replaceAll("(\\[|\\])", "");
+      builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlFileDataDataFormatted));
+
+      final List<List<String>> externalFilesData = new ArrayList<List<String>>();
+      for (Map.Entry<File, Long> entry : stubbedDataManager.getExternalFiles().entrySet()) {
+         final File externalFile = entry.getKey();
+         externalFilesData.add(constructFileDataList(externalFile));
+      }
+      final String externalFilesDataFormatted = externalFilesData.toString()
+         .replaceAll("\\],", "\\]<br /><br />")
+         .replaceAll("(\\[|\\])", "")
+         .replaceAll(", ", "<br />");
+
+      builder.append(populateTableRowTemplate("LOADED EXTERNAL FILES", CSS_CLASS_NO_HIGHLIGHTABLE, externalFilesDataFormatted));
 
       final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
       return String.format(systemStatusTable, "stubby4j parameters", builder.toString());
    }
 
-   private String buildPageBodyHtml(final String resourceId, final String htmlTemplateContent, final String tableName, final Map<String, String> stubObjectProperties) throws Exception {
+   private List<String> constructFileDataList(final File file) throws IOException {
+      final List<String> fileData = new ArrayList<String>();
+      fileData.add(String.format("<span style='color: #8B0000'>parentDir</span>=<span style='color: green'>%s/</span>", file.getParentFile().getCanonicalPath()));
+      fileData.add(String.format("<span style='color: #8B0000'>name</span>=<span style='color: green'>%s</span>", file.getName()));
+      fileData.add(String.format("<span style='color: #8B0000'>size</span>=<span style='color: green'>%skb</span>", String.format("%1$,.2f", ((double)file.length() / 1024))));
+      fileData.add(String.format("<span style='color: #8B0000'>lastModified</span>=<span style='color: green'>%s</span>", new Date(file.lastModified())));
+
+      return fileData;
+   }
+
+   private StringBuilder populateBuildWithHtmlBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {
       final StringBuilder builder = new StringBuilder();
 
       for (final Map.Entry<String, String> keyValue : stubObjectProperties.entrySet()) {
@@ -197,17 +220,15 @@ public final class StatusHandler extends AbstractHandler {
             continue;
          }
 
-         builder.append(constructHtmlTableRow(resourceId, tableName, key, value));
+         builder.append(constructHtmlTableRow(resourceId, stubTypeName, key, value));
       }
-      return String.format(htmlTemplateContent, tableName, builder.toString());
+      return builder;
    }
 
-   private String constructHtmlTableRow(final String resourceId, final String tableName, final String fieldName, final String value) {
+   private String constructHtmlTableRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
 
       if (highlightableProperties.contains(fieldName)) {
-         final String ajaxifiedLinkToResource =
-            String.format("&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;",
-               resourceId, tableName, fieldName);
+         final String ajaxifiedLinkToResource = String.format(AJAXABLE_ANCHOR, resourceId, stubTypeName, fieldName);
          return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
       }
 

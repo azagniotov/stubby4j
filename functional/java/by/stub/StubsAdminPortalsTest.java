@@ -200,7 +200,7 @@ public class StubsAdminPortalsTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
       final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-      final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/marshalledYaml");
+      final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/httpLifeCycleAsYaml");
       final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
       final HttpResponse ajaxResponse = ajaxRequest.execute();

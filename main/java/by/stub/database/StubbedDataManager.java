@@ -24,6 +24,7 @@ import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.YamlParser;
+import by.stub.yaml.YamlProperties;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -33,6 +34,7 @@ import by.stub.yaml.stubs.UnauthorizedStubResponse;
 import org.eclipse.jetty.http.HttpMethods;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,15 +46,11 @@ import java.util.Set;
 public class StubbedDataManager {
 
    private final File dataYaml;
-   private final String dataYamlAbsolutePath;
-   private final String dataYamlParentDirectory;
    private final List<StubHttpLifecycle> stubHttpLifecycles;
    private StubbyHttpTransport stubbyHttpTransport;
 
    public StubbedDataManager(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.dataYaml = dataYaml;
-      this.dataYamlAbsolutePath = this.dataYaml.getAbsolutePath();
-      this.dataYamlParentDirectory = this.dataYaml.getParent();
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
       this.stubbyHttpTransport = new StubbyHttpTransport();
    }
@@ -84,7 +82,7 @@ public class StubbedDataManager {
       if (stubResponse.isRecordingRequired()) {
          try {
             final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(HttpMethods.GET, stubResponse.getBody());
-            ReflectionUtils.injectObjectFields(stubResponse, "body", stubbyResponse.getContent());
+            ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
          } catch (Exception e) {
 
          }
@@ -121,17 +119,17 @@ public class StubbedDataManager {
    }
 
    public synchronized void refreshStubbedData(final YamlParser yamlParser) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, dataYaml);
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), dataYaml);
       resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    public synchronized void refreshStubbedData(final YamlParser yamlParser, final String post) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, post);
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), post);
       resetStubHttpLifecycles(stubHttpLifecycles);
    }
 
    public synchronized String refreshStubbedData(final YamlParser yamlParser, final String put, final int stubIndexToUpdate) throws Exception {
-      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(dataYamlParentDirectory, put);
+      final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), put);
       final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
       updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
 
@@ -155,35 +153,39 @@ public class StubbedDataManager {
       final Set<String> escrow = new HashSet<String>();
       final Map<File, Long> externalFiles = new HashMap<File, Long>();
       for (StubHttpLifecycle cycle : stubHttpLifecycles) {
-         storeFile(escrow, externalFiles, cycle.getRequest().getRawFile());
-         storeFile(escrow, externalFiles, cycle.getResponse().getRawFile());
+         storeExternalFileInCache(escrow, externalFiles, cycle.getRequest().getRawFile());
+         storeExternalFileInCache(escrow, externalFiles, cycle.getResponse().getRawFile());
       }
 
       return externalFiles;
    }
 
-   private void storeFile(final Set<String> escrow, final Map<File, Long> externalFiles, final File file) {
+   private void storeExternalFileInCache(final Set<String> escrow, final Map<File, Long> externalFiles, final File file) {
       if (ObjectUtils.isNotNull(file) && !escrow.contains(file.getName())) {
          escrow.add(file.getName());
          externalFiles.put(file, file.lastModified());
       }
    }
 
-   public String getYamlAbsolutePath() {
-      return dataYamlAbsolutePath;
+   public String getYamlCanonicalPath() {
+      try {
+         return this.dataYaml.getCanonicalPath();
+      } catch (IOException e) {
+         return this.dataYaml.getAbsolutePath();
+      }
    }
 
    public synchronized String getMarshalledYaml() {
       final StringBuilder builder = new StringBuilder();
       for (final StubHttpLifecycle cycle : stubHttpLifecycles) {
-         builder.append(cycle.getMarshalledYaml()).append("\n\n");
+         builder.append(cycle.getHttpLifeCycleAsYaml()).append("\n\n");
       }
 
       return builder.toString();
    }
 
    public synchronized String getMarshalledYamlByIndex(final int httpLifecycleIndex) {
-      return stubHttpLifecycles.get(httpLifecycleIndex).getMarshalledYaml();
+      return stubHttpLifecycles.get(httpLifecycleIndex).getHttpLifeCycleAsYaml();
    }
 
    public synchronized void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {

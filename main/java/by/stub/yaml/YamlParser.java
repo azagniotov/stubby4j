@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,15 @@ public class YamlParser {
          }
       }
 
-      httpLifecycle.setMarshalledYaml(marshallNodeMapToYamlSnippet(parentNodesMap));
+      httpLifecycle.setHttpLifeCycleAsYaml(marshallNodeMapToYaml(parentNodesMap));
+
+      final Map<String, Object> requestMap = new HashMap<String, Object>();
+      requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
+      httpLifecycle.setRequestAsYaml(marshallNodeToYaml(requestMap));
+
+      final Map<String, Object> responseMap = new HashMap<String, Object>();
+      responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
+      httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
 
       return httpLifecycle;
    }
@@ -209,12 +218,16 @@ public class YamlParser {
       return null;
    }
 
-   private String marshallNodeMapToYamlSnippet(final Map<String, Object> parentNodesMap) {
+   private String marshallNodeMapToYaml(final Map<String, Object> parentNodesMap) {
       final ArrayList<Map<String, Object>> placeholder = new ArrayList<Map<String, Object>>() {{
          add(parentNodesMap);
       }};
 
       return SNAKE_YAML.dumpAs(placeholder, null, DumperOptions.FlowStyle.BLOCK);
+   }
+
+   private String marshallNodeToYaml(final Object yamlNode) {
+      return SNAKE_YAML.dumpAs(yamlNode, null, DumperOptions.FlowStyle.BLOCK);
    }
 
    private Map<String, String> encodeAuthorizationHeader(final Object value) {

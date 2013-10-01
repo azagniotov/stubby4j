@@ -170,7 +170,7 @@ public final class StringUtils {
          final String toTest = StringUtils.newStringUtf8(objectBytes);
 
          if (!StringUtils.isUSAscii(toTest)) {
-            return "Local binary file, not able to display";
+            return "Loaded file is binary - it's content is not displayable";
          } else if (toTest.equals(StringUtils.FAILED)) {
             return StringUtils.FAILED;
          }

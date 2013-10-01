@@ -35,10 +35,12 @@ import java.util.List;
 public class StubHttpLifecycle {
 
    public static final StubHttpLifecycle NULL = null;
-   private String marshalledYaml;
+   private String httpLifeCycleAsYaml;
    private StubRequest request;
    private Object response;
    private int responseSequenceCounter = 0;
+   private String requestAsYaml;
+   private String responseAsYaml;
 
    public StubHttpLifecycle() {
       response = StubResponse.newStubResponse();
@@ -108,12 +110,28 @@ public class StubHttpLifecycle {
       return sequenceStubResponse;
    }
 
-   public String getMarshalledYaml() {
-      return marshalledYaml;
+   public String getHttpLifeCycleAsYaml() {
+      return httpLifeCycleAsYaml;
    }
 
-   public void setMarshalledYaml(final String marshalledYaml) {
-      this.marshalledYaml = marshalledYaml;
+   public void setHttpLifeCycleAsYaml(final String httpLifeCycleAsYaml) {
+      this.httpLifeCycleAsYaml = httpLifeCycleAsYaml;
+   }
+
+   public String getRequestAsYaml() {
+      return requestAsYaml;
+   }
+
+   public void setRequestAsYaml(final String requestAsYaml) {
+      this.requestAsYaml = requestAsYaml;
+   }
+
+   public String getResponseAsYaml() {
+      return responseAsYaml;
+   }
+
+   public void setResponseAsYaml(final String responseAsYaml) {
+      this.responseAsYaml = responseAsYaml;
    }
 
    public void setResourceId(final int listIndex) {

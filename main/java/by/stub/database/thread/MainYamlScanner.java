@@ -19,7 +19,7 @@ public final class MainYamlScanner implements Runnable {
    public MainYamlScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
       this.sleepTime = sleepTime;
       this.stubbedDataManager = stubbedDataManager;
-      ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYamlAbsolutePath()));
+      ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYamlCanonicalPath()));
    }
 
    @Override
@@ -38,7 +38,7 @@ public final class MainYamlScanner implements Runnable {
                continue;
             }
 
-            ANSITerminal.info(String.format("\nMain YAML scan detected change in %s\n", stubbedDataManager.getYamlAbsolutePath()));
+            ANSITerminal.info(String.format("\nMain YAML scan detected change in %s\n", stubbedDataManager.getYamlCanonicalPath()));
 
             try {
                mainYamlLastModified = currentFileModified;
