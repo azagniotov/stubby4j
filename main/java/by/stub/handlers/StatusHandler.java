@@ -109,21 +109,21 @@ public final class StatusHandler extends AbstractHandler {
          final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
          final String resourceId = stubHttpLifecycle.getResourceId();
 
-         final String ajaxLinkToRequestAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, "httplifecycle", "requestAsYaml");
-         final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, "request", ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
-         requestTableBuilder.append(populateTableRowTemplate(StringUtils.toUpper("RAW YAML"), CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
+         final String ajaxLinkToRequestAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
+         final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
+         requestTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
 
-         builder.append(String.format(htmlTemplateContent, "request", requestTableBuilder.toString()));
+         builder.append(String.format(htmlTemplateContent, YamlProperties.REQUEST, requestTableBuilder.toString()));
 
          final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
          for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
-            final String responseTableTitle = (allResponses.size() == 1 ? "response" : String.format("response/%s", sequenceId));
+            final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
             final StubResponse stubResponse = allResponses.get(sequenceId);
             final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
             final StringBuilder responseTableBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
-            final String ajaxLinkToResponseAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, "httplifecycle", "responseAsYaml");
-            responseTableBuilder.append(populateTableRowTemplate(StringUtils.toUpper("RAW YAML"), CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
+            final String ajaxLinkToResponseAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
+            responseTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
 
             builder.append(String.format(htmlTemplateContent, responseTableTitle, responseTableBuilder.toString()));
          }
@@ -137,11 +137,9 @@ public final class StatusHandler extends AbstractHandler {
    private String buildJvmParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
-
       builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getInputArguments()));
       builder.append(populateTableRowTemplate("HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getHeapMemoryUsage()));
       builder.append(populateTableRowTemplate("NON-HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getNonHeapMemoryUsage()));
-
       final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
       return String.format(jettyParametersTable, "jvm", builder.toString());
@@ -150,19 +148,16 @@ public final class StatusHandler extends AbstractHandler {
    private String buildJettyParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
-
       final String host = jettyContext.getHost();
       final int clientPort = jettyContext.getStubsPort();
       final int tlsPort = jettyContext.getStubsTlsPort();
       final int adminPort = jettyContext.getAdminPort();
-
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
       builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
       builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
-
       final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
       return String.format(jettyParametersTable, "jetty parameters", builder.toString());
@@ -171,7 +166,6 @@ public final class StatusHandler extends AbstractHandler {
    private String buildSystemStatusHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
-
       builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
       builder.append(populateTableRowTemplate("RUNTIME CLASSPATH", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getClassPath()));
       builder.append(populateTableRowTemplate("LOCAL BUILT DATE", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestBuiltDate()));
@@ -203,7 +197,7 @@ public final class StatusHandler extends AbstractHandler {
       final List<String> fileData = new ArrayList<String>();
       fileData.add(String.format("<span style='color: #8B0000'>parentDir</span>=<span style='color: green'>%s/</span>", file.getParentFile().getCanonicalPath()));
       fileData.add(String.format("<span style='color: #8B0000'>name</span>=<span style='color: green'>%s</span>", file.getName()));
-      fileData.add(String.format("<span style='color: #8B0000'>size</span>=<span style='color: green'>%skb</span>", String.format("%1$,.2f", ((double)file.length() / 1024))));
+      fileData.add(String.format("<span style='color: #8B0000'>size</span>=<span style='color: green'>%skb</span>", String.format("%1$,.2f", ((double) file.length() / 1024))));
       fileData.add(String.format("<span style='color: #8B0000'>lastModified</span>=<span style='color: green'>%s</span>", new Date(file.lastModified())));
 
       return fileData;
