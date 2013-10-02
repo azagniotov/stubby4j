@@ -108,7 +108,7 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setRequest(stubRequest);
 
-      final String actualPost = stubHttpLifecycle.getAjaxResponseContent("request", "post");
+      final String actualPost = stubHttpLifecycle.getAjaxResponseContent(StubTypes.REQUEST, "post");
 
       assertThat(expectedPost).isEqualTo(actualPost);
    }
@@ -122,17 +122,8 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(stubResponse);
 
-      final String actualBody = stubHttpLifecycle.getAjaxResponseContent("response", "body");
+      final String actualBody = stubHttpLifecycle.getAjaxResponseContent(StubTypes.RESPONSE, "body");
 
       assertThat(expectedBody).isEqualTo(actualBody);
-   }
-
-   @Test
-   public void shouldReturnAjaxResponseContent_WhenStubTypeUnknown() throws Exception {
-
-      final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
-      final String actualBody = stubHttpLifecycle.getAjaxResponseContent("blahblahblah", "body");
-
-      assertThat("Unknown stub type: blahblahblah").isEqualTo(actualBody);
    }
 }

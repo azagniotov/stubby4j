@@ -64,7 +64,7 @@ public final class ReflectionUtils {
          }
 
          final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
-         final String value = StringUtils.determineObjectStringValue(fieldObject);
+         final String value = StringUtils.objectToString(fieldObject);
 
          if (!value.equals(StringUtils.NOT_PROVIDED) && !value.equals("{}")) {
             properties.put(StringUtils.toLower(field.getName()), value);

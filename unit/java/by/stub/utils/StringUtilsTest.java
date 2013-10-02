@@ -33,7 +33,7 @@ public class StringUtilsTest {
 
       final String result = StringUtils.objectToString(null);
 
-      assertThat(result).isEqualTo("");
+      assertThat(result).isEqualTo(StringUtils.NOT_PROVIDED);
    }
 
    @Test
@@ -47,7 +47,7 @@ public class StringUtilsTest {
    @Test
    public void shouldDetermineObjectStringValue_WhenObjectIsFailedMessage() throws Exception {
 
-      final String result = StringUtils.determineObjectStringValue(StringUtils.getBytesUtf8(StringUtils.FAILED));
+      final String result = StringUtils.objectToString(StringUtils.getBytesUtf8(StringUtils.FAILED));
 
       assertThat(result).isEqualTo(StringUtils.FAILED);
    }

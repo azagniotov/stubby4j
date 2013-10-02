@@ -4,6 +4,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubHttpLifecycle;
+import by.stub.yaml.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
@@ -57,7 +58,7 @@ public class AjaxHandlerTest {
    public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedRequestContent() throws Exception {
 
       ArgumentCaptor<String> fieldCaptor = ArgumentCaptor.forClass(String.class);
-      ArgumentCaptor<String> stubTypeCaptor = ArgumentCaptor.forClass(String.class);
+      ArgumentCaptor<StubTypes> stubTypeCaptor = ArgumentCaptor.forClass(StubTypes.class);
       ArgumentCaptor<Integer> httpCycleIndexCaptor = ArgumentCaptor.forClass(Integer.class);
 
       final String requestURI = "/ajax/resource/5/request/post";
@@ -73,7 +74,7 @@ public class AjaxHandlerTest {
       verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(5);
-      assertThat(stubTypeCaptor.getValue()).isEqualTo("request");
+      assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.REQUEST);
       assertThat(fieldCaptor.getValue()).isEqualTo("post");
    }
 
@@ -81,7 +82,7 @@ public class AjaxHandlerTest {
    public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedResponseContent() throws Exception {
 
       ArgumentCaptor<String> fieldCaptor = ArgumentCaptor.forClass(String.class);
-      ArgumentCaptor<String> stubTypeCaptor = ArgumentCaptor.forClass(String.class);
+      ArgumentCaptor<StubTypes> stubTypeCaptor = ArgumentCaptor.forClass(StubTypes.class);
       ArgumentCaptor<Integer> httpCycleIndexCaptor = ArgumentCaptor.forClass(Integer.class);
 
       final String requestURI = "/ajax/resource/15/response/file";
@@ -97,7 +98,7 @@ public class AjaxHandlerTest {
       verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
-      assertThat(stubTypeCaptor.getValue()).isEqualTo("response");
+      assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.RESPONSE);
       assertThat(fieldCaptor.getValue()).isEqualTo("file");
    }
 
@@ -118,7 +119,7 @@ public class AjaxHandlerTest {
 
       verify(spyAjaxHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
       verify(spyAjaxHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyString(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(responseSequenceCaptor.getValue()).isEqualTo(8);
@@ -136,9 +137,10 @@ public class AjaxHandlerTest {
 
       spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxHandler, never()).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyString(), anyString(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
       verify(mockPrintWriter, times(1)).println("Could not fetch the content for stub type: WRONG-STUB-TYPE");
+
+      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
    }
 }

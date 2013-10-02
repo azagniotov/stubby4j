@@ -11,6 +11,7 @@ public final class YamlProperties {
    public static final String BODY = "body";
    public static final String FILE = "file";
    public static final String HEADERS = "headers";
+   public static final String HTTPLIFECYCLE = "httplifecycle";
    public static final String METHOD = "method";
    public static final String POST = "post";
    public static final String QUERY = "query";

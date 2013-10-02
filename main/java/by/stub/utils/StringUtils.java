@@ -22,7 +22,6 @@ package by.stub.utils;
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -154,13 +153,7 @@ public final class StringUtils {
       return Base64.encodeBase64String(StringUtils.getBytesUtf8(toEncode));
    }
 
-   public static String objectToString(final Object value) throws IOException {
-      final String valueAsStr = (ObjectUtils.isNotNull(value) ? value.toString().trim() : "");
-
-      return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
-   }
-
-   public static String determineObjectStringValue(final Object fieldObject) throws UnsupportedEncodingException {
+   public static String objectToString(final Object fieldObject) {
       if (ObjectUtils.isNull(fieldObject)) {
          return NOT_PROVIDED;
       }
@@ -175,10 +168,15 @@ public final class StringUtils {
             return StringUtils.FAILED;
          }
 
-         return new String(objectBytes, StringUtils.UTF_8);
+         try {
+            return new String(objectBytes, StringUtils.UTF_8);
+         } catch (UnsupportedEncodingException e) {
+            return new String(objectBytes);
+         }
+      } else {
+         final String valueAsStr = (ObjectUtils.isNotNull(fieldObject) ? fieldObject.toString().trim() : "");
+
+         return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
       }
-
-      return fieldObject.toString();
-
    }
 }

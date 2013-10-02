@@ -25,6 +25,7 @@ import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
+import by.stub.yaml.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
@@ -38,7 +39,8 @@ import java.util.regex.Pattern;
 
 public class AjaxHandler extends AbstractHandler {
 
-   private static final Pattern REGEX_REQUEST_OR_RESPONSE = Pattern.compile("^(request|response)$");
+   private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
+   private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
    private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
 
@@ -64,32 +66,30 @@ public class AjaxHandler extends AbstractHandler {
       final String targetFieldName = uriFragments[urlFragmentsLength - 1];
       final String stubType = uriFragments[urlFragmentsLength - 2];
 
-      if (REGEX_REQUEST_OR_RESPONSE.matcher(stubType).matches()) {
-
-         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
-         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
-         renderAjaxResponseContent(wrapper, stubType, targetFieldName, foundStubHttpLifecycle);
-
-      } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
-
-         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
-         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
-         renderAjaxResponseContent(wrapper, "this", targetFieldName, foundStubHttpLifecycle);
-
-      } else if (REGEX_NUMERIC.matcher(stubType).matches()) {
-
+      if (REGEX_NUMERIC.matcher(stubType).matches()) {
          final int sequencedResponseId = Integer.parseInt(stubType);
          final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
          final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
          renderAjaxResponseContent(wrapper, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
       } else {
-         wrapper.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+
+         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(wrapper, stubHttpCycleIndex);
+         if (REGEX_REQUEST.matcher(stubType).matches()) {
+            renderAjaxResponseContent(wrapper, StubTypes.REQUEST, targetFieldName, foundStubHttpLifecycle);
+         } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
+            renderAjaxResponseContent(wrapper, StubTypes.RESPONSE, targetFieldName, foundStubHttpLifecycle);
+         } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
+            renderAjaxResponseContent(wrapper, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStubHttpLifecycle);
+         } else {
+            wrapper.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+         }
       }
 
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
-   void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final String stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+   void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
          wrapper.getWriter().println(ajaxResponse);

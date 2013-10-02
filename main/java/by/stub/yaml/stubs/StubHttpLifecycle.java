@@ -22,7 +22,6 @@ package by.stub.yaml.stubs;
 
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.YamlProperties;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -140,22 +139,21 @@ public class StubHttpLifecycle {
       }
    }
 
-   public String getAjaxResponseContent(final String stubType, final String propertyName) throws Exception {
-      if (stubType.equals(YamlProperties.REQUEST)) {
-         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(request, propertyName));
-      } else if (stubType.equals(YamlProperties.RESPONSE)) {
-         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
-      } else if (stubType.equals("this")) {
-         return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(this, propertyName));
-      } else {
-         return "Unknown stub type: " + stubType;
+   public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {
+      switch (stubType) {
+         case REQUEST:
+            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(request, propertyName));
+         case RESPONSE:
+            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
+         default:
+            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(this, propertyName));
       }
    }
 
    public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
       final List<StubResponse> allResponses = getAllResponses();
       final StubResponse sequencedResponse = allResponses.get(sequencedResponseId);
-      return StringUtils.determineObjectStringValue(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
+      return StringUtils.objectToString(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
    }
 
    @Override
