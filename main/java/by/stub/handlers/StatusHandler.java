@@ -56,11 +56,13 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class StatusHandler extends AbstractHandler {
 
+   private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
+
    private static final String CSS_CLASS_HIGHLIGHTABLE = "highlightable";
    private static final String CSS_CLASS_NO_HIGHLIGHTABLE = "no-highlightable";
-   private static final String HTML_TABLE_ROW_TEMPLATE = "<tr><td width='250px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
-   private static final List<String> highlightableProperties = Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
-   private static final String AJAXABLE_ANCHOR = "&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[Click to View]</a></strong>&nbsp;";
+   private static final String FILE_METADATA_ROW_TEMPLATE = "<span style='color: #8B0000'>%s</span>=<span style='color: green'>%s</span>";
+   private static final String TABLE_ROW_TEMPLATE = "<tr><td width='250px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
+   private static final String AJAX_HYPERLINK_TEMPLATE = "&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>&nbsp;";
 
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
@@ -99,8 +101,7 @@ public final class StatusHandler extends AbstractHandler {
       final StringBuilder builder = new StringBuilder();
       builder.append(buildJvmParametersHtmlTable());
       builder.append(buildJettyParametersHtmlTable());
-      builder.append(buildSystemStatusHtmlTable());
-      builder.append("<br /><br />");
+      builder.append(buildStubbyParametersTable());
 
       final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
@@ -109,61 +110,64 @@ public final class StatusHandler extends AbstractHandler {
          final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
          final String resourceId = stubHttpLifecycle.getResourceId();
 
-         final String ajaxLinkToRequestAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
+         final String ajaxLinkToRequestAsYaml = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
          final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
          requestTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
 
          builder.append(String.format(htmlTemplateContent, YamlProperties.REQUEST, requestTableBuilder.toString()));
-
-         final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
-         for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
-
-            final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
-            final StubResponse stubResponse = allResponses.get(sequenceId);
-            final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
-            final StringBuilder responseTableBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
-            final String ajaxLinkToResponseAsYaml = String.format(AJAXABLE_ANCHOR, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
-            responseTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
-
-            builder.append(String.format(htmlTemplateContent, responseTableTitle, responseTableBuilder.toString()));
-         }
-
+         builder.append(buildStubResponseTable(htmlTemplateContent, stubHttpLifecycle, resourceId));
          builder.append("<br /><br />");
       }
 
       return HandlerUtils.populateHtmlTemplate("status", builder.toString());
    }
 
+   private String buildStubResponseTable(final String htmlTemplateContent, final StubHttpLifecycle stubHttpLifecycle, final String resourceId) throws Exception {
+      final StringBuilder builder = new StringBuilder();
+      final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
+      for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
+
+         final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
+         final StubResponse stubResponse = allResponses.get(sequenceId);
+         final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
+         final StringBuilder responseTableBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
+         final String ajaxLinkToResponseAsYaml = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
+         responseTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
+
+         builder.append(String.format(htmlTemplateContent, responseTableTitle, responseTableBuilder.toString()));
+      }
+
+      return builder.toString();
+   }
+
    private String buildJvmParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
-      builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getInputArguments()));
+      if (!RUNTIME_MX_BEAN.getInputArguments().isEmpty()) {
+         builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, RUNTIME_MX_BEAN.getInputArguments()));
+      }
       builder.append(populateTableRowTemplate("HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getHeapMemoryUsage()));
       builder.append(populateTableRowTemplate("NON-HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getNonHeapMemoryUsage()));
-      final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
-      return String.format(jettyParametersTable, "jvm", builder.toString());
+      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "jvm", builder.toString());
    }
 
    private String buildJettyParametersHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
       final String host = jettyContext.getHost();
-      final int clientPort = jettyContext.getStubsPort();
-      final int tlsPort = jettyContext.getStubsTlsPort();
       final int adminPort = jettyContext.getAdminPort();
       builder.append(populateTableRowTemplate("HOST", CSS_CLASS_NO_HIGHLIGHTABLE, host));
       builder.append(populateTableRowTemplate("ADMIN PORT", CSS_CLASS_NO_HIGHLIGHTABLE, adminPort));
-      builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, clientPort));
-      builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, tlsPort));
+      builder.append(populateTableRowTemplate("STUBS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, jettyContext.getStubsPort()));
+      builder.append(populateTableRowTemplate("STUBS TLS PORT", CSS_CLASS_NO_HIGHLIGHTABLE, jettyContext.getStubsTlsPort()));
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
-      final String jettyParametersTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
-      return String.format(jettyParametersTable, "jetty parameters", builder.toString());
+      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "jetty parameters", builder.toString());
    }
 
-   private String buildSystemStatusHtmlTable() throws Exception {
+   private String buildStubbyParametersTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
       builder.append(populateTableRowTemplate("VERSION", CSS_CLASS_NO_HIGHLIGHTABLE, JarUtils.readManifestImplementationVersion()));
@@ -172,35 +176,30 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("UPTIME", CSS_CLASS_NO_HIGHLIGHTABLE, HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
       builder.append(populateTableRowTemplate("INPUT ARGS", CSS_CLASS_NO_HIGHLIGHTABLE, CommandLineInterpreter.PROVIDED_OPTIONS));
       builder.append(populateTableRowTemplate("STUBBED ENDPOINTS", CSS_CLASS_NO_HIGHLIGHTABLE, stubbedDataManager.getStubHttpLifecycles().size()));
+      builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, generateFileMetadata(stubbedDataManager.getDataYaml())));
 
-      final String yamlFileDataDataFormatted = constructFileDataList(stubbedDataManager.getDataYaml()).toString().replaceAll(", ", "<br />").replaceAll("(\\[|\\])", "");
-      builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, yamlFileDataDataFormatted));
-
-      final List<List<String>> externalFilesData = new ArrayList<List<String>>();
-      for (Map.Entry<File, Long> entry : stubbedDataManager.getExternalFiles().entrySet()) {
-         final File externalFile = entry.getKey();
-         externalFilesData.add(constructFileDataList(externalFile));
+      if (!stubbedDataManager.getExternalFiles().isEmpty()) {
+         final List<String> externalFilesMetadata = new ArrayList<String>();
+         for (Map.Entry<File, Long> entry : stubbedDataManager.getExternalFiles().entrySet()) {
+            final File externalFile = entry.getKey();
+            externalFilesMetadata.add(generateFileMetadata(externalFile));
+         }
+         final String externalFilesDataFormatted = externalFilesMetadata.toString().replaceAll("(\\[|\\])", "").replaceAll(", ", "");
+         builder.append(populateTableRowTemplate("LOADED EXTERNAL FILES", CSS_CLASS_NO_HIGHLIGHTABLE, externalFilesDataFormatted));
       }
-      final String externalFilesDataFormatted = externalFilesData.toString()
-         .replaceAll("\\],", "\\]<br /><br />")
-         .replaceAll("(\\[|\\])", "")
-         .replaceAll(", ", "<br />");
 
-      builder.append(populateTableRowTemplate("LOADED EXTERNAL FILES", CSS_CLASS_NO_HIGHLIGHTABLE, externalFilesDataFormatted));
-
-      final String systemStatusTable = HandlerUtils.getHtmlResourceByName("snippet_html_table");
-
-      return String.format(systemStatusTable, "stubby4j parameters", builder.toString());
+      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "stubby4j parameters", builder.toString());
    }
 
-   private List<String> constructFileDataList(final File file) throws IOException {
+   private String generateFileMetadata(final File file) throws IOException {
       final List<String> fileData = new ArrayList<String>();
-      fileData.add(String.format("<span style='color: #8B0000'>parentDir</span>=<span style='color: green'>%s/</span>", file.getParentFile().getCanonicalPath()));
-      fileData.add(String.format("<span style='color: #8B0000'>name</span>=<span style='color: green'>%s</span>", file.getName()));
-      fileData.add(String.format("<span style='color: #8B0000'>size</span>=<span style='color: green'>%skb</span>", String.format("%1$,.2f", ((double) file.length() / 1024))));
-      fileData.add(String.format("<span style='color: #8B0000'>lastModified</span>=<span style='color: green'>%s</span>", new Date(file.lastModified())));
+      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "parentDir", file.getParentFile().getCanonicalPath() + "/"));
+      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "name", file.getName()));
+      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb"));
+      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "lastModified", new Date(file.lastModified())));
+      final String htmlSnippet = fileData.toString().replaceAll(", ", "<br />").replaceAll("(\\[|\\])", "");
 
-      return fileData;
+      return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + htmlSnippet + "</div>";
    }
 
    private StringBuilder populateBuildWithHtmlBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {
@@ -214,33 +213,33 @@ public final class StatusHandler extends AbstractHandler {
             continue;
          }
 
-         builder.append(constructHtmlTableRow(resourceId, stubTypeName, key, value));
+         builder.append(constructTableRow(resourceId, stubTypeName, key, value));
       }
       return builder;
    }
 
-   private String constructHtmlTableRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
+   private String constructTableRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
 
       if (highlightableProperties.contains(fieldName)) {
-         final String ajaxifiedLinkToResource = String.format(AJAXABLE_ANCHOR, resourceId, stubTypeName, fieldName);
-         return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxifiedLinkToResource);
+         final String ajaxHyperlink = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, stubTypeName, fieldName);
+         return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_HIGHLIGHTABLE, ajaxHyperlink);
       }
 
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
       if (fieldName.equals(YamlProperties.URL)) {
-         final String linkifiedUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
-         final String linkifiedSslUrl = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
+         final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
+         final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 
-         final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedUrl);
-         final String tableRowWithSslUrl = populateTableRowTemplate("SSL " + StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, linkifiedSslUrl);
+         final String tableRowWithUrl = populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, urlAsHyperlink);
+         final String tableRowWithTlsUrl = populateTableRowTemplate("TLS " + StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, tlsUrlAsHyperlink);
 
-         return String.format("%s%s", tableRowWithUrl, tableRowWithSslUrl);
+         return String.format("%s%s", tableRowWithUrl, tableRowWithTlsUrl);
       }
 
       return populateTableRowTemplate(StringUtils.toUpper(fieldName), CSS_CLASS_NO_HIGHLIGHTABLE, escapedValue);
    }
 
    private String populateTableRowTemplate(final Object... tokens) {
-      return String.format(HTML_TABLE_ROW_TEMPLATE, tokens);
+      return String.format(TABLE_ROW_TEMPLATE, tokens);
    }
 }
