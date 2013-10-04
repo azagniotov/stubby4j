@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -63,6 +62,7 @@ public final class StatusHandler extends AbstractHandler {
    private static final String FILE_METADATA_ROW_TEMPLATE = "<span style='color: #8B0000'>%s</span>=<span style='color: green'>%s</span>";
    private static final String TABLE_ROW_TEMPLATE = "<tr><td width='250px' valign='top' align='left'>%s</td><td class='%s' align='left'>%s</td></tr>";
    private static final String AJAX_HYPERLINK_TEMPLATE = "&nbsp;<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>&nbsp;";
+   private static final String HTML_TABLE_TEMPLATE = HandlerUtils.getHtmlResourceByName("snippet_html_table");
 
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
@@ -86,7 +86,7 @@ public final class StatusHandler extends AbstractHandler {
       wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
 
       try {
-         wrapper.getWriter().println(getConfigDataPresentation());
+         wrapper.getWriter().println(buildStatusPageHtml());
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
@@ -94,50 +94,50 @@ public final class StatusHandler extends AbstractHandler {
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
-   private String getConfigDataPresentation() throws Exception {
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
-
+   private String buildStatusPageHtml() throws Exception {
       final StringBuilder builder = new StringBuilder();
+
       builder.append(buildJvmParametersHtmlTable());
       builder.append(buildJettyParametersHtmlTable());
       builder.append(buildStubbyParametersTable());
 
-      final String htmlTemplateContent = HandlerUtils.getHtmlResourceByName("snippet_html_table");
-
+      final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
       for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
-
          final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
          final String resourceId = stubHttpLifecycle.getResourceId();
 
-         final String ajaxLinkToRequestAsYaml = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
-         final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
-         requestTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
-
-         builder.append(String.format(htmlTemplateContent, YamlProperties.REQUEST, requestTableBuilder.toString()));
-         builder.append(buildStubResponseTable(htmlTemplateContent, stubHttpLifecycle, resourceId));
+         builder.append(buildStubRequestTable(stubHttpLifecycle, resourceId));
+         builder.append(buildStubResponseTable(stubHttpLifecycle, resourceId));
          builder.append("<br /><br />");
       }
 
       return HandlerUtils.populateHtmlTemplate("status", builder.toString());
    }
 
-   private String buildStubResponseTable(final String htmlTemplateContent, final StubHttpLifecycle stubHttpLifecycle, final String resourceId) throws Exception {
-      final StringBuilder builder = new StringBuilder();
+   private String buildStubRequestTable(final StubHttpLifecycle stubHttpLifecycle, final String resourceId) throws Exception {
+      final String ajaxLinkToRequestAsYaml = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
+      final StringBuilder requestTableBuilder = populateBuildWithHtmlBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
+      requestTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToRequestAsYaml));
+
+      return String.format(HTML_TABLE_TEMPLATE, YamlProperties.REQUEST, requestTableBuilder.toString());
+   }
+
+   private String buildStubResponseTable(final StubHttpLifecycle stubHttpLifecycle, final String resourceId) throws Exception {
+      final StringBuilder responseTableBuilder = new StringBuilder();
       final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
       for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
          final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
          final StubResponse stubResponse = allResponses.get(sequenceId);
          final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
-         final StringBuilder responseTableBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
+         final StringBuilder sequencedResponseBuilder = populateBuildWithHtmlBody(resourceId, responseTableTitle, stubResponseProperties);
          final String ajaxLinkToResponseAsYaml = String.format(AJAX_HYPERLINK_TEMPLATE, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
-         responseTableBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
+         sequencedResponseBuilder.append(populateTableRowTemplate("RAW YAML", CSS_CLASS_HIGHLIGHTABLE, ajaxLinkToResponseAsYaml));
 
-         builder.append(String.format(htmlTemplateContent, responseTableTitle, responseTableBuilder.toString()));
+         responseTableBuilder.append(String.format(HTML_TABLE_TEMPLATE, responseTableTitle, sequencedResponseBuilder.toString()));
       }
 
-      return builder.toString();
+      return responseTableBuilder.toString();
    }
 
    private String buildJvmParametersHtmlTable() throws Exception {
@@ -149,7 +149,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getHeapMemoryUsage()));
       builder.append(populateTableRowTemplate("NON-HEAP MEMORY USAGE", CSS_CLASS_NO_HIGHLIGHTABLE, MEMORY_MX_BEAN.getNonHeapMemoryUsage()));
 
-      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "jvm", builder.toString());
+      return String.format(HTML_TABLE_TEMPLATE, "jvm", builder.toString());
    }
 
    private String buildJettyParametersHtmlTable() throws Exception {
@@ -164,7 +164,7 @@ public final class StatusHandler extends AbstractHandler {
       final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
       builder.append(populateTableRowTemplate("NEW STUB DATA POST URI", CSS_CLASS_NO_HIGHLIGHTABLE, endpointRegistration));
 
-      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "jetty parameters", builder.toString());
+      return String.format(HTML_TABLE_TEMPLATE, "jetty parameters", builder.toString());
    }
 
    private String buildStubbyParametersTable() throws Exception {
@@ -179,27 +179,25 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(populateTableRowTemplate("LOADED YAML", CSS_CLASS_NO_HIGHLIGHTABLE, generateFileMetadata(stubbedDataManager.getDataYaml())));
 
       if (!stubbedDataManager.getExternalFiles().isEmpty()) {
-         final List<String> externalFilesMetadata = new ArrayList<String>();
+         final StringBuilder externalFilesMetadata = new StringBuilder();
          for (Map.Entry<File, Long> entry : stubbedDataManager.getExternalFiles().entrySet()) {
             final File externalFile = entry.getKey();
-            externalFilesMetadata.add(generateFileMetadata(externalFile));
+            externalFilesMetadata.append(generateFileMetadata(externalFile));
          }
-         final String externalFilesDataFormatted = externalFilesMetadata.toString().replaceAll("(\\[|\\])", "").replaceAll(", ", "");
-         builder.append(populateTableRowTemplate("LOADED EXTERNAL FILES", CSS_CLASS_NO_HIGHLIGHTABLE, externalFilesDataFormatted));
+         builder.append(populateTableRowTemplate("LOADED EXTERNAL FILES", CSS_CLASS_NO_HIGHLIGHTABLE, externalFilesMetadata.toString()));
       }
 
-      return String.format(HandlerUtils.getHtmlResourceByName("snippet_html_table"), "stubby4j parameters", builder.toString());
+      return String.format(HTML_TABLE_TEMPLATE, "stubby4j parameters", builder.toString());
    }
 
    private String generateFileMetadata(final File file) throws IOException {
-      final List<String> fileData = new ArrayList<String>();
-      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "parentDir", file.getParentFile().getCanonicalPath() + "/"));
-      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "name", file.getName()));
-      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb"));
-      fileData.add(String.format(FILE_METADATA_ROW_TEMPLATE, "lastModified", new Date(file.lastModified())));
-      final String htmlSnippet = fileData.toString().replaceAll(", ", "<br />").replaceAll("(\\[|\\])", "");
+      final StringBuilder builder = new StringBuilder();
+      builder.append(String.format(FILE_METADATA_ROW_TEMPLATE, "parentDir", file.getParentFile().getCanonicalPath() + "/")).append("<br />");
+      builder.append(String.format(FILE_METADATA_ROW_TEMPLATE, "name", file.getName())).append("<br />");
+      builder.append(String.format(FILE_METADATA_ROW_TEMPLATE, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb")).append("<br />");
+      builder.append(String.format(FILE_METADATA_ROW_TEMPLATE, "lastModified", new Date(file.lastModified()))).append("<br />");
 
-      return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + htmlSnippet + "</div>";
+      return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + builder.toString() + "</div>";
    }
 
    private StringBuilder populateBuildWithHtmlBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {

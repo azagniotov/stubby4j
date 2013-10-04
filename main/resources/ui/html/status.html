@@ -64,6 +64,106 @@
          white-space: pre-wrap;
          font-size: 0.9em;
       }
+
+      #cgmp-popup-mask {
+         background-color: #222;
+         display: none;
+         left: 0;
+         position: absolute;
+         top: 0;
+         z-index: 9000;
+      }
+
+      .cgmp-popup-window {
+         display: none;
+         height: 200px;
+         left: 0;
+         padding: 20px;
+         position: fixed;
+         top: 0;
+         width: 440px;
+         z-index: 9999;
+      }
+
+      .cgmp-popup-shortcode-dialog {
+         background: none repeat scroll 0 0 #F9EDBE;
+         border: 1px solid #EBAE3D;
+         border-radius: 2px;
+         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+         color: #222;
+         height: auto;
+         min-height: 200px;
+         moz-border-radius: 2px;
+         moz-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+         webkit-border-radius: 2px;
+         webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+         width: 560px;
+      }
+
+      .cgmp-popup-shortcode-dialog p {
+         font-family: Arial,sans-serif !important;
+         font-size: 13px !important;
+      }
+
+      .cgmp-popup-shortcode-dialog .dismiss-container {
+         left: 0;
+         position: absolute;
+         top: 0;
+         width: 100%%;
+      }
+
+      .cgmp-popup-shortcode-dialog .dialog-dismiss {
+         color: #7F7F7F !important;
+         float: right;
+         font: 26px Arial,sans-serif;
+         margin: 6px 14px;
+         text-decoration: none;
+      }
+
+      .cgmp-popup-shortcode-dialog .close-dialog {
+         background-color: #D14836;
+         background-image: 0;
+         border: 1px solid transparent;
+         border-radius: 2px 2px 2px 2px;
+         color: #FFF;
+         cursor: pointer;
+         display: inline-block;
+         font: bold 11px/27px "Arial","Helvetica",sans-serif;
+         height: 27px;
+         min-width: 54px;
+         moz-transition: all 0.218s ease 0;
+         moz-user-select: none;
+         padding: 0 8px;
+         text-align: center;
+         text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+         text-transform: uppercase;
+      }
+
+      .cgmp-popup-shortcode-dialog .close-dialog:hover {
+         background-color: #C53727;
+         background-image: 0;
+         border-color: #B0281A #B0281A #AF301F;
+         border-style: solid;
+         border-width: 1px;
+         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+         color: #FFF;
+         moz-border-bottom-colors: none;
+         moz-border-image: none;
+         moz-border-left-colors: none;
+         moz-border-right-colors: none;
+         moz-border-top-colors: none;
+      }
+
+      div#inner-shortcode-dialog {
+         background-color: #fff;
+         border: 1px solid gray;
+         border-radius: 7px;
+         height: 90px;
+         moz-border-radius: 7px;
+         overflow: auto;
+         padding: 8px;
+         webkit-border-radius: 7px;
+      }
    </style>
    <link type="text/css" href="/highlight/styles/solarized_light.min.css" media="screen" rel="stylesheet"/>
    <script type="text/javascript" src="/minified/minified.js"></script>
