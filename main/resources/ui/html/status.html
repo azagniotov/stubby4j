@@ -174,15 +174,14 @@
       var MINI = require('minified');
       var $ = MINI.$, $$ = MINI.$$, EE = MINI.EE;
       var divFactory = EE('div');
+      var highlighted = {};
       $(function () {
          $.ready(function () {
-            var highlighted = {};
             bindLinks();
          });
       });
 
       function bindLinks() {
-         $.off(ajaxClickHandler);
          $('.ajaxable').on('click', ajaxClickHandler);
       }
 
@@ -245,21 +244,19 @@
 
          $('.cgmp-popup-window .close-dialog').on('click', function () {
             close_dialog($(this));
-            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
-            bindLinks();
+            //parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
+            reAjaxifyLink(parentTD, thisLink);
          });
 
          $('.cgmp-popup-window .dialog-dismiss').on('click', function () {
             close_dialog($(this));
-            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
-            bindLinks();
+            reAjaxifyLink(parentTD, thisLink);
          });
 
          $(mask).on('click', function () {
             $(this).remove();
             $('.cgmp-popup-window').remove();
-            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
-            bindLinks();
+            reAjaxifyLink(parentTD, thisLink);
          });
 
          function close_dialog(source) {
@@ -270,6 +267,18 @@
             if ($("div.cgmp-popup-shortcode-dialog").length == 0) {
                $(mask).remove();
             }
+         }
+
+         function reAjaxifyLink(parentTD, href) {
+            var anchorFactory = EE('a');
+            var anchor = anchorFactory()[0];
+            $(anchor).set({'@href': href, $: '+ajaxable'});
+            $(anchor).set('innerHTML', '[view]');
+            $(anchor).on('click', ajaxClickHandler);
+            var strongFactory = EE('strong');
+            var strong = strongFactory()[0];
+            parentTD.set('innerHTML', '&nbsp;');
+            parentTD.add($(strong).add($(anchor)));
          }
       }
    </script>
