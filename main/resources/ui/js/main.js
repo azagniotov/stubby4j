@@ -89,6 +89,14 @@ function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
       }
    }
 
+   document.onkeydown = function(event) {
+      if (event.keyCode === 27) { //ESC key
+         $(mask).remove();
+         $('.popup-window').remove();
+         reAjaxifyLink(parentTD, thisLink);
+      }
+   }
+
    function reAjaxifyLink(parentTD, href) {
       var anchorFactory = EE('a');
       var anchor = anchorFactory()[0];
