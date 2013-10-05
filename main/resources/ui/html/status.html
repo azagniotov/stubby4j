@@ -88,14 +88,14 @@
       .cgmp-popup-shortcode-dialog {
          background: none repeat scroll 0 0 #F9EDBE;
          border: 1px solid #EBAE3D;
-         border-radius: 2px;
+         border-radius: 7px;
          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
          color: #222;
          height: auto;
          min-height: 200px;
-         moz-border-radius: 2px;
+         moz-border-radius: 7px;
          moz-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-         webkit-border-radius: 2px;
+         webkit-border-radius: 7px;
          webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
          width: 560px;
       }
@@ -124,7 +124,9 @@
          background-color: #D14836;
          background-image: 0;
          border: 1px solid transparent;
-         border-radius: 2px 2px 2px 2px;
+         border-radius: 3px;
+         webkit-border-radius: 3px;
+         moz-border-radius: 3px;
          color: #FFF;
          cursor: pointer;
          display: inline-block;
@@ -155,7 +157,7 @@
       }
 
       div#inner-shortcode-dialog {
-         background-color: #fff;
+         background-color: #FDF6E3;
          border: 1px solid gray;
          border-radius: 7px;
          height: 150px;
@@ -169,93 +171,106 @@
    <script type="text/javascript" src="/minified/minified.js"></script>
    <script type="text/javascript" src="/highlight/highlight.pack.js"></script>
    <script type="text/javascript">
-      //hljs.tabReplace = '    ';
-      //hljs.initHighlightingOnLoad();
-
       var MINI = require('minified');
-      var $ = MINI.$, $$=MINI.$$, EE=MINI.EE;
-      $(function() {
-         $.ready(function() {
+      var $ = MINI.$, $$ = MINI.$$, EE = MINI.EE;
+      var divFactory = EE('div');
+      $(function () {
+         $.ready(function () {
             var highlighted = {};
-            $('.ajaxable').on('click', function() {
-               var thisLink = $$(this);
-               var parentTD = thisLink.parentNode.parentNode;
-               //$(parentTD).set("innerHTML", "<img src='/images/loading.gif' border='0' />");
-               $.request('get', thisLink.href).then(
-                  function success(content) {
-                     var wrapped = "<pre><code>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>";
-                     //$(parentTD).set('innerHTML', wrapped);
-                     displayPopupWithContent(wrapped);
-                     $('pre code').each(function(item, index) {
-                        if (typeof highlighted[index] === "undefined") {
-                           hljs.highlightBlock(item)
-                           highlighted[index] = true;
-                        }
-                     });
-               },
-                  function error(status, statusText, responseText) {
-                     var status = parseInt(status);
-                     if (status === 0) {
-                        alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
-                     } else {
-                        alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
-                     }
-                  }
-               );
-               return false;
-            });
+            bindLinks();
          });
       });
 
-      function displayPopupWithContent(ajaxContent)  {
-      var divFactory = EE('div');
-
-      var mask = divFactory()[0];
-      $('body').add(mask);
-
-      var popup = divFactory()[0];
-      $('body').add(popup);
-
-      $(mask).set({'@id': 'cgmp-popup-mask'});
-      var body = document.body;
-      var html = document.documentElement;
-      var maskHeight = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-      var maskWidth = Math.max( body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth );
-      $(mask).set({$display: 'block', $opacity: '0.3', $width: maskWidth + 'px', $height: maskHeight + 'px'});
-
-      var content = "<div id='inner-shortcode-dialog'><b>" + ajaxContent + "</b></div><br />";
-      var id = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
-      $(popup).set({'@id': id, $: '+cgmp-popup-shortcode-dialog +cgmp-popup-window'});
-      var popupContent = "<div class='dismiss-container'><a class='dialog-dismiss' href='javascript:void(0)'>×</a></div><p style='padding: 10px 10px 0 10px'>" + content + "</p><div align='center'><input type='button' class='close-dialog' value='Close' /></div>";
-      $(popup).set('innerHTML', popupContent);
-      $(popup).set({$display: 'block'});
-
-      var topCoord = window.innerHeight/2 - $$(popup).offsetHeight/2;
-      var leftCoord = window.innerWidth/2 - $$(popup).offsetWidth/2;
-      $(popup).set({$top:  topCoord + "px", $left:  leftCoord + "px"});
-
-      $('.cgmp-popup-window .close-dialog').on('click', function() {
-      close_dialog($(this));
-      });
-
-      $('.cgmp-popup-window .dialog-dismiss').on('click', function() {
-      close_dialog($(this));
-      });
-
-      $(mask).on('click', function() {
-      $(this).remove();
-      $('.cgmp-popup-window').remove();
-      });
-
-      function close_dialog(source) {
-      var parentDialog = source.trav('parentNode', 'div.cgmp-popup-shortcode-dialog');
-      if (parentDialog) {
-      $(parentDialog).remove();
+      function bindLinks() {
+         $.off(ajaxClickHandler);
+         $('.ajaxable').on('click', ajaxClickHandler);
       }
-      if ($("div.cgmp-popup-shortcode-dialog").length == 0) {
-      $(mask).remove();
+
+      function ajaxClickHandler() {
+         var thisLink = $$(this);
+         var parentTD = thisLink.parentNode.parentNode;
+         $(parentTD).set("innerHTML", "<img src='/images/loading.gif' border='0' />");
+
+         $.request('get', thisLink.href).then(
+            function success(content) {
+               var divHighlightedAjax = divFactory()[0];
+               $(divHighlightedAjax).set('innerHTML', "<pre><code>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>");
+               displayPopupWithContent(thisLink, $(parentTD), $(divHighlightedAjax).get('innerHTML'));
+               $('pre code').each(function (item, index) {
+               if (typeof highlighted[index] === "undefined") {
+                  hljs.highlightBlock(item)
+                  highlighted[index] = true;
+               }
+            });
+            }, function error(status, statusText, responseText) {
+               var status = parseInt(status);
+               if (status === 0) {
+                  alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
+               } else {
+                  alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+               }
+            });
+         return false;
       }
-      }
+
+      function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
+         var mask = divFactory()[0];
+         $(mask).set({'@id': 'cgmp-popup-mask'});
+         $('body').add(mask);
+
+         var popup = divFactory()[0];
+         $('body').add(popup);
+
+         var body = document.body;
+         var html = document.documentElement;
+         var maskHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+         var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+         $(mask).set({
+            $display: 'block',
+            $opacity: '0.3',
+            $width: maskWidth + 'px',
+            $height: maskHeight + 'px'
+         });
+
+         var content = "<div id='inner-shortcode-dialog'><b>" + ajaxContent + "</b></div><br />";
+         var id = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
+         $(popup).set({'@id': id, $: '+cgmp-popup-shortcode-dialog +cgmp-popup-window'});
+         var popupContent = "<div class='dismiss-container'><a class='dialog-dismiss' href='javascript:void(0)'>×</a></div><p style='padding: 10px 10px 0 10px'>" + content + "</p><div align='center'><input type='button' class='close-dialog' value='Close' /></div>";
+         $(popup).set('innerHTML', popupContent);
+         $(popup).set({$display: 'block'});
+
+         var topCoord = window.innerHeight / 2 - $$(popup).offsetHeight / 2;
+         var leftCoord = window.innerWidth / 2 - $$(popup).offsetWidth / 2;
+         $(popup).set({$top: topCoord + "px", $left: leftCoord + "px"});
+
+         $('.cgmp-popup-window .close-dialog').on('click', function () {
+            close_dialog($(this));
+            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
+            bindLinks();
+         });
+
+         $('.cgmp-popup-window .dialog-dismiss').on('click', function () {
+            close_dialog($(this));
+            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
+            bindLinks();
+         });
+
+         $(mask).on('click', function () {
+            $(this).remove();
+            $('.cgmp-popup-window').remove();
+            parentTD.set("innerHTML", "&nbsp;<strong><a class='ajaxable' href='" + thisLink + "'>[view]</a></strong>&nbsp;");
+            bindLinks();
+         });
+
+         function close_dialog(source) {
+            var parentDialog = source.trav('parentNode', 'div.cgmp-popup-shortcode-dialog');
+            if (parentDialog) {
+               $(parentDialog).remove();
+            }
+            if ($("div.cgmp-popup-shortcode-dialog").length == 0) {
+               $(mask).remove();
+            }
+         }
       }
    </script>
 </head>
