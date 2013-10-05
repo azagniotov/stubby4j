@@ -13,6 +13,7 @@ function bindLinks() {
 
 function ajaxClickHandler() {
    var thisLink = $$(this);
+   // TD/STRONG/A
    var parentTD = thisLink.parentNode.parentNode;
    $(parentTD).set("innerHTML", "&nbsp;<img align='middle' src='/images/loading.gif' border='0' />");
 
