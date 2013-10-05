@@ -1,7 +1,6 @@
 var MINI = require('minified');
 var $ = MINI.$, $$ = MINI.$$, EE = MINI.EE;
 var divFactory = EE('div');
-var highlighted = {};
 $(function () {
    $.ready(function () {
       bindLinks();
@@ -36,65 +35,49 @@ function ajaxClickHandler() {
 
 function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
    var mask = divFactory()[0];
-   $(mask).set({'@id': 'popup-mask'});
-   $('body').add(mask);
-
    var popup = divFactory()[0];
-   $('body').add(popup);
+   $('body').add([mask, popup]);
 
    var body = document.body;
    var html = document.documentElement;
    var maskHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
    var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
-   $(mask).set({
-      $display: 'block',
-      $opacity: '0.3',
-      $width: maskWidth + 'px',
-      $height: maskHeight + 'px'
-   });
+   $(mask).set({'@id': 'popup-mask', $display: 'block', $opacity: '0.4', $width: maskWidth + 'px', $height: maskHeight + 'px'});
 
    var content = "<div id='inner-dialog'><b>" + ajaxContent + "</b></div><br />";
    var id = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
-   $(popup).set({'@id': id, $: '+popup-dialog +popup-window'});
    var popupContent = "<div class='dismiss-container'><a class='dialog-dismiss' href='javascript:void(0)'>×</a></div><p style='padding: 2px 0 0 0'>" + content + "</p><div align='center'><input type='button' class='close-dialog' value='Close' /></div>";
-   $(popup).set({$display: 'block', 'innerHTML': popupContent});
-
+   $(popup).set({'@id': id, $display: 'block', $: '+popup-dialog +popup-window'});
    var topCoord = window.innerHeight / 2 - $$(popup).offsetHeight / 2;
    var leftCoord = window.innerWidth / 2 - $$(popup).offsetWidth / 2;
-   $(popup).set({$top: topCoord + "px", $left: leftCoord + "px"});
+   $(popup).set({$top: topCoord + "px", $left: leftCoord + "px", 'innerHTML': popupContent});
 
    $('.popup-window .close-dialog').on('click', function () {
-      close_dialog($(this));
-      reAjaxifyLink(parentTD, thisLink);
+      closePopupAndResetHandler();
    });
 
    $('.popup-window .dialog-dismiss').on('click', function () {
-      close_dialog($(this));
-      reAjaxifyLink(parentTD, thisLink);
+      closePopupAndResetHandler();
    });
 
    $(mask).on('click', function () {
-      $(this).remove();
-      $('.popup-window').remove();
-      reAjaxifyLink(parentTD, thisLink);
+      closePopupAndResetHandler();
    });
 
-   function close_dialog(source) {
-      var parentDialog = source.trav('parentNode', 'div.popup-dialog');
-      if (parentDialog) {
-         $(parentDialog).remove();
-      }
-      if ($("div.popup-dialog").length == 0) {
-         $(mask).remove();
+   document.onkeydown = function (event) {
+      if (event.keyCode === 27) { //ESC key
+         closePopupAndResetHandler();
       }
    }
 
-   document.onkeydown = function(event) {
-      if (event.keyCode === 27) { //ESC key
-         $(mask).remove();
-         $('.popup-window').remove();
-         reAjaxifyLink(parentTD, thisLink);
-      }
+   function closePopupAndResetHandler() {
+      closeDialog();
+      reAjaxifyLink(parentTD, thisLink);
+   }
+
+   function closeDialog() {
+      $('.popup-window').remove();
+      $(mask).remove();
    }
 
    function reAjaxifyLink(parentTD, href) {
