@@ -15,19 +15,14 @@ function bindLinks() {
 function ajaxClickHandler() {
    var thisLink = $$(this);
    var parentTD = thisLink.parentNode.parentNode;
-   $(parentTD).set("innerHTML", "&nbsp;<img align='middle' src='/images/loading-3.gif' border='0' />");
+   $(parentTD).set("innerHTML", "&nbsp;<img align='middle' src='/images/loading.gif' border='0' />");
 
    $.request('get', thisLink.href).then(
       function success(content) {
-         var divHighlightedAjax = divFactory()[0];
-         $(divHighlightedAjax).set('innerHTML', "<pre><code>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>");
-         displayPopupWithContent(thisLink, $(parentTD), $(divHighlightedAjax).get('innerHTML'));
-         $('pre code').each(function (item, index) {
-         if (typeof highlighted[index] === "undefined") {
-            hljs.highlightBlock(item)
-            highlighted[index] = true;
-         }
-      });
+         var id = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
+         var highlightableAjaxResponse = "<pre><code id='" + id + "'>" + content.replace(/^\s+|\s+$/g, '') + "</code></pre>";
+         displayPopupWithContent(thisLink, $(parentTD), highlightableAjaxResponse);
+         hljs.highlightBlock($$("code#" + id));
       }, function error(status, statusText, responseText) {
          var status = parseInt(status);
          if (status === 0) {
