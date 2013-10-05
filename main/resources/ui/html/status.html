@@ -189,7 +189,7 @@
       function ajaxClickHandler() {
          var thisLink = $$(this);
          var parentTD = thisLink.parentNode.parentNode;
-         $(parentTD).set("innerHTML", "<img src='/images/loading.gif' border='0' />");
+         $(parentTD).set("innerHTML", "&nbsp;<img align='middle' src='/images/loading-3.gif' border='0' />");
 
          $.request('get', thisLink.href).then(
             function success(content) {
