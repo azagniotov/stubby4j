@@ -1041,8 +1041,10 @@ for each <endpoint> of stored endpoints {
 
 ##### 2.0.17-SNAPSHOT
 * Upgraded SnakeYAML dependency library to v1.13 [ENHANCEMENT]
-* On admin status page now displaying YAML snippet for a given `request` or `response` separately instead of for a pair  [ENHANCEMENT]
-* On admin status page now displaying loaded external files (if any) [ENHANCEMENT]
+* On admin status page displaying YAML snippet for a given `request` or `response` separately  [ENHANCEMENT]
+* On admin status page displaying loaded external files (if any were loaded) [ENHANCEMENT]
+* On admin status page displaying Ajax response in a JS popup, instead of injecting the response into HTML table [ENHANCEMENT]
+* A bunch of cosmetic changes on Admin status page [COSMETICS]
 
 ##### 2.0.16
 * Displaying stubby JAR: version, its classpath location, built date, up-time, its input args and Java input args on status page [ENHANCEMENT]
