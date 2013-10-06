@@ -111,7 +111,7 @@ public final class StatusHandler extends AbstractHandler {
          builder.append("<br /><br />");
       }
 
-      return HandlerUtils.populateHtmlTemplate("status", System.currentTimeMillis(), builder.toString());
+      return HandlerUtils.populateHtmlTemplate("status", System.currentTimeMillis(), System.currentTimeMillis(), builder.toString());
    }
 
    private String buildStubRequestTable(final StubHttpLifecycle stubHttpLifecycle, final String resourceId) throws Exception {

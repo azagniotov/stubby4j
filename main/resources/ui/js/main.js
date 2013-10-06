@@ -45,9 +45,22 @@ function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
    var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
    $(mask).set({'@id': 'popup-mask', $display: 'block', $opacity: '0.4', $width: maskWidth + 'px', $height: maskHeight + 'px'});
 
-   var content = "<div id='inner-dialog'><b>" + ajaxContent + "</b></div><br />";
+   var resourceIdPattern = /resource\/(\d{1,})/;
+   var resourceIdMatches = $(thisLink).get('@href').match(resourceIdPattern);
+   var popupContent =
+      "<div class='dismiss-container'>" +
+         "<div class='dialog-title'>Resource#" + resourceIdMatches[1] + "</div>" +
+         "<a class='dialog-dismiss' href='javascript:void(0)'>×</a>" +
+      "</div>" +
+      "<p style='padding: 2px 0 0 0'></p>" +
+      "<div id='inner-dialog'>" +
+         "<b>" + ajaxContent + "</b>" +
+      "</div><br />" +
+      "<div align='center'>" +
+         "<input type='button' class='close-dialog' value='Close' />" +
+      "</div>";
+
    var id = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
-   var popupContent = "<div class='dismiss-container'><a class='dialog-dismiss' href='javascript:void(0)'>×</a></div><p style='padding: 2px 0 0 0'>" + content + "</p><div align='center'><input type='button' class='close-dialog' value='Close' /></div>";
    $(popup).set({'@id': id, $display: 'block', $: '+popup-dialog +popup-window'});
    var topCoord = window.innerHeight / 2 - $$(popup).offsetHeight / 2;
    var leftCoord = window.innerWidth / 2 - $$(popup).offsetWidth / 2;
@@ -77,15 +90,14 @@ function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
    }
 
    function closeDialog() {
-      $('.popup-window').remove();
-      $(mask).remove();
+      $('.popup-window').animate({$$fade: 0}, 250);
+      $(mask).animate({$$fade: 0}, 250);
    }
 
    function reAjaxifyLink(parentTD, href) {
       var anchorFactory = EE('a');
       var anchor = anchorFactory()[0];
-      $(anchor).set({'@href': href, $: '+ajaxable'});
-      $(anchor).set('innerHTML', '[view]');
+      $(anchor).set({'@href': href, $: '+ajaxable', 'innerHTML': '[view]'});
       $(anchor).on('click', ajaxClickHandler);
       var strongFactory = EE('strong');
       var strong = strongFactory()[0];

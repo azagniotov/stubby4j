@@ -1,16 +1,29 @@
 body {
-   color: #404040;
    background-color: #fff;
+   color: #404040;
    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
    font-weight: normal;
    line-height: 18px;
 }
 
 table {
-   color: #333333;
    background-color: #dedede;
+   color: #333333;
    font-size: 0.9em;
    line-height: 1.58;
+}
+
+table thead th {
+   border: 1px solid #4D90FE
+}
+
+table th, table td {
+   padding: 3px 8px
+}
+
+table td {
+   border: 1px solid #aaaaaa;
+   vertical-align: top;
 }
 
 table {
@@ -20,23 +33,10 @@ table {
    margin: 0 0 0.8em;
 }
 
-table thead th {
-   border: 1px solid #4D90FE;
-}
-
-table th, table td {
-   padding: 3px 8px;
-}
-
 th {
    background-color: #6199DF;
    color: #FFFFFF;
    font-weight: bold;
-}
-
-table td {
-   border: 1px solid #aaaaaa;
-   vertical-align: top;
 }
 
 td {
@@ -47,17 +47,17 @@ td {
 }
 
 td.highlightable {
-   padding: 0 !important;
+   padding: 0 !important
 }
 
 td.highlightable pre {
-   margin: 0 !important;
+   margin: 0 !important
 }
 
 td.highlightable pre code {
    font-family: Monaco, Andale Mono, Courier New, monospace;
-   white-space: pre-wrap;
    font-size: 0.9em;
+   white-space: pre-wrap;
 }
 
 #popup-mask {
@@ -84,20 +84,15 @@ td.highlightable pre code {
    background: none repeat scroll 0 0 #F9EDBE;
    border: 1px solid #EBAE3D;
    border-radius: 7px;
-   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+   box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
    color: #222;
    height: auto;
    min-height: 200px;
    moz-border-radius: 7px;
-   moz-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+   moz-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
    webkit-border-radius: 7px;
-   webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+   webkit-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
    width: 560px;
-}
-
-.popup-dialog p {
-   font-family: Arial,sans-serif !important;
-   font-size: 13px !important;
 }
 
 .popup-dialog .dismiss-container {
@@ -110,8 +105,16 @@ td.highlightable pre code {
 .popup-dialog .dialog-dismiss {
    color: #7F7F7F !important;
    float: right;
-   font: 26px Arial,sans-serif;
+   font: 30px Arial, sans-serif;
    margin: 6px 14px;
+   text-decoration: none;
+}
+
+.popup-dialog .dialog-title {
+   color: #7F7F7F !important;
+   float: left;
+   font: 18px Arial, sans-serif;
+   margin: 14px 0px 0px 20px;
    text-decoration: none;
 }
 
@@ -120,20 +123,20 @@ td.highlightable pre code {
    background-image: 0;
    border: 1px solid transparent;
    border-radius: 3px;
-   webkit-border-radius: 3px;
-   moz-border-radius: 3px;
    color: #FFF;
    cursor: pointer;
    display: inline-block;
-   font: bold 11px/27px "Arial","Helvetica",sans-serif;
+   font: bold 11px/27px "Arial", "Helvetica", sans-serif;
    height: 27px;
    min-width: 54px;
+   moz-border-radius: 3px;
    moz-transition: all 0.218s ease 0;
    moz-user-select: none;
    padding: 0 8px;
    text-align: center;
    text-shadow: 0 1px rgba(0, 0, 0, 0.1);
    text-transform: uppercase;
+   webkit-border-radius: 3px;
 }
 
 .popup-dialog .close-dialog:hover {
@@ -151,6 +154,11 @@ td.highlightable pre code {
    moz-border-top-colors: none;
 }
 
+.popup-dialog p {
+   font-family: Arial, sans-serif !important;
+   font-size: 13px !important;
+}
+
 div#inner-dialog {
    background-color: #FDF6E3;
    border: 1px solid gray;
@@ -163,5 +171,5 @@ div#inner-dialog {
 }
 
 div#inner-dialog pre {
-   margin-top: 0;
+   margin-top: 0
 }
