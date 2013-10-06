@@ -45,11 +45,15 @@ function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
    var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
    $(mask).set({'@id': 'popup-mask', $display: 'block', $opacity: '0.4', $width: maskWidth + 'px', $height: maskHeight + 'px'});
 
+   var thisLinkHref = $(thisLink).get('@href');
+   var hrefSegments = thisLinkHref.split("/");
+   var propertyName = hrefSegments[hrefSegments.length - 1];
+
    var resourceIdPattern = /resource\/(\d{1,})/;
-   var resourceIdMatches = $(thisLink).get('@href').match(resourceIdPattern);
+   var resourceIdMatches = thisLinkHref.match(resourceIdPattern);
    var popupContent =
       "<div class='dismiss-container'>" +
-         "<div class='dialog-title'>x-stubby-resource-id=" + resourceIdMatches[1] + "</div>" +
+         "<div class='dialog-title'>x-stubby-resource-id=" + resourceIdMatches[1] + ", <b>" + propertyName + "</b></div>" +
          "<a class='dialog-dismiss' href='javascript:void(0)'>×</a>" +
       "</div>" +
       "<p style='padding: 2px 0 0 0'></p>" +
