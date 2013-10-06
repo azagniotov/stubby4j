@@ -49,7 +49,7 @@ function displayPopupWithContent(thisLink, parentTD, ajaxContent) {
    var resourceIdMatches = $(thisLink).get('@href').match(resourceIdPattern);
    var popupContent =
       "<div class='dismiss-container'>" +
-         "<div class='dialog-title'>Resource#" + resourceIdMatches[1] + "</div>" +
+         "<div class='dialog-title'>x-stubby-resource-id=" + resourceIdMatches[1] + "</div>" +
          "<a class='dialog-dismiss' href='javascript:void(0)'>×</a>" +
       "</div>" +
       "<p style='padding: 2px 0 0 0'></p>" +
