@@ -1040,6 +1040,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.17
+* Added a verification check in StubbyManager to make sure that Jetty has been started or shut down [ENHANCEMENT]
 * Upgraded SnakeYAML dependency library to v1.13 [ENHANCEMENT]
 * Admin status page: displaying YAML snippet for a given `request` or `response` separately instead of pairing them up [ENHANCEMENT]
 * Admin status page: displaying metadata of loaded external files (if any) [ENHANCEMENT]
