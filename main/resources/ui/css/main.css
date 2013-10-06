@@ -60,7 +60,7 @@ td.highlightable pre code {
    white-space: pre-wrap;
 }
 
-#popup-mask {
+div#popup-mask {
    background-color: #222;
    display: none;
    left: 0;
@@ -69,14 +69,14 @@ td.highlightable pre code {
    z-index: 9000;
 }
 
-.popup-window {
+div#popup-window {
    display: none;
-   height: 200px;
+   height: 300px;
    left: 0;
    padding: 20px;
    position: fixed;
    top: 0;
-   width: 440px;
+   width: 580px;
    z-index: 9999;
 }
 
@@ -106,7 +106,7 @@ td.highlightable pre code {
    color: #7F7F7F !important;
    float: right;
    font: 30px Arial, sans-serif;
-   margin: 6px 14px;
+   margin: 6px 20px;
    text-decoration: none;
 }
 
@@ -163,7 +163,7 @@ div#inner-dialog {
    background-color: #FDF6E3;
    border: 1px solid gray;
    border-radius: 7px;
-   height: 150px;
+   height: 210px;
    moz-border-radius: 7px;
    overflow: auto;
    padding: 8px;

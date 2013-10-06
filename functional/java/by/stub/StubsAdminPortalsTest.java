@@ -14,6 +14,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -138,7 +139,7 @@ public class StubsAdminPortalsTest {
 
       final HttpResponse ajaxResponse = ajaxRequest.execute();
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo(postContent);
+      assertThat(ajaxResponse.parseAsString().trim()).contains(postContent);
    }
 
    @Test
@@ -163,7 +164,7 @@ public class StubsAdminPortalsTest {
 
       final HttpResponse ajaxResponse = ajaxRequest.execute();
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo(responseContent);
+      assertThat(ajaxResponse.parseAsString().trim()).contains(responseContent);
    }
 
    @Test
@@ -181,7 +182,7 @@ public class StubsAdminPortalsTest {
 
       final HttpResponse ajaxResponse = ajaxRequest.execute();
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo("Still going strong!");
+      assertThat(ajaxResponse.parseAsString().trim()).contains("Still going strong!");
    }
 
    @Test
@@ -205,7 +206,7 @@ public class StubsAdminPortalsTest {
 
       final HttpResponse ajaxResponse = ajaxRequest.execute();
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(ajaxResponse.parseAsString().trim()).isEqualTo(
+      assertThat(ajaxResponse.parseAsString().trim()).contains(
          "- request:\n" +
          "    method: POST\n" +
          "    url: /invoice/new\n" +

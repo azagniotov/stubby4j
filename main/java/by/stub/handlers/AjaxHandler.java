@@ -43,6 +43,7 @@ public class AjaxHandler extends AbstractHandler {
    private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
    private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
+   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup");
 
    private final StubbedDataManager stubbedDataManager;
 
@@ -92,7 +93,8 @@ public class AjaxHandler extends AbstractHandler {
    void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
-         wrapper.getWriter().println(ajaxResponse);
+         final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+         wrapper.getWriter().println(htmlPopup);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
@@ -101,7 +103,8 @@ public class AjaxHandler extends AbstractHandler {
    void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
-         wrapper.getWriter().println(ajaxResponse);
+         final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+         wrapper.getWriter().println(htmlPopup);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
