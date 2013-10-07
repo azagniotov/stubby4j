@@ -39,9 +39,10 @@ public final class StubbyManager {
       server.start();
 
       while (!isJettyUp()) {
+         ANSITerminal.warn("Waiting for Jetty to finish starting up..");
          Thread.sleep(250);
       }
-
+      ANSITerminal.status("Jetty successfully started");
       ANSITerminal.info("\nQuit: ctrl-c\n");
    }
 
@@ -56,8 +57,10 @@ public final class StubbyManager {
       server.stop();
 
       while (!isJettyDown()) {
+         ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
          Thread.sleep(250);
       }
+      ANSITerminal.status("Jetty successfully shutdown");
    }
 
    private boolean isJettyStarting() throws Exception {
