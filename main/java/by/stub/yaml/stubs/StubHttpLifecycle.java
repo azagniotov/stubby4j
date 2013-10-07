@@ -117,6 +117,9 @@ public class StubHttpLifecycle {
       this.httpLifeCycleAsYaml = httpLifeCycleAsYaml;
    }
 
+   /**
+    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    */
    public String getRequestAsYaml() {
       return requestAsYaml;
    }
@@ -125,6 +128,9 @@ public class StubHttpLifecycle {
       this.requestAsYaml = requestAsYaml;
    }
 
+   /**
+    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    */
    public String getResponseAsYaml() {
       return responseAsYaml;
    }

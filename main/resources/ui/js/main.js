@@ -17,7 +17,7 @@ function ajaxClickHandler() {
    var thisLink = $$(this);
    // TD/STRONG/A
    var parentTD = thisLink.parentNode.parentNode;
-   $(parentTD).set("innerHTML", "&nbsp;<img align='middle' src='/images/loading.gif' border='0' />");
+   $(parentTD).set("innerHTML", "<img align='baseline' src='/images/loading.gif' border='0' />");
 
    $.request('get', thisLink.href).then(
       function success(content) {
@@ -91,7 +91,7 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent) {
       $(anchor).on('click', ajaxClickHandler);
 
       var strong = strongFactory()[0];
-      parentTD.set('innerHTML', '&nbsp;');
+      parentTD.set('innerHTML', '');
       parentTD.add($(strong).add($(anchor)));
    }
 }

@@ -46,20 +46,6 @@ td {
    vertical-align: middle;
 }
 
-td.highlightable {
-   padding: 0 !important
-}
-
-td.highlightable pre {
-   margin: 0 !important
-}
-
-td.highlightable pre code {
-   font-family: Monaco, Andale Mono, Courier New, monospace;
-   font-size: 0.9em;
-   white-space: pre-wrap;
-}
-
 div#popup-mask {
    background-color: #222;
    display: none;
