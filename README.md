@@ -1039,6 +1039,9 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
+##### 2.0.18-SNAPSHOT
+* Configured jetty GZIP handler for static resources and Stubs & Admin portals
+
 ##### 2.0.17
 * Added a verification check in StubbyManager to make sure that Jetty has been started or shut down [ENHANCEMENT]
 * Upgraded SnakeYAML dependency library to v1.13 [ENHANCEMENT]

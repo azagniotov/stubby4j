@@ -30,10 +30,13 @@ import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.GzipHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -44,6 +47,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -90,23 +94,23 @@ public final class JettyFactory {
       final HandlerList handlers = new HandlerList();
       handlers.setHandlers(new Handler[]
          {
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/", "default404.html")),
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsHandler(stubbedDataManager))),
 
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/html/", "default404.html")),
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, staticResourceHandler("ui/images/", "favicon.ico")),
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, new StubsHandler(stubbedDataManager)),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsHandler(stubbedDataManager))),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/status", new StatusHandler(jettyContext, stubbedDataManager)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusHandler(jettyContext, stubbedDataManager))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new DataRefreshHandler(jettyContext, stubbedDataManager)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", staticResourceHandler("ui/js/highlight/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", staticResourceHandler("ui/js/minified/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js", staticResourceHandler("ui/js/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/css", staticResourceHandler("ui/css/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/images", staticResourceHandler("ui/images/")),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", new AjaxHandler(stubbedDataManager)),
-            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, new AdminHandler(stubbedDataManager))
+            constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxHandler(stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminHandler(stubbedDataManager)))
          }
       );
 
@@ -123,6 +127,28 @@ public final class JettyFactory {
       return resourceHandler;
    }
 
+   private GzipHandler gzipHandler(final AbstractHandler abstractHandler) {
+
+      final GzipHandler gzipHandler = new GzipHandler();
+      gzipHandler.setMimeTypes(
+            "text/html," +
+            "text/plain," +
+            "text/xml," +
+            "application/xhtml+xml," +
+            "application/json," +
+            "text/css," +
+            "application/javascript," +
+            "application/x-javascript," +
+            "image/svg+xml," +
+            "image/gif," +
+            "image/jpg," +
+            "image/jpeg," +
+            "image/png");
+      gzipHandler.setHandler(abstractHandler);
+
+      return gzipHandler;
+   }
+
    private ContextHandler constructHandler(final String connectorName, final String pathInfo, final Handler handler) {
 
       final ContextHandler contextHandler = new ContextHandler();
@@ -131,6 +157,10 @@ public final class JettyFactory {
       contextHandler.setConnectorNames(new String[]{connectorName});
       contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
       contextHandler.setHandler(handler);
+
+      final MimeTypes mimeTypes = new MimeTypes();
+      mimeTypes.setMimeMap(new HashMap());
+      contextHandler.setMimeTypes(mimeTypes);
 
       return contextHandler;
    }
