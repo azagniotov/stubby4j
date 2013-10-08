@@ -41,8 +41,8 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent) {
 
    var body = document.body;
    var html = document.documentElement;
-   var maskHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-   var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+   var maskHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight, window.innerHeight);
+   var maskWidth = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth, window.innerWidth);
    var divPopupMask = 'div#popup-mask';
    $(divPopupMask).set({$display: 'block', $opacity: '0.4', $width: maskWidth + 'px', $height: maskHeight + 'px'});
 
