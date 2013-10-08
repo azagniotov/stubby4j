@@ -62,7 +62,7 @@ div#popup-window {
    padding: 20px;
    position: fixed;
    top: 0;
-   width: 580px;
+   width: 45%;
    z-index: 9999;
 }
 
@@ -72,13 +72,10 @@ div#popup-window {
    border-radius: 7px;
    box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
    color: #222;
-   height: auto;
-   min-height: 200px;
    moz-border-radius: 7px;
    moz-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
    webkit-border-radius: 7px;
    webkit-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
-   width: 560px;
 }
 
 .popup-dialog .dismiss-container {
