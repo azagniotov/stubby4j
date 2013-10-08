@@ -42,17 +42,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class StubbedDataManager {
 
    private final File dataYaml;
    private final List<StubHttpLifecycle> stubHttpLifecycles;
    private StubbyHttpTransport stubbyHttpTransport;
+   private final ConcurrentHashMap<String, AtomicLong> resourceStats;
 
    public StubbedDataManager(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
       this.dataYaml = dataYaml;
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
       this.stubbyHttpTransport = new StubbyHttpTransport();
+      this.resourceStats = new ConcurrentHashMap<String, AtomicLong>();
    }
 
    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
@@ -69,6 +73,10 @@ public class StubbedDataManager {
       if (ObjectUtils.isNull(matchedLifecycle)) {
          return new NotFoundStubResponse();
       }
+
+      final String resourceId = matchedLifecycle.getResourceId();
+      resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
+      resourceStats.get(resourceId).incrementAndGet();
 
       final StubResponse stubResponse = matchedLifecycle.getResponse();
       if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {
@@ -139,6 +147,11 @@ public class StubbedDataManager {
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public List<StubHttpLifecycle> getStubHttpLifecycles() {
       return new LinkedList<StubHttpLifecycle>(stubHttpLifecycles);
+   }
+
+   // Just a shallow copy that protects collection from modification, the points themselves are not copied
+   public ConcurrentHashMap<String, AtomicLong> getResourceStats() {
+      return new ConcurrentHashMap<String, AtomicLong>(resourceStats);
    }
 
    public synchronized String getOnlyStubRequestUrl() {

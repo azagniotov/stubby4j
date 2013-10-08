@@ -98,6 +98,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(buildJvmParametersHtmlTable());
       builder.append(buildJettyParametersHtmlTable());
       builder.append(buildStubbyParametersHtmlTable());
+      builder.append(buildResourceStatsHtmlTable());
 
       final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
       for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
@@ -187,6 +188,15 @@ public final class StatusHandler extends AbstractHandler {
       }
 
       return String.format(TEMPLATE_HTML_TABLE, "stubby4j parameters", builder.toString());
+   }
+
+   private String buildResourceStatsHtmlTable() throws Exception {
+
+      final StringBuilder builder = new StringBuilder();
+      final String resourceStats = stubbedDataManager.getResourceStats().toString();
+      builder.append(interpolateHtmlTableRowTemplate("POPULARITY", resourceStats.replaceAll("\\{", "").replaceAll("\\}", "").replaceAll(", ", "<br />")));
+
+      return String.format(TEMPLATE_HTML_TABLE, "stubby resource stats", builder.toString());
    }
 
    private String buildLoadedFileMetadata(final File file) throws IOException {
