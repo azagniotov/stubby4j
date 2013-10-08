@@ -26,6 +26,7 @@ import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.JarUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
@@ -190,12 +191,16 @@ public final class StatusHandler extends AbstractHandler {
 
    private String buildLoadedFileMetadata(final File file) throws IOException {
       final StringBuilder builder = new StringBuilder();
-      builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "parentDir", file.getParentFile().getCanonicalPath() + "/")).append("<br />");
+      builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "parentDir", determineParentDir(file))).append("<br />");
       builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "name", file.getName())).append("<br />");
       builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb")).append("<br />");
       builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "lastModified", new Date(file.lastModified()))).append("<br />");
 
       return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + builder.toString() + "</div>";
+   }
+
+   private String determineParentDir(final File file) throws IOException {
+      return (ObjectUtils.isNull(file.getParentFile()) ? file.getCanonicalPath().replaceAll(file.getName(), "") : file.getParentFile().getCanonicalPath() + "/");
    }
 
    private StringBuilder buildHtmlTableBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {
