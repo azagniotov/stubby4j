@@ -11,10 +11,11 @@ $(function () {
 });
 
 function bindLinks() {
-   $('.ajaxable').on('click', ajaxClickHandler);
+   $('.ajax-stats').on('click', ajaxToStatsClickHandler);
+   $('.ajax-resource').on('click', ajaxToResourceClickHandler);
 }
 
-function ajaxClickHandler() {
+function ajaxToStatsClickHandler() {
    var thisLink = $$(this);
    // TD/STRONG/A
    var parentTD = thisLink.parentNode.parentNode;
@@ -22,7 +23,131 @@ function ajaxClickHandler() {
 
    $.request('get', thisLink.href).then(
       function success(content) {
-         displayPopupWithContent(thisLink, $(parentTD), content.replace(/^\s+|\s+$/g, ''));
+         var popupWithCsvWithin = content.replace(/^\s+|\s+$/g, '');
+
+         displayPopupWithContent(thisLink, $(parentTD), popupWithCsvWithin, ajaxToStatsClickHandler);
+         var divStatsHolder = '#inner-dialog-stats';
+         var csv = $(divStatsHolder).get('innerHTML');
+         $(divStatsHolder).set('innerHTML', '');
+
+         var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width = 510 - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+         var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .3);
+
+         var y = d3.scale.linear()
+            .range([height, 0]);
+
+         var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+         var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
+         var svg = d3.select(divStatsHolder).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+         var data = d3.csv.parse(csv, stringToInt);
+         console.log(data);
+
+         var maxYAxis = d3.max(data, function(d) {
+            console.log(d.hits);
+            return d.hits;
+         });
+         console.log(maxYAxis);
+
+         x.domain(data.map(function(d) { return d.resourceId; }));
+         y.domain([0, maxYAxis]);
+
+         svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("x", "30%")
+            .attr("dy", "2.8em")
+            .text("x-stubby-resource-id");
+
+         svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("hits");
+
+         svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.resourceId); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.hits); })
+            .attr("height", function(d) { return height - y(d.hits); });
+
+         d3.select("#sort-values-box").on("change", sortColumns);
+         var sortTimeout = setTimeout(function() {
+            d3.select("#sort-values-box").property("checked", true).each(sortColumns);
+         }, 1500);
+
+         function stringToInt(d) {
+            d.hits = +d.hits;
+            return d;
+         }
+
+         function sortColumns() {
+            clearTimeout(sortTimeout);
+            // Copy-on-write since tweens are evaluated after a delay.
+            var x0 = x.domain(data.sort(this.checked
+                     ? function(a, b) { return b.hits - a.hits; }
+                     : function(a, b) { return d3.ascending(a.resourceId, b.resourceId); })
+                  .map(function(d) { return d.resourceId; }))
+               .copy();
+
+            var transition = svg.transition().duration(1250),
+               delay = function(d, i) { return i * 50; };
+
+            transition.selectAll(".bar")
+               .delay(delay)
+               .attr("x", function(d) { return x0(d.resourceId); });
+
+            transition.select(".x.axis")
+               .call(xAxis)
+               .selectAll("g")
+               .delay(delay);
+         }
+      }, function error(status, statusText, responseText) {
+         var status = parseInt(status);
+         if (status === 0) {
+            alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
+         } else {
+            alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+         }
+      });
+   return false;
+}
+
+
+
+function ajaxToResourceClickHandler() {
+   var thisLink = $$(this);
+   // TD/STRONG/A
+   var parentTD = thisLink.parentNode.parentNode;
+   $(parentTD).set("innerHTML", "<img align='baseline' src='/images/loading.gif' border='0' />");
+
+   $.request('get', thisLink.href).then(
+      function success(content) {
+         var popupWithContent = content.replace(/^\s+|\s+$/g, '');
+         displayPopupWithContent(thisLink, $(parentTD), popupWithContent, ajaxToResourceClickHandler);
          hljs.highlightBlock($$("code#ajax-response"));
       }, function error(status, statusText, responseText) {
          var status = parseInt(status);
@@ -35,7 +160,7 @@ function ajaxClickHandler() {
    return false;
 }
 
-function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent) {
+function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisLinkHandlerFunction) {
    var body = document.body;
    var html = document.documentElement;
 
@@ -86,7 +211,7 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent) {
 
    function closePopupAndResetHandler() {
       closeDialog();
-      reAjaxifyLink(parentTD, thisLink);
+      rebindAjaxLink(parentTD, thisLink);
    }
 
    function closeDialog() {
@@ -99,10 +224,10 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent) {
       $("div#popup-placeholder").remove();
    }
 
-   function reAjaxifyLink(parentTD, href) {
+   function rebindAjaxLink(parentTD, href) {
       var anchor = anchorFactory()[0];
-      $(anchor).set({'@href': href, $: '+ajaxable', 'innerHTML': '[view]'});
-      $(anchor).on('click', ajaxClickHandler);
+      $(anchor).set({'@href': href, $: '+ajaxified', 'innerHTML': '[view]'});
+      $(anchor).on('click', thisLinkHandlerFunction);
 
       var strong = strongFactory()[0];
       parentTD.set('innerHTML', '');

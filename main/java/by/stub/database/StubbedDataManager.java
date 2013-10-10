@@ -154,6 +154,11 @@ public class StubbedDataManager {
       return new ConcurrentHashMap<String, AtomicLong>(resourceStats);
    }
 
+   public String getResourceStatsAsCsv() {
+      final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", "\n").replaceAll("=", ",");
+      return String.format("resourceId,hits\n%s", csvNoHeader);
+   }
+
    public synchronized String getOnlyStubRequestUrl() {
       return stubHttpLifecycles.get(0).getRequest().getUrl();
    }

@@ -156,3 +156,38 @@ div#inner-dialog {
 div#inner-dialog pre {
    margin-top: 0
 }
+
+div#inner-dialog-stats {
+   height: 210px;
+   overflow: auto;
+   padding: 8px;
+   font: 10px sans-serif;
+   text-align: center;
+}
+
+div#popup-window label {
+   top: 25px;
+   left: 42%;
+   position: relative;
+   float: left;
+}
+
+.axis text {
+   font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+   fill: none;
+   stroke: #000;
+   shape-rendering: crispEdges;
+}
+
+.bar {
+   fill: #6BAF71;
+   fill-opacity: .9;
+}
+
+.x.axis path {
+   display: none;
+}

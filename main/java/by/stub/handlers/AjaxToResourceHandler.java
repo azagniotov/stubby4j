@@ -37,17 +37,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class AjaxHandler extends AbstractHandler {
+public class AjaxToResourceHandler extends AbstractHandler {
 
    private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
    private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
    private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
-   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup");
+   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup-generic");
 
    private final StubbedDataManager stubbedDataManager;
 
-   public AjaxHandler(final StubbedDataManager stubbedDataManager) {
+   public AjaxToResourceHandler(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
    }
 

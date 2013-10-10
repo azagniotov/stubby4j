@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
  * @author: Alexander Zagniotov
  * Created: 8/18/13 1:48 PM
  */
-public class AjaxHandlerTest {
+public class AjaxToResourceHandlerTest {
 
    private StubbedDataManager mockStubbedDataManager = Mockito.mock(StubbedDataManager.class);
    private Request mockRequest = Mockito.mock(Request.class);
@@ -62,16 +62,16 @@ public class AjaxHandlerTest {
       ArgumentCaptor<Integer> httpCycleIndexCaptor = ArgumentCaptor.forClass(Integer.class);
 
       final String requestURI = "/ajax/resource/5/request/post";
-      final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
-      final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
+      final AjaxToResourceHandler ajaxToResourceHandler = new AjaxToResourceHandler(mockStubbedDataManager);
+      final AjaxToResourceHandler spyAjaxToResourceHandler = Mockito.spy(ajaxToResourceHandler);
 
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
-      spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      spyAjaxToResourceHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxToResourceHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(5);
       assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.REQUEST);
@@ -86,16 +86,16 @@ public class AjaxHandlerTest {
       ArgumentCaptor<Integer> httpCycleIndexCaptor = ArgumentCaptor.forClass(Integer.class);
 
       final String requestURI = "/ajax/resource/15/response/file";
-      final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
-      final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
+      final AjaxToResourceHandler ajaxToResourceHandler = new AjaxToResourceHandler(mockStubbedDataManager);
+      final AjaxToResourceHandler spyAjaxToResourceHandler = Mockito.spy(ajaxToResourceHandler);
 
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
-      spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      spyAjaxToResourceHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxToResourceHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.RESPONSE);
@@ -110,16 +110,16 @@ public class AjaxHandlerTest {
       ArgumentCaptor<Integer> httpCycleIndexCaptor = ArgumentCaptor.forClass(Integer.class);
 
       final String requestURI = "/ajax/resource/15/response/8/file";
-      final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
-      final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
+      final AjaxToResourceHandler ajaxToResourceHandler = new AjaxToResourceHandler(mockStubbedDataManager);
+      final AjaxToResourceHandler spyAjaxToResourceHandler = Mockito.spy(ajaxToResourceHandler);
 
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
-      spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      spyAjaxToResourceHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxToResourceHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(responseSequenceCaptor.getValue()).isEqualTo(8);
@@ -130,17 +130,17 @@ public class AjaxHandlerTest {
    public void verifyBehaviourWhenAjaxSubmittedToFetchContentForWrongStubType() throws Exception {
 
       final String requestURI = "/ajax/resource/5/WRONG-STUB-TYPE/post";
-      final AjaxHandler ajaxHandler = new AjaxHandler(mockStubbedDataManager);
-      final AjaxHandler spyAjaxHandler = Mockito.spy(ajaxHandler);
+      final AjaxToResourceHandler ajaxToResourceHandler = new AjaxToResourceHandler(mockStubbedDataManager);
+      final AjaxToResourceHandler spyAjaxToResourceHandler = Mockito.spy(ajaxToResourceHandler);
 
       when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
 
-      spyAjaxHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+      spyAjaxToResourceHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
+      verify(spyAjaxToResourceHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
       verify(mockPrintWriter, times(1)).println("Could not fetch the content for stub type: WRONG-STUB-TYPE");
 
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
-      verify(spyAjaxHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxToResourceHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
    }
 }

@@ -24,7 +24,8 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminHandler;
-import by.stub.handlers.AjaxHandler;
+import by.stub.handlers.AjaxToResourceHandler;
+import by.stub.handlers.AjaxToStatsHandler;
 import by.stub.handlers.DataRefreshHandler;
 import by.stub.handlers.StatusHandler;
 import by.stub.handlers.StubsHandler;
@@ -37,7 +38,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.GzipHandler;
-import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -111,7 +111,8 @@ public final class JettyFactory {
             constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxHandler(stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxToResourceHandler(stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxToStatsHandler(stubbedDataManager))),
             constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminHandler(stubbedDataManager)))
          }
       );

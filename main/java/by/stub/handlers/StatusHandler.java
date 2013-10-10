@@ -60,7 +60,8 @@ public final class StatusHandler extends AbstractHandler {
    private static final List<String> FIELDS_FOR_AJAX_LINKS = Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
 
    private static final String TEMPLATE_LOADED_FILE_METADATA_PAIR = "<span style='color: #8B0000'>%s</span>=<span style='color: green'>%s</span>";
-   private static final String TEMPLATE_AJAX_HYPERLINK = "<strong><a class='ajaxable' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>";
+   private static final String TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK = "<strong><a class='ajax-resource' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>";
+   private static final String TEMPLATE_AJAX_TO_STATS_HYPERLINK = "<strong><a class='ajax-stats' href='/ajax/stats'>[view]</a></strong>";
    private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("snippet_html_table");
    private static final String TEMPLATE_HTML_TABLE_ROW = "<tr><td width='250px' valign='top' align='left'>%s</td><td align='left'>%s</td></tr>";
 
@@ -114,7 +115,7 @@ public final class StatusHandler extends AbstractHandler {
 
    private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
       final String resourceId = stubHttpLifecycle.getResourceId();
-      final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
+      final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
       final StringBuilder requestTableBuilder = buildHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
       requestTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
@@ -131,7 +132,7 @@ public final class StatusHandler extends AbstractHandler {
          final StubResponse stubResponse = allResponses.get(sequenceId);
          final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
          final StringBuilder sequencedResponseBuilder = buildHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
-         final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
+         final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
          sequencedResponseBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToResponseAsYaml));
 
          responseTableBuilder.append(String.format(TEMPLATE_HTML_TABLE, responseTableTitle, sequencedResponseBuilder.toString()));
@@ -192,11 +193,14 @@ public final class StatusHandler extends AbstractHandler {
 
    private String buildResourceStatsHtmlTable() throws Exception {
 
-      final StringBuilder builder = new StringBuilder();
-      final String resourceStats = stubbedDataManager.getResourceStats().toString();
-      builder.append(interpolateHtmlTableRowTemplate("POPULARITY", resourceStats.replaceAll("\\{", "").replaceAll("\\}", "").replaceAll(", ", "<br />")));
+      if (stubbedDataManager.getResourceStats().isEmpty()) {
+         return "";
+      }
 
-      return String.format(TEMPLATE_HTML_TABLE, "stubby resource stats", builder.toString());
+      final StringBuilder builder = new StringBuilder();
+      builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
+
+      return String.format(TEMPLATE_HTML_TABLE, "stubby stats", builder.toString());
    }
 
    private String buildLoadedFileMetadata(final File file) throws IOException {
@@ -232,7 +236,7 @@ public final class StatusHandler extends AbstractHandler {
    private String buildHtmlTableSingleRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
 
       if (FIELDS_FOR_AJAX_LINKS.contains(fieldName)) {
-         final String ajaxHyperlink = String.format(TEMPLATE_AJAX_HYPERLINK, resourceId, stubTypeName, fieldName);
+         final String ajaxHyperlink = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, stubTypeName, fieldName);
          return interpolateHtmlTableRowTemplate(StringUtils.toUpper(fieldName), ajaxHyperlink);
       }
 
