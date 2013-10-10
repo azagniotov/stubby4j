@@ -55,13 +55,9 @@ function ajaxToStatsClickHandler() {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
          var data = d3.csv.parse(csv, stringToInt);
-         console.log(data);
-
          var maxYAxis = d3.max(data, function(d) {
-            console.log(d.hits);
             return d.hits;
          });
-         console.log(maxYAxis);
 
          x.domain(data.map(function(d) { return d.resourceId; }));
          y.domain([0, maxYAxis]);
@@ -125,13 +121,9 @@ function ajaxToStatsClickHandler() {
                .selectAll("g")
                .delay(delay);
          }
-      }, function error(status, statusText, responseText) {
-         var status = parseInt(status);
-         if (status === 0) {
-            alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
-         } else {
-            alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
-         }
+      },
+      function error(status, statusText, responseText) {
+         requestErrorHandler(status, statusText, responseText, thisLink, parentTD, ajaxToStatsClickHandler);
       });
    return false;
 }
@@ -149,15 +141,31 @@ function ajaxToResourceClickHandler() {
          var popupWithContent = content.replace(/^\s+|\s+$/g, '');
          displayPopupWithContent(thisLink, $(parentTD), popupWithContent, ajaxToResourceClickHandler);
          hljs.highlightBlock($$("code#ajax-response"));
-      }, function error(status, statusText, responseText) {
-         var status = parseInt(status);
-         if (status === 0) {
-            alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
-         } else {
-            alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
-         }
+      },
+      function error(status, statusText, responseText) {
+         requestErrorHandler(status, statusText, responseText, thisLink, parentTD, ajaxToResourceClickHandler);
       });
    return false;
+}
+
+function requestErrorHandler(status, statusText, responseText, thisLink, parentTD, thisLinkHandlerFunction) {
+   var status = parseInt(status);
+   if (status === 0) {
+      alert("Could not contact the stubby4j backend when fetching resource:\n" + thisLink + "\n\nIs stubby4j app UP?");
+   } else {
+      alert("Error fetching resource:\n" + thisLink + "\n\nstatus: " + status + "\nstatusText: " + statusText + "\nresponseText: " + responseText);
+   }
+   //rebindAjaxLink(parentTD, thisLink, thisLinkHandlerFunction);
+}
+
+function rebindAjaxLink(parentTD, href, thisLinkHandlerFunction) {
+   var anchor = anchorFactory()[0];
+   $(anchor).set({'@href': href, $: '+ajaxified', 'innerHTML': '[view]'});
+   $(anchor).on('click', thisLinkHandlerFunction);
+
+   var strong = strongFactory()[0];
+   parentTD.set('innerHTML', '');
+   parentTD.add($(strong).add($(anchor)));
 }
 
 function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisLinkHandlerFunction) {
@@ -211,7 +219,7 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
 
    function closePopupAndResetHandler() {
       closeDialog();
-      rebindAjaxLink(parentTD, thisLink);
+      rebindAjaxLink(parentTD, thisLink, thisLinkHandlerFunction);
    }
 
    function closeDialog() {
@@ -222,16 +230,6 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
          $(divPopupMask).remove();
       });
       $("div#popup-placeholder").remove();
-   }
-
-   function rebindAjaxLink(parentTD, href) {
-      var anchor = anchorFactory()[0];
-      $(anchor).set({'@href': href, $: '+ajaxified', 'innerHTML': '[view]'});
-      $(anchor).on('click', thisLinkHandlerFunction);
-
-      var strong = strongFactory()[0];
-      parentTD.set('innerHTML', '');
-      parentTD.add($(strong).add($(anchor)));
    }
 
    window.onresize = function(event) {
