@@ -193,12 +193,12 @@ public final class StatusHandler extends AbstractHandler {
 
    private String buildResourceStatsHtmlTable() throws Exception {
 
-      if (stubbedDataManager.getResourceStats().isEmpty()) {
-         return "";
-      }
-
       final StringBuilder builder = new StringBuilder();
-      builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
+      if (stubbedDataManager.getResourceStats().isEmpty()) {
+         builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", "No requests were made to stubby yet.."));
+      } else {
+         builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
+      }
 
       return String.format(TEMPLATE_HTML_TABLE, "stubby stats", builder.toString());
    }
