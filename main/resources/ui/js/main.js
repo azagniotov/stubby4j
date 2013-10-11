@@ -7,6 +7,26 @@ var strongFactory = EE('strong');
 $(function () {
    $.ready(function () {
       bindLinks();
+      var checkForStatsTimeout = setTimeout(function() { checkForStats(); }, 1000);
+      function checkForStats() {
+         var statsPresent = false;
+         $.request('get', "/ajax/stats/check").then(
+            function success(content) {
+               statsPresent = (/^true$/i).test(content.replace(/^\s+|\s+$/g, ''))
+               if (statsPresent === true) {
+                  clearTimeout(checkForStatsTimeout);
+                  var parentTD = document.evaluate('//td[contains(text(), "No requests were made")]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotItem(0);
+                  parentTD = $(parentTD);
+                  rebindAjaxLink(parentTD, "/ajax/stats", ajaxToStatsClickHandler);
+               } else {
+                  checkForStatsTimeout = setTimeout(function() { checkForStats(); }, 1000);
+               }
+            },
+            function error(status, statusText, responseText) {
+               requestErrorHandler(status, statusText, responseText, null, null, null);
+         });
+         return false;
+      }
    });
 });
 
