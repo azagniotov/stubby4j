@@ -1042,6 +1042,7 @@ for each <endpoint> of stored endpoints {
 ##### 2.0.18-SNAPSHOT
 * When `--data` file was just a relative filename without parent directory, NPE was thrown when Admin portal status page was loaded [BUG]
 * Configured jetty GZIP handler for static resources and Stubs & Admin portals [ENHANCEMENT]
+* Added resource hit stats section to Admin portal status page [ENHANCEMENT]
 
 ##### 2.0.17
 * Added a verification check in StubbyManager to make sure that Jetty has been started or shut down [ENHANCEMENT]
