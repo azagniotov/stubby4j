@@ -33,12 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AjaxToStatsHandler extends AbstractHandler {
+public class AjaxEndpointStatsHandler extends AbstractHandler {
 
    private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup-stats");
    private final StubbedDataManager stubbedDataManager;
 
-   public AjaxToStatsHandler(final StubbedDataManager stubbedDataManager) {
+   public AjaxEndpointStatsHandler(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
    }
 

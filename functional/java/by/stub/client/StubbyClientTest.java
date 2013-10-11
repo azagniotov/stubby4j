@@ -1,7 +1,7 @@
 package by.stub.client;
 
 import by.stub.exception.Stubby4JException;
-import by.stub.handlers.AdminHandler;
+import by.stub.handlers.AdminPortalHandler;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
@@ -318,7 +318,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
       final String host = "localhost";
-      final String uri = AdminHandler.ADMIN_ROOT;
+      final String uri = AdminPortalHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final URL url = StubbyClientTest.class.getResource("/yaml/stubs.yaml");
@@ -334,7 +334,7 @@ public class StubbyClientTest {
 
    @Test
    public void updateStubbedData_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
-      final String adminUrl = String.format("http://localhost:%s%s", JettyFactory.DEFAULT_ADMIN_PORT, AdminHandler.ADMIN_ROOT);
+      final String adminUrl = String.format("http://localhost:%s%s", JettyFactory.DEFAULT_ADMIN_PORT, AdminPortalHandler.ADMIN_ROOT);
 
       final URL url = StubbyClientTest.class.getResource("/yaml/stubs.yaml");
       final InputStream stubsDatanputStream = url.openStream();
@@ -350,7 +350,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsEmpty() throws Exception {
       final String host = "localhost";
-      final String uri = AdminHandler.ADMIN_ROOT;
+      final String uri = AdminPortalHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
@@ -362,7 +362,7 @@ public class StubbyClientTest {
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenPostStubDataIsNull() throws Exception {
       final String host = "localhost";
-      final String uri = AdminHandler.ADMIN_ROOT;
+      final String uri = AdminPortalHandler.ADMIN_ROOT;
       final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);

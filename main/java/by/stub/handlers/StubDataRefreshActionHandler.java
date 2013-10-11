@@ -39,12 +39,12 @@ import java.io.IOException;
 import java.util.Date;
 
 @SuppressWarnings("serial")
-public final class DataRefreshHandler extends AbstractHandler {
+public final class StubDataRefreshActionHandler extends AbstractHandler {
 
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
 
-   public DataRefreshHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
+   public StubDataRefreshActionHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
       this.jettyContext = newContext;
       this.stubbedDataManager = newStubbedDataManager;
    }

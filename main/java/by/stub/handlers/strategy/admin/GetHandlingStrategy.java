@@ -1,7 +1,7 @@
 package by.stub.handlers.strategy.admin;
 
 import by.stub.database.StubbedDataManager;
-import by.stub.handlers.AdminHandler;
+import by.stub.handlers.AdminPortalHandler;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -22,7 +22,7 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
    public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws IOException {
 
       final StringBuilder yamlAppender = new StringBuilder();
-      final int contextPathLength = AdminHandler.ADMIN_ROOT.length();
+      final int contextPathLength = AdminPortalHandler.ADMIN_ROOT.length();
       final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
 
       if (StringUtils.isSet(pathInfoNoHeadingSlash)) {

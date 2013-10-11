@@ -36,11 +36,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class StubsHandler extends AbstractHandler {
+public class StubsPortalHandler extends AbstractHandler {
 
    private final StubbedDataManager stubbedDataManager;
 
-   public StubsHandler(final StubbedDataManager stubbedDataManager) {
+   public StubsPortalHandler(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
    }
 

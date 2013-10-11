@@ -23,12 +23,12 @@ import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
-import by.stub.handlers.AdminHandler;
-import by.stub.handlers.AjaxToResourceHandler;
-import by.stub.handlers.AjaxToStatsHandler;
-import by.stub.handlers.DataRefreshHandler;
-import by.stub.handlers.StatusHandler;
-import by.stub.handlers.StubsHandler;
+import by.stub.handlers.AdminPortalHandler;
+import by.stub.handlers.AjaxEndpointStatsHandler;
+import by.stub.handlers.AjaxResourceContentHandler;
+import by.stub.handlers.StubDataRefreshActionHandler;
+import by.stub.handlers.StatusPageHandler;
+import by.stub.handlers.StubsPortalHandler;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.MimeTypes;
@@ -97,23 +97,23 @@ public final class JettyFactory {
          {
             constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
             constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsHandler(stubbedDataManager))),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
             constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
             constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsHandler(stubbedDataManager))),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusHandler(jettyContext, stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new DataRefreshHandler(jettyContext, stubbedDataManager)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxToResourceHandler(stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxToStatsHandler(stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminHandler(stubbedDataManager)))
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
+            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
          }
       );
 

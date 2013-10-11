@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers;
 
+import by.stub.annotations.VisibleForTesting;
 import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
@@ -37,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class AjaxToResourceHandler extends AbstractHandler {
+public class AjaxResourceContentHandler extends AbstractHandler {
 
    private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
    private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
@@ -47,7 +48,7 @@ public class AjaxToResourceHandler extends AbstractHandler {
 
    private final StubbedDataManager stubbedDataManager;
 
-   public AjaxToResourceHandler(final StubbedDataManager stubbedDataManager) {
+   public AjaxResourceContentHandler(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
    }
 
@@ -90,6 +91,7 @@ public class AjaxToResourceHandler extends AbstractHandler {
       ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
    }
 
+   @VisibleForTesting
    void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
@@ -100,6 +102,7 @@ public class AjaxToResourceHandler extends AbstractHandler {
       }
    }
 
+   @VisibleForTesting
    void renderAjaxResponseContent(final HttpServletResponseWithGetStatus wrapper, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
       try {
          final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
@@ -110,6 +113,7 @@ public class AjaxToResourceHandler extends AbstractHandler {
       }
    }
 
+   @VisibleForTesting
    StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponseWithGetStatus wrapper, final int stubHttpCycleIndex) throws IOException {
       final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
       if (ObjectUtils.isNull(foundStubHttpLifecycle)) {

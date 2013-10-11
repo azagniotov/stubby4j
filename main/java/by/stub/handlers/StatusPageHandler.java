@@ -53,7 +53,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public final class StatusHandler extends AbstractHandler {
+public final class StatusPageHandler extends AbstractHandler {
 
    private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
    private static final MemoryMXBean MEMORY_MX_BEAN = ManagementFactory.getMemoryMXBean();
@@ -68,7 +68,7 @@ public final class StatusHandler extends AbstractHandler {
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
 
-   public StatusHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
+   public StatusPageHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
       this.jettyContext = newContext;
       this.stubbedDataManager = newStubbedDataManager;
    }
@@ -99,7 +99,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(buildJvmParametersHtmlTable());
       builder.append(buildJettyParametersHtmlTable());
       builder.append(buildStubbyParametersHtmlTable());
-      builder.append(buildResourceStatsHtmlTable());
+      builder.append(buildEndpointStatsHtmlTable());
 
       final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
       for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
@@ -116,7 +116,7 @@ public final class StatusHandler extends AbstractHandler {
    private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
       final String resourceId = stubHttpLifecycle.getResourceId();
       final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
-      final StringBuilder requestTableBuilder = buildHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
+      final StringBuilder requestTableBuilder = buildStubHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
       requestTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
       return String.format(TEMPLATE_HTML_TABLE, YamlProperties.REQUEST, requestTableBuilder.toString());
@@ -131,7 +131,7 @@ public final class StatusHandler extends AbstractHandler {
          final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
          final StubResponse stubResponse = allResponses.get(sequenceId);
          final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
-         final StringBuilder sequencedResponseBuilder = buildHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
+         final StringBuilder sequencedResponseBuilder = buildStubHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
          final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
          sequencedResponseBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToResponseAsYaml));
 
@@ -162,7 +162,7 @@ public final class StatusHandler extends AbstractHandler {
       builder.append(interpolateHtmlTableRowTemplate("ADMIN PORT", adminPort));
       builder.append(interpolateHtmlTableRowTemplate("STUBS PORT", jettyContext.getStubsPort()));
       builder.append(interpolateHtmlTableRowTemplate("STUBS TLS PORT", jettyContext.getStubsTlsPort()));
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminHandler.ADMIN_ROOT, host, adminPort);
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminPortalHandler.ADMIN_ROOT, host, adminPort);
       builder.append(interpolateHtmlTableRowTemplate("NEW STUB DATA POST URI", endpointRegistration));
 
       return String.format(TEMPLATE_HTML_TABLE, "jetty parameters", builder.toString());
@@ -191,13 +191,13 @@ public final class StatusHandler extends AbstractHandler {
       return String.format(TEMPLATE_HTML_TABLE, "stubby4j parameters", builder.toString());
    }
 
-   private String buildResourceStatsHtmlTable() throws Exception {
+   private String buildEndpointStatsHtmlTable() throws Exception {
 
       final StringBuilder builder = new StringBuilder();
       if (stubbedDataManager.getResourceStats().isEmpty()) {
-         builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", "No requests were made to stubby yet.."));
+         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet OR you need to referesh the status page.."));
       } else {
-         builder.append(interpolateHtmlTableRowTemplate("RESOURCE HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
+         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
       }
 
       return String.format(TEMPLATE_HTML_TABLE, "stubby stats", builder.toString());
@@ -217,7 +217,7 @@ public final class StatusHandler extends AbstractHandler {
       return (ObjectUtils.isNull(file.getParentFile()) ? file.getCanonicalPath().replaceAll(file.getName(), "") : file.getParentFile().getCanonicalPath() + "/");
    }
 
-   private StringBuilder buildHtmlTableBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {
+   private StringBuilder buildStubHtmlTableBody(final String resourceId, final String stubTypeName, final Map<String, String> stubObjectProperties) throws Exception {
       final StringBuilder builder = new StringBuilder();
 
       for (final Map.Entry<String, String> keyValue : stubObjectProperties.entrySet()) {

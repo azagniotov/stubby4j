@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-public class AdminHandler extends AbstractHandler {
+public class AdminPortalHandler extends AbstractHandler {
 
    public static final String NAME = "admin";
 
@@ -45,7 +45,7 @@ public class AdminHandler extends AbstractHandler {
    public static final String ADMIN_ROOT = "/";
    private final StubbedDataManager stubbedDataManager;
 
-   public AdminHandler(final StubbedDataManager stubbedDataManager) {
+   public AdminPortalHandler(final StubbedDataManager stubbedDataManager) {
       this.stubbedDataManager = stubbedDataManager;
    }
 
