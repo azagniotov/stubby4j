@@ -62,8 +62,8 @@ public final class StatusPageHandler extends AbstractHandler {
    private static final String TEMPLATE_LOADED_FILE_METADATA_PAIR = "<span style='color: #8B0000'>%s</span>=<span style='color: green'>%s</span>";
    private static final String TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK = "<strong><a class='ajax-resource' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>";
    private static final String TEMPLATE_AJAX_TO_STATS_HYPERLINK = "<strong><a class='ajax-stats' href='/ajax/stats'>[view]</a></strong>";
-   private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("snippet_html_table");
    private static final String TEMPLATE_HTML_TABLE_ROW = "<tr><td width='250px' valign='top' align='left'>%s</td><td align='left'>%s</td></tr>";
+   private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("_table");
 
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
@@ -195,7 +195,7 @@ public final class StatusPageHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
       if (stubbedDataManager.getResourceStats().isEmpty()) {
-         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet OR you need to referesh the status page.."));
+         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet OR you need to referesh the current page.."));
       } else {
          builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
       }

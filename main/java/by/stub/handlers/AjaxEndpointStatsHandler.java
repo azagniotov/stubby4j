@@ -35,7 +35,7 @@ import java.io.IOException;
 
 public class AjaxEndpointStatsHandler extends AbstractHandler {
 
-   private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup-stats");
+   private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_stats");
    private final StubbedDataManager stubbedDataManager;
 
    public AjaxEndpointStatsHandler(final StubbedDataManager stubbedDataManager) {

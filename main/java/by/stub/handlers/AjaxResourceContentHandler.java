@@ -44,7 +44,7 @@ public class AjaxResourceContentHandler extends AbstractHandler {
    private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
    private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
-   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("popup-generic");
+   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_generic");
 
    private final StubbedDataManager stubbedDataManager;
 
