@@ -10,7 +10,9 @@ $(function () {
       var checkForStatsTimeout = setTimeout(function() { checkForStats(); }, 1000);
       function checkForStats() {
          var statsPresent = false;
-         $.request('get', "/ajax/stats/check").then(
+         var anchor = anchorFactory()[0];
+         $(anchor).set({'@href': "/ajax/stats/check"});
+         $.request('get', anchor.href).then(
             function success(content) {
                statsPresent = (/^true$/i).test(content.replace(/^\s+|\s+$/g, ''))
                if (statsPresent === true) {
@@ -23,7 +25,7 @@ $(function () {
                }
             },
             function error(status, statusText, responseText) {
-               requestErrorHandler(status, statusText, responseText, null, null, null);
+               requestErrorHandler(status, statusText, responseText, anchor, null, null);
          });
          return false;
       }
