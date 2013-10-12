@@ -47,7 +47,7 @@ td {
 }
 
 div#popup-mask {
-   background-color: #222;
+   background-color: #666;
    display: none;
    left: 0;
    position: absolute;
@@ -66,16 +66,22 @@ div#popup-window {
    z-index: 9999;
 }
 
+div#popup-window {
+   border: 15px solid rgb(0, 0, 0);
+   border: 15px solid rgba(0, 0, 0, .5);
+   -webkit-background-clip: padding-box; /* for Safari */
+   background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+}
+
 .popup-dialog {
    background: none repeat scroll 0 0 #F9EDBE;
-   border: 1px solid #EBAE3D;
-   border-radius: 7px;
-   box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
+   border-radius: 26px;
+   box-shadow: 0 0 8px rgba(0, 0, 0, 1);
    color: #222;
-   moz-border-radius: 7px;
-   moz-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
-   webkit-border-radius: 7px;
-   webkit-box-shadow: 0 3px 25px rgba(0, 0, 0, 1);
+   moz-border-radius: 26px;
+   moz-box-shadow: 0 0 8px rgba(0, 0, 0, 1);
+   webkit-border-radius: 26px;
+   webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 1);
 }
 
 .popup-dialog .dismiss-container {
