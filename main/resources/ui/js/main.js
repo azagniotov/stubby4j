@@ -117,6 +117,7 @@ function ajaxToStatsClickHandler() {
 
          function stringToInt(d) {
             d.hits = +d.hits;
+            d.resourceId = +d.resourceId;
             return d;
          }
 
