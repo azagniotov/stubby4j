@@ -64,9 +64,10 @@ div#popup-window {
    top: 0;
    width: 45%;
    z-index: 9999;
+   /*
    opacity: 0.9;
    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-   filter: alpha(opacity=90); /* For IE8 and earlier */
+   filter: alpha(opacity=90);  For IE8 and earlier */
 }
 
 div#popup-window {
