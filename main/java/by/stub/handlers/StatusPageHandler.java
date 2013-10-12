@@ -195,7 +195,7 @@ public final class StatusPageHandler extends AbstractHandler {
 
       final StringBuilder builder = new StringBuilder();
       if (stubbedDataManager.getResourceStats().isEmpty()) {
-         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet OR you need to referesh the current page.."));
+         builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet"));
       } else {
          builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
       }

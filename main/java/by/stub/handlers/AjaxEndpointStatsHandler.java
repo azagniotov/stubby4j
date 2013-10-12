@@ -56,10 +56,10 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
       try {
          if (request.getRequestURI().contains("stats/check")) {
             wrapper.getWriter().println(!stubbedDataManager.getResourceStats().isEmpty());
-            return;
-         }
+         } else {
          final String htmlPopup = String.format(POPUP_STATS_HTML_TEMPLATE, stubbedDataManager.getResourceStatsAsCsv());
-         wrapper.getWriter().println(htmlPopup);
+            wrapper.getWriter().println(htmlPopup);
+         }
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
