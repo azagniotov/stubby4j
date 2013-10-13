@@ -7,7 +7,10 @@ var strongFactory = EE('strong');
 $(function () {
    $.ready(function () {
       bindLinks();
-      var checkForStatsTimeout = setTimeout(function() { checkForStats(); }, 1000);
+      var checkForStatsTimeout = setTimeout(function () {
+         checkForStats();
+      }, 1000);
+
       function checkForStats() {
          var statsPresent = false;
          var anchor = anchorFactory()[0];
@@ -21,12 +24,14 @@ $(function () {
                   parentTD = $(parentTD);
                   rebindAjaxLink(parentTD, "/ajax/stats", ajaxToStatsClickHandler);
                } else {
-                  checkForStatsTimeout = setTimeout(function() { checkForStats(); }, 1000);
+                  checkForStatsTimeout = setTimeout(function () {
+                     checkForStats();
+                  }, 1000);
                }
             },
             function error(status, statusText, responseText) {
-               requestErrorHandler(status, statusText, responseText, anchor, null, null);
-         });
+               //requestErrorHandler(status, statusText, responseText, anchor, null, null);
+            });
          return false;
       }
    });
@@ -77,11 +82,13 @@ function ajaxToStatsClickHandler() {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
          var data = d3.csv.parse(csv, stringToInt);
-         var maxYAxis = d3.max(data, function(d) {
+         var maxYAxis = d3.max(data, function (d) {
             return d.hits;
          });
 
-         x.domain(data.map(function(d) { return d.resourceId; }));
+         x.domain(data.map(function (d) {
+            return d.resourceId;
+         }));
          y.domain([0, maxYAxis]);
 
          svg.append("g")
@@ -107,13 +114,19 @@ function ajaxToStatsClickHandler() {
             .data(data)
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.resourceId); })
+            .attr("x", function (d) {
+               return x(d.resourceId);
+            })
             .attr("width", x.rangeBand())
-            .attr("y", function(d) { return y(d.hits); })
-            .attr("height", function(d) { return height - y(d.hits); });
+            .attr("y", function (d) {
+               return y(d.hits);
+            })
+            .attr("height", function (d) {
+               return height - y(d.hits);
+            });
 
          d3.select("#sort-values-box").on("change", sortColumns);
-         var sortTimeout = setTimeout(function() {
+         var sortTimeout = setTimeout(function () {
             d3.select("#sort-values-box").property("checked", true).each(sortColumns);
          }, 1500);
 
@@ -127,17 +140,27 @@ function ajaxToStatsClickHandler() {
             clearTimeout(sortTimeout);
             // Copy-on-write since tweens are evaluated after a delay.
             var x0 = x.domain(data.sort(this.checked
-                     ? function(a, b) { return b.hits - a.hits; }
-                     : function(a, b) { return d3.ascending(a.resourceId, b.resourceId); })
-                  .map(function(d) { return d.resourceId; }))
+                     ? function (a, b) {
+                     return b.hits - a.hits;
+                  }
+                     : function (a, b) {
+                     return d3.ascending(a.resourceId, b.resourceId);
+                  })
+                  .map(function (d) {
+                     return d.resourceId;
+                  }))
                .copy();
 
             var transition = svg.transition().duration(1250),
-               delay = function(d, i) { return i * 50; };
+               delay = function (d, i) {
+                  return i * 50;
+               };
 
             transition.selectAll(".bar")
                .delay(delay)
-               .attr("x", function(d) { return x0(d.resourceId); });
+               .attr("x", function (d) {
+                  return x0(d.resourceId);
+               });
 
             transition.select(".x.axis")
                .call(xAxis)
@@ -150,7 +173,6 @@ function ajaxToStatsClickHandler() {
       });
    return false;
 }
-
 
 
 function ajaxToResourceClickHandler() {
@@ -219,9 +241,106 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
    });
 
    document.onkeydown = function (event) {
+      if (event == null) {
+         event = window.event;
+      }
       if (event.keyCode === 27) { //ESC key
          closePopupAndResetHandler();
       }
+   }
+
+   document.onmousedown = function (event) {
+      onMouseDownHandler(event);
+   };
+
+   function onMouseDownHandler(event) {
+      // IE is retarded and doesn't pass the event object
+      if (event == null) {
+         event = window.event;
+      }
+      // IE uses srcElement, others use target
+      var target = event.target != null ? event.target : event.srcElement;
+
+      // for IE, left click == 1
+      // for Firefox, left click == 0
+      if ((event.button === 1 && window.event != null || event.button === 0)
+         && target.className === 'dismiss-container' || target.className === 'dialog-title' || target.className === 'drag') {
+         // grab the mouse position
+         var initialMouseX = event.clientX;
+         var initialMouseY = event.clientY;
+         // grab the clicked element's position
+         var coords = $(divPopupWindow).get({$top: 0, $left: 0, $width: 0, $height: 0}, true);
+         var initialPopupX = coords.$left;
+         var initialPopupY = coords.$top;
+         coords.$height = coords.$height + 52; //border width from each side: 26 * 2
+         coords.$width = coords.$width + 52;   //border width from each side: 26 * 2
+
+         // tell our code to start moving the element with the mouse
+         document.onmousemove = function (event) {
+            onMouseMoveHandler(event);
+         };
+
+         function onMouseMoveHandler(event) {
+            if (event == null) {
+               event = window.event;
+            }
+
+            // this is the actual "drag code"
+            var mouseDraggedDistanceX = event.clientX - initialMouseX;
+            var newLeft = (initialPopupX + mouseDraggedDistanceX);
+            var viewportWidth = getViewportWidth();
+            if (newLeft + coords.$width > viewportWidth) {
+               newLeft = viewportWidth - coords.$width;
+            } else if (newLeft < 0) {
+               newLeft = 0;
+            }
+
+            var mouseDraggedDistanceY = event.clientY - initialMouseY;
+            var newTop = ( initialPopupY + mouseDraggedDistanceY);
+            var viewportHeight = getViewportHeight();
+            if (newTop + coords.$height > viewportHeight) {
+               newTop = viewportHeight - coords.$height;
+            } else if (newTop < 0) {
+               newTop = 0;
+            }
+            $(divPopupWindow).set({$top: newTop + 'px', $left: newLeft + 'px'});
+         }
+
+         // cancel out any text selections
+         document.body.focus();
+
+         // prevent text selection in IE
+         document.onselectstart = function () {
+            return false;
+         };
+         // prevent IE from trying to drag an image
+         target.ondragstart = function () {
+            return false;
+         };
+
+         // prevent text selection (except IE)
+         return false;
+      }
+   }
+
+   document.onmouseup = function (event) {
+      onMouseUpHandler(event);
+   };
+
+   function onMouseUpHandler(event) {
+      document.onmousemove = null;
+      document.onselectstart = null;
+      if ($$(divPopupWindow)) {
+         $$(divPopupWindow).ondragstart = null;
+      }
+   }
+
+   function getViewportHeight() {
+      return Math.min(window.innerHeight, html.clientHeight, body.clientHeight);
+   }
+
+   function getViewportWidth() {
+      return Math.min(window.innerWidth, html.clientWidth, body.clientWidth);
    }
 
    function getMaskHeight() {
@@ -246,16 +365,16 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
    }
 
    function closeDialog() {
-      $(divPopupWindow).animate({$$fade: 0}, 250).then(function() {
+      $(divPopupWindow).animate({$$fade: 0}, 250).then(function () {
          $(divPopupWindow).remove();
       });
-      $(divPopupMask).animate({$$fade: 0}, 250).then(function() {
+      $(divPopupMask).animate({$$fade: 0}, 250).then(function () {
          $(divPopupMask).remove();
       });
       $("div#popup-placeholder").remove();
    }
 
-   window.onresize = function(event) {
+   window.onresize = function (event) {
       $(divPopupMask).set({$width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
       $(divPopupWindow).set({$top: getTopCoord() + 'px', $left: getLeftCoord() + 'px'});
    }

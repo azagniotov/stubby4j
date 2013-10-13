@@ -90,10 +90,11 @@ div#popup-window {
 }
 
 .popup-dialog .dismiss-container {
+   top: 0;
    left: 0;
    position: absolute;
-   top: 0;
    width: 100%;
+   cursor: move;
 }
 
 .popup-dialog .dialog-dismiss {
@@ -105,16 +106,18 @@ div#popup-window {
 }
 
 .popup-dialog .dialog-title {
-   color: #7F7F7F !important;
    float: left;
-   font: 18px Arial, sans-serif;
    margin: 14px 0px 0px 20px;
+}
+
+.popup-dialog .dialog-title span {
+   color: #7F7F7F !important;
+   font: 18px Arial, sans-serif;
    text-decoration: none;
 }
 
 .popup-dialog .close-dialog {
-   background-color: #D14836;
-   background-image: 0;
+   background: #D14836 0;
    border: 1px solid transparent;
    border-radius: 3px;
    color: #FFF;
@@ -123,14 +126,16 @@ div#popup-window {
    font: bold 11px/27px "Arial", "Helvetica", sans-serif;
    height: 27px;
    min-width: 54px;
-   moz-border-radius: 3px;
-   moz-transition: all 0.218s ease 0;
-   moz-user-select: none;
+   -moz-border-radius: 3px;
+   -moz-transition: all 0.218s ease 0;
+   -moz-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
    padding: 0 8px;
    text-align: center;
    text-shadow: 0 1px rgba(0, 0, 0, 0.1);
    text-transform: uppercase;
-   webkit-border-radius: 3px;
+   -webkit-border-radius: 3px;
 }
 
 .popup-dialog .close-dialog:hover {
