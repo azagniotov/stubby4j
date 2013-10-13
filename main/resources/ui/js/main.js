@@ -15,7 +15,8 @@ $(function () {
          var statsPresent = false;
          var anchor = anchorFactory()[0];
          $(anchor).set({'@href': "/ajax/stats/check"});
-         $.request('get', anchor.href).then(
+         var noCache = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
+         $.request('get', anchor.href + "?" + noCache).then(
             function success(content) {
                statsPresent = (/^true$/i).test(content.replace(/^\s+|\s+$/g, ''))
                if (statsPresent === true) {
@@ -47,8 +48,8 @@ function ajaxToStatsClickHandler() {
    // TD/STRONG/A
    var parentTD = thisLink.parentNode.parentNode;
    $(parentTD).set("innerHTML", "<img align='baseline' src='/images/loading.gif' border='0' />");
-
-   $.request('get', thisLink.href).then(
+   var noCache = Math.random().toString(36).substring(3) + Math.random().toString(36).substring(3);
+   $.request('get', thisLink.href + "?" + noCache).then(
       function success(content) {
          var popupWithCsvWithin = content.replace(/^\s+|\s+$/g, '');
 
