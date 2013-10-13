@@ -53,7 +53,7 @@ function ajaxToStatsClickHandler() {
          var popupWithCsvWithin = content.replace(/^\s+|\s+$/g, '');
 
          displayPopupWithContent(thisLink, $(parentTD), popupWithCsvWithin, ajaxToStatsClickHandler);
-         var divStatsHolder = '#inner-dialog-stats';
+         var divStatsHolder = '#popup-stats-content';
          var csv = $(divStatsHolder).get('innerHTML');
          $(divStatsHolder).set('innerHTML', '');
 
@@ -221,22 +221,22 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
    $(divRemovable).set({'@id': "popup-placeholder", 'innerHTML': popupHtmlWithContent});
    $('body').add($(divRemovable));
 
-   var divPopupMask = 'div#popup-mask';
-   $(divPopupMask).set({$display: 'block', $opacity: '0.4', $width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
+   var divOverlay = 'div#overlay';
+   $(divOverlay).set({$display: 'block', $opacity: '0.4', $width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
 
    var divPopupWindow = 'div#popup-window';
    $(divPopupWindow).set({$display: 'block'});
    $(divPopupWindow).set({$top: getTopCoord() + "px", $left: getLeftCoord() + "px"});
 
-   $(divPopupWindow + ' .close-dialog').on('click', function () {
+   $('#close-x').on('click', function () {
       closePopupAndResetHandler();
    });
 
-   $(divPopupWindow + ' .dialog-dismiss').on('click', function () {
+   $('#close-dialog-btn').on('click', function () {
       closePopupAndResetHandler();
    });
 
-   $(divPopupMask).on('click', function () {
+   $(divOverlay).on('click', function () {
       closePopupAndResetHandler();
    });
 
@@ -264,7 +264,7 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
       // for IE, left click == 1
       // for Firefox, left click == 0
       if ((event.button === 1 && window.event != null || event.button === 0)
-         && target.className === 'dismiss-container' || target.className === 'dialog-title' || target.className === 'drag') {
+         && target.id === 'popup-drag-handle' || target.id === 'popup-title' || target.className === 'drag') {
          // grab the mouse position
          var initialMouseX = event.clientX;
          var initialMouseY = event.clientY;
@@ -368,14 +368,14 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
       $(divPopupWindow).animate({$$fade: 0}, 250).then(function () {
          $(divPopupWindow).remove();
       });
-      $(divPopupMask).animate({$$fade: 0}, 250).then(function () {
-         $(divPopupMask).remove();
+      $(divOverlay).animate({$$fade: 0}, 250).then(function () {
+         $(divOverlay).remove();
       });
       $("div#popup-placeholder").remove();
    }
 
    window.onresize = function (event) {
-      $(divPopupMask).set({$width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
+      $(divOverlay).set({$width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
       $(divPopupWindow).set({$top: getTopCoord() + 'px', $left: getLeftCoord() + 'px'});
    }
 }

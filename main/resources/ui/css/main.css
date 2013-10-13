@@ -46,7 +46,7 @@ td {
    vertical-align: middle;
 }
 
-div#popup-mask {
+div#overlay {
    background-color: #666;
    display: none;
    left: 0;
@@ -57,48 +57,23 @@ div#popup-mask {
 
 div#popup-window {
    display: none;
-   height: 316px;
-   left: 0;
-   padding: 20px;
-   position: fixed;
    top: 0;
+   left: 0;
+   position: fixed;
+   height: 316px;
    width: 45%;
    z-index: 9999;
-   /*
-   opacity: 0.9;
-   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-   filter: alpha(opacity=90);  For IE8 and earlier */
 }
 
-div#popup-window {
-   -moz-background-clip: padding-box; /* Firefox 3.6 */
-   -webkit-background-clip: padding-box; /* Safari 4? Chrome 6? */
-   background-clip: padding-box; /* Firefox 4, Safari 5, Opera 10, IE 9 */
-   border: 13px solid rgb(0, 0, 0);
-   border: 13px solid rgba(0, 0, 0, .5);
+div#popup-window label {
+   top: 35px;
+   position: relative;
+   font-size: .9em;
+   float: right;
+   z-index: 100;
 }
 
-.popup-dialog {
-   background: none repeat scroll 0 0 #F9EDBE;
-   color: #222;
-   box-shadow: 0 0 4px rgba(0, 0, 0, 1);
-   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 1);
-   border-radius: 26px;
-   -moz-border-radius: 26px;
-   -webkit-border-radius: 26px;
-   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 1);
-}
-
-.popup-dialog .second-half {
-   top: 45px;
-   left: 0;
-   position: absolute;
-   padding-top: 18px;
-   border-top: 1px solid #FAF5E1;
-   width: 100%;
-}
-
-.popup-dialog .dismiss-container {
+div#popup-window div#popup-drag-handle {
    top: 0;
    background-color: #DDD2A8;
    left: 0;
@@ -111,7 +86,7 @@ div#popup-window {
    cursor: move;
 }
 
-.popup-dialog .dialog-dismiss {
+div#popup-drag-handle a#close-x {
    color: #7F7F7F !important;
    float: right;
    font: 28px Arial, sans-serif;
@@ -119,29 +94,60 @@ div#popup-window {
    text-decoration: none;
 }
 
-.popup-dialog .dialog-title {
+div#popup-drag-handle div#popup-title {
    float: left;
    margin: 14px 0px 0px 20px;
    color: #7F7F7F !important;
 }
 
-.popup-dialog .dialog-title span {
+div#popup-drag-handle div#popup-title span {
    color: #7F7F7F !important;
    font: 18px Arial, sans-serif;
    text-decoration: none;
 }
 
-.popup-dialog .close-dialog {
+div#popup-window div#popup-body {
+   top: 45px;
+   left: 0;
+   position: absolute;
+   padding-top: 18px;
+   border-top: 1px solid #FAF5E1;
+   width: 100%;
+   text-align: center;
+}
+
+div#popup-body div#popup-content {
+   background-color: #FDF6E3;
+   border: 1px solid gray;
+   height: 210px;
+   overflow: auto;
+   margin-right: 18px;
+   margin-left: 18px;
+   padding: 8px;
+   text-align: left;
+}
+
+div#popup-body div#popup-content pre {
+   margin-top: 0
+}
+
+div#popup-body div#popup-stats-content {
+   height: 210px;
+   overflow: auto;
+   padding: 8px;
+   font: 10px sans-serif;
+   text-align: center;
+}
+
+input#close-dialog-btn {
    background: #D14836 0;
    border: 1px solid transparent;
-   border-radius: 3px;
    color: #FFF;
    cursor: pointer;
    display: inline-block;
    font: bold 11px/27px "Arial", "Helvetica", sans-serif;
    height: 27px;
    min-width: 54px;
-   -moz-border-radius: 3px;
    -moz-transition: all 0.218s ease 0;
    -moz-user-select: none;
    -webkit-user-select: none;
@@ -150,14 +156,16 @@ div#popup-window {
    text-align: center;
    text-shadow: 0 1px rgba(0, 0, 0, 0.1);
    text-transform: uppercase;
-   -webkit-border-radius: 3px;
+   margin-top: 0px;
 }
 
-.popup-dialog .close-dialog:hover {
+input#close-dialog-btn:hover {
    background: #C53727 0;
    border: 1px solid #B0281A;
    border-bottom-color: #AF301F;
-   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+   box-shadow: 0 0 2px rgba(0, 0, 0, 1);
+   -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 1);
+   -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 1);
    color: #FFF;
    -moz-border-bottom-colors: none;
    -moz-border-image: none;
@@ -166,41 +174,48 @@ div#popup-window {
    -moz-border-top-colors: none;
 }
 
-.popup-dialog p {
-   font-family: Arial, sans-serif !important;
-   font-size: 13px !important;
+.global-styles {
+   background: none repeat scroll 0 0 #F9EDBE;
+   color: #222;
+   padding: 20px;
 }
 
-div#inner-dialog {
-   background-color: #FDF6E3;
-   border: 1px solid gray;
-   height: 210px;
-   overflow: auto;
-   margin-right: 18px;
-   margin-left: 18px;
-   padding: 8px;
+.border-thickness-plus-translucency {
+   -moz-background-clip: padding-box; /* Firefox 3.6 */
+   -webkit-background-clip: padding-box; /* Safari 4? Chrome 6? */
+   background-clip: padding-box; /* Firefox 4, Safari 5, Opera 10, IE 9 */
+   border: 13px solid rgb(0, 0, 0);
+   border: 13px solid rgba(0, 0, 0, .5);
+}
+
+.border-radius-5px {
+   border-radius: 5px;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+}
+
+.border-radius-7px {
    border-radius: 7px;
-   -webkit-border-radius: 7px;
    -moz-border-radius: 7px;
+   -webkit-border-radius: 7px;
 }
 
-div#inner-dialog pre {
-   margin-top: 0
+.border-radius-26px {
+   border-radius: 26px;
+   -moz-border-radius: 26px;
+   -webkit-border-radius: 26px;
 }
 
-div#inner-dialog-stats {
-   height: 210px;
-   overflow: auto;
-   padding: 8px;
-   font: 10px sans-serif;
-   text-align: center;
+.box-shadow-4px {
+   box-shadow: 0 0 4px rgba(0, 0, 0, 1);
+   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 1);
+   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 1);
 }
 
-div#popup-window label {
-   top: 35px;
-   position: relative;
-   font-size: .9em;
-   float: right;
+.box-shadow-2px {
+   box-shadow: 0 0 2px rgba(0, 0, 0, 1);
+   -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 1);
+   -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 1);
 }
 
 .axis text {

@@ -1,18 +1,16 @@
-<div id="popup-mask"></div>
-<div id="popup-window" class="popup-dialog">
-   <div class="dismiss-container">
-      <div class="dialog-title"><span class="drag">x-stubby-resource-id=%s, <b>%s</b></span></div>
-      <a class="dialog-dismiss" href="javascript:void(0)">x</a>
+<div id="overlay"></div>
+<div id="popup-window" class="global-styles border-thickness-plus-translucency border-radius-26px box-shadow-4px">
+   <div id="popup-drag-handle">
+      <div id="popup-title"><span class="drag">x-stubby-resource-id=%s, <b>%s</b></span></div>
+      <a id="close-x" href="javascript:void(0)">x</a>
    </div>
-   <div class="second-half">
-      <div id="inner-dialog">
+   <div id="popup-body">
+      <div id="popup-content" class="border-radius-7px">
          <b>
             <pre><code id="ajax-response">%s</code></pre>
          </b>
       </div>
-      <br />
-      <div align="center">
-         <input type="button" class="close-dialog" value="Close">
-      </div>
+      <br>
+      <input id="close-dialog-btn" class="border-radius-5px box-shadow-2px" type="button" value="Close">
    </div>
 </div>
