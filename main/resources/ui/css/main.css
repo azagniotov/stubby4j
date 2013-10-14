@@ -82,7 +82,7 @@ div#popup-window div#popup-drag-handle {
    position: absolute;
    width: 100%;
    height: 44px;
-   border-bottom: 1px solid #C4B992;
+   border-bottom: 1px solid #B4AA87;
    cursor: move;
 }
 
@@ -175,7 +175,7 @@ input#close-dialog-btn:hover {
 }
 
 .global-styles {
-   background: none repeat scroll 0 0 #F9EDBE;
+   background: none repeat scroll 0 0 #F3E7B8;
    color: #222;
    padding: 20px;
 }
