@@ -86,6 +86,11 @@ div#popup-window div#popup-drag-handle {
    cursor: move;
 }
 
+div#popup-window div#popup-resize-handle {
+   float: right;
+   cursor: e-resize
+}
+
 div#popup-drag-handle a#close-x {
    color: #7F7F7F !important;
    float: right;

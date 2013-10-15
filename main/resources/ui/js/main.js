@@ -250,122 +250,6 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
       }
    }
 
-   document.onmousedown = function (event) {
-      onMouseDownHandler(event);
-   };
-
-   function onMouseDownHandler(event) {
-      document.onmousemove = null;
-      document.onselectstart = null;
-      // IE is retarded and doesn't pass the event object
-      if (event == null) {
-         event = window.event;
-      }
-      // IE uses srcElement, others use target
-      var target = event.target != null ? event.target : event.srcElement;
-
-      // for IE, left click == 1
-      // for Firefox, left click == 0
-      if (event.button === 1 && window.event != null || event.button === 0)  {
-         target.focus();
-         if (target.id === 'popup-drag-handle' || target.id === 'popup-title' || target.className === 'drag') {
-            draggableHandler(event);
-            // prevent text selection (except IE)
-            return false;
-         }  else if (target.id === 'popup-resize-handle') {
-            resizeableHandler(event);
-            // prevent text selection (except IE)
-            return false;
-         }
-
-         // cancel out any text selections
-         document.body.focus();
-         // prevent text selection in IE
-         document.onselectstart = function () {
-            return false;
-         };
-         // prevent IE from trying to drag an image
-         target.ondragstart = function () {
-            return false;
-         };
-      }
-   }
-
-   function draggableHandler(event) {
-      // grab the mouse position
-      var initialMouseX = event.clientX;
-      var initialMouseY = event.clientY;
-      // grab the clicked element's position
-      var coords = $(divPopupWindow).get({$top: 0, $left: 0, $width: 0, $height: 0}, true);
-      var initialPopupX = coords.$left;
-      var initialPopupY = coords.$top;
-      coords.$height = coords.$height + 52 + 13; //border width from each side: 26 * 2
-      coords.$width = coords.$width + 52;   //border width from each side: 26 * 2
-      var viewportWidth = getViewportWidth();
-      var viewportHeight = getViewportHeight();
-
-      // tell our code to start moving the element with the mouse
-      document.onmousemove = function (event) {
-         onMouseMoveHandler(event);
-      };
-
-      function onMouseMoveHandler(event) {
-         if (event == null) {
-            event = window.event;
-         }
-
-         // this is the actual "drag code"
-         var mouseDraggedDistanceX = event.clientX - initialMouseX;
-         var newLeft = (initialPopupX + mouseDraggedDistanceX);
-         if (newLeft + coords.$width > viewportWidth) {
-            newLeft = viewportWidth - coords.$width;
-         } else if (newLeft < 0) {
-            newLeft = 0;
-         }
-
-         var mouseDraggedDistanceY = event.clientY - initialMouseY;
-         var newTop = ( initialPopupY + mouseDraggedDistanceY);
-         if (newTop + coords.$height > viewportHeight) {
-            newTop = viewportHeight - coords.$height;
-         } else if (newTop < 0) {
-            newTop = 0;
-         }
-         $(divPopupWindow).set({$top: newTop + 'px', $left: newLeft + 'px'});
-      }
-   }
-
-   function resizeableHandler(event) {
-      // grab the mouse position
-      var initialMouseX = event.clientX;
-      var coords = $(divPopupWindow).get({$top: 0, $left: 0, $width: 0, $height: 0}, true);
-      coords.$top = coords.$top + 52 + 13; //border width from each side: 26 * 2
-      coords.$left = coords.$left + 52;   //border width from each side: 26 * 2
-      var initialPopupWidth = coords.$width ;
-      var minimalWidth = 420;
-      var viewportWidth = getViewportWidth();
-
-      // tell our code to start moving the element with the mouse
-      document.onmousemove = function (event) {
-         onMouseMoveHandler(event);
-      };
-
-      function onMouseMoveHandler(event) {
-         if (event == null) {
-            event = window.event;
-         }
-         // this is the actual "drag code"
-         var mouseDraggedDistanceX = event.clientX - initialMouseX;
-         var newWidth = (initialPopupWidth + mouseDraggedDistanceX);
-         if (coords.$left + newWidth > viewportWidth) {
-            newWidth = viewportWidth - coords.$left;
-         } else if (newWidth < minimalWidth) {
-            newWidth = minimalWidth;
-         }
-
-         $(divPopupWindow).set({$width: newWidth + 'px'});
-      }
-   }
-
    document.onmouseup = function (event) {
       onMouseUpHandler(event);
    };
@@ -378,12 +262,137 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
       }
    }
 
+   document.onmousedown = function (event) {
+      onMouseDownHandler(event);
+   };
+
+   function onMouseDownHandler(event) {
+      document.onmousemove = null;
+      document.onselectstart = null;
+
+      var viewportWidth = getViewportWidth();
+      var viewportHeight = getViewportHeight();
+
+      // IE is retarded and doesn't pass the event object
+      if (event == null) {
+         event = window.event;
+      }
+      // IE uses srcElement, others use target
+      var target = event.target != null ? event.target : event.srcElement;
+
+      // for IE, left click == 1
+      // for Firefox, left click == 0
+      if (event.button === 1 && window.event != null || event.button === 0)  {
+         if (target.id === 'popup-drag-handle' || target.id === 'popup-title' || target.className === 'drag') {
+            draggableHandler(event);
+         }  else if (target.id === 'popup-resize-handle') {
+            resizeableHandler(event);
+         }
+         // cancel out any text selections
+         document.body.focus();
+         // prevent text selection in IE
+         document.onselectstart = function () {
+            return false;
+         };
+         // prevent IE from trying to drag an image
+         target.ondragstart = function () {
+            return false;
+         };
+
+         $("body").set({$cursor: 'auto'});
+         return false;
+      }
+
+      function draggableHandler(event) {
+         // grab the mouse position
+         var initialMouseX = event.clientX;
+         var initialMouseY = event.clientY;
+         // grab the clicked element's position
+         var coords = $(divPopupWindow).get({$top: 0, $left: 0, $width: 0, $height: 0}, true);
+         var initialPopupX = coords.$left;
+         var initialPopupY = coords.$top;
+         coords.$height = coords.$height + 52 + 13; //border width from each side: 26 * 2
+         coords.$width = coords.$width + 52;   //border width from each side: 26 * 2
+
+         // tell our code to start moving the element with the mouse
+         document.onmousemove = function (event) {
+            onMouseMoveHandler(event);
+         };
+
+         function onMouseMoveHandler(event) {
+            if (event == null) {
+               event = window.event;
+            }
+
+            var mouseDraggedDistanceX = event.clientX - initialMouseX;
+            var newLeft = (initialPopupX + mouseDraggedDistanceX);
+            if (newLeft + coords.$width > viewportWidth) {
+               newLeft = viewportWidth - coords.$width;
+            } else if (newLeft < 0) {
+               newLeft = 0;
+            }
+
+            var mouseDraggedDistanceY = event.clientY - initialMouseY;
+            var newTop = ( initialPopupY + mouseDraggedDistanceY);
+            if (newTop + coords.$height > viewportHeight) {
+               newTop = viewportHeight - coords.$height;
+            } else if (newTop < 0) {
+               newTop = 0;
+            }
+            $(divPopupWindow).set({$top: newTop + 'px', $left: newLeft + 'px'});
+         }
+      }
+
+      function resizeableHandler(event) {
+         // grab the mouse position
+         var initialMouseX = event.clientX;
+         var coords = $(divPopupWindow).get({$top: 0, $left: 0, $width: 0, $height: 0}, true);
+         coords.$top = coords.$top + 52 + 13; //border width from each side plus another border: 26 * 2 + 13
+         coords.$left = coords.$left + 52;   //border width from each side: 26 * 2
+         var initialPopupWidth = coords.$width ;
+         var minimalWidth = 420;
+
+         // tell our code to start moving the element with the mouse
+         document.onmousemove = function (event) {
+            onMouseMoveHandler(event);
+         };
+
+         function onMouseMoveHandler(event) {
+            if (event == null) {
+               event = window.event;
+            }
+
+            var mouseDraggedDistanceX = event.clientX - initialMouseX;
+            var newWidth = (initialPopupWidth + mouseDraggedDistanceX);
+            if (coords.$left + newWidth > viewportWidth) {
+               newWidth = viewportWidth - coords.$left;
+            } else if (newWidth < minimalWidth) {
+               newWidth = minimalWidth;
+            }
+
+            if (initialPopupWidth !== newWidth) {
+               $(divPopupWindow).set({$width: newWidth + 'px'});
+            }
+         }
+      }
+   }
+
    function getViewportHeight() {
-      return Math.min(window.innerHeight, html.clientHeight, body.clientHeight);
+      return getMaxViewportValue("Height");
    }
 
    function getViewportWidth() {
-      return Math.min(window.innerWidth, html.clientWidth, body.clientWidth);
+      return getMaxViewportValue("Width");
+   }
+
+   function getMaxViewportValue(name) {
+      return Math.min(
+         body["scroll" + name],
+         html["scroll" + name],
+         body["offset" + name],
+         html["offset" + name],
+         html["client" + name]
+      );
    }
 
    function getMaskHeight() {
@@ -418,6 +427,9 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
    }
 
    window.onresize = function (event) {
+      if (event == null) {
+         event = window.event;
+      }
       $(divOverlay).set({$width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
       $(divPopupWindow).set({$top: getTopCoord() + 'px', $left: getLeftCoord() + 'px'});
    }
