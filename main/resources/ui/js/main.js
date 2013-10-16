@@ -431,6 +431,6 @@ function displayPopupWithContent(thisLink, parentTD, popupHtmlWithContent, thisL
          event = window.event;
       }
       $(divOverlay).set({$width: getMaskWidth() + 'px', $height: getMaskHeight() + 'px'});
-      $(divPopupWindow).set({$top: getTopCoord() + 'px', $left: getLeftCoord() + 'px'});
+      $(divPopupWindow).set({$top: getTopCoord() + 'px', $left: getLeftCoord() + 'px', $width: '45%'});
    }
 }
