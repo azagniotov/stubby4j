@@ -1040,6 +1040,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.19-SNAPSHOT
+* Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
 
 ##### 2.0.18
 * When `--data` file was just a relative filename without parent directory, NPE was thrown when Admin portal status page was loaded [BUG]
