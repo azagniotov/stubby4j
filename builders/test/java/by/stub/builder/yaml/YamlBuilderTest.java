@@ -1,5 +1,6 @@
 package by.stub.builder.yaml;
 
+import by.stub.utils.FileUtils;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -14,25 +15,25 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedResponseWithSequenceResponses() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
-            "      method: [PUT]\n" +
-            "      url: /invoice\n" +
-            "\n" +
-            "   response:\n" +
-            "      -  status: 200\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
-            "         body: OK\n" +
-            "\n" +
-            "      -  status: 200\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
-            "         body: Still going strong!\n" +
-            "\n" +
-            "      -  status: 500\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
-            "         body: OMFG!!!\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      method: [PUT]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 200" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         body: OK" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 200" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         body: Still going strong!" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 500" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         body: OMFG!!!" + FileUtils.LINE_SEPARATOR +
             "         file: ../../response.json";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
@@ -63,25 +64,25 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedResponseWithSequenceResponsesFoldedBodyAndFile() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
-            "      method: [PUT]\n" +
-            "      url: /invoice\n" +
-            "\n" +
-            "   response:\n" +
-            "      -  status: 200\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
-            "         body: OK\n" +
-            "\n" +
-            "      -  status: 200\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
-            "         body: >\n" +
-            "            {\"status\", \"200\"}\n" +
-            "\n" +
-            "      -  status: 500\n" +
-            "         headers: \n" +
-            "            content-type: application/json\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      method: [PUT]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 200" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         body: OK" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 200" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         body: >" + FileUtils.LINE_SEPARATOR +
+            "            {\"status\", \"200\"}" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "      -  status: 500" + FileUtils.LINE_SEPARATOR +
+            "         headers: " + FileUtils.LINE_SEPARATOR +
+            "            content-type: application/json" + FileUtils.LINE_SEPARATOR +
             "         file: ../path/to/error.file";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
@@ -111,12 +112,12 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedRequestWithMultipleMethods() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
-            "      method: [HEAD, GET, PUT]\n" +
-            "      url: /invoice\n" +
-            "\n" +
-            "   response:\n" +
-            "      status: 200\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      method: [HEAD, GET, PUT]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      status: 200" + FileUtils.LINE_SEPARATOR +
             "      body: OK";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
@@ -137,18 +138,18 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedRequestWithStubbedResponse() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
-            "      query:\n" +
-            "         status: active\n" +
-            "         type: full\n" +
-            "      method: [GET]\n" +
-            "      url: /invoice\n" +
-            "\n" +
-            "   response:\n" +
-            "      headers:\n" +
-            "         content-type: application/json\n" +
-            "         pragma: no-cache\n" +
-            "      status: 200\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      query:" + FileUtils.LINE_SEPARATOR +
+            "         status: active" + FileUtils.LINE_SEPARATOR +
+            "         type: full" + FileUtils.LINE_SEPARATOR +
+            "      method: [GET]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      headers:" + FileUtils.LINE_SEPARATOR +
+            "         content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         pragma: no-cache" + FileUtils.LINE_SEPARATOR +
+            "      status: 200" + FileUtils.LINE_SEPARATOR +
             "      file: ../json/systemtest-body-response-as-file.json";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
@@ -173,20 +174,20 @@ public class YamlBuilderTest {
    public void shouldBuildStubbedRequestWithMultilineStubbedResponse() throws Exception {
 
       final String expectedYaml =
-         "-  request:\n" +
-            "      method: [PUT]\n" +
-            "      url: /invoice/123\n" +
-            "      headers:\n" +
-            "         content-type: application/json\n" +
-            "      post: >\n" +
-            "         {\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}\n" +
-            "\n" +
-            "   response:\n" +
-            "      headers:\n" +
-            "         content-type: application/json\n" +
-            "         pragma: no-cache\n" +
-            "      status: 200\n" +
-            "      body: >\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      method: [PUT]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice/123" + FileUtils.LINE_SEPARATOR +
+            "      headers:" + FileUtils.LINE_SEPARATOR +
+            "         content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "      post: >" + FileUtils.LINE_SEPARATOR +
+            "         {\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      headers:" + FileUtils.LINE_SEPARATOR +
+            "         content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         pragma: no-cache" + FileUtils.LINE_SEPARATOR +
+            "      status: 200" + FileUtils.LINE_SEPARATOR +
+            "      body: >" + FileUtils.LINE_SEPARATOR +
             "         {\"id\": \"123\", \"status\": \"updated\"}";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();
@@ -210,21 +211,21 @@ public class YamlBuilderTest {
    @Test
    public void shouldBuildStubbedRequestWithStubbedResponseWhenBothHaveManyHeaders() throws Exception {
       final String expectedYaml =
-         "-  request:\n" +
-            "      headers:\n" +
-            "         content-type: application/json\n" +
-            "         content-language: US-en\n" +
-            "         content-length: 30\n" +
-            "         authorization: bob:secret\n" +
-            "      method: [GET]\n" +
-            "      url: /invoice\n" +
-            "\n" +
-            "   response:\n" +
-            "      headers:\n" +
-            "         content-type: application/json\n" +
-            "         content-language: US-en\n" +
-            "         content-length: 30\n" +
-            "         pragma: no-cache\n" +
+         "-  request:" + FileUtils.LINE_SEPARATOR +
+            "      headers:" + FileUtils.LINE_SEPARATOR +
+            "         content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         content-language: US-en" + FileUtils.LINE_SEPARATOR +
+            "         content-length: 30" + FileUtils.LINE_SEPARATOR +
+            "         authorization: bob:secret" + FileUtils.LINE_SEPARATOR +
+            "      method: [GET]" + FileUtils.LINE_SEPARATOR +
+            "      url: /invoice" + FileUtils.LINE_SEPARATOR +
+            "" + FileUtils.LINE_SEPARATOR +
+            "   response:" + FileUtils.LINE_SEPARATOR +
+            "      headers:" + FileUtils.LINE_SEPARATOR +
+            "         content-type: application/json" + FileUtils.LINE_SEPARATOR +
+            "         content-language: US-en" + FileUtils.LINE_SEPARATOR +
+            "         content-length: 30" + FileUtils.LINE_SEPARATOR +
+            "         pragma: no-cache" + FileUtils.LINE_SEPARATOR +
             "         location: /invoice/exit";
 
       final YamlBuilder yamlBuilder = new YamlBuilder();

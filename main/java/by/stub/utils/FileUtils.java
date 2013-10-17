@@ -66,6 +66,7 @@ public final class FileUtils {
       final PrintWriter out = new PrintWriter(stringBuilderWriter);
       out.println();
       LINE_SEPARATOR = stringBuilderWriter.toString();
+      out.flush();
       out.close();
    }
 
