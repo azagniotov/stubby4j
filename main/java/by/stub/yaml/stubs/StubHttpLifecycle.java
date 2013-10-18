@@ -25,6 +25,7 @@ import by.stub.utils.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Alexander Zagniotov
@@ -33,11 +34,12 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class StubHttpLifecycle {
 
+   private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
+
    public static final StubHttpLifecycle NULL = null;
    private String httpLifeCycleAsYaml;
    private StubRequest request;
    private Object response;
-   private int responseSequenceCounter = 0;
    private String requestAsYaml;
    private String responseAsYaml;
 
@@ -57,10 +59,29 @@ public class StubHttpLifecycle {
       return request;
    }
 
-   public StubResponse getResponse() {
-      return getActualStubbedResponse();
+   public StubResponse getResponse(final boolean incrementSequencedResponseId) {
+
+      if (response instanceof StubResponse) {
+         return (StubResponse) response;
+      }
+
+      final List<StubResponse> responses = (LinkedList<StubResponse>) response;
+      if (responses.isEmpty()) {
+         return StubResponse.newStubResponse();
+      }
+
+      if (incrementSequencedResponseId) {
+         final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
+         responseSequencedIdCounter.compareAndSet(responses.size(), 0);
+         return responses.get(responseSequencedId);
+      }
+
+      return responses.get(responseSequencedIdCounter.get());
    }
 
+   public int getNextSequencedResponseId() {
+      return responseSequencedIdCounter.get();
+   }
 
    public List<StubResponse> getAllResponses() {
 
@@ -90,23 +111,6 @@ public class StubHttpLifecycle {
 
    public String getResourceId() {
       return getAllResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-   }
-
-   public StubResponse getActualStubbedResponse() {
-
-      if (response instanceof StubResponse) {
-         return (StubResponse) response;
-      }
-
-      final List<StubResponse> responses = (LinkedList<StubResponse>) response;
-      if (responses.isEmpty()) {
-         return StubResponse.newStubResponse();
-      }
-
-      final StubResponse sequenceStubResponse = responses.get(responseSequenceCounter);
-      responseSequenceCounter = (responseSequenceCounter + 1 == responses.size() ? responseSequenceCounter = 0 : ++responseSequenceCounter);
-
-      return sequenceStubResponse;
    }
 
    public String getHttpLifeCycleAsYaml() {
@@ -150,7 +154,7 @@ public class StubHttpLifecycle {
          case REQUEST:
             return StringUtils.objectToString(ReflectionUtils.getPropertyValue(request, propertyName));
          case RESPONSE:
-            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(getResponse(), propertyName));
+            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(getResponse(false), propertyName));
          default:
             return StringUtils.objectToString(ReflectionUtils.getPropertyValue(this, propertyName));
       }

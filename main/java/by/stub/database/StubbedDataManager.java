@@ -78,7 +78,7 @@ public class StubbedDataManager {
       resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
       resourceStats.get(resourceId).incrementAndGet();
 
-      final StubResponse stubResponse = matchedLifecycle.getResponse();
+      final StubResponse stubResponse = matchedLifecycle.getResponse(true);
       if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {
          return new UnauthorizedStubResponse();
       }
@@ -172,7 +172,7 @@ public class StubbedDataManager {
       final Map<File, Long> externalFiles = new HashMap<File, Long>();
       for (StubHttpLifecycle cycle : stubHttpLifecycles) {
          storeExternalFileInCache(escrow, externalFiles, cycle.getRequest().getRawFile());
-         storeExternalFileInCache(escrow, externalFiles, cycle.getResponse().getRawFile());
+         storeExternalFileInCache(escrow, externalFiles, cycle.getResponse(false).getRawFile());
       }
 
       return externalFiles;

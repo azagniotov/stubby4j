@@ -1040,6 +1040,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.19-SNAPSHOT
+* Loading status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
 
 ##### 2.0.18

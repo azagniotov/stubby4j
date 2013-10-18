@@ -63,7 +63,7 @@ public class YamlParserLoadTest {
 
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(498);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualRequest.getUrl()).contains(String.format("%s/%s", baseRequestUrl, 499));
       assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 499));

@@ -64,6 +64,7 @@ public final class StatusPageHandler extends AbstractHandler {
    private static final String TEMPLATE_AJAX_TO_STATS_HYPERLINK = "<strong><a class='ajax-stats' href='/ajax/stats'>[view]</a></strong>";
    private static final String TEMPLATE_HTML_TABLE_ROW = "<tr><td width='250px' valign='top' align='left'>%s</td><td align='left'>%s</td></tr>";
    private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("_table");
+   private static final String NEXT_IN_THE_QUEUE = " NEXT IN THE QUEUE";
 
    private final StubbedDataManager stubbedDataManager;
    private final JettyContext jettyContext;
@@ -128,7 +129,10 @@ public final class StatusPageHandler extends AbstractHandler {
       final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
       for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
-         final String responseTableTitle = (allResponses.size() == 1 ? YamlProperties.RESPONSE : String.format("%s/%s", YamlProperties.RESPONSE, sequenceId));
+         final boolean isResponsesSequenced =  allResponses.size() == 1 ? false : true;
+         final int nextSequencedResponseId = stubHttpLifecycle.getNextSequencedResponseId();
+         final String nextResponseLabel = (isResponsesSequenced && nextSequencedResponseId == sequenceId ? NEXT_IN_THE_QUEUE : "");
+         final String responseTableTitle = (isResponsesSequenced ? String.format("%s/%s%s", YamlProperties.RESPONSE, sequenceId, nextResponseLabel) : YamlProperties.RESPONSE);
          final StubResponse stubResponse = allResponses.get(sequenceId);
          final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
          final StringBuilder sequencedResponseBuilder = buildStubHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
@@ -236,7 +240,8 @@ public final class StatusPageHandler extends AbstractHandler {
    private String buildHtmlTableSingleRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
 
       if (FIELDS_FOR_AJAX_LINKS.contains(fieldName)) {
-         final String ajaxHyperlink = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, stubTypeName, fieldName);
+         final String cleansedStubTypeName = stubTypeName.replaceAll(NEXT_IN_THE_QUEUE, "");   //Only when there are sequenced responses
+         final String ajaxHyperlink = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, cleansedStubTypeName, fieldName);
          return interpolateHtmlTableRowTemplate(StringUtils.toUpper(fieldName), ajaxHyperlink);
       }
 

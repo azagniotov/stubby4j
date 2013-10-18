@@ -69,7 +69,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
       assertThat(actualResponse.getStatus()).isEqualTo(expectedStatus);
@@ -95,7 +95,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
 
@@ -131,8 +131,8 @@ public class YamlParserTest {
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
-      final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse();
-      final StubResponse actualSequenceResponse = actualHttpLifecycle.getResponse();
+      final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse(true);
+      final StubResponse actualSequenceResponse = actualHttpLifecycle.getResponse(true);
 
       final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
 
@@ -186,7 +186,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualResponse.getStatus()).isEqualTo(String.valueOf(200));
    }
@@ -281,7 +281,7 @@ public class YamlParserTest {
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
 
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getActualStubbedResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualResponse.getFile()).isEqualTo(new byte[]{});
       assertThat(StringUtils.newStringUtf8(actualResponse.getResponseBodyAsBytes())).isEqualTo(expectedBody);
@@ -364,7 +364,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualResponse.getBody()).isEqualTo(stubbedResponseBody);
    }
@@ -396,7 +396,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
       assertThat(actualResponse.getBody()).isEqualTo(stubbedResponseBody);
    }
@@ -495,7 +495,7 @@ public class YamlParserTest {
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
-      final StubResponse actualResponse = actualHttpLifecycle.getResponse();
+      final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
       final MapEntry headerOneEntry = MapEntry.entry("location", location);
       final MapEntry headerTwoEntry = MapEntry.entry("content-type", contentType);
 
@@ -575,7 +575,7 @@ public class YamlParserTest {
 
       for (int idx = 0; idx < loadedHttpCycles.size(); idx++) {
          final StubHttpLifecycle cycle = loadedHttpCycles.get(idx);
-         final StubResponse cycleResponse = cycle.getResponse();
+         final StubResponse cycleResponse = cycle.getResponse(true);
 
          assertThat(cycleResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
          assertThat(cycleResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(idx));

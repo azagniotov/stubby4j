@@ -38,7 +38,7 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(stubResponse);
 
-      assertThat(stubHttpLifecycle.getActualStubbedResponse()).isEqualTo(stubResponse);
+      assertThat(stubHttpLifecycle.getResponse(true)).isEqualTo(stubResponse);
    }
 
    @Test
@@ -49,7 +49,7 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(sequence);
 
-      final StubResponse actualStubbedResponse = stubHttpLifecycle.getActualStubbedResponse();
+      final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
       assertThat(actualStubbedResponse.getStatus()).isEqualTo("200");
       assertThat(actualStubbedResponse.getBody()).isEmpty();
    }
@@ -69,10 +69,11 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(sequence);
 
-      final StubResponse actualStubbedResponse = stubHttpLifecycle.getActualStubbedResponse();
+      final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
       assertThat(actualStubbedResponse).isNotEqualTo(stubResponse);
       assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
       assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
+      assertThat(stubHttpLifecycle.getNextSequencedResponseId()).isEqualTo(0);
    }
 
    @Test
@@ -91,12 +92,13 @@ public class StubHttpLifecycleTest {
       final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
       stubHttpLifecycle.setResponse(sequence);
 
-      final StubResponse irrelevantStubbedResponse = stubHttpLifecycle.getActualStubbedResponse();
-      final StubResponse actualStubbedResponse = stubHttpLifecycle.getActualStubbedResponse();
+      final StubResponse irrelevantStubbedResponse = stubHttpLifecycle.getResponse(true);
+      final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
 
       assertThat(actualStubbedResponse).isNotEqualTo(stubResponse);
       assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
       assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
+      assertThat(stubHttpLifecycle.getNextSequencedResponseId()).isEqualTo(0);
    }
 
    @Test
