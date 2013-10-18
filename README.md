@@ -1042,6 +1042,7 @@ for each <endpoint> of stored endpoints {
 ##### 2.0.19-SNAPSHOT
 * Loading status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
+* Admin status page now shows what is the next sequenced response in the sequence queue [ENHANCEMENT]
 
 ##### 2.0.18
 * When `--data` file was just a relative filename without parent directory, NPE was thrown when Admin portal status page was loaded [BUG]
