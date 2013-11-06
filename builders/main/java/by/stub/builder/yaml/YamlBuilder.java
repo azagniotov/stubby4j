@@ -385,7 +385,7 @@ public final class YamlBuilder {
 
          final String rawRequestString = REQUEST_STRING_BUILDER.toString();
          final String cleansedRequestString = rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
-         final String yaml = String.format("%s\n%s", cleansedRequestString, RESPONSE_STRING_BUILDER.toString()).trim();
+         final String yaml = String.format("%s%s%s", cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
 
          unusedNodes.clear();
          unusedNodes.add(REQUEST_HEADERS_KEY);
