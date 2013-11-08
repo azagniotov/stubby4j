@@ -100,7 +100,8 @@ public final class HandlerUtils {
       }
 
       try {
-         return StringUtils.inputStreamToString(request.getInputStream());
+         final String requestContent = StringUtils.inputStreamToString(request.getInputStream());
+         return requestContent.replaceAll("\\\\/", "/"); //https://code.google.com/p/snakeyaml/issues/detail?id=93
       } catch (final Exception ex) {
          final String err = String.format("Error when extracting POST body: %s, returning null..", ex.toString());
          ConsoleUtils.logIncomingRequestError(request, source, err);

@@ -179,7 +179,7 @@ public class AdminPortalTest {
    }
 
    @Test
-   public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRoot() throws Exception {
+   public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
 
       final String requestUrl = String.format("%s/1", ADMIN_URL);
       final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
@@ -233,6 +233,94 @@ public class AdminPortalTest {
          .build();
 
       final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, yamlToUpdate);
+
+      final HttpResponse httpPutResponse = httpPutRequest.execute();
+      final String putResponseContent = httpPutResponse.parseAsString().trim();
+      final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
+      assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
+
+
+      httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      httpGetResponse = httpGetRequest.execute();
+      getResponseContent = httpGetResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(getResponseContent).containsOnlyOnce("request");
+      assertThat(getResponseContent).containsOnlyOnce("query");
+      assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
+      assertThat(getResponseContent).containsOnlyOnce("response");
+      assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+
+      assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
+      assertThat(getResponseContent).doesNotContain("content-type: application/json");
+   }
+
+   @Test
+   public void should_UpdateStubbedRequest_WhenJsonRequest_ToAdminPortalRootWithValidIndexURI() throws Exception {
+
+      final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
+      HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      HttpResponse httpGetResponse = httpGetRequest.execute();
+      String getResponseContent = httpGetResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(getResponseContent).containsOnlyOnce("request");
+      assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
+      assertThat(getResponseContent).containsOnlyOnce("response");
+      assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+
+      final URL url = AdminPortalTest.class.getResource("/json/update.request.without.escaped.slashes.json");
+      final InputStream jsonInputStream = url.openStream();
+      final String jsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
+
+      final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, jsonToUpdate);
+
+      final HttpResponse httpPutResponse = httpPutRequest.execute();
+      final String putResponseContent = httpPutResponse.parseAsString().trim();
+      final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
+      assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
+
+
+      httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      httpGetResponse = httpGetRequest.execute();
+      getResponseContent = httpGetResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(getResponseContent).containsOnlyOnce("request");
+      assertThat(getResponseContent).containsOnlyOnce("query");
+      assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
+      assertThat(getResponseContent).containsOnlyOnce("response");
+      assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+
+      assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
+      assertThat(getResponseContent).doesNotContain("content-type: application/json");
+   }
+
+   @Test
+   public void should_UpdateStubbedRequest_WhenForwardSlashesEscapedJsonRequest_ToAdminPortalRootWithValidIndexURI() throws Exception {
+
+      final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
+      HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      HttpResponse httpGetResponse = httpGetRequest.execute();
+      String getResponseContent = httpGetResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+      assertThat(getResponseContent).containsOnlyOnce("request");
+      assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
+      assertThat(getResponseContent).containsOnlyOnce("response");
+      assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+
+      final URL url = AdminPortalTest.class.getResource("/json/update.request.with.escaped.forward.slashes.json");
+      final InputStream jsonInputStream = url.openStream();
+      final String escapedJsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
+
+      final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, escapedJsonToUpdate);
 
       final HttpResponse httpPutResponse = httpPutRequest.execute();
       final String putResponseContent = httpPutResponse.parseAsString().trim();

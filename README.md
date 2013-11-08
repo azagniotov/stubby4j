@@ -78,6 +78,10 @@ Run `gradle` command to:
 * Run unit, integration and functional tests without Cobertura
 * Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
 
+Run `gradle build -x test` command to:
+* Clean
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
+
 Run `gradle cobertura` command to:
 * Clean
 * Generate Cobertura report under the ```main``` module
