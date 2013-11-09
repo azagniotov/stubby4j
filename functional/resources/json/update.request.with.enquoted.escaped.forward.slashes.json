@@ -1,7 +1,7 @@
 [
    {
       "request": {
-         "url": ^\/resources\/something\/new,
+         "url": "^\/resources\/something\/new",
          "query": {
             "someKey": "someValue"
          },
