@@ -686,7 +686,11 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
 ```
 
 
+#### JSON support
+JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j for YAML & JSON parsing) implements YAML 1.1 at the moment. It means that not all the JSON documents can be parsed. Just give it a go.
+
 ##### JSON (file or POST/PUT)
+
 ```json
 [
   {
