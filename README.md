@@ -279,6 +279,7 @@ A demonstration using regular expressions:
 
 * can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores query parameters on incoming request and will match only request URL
+* stubby accommodates for HTTP requests that contain query string params with no values
 * query params can be specified regardless of their order in incoming request. In other words - order agnostic
 * query params can also be an array with double/single quoted/un-quoted elements: ```attributes=["id","uuid"]``` or ```attributes=[id,uuid]```. Please note no spaces between the CSV
 
@@ -305,6 +306,18 @@ A demonstration using regular expressions:
       url: ^/with/parameters$
       query:
          search: search terms
+         filter: month
+```
+
+* The following will match either of these:
+    * `/with/parameters?search&filter=month`
+    * `/with/parameters?search=&filter=month`
+
+```yaml
+-  request:
+      url: ^/with/parameters$
+      query:
+         search:
          filter: month
 ```
 
@@ -1048,10 +1061,12 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.19-SNAPSHOT
-* Added a fix around a problem in snakeYAML where it cannot parse escaped forward slashes in JSON [BUG]
-* Loading status page was changing sequenced response counter ID [BUG]
+* Record&Play is now more intelligent: when stubbed `request` was matched, its properties are used to construct HTTP request to the recordable source [ENHANCEMENT]
+* Added a fix around a problem in snakeYAML (no support yet) where it cannot parse escaped forward slashes in JSON [BUG]
+* Refreshing Admin status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
 * Admin status page now shows what is the next sequenced response in the sequence queue [ENHANCEMENT]
+* Supporting HTTP requests with empty query params: `/uri?some_param=` or `/uri?some_param` [ENHANCEMENT]
 
 ##### 2.0.18
 * When `--data` file was just a relative filename without parent directory, NPE was thrown when Admin portal status page was loaded [BUG]

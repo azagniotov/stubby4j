@@ -610,6 +610,10 @@ public class StubsPortalTest {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
       final HttpResponse response = request.execute();
 
       final HttpHeaders headers = response.getHeaders();
@@ -697,5 +701,38 @@ public class StubsPortalTest {
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContent).isEqualTo("Returned content with URL /groups/with/sub/groups/abc-123, parent group abc-123 and two sub-groups abc & 123");
+   }
+
+   @Test
+   public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInQueryStringParam() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.param?type_name&client_secret=secret");
+      final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+      final String responseContentAsString = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContentAsString).contains("EMPTY WORKS");
+   }
+
+   @Test
+   public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInSingleQueryStringParam() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.single.param?type_name");
+      final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+      final String responseContentAsString = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContentAsString).contains("EMPTY SINGLE WORKS");
+   }
+
+   @Test
+   public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoQueryStringParamValue() throws Exception {
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.param?type_name=&client_secret=secret");
+      final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+      final String responseContentAsString = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContentAsString).contains("EMPTY WORKS");
    }
 }

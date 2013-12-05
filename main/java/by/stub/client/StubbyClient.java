@@ -26,10 +26,13 @@ import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
 import by.stub.utils.ObjectUtils;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class StubbyClient {
 
@@ -330,11 +333,14 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
+      final Map<String, String> headers = new HashMap<String, String>();
+      headers.put(StubRequest.AUTH_HEADER, stubbyRequest.getBase64encodedCredentials());
+
       return new StubbyHttpTransport().getResponse(
          stubbyRequest.getMethod(),
          stubbyRequest.constructFullUrl(),
          stubbyRequest.getPost(),
-         stubbyRequest.getBase64encodedCredentials(),
+         headers,
          stubbyRequest.calculatePostLength());
    }
 }

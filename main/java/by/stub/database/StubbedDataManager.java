@@ -89,7 +89,7 @@ public class StubbedDataManager {
 
       if (stubResponse.isRecordingRequired()) {
          try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(HttpMethods.GET, stubResponse.getBody());
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(matchedLifecycle.getRequest(), stubResponse.getBody());
             ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
          } catch (Exception e) {
 

@@ -153,6 +153,13 @@ public final class StringUtils {
       return Base64.encodeBase64String(StringUtils.getBytesUtf8(toEncode));
    }
 
+   public static int calculateStringLength(String post) {
+      if (StringUtils.isSet(post)) {
+         return post.getBytes(StringUtils.charsetUTF8()).length;
+      }
+      return 0;
+   }
+
    public static String objectToString(final Object fieldObject) {
       if (ObjectUtils.isNull(fieldObject)) {
          return NOT_PROVIDED;

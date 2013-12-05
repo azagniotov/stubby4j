@@ -28,7 +28,7 @@ public final class CollectionUtils {
          final String[] splittedPair = pair.split("=");
 
          final String splittedPairKey = splittedPair[0];
-         String splittedPairValue = splittedPair[1];
+         String splittedPairValue = splittedPair.length > 1 ? splittedPair[1] : "";
 
          if (StringUtils.isWithinSquareBrackets(splittedPairValue)) {
 

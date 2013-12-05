@@ -3,6 +3,7 @@ package by.stub.http;
 import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpStatus;
@@ -14,7 +15,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static java.util.Map.Entry;
 
 /**
  * @author Alexander Zagniotov
@@ -39,14 +43,18 @@ public class StubbyHttpTransport {
 
    }
 
-   public StubbyResponse getResponse(final String method, final String fullUrl) throws IOException {
-      return getResponse(method, fullUrl, null, null, -1);
+   public StubbyResponse getResponse(final StubRequest request, final String fullUrl) throws IOException {
+      return getResponse(request.getMethod().get(0),
+         fullUrl,
+         request.getPostBody(),
+         request.getHeaders(),
+         StringUtils.calculateStringLength(request.getPostBody()));
    }
 
    public StubbyResponse getResponse(final String method,
                                      final String fullUrl,
                                      final String post,
-                                     final String encodedCredentials,
+                                     final Map<String, String> headers,
                                      final int postLength) throws IOException {
 
       if (!SUPPORTED_METHODS.contains(method)) {
@@ -59,7 +67,7 @@ public class StubbyHttpTransport {
       connection.setRequestMethod(method);
       connection.setUseCaches(false);
       connection.setInstanceFollowRedirects(false);
-      setRequestHeaders(connection, encodedCredentials, postLength);
+      setRequestHeaders(connection, headers, postLength);
 
       if (POSTING_METHODS.contains(method)) {
          writeOutputStream(connection, post);
@@ -85,11 +93,14 @@ public class StubbyHttpTransport {
       }
    }
 
-   private void setRequestHeaders(final HttpURLConnection connection, final String encodedCredentials, final int postLength) {
+   private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
 
+      final String encodedCredentials = headers.remove(StubRequest.AUTH_HEADER);
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
-      if (StringUtils.isSet(encodedCredentials)) {
+      if (StringUtils.isSet(encodedCredentials) && !encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
          connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
+      } else if (StringUtils.isSet(encodedCredentials) && encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
+         connection.setRequestProperty("Authorization", encodedCredentials);
       }
 
       final String requestMethod = connection.getRequestMethod();
@@ -105,6 +116,10 @@ public class StubbyHttpTransport {
          } else {
             connection.setChunkedStreamingMode(0);
          }
+      }
+
+      for (Entry<String, String> entry : headers.entrySet())  {
+         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
    }
 

@@ -16,7 +16,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class CollectionUtilsTest {
 
    @Test
-   public void constructParamMap_ShouldConstructParamMap_WhenQuqeryStringGiven() throws Exception {
+   public void constructParamMap_ShouldConstructParamMap_WhenQueryStringGiven() throws Exception {
 
       final Map<String, String> expectedParams = new HashMap<String, String>() {{
          put("paramTwo", "two");
@@ -24,6 +24,44 @@ public class CollectionUtilsTest {
       }};
 
       final Map<String, String> actualParams = CollectionUtils.constructParamMap("paramOne=one&paramTwo=two");
+
+      assertThat(expectedParams).isEqualTo(actualParams);
+   }
+
+   @Test
+   public void constructParamMap_ShouldConstructParamMap_WhenQueryParamHasNoValue() throws Exception {
+
+      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+         put("paramTwo", "two");
+         put("paramOne", "");
+      }};
+
+      final Map<String, String> actualParams = CollectionUtils.constructParamMap("paramOne=&paramTwo=two");
+
+      assertThat(expectedParams).isEqualTo(actualParams);
+   }
+
+   @Test
+   public void constructParamMap_ShouldConstructParamMap_WhenQueryParamHasNoValueNorEqualSign() throws Exception {
+
+      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+         put("paramTwo", "two");
+         put("paramOne", "");
+      }};
+
+      final Map<String, String> actualParams = CollectionUtils.constructParamMap("paramOne&paramTwo=two");
+
+      assertThat(expectedParams).isEqualTo(actualParams);
+   }
+
+   @Test
+   public void constructParamMap_ShouldConstructParamMap_WhenSingleQueryParamHasNoValueNorEqualSign() throws Exception {
+
+      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+         put("paramOne", "");
+      }};
+
+      final Map<String, String> actualParams = CollectionUtils.constructParamMap("paramOne");
 
       assertThat(expectedParams).isEqualTo(actualParams);
    }
