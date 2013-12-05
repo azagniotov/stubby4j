@@ -31,7 +31,6 @@ import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.UnauthorizedStubResponse;
-import org.eclipse.jetty.http.HttpMethods;
 
 import java.io.File;
 import java.io.IOException;
