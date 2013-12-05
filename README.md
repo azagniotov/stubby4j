@@ -20,6 +20,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
    * [Response](#response)
+   * [Record and Play](#record-and-play)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
 * [The admin portal](#the-admin-portal)
 * [The stubs portal](#the-stubs-portal)
@@ -572,6 +573,10 @@ Assuming a match has been made against the given `request` object, data from `re
       body: Hello, World!
 ```
 
+### Record and play
+
+Coming soon ...
+
 ### Dynamic token replacement in stubbed response
 
 During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response.
@@ -1063,8 +1068,8 @@ for each <endpoint> of stored endpoints {
 ##### 2.0.20-SNAPSHOT
 
 ##### 2.0.19
-* Record&Play is now more intelligent: when stubbed `request` was matched, its properties are used to construct HTTP request to the recordable source [ENHANCEMENT]
-* Added a fix around a problem in snakeYAML (no support yet) where it cannot parse escaped forward slashes in JSON [BUG]
+* Record&Play is now more intelligent: when stubbed `request` is matched, its properties (`method`, `headers`, `post` etc.)are used to construct HTTP request to the recordable source [ENHANCEMENT]
+* Added a workaround a limitation in SnakeYAML v1.13 used by stubby (it has limited JSON support, not all the JSON documents can be parsed) where it cannot parse escaped forward slashes in JSON [BUG]
 * Refreshing Admin status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
 * Admin status page now shows what is the next sequenced response in the sequence queue [ENHANCEMENT]
