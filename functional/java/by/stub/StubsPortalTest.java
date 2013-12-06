@@ -738,6 +738,7 @@ public class StubsPortalTest {
 
    @Test
    public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
+      final String expectedRecordedResponseContent = "<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>";
       final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -747,15 +748,15 @@ public class StubsPortalTest {
 
       final HttpResponse firstCallResponse = request.execute();
       String firstCallResponseContent = firstCallResponse.parseAsString().trim();
-      assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+      assertThat(firstCallResponseContent).contains(expectedRecordedResponseContent);
 
       final HttpResponse secondCallResponse = request.execute();
       String secondCallResponseContent = secondCallResponse.parseAsString().trim();
-      assertThat(secondCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+      assertThat(secondCallResponseContent).contains(expectedRecordedResponseContent);
 
       final HttpResponse thirdCallResponse = request.execute();
       String thirdCallResponseContent = thirdCallResponse.parseAsString().trim();
-      assertThat(thirdCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+      assertThat(thirdCallResponseContent).contains(expectedRecordedResponseContent);
    }
 
    @Test
