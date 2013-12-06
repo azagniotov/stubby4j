@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsAdminPortalsTest {
@@ -206,19 +207,19 @@ public class StubsAdminPortalsTest {
       final HttpResponse ajaxResponse = ajaxRequest.execute();
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(ajaxResponse.parseAsString().trim()).contains(
-         "- request:\n" +
-         "    method: POST\n" +
-         "    url: /invoice/new\n" +
-         "    headers:\n" +
-         "      content-type: application/json\n" +
-         "    post: |\n" +
-         "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}\n" +
-         "  response:\n" +
-         "    headers:\n" +
-         "      content-type: application/json\n" +
-         "      pragma: no-cache\n" +
-         "    status: 201\n" +
-         "    body: |\n" +
+         "- request:" + BR +
+         "    method: POST" + BR +
+         "    url: /invoice/new" + BR +
+         "    headers:" + BR +
+         "      content-type: application/json" + BR +
+         "    post: |" + BR +
+         "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}" + BR +
+         "  response:" + BR +
+         "    headers:" + BR +
+         "      content-type: application/json" + BR +
+         "      pragma: no-cache" + BR +
+         "    status: 201" + BR +
+         "    body: |" + BR +
          "      {\"id\": \"456\", \"status\": \"created\"}");
    }
 }

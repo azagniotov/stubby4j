@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static by.stub.utils.FileUtils.BR;
+
 /**
  * Please refer to the accompanied unit tests for usage examples.
  *
@@ -41,15 +43,15 @@ public final class YamlBuilder {
    private final static String URL = String.format("%s%s", SIX_SPACE, "url: ");
 
    private final static String ONELINEPOST = String.format("%s%s", SIX_SPACE, "post: ");
-   private final static String MULTILINEPOST = String.format("%s%s", SIX_SPACE, "post: >\n");
+   private final static String MULTILINEPOST = String.format("%s%s%s", SIX_SPACE, "post: >", BR);
 
    private final static String ONELINEBODY = String.format("%s%s", SIX_SPACE, "body: ");
    private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format("%s%s", NINE_SPACE, "body: ");
 
-   private final static String MULTILINEBODY = String.format("%s%s", SIX_SPACE, "body: >\n");
-   private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s", NINE_SPACE, "body: >\n");
+   private final static String MULTILINEBODY = String.format("%s%s%s", SIX_SPACE, "body: >", BR);
+   private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s%s", NINE_SPACE, "body: >", BR);
 
-   private final static String NL = FileUtils.LINE_SEPARATOR;
+   private final static String NL = FileUtils.BR;
 
    private final static String REQUEST_HEADERS_KEY = String.format("%s-%s", REQUEST, HEADERS);
    private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST, QUERY);

@@ -175,7 +175,7 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("No data found for GET request at URI /item/888");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for GET request at URI /item/888");
    }
 
 
@@ -239,7 +239,7 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("No data found for POST request at URI /  With post data: post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /  With post data: post body");
    }
 
 
@@ -252,7 +252,7 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("No data found for POST request at URI /  With post data: post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /  With post data: post body");
    }
 
 
@@ -265,7 +265,7 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "unexpected or wrong post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("No data found for POST request at URI /item/1  With post data: unexpected or wrong post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1  With post data: unexpected or wrong post body");
    }
 
    @Test
@@ -277,7 +277,7 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("No data found for POST request at URI /item/1");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1");
    }
 
    @Test

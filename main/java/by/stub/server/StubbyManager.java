@@ -23,6 +23,8 @@ package by.stub.server;
 import by.stub.cli.ANSITerminal;
 import org.eclipse.jetty.server.Server;
 
+import static by.stub.utils.FileUtils.BR;
+
 public final class StubbyManager {
 
    private final Server server;
@@ -43,7 +45,7 @@ public final class StubbyManager {
          Thread.sleep(250);
       }
       ANSITerminal.status("Jetty successfully started");
-      ANSITerminal.info("\nQuit: ctrl-c\n");
+      ANSITerminal.info(BR + "Quit: ctrl-c" + BR);
    }
 
    public synchronized void stopJetty() throws Exception {

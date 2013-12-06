@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.BR;
+
 /**
  * @author Alexander Zagniotov
  * @since 11/6/12, 8:01 AM
@@ -52,14 +54,14 @@ public final class ExternalFilesScanner implements Runnable {
                continue;
             }
 
-            ANSITerminal.info(String.format("\nExternal file scan detected change in %s\n", offendingFilename));
+            ANSITerminal.info(String.format("%sExternal file scan detected change in %s%s", BR, offendingFilename, BR));
 
             try {
                stubbedDataManager.refreshStubbedData(new YamlParser());
                ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + new Date().toString().trim() + "]%s",
-                  "\n",
+                  BR,
                   stubbedDataManager.getDataYaml(),
-                  "\n"));
+                  BR));
             } catch (final Exception ex) {
                ANSITerminal.error("Could not refresh YAML configuration: " + ex.toString());
                ANSITerminal.warn(String.format("YAML refresh aborted, previously loaded stubs remain untouched"));

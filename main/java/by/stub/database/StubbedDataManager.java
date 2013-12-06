@@ -44,6 +44,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static by.stub.utils.FileUtils.BR;
+
 public class StubbedDataManager {
 
    private final File dataYaml;
@@ -91,7 +93,7 @@ public class StubbedDataManager {
             final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(matchedLifecycle.getRequest(), stubResponse.getBody());
             ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
          } catch (Exception e) {
-
+            // Does not matter
          }
       }
       return stubResponse;
@@ -154,8 +156,8 @@ public class StubbedDataManager {
    }
 
    public String getResourceStatsAsCsv() {
-      final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", "\n").replaceAll("=", ",");
-      return String.format("resourceId,hits\n%s", csvNoHeader);
+      final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", BR).replaceAll("=", ",");
+      return String.format("resourceId,hits%s%s", BR, csvNoHeader);
    }
 
    public synchronized String getOnlyStubRequestUrl() {
@@ -195,7 +197,7 @@ public class StubbedDataManager {
    public synchronized String getMarshalledYaml() {
       final StringBuilder builder = new StringBuilder();
       for (final StubHttpLifecycle cycle : stubHttpLifecycles) {
-         builder.append(cycle.getHttpLifeCycleAsYaml()).append("\n\n");
+         builder.append(cycle.getHttpLifeCycleAsYaml()).append(BR + BR);
       }
 
       return builder.toString();

@@ -7,7 +7,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v2.0.19
+## User manual for stubby4j v2.0.20
 ### Table of contents
 
 * [Key features](#key-features)
@@ -109,30 +109,30 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.19` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.20` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.19</version>
+    <version>2.0.20</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.19" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.20" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.19'
+'by.stub:stubby4j:jar:2.0.20'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.19'
+compile 'by.stub:stubby4j:2.0.20'
 ```
 
 ##### Scala SBT
@@ -143,7 +143,7 @@ libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 ### Command-line switches
 ```
 usage:
-       java -jar stubby4j-2.0.19.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.20.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
  -a,--admin <arg>      Port for admin portal. Defaults to 8889.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -575,7 +575,35 @@ Assuming a match has been made against the given `request` object, data from `re
 
 ### Record and play
 
-Coming soon ...
+If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
+from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
+
+##### Example
+```yaml
+-  request:
+      method: [GET]
+      url: /maps/api/geocode/json
+      query:
+         address: "1600+Amphitheatre+Parkway,+Mountain+View,+CA"
+         sensor: false
+
+   response:
+      status: 200
+      headers:
+         content-type: application/json
+      body: http://maps.googleapis.com
+```
+##### Example explained
+
+Upon successful HTTP request verification, properties of stubbed `request` (`method`, `url`, `headers`, `post` and `query`) are used to construct
+an HTTP request to the destination URL specified in `body` of the stubbed `response`.
+
+In the above example, stubby will record HTTP response received after submitting an HTTP GET request to the url below:
+`http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA`
+
+##### Please note
+* Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
+* Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
 ### Dynamic token replacement in stubbed response
 
@@ -596,6 +624,7 @@ During HTTP request verification, you can leverage regex capturing groups as tok
       body: Returned invoice number# <% url.1 %> in category '<% url.2 %>' on the date '<% query.date.1 %>', using header custom-header <% headers.custom-header.0 %>
 ```
 ##### Example explained
+
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a manually defined capturing group has parenthesis around it.
 
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template (keep on reading!).
@@ -1065,10 +1094,13 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 2.0.20-SNAPSHOT
+##### 2.0.21-SNAPSHOT
+
+##### 2.0.20
+* Replacing all hardcoded `\n` with dynamically generated system line break characters
 
 ##### 2.0.19
-* Record&Play is now more intelligent: when stubbed `request` is matched, its stubbed properties (`method`, `headers`, `post` and `query`) are used to construct HTTP request to the recordable source URL provided in stubbed `response` body [ENHANCEMENT]
+* Record&Play is now more intelligent: when stubbed `request` is matched, its stubbed properties (`method`, `url`, `headers`, `post` and `query`) are used to construct HTTP request to the recordable destination URL provided in stubbed `response` body [ENHANCEMENT]
 * Added a workaround a limitation in SnakeYAML v1.13 used by stubby (it has limited JSON support, not all the JSON documents can be parsed) where it cannot parse escaped forward slashes in JSON [BUG]
 * Refreshing Admin status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]

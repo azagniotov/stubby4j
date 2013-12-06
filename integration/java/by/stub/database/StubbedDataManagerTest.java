@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -834,7 +835,7 @@ public class StubbedDataManagerTest {
          .withStatus("201")
          .build();
 
-      loadYamlToDataStore(String.format("%s\n%s\n%s", cycleOne, cycleTwo, cycleThree));
+      loadYamlToDataStore(String.format("%s%s%s%s%s", cycleOne, BR, cycleTwo, BR, cycleThree));
 
       List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = stubbedDataManager.getStubHttpLifecycles();
       assertThat(beforeDeletionLoadedHttpCycles.size()).isEqualTo(3);
@@ -915,7 +916,7 @@ public class StubbedDataManagerTest {
          .withStatus("201")
          .build();
 
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", String.format("%s\n%s", cycleTwo, cycleThree));
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", String.format("%s%s%s", cycleTwo, BR, cycleThree));
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
 
       List<StubHttpLifecycle> afterResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
@@ -958,7 +959,7 @@ public class StubbedDataManagerTest {
          .withStatus("201")
          .build();
 
-      loadYamlToDataStore(String.format("%s\n%s", cycleTwo, cycleThree));
+      loadYamlToDataStore(String.format("%s%s%s", cycleTwo, BR, cycleThree));
 
       List<StubHttpLifecycle> beforeUpdateHttpCycles = stubbedDataManager.getStubHttpLifecycles();
       assertThat(beforeUpdateHttpCycles.size()).isEqualTo(2);

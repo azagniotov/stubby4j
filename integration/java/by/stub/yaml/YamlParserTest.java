@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -644,7 +645,7 @@ public class YamlParserTest {
          .withStatus("201")
          .build();
 
-      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s\n%s\n%s", cycleOne, cycleTwo, cycleThree));
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s%s%s%s%s", cycleOne, BR, cycleTwo, BR, cycleThree));
       assertThat(loadedHttpCycles.size()).isEqualTo(3);
 
       for (int resourceId = 0; resourceId < loadedHttpCycles.size(); resourceId++) {

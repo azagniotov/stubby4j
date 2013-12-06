@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.BR;
+
 public final class CommandLineInterpreter {
 
    public static final List<String> PROVIDED_OPTIONS = Collections.synchronizedList(new LinkedList<String>());
@@ -123,7 +125,7 @@ public final class CommandLineInterpreter {
     */
    public void printHelp() {
       final HelpFormatter formatter = new HelpFormatter();
-      final String command = String.format("%sjava -jar stubby4j-x.x.xx.jar", "\n");
+      final String command = String.format("%sjava -jar stubby4j-x.x.xx.jar", BR);
       formatter.printHelp(command, OPTIONS, true);
    }
 

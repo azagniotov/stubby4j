@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -1281,13 +1282,13 @@ public class StubRequestTest {
       final String postRegex = ".*";
 
       final String postAssertingValue =
-         "Here's the story of a lovely lady,\n" +
-            "Who was bringing up three very lovely girls.\n" +
-            "All of them had hair of gold, like their mother,\n" +
-            "The youngest one in curls.\n" +
-            "Here's the story, of a man named Brady,\n" +
-            "Who was busy with three boys of his own.\n" +
-            "They were four men, living all together,\n" +
+         "Here's the story of a lovely lady," + BR +
+            "Who was bringing up three very lovely girls." + BR +
+            "All of them had hair of gold, like their mother," + BR +
+            "The youngest one in curls." + BR +
+            "Here's the story, of a man named Brady," + BR +
+            "Who was busy with three boys of his own." + BR +
+            "They were four men, living all together," + BR +
             "Yet they were all alone.";
 
       final String url = "/invoice/789";
@@ -1313,13 +1314,13 @@ public class StubRequestTest {
       final String postRegex = "^[\\.,'a-zA-Z\\s+]*$";
 
       final String postAssertingValue =
-         "Here's the story of a lovely lady,\n" +
-            "Who was bringing up three very lovely girls.\n" +
-            "All of them had hair of gold, like their mother,\n" +
-            "The youngest one in curls.\n" +
-            "Here's the story, of a man named Brady,\n" +
-            "Who was busy with three boys of his own.\n" +
-            "They were four men, living all together,\n" +
+         "Here's the story of a lovely lady," + BR +
+            "Who was bringing up three very lovely girls." + BR +
+            "All of them had hair of gold, like their mother," + BR +
+            "The youngest one in curls." + BR +
+            "Here's the story, of a man named Brady," + BR +
+            "Who was busy with three boys of his own." + BR +
+            "They were four men, living all together," + BR +
             "Yet they were all alone.";
 
       final String url = "/invoice/789";

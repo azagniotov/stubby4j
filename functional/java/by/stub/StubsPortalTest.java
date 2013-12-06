@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsPortalTest {
@@ -151,7 +152,7 @@ public class StubsPortalTest {
          HttpResponse response = request.execute();
          String responseContent = response.parseAsString().trim();
 
-         final String errorMessage = String.format("No data found for GET request at URI %s", assertingRequest);
+         final String errorMessage = String.format("(404) Nothing found for GET request at URI %s", assertingRequest);
          assertThat(responseContent).contains(errorMessage);
          assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
       }
@@ -265,7 +266,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
+      assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
    }
 
    @Test
@@ -293,7 +294,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for GET request at URI /invoice?status=active");
+      assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
 
    }
 
@@ -353,7 +354,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
+      assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
    }
 
    @Test
@@ -372,7 +373,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for PUT request at URI /invoice/123");
+      assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
    }
 
    @Test
@@ -433,7 +434,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
+      assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
    }
 
    @Test
@@ -452,7 +453,7 @@ public class StubsPortalTest {
       final String responseContentAsString = response.parseAsString().trim();
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(responseContentAsString).contains("No data found for POST request at URI /invoice/new");
+      assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
    }
 
    @Test
@@ -572,13 +573,13 @@ public class StubsPortalTest {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/post/regex");
       final String content =
-         "Here's the story of a lovely lady,\n" +
-            "Who was bringing up three very lovely girls.\n" +
-            "All of them had hair of gold, like their mother,\n" +
-            "The youngest one in curls.\n" +
-            "Here's the story, of a man named Brady,\n" +
-            "Who was busy with three boys of his own.\n" +
-            "They were four men, living all together,\n" +
+         "Here's the story of a lovely lady," + BR +
+            "Who was bringing up three very lovely girls." + BR +
+            "All of them had hair of gold, like their mother," + BR +
+            "The youngest one in curls." + BR +
+            "Here's the story, of a man named Brady," + BR +
+            "Who was busy with three boys of his own." + BR +
+            "They were four men, living all together," + BR +
             "Yet they were all alone.";
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
@@ -602,47 +603,6 @@ public class StubsPortalTest {
       assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
       final List<String> headerValues = (List<String>) headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
       assertThat(headerValues.get(0)).isEqualTo("1");
-   }
-
-   @SuppressWarnings("unchecked")
-   @Test
-   public void should_ReturnExpectedRecordedResponse_FromAnotherValidUrl() throws Exception {
-      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response?language=chinese&greeting=nihao");
-      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-      final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-      request.setHeaders(requestHeaders);
-
-      final HttpResponse response = request.execute();
-
-      final HttpHeaders headers = response.getHeaders();
-      assertThat(headers.getContentType().contains("application/xml")).isTrue();
-
-      String responseContent = response.parseAsString().trim();
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode>");
-   }
-
-   @SuppressWarnings("unchecked")
-   @Test
-   public void should_NotReturnExpectedRecordedResponse_FromAnotherValidUrl_WhenQueryNotCorrect() throws Exception {
-      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response/and/wrong/param?language=russian&greeting=nihao");
-      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-      final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-      request.setHeaders(requestHeaders);
-
-      final HttpResponse response = request.execute();
-
-      final HttpHeaders headers = response.getHeaders();
-      assertThat(headers.getContentType().contains("application/xml")).isTrue();
-
-      String responseContent = response.parseAsString().trim();
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat(responseContent).contains("No data found for GET request at URI /recordable/feed/1?greeting=nihao&language=russian");
-      assertThat(responseContent).contains("With query params: {greeting=nihao, language=russian}");
    }
 
    @Test

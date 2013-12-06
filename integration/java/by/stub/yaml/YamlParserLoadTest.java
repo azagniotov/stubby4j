@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -51,7 +52,7 @@ public class YamlParserLoadTest {
             .withHeaders(expectedHeaderKey, expectedHeaderValue)
             .withLiteralBody(stubbedResponseBody).build();
 
-         BUILDER.append(yaml).append("\n\n");
+         BUILDER.append(yaml).append(BR + BR);
       }
 
       BUILDER.trimToSize();

@@ -45,8 +45,7 @@ public class StubbyHttpTransport {
    }
 
    public StubbyResponse getResponse(final StubRequest request, final String destinationToRecordUrl) throws IOException {
-      final String fullUrl = request.getQuery().isEmpty() ? destinationToRecordUrl :
-         String.format("%s?%s", destinationToRecordUrl, CollectionUtils.constructQueryString(request.getQuery()));
+      final String fullUrl = String.format("%s%s", destinationToRecordUrl, request.getUrl());
       return getResponse(request.getMethod().get(0),
          fullUrl,
          request.getPostBody(),

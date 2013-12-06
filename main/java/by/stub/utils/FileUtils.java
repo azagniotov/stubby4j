@@ -54,18 +54,18 @@ public final class FileUtils {
       )
    );
 
-   public static final String LINE_SEPARATOR_UNIX = "\n";
-   public static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
-   public static final String LINE_SEPARATOR_WINDOWS = "\r\n";
-   public static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
-   public static final String LINE_SEPARATOR;
+   private static final String LINE_SEPARATOR_UNIX = "\n";
+   private static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
+   private static final String LINE_SEPARATOR_WINDOWS = "\r\n";
+   private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
+   public static final String BR;
 
    static {
       final int initialSize = 4;
       final StringBuilderWriter stringBuilderWriter = new StringBuilderWriter(initialSize);
       final PrintWriter out = new PrintWriter(stringBuilderWriter);
       out.println();
-      LINE_SEPARATOR = stringBuilderWriter.toString();
+      BR = stringBuilderWriter.toString();
       out.flush();
       out.close();
    }
@@ -165,7 +165,7 @@ public final class FileUtils {
          .replace(LINE_SEPARATOR_WINDOWS, LINE_SEPARATOR_TOKEN)
          .replace(LINE_SEPARATOR_MAC_OS_PRE_X, LINE_SEPARATOR_TOKEN)
          .replace(LINE_SEPARATOR_UNIX, LINE_SEPARATOR_TOKEN)
-         .replace(LINE_SEPARATOR_TOKEN, LINE_SEPARATOR);
+         .replace(LINE_SEPARATOR_TOKEN, BR);
    }
 
    public static BufferedReader constructReader(final String content) {

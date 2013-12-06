@@ -28,6 +28,8 @@ import org.apache.commons.cli.ParseException;
 
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.BR;
+
 public final class Main {
 
    private static CommandLineInterpreter commandLineInterpreter;
@@ -88,7 +90,7 @@ public final class Main {
       final String msg =
          String.format("YAML data was not provided using command line option '--%s'. %s"
             + "To see all command line options run again with option '--%s'",
-            CommandLineInterpreter.OPTION_CONFIG, "\n", CommandLineInterpreter.OPTION_HELP);
+            CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
 
       throw new Stubby4JException(msg);
    }
