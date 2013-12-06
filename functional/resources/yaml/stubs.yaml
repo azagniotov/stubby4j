@@ -210,12 +210,28 @@
       headers:
          content-type: application/xml
       status: 200
-      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode><invoiceDate>2012-06-27 14:51:26.416 PDT</invoiceDate><invoiceAmount>880.10</invoiceAmount><poNumber>1000054</poNumber><invoiceNumber>23423423</invoiceNumber><invoiceCurrencyCode>USD</invoiceCurrencyCode><vendorNumber>12345</vendorNumber><paymentDetails><paymentDetail><lineNumber>123</lineNumber><amount>20.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>ITEM</lineTypeLookupCode><taxCode /></paymentDetail><paymentDetail><lineNumber>124</lineNumber><amount>80.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>TEXT</lineTypeLookupCode><taxCode>VAT10</taxCode></paymentDetail></paymentDetails></payment>
+      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
+
+
+-  request:
+      method: GET
+      url: /recordable/feed/2
+      query:
+         greeting: nihao
+         language: chinese
+      headers:
+         content-type: application/json
+
+   response:
+      headers:
+         content-type: application/xml
+      status: 200
+      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
 
 
 -  request:
       method: [GET]
-      url: /uri/with/recordable/response
+      url: /feed/1
       query:
          greeting: nihao
          language: chinese
@@ -226,12 +242,12 @@
       status: 200
       headers:
          content-type: application/xml
-      body: http://localhost:5892/recordable/feed/1
+      body: http://localhost:5892/recordable
 
 
 -  request:
       method: [GET]
-      url: /uri/with/recordable/response/and/wrong/param
+      url: /feed/2
       query:
          greeting: nihao
          language: russian
@@ -242,7 +258,7 @@
       status: 200
       headers:
          content-type: application/xml
-      body: http://localhost:5892/recordable/feed/1
+      body: http://localhost:5892/recordable
 
 
 -  request:

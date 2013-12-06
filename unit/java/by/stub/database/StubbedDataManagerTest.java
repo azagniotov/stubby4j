@@ -187,14 +187,23 @@ public class StubbedDataManagerTest {
 
       final StubResponse expectedResponse = stubbedDataManager.getStubHttpLifecycles().get(0).getResponse(true);
       assertThat(expectedResponse.getBody()).isEqualTo(sourceToRecord);
+      assertThat(expectedResponse.isRecordingRequired()).isTrue();
 
       final String actualResponseText = "OK, this is recorded response text!";
       final StubRequest matchedRequest = stubbedDataManager.getStubHttpLifecycles().get(0).getRequest();
       when(mockStubbyHttpTransport.getResponse(eq(matchedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText));
 
-      final StubResponse actualResponse = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
-      assertThat(expectedResponse.getBody()).isEqualTo(actualResponseText);
-      assertThat(actualResponse.getBody()).isEqualTo(actualResponseText);
+      final StubResponse actualResponseOne = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
+      assertThat(actualResponseOne.getBody()).isEqualTo(actualResponseText);
+      assertThat(expectedResponse.getBody()).isEqualTo(actualResponseOne.getBody());
+      assertThat(expectedResponse.isRecordingRequired()).isFalse();
+      assertThat(actualResponseOne.isRecordingRequired()).isFalse();
+
+      final StubResponse actualResponseTwo = stubbedDataManager.findStubResponseFor(originalHttpLifecycles.get(0).getRequest());
+      assertThat(actualResponseTwo.getBody()).isEqualTo(actualResponseText);
+      assertThat(expectedResponse.getBody()).isEqualTo(actualResponseTwo.getBody());
+      assertThat(expectedResponse.isRecordingRequired()).isFalse();
+      assertThat(actualResponseTwo.isRecordingRequired()).isFalse();
    }
 
    @Test

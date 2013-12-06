@@ -716,4 +716,64 @@ public class StubsPortalTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContentAsString).contains("EMPTY WORKS");
    }
+
+   @Test
+   public void should_ReturnExpectedRecordedResponse_FromAnotherValidUrl() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
+      final HttpResponse response = request.execute();
+
+      final HttpHeaders headers = response.getHeaders();
+      assertThat(headers.getContentType().contains("application/xml")).isTrue();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+   }
+
+   @Test
+   public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
+      final HttpResponse firstCallResponse = request.execute();
+      String firstCallResponseContent = firstCallResponse.parseAsString().trim();
+      assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+
+      final HttpResponse secondCallResponse = request.execute();
+      String secondCallResponseContent = secondCallResponse.parseAsString().trim();
+      assertThat(secondCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+
+      final HttpResponse thirdCallResponse = request.execute();
+      String thirdCallResponseContent = thirdCallResponse.parseAsString().trim();
+      assertThat(thirdCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+   }
+
+   @Test
+   public void should_NotReturnExpectedRecordedResponse_FromValidUrl_WhenQueryValueNotCorrect() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/2?language=russian&greeting=nihao");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
+      final HttpResponse response = request.execute();
+
+      final HttpHeaders headers = response.getHeaders();
+      assertThat(headers.getContentType().contains("application/xml")).isTrue();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).contains("(404) Nothing found for GET request at URI /recordable/feed/2?greeting=nihao&language=russian");
+   }
 }

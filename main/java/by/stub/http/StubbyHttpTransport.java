@@ -2,7 +2,6 @@ package by.stub.http;
 
 import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
-import by.stub.utils.CollectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeaders;

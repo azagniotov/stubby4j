@@ -88,7 +88,7 @@ public class StubResponseTest {
    }
 
    @Test
-   public void shouldRequireRecording_WhenBodyStartsWithHtt() throws Exception {
+   public void shouldNotRequireRecording_WhenBodyStartsWithHtt() throws Exception {
 
       final String expectedResponseBody = "htt://someurl.com";
       final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
