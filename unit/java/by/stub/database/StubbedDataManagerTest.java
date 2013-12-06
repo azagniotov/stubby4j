@@ -8,7 +8,6 @@ import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.eclipse.jetty.http.HttpMethods;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

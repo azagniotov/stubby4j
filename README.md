@@ -1068,7 +1068,7 @@ for each <endpoint> of stored endpoints {
 ##### 2.0.20-SNAPSHOT
 
 ##### 2.0.19
-* Record&Play is now more intelligent: when stubbed `request` is matched, its properties (`method`, `headers`, `post` etc.)are used to construct HTTP request to the recordable source [ENHANCEMENT]
+* Record&Play is now more intelligent: when stubbed `request` is matched, its stubbed properties (`method`, `headers`, `post` and `query`) are used to construct HTTP request to the recordable source URL provided in stubbed `response` body [ENHANCEMENT]
 * Added a workaround a limitation in SnakeYAML v1.13 used by stubby (it has limited JSON support, not all the JSON documents can be parsed) where it cannot parse escaped forward slashes in JSON [BUG]
 * Refreshing Admin status page was changing sequenced response counter ID [BUG]
 * Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]

@@ -2,6 +2,7 @@ package by.stub.http;
 
 import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
+import by.stub.utils.CollectionUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -43,7 +44,9 @@ public class StubbyHttpTransport {
 
    }
 
-   public StubbyResponse getResponse(final StubRequest request, final String fullUrl) throws IOException {
+   public StubbyResponse getResponse(final StubRequest request, final String destinationToRecordUrl) throws IOException {
+      final String fullUrl = request.getQuery().isEmpty() ? destinationToRecordUrl :
+         String.format("%s?%s", destinationToRecordUrl, CollectionUtils.constructQueryString(request.getQuery()));
       return getResponse(request.getMethod().get(0),
          fullUrl,
          request.getPostBody(),

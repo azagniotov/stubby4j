@@ -607,7 +607,7 @@ public class StubsPortalTest {
    @SuppressWarnings("unchecked")
    @Test
    public void should_ReturnExpectedRecordedResponse_FromAnotherValidUrl() throws Exception {
-      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response");
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response?language=chinese&greeting=nihao");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders requestHeaders = new HttpHeaders();
@@ -622,6 +622,27 @@ public class StubsPortalTest {
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode>");
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void should_NotReturnExpectedRecordedResponse_FromAnotherValidUrl_WhenQueryNotCorrect() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/recordable/response/and/wrong/param?language=russian&greeting=nihao");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
+      final HttpResponse response = request.execute();
+
+      final HttpHeaders headers = response.getHeaders();
+      assertThat(headers.getContentType().contains("application/xml")).isTrue();
+
+      String responseContent = response.parseAsString().trim();
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).contains("No data found for GET request at URI /recordable/feed/1?greeting=nihao&language=russian");
+      assertThat(responseContent).contains("With query params: {greeting=nihao, language=russian}");
    }
 
    @Test
