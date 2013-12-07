@@ -262,6 +262,20 @@
 
 
 -  request:
+      method: [GET]
+      url: /maps/api/geocode/json
+      query:
+         address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
+         sensor: false
+
+   response:
+      status: 200
+      headers:
+         content-type: application/json
+      body: http://maps.googleapis.com
+
+
+-  request:
       method: GET
       url: /item/1
 

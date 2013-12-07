@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.database;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyResponse;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
@@ -89,11 +90,12 @@ public class StubbedDataManager {
       }
 
       if (stubResponse.isRecordingRequired()) {
+         final String recordingSource = stubResponse.getBody();
          try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.getResponse(matchedLifecycle.getRequest(), stubResponse.getBody());
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedLifecycle.getRequest(), recordingSource);
             ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
          } catch (Exception e) {
-            // Does not matter
+            ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
          }
       }
       return stubResponse;

@@ -10,12 +10,15 @@ import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import org.eclipse.jetty.http.HttpStatus;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +57,11 @@ public class StubsPortalTest {
    public void beforeEach() throws Exception {
       final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
       assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
+   }
+
+   @After
+   public void afterEach() throws Exception {
+      ANSITerminal.muteConsole(true);
    }
 
    @AfterClass
@@ -737,29 +745,6 @@ public class StubsPortalTest {
    }
 
    @Test
-   public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
-      final String expectedRecordedResponseContent = "<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>";
-      final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
-      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-      final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-      request.setHeaders(requestHeaders);
-
-      final HttpResponse firstCallResponse = request.execute();
-      String firstCallResponseContent = firstCallResponse.parseAsString().trim();
-      assertThat(firstCallResponseContent).contains(expectedRecordedResponseContent);
-
-      final HttpResponse secondCallResponse = request.execute();
-      String secondCallResponseContent = secondCallResponse.parseAsString().trim();
-      assertThat(secondCallResponseContent).contains(expectedRecordedResponseContent);
-
-      final HttpResponse thirdCallResponse = request.execute();
-      String thirdCallResponseContent = thirdCallResponse.parseAsString().trim();
-      assertThat(thirdCallResponseContent).contains(expectedRecordedResponseContent);
-   }
-
-   @Test
    public void should_NotReturnExpectedRecordedResponse_FromValidUrl_WhenQueryValueNotCorrect() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/2?language=russian&greeting=nihao");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -776,5 +761,89 @@ public class StubsPortalTest {
       String responseContent = response.parseAsString().trim();
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(responseContent).contains("(404) Nothing found for GET request at URI /recordable/feed/2?greeting=nihao&language=russian");
+   }
+
+   @Test
+   public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
+
+      ANSITerminal.muteConsole(false);
+
+      final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
+      final boolean NO_AUTO_FLUSH = false;
+      final PrintStream oldPrintStream = System.out;
+      System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpHeaders requestHeaders = new HttpHeaders();
+      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      request.setHeaders(requestHeaders);
+
+      final int LIMIT = 5;
+      for (int idx = 1; idx <= LIMIT; idx++) {
+         final HttpResponse actualResponse = request.execute();
+         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
+
+         String firstCallResponseContent = actualResponse.parseAsString().trim();
+         assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+         // Make sure we only hitting recordabe source once
+         assertThat(actualConsoleOutput).containsOnlyOnce("Recording HTTP response using");
+
+         if (idx == LIMIT) {
+            System.setOut(oldPrintStream);
+            System.out.println(actualConsoleOutput);
+         }
+      }
+   }
+
+   /**
+    * This test really has value when there is an active connection to the Internet
+    */
+   @Test
+   public void should_ReturnExpectedRecordedResponse_FromGoogle() throws Exception {
+
+      ANSITerminal.muteConsole(false);
+
+      final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
+      final boolean NO_AUTO_FLUSH = false;
+      final PrintStream oldPrintStream = System.out;
+      System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
+
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final int LIMIT = 5;
+      for (int idx = 1; idx <= LIMIT; idx++) {
+         final HttpResponse response = request.execute();
+         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
+         if (idx == 1) {
+            if (actualConsoleOutput.contains("UnknownHostException")) {
+               System.setOut(oldPrintStream);
+               System.out.println(actualConsoleOutput);
+               // If we are here, it means we do not have active Internet connection and we could not hit Google
+               // in that case, there is no point to causing this test to fail if the user running this test without
+               // having the ability to access the Internet.
+               break;
+            }
+         }
+
+         final HttpHeaders headers = response.getHeaders();
+         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+
+         String responseContent = response.parseAsString().trim();
+         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+         assertThat(responseContent).contains("results");
+         assertThat(responseContent).contains("address_components");
+         assertThat(responseContent).contains("formatted_address");
+
+         // Make sure we only hitting recordabe source once
+         assertThat(actualConsoleOutput).containsOnlyOnce("Recording HTTP response using");
+
+         if (idx == LIMIT) {
+            System.setOut(oldPrintStream);
+            System.out.println(actualConsoleOutput);
+         }
+      }
    }
 }

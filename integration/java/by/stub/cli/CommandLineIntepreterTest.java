@@ -22,12 +22,13 @@ public class CommandLineIntepreterTest {
 
       final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
       final boolean NO_AUTO_FLUSH = false;
+      final PrintStream oldPrintStream = System.out;
       System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
 
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
       commandLineInterpreter.printHelp();
 
-      System.setOut(System.out);
+      System.setOut(oldPrintStream);
 
       final String expectedConsoleOutput = "usage:" + BR +
          "       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]" + BR +

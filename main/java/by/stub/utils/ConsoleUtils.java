@@ -90,7 +90,7 @@ public final class ConsoleUtils {
       ANSITerminal.loaded(loadedMsg);
    }
 
-   private static String getTime() {
+   public static String getTime() {
       final Calendar now = Calendar.getInstance(Locale.US);
       return String.format("%02d:%02d:%02d",
          now.get(Calendar.HOUR_OF_DAY),

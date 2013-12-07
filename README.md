@@ -584,7 +584,7 @@ from the provided URL (before rendering the stubbed response) and replay the rec
       method: [GET]
       url: /maps/api/geocode/json
       query:
-         address: "1600+Amphitheatre+Parkway,+Mountain+View,+CA"
+         address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
          sensor: false
 
    response:
@@ -1095,6 +1095,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 2.0.21-SNAPSHOT
+* Added console outputs for record & play functionality
 
 ##### 2.0.20
 * Replacing all hardcoded `\n` with dynamically generated system line break characters

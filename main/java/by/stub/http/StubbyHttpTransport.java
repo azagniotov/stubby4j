@@ -1,7 +1,9 @@
 package by.stub.http;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
+import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -43,9 +45,14 @@ public class StubbyHttpTransport {
 
    }
 
-   public StubbyResponse getResponse(final StubRequest request, final String destinationToRecordUrl) throws IOException {
+   public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String destinationToRecordUrl) throws IOException {
+      final String method = request.getMethod().get(0);
       final String fullUrl = String.format("%s%s", destinationToRecordUrl, request.getUrl());
-      return getResponse(request.getMethod().get(0),
+      if (!ANSITerminal.isMute()) {
+         final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, fullUrl);
+         ANSITerminal.incoming(logMessage);
+      }
+      return getResponse(method,
          fullUrl,
          request.getPostBody(),
          request.getHeaders(),
