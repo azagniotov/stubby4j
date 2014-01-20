@@ -162,7 +162,9 @@ public class StubRequest {
    }
 
    public static StubRequest newStubRequest(final String url, final String post) {
-       ANSITerminal.incoming(post);
+       if (post!=null){
+           ANSITerminal.incoming(post);
+       }
       return new StubRequest(url, post, null, null, null, null);
    }
 

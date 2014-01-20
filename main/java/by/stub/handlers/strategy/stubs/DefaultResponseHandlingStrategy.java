@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -56,6 +57,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       }
 
       final OutputStream streamOut = response.getOutputStream();
+      ANSITerminal.incoming(new String(responseBody));
       streamOut.write(responseBody);
       streamOut.flush();
       streamOut.close();

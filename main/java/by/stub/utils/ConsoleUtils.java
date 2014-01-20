@@ -102,12 +102,4 @@ public final class ConsoleUtils {
          now.get(Calendar.SECOND)
       );
    }
-
-    public static void logRequestBody(String postBody) {
-        ANSITerminal.log(postBody);
-    }
-
-    public static void logResponseBody(String postBody) {
-        ANSITerminal.log(postBody);
-    }
 }
