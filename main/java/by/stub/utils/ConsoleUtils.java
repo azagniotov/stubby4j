@@ -23,10 +23,14 @@ import by.stub.cli.ANSITerminal;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import org.eclipse.jetty.http.HttpStatus;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Alexander Zagniotov
@@ -98,4 +102,12 @@ public final class ConsoleUtils {
          now.get(Calendar.SECOND)
       );
    }
+
+    public static void logRequestBody(String postBody) {
+        ANSITerminal.log(postBody);
+    }
+
+    public static void logResponseBody(String postBody) {
+        ANSITerminal.log(postBody);
+    }
 }

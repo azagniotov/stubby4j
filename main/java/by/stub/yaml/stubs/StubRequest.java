@@ -21,6 +21,7 @@ package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.annotations.VisibleForTesting;
+import by.stub.cli.ANSITerminal;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
@@ -161,6 +162,7 @@ public class StubRequest {
    }
 
    public static StubRequest newStubRequest(final String url, final String post) {
+       ANSITerminal.incoming(post);
       return new StubRequest(url, post, null, null, null, null);
    }
 
