@@ -212,10 +212,37 @@ public class StubRequest {
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
+      return mapsMatchExact(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
    }
 
-   private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
+    boolean mapsMatchExact(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
+        if (dataStoreMap.isEmpty()) {
+            return true;
+        } else if (thisAssertingMap.isEmpty()) {
+            return false;
+        }
+
+        final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+        final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+
+        for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
+            final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());
+            if (!containsRequiredParam) {
+                return false;
+            } else {
+                final String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
+                final String templateTokenName = String.format("%s.%s", mapName, dataStoreParam.getKey());
+                if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, templateTokenName)) {
+                    return false;
+                }
+            }
+            assertingMapCopy.remove(dataStoreParam.getKey());
+        }
+
+        return assertingMapCopy.isEmpty();
+    }
+
+    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 

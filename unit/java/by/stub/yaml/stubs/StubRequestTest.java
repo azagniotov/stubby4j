@@ -867,8 +867,7 @@ public class StubRequestTest {
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoValue)
-            .withQuery("paramThree", "three").build();
+            .withQuery(paramTwo, paramTwoValue).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
