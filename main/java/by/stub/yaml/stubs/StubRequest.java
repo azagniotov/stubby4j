@@ -28,6 +28,11 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -208,7 +213,11 @@ public class StubRequest {
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+       try {
+           return JSONCompare.compareJSON(dataStorePostBody,thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+       } catch (JSONException e) {
+           return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+       }
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
