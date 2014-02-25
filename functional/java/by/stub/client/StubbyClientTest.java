@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -45,9 +44,8 @@ public class StubbyClientTest {
    @Test
 	public void doCallbackRequest() throws Exception {
 		final String host = "localhost";
-		final String uri = "/rest/conversions/dragon-transcribe";
+		final String uri = "/rest/callmeback";
 
-//		Thread.sleep(2 * 60 * 1000);
         LinkedHashMap<String,String> headers = new LinkedHashMap<String, String>();
         headers.put("X-Reference", UUID.randomUUID().toString());
         headers.put("X-Return-Url","http://localhost:"+ SSL_PORT);

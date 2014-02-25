@@ -503,7 +503,7 @@
 
 -  request:
       method: [POST, PUT]
-      url: /rest/conversions/dragon-transcribe.*
+      url: /rest/callmeback.*
       headers:
           x-reference: "(.*)"
           x-return-url: "(.*)"
@@ -512,18 +512,15 @@
       -  status: 202
          headers:
             content-type: text/plain
-            location: 20140222144501-mtlblade1716eps01-15952-308
          callback:
                 method: POST                
                 url: <% headers.x-return-url.0 %>
-                latency: 5000
+                latency: 10
                 headers:
                     content-type: application/json
                 body: >
                     {
-                    "scrid":"20140222144501-mtlblade1716eps01-15952-308",
-                    "status":"Converted",
-                    "conversion":"some random text",
+                    "id":"20140222144501-308",
                     "reference":"<% headers.x-reference.0 %>"
                     }
                     
