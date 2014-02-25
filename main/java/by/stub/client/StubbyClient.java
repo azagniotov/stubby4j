@@ -309,7 +309,17 @@ public final class StubbyClient {
       return makeRequest(adminUrl.getProtocol(), HttpMethods.POST, adminUrl.getHost(), adminUrl.getPath(), adminUrl.getPort(), stubsData);
    }
 
-   /**
+   public StubbyResponse doPostOverSsl(final String host, final String uri, final int port, final String encodedCredentials, final String post) throws Exception {	   
+	      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTPS, HttpMethods.POST, uri, host, port, encodedCredentials, post);
+	      return makeRequest(stubbyRequest);
+	   }
+
+    public StubbyResponse doPostOverSsl(final String host, final String uri, final int port, final String encodedCredentials, final String post, final Map<String, String> headers) throws Exception {
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTPS, HttpMethods.POST, uri, host, port, encodedCredentials, post);
+        return makeRequest(stubbyRequest,headers);
+    }
+
+    /**
     * Makes HTTP request to stubby.
     *
     * @param scheme HTTP protocol scheme, HTTP or HTTPS
@@ -333,14 +343,45 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
-      final Map<String, String> headers = new HashMap<String, String>();
-      headers.put(StubRequest.AUTH_HEADER, stubbyRequest.getBase64encodedCredentials());
-
-      return new StubbyHttpTransport().getResponse(
-         stubbyRequest.getMethod(),
-         stubbyRequest.constructFullUrl(),
-         stubbyRequest.getPost(),
-         headers,
-         stubbyRequest.calculatePostLength());
+	  return makeRequest(stubbyRequest,null);
    }
+   
+   private StubbyResponse makeRequest(final StubbyRequest stubbyRequest, Map<String, String> headers) throws Exception {
+	   
+	   if (ObjectUtils.isNull(headers)){
+		   headers.put(StubRequest.AUTH_HEADER, stubbyRequest.getBase64encodedCredentials());
+	   }
+	   	      
+	      return new StubbyHttpTransport().getResponse(
+	         stubbyRequest.getMethod(),
+	         stubbyRequest.constructFullUrl(),
+	         stubbyRequest.getPost(),
+	         headers,
+	         stubbyRequest.calculatePostLength());
+	   }
+   
+   /**
+    * Makes HTTP request to stubby.
+    *
+    * @param scheme HTTP protocol scheme, HTTP or HTTPS
+    * @param method HTTP method, currently supported: GET, HEAD, PUT, POST
+    * @param host   host that stubby4j is running on
+    * @param uri    URI for the HTTP request
+    * @param port   port that stubby4j Stubs is running on
+    * @param post   data to POST to the server
+    * @param headers list of headers that needs to be set in request
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse makeRequest(final String scheme,
+           final String method,
+           final String host,
+           final String uri,
+           final int port,
+           final String post,
+           final Map<String,String> headers) throws Exception {
+	   final StubbyRequest stubbyRequest = new StubbyRequest(scheme, method, uri, host, port, null, post);
+	   return makeRequest(stubbyRequest,headers);
+}
+   
 }

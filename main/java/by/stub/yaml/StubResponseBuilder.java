@@ -1,6 +1,7 @@
 package by.stub.yaml;
 
 import by.stub.utils.ReflectionUtils;
+import by.stub.yaml.stubs.StubCallback;
 import by.stub.yaml.stubs.StubResponse;
 
 import java.io.File;
@@ -14,30 +15,39 @@ import java.util.Map;
  */
 final class StubResponseBuilder implements StubBuilder<StubResponse> {
 
-   private final Map<String, Object> fieldNameAndValues;
-   private String status;
-   private String body;
-   private File file;
-   private String latency;
-   private Map<String, String> headers;
+	private Map<String, Object> fieldNameAndValues;
+	private String status;
+	private String body;
+	private File file;
+	private String latency;
+	private Map<String, String> headers;
+	private StubCallback callback;
 
-   StubResponseBuilder() {
-      this.status = null;
-      this.body = null;
-      this.file = null;
-      this.latency = null;
-      this.headers = new LinkedHashMap<String, String>();
-      this.fieldNameAndValues = new HashMap<String, Object>();
-   }
+	StubResponseBuilder() {
+		initialize();
+	}
 
-   @Override
-   public void store(final String fieldName, final Object fieldValue) {
-      fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
-   }
+	@Override
+	public void store(final String fieldName, final Object fieldValue) {
+		fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
+	}
 
-   @Override
-   public StubResponse build()  throws Exception {
-      ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
-      return new StubResponse(status, body, file, latency, headers);
-   }
+	private void initialize() {
+		this.status = null;
+		this.body = null;
+		this.file = null;
+		this.latency = null;
+		this.headers = new LinkedHashMap<String, String>();
+		this.callback = null;
+		this.fieldNameAndValues = new HashMap<String, Object>();
+	}
+
+	@Override
+	public StubResponse build() throws Exception {
+		ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
+		StubResponse result = new StubResponse(status, body, file, latency,
+				headers, callback);
+		initialize();
+		return result;
+	}
 }

@@ -24,6 +24,8 @@ import by.stub.utils.ObjectUtils;
 import java.io.File;
 import java.util.Map;
 
+import javax.rmi.CORBA.Stub;
+
 /**
  * @author Alexander Zagniotov
  * @since 7/2/12, 12:03 AM
@@ -34,8 +36,9 @@ public class RedirectStubResponse extends StubResponse {
                        final String body,
                        final File file,
                        final String latency,
-                       final Map<String, String> headers) {
-      super(status, body, file, latency, headers);
+                       final Map<String, String> headers,
+                       final StubCallback callback) {
+      super(status, body, file, latency, headers, callback);
    }
 
    @Override
@@ -45,14 +48,15 @@ public class RedirectStubResponse extends StubResponse {
 
    public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
       if (ObjectUtils.isNull(stubResponse)) {
-         return new RedirectStubResponse(null, null, null, null, null);
+         return new RedirectStubResponse(null, null, null, null, null, null);
       }
       final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
          stubResponse.getStatus(),
          stubResponse.getBody(),
          stubResponse.getRawFile(),
          stubResponse.getLatency(),
-         stubResponse.getHeaders()
+         stubResponse.getHeaders(),
+         stubResponse.getCallback()
       );
 
       return redirectStubResponse;

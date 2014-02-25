@@ -21,9 +21,12 @@ package by.stub.utils;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
+import by.stub.yaml.stubs.StubCallback;
+
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -83,6 +86,17 @@ public final class ConsoleUtils {
          ANSITerminal.log(logMessage);
       }
    }
+   
+   public static void logOutgoingCallback(final String url, final StubCallback callback) {	      
+	      final String logMessage = String.format("[%s] <- %s [%s] %s",
+	         getTime(),
+	         callback.getMethod(),
+	         url,
+	         callback.getBody()
+	         );	  
+	      
+	      ANSITerminal.log(logMessage);
+	   }
 
    public static void logUnmarshalledStubRequest(final List<String> methods, final String url) {
       final String loadedMsg = String.format("Loaded: %s %s", methods, url);

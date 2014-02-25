@@ -34,115 +34,157 @@ import java.util.Map;
  */
 public class StubResponse {
 
-   public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
+    public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
-   private final String status;
-   private final String body;
-   private final File file;
-   private final byte[] fileBytes;
-   private final String latency;
-   private final Map<String, String> headers;
+    protected String status;
+    protected String body;
+    protected File file;
+    protected byte[] fileBytes;
+    protected String latency;
+    private final StubCallback callback; // Private so that StubCallback that extends StubResponse doesn't allow chaining of Callback
+    protected Map<String, String> headers;
 
-   public StubResponse(final String status,
-                       final String body,
-                       final File file,
-                       final String latency,
-                       final Map<String, String> headers) {
-      this.status = ObjectUtils.isNull(status) ? "200" : status;
-      this.body = body;
-      this.file = file;
-      this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
-      this.latency = latency;
-      this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
-   }
+    public StubResponse() {
+        this.status = "200";
+        this.body = "";
+        this.file = null;
+        this.fileBytes = new byte[]{};
+        this.latency = "0";
+        this.headers = new LinkedHashMap<String, String>();
+        this.callback = null;
+    }
 
-   public String getStatus() {
-      return status;
-   }
+    public StubResponse(final String status, final String body,
+                        final File file, final String latency,
+                        final Map<String, String> headers) {
+        this.status = ObjectUtils.isNull(status) ? "200" : status;
+        this.body = body;
+        this.file = file;
+        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{}
+                : getFileBytes();
+        this.latency = latency;
+        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
+                : headers;
+        this.callback = null;
+    }
 
-   public String getBody() {
-      return (StringUtils.isSet(body) ? body : "");
-   }
+    public StubResponse(final String status, final String body,
+                        final File file, final String latency,
+                        final Map<String, String> headers, final StubCallback callback) {
+        this.status = ObjectUtils.isNull(status) ? "200" : status;
+        this.body = body;
+        this.file = file;
+        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{}
+                : getFileBytes();
+        this.latency = latency;
+        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
+                : headers;
+        this.callback = callback;
+    }
 
-   public boolean isRecordingRequired() {
-      final String body = getBody();
-      if (StringUtils.toLower(body).startsWith("http")) {
-         return true;
-      }
+    public String getStatus() {
+        return status;
+    }
 
-      return false;
-   }
+    public String getBody() {
+        return (StringUtils.isSet(body) ? body : "");
+    }
 
-   public Map<String, String> getHeaders() {
-      return headers;
-   }
+    public StubCallback getCallback() {
+        return callback;
+    }
 
-   public String getLatency() {
-      return latency;
-   }
+    public boolean isRecordingRequired() {
+        final String body = getBody();
+        if (StringUtils.toLower(body).startsWith("http")) {
+            return true;
+        }
 
-   //Used by reflection when populating stubby admin page with stubbed information
-   public byte[] getFile() {
-      return fileBytes;
-   }
+        return false;
+    }
 
-   public File getRawFile() {
-      return file;
-   }
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
-   public byte[] getResponseBodyAsBytes() {
+    public String getLatency() {
+        return latency;
+    }
 
-      if (fileBytes.length == 0) {
-         return getBody().getBytes(StringUtils.charsetUTF8());
-      }
-      return fileBytes;
-   }
+    // Used by reflection when populating stubby admin page with stubbed
+    // information
+    public byte[] getFile() {
+        return fileBytes;
+    }
 
-   public boolean isContainsTemplateTokens() {
-      final boolean isFileTemplate = fileBytes.length == 0 ? false : isTemplateFile();
-      return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
-   }
+    public File getRawFile() {
+        return file;
+    }
 
-   @CoberturaIgnore
-   private boolean isTemplateFile() {
-      try {
-         return FileUtils.isTemplateFile(file);
-      } catch (Exception e) {
-         return false;
-      }
-   }
+    public byte[] getResponseBodyAsBytes() {
 
-   @CoberturaIgnore
-   private byte[] getFileBytes() {
-      try {
-         return FileUtils.fileToBytes(file);
-      } catch (Exception e) {
-         return new byte[]{};
-      }
-   }
+        if (fileBytes.length == 0) {
+            return getBody().getBytes(StringUtils.charsetUTF8());
+        }
+        return fileBytes;
+    }
 
-   public boolean hasHeaderLocation() {
-      return getHeaders().containsKey("location");
-   }
+    public boolean isContainsTemplateTokens() {
+        final boolean isFileTemplate = fileBytes.length == 0 ? false
+                : isTemplateFile();
+        return isFileTemplate
+                || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+    }
 
-   void addResourceIDHeader(final int httplifeCycleIndex) {
-      getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
-      final Map<String, String> shuffledHeaders = new LinkedHashMap<String, String>();
-      shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
-      shuffledHeaders.putAll(new LinkedHashMap<String, String>(getHeaders()));
-      getHeaders().clear();
-      getHeaders().putAll(shuffledHeaders);
-   }
+    public boolean isContainsCallback() {
+        if (callback != null) {
+            return true;
+        }
+        return false;
+    }
 
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.OK_200;
-   }
+    @CoberturaIgnore
+    private boolean isTemplateFile() {
+        try {
+            return FileUtils.isTemplateFile(file);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-   public static StubResponse newStubResponse() {
-      return new StubResponse(null, null, null, null, null);
-   }
+    @CoberturaIgnore
+    private byte[] getFileBytes() {
+        try {
+            return FileUtils.fileToBytes(file);
+        } catch (Exception e) {
+            return new byte[]{};
+        }
+    }
 
-   public static StubResponse newStubResponse(final String status, final String body) {
-      return new StubResponse(status, body, null, null, null);
-   }
+    public boolean hasHeaderLocation() {
+        return getHeaders().containsKey("location");
+    }
+
+    void addResourceIDHeader(final int httplifeCycleIndex) {
+        getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
+        final Map<String, String> shuffledHeaders = new LinkedHashMap<String, String>();
+        shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER,
+                String.valueOf(httplifeCycleIndex));
+        shuffledHeaders.putAll(new LinkedHashMap<String, String>(getHeaders()));
+        getHeaders().clear();
+        getHeaders().putAll(shuffledHeaders);
+    }
+
+    public StubResponseTypes getStubResponseType() {
+        return StubResponseTypes.OK_200;
+    }
+
+    public static StubResponse newStubResponse() {
+        return new StubResponse(null, null, null, null, null);
+    }
+
+    public static StubResponse newStubResponse(final String status,
+                                               final String body) {
+        return new StubResponse(status, body, null, null, null);
+    }
 }

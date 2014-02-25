@@ -500,3 +500,33 @@
    response:
       status: 200
       body: EMPTY SINGLE WORKS
+
+-  request:
+      method: [POST, PUT]
+      url: /rest/conversions/dragon-transcribe.*
+      headers:
+          x-reference: "(.*)"
+          x-return-url: "(.*)"
+      
+   response:                     
+      -  status: 202
+         headers:
+            content-type: text/plain
+            location: 20140222144501-mtlblade1716eps01-15952-308
+         callback:
+                method: POST                
+                url: <% headers.x-return-url.0 %>
+                latency: 5000
+                headers:
+                    content-type: application/json
+                body: >
+                    {
+                    "scrid":"20140222144501-mtlblade1716eps01-15952-308",
+                    "status":"Converted",
+                    "conversion":"some random text",
+                    "reference":"<% headers.x-reference.0 %>"
+                    }
+                    
+      -  status: 429
+         headers:
+            content-type: text/plain                           

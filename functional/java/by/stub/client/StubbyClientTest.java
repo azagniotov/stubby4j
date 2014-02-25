@@ -14,6 +14,9 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -38,6 +41,21 @@ public class StubbyClientTest {
    public static void afterClass() throws Exception {
       STUBBY_CLIENT.stopJetty();
    }
+
+   @Test
+	public void doCallbackRequest() throws Exception {
+		final String host = "localhost";
+		final String uri = "/rest/conversions/dragon-transcribe";
+
+//		Thread.sleep(2 * 60 * 1000);
+        LinkedHashMap<String,String> headers = new LinkedHashMap<String, String>();
+        headers.put("X-Reference", UUID.randomUUID().toString());
+        headers.put("X-Return-Url","http://localhost:"+ SSL_PORT);
+
+		StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "RequestPostPayload", headers);
+		assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+	}
+
 
    @Test
    public void doGetOverSsl_ShouldMakeSuccessfulGet() throws Exception {

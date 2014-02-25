@@ -19,6 +19,7 @@ public final class YamlProperties {
    public static final String RESPONSE = "response";
    public static final String STATUS = "status";
    public static final String URL = "url";
+   public static final String CALLBACK = "callback";
 
    @CoberturaIgnore
    private YamlProperties() {
