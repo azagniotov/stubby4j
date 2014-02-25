@@ -32,6 +32,7 @@ import org.eclipse.jetty.http.HttpSchemes;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class StubbyClient {
@@ -349,6 +350,7 @@ public final class StubbyClient {
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest, Map<String, String> headers) throws Exception {
 	   
 	   if (ObjectUtils.isNull(headers)){
+           headers = new LinkedHashMap<String, String>();
 		   headers.put(StubRequest.AUTH_HEADER, stubbyRequest.getBase64encodedCredentials());
 	   }
 	   	      
