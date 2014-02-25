@@ -87,12 +87,12 @@ public final class ConsoleUtils {
       }
    }
    
-   public static void logOutgoingCallback(final String url, final StubCallback callback) {	      
+   public static void logOutgoingCallback(final String url, final StubCallback callback, final String body) {
 	      final String logMessage = String.format("[%s] <- %s [%s] %s",
 	         getTime(),
 	         callback.getMethod(),
 	         url,
-	         callback.getBody()
+	         body
 	         );	  
 	      
 	      ANSITerminal.log(logMessage);

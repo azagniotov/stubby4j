@@ -41,8 +41,8 @@ public class DefaultCallbackHandlingStrategy implements
 				    TimeUnit.MILLISECONDS.sleep(Long.parseLong(callbackRequest.getLatency()));
 				    
 				    // SEND REQUEST
-				    StubbyResponse response = client.makeRequest(url.getProtocol(),callbackRequest.getMethod(), url.getHost(), url.getPath(), url.getPort(), new String(responseBody),headers);//																					   
-					ConsoleUtils.logOutgoingCallback(url.toString(), callbackRequest);					
+				    StubbyResponse response = client.makeRequest(url.getProtocol(),callbackRequest.getMethod(), url.getHost(), url.getPath(), url.getPort(), new String(responseBody),headers);//
+					ConsoleUtils.logOutgoingCallback(url.toString(), callbackRequest, new String(responseBody));
 				} catch (Exception e) {					
 					e.printStackTrace();
 				}
