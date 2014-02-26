@@ -85,9 +85,9 @@ public class StubbedDataManager {
          return new UnauthorizedStubResponse();
       }
 
-      if (stubResponse.hasHeaderLocation()) {
-         return RedirectStubResponse.newRedirectStubResponse(stubResponse);
-      }
+//      if (stubResponse.hasHeaderLocation()) {
+//         return RedirectStubResponse.newRedirectStubResponse(stubResponse);
+//      }
 
       if (stubResponse.isRecordingRequired()) {
          final String recordingSource = stubResponse.getBody();

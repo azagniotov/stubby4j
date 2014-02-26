@@ -21,17 +21,21 @@ package by.stub.handlers.strategy.stubs;
 
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
+import nl.flotsam.xeger.Xeger;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
-
    private final StubResponse foundStubResponse;
 
    public DefaultResponseHandlingStrategy(final StubResponse foundStubResponse) {
@@ -52,7 +56,8 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       if (foundStubResponse.isContainsTemplateTokens()) {
          final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+//         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+         responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
       }
 
       final OutputStream streamOut = response.getOutputStream();
@@ -64,7 +69,15 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
       response.setCharacterEncoding(StringUtils.UTF_8);
       for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
+          //Check if the header contains a regex Xeger expression
+          if (entry.getValue().contains(StringUtils.TEMPLATE_TOKEN_LEFT)){
+              if (entry.getValue().toLowerCase().contains("xeger")){
+                  String generated = HandlerUtils.processXegerVariables(entry.getValue());
+                  entry.setValue(generated);
+              }
+          }
          response.setHeader(entry.getKey(), entry.getValue());
+
       }
    }
 }

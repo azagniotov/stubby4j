@@ -512,6 +512,7 @@
       -  status: 202
          headers:
             content-type: text/plain
+            location: <%xeger.1:[0-9]{8}-[a-z]{10}-[0-9]{3,5}-[0-9]{2,3}%>
          callback:
                 method: POST                
                 url: <% headers.x-return-url.0 %>
@@ -520,10 +521,6 @@
                     content-type: application/json
                 body: >
                     {
-                    "id":"20140222144501-308",
+                    "id":"<%xeger.1:[0-9]{8}-[a-z]{10}-[0-9]{3,5}-[0-9]{2,3}%>",
                     "reference":"<% headers.x-reference.0 %>"
                     }
-                    
-      -  status: 429
-         headers:
-            content-type: text/plain                           

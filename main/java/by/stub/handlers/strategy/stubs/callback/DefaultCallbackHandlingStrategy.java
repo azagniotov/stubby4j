@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
 import by.stub.utils.ConsoleUtils;
+import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubCallback;
 import by.stub.yaml.stubs.StubRequest;
@@ -31,9 +32,9 @@ public class DefaultCallbackHandlingStrategy implements
 				    byte[] responseBody = callbackRequest.getResponseBodyAsBytes();
 				    if (callbackRequest.isContainsTemplateTokens()) {
 				       final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-				       responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+				       responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
 				    }
-				    	
+
 				    // Setup Request HEADERS
 				    Map<String,String> headers = callbackRequest.getHeaders();				    
 				    

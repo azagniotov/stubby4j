@@ -21,6 +21,7 @@ package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.exception.Stubby4JException;
+import nl.flotsam.xeger.Xeger;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.MimeTypes;
 
@@ -28,10 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexander Zagniotov
@@ -39,6 +40,9 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("serial")
 public final class HandlerUtils {
+   private static Map<String,String> xegerVariables = new HashMap<String, String>();
+   private final static String XEGER_EXPRESSION_LABEL = "xeger.";
+   private final static String XEGER_EXTRACT_REGEX = ".*<%.*xeger\\.(\\d+):(.*)%>.*";
 
    private HandlerUtils() {
 
@@ -122,4 +126,30 @@ public final class HandlerUtils {
    private static String pluralize(final long timeUnit) {
       return timeUnit == 1 ? "" : "s";
    }
+
+    public static String processXegerVariables(String value){
+        Map<String,String> tokenToReplace = new HashMap<String, String>();
+
+        Pattern p = Pattern.compile(XEGER_EXTRACT_REGEX);
+        Matcher m = p.matcher(value);
+        while (m.find()){
+            String index = m.group(1); // The Xeger variable number
+            String regex = m.group(2); // the Xeger expression to generate a string
+            String generated;
+            String key = XEGER_EXPRESSION_LABEL + index + ".*";
+
+            if (ObjectUtils.isNull(xegerVariables.get(key))){
+                Xeger generator = new Xeger(regex);
+                generated = generator.generate();
+                xegerVariables.put(key,generated);
+            }else {
+                generated = xegerVariables.get(key);
+            }
+            tokenToReplace.put(key,generated);
+        }
+
+        String newValue = StringUtils.replaceTokens(value.getBytes(),tokenToReplace);
+
+        return newValue;
+    }
 }
