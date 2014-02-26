@@ -21,11 +21,6 @@ package by.stub.handlers;
 
 //import static org.fest.assertions.api.Assertions.assertThat;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +38,6 @@ import by.stub.handlers.strategy.stubs.callback.StubsCallbackHandlingStrategyFac
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubCallback;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;

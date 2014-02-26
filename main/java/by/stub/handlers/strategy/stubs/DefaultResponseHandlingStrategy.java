@@ -19,21 +19,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletResponse;
+
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
-import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import nl.flotsam.xeger.Xeger;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
    private final StubResponse foundStubResponse;
@@ -56,7 +52,6 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       if (foundStubResponse.isContainsTemplateTokens()) {
          final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-//         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
          responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
       }
 
