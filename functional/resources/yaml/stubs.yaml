@@ -538,3 +538,8 @@
       -  status: 202
          headers:
             content-type: text/plain
+
+      -  status: 202
+         capture: false
+         headers:
+            content-type: text/plain

@@ -55,8 +55,10 @@ public class StubbyClientTest {
 
        StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 1", headers);
        StubbyResponse stubbyResponse2 = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 2", headers);
+       StubbyResponse stubbyResponse3 = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 3", headers);
        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
        assertThat(stubbyResponse2.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+       assertThat(stubbyResponse3.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
        assertThat(CaptureRequestUtil.requestCaptured.size()).isEqualTo(1);
        Iterator iterator = CaptureRequestUtil.requestCaptured.keySet().iterator();
        while(iterator.hasNext()){
