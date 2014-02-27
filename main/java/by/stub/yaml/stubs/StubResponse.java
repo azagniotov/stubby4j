@@ -43,6 +43,7 @@ public class StubResponse {
     protected String latency;
     private final StubCallback callback; // Private so that StubCallback that extends StubResponse doesn't allow chaining of Callback
     protected Map<String, String> headers;
+    protected String capture = "false";
 
     public StubResponse() {
         this.status = "200";
@@ -66,11 +67,13 @@ public class StubResponse {
         this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
                 : headers;
         this.callback = null;
+        this.capture = "false";
     }
 
     public StubResponse(final String status, final String body,
                         final File file, final String latency,
-                        final Map<String, String> headers, final StubCallback callback) {
+                        final Map<String, String> headers, final StubCallback callback,
+                        final String capture) {
         this.status = ObjectUtils.isNull(status) ? "200" : status;
         this.body = body;
         this.file = file;
@@ -80,7 +83,10 @@ public class StubResponse {
         this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
                 : headers;
         this.callback = callback;
+        this.capture = ObjectUtils.isNull(capture) ? "false" : capture;
     }
+
+    public String getCapture(){ return capture; }
 
     public String getStatus() {
         return status;
@@ -180,11 +186,15 @@ public class StubResponse {
     }
 
     public static StubResponse newStubResponse() {
-        return new StubResponse(null, null, null, null, null);
+        return new StubResponse(null, null, null, null, null,null,null);
     }
 
     public static StubResponse newStubResponse(final String status,
                                                final String body) {
-        return new StubResponse(status, body, null, null, null);
+        return new StubResponse(status, body, null, null, null,null,null);
+    }
+
+    public boolean isCaptureOn() {
+        return Boolean.valueOf(capture);
     }
 }

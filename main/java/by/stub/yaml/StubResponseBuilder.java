@@ -22,6 +22,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
 	private String latency;
 	private Map<String, String> headers;
 	private StubCallback callback;
+    private String capture;
 
 	StubResponseBuilder() {
 		initialize();
@@ -40,13 +41,14 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
 		this.headers = new LinkedHashMap<String, String>();
 		this.callback = null;
 		this.fieldNameAndValues = new HashMap<String, Object>();
+        this.capture = "false";
 	}
 
 	@Override
 	public StubResponse build() throws Exception {
 		ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
 		StubResponse result = new StubResponse(status, body, file, latency,
-				headers, callback);
+				headers, callback, capture);
 		initialize();
 		return result;
 	}

@@ -21,10 +21,12 @@ package by.stub.handlers.strategy.stubs;
 
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
+import by.stub.data.CaptureRequestUtil;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -47,6 +49,11 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
          final long latency = Long.parseLong(foundStubResponse.getLatency());
          TimeUnit.MILLISECONDS.sleep(latency);
       }
+
+      if (foundStubResponse.isCaptureOn()){
+          CaptureRequestUtil.capture(UUID.randomUUID(), assertionStubRequest);
+      }
+
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
@@ -72,7 +79,6 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
               }
           }
          response.setHeader(entry.getKey(), entry.getValue());
-
       }
    }
 }

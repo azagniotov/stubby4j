@@ -524,3 +524,17 @@
                     "id":"<%xeger.1:[0-9]{8}-[a-z]{10}-[0-9]{3,5}-[0-9]{2,3}%>",
                     "reference":"<% headers.x-reference.0 %>"
                     }
+
+-  request:
+      method: [POST]
+      url: /rest/capturerequest
+
+   response:
+      -  status: 202
+         capture: true
+         headers:
+            content-type: text/plain
+
+      -  status: 202
+         headers:
+            content-type: text/plain

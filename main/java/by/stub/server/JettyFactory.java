@@ -63,7 +63,7 @@ public final class JettyFactory {
    public static final int DEFAULT_ADMIN_PORT = 8889;
    public static final int DEFAULT_STUBS_PORT = 8882;
    public static final int DEFAULT_SSL_PORT = 7443;
-   public static final String DEFAULT_HOST = "0.0.0.0";
+   public static final String DEFAULT_HOST = "127.0.0.1";
    static final String ADMIN_CONNECTOR_NAME = "stubbyAdminConnector";
    static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
    static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
