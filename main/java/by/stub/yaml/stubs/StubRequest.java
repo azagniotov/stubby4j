@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -52,7 +53,8 @@ public class StubRequest {
    private final Map<String, String> headers;
    private final Map<String, String> query;
    private final Map<String, String> regexGroups;
-
+   private Map<String, String> xegerVariables = new ConcurrentHashMap<String, String>();
+   
    public StubRequest(final String url,
                       final String post,
                       final File file,
@@ -117,13 +119,14 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      final Map<String, String> headersCopy = new LinkedHashMap<String, String>(headers);
-      final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
-      this.headers.clear();
-      for (final Map.Entry<String, String> entry : entrySet) {
-         this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
-      }
-
+	  if (ObjectUtils.isNotNull(headers)){
+		   final Map<String, String> headersCopy = new LinkedHashMap<String, String>(headers);
+		   final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
+		   this.headers.clear();
+		   for (final Map.Entry<String, String> entry : entrySet) {
+			   this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
+		   }
+	  }
       return headers;
    }
 
@@ -332,5 +335,9 @@ public class StubRequest {
 
       return sb.toString();
    }
+
+   public Map<String, String> getXegerVariables() {
+       return xegerVariables;
+   }   
 
 }

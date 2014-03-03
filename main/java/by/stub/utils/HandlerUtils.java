@@ -21,6 +21,8 @@ package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.exception.Stubby4JException;
+import by.stub.yaml.stubs.StubRequest;
+import by.stub.yaml.stubs.StubResponse;
 import nl.flotsam.xeger.Xeger;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.MimeTypes;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -41,7 +44,6 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("serial")
 public final class HandlerUtils {
-   private static ConcurrentHashMap<String,String> xegerVariables = new ConcurrentHashMap<String, String>();
    private final static String XEGER_EXPRESSION_LABEL = "xeger.";
    private final static String XEGER_EXTRACT_REGEX = ".*<%.*xeger\\.(\\d+):(.*)%>.*";
 
@@ -128,7 +130,7 @@ public final class HandlerUtils {
       return timeUnit == 1 ? "" : "s";
    }
 
-    public static String processXegerVariables(String value){
+    public static Map<String,String> getXegerTokenWithValues(String value, StubRequest assertionStubRequest){
     	ConcurrentHashMap<String,String> tokenToReplace = new ConcurrentHashMap<String, String>();
 
         Pattern p = Pattern.compile(XEGER_EXTRACT_REGEX);
@@ -138,19 +140,38 @@ public final class HandlerUtils {
             String regex = m.group(2); // the Xeger expression to generate a string
             String generated;
             String key = XEGER_EXPRESSION_LABEL + index + ".*";
-
-            if (ObjectUtils.isNull(xegerVariables.get(key))){
-                Xeger generator = new Xeger(regex);
-                generated = generator.generate();
-                xegerVariables.put(key,generated);
-            }else {
-                generated = xegerVariables.get(key);
-            }
+            if (ObjectUtils.isNotNull(assertionStubRequest.getXegerVariables().get(key))){
+	    		generated = assertionStubRequest.getXegerVariables().get(key);
+	    	}else{
+	    		Xeger generator = new Xeger(regex);
+	            generated = generator.generate();
+	         	assertionStubRequest.getXegerVariables().put(key,generated);
+	        }            
             tokenToReplace.put(key,generated);
-        }
-
-        String newValue = StringUtils.replaceTokens(value.getBytes(),tokenToReplace);
-
-        return newValue;
+        }         
+        return tokenToReplace;
     }
+   
+    public static HttpServletResponse setStubResponseHeaders(StubResponse stubResponse, HttpServletResponse response, StubRequest assertionStubRequest) {	  
+  	  String headerValue;  	  
+  	  
+      response.setCharacterEncoding(StringUtils.UTF_8);      
+      if (ObjectUtils.isNotNull(stubResponse.getHeaders())){    		 
+      	  for (Entry<String, String> entry : stubResponse.getHeaders().entrySet()){      
+      		headerValue = entry.getValue();      		
+            //Check if the header contains a regex Xeger expression
+            if (headerValue.contains(StringUtils.TEMPLATE_TOKEN_LEFT)){
+                    if (headerValue.toLowerCase().contains("xeger")){                    	
+                    	// Get all Xeger placeholder found in the response
+                    	Map<String,String> xegerVariables = HandlerUtils.getXegerTokenWithValues(headerValue, assertionStubRequest);                    	
+                    	headerValue = StringUtils.replaceTokens(headerValue.getBytes(), xegerVariables);
+                    }else {
+                    	headerValue = StringUtils.replaceTokens(headerValue.getBytes(), assertionStubRequest.getRegexGroups());	
+                    }                    
+            }                
+            response.setHeader(entry.getKey(), headerValue);              
+      	  }    	  
+      }        
+      return response;
+   }
 }

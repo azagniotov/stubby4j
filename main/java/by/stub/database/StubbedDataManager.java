@@ -87,7 +87,8 @@ public class StubbedDataManager {
          return new UnauthorizedStubResponse();
       }
 
-      if (stubResponse.hasHeaderLocation()) {
+      // If the response is a 3xx status code with a location header then we expect this to be a Redirect Http Response.
+      if (stubResponse.hasHeaderLocation() && stubResponse.getStatus().startsWith("3")) {
          return RedirectStubResponse.newRedirectStubResponse(stubResponse);
       }
 

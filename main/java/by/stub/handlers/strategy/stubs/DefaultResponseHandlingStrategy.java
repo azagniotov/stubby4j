@@ -20,11 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers.strategy.stubs;
 
 import java.io.OutputStream;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletResponse;
 
 import by.stub.data.CaptureRequestUtil;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
@@ -44,7 +42,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    @Override
    public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
-      setStubResponseHeaders(foundStubResponse, response);
+      HandlerUtils.setStubResponseHeaders(foundStubResponse, response,assertionStubRequest);
 
       if (StringUtils.isSet(foundStubResponse.getLatency())) {    	 
          final long latency = Long.parseLong(foundStubResponse.getLatency());
@@ -59,8 +57,14 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
 
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       if (foundStubResponse.isContainsTemplateTokens()) {
-         final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-         responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
+    	 // Update the body-content based on request values 
+         String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());         
+         
+         // Update the body-content based on the Xeger Variables
+         Map<String,String> xegerVariables = HandlerUtils.getXegerTokenWithValues(replacedTemplate,assertionStubRequest);         
+         replacedTemplate = StringUtils.replaceTokens(replacedTemplate.getBytes(),xegerVariables);
+         
+         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
       }
 
       if (ObjectUtils.isNotNull(responseBody)){
@@ -68,23 +72,6 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
     	  streamOut.write(responseBody);    	 
     	  streamOut.flush();
     	  streamOut.close();
-      }
-   }
-
-   private void setStubResponseHeaders(StubResponse stubResponse, HttpServletResponse response) {	  
-	  String headerValue;
-      response.setCharacterEncoding(StringUtils.UTF_8);      
-      if (ObjectUtils.isNotNull(stubResponse.getHeaders())){    		 
-    	  for (Entry<String, String> entry : stubResponse.getHeaders().entrySet()){      
-    		  headerValue = entry.getValue();
-              //Check if the header contains a regex Xeger expression
-              if (headerValue.contains(StringUtils.TEMPLATE_TOKEN_LEFT)){
-                  if (headerValue.toLowerCase().contains("xeger")){
-            	      headerValue = HandlerUtils.processXegerVariables(headerValue);                  
-                  }
-              }              					
-              response.setHeader(entry.getKey(), headerValue);              
-    	  }    	  
       }
    }
 }

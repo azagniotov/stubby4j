@@ -19,15 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
-
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Alexander Zagniotov
@@ -37,14 +36,14 @@ public class StubResponse {
 
     public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
-    protected String status;
-    protected String body;
-    protected File file;
-    protected byte[] fileBytes;
-    protected String latency;
+    private String status;
+    private String body;
+    private File file;
+    private byte[] fileBytes;
+    private String latency;
     private final StubCallback callback; // Private so that StubCallback that extends StubResponse doesn't allow chaining of Callback
-    protected Map<String, String> headers;
-    protected String capture = "false";
+    private Map<String, String> headers;
+    private String capture = "false";    
 
     public StubResponse() {
         this.status = "200";
@@ -53,7 +52,7 @@ public class StubResponse {
         this.fileBytes = new byte[]{};
         this.latency = "0";
         this.headers = new ConcurrentHashMap<String, String>();
-        this.callback = null;
+        this.callback = null;        
     }
 
     public StubResponse(final String status, final String body,
@@ -67,7 +66,7 @@ public class StubResponse {
         this.latency = latency;
         this.headers = (ObjectUtils.isNull(headers) ? new ConcurrentHashMap<String, String>() : headers);
         this.callback = null;
-        this.capture = "false";
+        this.capture = "false";        
     }
 
     public StubResponse(final String status, final String body,
@@ -111,7 +110,7 @@ public class StubResponse {
     public Map<String, String> getHeaders() {
         return headers;
     }
-
+       
     public String getLatency() {
         return latency;
     }

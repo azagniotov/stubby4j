@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import by.stub.client.StubbyClient;
-import by.stub.client.StubbyResponse;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
@@ -31,8 +30,14 @@ public class DefaultCallbackHandlingStrategy implements
 					// Setup Request BODY
 				    byte[] responseBody = callbackRequest.getResponseBodyAsBytes();
 				    if (callbackRequest.isContainsTemplateTokens()) {
-				       final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-				       responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
+				       // Replace tokens in body based on RegEx extractor found in initial request	
+				       String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
+				       
+				       
+				       Map<String,String> xegerVariables = HandlerUtils.getXegerTokenWithValues(replacedTemplate,assertionStubRequest);
+				       replacedTemplate = StringUtils.replaceTokens(replacedTemplate.getBytes(),xegerVariables);                  
+				       
+				       responseBody = StringUtils.getBytesUtf8(replacedTemplate);				         				     
 				    }
 
 				    // Setup Request HEADERS
@@ -42,7 +47,7 @@ public class DefaultCallbackHandlingStrategy implements
 				    TimeUnit.MILLISECONDS.sleep(Long.parseLong(callbackRequest.getLatency()));
 				    
 				    // SEND REQUEST
-				    StubbyResponse response = client.makeRequest(url.getProtocol(),callbackRequest.getMethod(), url.getHost(), url.getPath(), url.getPort(), new String(responseBody),headers);//
+				    client.makeRequest(url.getProtocol(),callbackRequest.getMethod(), url.getHost(), url.getPath(), url.getPort(), new String(responseBody),headers);//
 					ConsoleUtils.logOutgoingCallback(url.toString(), callbackRequest, new String(responseBody));
 				} catch (Exception e) {					
 					e.printStackTrace();
