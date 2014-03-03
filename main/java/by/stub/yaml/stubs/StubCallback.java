@@ -12,10 +12,7 @@ public class StubCallback {
 	   private final String status;
 	   private final String body;
 	   private final String url;
-//	   private final File file;
-//	   private final byte[] fileBytes;
 	   private final String latency;
-//	   private final StubCallback callback;
 	   private final Map<String, String> headers;	   
 
 public StubCallback(String method, String status, String body, Map<String, String> headers, String url, String latency) {		

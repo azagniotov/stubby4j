@@ -59,23 +59,23 @@ public class StubsPortalHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
-      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
-      final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
       try {
-			strategyStubResponse.handle(wrapper, assertionStubRequest);
-			if (foundStubResponse.isContainsCallback()) {
+          final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
+          final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
+          final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
+          final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
+
+      
+		  strategyStubResponse.handle(wrapper, assertionStubRequest);
+		  if (foundStubResponse.isContainsCallback()) {
 				StubCallback foundStubCallback = foundStubResponse.getCallback();
 				StubCallbackHandlingStrategy strategyStubCallback = StubsCallbackHandlingStrategyFactory.getStrategy(foundStubCallback);
 				strategyStubCallback.handle(foundStubCallback, assertionStubRequest);							
-			}
-		} catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-
-      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper);
-
+		  }
+		  ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper);
+	  } catch (final Exception ex) {	
+			ex.printStackTrace();
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      }     
    }
 }

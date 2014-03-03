@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unchecked")
 public class YamlParser {
@@ -160,8 +161,9 @@ public class YamlParser {
             	Map<String, Object> yamlProperties2 = (Map<String, Object>) rawFieldName;
             	 final StubCallback callbackStub = unmarshallYamlMapToTargetStub(yamlProperties2, new StubCallbackBuilder());
                 massagedFieldValue = callbackStub;
-           }else {
-        	   massagedFieldValue = encodeAuthorizationHeader(rawFieldName);
+           }else {        	   
+        	   ConcurrentHashMap<String, String> headers = new ConcurrentHashMap((Map)rawFieldName);               
+        	   massagedFieldValue = encodeAuthorizationHeader(headers);
            }
 
          } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
@@ -205,7 +207,10 @@ public class YamlParser {
             	 Map<String, Object> yamlProperties2 = (Map<String, Object>) rawFieldValue;
             	 final StubCallback callbackStub = unmarshallYamlMapToTargetStub(yamlProperties2, new StubCallbackBuilder());
             	 rawFieldValue = callbackStub;
+            }else if (rawFieldName.toLowerCase().equals(YamlProperties.HEADERS)){
+            	rawFieldValue = new ConcurrentHashMap((Map)rawFieldValue);
             }
+            
             stubBuilder.store(rawFieldName, rawFieldValue);
          }
 

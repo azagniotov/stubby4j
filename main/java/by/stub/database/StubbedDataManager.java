@@ -75,10 +75,12 @@ public class StubbedDataManager {
       if (ObjectUtils.isNull(matchedLifecycle)) {
          return new NotFoundStubResponse();
       }
-
+      	
       final String resourceId = matchedLifecycle.getResourceId();
-      resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
-      resourceStats.get(resourceId).incrementAndGet();
+      if (ObjectUtils.isNotNull(resourceId)){
+    	  resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
+    	  resourceStats.get(resourceId).incrementAndGet();    	  
+      }
 
       final StubResponse stubResponse = matchedLifecycle.getResponse(true);
       if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {

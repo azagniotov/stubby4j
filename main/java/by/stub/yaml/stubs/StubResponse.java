@@ -27,6 +27,7 @@ import by.stub.utils.StringUtils;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Alexander Zagniotov
@@ -51,7 +52,7 @@ public class StubResponse {
         this.file = null;
         this.fileBytes = new byte[]{};
         this.latency = "0";
-        this.headers = new LinkedHashMap<String, String>();
+        this.headers = new ConcurrentHashMap<String, String>();
         this.callback = null;
     }
 
@@ -64,8 +65,7 @@ public class StubResponse {
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{}
                 : getFileBytes();
         this.latency = latency;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
-                : headers;
+        this.headers = (ObjectUtils.isNull(headers) ? new ConcurrentHashMap<String, String>() : headers);
         this.callback = null;
         this.capture = "false";
     }
@@ -80,8 +80,7 @@ public class StubResponse {
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{}
                 : getFileBytes();
         this.latency = latency;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>()
-                : headers;
+        this.headers = (ObjectUtils.isNull(headers) ? new ConcurrentHashMap<String, String>() : headers);
         this.callback = callback;
         this.capture = ObjectUtils.isNull(capture) ? "false" : capture;
     }
@@ -173,10 +172,9 @@ public class StubResponse {
 
     void addResourceIDHeader(final int httplifeCycleIndex) {
         getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
-        final Map<String, String> shuffledHeaders = new LinkedHashMap<String, String>();
-        shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER,
-                String.valueOf(httplifeCycleIndex));
-        shuffledHeaders.putAll(new LinkedHashMap<String, String>(getHeaders()));
+        final Map<String, String> shuffledHeaders = new ConcurrentHashMap<String, String>();
+        shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
+        shuffledHeaders.putAll(new ConcurrentHashMap<String, String>(getHeaders()));
         getHeaders().clear();
         getHeaders().putAll(shuffledHeaders);
     }

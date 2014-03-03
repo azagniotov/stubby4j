@@ -23,6 +23,7 @@ package by.stub.yaml.stubs;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,18 +66,20 @@ public class StubHttpLifecycle {
          return (StubResponse) response;
       }
 
-      final List<StubResponse> responses = (LinkedList<StubResponse>) response;
+      synchronized (response) {		
+      final List<StubResponse> responses = ((LinkedList<StubResponse>) response);
       if (responses.isEmpty()) {
          return StubResponse.newStubResponse();
       }
 
       if (incrementSequencedResponseId) {
          final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
-         responseSequencedIdCounter.compareAndSet(responses.size(), 0);
-         return responses.get(responseSequencedId);
+         responseSequencedIdCounter.compareAndSet(responses.size(), 0);         			
+         return responses.get(responseSequencedId);         
       }
 
       return responses.get(responseSequencedIdCounter.get());
+      }
    }
 
    public int getNextSequencedResponseId() {

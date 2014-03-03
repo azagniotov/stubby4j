@@ -2105,7 +2105,7 @@ public class StubRequestTest {
          "method=[GET, POST, PUT], " +
          "post=this is a post body, " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+         "headers={headerone=headerOneValue, headertwo=headerTwoValue, headerthree=headerThreeValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
@@ -2130,7 +2130,7 @@ public class StubRequestTest {
          "url=/invoice/123, " +
          "method=[GET, POST, PUT], " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+         "headers={headerone=headerOneValue, headertwo=headerTwoValue, headerthree=headerThreeValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
@@ -2155,7 +2155,7 @@ public class StubRequestTest {
          "url=/invoice/123, " +
          "method=[GET, POST, PUT], " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=null}}";
+         "headers={headerone=null, headertwo=headerTwoValue, headerthree=headerThreeValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }

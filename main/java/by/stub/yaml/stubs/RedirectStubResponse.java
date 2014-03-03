@@ -19,12 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.utils.ObjectUtils;
-
 import java.io.File;
 import java.util.Map;
 
-import javax.rmi.CORBA.Stub;
+import by.stub.utils.ObjectUtils;
 
 /**
  * @author Alexander Zagniotov

@@ -19,20 +19,16 @@ final class StubCallbackBuilder implements StubBuilder<StubCallback> {
    private String status;
    private String body;
    private String url;
-//   private File file;
    private String latency;
    private Map<String, String> headers;
-//   private StubCallback callback;
 
    StubCallbackBuilder() {
 	  this.method = null;
       this.status = null;
       this.body = null;
       this.url = null;
-//      this.file = null;
       this.latency = null;
       this.headers = new LinkedHashMap<String, String>();
-//      this.callback = null;
       this.fieldNameAndValues = new HashMap<String, Object>();
    }
 

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +41,7 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings("serial")
 public final class HandlerUtils {
-   private static Map<String,String> xegerVariables = new HashMap<String, String>();
+   private static ConcurrentHashMap<String,String> xegerVariables = new ConcurrentHashMap<String, String>();
    private final static String XEGER_EXPRESSION_LABEL = "xeger.";
    private final static String XEGER_EXTRACT_REGEX = ".*<%.*xeger\\.(\\d+):(.*)%>.*";
 
@@ -128,7 +129,7 @@ public final class HandlerUtils {
    }
 
     public static String processXegerVariables(String value){
-        Map<String,String> tokenToReplace = new HashMap<String, String>();
+    	ConcurrentHashMap<String,String> tokenToReplace = new ConcurrentHashMap<String, String>();
 
         Pattern p = Pattern.compile(XEGER_EXTRACT_REGEX);
         Matcher m = p.matcher(value);

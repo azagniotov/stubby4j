@@ -19,18 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.server;
 
-import by.stub.cli.ANSITerminal;
-import by.stub.cli.CommandLineInterpreter;
-import by.stub.database.StubbedDataManager;
-import by.stub.exception.Stubby4JException;
-import by.stub.handlers.AdminPortalHandler;
-import by.stub.handlers.AjaxEndpointStatsHandler;
-import by.stub.handlers.AjaxResourceContentHandler;
-import by.stub.handlers.StatusPageHandler;
-import by.stub.handlers.StubDataRefreshActionHandler;
-import by.stub.handlers.StubsPortalHandler;
-import by.stub.utils.ObjectUtils;
-import by.stub.utils.StringUtils;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -44,14 +40,20 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import by.stub.cli.ANSITerminal;
+import by.stub.cli.CommandLineInterpreter;
+import by.stub.database.StubbedDataManager;
+import by.stub.exception.Stubby4JException;
+import by.stub.handlers.AdminPortalHandler;
+import by.stub.handlers.AjaxEndpointStatsHandler;
+import by.stub.handlers.AjaxResourceContentHandler;
+import by.stub.handlers.StatusPageHandler;
+import by.stub.handlers.StubDataRefreshActionHandler;
+import by.stub.handlers.StubsPortalHandler;
+import by.stub.utils.ObjectUtils;
+import by.stub.utils.StringUtils;
 
 /**
  * @author Alexander Zagniotov
@@ -81,8 +83,11 @@ public final class JettyFactory {
    }
 
    public Server construct() throws IOException {
-
-      final Server server = new Server();
+	  QueuedThreadPool threadPool = new QueuedThreadPool();
+	  threadPool.setMaxThreads(1500);	  
+	  
+      final Server server = new Server();          
+      server.setThreadPool(threadPool);
       server.setConnectors(buildConnectors());
       server.setHandler(constructHandlers());
 

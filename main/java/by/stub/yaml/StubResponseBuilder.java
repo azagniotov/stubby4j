@@ -1,13 +1,14 @@
 package by.stub.yaml;
 
-import by.stub.utils.ReflectionUtils;
-import by.stub.yaml.stubs.StubCallback;
-import by.stub.yaml.stubs.StubResponse;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import by.stub.utils.ReflectionUtils;
+import by.stub.yaml.stubs.StubCallback;
+import by.stub.yaml.stubs.StubResponse;
 
 /**
  * @author Alexander Zagniotov
@@ -38,7 +39,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
 		this.body = null;
 		this.file = null;
 		this.latency = null;
-		this.headers = new LinkedHashMap<String, String>();
+		this.headers = new ConcurrentHashMap<String, String>();
 		this.callback = null;
 		this.fieldNameAndValues = new HashMap<String, Object>();
         this.capture = "false";
@@ -47,8 +48,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
 	@Override
 	public StubResponse build() throws Exception {
 		ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
-		StubResponse result = new StubResponse(status, body, file, latency,
-				headers, callback, capture);
+		StubResponse result = new StubResponse(status, body, file, latency, headers, callback, capture);
 		initialize();
 		return result;
 	}

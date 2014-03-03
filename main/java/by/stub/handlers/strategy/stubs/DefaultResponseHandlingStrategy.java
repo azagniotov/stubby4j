@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers.strategy.stubs;
 
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import by.stub.data.CaptureRequestUtil;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -45,7 +46,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       HandlerUtils.setResponseMainHeaders(response);
       setStubResponseHeaders(foundStubResponse, response);
 
-      if (StringUtils.isSet(foundStubResponse.getLatency())) {
+      if (StringUtils.isSet(foundStubResponse.getLatency())) {    	 
          final long latency = Long.parseLong(foundStubResponse.getLatency());
          TimeUnit.MILLISECONDS.sleep(latency);
       }
@@ -62,23 +63,28 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
          responseBody = StringUtils.getBytesUtf8(HandlerUtils.processXegerVariables(replacedTemplate));
       }
 
-      final OutputStream streamOut = response.getOutputStream();
-      streamOut.write(responseBody);
-      streamOut.flush();
-      streamOut.close();
+      if (ObjectUtils.isNotNull(responseBody)){
+    	  final OutputStream streamOut = response.getOutputStream();
+    	  streamOut.write(responseBody);    	 
+    	  streamOut.flush();
+    	  streamOut.close();
+      }
    }
 
-   private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
-      response.setCharacterEncoding(StringUtils.UTF_8);
-      for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-          //Check if the header contains a regex Xeger expression
-          if (entry.getValue().contains(StringUtils.TEMPLATE_TOKEN_LEFT)){
-              if (entry.getValue().toLowerCase().contains("xeger")){
-                  String generated = HandlerUtils.processXegerVariables(entry.getValue());
-                  entry.setValue(generated);
-              }
-          }
-         response.setHeader(entry.getKey(), entry.getValue());
+   private void setStubResponseHeaders(StubResponse stubResponse, HttpServletResponse response) {	  
+	  String headerValue;
+      response.setCharacterEncoding(StringUtils.UTF_8);      
+      if (ObjectUtils.isNotNull(stubResponse.getHeaders())){    		 
+    	  for (Entry<String, String> entry : stubResponse.getHeaders().entrySet()){      
+    		  headerValue = entry.getValue();
+              //Check if the header contains a regex Xeger expression
+              if (headerValue.contains(StringUtils.TEMPLATE_TOKEN_LEFT)){
+                  if (headerValue.toLowerCase().contains("xeger")){
+            	      headerValue = HandlerUtils.processXegerVariables(headerValue);                  
+                  }
+              }              					
+              response.setHeader(entry.getKey(), headerValue);              
+    	  }    	  
       }
    }
 }
