@@ -84,7 +84,7 @@ public final class JettyFactory {
 
    public Server construct() throws IOException {
 	  QueuedThreadPool threadPool = new QueuedThreadPool();
-	  threadPool.setMaxThreads(1500);	  
+	  threadPool.setMaxThreads(10);	  
 	  
       final Server server = new Server();          
       server.setThreadPool(threadPool);
@@ -217,7 +217,7 @@ public final class JettyFactory {
       stubsChannel.setMaxIdleTime(idleTimeInMilliseconds);
       stubsChannel.setRequestHeaderSize(8192);
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
-      stubsChannel.setHost(DEFAULT_HOST);
+      stubsChannel.setHost(DEFAULT_HOST);      
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          stubsChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));

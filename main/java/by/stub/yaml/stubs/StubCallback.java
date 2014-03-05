@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 
@@ -78,8 +79,32 @@ public int getPort() throws MalformedURLException {
 	return url.getPort();	
 }
 
+ @Override
+ @CoberturaIgnore
+ public int hashCode() {
+    int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
+    result = 31 * result + method.hashCode();
+    result = 31 * result + (ObjectUtils.isNotNull(body) ? body.hashCode() : 0);    
+    result = 31 * result + headers.hashCode();    
+    return result;
+ }
 
+ @Override
+ @CoberturaIgnore
+ public final String toString() {
+    final StringBuffer sb = new StringBuffer();
+    sb.append("StubCallback");
+    sb.append("{url=").append(url);
+    sb.append(", method=").append(method);
 
+    if (!ObjectUtils.isNull(body)) {
+       sb.append(", post=").append(body);
+    }
 
-	   
+    sb.append(", headers=").append(getHeaders());
+    sb.append('}');
+
+    return sb.toString();
+ }
+ 
 }
