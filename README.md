@@ -578,9 +578,10 @@ Assuming a match has been made against the given `request` object, data from `re
 
 If the stubbed `response` contains a `callback` definition the server will send the specified callback request after the first response 
 has been sent. This allows one to simulate an asynchronous call:
-Client --`request`--> Server
-Client <--`response`-- Server
-Client <--`callback`-- Server
+
+1. Client --`request`--> Server
+2. Client <--`response`-- Server
+3. Client <--`callback`-- Server
 
 #### Example
 ```yaml
