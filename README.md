@@ -573,6 +573,44 @@ Assuming a match has been made against the given `request` object, data from `re
       body: Hello, World!
 ```
 
+### Response Callback
+
+If the stubbed `response` contains a `callback` definition the server will send the specified callback request after the first response 
+has been sent. This allows one to simulate an asynchronous call:
+Client --`request`--> Server
+Client <--`response`-- Server
+Client <--`callback`-- Server
+
+#### Example
+```yaml
+-  request:
+      method: [POST, PUT]
+      url: /rest/callmeback.*
+      headers:
+          x-reference: "(.*)"
+          x-return-url: "(.*)"
+      
+   response:                     
+      -  status: 202
+         headers:
+            content-type: text/plain            
+         callback:
+                method: POST                
+                url: <% headers.x-return-url.0 %>
+                latency: 2000
+                headers:
+                    content-type: application/json
+                body: >
+                    {                    
+                    "reference":"<% headers.x-reference.0 %>"
+                    }
+```					
+
+#### Limitation
+* `callback` doesn't support the `file` configuration.
+* Supports only one `callback` inside a response
+
+
 ### Record and play
 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
