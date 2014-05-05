@@ -10,7 +10,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## User manual for stubby4j v2.0.21
 ### Table of contents
 
-* [Quick start example](#quick-start)
+* [Quick start example](#quick-start-example)
 * [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
