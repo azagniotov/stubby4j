@@ -10,6 +10,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 ## User manual for stubby4j v2.0.21
 ### Table of contents
 
+* [Quick start example](#quick-start)
 * [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
@@ -30,6 +31,31 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Authors](#authors)
 * [Kudos](#kudos)
 * [See also](#see-also)
+
+### Quick start example
+
+This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building the JAR locally. 
+
+* Download the [latest stubby4j version](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) (the JAR archive)
+* Create the following local YAML file: 
+```yaml
+-  request:
+      method: GET
+      url: /hello-world
+ 
+   response:
+      status: 200
+      headers:
+         content-type: application/json
+      body: Hello World!
+```
+* Execute the downloaded stubby JAR using command `java -jar stubby4j-x.x.xx.jar -d <PATH_TO_YOUR_CREATED_LOCAL_YAML_FILE>`
+* Navigate to `http://localhost:8882/hello-world` to get the stubbed response "Hello World!"
+* Navigate to stubby4j admin portal at `http://localhost:8889/status` to see what has been stubbed & other useful data
+
+That's it!
+
+For more information and more complex examples, please dive into the rest of documentation, especially [Endpoint configuration HOWTO](#endpoint-configuration-howto)
 
 ### Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
@@ -145,7 +171,7 @@ libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 usage:
        java -jar stubby4j-2.0.21.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
- -a,--admin <arg>      Port for admin portal. Defaults to 8889.
+ -a,--admin <arg>      Port for admin portal. __Defaults to 8889__.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
                        expected.
  -h,--help             This help text.
@@ -154,8 +180,8 @@ usage:
  -l,--location <arg>   Hostname at which to bind stubby.
  -m,--mute             Prevent stubby from printing to the console.
  -p,--password <arg>   Password for the provided keystore file.
- -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
- -t,--tls <arg>        Port for TLS connection. Defaults to 7443.
+ -s,--stubs <arg>      Port for stub portal. __Defaults to 8882__.
+ -t,--tls <arg>        Port for TLS (SSL) connection. __Defaults to 7443__.
  -v,--version          Prints out to console stubby version.
  -w,--watch            Periodically scans for changes in last modification
                        date of the main YAML and referenced external files
