@@ -36,7 +36,13 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building the JAR locally. 
 
-* Download the [latest stubby4j version](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) (the JAR archive)
+##### Minimum system requirements
+
+* Oracle JRE 1.6 (OpenJDK JRE has not been tested)
+
+##### Setup
+
+* Download the [latest stubby4j version](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) (the JAR archive).
 * Create the following local YAML file: 
 ```yaml
 -  request:
