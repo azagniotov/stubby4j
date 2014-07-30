@@ -1,0 +1,6 @@
+-  request:
+    url: ^/hi$
+    method: GET 
+    response:
+      status: 200 
+
