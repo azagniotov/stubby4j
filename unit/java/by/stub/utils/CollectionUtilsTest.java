@@ -67,7 +67,8 @@ public class CollectionUtilsTest {
    }
 
    @Test
-   public void constructQueryString_ShouldConstructQueryString_WhenParamMapGiven() throws Exception {
+   public void
+   constructQueryString_ShouldConstructQueryString_WhenParamMapGiven() throws Exception {
 
       final Map<String, String> expectedParams = new HashMap<String, String>() {{
          put("paramTwo", "two");
@@ -75,7 +76,7 @@ public class CollectionUtilsTest {
       }};
 
       final String actualQueryString = CollectionUtils.constructQueryString(expectedParams);
-      final String expectedQueryString = "paramTwo=two&paramOne=one";
+      final String expectedQueryString = "paramOne=one&paramTwo=two";
 
       assertThat(expectedQueryString).isEqualTo(actualQueryString);
    }

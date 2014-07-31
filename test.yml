@@ -4,3 +4,9 @@
     response:
       status: 200 
 
+-  request:
+    url: ^/di$
+    method: GET 
+    response:
+      status: 200 
+
