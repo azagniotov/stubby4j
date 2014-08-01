@@ -21,6 +21,7 @@ package by.stub.database;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyResponse;
+import by.stub.handlers.UnusedStubsHandler;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.ReflectionUtils;
@@ -75,6 +76,8 @@ public class StubbedDataManager {
       if (ObjectUtils.isNull(matchedLifecycle)) {
          return new NotFoundStubResponse();
       }
+
+      UnusedStubsHandler.userStubRequests.add(matchedLifecycle.getRequest());
 
       final String resourceId = matchedLifecycle.getResourceId();
       resourceStats.putIfAbsent(resourceId, new AtomicLong(0));

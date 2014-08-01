@@ -42,8 +42,9 @@ public class StubHttpLifecycle {
    private Object response;
    private String requestAsYaml;
    private String responseAsYaml;
+    private boolean isUsed;
 
-   public StubHttpLifecycle() {
+    public StubHttpLifecycle() {
       response = StubResponse.newStubResponse();
    }
 

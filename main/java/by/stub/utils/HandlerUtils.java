@@ -21,6 +21,7 @@ package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.exception.Stubby4JException;
+import by.stub.handlers.ErrorCountHandler;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.MimeTypes;
 
@@ -45,6 +46,7 @@ public final class HandlerUtils {
    }
 
    public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
+      ErrorCountHandler.errorCount =   ErrorCountHandler.errorCount +1;
       response.setStatus(httpStatus);
       response.sendError(httpStatus, message);
       response.flushBuffer();

@@ -23,12 +23,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
 import by.stub.exception.Stubby4JException;
-import by.stub.handlers.AdminPortalHandler;
-import by.stub.handlers.AjaxEndpointStatsHandler;
-import by.stub.handlers.AjaxResourceContentHandler;
-import by.stub.handlers.StatusPageHandler;
-import by.stub.handlers.StubDataRefreshActionHandler;
-import by.stub.handlers.StubsPortalHandler;
+import by.stub.handlers.*;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.MimeTypes;
@@ -105,6 +100,8 @@ public final class JettyFactory {
 
             constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/errors", new ErrorCountHandler()),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/unused", new UnusedStubsHandler(stubbedDataManager)),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
             constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),

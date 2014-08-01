@@ -22,7 +22,8 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 11/6/12, 3:44 PM
  */
-public class StubRequestTest {
+public class
+        StubRequestTest {
 
    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
 
@@ -867,8 +868,7 @@ public class StubRequestTest {
             .withMethodGet()
             .withMethodHead()
             .withQuery(paramOne, paramOneValue)
-            .withQuery(paramTwo, paramTwoValue)
-            .withQuery("paramThree", "three").build();
+            .withQuery(paramTwo, paramTwoValue).build();
 
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
@@ -2105,7 +2105,7 @@ public class StubRequestTest {
          "method=[GET, POST, PUT], " +
          "post=this is a post body, " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+         "headers={headerone=headerOneValue, headerthree=headerThreeValue, headertwo=headerTwoValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
@@ -2130,7 +2130,7 @@ public class StubRequestTest {
          "url=/invoice/123, " +
          "method=[GET, POST, PUT], " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=headerOneValue}}";
+         "headers={headerone=headerOneValue, headerthree=headerThreeValue, headertwo=headerTwoValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }
@@ -2155,7 +2155,7 @@ public class StubRequestTest {
          "url=/invoice/123, " +
          "method=[GET, POST, PUT], " +
          "query={paramOne=paramOneValue, paramTwo=paramTwoValue}, " +
-         "headers={headerthree=headerThreeValue, headertwo=headerTwoValue, headerone=null}}";
+         "headers={headerone=null, headerthree=headerThreeValue, headertwo=headerTwoValue}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
    }

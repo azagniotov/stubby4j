@@ -63,8 +63,6 @@ public class StubsPortalHandler extends AbstractHandler {
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
-
       ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper);
-
    }
 }

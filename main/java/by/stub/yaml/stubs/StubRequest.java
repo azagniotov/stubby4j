@@ -21,12 +21,18 @@ package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.annotations.VisibleForTesting;
+import by.stub.cli.ANSITerminal;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -161,6 +167,9 @@ public class StubRequest {
    }
 
    public static StubRequest newStubRequest(final String url, final String post) {
+       if (post!=null){
+           ANSITerminal.incoming(post);
+       }
       return new StubRequest(url, post, null, null, null, null);
    }
 
@@ -204,14 +213,45 @@ public class StubRequest {
    }
 
    private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+       try {
+           return JSONCompare.compareJSON(dataStorePostBody,thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+       } catch (JSONException e) {
+           return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+       }
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-      return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
+      return mapsMatchExact(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
    }
 
-   private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
+    boolean mapsMatchExact(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
+        if (dataStoreMap.isEmpty()) {
+            return true;
+        } else if (thisAssertingMap.isEmpty()) {
+            return false;
+        }
+
+        final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
+        final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+
+        for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
+            final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());
+            if (!containsRequiredParam) {
+                return false;
+            } else {
+                final String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
+                final String templateTokenName = String.format("%s.%s", mapName, dataStoreParam.getKey());
+                if (!stringsMatch(dataStoreParam.getValue(), assertedQueryValue, templateTokenName)) {
+                    return false;
+                }
+            }
+            assertingMapCopy.remove(dataStoreParam.getKey());
+        }
+
+        return assertingMapCopy.isEmpty();
+    }
+
+    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
       dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
 

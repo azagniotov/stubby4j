@@ -1,0 +1,19 @@
+-  request:
+     url: ^/hi$
+     method: GET 
+   response:
+     status: 200 
+     headers:
+       content-type: application/json
+     file: integration/target/resources/test/json/response.external.file.json
+
+-  request:
+     url: ^/dai$
+     method: GET 
+     file: integration/target/resources/test/json/request.external.file.json
+   response:
+     status: 200 
+     headers:
+       content-type: application/json
+     file: integration/target/resources/test/json/response.external.file.json
+
