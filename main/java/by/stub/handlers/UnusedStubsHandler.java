@@ -50,12 +50,44 @@ public class UnusedStubsHandler extends AbstractHandler {
     }
 
     private String getUnusedStubs() {
-        String unUsed = "";
-        List<StubHttpLifecycle> unusedStubLifeCycles = stubLifeCycles.stream().filter(cycle -> !userStubRequests.contains(cycle.getRequest())).collect(Collectors.toList());
 
-        for(StubHttpLifecycle  unusedStubLifeCycle: unusedStubLifeCycles){
-            unUsed = unUsed + "\n" + unusedStubLifeCycle.getHttpLifeCycleAsYaml();
-        }
+        List<StubHttpLifecycle> unUsedCycles = stubLifeCycles.stream().filter(cycle -> !userStubRequests.contains(cycle.getRequest())).collect(Collectors.toList());
+        List<StubHttpLifecycle> usedCycles = stubLifeCycles.stream().filter(cycle -> userStubRequests.contains(cycle.getRequest())).collect(Collectors.toList());
+
+        List<String> unUsedRequestJsons = getRequestFiles(unUsedCycles);
+        List<String> unUsedResponseJsons = getResponseFiles(unUsedCycles);
+
+        List<String> usedRequestJsons = getRequestFiles(usedCycles);
+        List<String> usedResponseJsons = getResponseFiles(usedCycles);
+
+        unUsedRequestJsons = unUsedRequestJsons.stream().filter((unUsedRequestJson) -> !usedRequestJsons.contains(unUsedRequestJson)).collect(Collectors.toList());
+        unUsedResponseJsons = unUsedResponseJsons.stream().filter((unUsedResponseJson) -> !usedResponseJsons.contains(unUsedResponseJson)).collect(Collectors.toList());
+
+        String stubsUnUsed = unUsedCycles.stream().map((unUsedCycle) -> unUsedCycle.getHttpLifeCycleAsYaml()).collect(Collectors.joining("\n"));
+        String requestJsonUnUsed = unUsedRequestJsons.stream().reduce("", (start, unUsedRequestJson) -> start + "\n" + unUsedRequestJson);
+        String responseJsonUnUsed = unUsedResponseJsons.stream().reduce("", (start, unUsedResponseJson) -> start + "\n" + unUsedResponseJson);
+        String requestJsonUsed = usedRequestJsons.stream().reduce("", (start, unUsedRequestJson) -> start + "\n" + unUsedRequestJson);
+        String responseJsonUsed = usedResponseJsons.stream().reduce("", (start, unUsedResponseJson) -> start + "\n" + unUsedResponseJson);
+
+        String unUsed = stubsUnUsed
+                + "\n" + "UsedJson:"
+                + requestJsonUsed
+                + responseJsonUsed
+                + "\n" + "UnUsedJson:"
+                + responseJsonUnUsed
+                + requestJsonUnUsed;
+
         return unUsed;
+
+    }
+
+    private List<String> getResponseFiles(List<StubHttpLifecycle> unUsedCycles) {
+        unUsedCycles = unUsedCycles.stream().filter((unUsedCycle) -> unUsedCycle.getResponse(false).getRawFile() != null).collect(Collectors.toList());
+        return unUsedCycles.stream().map((unUsedCycle) -> unUsedCycle.getResponse(false).getRawFile().getAbsolutePath()).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+    }
+
+    private List<String> getRequestFiles(List<StubHttpLifecycle> unUsedCycles) {
+        unUsedCycles = unUsedCycles.stream().filter((unUsedCycle) -> unUsedCycle.getRequest().getRawFile() != null).collect(Collectors.toList());
+        return unUsedCycles.stream().map((unUsedCycle) -> unUsedCycle.getRequest().getRawFile().getAbsolutePath()).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
     }
 }
