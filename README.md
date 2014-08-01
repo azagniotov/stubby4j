@@ -823,6 +823,14 @@ Perform `PUT` requests in the same format as using `POST`, only this time supply
 
 Send a `DELETE` request to `localhost:8889/<id>`
 
+##### Errors Count
+
+Get the count of errors those encountered. The errors include here are ones generated when the server is hit with end point that is not configured. This is a `GET` request to `localhost:8889/errors`
+
+##### Unused Stubs Configuration
+
+Get the list of unused configurations and files that are not used as part of the test, this is `GET` request to `localhost:8889/unused`. For big configurations, to clean up the unused configuration and file, this comes handy. Fire this end point at end of the test suite, to find the unused and so they can be deleted.
+
 
 ### The stubs portal
 
