@@ -1126,8 +1126,6 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 2.0.22-SNAPSHOT
-
 ##### 2.0.21
 * Added console outputs for record & play functionality
 
