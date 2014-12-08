@@ -75,17 +75,20 @@ public class StubbedDataManager {
       if (ObjectUtils.isNull(matchedLifecycle)) {
          return new NotFoundStubResponse();
       }
-
+      	
       final String resourceId = matchedLifecycle.getResourceId();
-      resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
-      resourceStats.get(resourceId).incrementAndGet();
+      if (ObjectUtils.isNotNull(resourceId)){
+    	  resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
+    	  resourceStats.get(resourceId).incrementAndGet();    	  
+      }
 
       final StubResponse stubResponse = matchedLifecycle.getResponse(true);
       if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {
          return new UnauthorizedStubResponse();
       }
 
-      if (stubResponse.hasHeaderLocation()) {
+      // If the response is a 3xx status code with a location header then we expect this to be a Redirect Http Response.
+      if (stubResponse.hasHeaderLocation() && stubResponse.getStatus().startsWith("3")) {
          return RedirectStubResponse.newRedirectStubResponse(stubResponse);
       }
 

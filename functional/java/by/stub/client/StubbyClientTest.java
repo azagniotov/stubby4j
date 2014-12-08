@@ -1,10 +1,12 @@
 package by.stub.client;
 
+import by.stub.data.CaptureRequestUtil;
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminPortalHandler;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
@@ -14,6 +16,9 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -38,6 +43,44 @@ public class StubbyClientTest {
    public static void afterClass() throws Exception {
       STUBBY_CLIENT.stopJetty();
    }
+
+   @Test
+   public void doCaptureRequest() throws Exception {
+       final String host = "localhost";
+       final String uri = "/rest/capturerequest";
+
+       LinkedHashMap<String,String> headers = new LinkedHashMap<String, String>();
+       String uuid = UUID.randomUUID().toString();
+       headers.put("X-Reference", uuid);
+
+       StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 1", headers);
+       StubbyResponse stubbyResponse2 = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 2", headers);
+       StubbyResponse stubbyResponse3 = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 3", headers);
+       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+       assertThat(stubbyResponse2.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+       assertThat(stubbyResponse3.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+       assertThat(CaptureRequestUtil.requestCaptured.size()).isEqualTo(1);
+       Iterator iterator = CaptureRequestUtil.requestCaptured.keySet().iterator();
+       while(iterator.hasNext()){
+           StubRequest request = (StubRequest) CaptureRequestUtil.requestCaptured.get(iterator.next());
+           assertThat(request.getHeaders().get("x-reference")).isEqualTo(uuid);
+       }
+   }
+
+   @Test
+	public void doCallbackRequest() throws Exception {
+		final String host = "localhost";
+		final String uri = "/rest/callmeback";
+
+        LinkedHashMap<String,String> headers = new LinkedHashMap<String, String>();
+        headers.put("X-Reference", UUID.randomUUID().toString());
+        headers.put("X-Return-Url","http://localhost:"+ SSL_PORT +"/callingback");
+
+		StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostOverSsl(host, uri, SSL_PORT, null, "Request 1", headers);
+		assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.ACCEPTED_202);
+//       TimeUnit.MINUTES.sleep(5);
+	}
+
 
    @Test
    public void doGetOverSsl_ShouldMakeSuccessfulGet() throws Exception {

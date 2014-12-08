@@ -19,19 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import by.stub.data.CaptureRequestUtil;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
+import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
-
    private final StubResponse foundStubResponse;
 
    public DefaultResponseHandlingStrategy(final StubResponse foundStubResponse) {
@@ -41,30 +42,36 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    @Override
    public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
-      setStubResponseHeaders(foundStubResponse, response);
+      HandlerUtils.setStubResponseHeaders(foundStubResponse, response,assertionStubRequest);
 
-      if (StringUtils.isSet(foundStubResponse.getLatency())) {
+      if (StringUtils.isSet(foundStubResponse.getLatency())) {    	 
          final long latency = Long.parseLong(foundStubResponse.getLatency());
          TimeUnit.MILLISECONDS.sleep(latency);
       }
+
+      if (foundStubResponse.isCaptureOn()){
+          CaptureRequestUtil.capture(UUID.randomUUID(), assertionStubRequest);
+      }
+
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
       if (foundStubResponse.isContainsTemplateTokens()) {
-         final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
+    	 // Update the body-content based on request values 
+         String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());         
+         
+         // Update the body-content based on the Xeger Variables
+         Map<String,String> xegerVariables = HandlerUtils.getXegerTokenWithValues(replacedTemplate,assertionStubRequest);         
+         replacedTemplate = StringUtils.replaceTokens(replacedTemplate.getBytes(),xegerVariables);
+         
          responseBody = StringUtils.getBytesUtf8(replacedTemplate);
       }
 
-      final OutputStream streamOut = response.getOutputStream();
-      streamOut.write(responseBody);
-      streamOut.flush();
-      streamOut.close();
-   }
-
-   private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
-      response.setCharacterEncoding(StringUtils.UTF_8);
-      for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-         response.setHeader(entry.getKey(), entry.getValue());
+      if (ObjectUtils.isNotNull(responseBody)){
+    	  final OutputStream streamOut = response.getOutputStream();
+    	  streamOut.write(responseBody);    	 
+    	  streamOut.flush();
+    	  streamOut.close();
       }
    }
 }

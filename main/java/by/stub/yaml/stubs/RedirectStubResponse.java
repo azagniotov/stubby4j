@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.yaml.stubs;
 
-import by.stub.utils.ObjectUtils;
-
 import java.io.File;
 import java.util.Map;
+
+import by.stub.utils.ObjectUtils;
 
 /**
  * @author Alexander Zagniotov
@@ -34,8 +34,10 @@ public class RedirectStubResponse extends StubResponse {
                        final String body,
                        final File file,
                        final String latency,
-                       final Map<String, String> headers) {
-      super(status, body, file, latency, headers);
+                       final Map<String, String> headers,
+                       final StubCallback callback,
+                       final String capture) {
+      super(status, body, file, latency, headers, callback,capture);
    }
 
    @Override
@@ -45,14 +47,16 @@ public class RedirectStubResponse extends StubResponse {
 
    public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
       if (ObjectUtils.isNull(stubResponse)) {
-         return new RedirectStubResponse(null, null, null, null, null);
+         return new RedirectStubResponse(null, null, null, null, null, null,null);
       }
       final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
          stubResponse.getStatus(),
          stubResponse.getBody(),
          stubResponse.getRawFile(),
          stubResponse.getLatency(),
-         stubResponse.getHeaders()
+         stubResponse.getHeaders(),
+         stubResponse.getCallback(),
+         stubResponse.getCapture()
       );
 
       return redirectStubResponse;

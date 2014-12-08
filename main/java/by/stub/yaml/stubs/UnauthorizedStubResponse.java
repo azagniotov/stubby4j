@@ -27,7 +27,7 @@ public class UnauthorizedStubResponse extends StubResponse {
 
 
    public UnauthorizedStubResponse() {
-      super("401", null, null, null, null);
+      super("401", null, null, null, null,null,null);
    }
 
    @Override

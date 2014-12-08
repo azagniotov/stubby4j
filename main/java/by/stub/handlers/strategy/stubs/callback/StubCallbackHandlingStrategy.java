@@ -17,20 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package by.stub.yaml.stubs;
+package by.stub.handlers.strategy.stubs.callback;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/2/12, 12:03 AM
- */
-public class NotFoundStubResponse extends StubResponse {
+import by.stub.yaml.stubs.StubCallback;
+import by.stub.yaml.stubs.StubRequest;
 
-   public NotFoundStubResponse() {
-      super("404", null, null, null, null,null,null);
-   }
-
-   @Override
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.NOTFOUND;
-   }
+public interface StubCallbackHandlingStrategy {
+   void handle(final StubCallback callbackRequest, final StubRequest assertionStubRequest) throws Exception;
 }

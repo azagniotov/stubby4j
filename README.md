@@ -21,6 +21,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
    * [Response](#response)
+   * [Callback](#response-callback)
    * [Record and Play](#record-and-play)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
 * [The admin portal](#the-admin-portal)
@@ -604,6 +605,45 @@ Assuming a match has been made against the given `request` object, data from `re
       latency: 800000
       body: Hello, World!
 ```
+
+### Response Callback
+
+If the stubbed `response` contains a `callback` definition the server will send the specified callback request after the first response 
+has been sent. This allows one to simulate an asynchronous call:
+
+1. Client --`request`--> Server
+2. Client <--`response`-- Server
+3. Client <--`callback`-- Server
+
+#### Example
+```yaml
+-  request:
+      method: [POST, PUT]
+      url: /rest/callmeback.*
+      headers:
+          x-reference: "(.*)"
+          x-return-url: "(.*)"
+      
+   response:                     
+      -  status: 202
+         headers:
+            content-type: text/plain            
+         callback:
+                method: POST                
+                url: <% headers.x-return-url.0 %>
+                latency: 2000
+                headers:
+                    content-type: application/json
+                body: >
+                    {                    
+                    "reference":"<% headers.x-reference.0 %>"
+                    }
+```					
+
+#### Limitation
+* `callback` doesn't support the `file` configuration.
+* Supports only one `callback` inside a response
+
 
 ### Record and play
 

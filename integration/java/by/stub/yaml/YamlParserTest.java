@@ -339,7 +339,7 @@ public class YamlParserTest {
    public void shouldFailUnmarshallYamlIntoObjectTree_WithJsonAsLiteralPost() throws Exception {
 
       expectedException.expect(IllegalArgumentException.class);
-      expectedException.expectMessage("Can not set java.lang.String field by.stub.yaml.StubRequestBuilder.post to java.util.LinkedHashMap");
+      expectedException.expectMessage("Can not set java.lang.String field by.stub.yaml.StubRequestBuilder.post to java.util.concurrent.ConcurrentHashMap");
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()

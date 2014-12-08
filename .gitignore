@@ -42,3 +42,4 @@ stubby4j.iml
 stubby4j.ipr
 stubby4j.iws
 *.iml
+**/bin/**

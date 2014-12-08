@@ -24,6 +24,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubCallback;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unchecked")
 public class YamlParser {
@@ -121,7 +123,7 @@ public class YamlParser {
 
       final Map<String, Object> responseMap = new HashMap<String, Object>();
       responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
-      httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
+      httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));           
 
       return httpLifecycle;
    }
@@ -154,15 +156,22 @@ public class YamlParser {
          if (rawFieldName instanceof List) {
             massagedFieldValue = rawFieldName;
 
-         } else if (rawFieldName instanceof Map) {
-            massagedFieldValue = encodeAuthorizationHeader(rawFieldName);
+         } else if (rawFieldName instanceof Map) {            
+            if (fieldName.toLowerCase().equals(YamlProperties.CALLBACK)) {
+            	Map<String, Object> yamlProperties2 = (Map<String, Object>) rawFieldName;
+            	 final StubCallback callbackStub = unmarshallYamlMapToTargetStub(yamlProperties2, new StubCallbackBuilder());
+                massagedFieldValue = callbackStub;
+           }else {        	   
+        	   ConcurrentHashMap<String, String> headers = new ConcurrentHashMap((Map)rawFieldName);               
+        	   massagedFieldValue = encodeAuthorizationHeader(headers);
+           }
 
          } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
 
             final ArrayList<String> methods = new ArrayList<String>(1);
             methods.add(StringUtils.objectToString(rawFieldName));
             massagedFieldValue = methods;
-
+            
          } else if (isPairKeyEqualsToYamlNodeFile(fieldName)) {
             massagedFieldValue = loadFileContentFromFileUrl(rawFieldName);
          } else {
@@ -193,7 +202,15 @@ public class YamlParser {
             Object rawFieldValue = mapEntry.getValue();
             if (isPairKeyEqualsToYamlNodeFile(rawFieldName)) {
                rawFieldValue = loadFileContentFromFileUrl(rawFieldValue);
+            }            
+            if (rawFieldName.toLowerCase().equals(YamlProperties.CALLBACK)) {
+            	 Map<String, Object> yamlProperties2 = (Map<String, Object>) rawFieldValue;
+            	 final StubCallback callbackStub = unmarshallYamlMapToTargetStub(yamlProperties2, new StubCallbackBuilder());
+            	 rawFieldValue = callbackStub;
+            }else if (rawFieldName.toLowerCase().equals(YamlProperties.HEADERS)){
+            	rawFieldValue = new ConcurrentHashMap((Map)rawFieldValue);
             }
+            
             stubBuilder.store(rawFieldName, rawFieldValue);
          }
 
@@ -236,6 +253,7 @@ public class YamlParser {
       if (!pairValue.containsKey(StubRequest.AUTH_HEADER)) {
          return pairValue;
       }
+                    
       final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
       final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
