@@ -1,4 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
+[![Coverage Status](https://coveralls.io/repos/azagniotov/stubby4j/badge.svg)](https://coveralls.io/r/azagniotov/stubby4j)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j)
+
 
 # stubby4j
 A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.

@@ -3,3 +3,6 @@ jdk:
   - openjdk6
   - openjdk7
   - oraclejdk7
+
+after_success:
+- gradle cobertura coveralls:report

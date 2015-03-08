@@ -25,7 +25,6 @@ allprojects {
          Task testTask ->
             def totalSuiteCount = 0
             def successSuiteCount = 0
-            testReport = false
             testLogging {
                events /*"passed", */"skipped", "failed"
                exceptionFormat "full"
@@ -65,7 +64,7 @@ apply from: "$rootDir/conf/gradle/ides.gradle"
 subprojects {
    subproject ->
       sourceCompatibility = 1.6
-      tasks.withType(Compile) {
+      tasks.withType(JavaCompile) {
          doFirst {
             assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
          }

@@ -3,7 +3,7 @@ configurations {
 }
 
 dependencies {
-   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3'
+   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.1.1'
 }
 
 task coberturaPrepare() {
@@ -24,7 +24,8 @@ task coberturaPrepare() {
 }
 
 task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
-   ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
+   ext.outputDir = project(":main").buildDir.path + "/classes-instrumented"
+   //ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
    doLast {
       ant.coberturaInstrument(
          ignoreTrivial: true,
