@@ -72,6 +72,11 @@ gradle.taskGraph.whenReady { graph ->
    }
 } 
 
+tasks.coveralls {
+   sourceReportFactoryMap[
+      file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = true
+}
+
 task cobertura {
    dependsOn = ['clean', 'coberturaReport']
 }
