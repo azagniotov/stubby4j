@@ -1,4 +1,6 @@
 // vim: ft=groovy
+import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
+
 defaultTasks 'clean', 'build'
 description = 'Gradle configuration for stubby4j'
 
@@ -12,8 +14,8 @@ buildscript {
       classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.3.1'
    }
 }
-import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
-ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
+
+apply plugin: 'com.github.kt3k.coveralls'
 
 def totalTestCounter = 0
 allprojects {
@@ -108,3 +110,10 @@ projects.each {
             }
          }
 }
+
+tasks.coveralls {
+   def factory = new CoberturaSourceReportFactory()
+   sourceReportFactoryMap[
+      file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = factory
+}
+

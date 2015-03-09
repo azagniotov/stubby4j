@@ -1,5 +1,3 @@
-apply plugin: 'com.github.kt3k.coveralls'
-
 configurations {
    coberturaRuntime { extendsFrom testRuntime }
 }
@@ -71,12 +69,6 @@ gradle.taskGraph.whenReady { graph ->
       }
    }
 } 
-
-tasks.coveralls {
-   def f = project(":").ext.coberturaSourceReportFactory
-   sourceReportFactoryMap[
-      file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = f
-}
 
 task cobertura {
    dependsOn = ['clean', 'coberturaReport']
