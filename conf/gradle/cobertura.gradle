@@ -45,7 +45,7 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
    }
 }
 
-task coberturaReport(dependsOn: ['coberturaInstrument', project(":unit").test]) << {
+task coberturaReport(dependsOn: ['coberturaInstrument', test]) << {
    ant.coberturaReport(
       format: "html", 
       destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
