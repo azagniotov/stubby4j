@@ -80,7 +80,7 @@ subprojects {
          mavenLocal()
       }
 
-      apply from: "$rootDir/conf/gradle/dependencies.gradle"
+      apply from: "$rootDir/conf/gradle/dependency.gradle"
       if (subproject.name != 'main' && subproject.name != 'builders') {
          apply from: "$rootDir/conf/gradle/cobertura.gradle"
       }
