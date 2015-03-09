@@ -4,5 +4,8 @@ jdk:
   - openjdk7
   - oraclejdk7
 
+env:
+  - TERM=dumb
+
 after_success:
-- gradle cobertura coveralls:report
+  - gradle cobertura coveralls

@@ -1,3 +1,5 @@
+apply plugin: 'com.github.kt3k.coveralls'
+
 configurations {
    coberturaRuntime { extendsFrom testRuntime }
 }
@@ -48,6 +50,13 @@ task coberturaReport(dependsOn: ['coberturaInstrument', 'test'/*project(":unit")
       format: "html", 
       destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
       srcdir: "$rootDir/main/java", 
+      datafile: coberturaPrepare.datafileLocation
+   )
+
+   ant.coberturaReport(
+      format: "xml",
+      destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
+      srcdir: "$rootDir/main/java",
       datafile: coberturaPrepare.datafileLocation
    )
 }
