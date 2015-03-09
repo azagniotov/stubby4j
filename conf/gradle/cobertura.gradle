@@ -72,6 +72,11 @@ gradle.taskGraph.whenReady { graph ->
    }
 } 
 
+// Required for 'coveralls-gradle-plugin'
+task testReport(type: TestReport, group: 'Build') {
+  description = 'Points to an aggregated test report'
+  destinationDir = file(project(":main").reporting.baseDir.path + "/cobertura/xml")
+}
 
 task cobertura {
    dependsOn = ['clean', 'coberturaReport']
