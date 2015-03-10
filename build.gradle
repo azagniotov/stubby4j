@@ -36,12 +36,6 @@ allprojects {
                showCauses true
                showStackTraces true
             }
-            doFirst {
-               //println ""
-               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               //println ":::::                         Running " + project.name.toUpperCase() + " module tests"
-               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-            }
             afterSuite { testDescriptor, testResult ->
                if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
                   totalSuiteCount += testResult.getTestCount()
@@ -83,42 +77,4 @@ subprojects {
       }
       
       apply from: "$rootDir/conf/gradle/dependency.gradle"
-      if (subproject.name != 'main' && subproject.name != 'builders') {
-         apply from: "$rootDir/conf/gradle/cobertura.gradle"
-      } else if (subproject.name == 'main') {
-         apply from: "$rootDir/conf/gradle/artifacts.gradle"
-      }
 }
-
-project(":").tasks.each {
-   task ->
-      def taskNameLowerCase = task.name.toLowerCase()
-      if (!taskNameLowerCase.contains("idea") && 
-         !taskNameLowerCase.contains("eclipse") &&
-         !taskNameLowerCase.contains("clean") && 
-         !taskNameLowerCase.contains("jar") &&
-         !taskNameLowerCase.contains("skinnyJar")) {
-         task.enabled = false
-         println ":" + task.name + " => Disabling task.." 
-      }
-}
-
-project(":functional").uploadArchives.enabled = false
-project(":unit").uploadArchives.enabled = false
-project(":integration").uploadArchives.enabled = false
-project(":builders").uploadArchives.enabled = false
-
-def projects = [project(":unit"), project(":integration"), project(":functional") ]
-projects.each {
-   project ->
-      project.tasks.each {
-         task ->
-            def taskNameLowerCase = task.name.toLowerCase()
-            if (taskNameLowerCase.contains("jar")) {
-               task.enabled = false
-               println ":" + project.name + ":" + task.name + " => Disabling task.."
-            }
-         }
-}
-
-
