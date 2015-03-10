@@ -11,7 +11,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v2.0.21
+## User manual for stubby4j v2.0.22
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -145,30 +145,30 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.21` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.22` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.21</version>
+    <version>2.0.22</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.21" />
+<dependency org="by.stub" name="stubby4j" rev="2.0.22" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.21'
+'by.stub:stubby4j:jar:2.0.22'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.21'
+compile 'by.stub:stubby4j:2.0.22'
 ```
 
 ##### Scala SBT
@@ -179,7 +179,7 @@ libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 ### Command-line switches
 ```
 usage:
-       java -jar stubby4j-2.0.21.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
+       java -jar stubby4j-2.0.22.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
        [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
  -a,--admin <arg>      Port for admin portal. __Defaults to 8889__.
  -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
@@ -1131,9 +1131,13 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.0.0-SNAPSHOT
-* Built using Java 1.7
-* Upgraded to Jetty v9.2.9.v20150224
-* Cobertura coverage report only includes unit tests coverage, without functional & integration
+* Updating Jetty to v9.2.9
+
+##### 2.0.22
+* Compiled using Java 1.7
+* Cleaned up project Gradle configuration 
+* Updated Gradle configuration to be compatible with Gradle v2.2.1 & Gradle Nexus plugini v2.3
+* Updated all (except Jetty) dependenices to their latest versions (as of May 10th, 2015)
 
 ##### 2.0.21
 * Added console outputs for record & play functionality
