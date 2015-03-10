@@ -19,9 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubRequest;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface StubResponseHandlingStrategy {
-   void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception;
+   void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception;
 }

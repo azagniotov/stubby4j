@@ -2,12 +2,12 @@ package by.stub.handlers.strategy.admin;
 
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminPortalHandler;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -18,7 +18,7 @@ import java.io.OutputStream;
 public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws IOException {
+   public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws IOException {
 
       final StringBuilder yamlAppender = new StringBuilder();
       final int contextPathLength = AdminPortalHandler.ADMIN_ROOT.length();
@@ -29,7 +29,7 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
          if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(targetHttpStubCycleIndex)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
-            HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
+            HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
          }
 
@@ -38,9 +38,9 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
          yamlAppender.append(stubbedDataManager.getMarshalledYaml());
       }
 
-      wrapper.setContentType("text/plain;charset=UTF-8");
+      response.setContentType("text/plain;charset=UTF-8");
 
-      final OutputStream streamOut = wrapper.getOutputStream();
+      final OutputStream streamOut = response.getOutputStream();
       streamOut.write(StringUtils.getBytesUtf8(yamlAppender.toString()));
       streamOut.flush();
       streamOut.close();

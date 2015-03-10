@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -60,9 +60,9 @@ public final class ConsoleUtils {
       ANSITerminal.incoming(logMessage);
    }
 
-   public static void logOutgoingResponse(final String url, final HttpServletResponseWithGetStatus wrapper) {
+   public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
 
-      final int status = wrapper.getStatus();
+      final int status = response.getStatus();
 
       final String logMessage = String.format("[%s] <- %s [%s] %s",
          getTime(),

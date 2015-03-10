@@ -19,13 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
@@ -35,7 +36,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
       final String authorizationHeader = assertionStubRequest.getHeaders().get(StubRequest.AUTH_HEADER);
       if (ObjectUtils.isNull(authorizationHeader)) {

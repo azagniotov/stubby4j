@@ -113,11 +113,11 @@ stubby4j is a multi-module Gradle project
 Run `gradle` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
 
 Run `gradle build -x test` command to:
 * Clean
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
 
 Run `gradle cobertura` command to:
 * Clean
@@ -133,14 +133,15 @@ Run `gradle clean check` command to:
 ### Third-party dependencies
 stubby4j is a fat JAR, which contains the following dependencies:
 
+* __javax.servlet-api-3.1.0.jar__
+* jetty-server-9.2.9.v20150224.jar
+* jetty-servlets-9.2.9.v20150224.jar
+* jetty-http-9.2.9.v20150224.jar
+* jetty-io-9.2.9.v20150224.jar
+* jetty-continuation-9.2.9.v20150224.jar
+* jetty-util-9.2.9.v20150224.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.15.jar
-* javax.servlet-3.0.0.v201112011016.jar
-* jetty-server-8.1.7.v20120910.jar
-* jetty-continuation-8.1.7.v20120910.jar
-* jetty-util-8.1.7.v20120910.jar
-* jetty-io-8.1.7.v20120910.jar
-* jetty-http-8.1.7.v20120910.jar
 
 
 ### Adding stubby4j to your project

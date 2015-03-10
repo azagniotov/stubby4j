@@ -21,7 +21,6 @@ package by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
@@ -52,23 +51,21 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
 
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
       baseRequest.setHandled(true);
-      wrapper.setContentType("text/plain;charset=UTF-8");
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      response.setContentType("text/plain;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
 
       try {
          stubbedDataManager.refreshStubbedData(new YamlParser());
          final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
             stubbedDataManager.getDataYaml());
-         wrapper.getWriter().println(successMessage);
+         response.getWriter().println(successMessage);
          ANSITerminal.ok(successMessage);
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 }

@@ -21,7 +21,6 @@ package by.stub.handlers;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
@@ -77,20 +76,18 @@ public final class StatusPageHandler extends AbstractHandler {
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
 
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
       baseRequest.setHandled(true);
-      wrapper.setContentType("text/html;charset=UTF-8");
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      response.setContentType("text/html;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeader.SERVER.name().toLowerCase(), HandlerUtils.constructHeaderServerName());
 
       try {
-         wrapper.getWriter().println(buildStatusPageHtml());
+         response.getWriter().println(buildStatusPageHtml());
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 
    private String buildStatusPageHtml() throws Exception {

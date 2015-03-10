@@ -22,7 +22,6 @@ package by.stub.handlers;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpHeader;
@@ -54,22 +53,21 @@ public class AdminPortalHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-      wrapper.setContentType("text/html;charset=UTF-8");
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
-      wrapper.setHeader(HttpHeader.DATE.name(), new Date().toString());
-      wrapper.setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      wrapper.setHeader(HttpHeader.PRAGMA.name(), "no-cache"); // HTTP 1.0.
-      wrapper.setDateHeader(HttpHeader.EXPIRES.name(), 0);
+      response.setContentType("text/html;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.DATE.name(), new Date().toString());
+      response.setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeader.PRAGMA.name(), "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeader.EXPIRES.name(), 0);
 
       final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
       try {
-         strategyStubResponse.handle(request, wrapper, stubbedDataManager);
+         strategyStubResponse.handle(request, response, stubbedDataManager);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 }

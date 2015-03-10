@@ -2,7 +2,6 @@ package by.stub.handlers.strategy;
 
 import by.stub.handlers.strategy.stubs.DefaultResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -55,7 +54,7 @@ public class DefaultResponseHandlingStrategyTest {
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
 
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
@@ -84,7 +83,7 @@ public class DefaultResponseHandlingStrategyTest {
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
 
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
@@ -117,7 +116,7 @@ public class DefaultResponseHandlingStrategyTest {
    public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);

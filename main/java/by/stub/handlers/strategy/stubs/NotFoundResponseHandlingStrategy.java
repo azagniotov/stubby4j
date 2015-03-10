@@ -19,10 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
+
+import javax.servlet.http.HttpServletResponse;
 
 import static by.stub.utils.FileUtils.BR;
 
@@ -33,7 +34,7 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
 
       HandlerUtils.setResponseMainHeaders(response);
 

@@ -1,5 +1,5 @@
 project.ext.dependencies = configurations.compile.resolve().findAll { file ->
-   return !file.name.contains("servlet-api") && !file.name.contains("-sources")
+   return /*!file.name.contains("servlet-api") && */!file.name.contains("-sources")
 }
 
 project.ext.projectManifest = manifest {

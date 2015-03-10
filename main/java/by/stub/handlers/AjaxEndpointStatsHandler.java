@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.handlers;
 
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -46,22 +45,21 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-      HandlerUtils.setResponseMainHeaders(wrapper);
-      wrapper.setContentType("text/plain;charset=UTF-8");
-      wrapper.setStatus(HttpStatus.OK_200);
+      HandlerUtils.setResponseMainHeaders(response);
+      response.setContentType("text/plain;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
 
       try {
          if (request.getRequestURI().contains("stats/check")) {
-            wrapper.getWriter().println(!stubbedDataManager.getResourceStats().isEmpty());
+            response.getWriter().println(!stubbedDataManager.getResourceStats().isEmpty());
          } else {
             ConsoleUtils.logIncomingRequest(request);
             final String htmlPopup = String.format(POPUP_STATS_HTML_TEMPLATE, stubbedDataManager.getResourceStatsAsCsv());
-            wrapper.getWriter().println(htmlPopup);
-            ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+            response.getWriter().println(htmlPopup);
+            ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
          }
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
    }
 }
