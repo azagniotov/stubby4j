@@ -1,6 +1,8 @@
 // vim: ft=groovy
 dependencies {
-   compile "org.eclipse.jetty:jetty-server:9.2.9.v20150224"
+   def jettyVersion = "9.2.9.v20150224"
+   compile "org.eclipse.jetty:jetty-server:" + jettyVersion
+   compile "org.eclipse.jetty:jetty-servlets:" + jettyVersion
    compile "commons-cli:commons-cli:1.2"
    compile "org.yaml:snakeyaml:1.15"
 

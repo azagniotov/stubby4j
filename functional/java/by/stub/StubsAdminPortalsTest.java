@@ -208,18 +208,18 @@ public class StubsAdminPortalsTest {
       assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(ajaxResponse.parseAsString().trim()).contains(
          "- request:" + BR +
-         "    method: POST" + BR +
-         "    url: /invoice/new" + BR +
-         "    headers:" + BR +
-         "      content-type: application/json" + BR +
-         "    post: |" + BR +
-         "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}" + BR +
-         "  response:" + BR +
-         "    headers:" + BR +
-         "      content-type: application/json" + BR +
-         "      pragma: no-cache" + BR +
-         "    status: 201" + BR +
-         "    body: |" + BR +
-         "      {\"id\": \"456\", \"status\": \"created\"}");
+            "    method: POST" + BR +
+            "    url: /invoice/new" + BR +
+            "    headers:" + BR +
+            "      content-type: application/json" + BR +
+            "    post: |" + BR +
+            "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}" + BR +
+            "  response:" + BR +
+            "    headers:" + BR +
+            "      content-type: application/json" + BR +
+            "      pragma: no-cache" + BR +
+            "    status: 201" + BR +
+            "    body: |" + BR +
+            "      {\"id\": \"456\", \"status\": \"created\"}");
    }
 }

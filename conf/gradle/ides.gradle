@@ -1,6 +1,6 @@
 idea {
    project {
-      jdkName = '1.6'
+      jdkName = '1.7'
       wildcards += [
          '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
          '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',

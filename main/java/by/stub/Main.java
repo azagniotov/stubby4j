@@ -89,7 +89,7 @@ public final class Main {
       }
       final String msg =
          String.format("YAML data was not provided using command line option '--%s'. %s"
-            + "To see all command line options run again with option '--%s'",
+               + "To see all command line options run again with option '--%s'",
             CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
 
       throw new Stubby4JException(msg);

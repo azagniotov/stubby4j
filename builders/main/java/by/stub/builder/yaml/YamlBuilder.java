@@ -1,7 +1,7 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -88,19 +88,19 @@ public final class YamlBuilder {
       }
 
       public Request withMethodGet() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.GET);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.GET.name());
       }
 
       public Request withMethodPut() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.PUT);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.PUT.name());
       }
 
       public Request withMethodPost() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.POST);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.POST.name());
       }
 
       public Request withMethodHead() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.HEAD);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.HEAD.name());
       }
 
       public Request withUrl(final String value) {

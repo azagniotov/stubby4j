@@ -6,7 +6,7 @@ import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
       stubbedDataManager.refreshStubbedData(new YamlParser(), post);
 
       if (stubbedDataManager.getStubHttpLifecycles().size() == 1) {
-         wrapper.addHeader(HttpHeaders.LOCATION, stubbedDataManager.getOnlyStubRequestUrl());
+         wrapper.addHeader(HttpHeader.LOCATION.name(), stubbedDataManager.getOnlyStubRequestUrl());
       }
 
       wrapper.setStatus(HttpStatus.CREATED_201);

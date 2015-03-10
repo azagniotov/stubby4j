@@ -26,9 +26,8 @@ import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -56,9 +55,9 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 
       baseRequest.setHandled(true);
-      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+      wrapper.setContentType("text/plain;charset=UTF-8");
       wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      wrapper.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
 
       try {
          stubbedDataManager.refreshStubbedData(new YamlParser());

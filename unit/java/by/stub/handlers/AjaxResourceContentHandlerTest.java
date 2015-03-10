@@ -5,7 +5,7 @@ import by.stub.database.StubbedDataManager;
 import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubTypes;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,7 +51,7 @@ public class AjaxResourceContentHandlerTest {
       mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
    }
 
    @Test

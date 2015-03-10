@@ -31,10 +31,10 @@ import java.util.Map;
 public class RedirectStubResponse extends StubResponse {
 
    public RedirectStubResponse(final String status,
-                       final String body,
-                       final File file,
-                       final String latency,
-                       final Map<String, String> headers) {
+                               final String body,
+                               final File file,
+                               final String latency,
+                               final Map<String, String> headers) {
       super(status, body, file, latency, headers);
    }
 

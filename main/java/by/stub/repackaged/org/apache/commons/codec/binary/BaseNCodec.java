@@ -257,8 +257,7 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to encode
     * @return An object (of type byte[]) containing the Base-N encoded data which corresponds to the byte[] supplied.
-    * @throws org.apache.commons.codec.EncoderException
-    *          if the parameter supplied is not of type byte[]
+    * @throws org.apache.commons.codec.EncoderException if the parameter supplied is not of type byte[]
     */
    public Object encode(Object pObject) throws Exception {
       if (!(pObject instanceof byte[])) {
@@ -283,8 +282,7 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to decode
     * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] or String supplied.
-    * @throws org.apache.commons.codec.DecoderException
-    *          if the parameter supplied is not of type byte[]
+    * @throws org.apache.commons.codec.DecoderException if the parameter supplied is not of type byte[]
     */
    public Object decode(Object pObject) throws Exception {
       if (pObject instanceof byte[]) {
@@ -373,7 +371,7 @@ public abstract class BaseNCodec {
     * @param arrayOctet byte array to test
     * @param allowWSPad if <code>true</code>, then whitespace and PAD are also allowed
     * @return <code>true</code> if all bytes are valid characters in the alphabet or if the byte array is empty;
-    *         <code>false</code>, otherwise
+    * <code>false</code>, otherwise
     */
    public boolean isInAlphabet(byte[] arrayOctet, boolean allowWSPad) {
       for (int i = 0; i < arrayOctet.length; i++) {
@@ -391,7 +389,7 @@ public abstract class BaseNCodec {
     *
     * @param basen String to test
     * @return <code>true</code> if all characters in the String are valid characters in the alphabet or if
-    *         the String is empty; <code>false</code>, otherwise
+    * the String is empty; <code>false</code>, otherwise
     * @see #isInAlphabet(byte[], boolean)
     */
    public boolean isInAlphabet(String basen) {
@@ -423,7 +421,7 @@ public abstract class BaseNCodec {
     *
     * @param pArray byte[] array which will later be encoded
     * @return amount of space needed to encoded the supplied array.
-    *         Returns a long since a max-len array will require > Integer.MAX_VALUE
+    * Returns a long since a max-len array will require > Integer.MAX_VALUE
     */
    public long getEncodedLength(byte[] pArray) {
       // Calculate non-chunked size - rounded up to allow for padding

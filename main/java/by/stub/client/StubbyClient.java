@@ -27,8 +27,8 @@ import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.http.HttpSchemes;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.HttpScheme;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -188,7 +188,7 @@ public final class StubbyClient {
     * @throws Exception
     */
    public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception {
-      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTPS, HttpMethods.GET, uri, host, port, encodedCredentials);
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.name().toLowerCase(), HttpMethod.GET.name(), uri, host, port, encodedCredentials);
 
       return makeRequest(stubbyRequest);
    }
@@ -206,7 +206,7 @@ public final class StubbyClient {
     * @throws Exception
     */
    public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception {
-      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTP, HttpMethods.GET, uri, host, stubsPort, encodedCredentials);
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.name().toLowerCase(), HttpMethod.GET.name(), uri, host, stubsPort, encodedCredentials);
 
       return makeRequest(stubbyRequest);
    }
@@ -265,7 +265,7 @@ public final class StubbyClient {
     * @throws Exception
     */
    public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception {
-      final StubbyRequest stubbyRequest = new StubbyRequest(HttpSchemes.HTTP, HttpMethods.POST, uri, host, stubsPort, encodedCredentials, post);
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.name().toLowerCase(), HttpMethod.POST.name(), uri, host, stubsPort, encodedCredentials, post);
 
       return makeRequest(stubbyRequest);
    }
@@ -306,7 +306,7 @@ public final class StubbyClient {
    public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception {
       final URL adminUrl = new URL(url);
 
-      return makeRequest(adminUrl.getProtocol(), HttpMethods.POST, adminUrl.getHost(), adminUrl.getPath(), adminUrl.getPort(), stubsData);
+      return makeRequest(adminUrl.getProtocol(), HttpMethod.POST.name(), adminUrl.getHost(), adminUrl.getPath(), adminUrl.getPort(), stubsData);
    }
 
    /**
@@ -333,7 +333,7 @@ public final class StubbyClient {
    }
 
    private StubbyResponse makeRequest(final StubbyRequest stubbyRequest) throws Exception {
-      final Map<String, String> headers = new HashMap<String, String>();
+      final Map<String, String> headers = new HashMap<>();
       headers.put(StubRequest.AUTH_HEADER, stubbyRequest.getBase64encodedCredentials());
 
       return new StubbyHttpTransport().getResponse(

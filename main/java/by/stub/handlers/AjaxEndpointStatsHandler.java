@@ -24,7 +24,6 @@ import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -49,7 +48,7 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
 
       final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
       HandlerUtils.setResponseMainHeaders(wrapper);
-      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+      wrapper.setContentType("text/plain;charset=UTF-8");
       wrapper.setStatus(HttpStatus.OK_200);
 
       try {

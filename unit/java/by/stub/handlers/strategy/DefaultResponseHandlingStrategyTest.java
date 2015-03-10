@@ -7,14 +7,14 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,11 +45,11 @@ public class DefaultResponseHandlingStrategyTest {
    }
 
    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CONTENT_TYPE, MimeTypes.TEXT_HTML_UTF_8);
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
-      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeaders.EXPIRES, 0);
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.name(), "text/html;charset=UTF-8");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.name(), "no-cache");
+      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.name(), 0);
    }
 
    @Test
@@ -63,6 +63,14 @@ public class DefaultResponseHandlingStrategyTest {
 
          @Override
          public void write(final int i) throws IOException {
+
+         }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
 
          }
       });
@@ -88,6 +96,14 @@ public class DefaultResponseHandlingStrategyTest {
          public void write(final int i) throws IOException {
 
          }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
+
+         }
       });
 
       when(mockAssertionRequest.getQuery()).thenReturn(new HashMap<String, String>());
@@ -111,6 +127,14 @@ public class DefaultResponseHandlingStrategyTest {
 
          @Override
          public void write(final int i) throws IOException {
+
+         }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
 
          }
       });

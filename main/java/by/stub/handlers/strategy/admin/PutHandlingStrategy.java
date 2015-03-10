@@ -6,7 +6,7 @@ import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +45,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
       final String updatedCycleUrl = stubbedDataManager.refreshStubbedData(new YamlParser(), put, stubIndexToUpdate);
 
       wrapper.setStatus(HttpStatus.CREATED_201);
-      wrapper.addHeader(HttpHeaders.LOCATION, updatedCycleUrl);
+      wrapper.addHeader(HttpHeader.LOCATION.name(), updatedCycleUrl);
       final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
       wrapper.getWriter().println(successfulMessage);
    }

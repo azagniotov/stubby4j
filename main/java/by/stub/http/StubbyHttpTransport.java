@@ -6,10 +6,9 @@ import by.stub.exception.Stubby4JException;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,16 +28,16 @@ import static java.util.Map.Entry;
 public class StubbyHttpTransport {
 
    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
-      add(HttpMethods.GET);
-      add(HttpMethods.HEAD);
-      add(HttpMethods.TRACE);
-      add(HttpMethods.OPTIONS);
-      add(HttpMethods.POST);
+      add(HttpMethod.GET.name());
+      add(HttpMethod.HEAD.name());
+      add(HttpMethod.TRACE.name());
+      add(HttpMethod.OPTIONS.name());
+      add(HttpMethod.POST.name());
    }};
 
    private static final Set<String> POSTING_METHODS = new HashSet<String>() {{
-      add(HttpMethods.PUT);
-      add(HttpMethods.POST);
+      add(HttpMethod.PUT.name());
+      add(HttpMethod.POST.name());
    }};
 
    public StubbyHttpTransport() {
@@ -112,13 +111,13 @@ public class StubbyHttpTransport {
       }
 
       final String requestMethod = connection.getRequestMethod();
-      if (HttpMethods.POST.equals(requestMethod) || HttpMethods.PUT.equals(requestMethod)) {
+      if (HttpMethod.POST.name().equals(requestMethod) || HttpMethod.PUT.name().equals(requestMethod)) {
          connection.setDoOutput(true);
-         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MimeTypes.FORM_ENCODED);
-         connection.setRequestProperty(HttpHeaders.CONTENT_LANGUAGE, "en-US");
-         connection.setRequestProperty(HttpHeaders.CONTENT_ENCODING, StringUtils.UTF_8);
+         connection.setRequestProperty(HttpHeader.CONTENT_TYPE.name(), "application/x-www-form-urlencoded");
+         connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.name(), "en-US");
+         connection.setRequestProperty(HttpHeader.CONTENT_ENCODING.name(), StringUtils.UTF_8);
 
-         connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(postLength));
+         connection.setRequestProperty(HttpHeader.CONTENT_LENGTH.name(), Integer.toString(postLength));
          if (postLength > 0) {
             connection.setFixedLengthStreamingMode(postLength);
          } else {
@@ -126,7 +125,7 @@ public class StubbyHttpTransport {
          }
       }
 
-      for (Entry<String, String> entry : headers.entrySet())  {
+      for (Entry<String, String> entry : headers.entrySet()) {
          connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
    }

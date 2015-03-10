@@ -1,7 +1,7 @@
 package by.stub.builder.stubs;
 
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,25 +33,25 @@ public final class StubRequestBuilder {
    }
 
    public StubRequestBuilder withMethodGet() {
-      this.methods.add(HttpMethods.GET);
+      this.methods.add(HttpMethod.GET.name());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPut() {
-      this.methods.add(HttpMethods.PUT);
+      this.methods.add(HttpMethod.PUT.name());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPost() {
-      this.methods.add(HttpMethods.POST);
+      this.methods.add(HttpMethod.POST.name());
 
       return this;
    }
 
    public StubRequestBuilder withMethodHead() {
-      this.methods.add(HttpMethods.HEAD);
+      this.methods.add(HttpMethod.HEAD.name());
 
       return this;
    }

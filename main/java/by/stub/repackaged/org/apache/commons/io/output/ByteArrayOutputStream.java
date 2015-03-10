@@ -192,7 +192,7 @@ public class ByteArrayOutputStream extends OutputStream {
     *
     * @param in the input stream to read from
     * @return total number of bytes read from the input stream
-    *         (and written to this stream)
+    * (and written to this stream)
     * @throws IOException if an I/O error occurs while reading the input stream
     * @since 1.4
     */

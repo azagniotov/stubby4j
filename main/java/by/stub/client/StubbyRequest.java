@@ -72,7 +72,7 @@ final class StubbyRequest {
    }
 
    public String constructFullUrl() {
-      return String.format(URL_TEMPLATE, scheme, host, clientPort, StringUtils.isSet(uri) ? uri : "");
+      return String.format(URL_TEMPLATE, scheme.toLowerCase(), host, clientPort, StringUtils.isSet(uri) ? uri : "");
    }
 
    public int calculatePostLength() {

@@ -6,7 +6,6 @@ import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
          yamlAppender.append(stubbedDataManager.getMarshalledYaml());
       }
 
-      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+      wrapper.setContentType("text/plain;charset=UTF-8");
 
       final OutputStream streamOut = wrapper.getOutputStream();
       streamOut.write(StringUtils.getBytesUtf8(yamlAppender.toString()));

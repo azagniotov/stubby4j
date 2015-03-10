@@ -21,8 +21,7 @@ package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.exception.Stubby4JException;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.http.HttpHeader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,16 +68,16 @@ public final class HandlerUtils {
    }
 
    public static void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeaders.DATE, new Date().toString());
-      response.setHeader(HttpHeaders.CONTENT_TYPE, MimeTypes.TEXT_HTML_UTF_8);
-      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeaders.EXPIRES, 0);
+      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.DATE.name(), new Date().toString());
+      response.setHeader(HttpHeader.CONTENT_TYPE.name(), "text/html;charset=UTF-8");
+      response.setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeader.PRAGMA.name(), "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeader.EXPIRES.name(), 0);
    }
 
    public static String linkifyRequestUrl(final String scheme, final Object uri, final String host, final int port) {
-      final String fullUrl = String.format("%s://%s:%s%s", scheme, host, port, uri);
+      final String fullUrl = String.format("%s://%s:%s%s", scheme.toLowerCase(), host, port, uri);
       final String href = StringUtils.encodeSingleQuotes(fullUrl);
       return String.format("<a target='_blank' href='%s'>%s</a>", href, fullUrl);
    }

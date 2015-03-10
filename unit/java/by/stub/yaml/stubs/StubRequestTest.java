@@ -314,7 +314,9 @@ public class StubRequestTest {
    public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       final Map<String, String> dataStoreMap = new HashMap<String, String>();
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("key", "value");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isTrue();
@@ -323,7 +325,9 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenDataStoreMapNotEmptyAndAssertingMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("key", "value");
+      }};
       final Map<String, String> assertingMap = new HashMap<String, String>();
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
@@ -333,8 +337,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreKey() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("someKey", "someValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("someKey", "someValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isFalse();
@@ -343,8 +351,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreValue() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "someValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("requiredKey", "someValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isFalse();
@@ -353,8 +365,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnTrue_WhenAssertingMapMatchesDataStoreMap() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isTrue();

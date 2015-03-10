@@ -24,7 +24,7 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +46,7 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
       }
 
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
-      response.setHeader(HttpHeaders.LOCATION, foundStubResponse.getHeaders().get("location"));
-      response.setHeader(HttpHeaders.CONNECTION, "close");
+      response.setHeader(HttpHeader.LOCATION.name(), foundStubResponse.getHeaders().get("location"));
+      response.setHeader(HttpHeader.CONNECTION.name(), "close");
    }
 }
