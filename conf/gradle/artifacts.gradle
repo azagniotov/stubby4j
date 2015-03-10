@@ -16,17 +16,6 @@ project.ext.projectManifest = manifest {
                'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
 }
 
-def doSign = !"${version}".contains('SNAPSHOT')
-if (!doSign) {
-   println ""
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ":::     ATTENTION: Latest development version is ${version}     :::"
-   println ":::         Remove the '-SNAPSHOT' before signing artifacts         :::"
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ""
-   return
-}
-
 jar {
    description = 'Creates a shaded/uberjar/fatjar of stubby4j'
    archiveName = "${stubbyProjectName}-${version}.jar"
