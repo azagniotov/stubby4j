@@ -45,7 +45,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
       final String updatedCycleUrl = stubbedDataManager.refreshStubbedData(new YamlParser(), put, stubIndexToUpdate);
 
       response.setStatus(HttpStatus.CREATED_201);
-      response.addHeader(HttpHeader.LOCATION.name(), updatedCycleUrl);
+      response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
       final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
       response.getWriter().println(successfulMessage);
    }

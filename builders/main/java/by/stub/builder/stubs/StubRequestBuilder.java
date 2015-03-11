@@ -33,25 +33,25 @@ public final class StubRequestBuilder {
    }
 
    public StubRequestBuilder withMethodGet() {
-      this.methods.add(HttpMethod.GET.name());
+      this.methods.add(HttpMethod.GET.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPut() {
-      this.methods.add(HttpMethod.PUT.name());
+      this.methods.add(HttpMethod.PUT.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPost() {
-      this.methods.add(HttpMethod.POST.name());
+      this.methods.add(HttpMethod.POST.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodHead() {
-      this.methods.add(HttpMethod.HEAD.name());
+      this.methods.add(HttpMethod.HEAD.asString());
 
       return this;
    }

@@ -244,7 +244,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(response.getHeaders()).containsKey("content-type");
-      assertThat(response.getHeaders().getContentType()).contains("application/pdf;charset=UTF-8");
+      assertThat(response.getHeaders().getContentType()).contains("application/pdf; charset=UTF-8");
       assertThat(response.getHeaders()).containsKey("content-disposition");
    }
 

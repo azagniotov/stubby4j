@@ -67,12 +67,13 @@ public final class JettyFactory {
    public static final int DEFAULT_ADMIN_PORT = 8889;
    public static final int DEFAULT_STUBS_PORT = 8882;
    public static final int DEFAULT_SSL_PORT = 7443;
+   private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
+   private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
    public static final String DEFAULT_HOST = "localhost";
 
-   // We prefix the name with an @ because this is the way Jetty v9 finds a named connector
-   static final String ADMIN_CONNECTOR_NAME = "@AdminConnector";
-   static final String STUBS_CONNECTOR_NAME = "@StubsConnector";
-   static final String SSL_CONNECTOR_NAME = "@SslStubsConnector";
+   static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
+   static final String STUBS_CONNECTOR_NAME = "StubsConnector";
+   static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
    private static final String ROOT_PATH_INFO = "/";
    private final Map<String, String> commandLineArgs;
    private final StubbedDataManager stubbedDataManager;
@@ -88,7 +89,13 @@ public final class JettyFactory {
 
    public Server construct() throws IOException {
 
+      //final Server server = new Server(new QueuedThreadPool(100, 10));
+      //server.addBean(new ScheduledExecutorScheduler());
       final Server server = new Server();
+      server.setDumpAfterStart(false);
+      server.setDumpBeforeStop(false);
+      server.setStopAtShutdown(true);
+
       server.setConnectors(buildConnectors(server));
       server.setHandler(constructHandlers());
 
@@ -163,12 +170,13 @@ public final class JettyFactory {
       final ContextHandler contextHandler = new ContextHandler();
       contextHandler.setContextPath(pathInfo);
       contextHandler.setAllowNullPathInfo(true);
-      contextHandler.setVirtualHosts(new String[]{connectorName});
+      // We prefix the name with an '@' because this is the way Jetty v9 finds a named connector
+      contextHandler.setVirtualHosts(new String[]{"@" + connectorName});
       contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
       contextHandler.setHandler(handler);
 
       final MimeTypes mimeTypes = new MimeTypes();
-      mimeTypes.setMimeMap(new HashMap());
+      mimeTypes.setMimeMap(new HashMap<String, String>());
       contextHandler.setMimeTypes(mimeTypes);
 
       return contextHandler;
@@ -176,24 +184,24 @@ public final class JettyFactory {
 
    private Connector[] buildConnectors(final Server server) throws IOException {
 
-      final List<Connector> connectors = new ArrayList<Connector>();
+      final List<Connector> connectors = new ArrayList<>();
 
-      HttpConfiguration httpConfig = new HttpConfiguration();
-      httpConfig.setOutputBufferSize(32768);
-
-      connectors.add(buildAdminConnector(server, httpConfig));
-      connectors.add(buildStubsConnector(server, httpConfig));
+      connectors.add(buildAdminConnector(server));
+      connectors.add(buildStubsConnector(server));
       connectors.add(buildStubsSslConnector(server));
 
       return connectors.toArray(new Connector[connectors.size()]);
    }
 
-   private ServerConnector buildAdminConnector(final Server server, final HttpConfiguration httpConfig) {
-      final ServerConnector adminChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
+   private ServerConnector buildAdminConnector(final Server server) {
+
+      final HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      final ServerConnector adminChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
       adminChannel.setPort(getAdminPort(commandLineArgs));
 
       adminChannel.setName(ADMIN_CONNECTOR_NAME);
       adminChannel.setHost(DEFAULT_HOST);
+      adminChannel.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          adminChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -213,14 +221,15 @@ public final class JettyFactory {
       return adminChannel;
    }
 
-   private ServerConnector buildStubsConnector(final Server server, final HttpConfiguration httpConfig) {
+   private ServerConnector buildStubsConnector(final Server server) {
 
-      final ServerConnector stubsChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
+      final HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      final ServerConnector stubsChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
       stubsChannel.setPort(getStubsPort(commandLineArgs));
-      final int idleTimeInMilliseconds = 45000;
-      stubsChannel.setIdleTimeout(idleTimeInMilliseconds);
+
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
       stubsChannel.setHost(DEFAULT_HOST);
+      stubsChannel.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          stubsChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -245,21 +254,21 @@ public final class JettyFactory {
          keystorePath = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYSTORE);
       }
 
-      HttpConfiguration httpConfig = new HttpConfiguration();
-      httpConfig.setOutputBufferSize(32768);
-      httpConfig.setSecureScheme(HttpScheme.HTTPS.name());
-      httpConfig.setSecurePort(getStubsSslPort(commandLineArgs));
-      httpConfig.addCustomizer(new SecureRequestCustomizer());
+      HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      httpConfiguration.setSecureScheme(HttpScheme.HTTPS.asString());
+      httpConfiguration.setSecurePort(getStubsSslPort(commandLineArgs));
+      httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
 
       ServerConnector sslConnector = new ServerConnector(server,
-         new SslConnectionFactory(sslContextFactory, "http/1.1"),
-         new HttpConnectionFactory(httpConfig));
+         new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1),
+         new HttpConnectionFactory(httpConfiguration));
       sslConnector.setPort(getStubsSslPort(commandLineArgs));
+
       sslConnector.setHost(DEFAULT_HOST);
-      sslConnector.setIdleTimeout(500000);
       sslConnector.setName(SSL_CONNECTOR_NAME);
+      sslConnector.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -301,6 +310,17 @@ public final class JettyFactory {
       } catch (final Exception ex) {
          throw new Stubby4JException(ex.toString(), ex);
       }
+   }
+
+   private HttpConfiguration constructHttpConfiguration() {
+      final HttpConfiguration httpConfiguration = new HttpConfiguration();
+      httpConfiguration.setSendServerVersion(true);
+      httpConfiguration.setSendXPoweredBy(true);
+      httpConfiguration.setOutputBufferSize(32768);
+      httpConfiguration.setRequestHeaderSize(8192);
+      httpConfiguration.setResponseHeaderSize(8192);
+
+      return httpConfiguration;
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {

@@ -44,11 +44,11 @@ public class DefaultResponseHandlingStrategyTest {
    }
 
    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.name(), "text/html;charset=UTF-8");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.name(), "no-cache");
-      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.name(), 0);
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
    }
 
    @Test

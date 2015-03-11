@@ -53,7 +53,6 @@ public final class StubbyManager {
          return;
       }
 
-      server.setStopAtShutdown(true);
       server.stop();
 
       while (!isJettyDown()) {

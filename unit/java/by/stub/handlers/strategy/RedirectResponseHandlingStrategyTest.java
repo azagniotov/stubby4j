@@ -44,11 +44,11 @@ public class RedirectResponseHandlingStrategyTest {
    }
 
    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.name(), "text/html;charset=UTF-8");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.name(), "no-cache");
-      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.name(), 0);
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
    }
 
    @Test
@@ -63,8 +63,8 @@ public class RedirectResponseHandlingStrategyTest {
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.name(), mockStubResponse.getHeaders().get("location"));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.name(), "close");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
       verifyMainHeaders(mockHttpServletResponse);
    }
 
@@ -81,8 +81,8 @@ public class RedirectResponseHandlingStrategyTest {
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
       verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.name(), mockStubResponse.getHeaders().get("location"));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.name(), "close");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
       verifyMainHeaders(mockHttpServletResponse);
    }
 }

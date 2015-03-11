@@ -68,7 +68,7 @@ public class StubsPortalHandlerTest {
 
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.NOTFOUND);
@@ -88,7 +88,7 @@ public class StubsPortalHandlerTest {
 
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.NOTFOUND);
@@ -126,7 +126,7 @@ public class StubsPortalHandlerTest {
 
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
 
@@ -147,7 +147,7 @@ public class StubsPortalHandlerTest {
 
       final NotFoundStubResponse mockStubResponse = Mockito.mock(NotFoundStubResponse.class);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
@@ -189,7 +189,7 @@ public class StubsPortalHandlerTest {
       final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
@@ -211,7 +211,7 @@ public class StubsPortalHandlerTest {
       final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
@@ -235,7 +235,7 @@ public class StubsPortalHandlerTest {
       // We already found that it was unauthorized
       final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
 
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
       when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
@@ -261,7 +261,7 @@ public class StubsPortalHandlerTest {
       final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.OK_200);
@@ -303,7 +303,7 @@ public class StubsPortalHandlerTest {
       final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubResponse.getLatency()).thenReturn("50");
       when(mockStubResponse.getStatus()).thenReturn("200");
@@ -336,7 +336,7 @@ public class StubsPortalHandlerTest {
 
    @Test
    public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
-      final String method = HttpMethod.GET.name();
+      final String method = HttpMethod.GET.asString();
       final String requestPathInfo = "/path/1";
 
       final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);

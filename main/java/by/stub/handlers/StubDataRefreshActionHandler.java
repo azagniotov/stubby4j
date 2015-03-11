@@ -54,7 +54,7 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
       baseRequest.setHandled(true);
       response.setContentType("text/plain;charset=UTF-8");
       response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
       try {
          stubbedDataManager.refreshStubbedData(new YamlParser());

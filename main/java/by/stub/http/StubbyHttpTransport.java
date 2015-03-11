@@ -28,16 +28,16 @@ import static java.util.Map.Entry;
 public class StubbyHttpTransport {
 
    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
-      add(HttpMethod.GET.name());
-      add(HttpMethod.HEAD.name());
-      add(HttpMethod.TRACE.name());
-      add(HttpMethod.OPTIONS.name());
-      add(HttpMethod.POST.name());
+      add(HttpMethod.GET.asString());
+      add(HttpMethod.HEAD.asString());
+      add(HttpMethod.TRACE.asString());
+      add(HttpMethod.OPTIONS.asString());
+      add(HttpMethod.POST.asString());
    }};
 
    private static final Set<String> POSTING_METHODS = new HashSet<String>() {{
-      add(HttpMethod.PUT.name());
-      add(HttpMethod.POST.name());
+      add(HttpMethod.PUT.asString());
+      add(HttpMethod.POST.asString());
    }};
 
    public StubbyHttpTransport() {
@@ -111,13 +111,13 @@ public class StubbyHttpTransport {
       }
 
       final String requestMethod = connection.getRequestMethod();
-      if (HttpMethod.POST.name().equals(requestMethod) || HttpMethod.PUT.name().equals(requestMethod)) {
+      if (HttpMethod.POST.asString().equals(requestMethod) || HttpMethod.PUT.asString().equals(requestMethod)) {
          connection.setDoOutput(true);
-         connection.setRequestProperty(HttpHeader.CONTENT_TYPE.name(), "application/x-www-form-urlencoded");
-         connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.name(), "en-US");
-         connection.setRequestProperty(HttpHeader.CONTENT_ENCODING.name(), StringUtils.UTF_8);
+         connection.setRequestProperty(HttpHeader.CONTENT_TYPE.asString(), "application/x-www-form-urlencoded");
+         connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.asString(), "en-US");
+         connection.setRequestProperty(HttpHeader.CONTENT_ENCODING.asString(), StringUtils.UTF_8);
 
-         connection.setRequestProperty(HttpHeader.CONTENT_LENGTH.name(), Integer.toString(postLength));
+         connection.setRequestProperty(HttpHeader.CONTENT_LENGTH.asString(), Integer.toString(postLength));
          if (postLength > 0) {
             connection.setFixedLengthStreamingMode(postLength);
          } else {

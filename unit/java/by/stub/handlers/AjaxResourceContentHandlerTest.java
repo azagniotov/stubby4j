@@ -50,7 +50,7 @@ public class AjaxResourceContentHandlerTest {
       mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.name());
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
    }
 
    @Test

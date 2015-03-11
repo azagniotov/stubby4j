@@ -41,7 +41,6 @@ public class StubbyClientTest {
    }
 
    @Test
-   @Ignore
    public void doGetOverSsl_ShouldMakeSuccessfulGet() throws Exception {
 
       final String host = "localhost";
@@ -54,14 +53,13 @@ public class StubbyClientTest {
    }
 
    @Test
-   @Ignore
    public void makeRequest_ShouldMakeSuccessfulGetOverSsl() throws Exception {
 
       final String uri = "/item/1";
 
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.makeRequest(
-         HttpScheme.HTTPS.name(),
-         HttpMethod.GET.name(),
+         HttpScheme.HTTPS.asString(),
+         HttpMethod.GET.asString(),
          JettyFactory.DEFAULT_HOST,
          uri,
          SSL_PORT,
@@ -74,7 +72,7 @@ public class StubbyClientTest {
    @Test(expected = Stubby4JException.class)
    public void makeRequest_ShouldFailToMakeRequest_WhenUnsupportedMethodGiven() throws Exception {
 
-      STUBBY_CLIENT.makeRequest(HttpScheme.HTTPS.name(), HttpMethod.MOVE.name(), JettyFactory.DEFAULT_HOST,
+      STUBBY_CLIENT.makeRequest(HttpScheme.HTTPS.asString(), HttpMethod.MOVE.asString(), JettyFactory.DEFAULT_HOST,
          "/item/1", SSL_PORT, null);
    }
 
@@ -117,7 +115,6 @@ public class StubbyClientTest {
    }
 
    @Test
-   @Ignore
    public void doGetOverSsl_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
       final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
 
@@ -243,7 +240,8 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /  With post data: post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
+      assertThat(stubbyResponse.getContent()).contains("With post data: post body");
    }
 
 
@@ -256,9 +254,9 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /  With post data: post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
+      assertThat(stubbyResponse.getContent()).contains("With post data: post body");
    }
-
 
    @Test
    public void doPost_ShouldMakeSuccessfulPost_WhenGivenWrongPostData() throws Exception {
@@ -269,7 +267,8 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "unexpected or wrong post body");
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1  With post data: unexpected or wrong post body");
+      assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1");
+      assertThat(stubbyResponse.getContent()).contains("With post data: unexpected or wrong post body");
    }
 
    @Test

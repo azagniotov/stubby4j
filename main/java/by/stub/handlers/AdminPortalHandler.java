@@ -24,7 +24,6 @@ import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
-import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -33,7 +32,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 public class AdminPortalHandler extends AbstractHandler {
 
@@ -53,13 +51,8 @@ public class AdminPortalHandler extends AbstractHandler {
 
       baseRequest.setHandled(true);
 
-      response.setContentType("text/html;charset=UTF-8");
+      HandlerUtils.setResponseMainHeaders(response);
       response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeader.DATE.name(), new Date().toString());
-      response.setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeader.PRAGMA.name(), "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeader.EXPIRES.name(), 0);
 
       final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
       try {

@@ -68,12 +68,12 @@ public final class HandlerUtils {
    }
 
    public static void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeader.SERVER.name(), HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeader.DATE.name(), new Date().toString());
-      response.setHeader(HttpHeader.CONTENT_TYPE.name(), "text/html;charset=UTF-8");
-      response.setHeader(HttpHeader.CACHE_CONTROL.name(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeader.PRAGMA.name(), "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeader.EXPIRES.name(), 0);
+      response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.DATE.asString(), new Date().toString());
+      response.setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      response.setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeader.PRAGMA.asString(), "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeader.EXPIRES.asString(), 0);
    }
 
    public static String linkifyRequestUrl(final String scheme, final Object uri, final String host, final int port) {

@@ -46,7 +46,7 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
       }
 
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
-      response.setHeader(HttpHeader.LOCATION.name(), foundStubResponse.getHeaders().get("location"));
-      response.setHeader(HttpHeader.CONNECTION.name(), "close");
+      response.setHeader(HttpHeader.LOCATION.asString(), foundStubResponse.getHeaders().get("location"));
+      response.setHeader(HttpHeader.CONNECTION.asString(), "close");
    }
 }

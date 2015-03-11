@@ -88,19 +88,19 @@ public final class YamlBuilder {
       }
 
       public Request withMethodGet() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.GET.name());
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.GET.asString());
       }
 
       public Request withMethodPut() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.PUT.name());
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.PUT.asString());
       }
 
       public Request withMethodPost() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.POST.name());
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.POST.asString());
       }
 
       public Request withMethodHead() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.HEAD.name());
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.HEAD.asString());
       }
 
       public Request withUrl(final String value) {

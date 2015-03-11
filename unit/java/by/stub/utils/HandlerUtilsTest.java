@@ -32,7 +32,7 @@ public class HandlerUtilsTest {
    @Test
    public void shouldLinkifyUriString() throws Exception {
 
-      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.name(), "/google/1", "localhost", 8888);
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), "/google/1", "localhost", 8888);
       final String expectedLinkified = "<a target='_blank' href='http://localhost:8888/google/1'>http://localhost:8888/google/1</a>";
 
       assertThat(actualLinkified).isEqualTo(expectedLinkified);
@@ -41,7 +41,7 @@ public class HandlerUtilsTest {
    @Test
    public void shouldLinkifyUriStringForHttps() throws Exception {
 
-      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.name(), "/google/1", "localhost", 7443);
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.asString(), "/google/1", "localhost", 7443);
       final String expectedLinkified = "<a target='_blank' href='https://localhost:7443/google/1'>https://localhost:7443/google/1</a>";
 
       assertThat(actualLinkified).isEqualTo(expectedLinkified);
@@ -50,7 +50,7 @@ public class HandlerUtilsTest {
    @Test
    public void shouldLinkifyUriStringWithSingleQuotesInQueryString() throws Exception {
 
-      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.name(), "/entity?client_secret=secret&attributes=['id','uuid']", "localhost", 8882);
+      final String actualLinkified = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), "/entity?client_secret=secret&attributes=['id','uuid']", "localhost", 8882);
       final String expectedLinkified = "<a target='_blank' href='http://localhost:8882/entity?client_secret=secret&attributes=[%27id%27,%27uuid%27]'>http://localhost:8882/entity?client_secret=secret&attributes=['id','uuid']</a>";
 
       assertThat(actualLinkified).isEqualTo(expectedLinkified);

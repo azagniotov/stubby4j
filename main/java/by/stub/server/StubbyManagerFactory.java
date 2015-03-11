@@ -43,6 +43,7 @@ public class StubbyManagerFactory {
 
    public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
+      // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
       Log.setLog(new EmptyLogger());
 
       final File dataYamlFile = new File(dataYamlFilename);

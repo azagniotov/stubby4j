@@ -79,7 +79,7 @@ public final class StatusPageHandler extends AbstractHandler {
       baseRequest.setHandled(true);
       response.setContentType("text/html;charset=UTF-8");
       response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeader.SERVER.name().toLowerCase(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.SERVER.asString().toLowerCase(), HandlerUtils.constructHeaderServerName());
 
       try {
          response.getWriter().println(buildStatusPageHtml());
@@ -162,7 +162,7 @@ public final class StatusPageHandler extends AbstractHandler {
       builder.append(interpolateHtmlTableRowTemplate("ADMIN PORT", adminPort));
       builder.append(interpolateHtmlTableRowTemplate("STUBS PORT", jettyContext.getStubsPort()));
       builder.append(interpolateHtmlTableRowTemplate("STUBS TLS PORT", jettyContext.getStubsTlsPort()));
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.name(), AdminPortalHandler.ADMIN_ROOT, host, adminPort);
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), AdminPortalHandler.ADMIN_ROOT, host, adminPort);
       builder.append(interpolateHtmlTableRowTemplate("NEW STUB DATA POST URI", endpointRegistration));
 
       return String.format(TEMPLATE_HTML_TABLE, "jetty parameters", builder.toString());
@@ -243,8 +243,8 @@ public final class StatusPageHandler extends AbstractHandler {
 
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
       if (fieldName.equals(YamlProperties.URL)) {
-         final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.name(), escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
-         final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.name(), escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
+         final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
+         final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 
          final String tableRowWithUrl = interpolateHtmlTableRowTemplate(StringUtils.toUpper(fieldName), urlAsHyperlink);
          final String tableRowWithTlsUrl = interpolateHtmlTableRowTemplate("TLS " + StringUtils.toUpper(fieldName), tlsUrlAsHyperlink);

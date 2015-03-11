@@ -706,7 +706,7 @@ public class StubbedDataManagerTest {
       assertThat(externalFiles.size()).isEqualTo(1);
       assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
 
-      final Set<String> filenames = new HashSet<String>();
+      final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
          filenames.add(entry.getKey().getName());
       }
@@ -764,7 +764,7 @@ public class StubbedDataManagerTest {
       assertThat(externalFiles.size()).isEqualTo(1);
       assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
 
-      final Set<String> filenames = new HashSet<String>();
+      final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
          filenames.add(entry.getKey().getName());
       }
@@ -793,7 +793,7 @@ public class StubbedDataManagerTest {
       assertThat(externalFiles.size()).isEqualTo(1);
       assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
 
-      final Set<String> filenames = new HashSet<String>();
+      final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
          filenames.add(entry.getKey().getName());
       }

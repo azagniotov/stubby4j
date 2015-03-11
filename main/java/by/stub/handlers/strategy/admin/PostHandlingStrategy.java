@@ -35,7 +35,7 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
       stubbedDataManager.refreshStubbedData(new YamlParser(), post);
 
       if (stubbedDataManager.getStubHttpLifecycles().size() == 1) {
-         response.addHeader(HttpHeader.LOCATION.name(), stubbedDataManager.getOnlyStubRequestUrl());
+         response.addHeader(HttpHeader.LOCATION.asString(), stubbedDataManager.getOnlyStubRequestUrl());
       }
 
       response.setStatus(HttpStatus.CREATED_201);
