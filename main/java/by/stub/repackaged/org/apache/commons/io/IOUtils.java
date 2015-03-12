@@ -25,7 +25,7 @@ import java.io.OutputStream;
 
 /**
  * General IO stream manipulation utilities.
- * <p/>
+ *
  * This class provides static utility methods for input/output operations.
  * <ul>
  * <li>closeQuietly - these methods close a stream ignoring nulls and exceptions
@@ -34,24 +34,24 @@ import java.io.OutputStream;
  * <li>copy - these methods copy all the data from one stream to another
  * <li>contentEquals - these methods compare the content of two streams
  * </ul>
- * <p/>
+ *
  * The byte-to-char methods and char-to-byte methods involve a conversion step.
  * Two methods are provided in each case, one that uses the platform default
  * encoding and the other which allows you to specify an encoding. You are
  * encouraged to always specify an encoding because relying on the platform
  * default can lead to unexpected results, for example when moving from
  * development to production.
- * <p/>
+ *
  * All the methods in this class that read a stream are buffered internally.
  * This means that there is no cause to use a <code>BufferedInputStream</code>
  * or <code>BufferedReader</code>. The default buffer size of 4K has been shown
  * to be efficient in tests.
- * <p/>
+ *
  * Wherever possible, the methods in this class do <em>not</em> flush or close
  * the stream. This is to avoid making non-portable assumptions about the
  * streams' origin and further use. Thus the caller is still responsible for
  * closing streams after use.
- * <p/>
+ *
  * Origin of code: Excalibur.
  *
  * @version $Id: IOUtils.java 1326636 2012-04-16 14:54:53Z ggregory $
@@ -79,10 +79,10 @@ public final class IOUtils {
    /**
     * Copy bytes from an <code>InputStream</code> to an
     * <code>OutputStream</code>.
-    * <p/>
+    *
     * This method buffers the input internally, so there is no need to use a
     * <code>BufferedInputStream</code>.
-    * <p/>
+    *
     * Large streams (over 2GB) will return a bytes copied value of
     * <code>-1</code> after the copy has completed since the correct
     * number of bytes cannot be returned as an int. For large streams
@@ -106,10 +106,10 @@ public final class IOUtils {
    /**
     * Copy bytes from a large (over 2GB) <code>InputStream</code> to an
     * <code>OutputStream</code>.
-    * <p/>
+    *
     * This method buffers the input internally, so there is no need to use a
     * <code>BufferedInputStream</code>.
-    * <p/>
+    *
     * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
     *
     * @param input  the <code>InputStream</code> to read from
@@ -127,10 +127,10 @@ public final class IOUtils {
    /**
     * Copy bytes from a large (over 2GB) <code>InputStream</code> to an
     * <code>OutputStream</code>.
-    * <p/>
+    *
     * This method uses the provided buffer, so there is no need to use a
     * <code>BufferedInputStream</code>.
-    * <p/>
+    *
     *
     * @param input  the <code>InputStream</code> to read from
     * @param output the <code>OutputStream</code> to write to

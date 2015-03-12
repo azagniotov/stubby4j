@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 /**
  * Provides Base64 encoding and decoding as defined by <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>.
- * <p/>
+ *
  * <p>
  * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
  * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
@@ -47,7 +47,7 @@ public class Base64 extends BaseNCodec {
 
    /**
     * Chunk separator per RFC 2045 section 2.1.
-    * <p/>
+    *
     * <p>
     * N.B. The next major release may break compatibility and make this field private.
     * </p>
@@ -59,7 +59,7 @@ public class Base64 extends BaseNCodec {
    /**
     * This array is a lookup table that translates 6-bit positive integer index values into their "Base64 Alphabet"
     * equivalents as specified in Table 1 of RFC 2045.
-    * <p/>
+    *
     * Thanks to "commons" project in ws.apache.org for this code.
     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
     */
@@ -88,10 +88,10 @@ public class Base64 extends BaseNCodec {
     * This array is a lookup table that translates Unicode characters drawn from the "Base64 Alphabet" (as specified in
     * Table 1 of RFC 2045) into their 6-bit positive integer equivalents. Characters that are not in the Base64
     * alphabet but fall within the bounds of the array are translated to -1.
-    * <p/>
+    *
     * Note: '+' and '-' both decode to 62. '/' and '_' both decode to 63. This means decoder seamlessly handles both
     * URL_SAFE and STANDARD base64. (The encoder, on the other hand, needs to know ahead of time what to emit).
-    * <p/>
+    *
     * Thanks to "commons" project in ws.apache.org for this code.
     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
     */
@@ -155,7 +155,7 @@ public class Base64 extends BaseNCodec {
     * <p>
     * When encoding the line length is 0 (no chunking), and the encoding table is STANDARD_ENCODE_TABLE.
     * </p>
-    * <p/>
+    *
     * <p>
     * When decoding all variants are supported.
     * </p>
@@ -169,7 +169,7 @@ public class Base64 extends BaseNCodec {
     * <p>
     * When encoding the line length is 76, the line separator is CRLF, and the encoding table is STANDARD_ENCODE_TABLE.
     * </p>
-    * <p/>
+    *
     * <p>
     * When decoding all variants are supported.
     * </p>
@@ -505,7 +505,7 @@ public class Base64 extends BaseNCodec {
 
    /**
     * Encodes binary data using the base64 algorithm but does not chunk the output.
-    * <p/>
+    *
     * NOTE:  We changed the behaviour of this method from multi-line chunking (commons-codec-1.4) to
     * single-line non-chunking (commons-codec-1.5).
     *

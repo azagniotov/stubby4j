@@ -30,14 +30,14 @@ import java.util.List;
  * This class implements an output stream in which the data is
  * written into a byte array. The buffer automatically grows as data
  * is written to it.
- * <p/>
+ *
  * The data can be retrieved using <code>toByteArray()</code> and
  * <code>toString()</code>.
- * <p/>
+ *
  * Closing a <tt>ByteArrayOutputStream</tt> has no effect. The methods in
  * this class can be called after the stream has been closed without
  * generating an <tt>IOException</tt>.
- * <p/>
+ *
  * This is an alternative implementation of the {@link java.io.ByteArrayOutputStream}
  * class. The original implementation only allocates 32 bytes at the beginning.
  * As this class is designed for heavy duty it starts at 1024 bytes. In contrast
@@ -268,7 +268,7 @@ public class ByteArrayOutputStream extends OutputStream {
    /**
     * Fetches entire contents of an <code>InputStream</code> and represent
     * same data as result InputStream.
-    * <p/>
+    *
     * This method is useful where,
     * <ul>
     * <li>Source InputStream is slow.</li>

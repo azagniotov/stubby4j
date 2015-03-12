@@ -21,7 +21,7 @@ import by.stub.utils.StringUtils;
 
 /**
  * Abstract superclass for Base-N encoders and decoders.
- * <p/>
+ *
  * <p>
  * This class is not thread-safe.
  * Each thread should use its own instance.
@@ -32,7 +32,7 @@ public abstract class BaseNCodec {
 
    /**
     * MIME chunk size per RFC 2045 section 6.8.
-    * <p/>
+    *
     * <p>
     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
     * equal signs.
@@ -44,7 +44,7 @@ public abstract class BaseNCodec {
 
    /**
     * PEM chunk size per RFC 1421 section 4.3.2.4.
-    * <p/>
+    *
     * <p>
     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
     * equal signs.
@@ -398,7 +398,7 @@ public abstract class BaseNCodec {
 
    /**
     * Tests a given byte array to see if it contains any characters within the alphabet or PAD.
-    * <p/>
+    *
     * Intended for use in checking line-ending arrays
     *
     * @param arrayOctet byte array to test
