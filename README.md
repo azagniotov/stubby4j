@@ -40,9 +40,11 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
 
-##### Minimum system requirements
+##### Minimum system requirements to run stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j)
 
-* Oracle JRE 1.6 (stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) were built using the latter JRE) 
+* version = 3.0.0:  Oracle JRE v1.7.0_76
+* version = 2.0.22: Oracle JRE v1.7.0_04
+* version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
 
 ##### Setup
 
