@@ -122,7 +122,8 @@ public class StubHttpLifecycle {
    }
 
    /**
-    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    * Do not remove this method if your IDE complains that it is unused.
+    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
     */
    public String getRequestAsYaml() {
       return requestAsYaml;
@@ -133,7 +134,8 @@ public class StubHttpLifecycle {
    }
 
    /**
-    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    * Do not remove this method if your IDE complains that it is unused.
+    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
     */
    public String getResponseAsYaml() {
       return responseAsYaml;

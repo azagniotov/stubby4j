@@ -20,7 +20,7 @@ import java.math.BigInteger;
  * 4 in the encoded data.
  * <li>Line separator: Default is CRLF ("\r\n")</li>
  * </ul>
- * </p>
+ *
  * <p>
  * Since this class operates directly on byte streams, and not character streams, it is hard-coded to only encode/decode
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
@@ -196,7 +196,7 @@ public class Base64 extends BaseNCodec {
     * </p>
     *
     * @param lineLength Each line of encoded data will be at most of the given length (rounded down to nearest multiple of 4).
-    *                   If lineLength <= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
+    *                   If lineLength &lt;= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
     * @since 1.4
     */
    public Base64(int lineLength) {
@@ -217,7 +217,7 @@ public class Base64 extends BaseNCodec {
     * </p>
     *
     * @param lineLength    Each line of encoded data will be at most of the given length (rounded down to nearest multiple of 4).
-    *                      If lineLength <= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
+    *                      If lineLength &lt;= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
     * @param lineSeparator Each line of encoded data will end with this sequence of bytes.
     * @throws IllegalArgumentException Thrown when the provided lineSeparator included some base64 characters.
     * @since 1.4
@@ -240,7 +240,7 @@ public class Base64 extends BaseNCodec {
     * </p>
     *
     * @param lineLength    Each line of encoded data will be at most of the given length (rounded down to nearest multiple of 4).
-    *                      If lineLength <= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
+    *                      If lineLength &lt;= 0, then the output will not be divided into lines (chunks). Ignored when decoding.
     * @param lineSeparator Each line of encoded data will end with this sequence of bytes.
     * @param urlSafe       Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode
     *                      operations. Decoding seamlessly handles both modes.

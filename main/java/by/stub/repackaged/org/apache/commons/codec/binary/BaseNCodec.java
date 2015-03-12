@@ -29,7 +29,6 @@ import by.stub.utils.StringUtils;
  */
 public abstract class BaseNCodec {
 
-
    /**
     * MIME chunk size per RFC 2045 section 6.8.
     *
@@ -119,7 +118,7 @@ public abstract class BaseNCodec {
 
    /**
     * Variable tracks how many characters have been written to the current line. Only used when encoding. We use it to
-    * make sure each encoded line never goes beyond lineLength (if lineLength > 0).
+    * make sure each encoded line never goes beyond lineLength (if lineLength &gt; 0).
     */
    protected int currentLinePos;
 
@@ -257,7 +256,6 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to encode
     * @return An object (of type byte[]) containing the Base-N encoded data which corresponds to the byte[] supplied.
-    * @throws org.apache.commons.codec.EncoderException if the parameter supplied is not of type byte[]
     */
    public Object encode(Object pObject) throws Exception {
       if (!(pObject instanceof byte[])) {
@@ -282,7 +280,6 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to decode
     * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] or String supplied.
-    * @throws org.apache.commons.codec.DecoderException if the parameter supplied is not of type byte[]
     */
    public Object decode(Object pObject) throws Exception {
       if (pObject instanceof byte[]) {
@@ -421,7 +418,7 @@ public abstract class BaseNCodec {
     *
     * @param pArray byte[] array which will later be encoded
     * @return amount of space needed to encoded the supplied array.
-    * Returns a long since a max-len array will require > Integer.MAX_VALUE
+    * Returns a long since a max-len array will require greater than Integer.MAX_VALUE
     */
    public long getEncodedLength(byte[] pArray) {
       // Calculate non-chunked size - rounded up to allow for padding
