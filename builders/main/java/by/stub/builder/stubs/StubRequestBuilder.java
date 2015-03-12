@@ -132,11 +132,11 @@ public final class StubRequestBuilder {
       final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
 
       this.url = null;
-      this.methods = new ArrayList<String>();
+      this.methods = new ArrayList<>();
       this.post = null;
       this.file = null;
-      this.headers = new HashMap<String, String>();
-      this.query = new LinkedHashMap<String, String>();
+      this.headers = new LinkedHashMap<>();
+      this.query = new LinkedHashMap<>();
 
       return stubRequest;
    }

@@ -2111,9 +2111,9 @@ public class StubRequestTest {
             .withPost("this is a post body")
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
+            .withHeaders("headerOne", "headerOneValue").build();
 
 
       final String expectedToStringOutput = "StubRequest{" +
@@ -2137,10 +2137,9 @@ public class StubRequestTest {
             .withPost(null)
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
-
+            .withHeaders("headerOne", "headerOneValue").build();
 
       final String expectedToStringOutput = "StubRequest{" +
          "url=/invoice/123, " +
@@ -2162,10 +2161,9 @@ public class StubRequestTest {
             .withPost(null)
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", null)
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
-
+            .withHeaders("headerOne", null).build();
 
       final String expectedToStringOutput = "StubRequest{" +
          "url=/invoice/123, " +
