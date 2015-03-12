@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/25/13 11:29 PM
- */
 public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
    @Override

@@ -7,10 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/25/13 11:16 PM
- */
 public class NullHandlingStrategy implements AdminResponseHandlingStrategy {
 
    @Override

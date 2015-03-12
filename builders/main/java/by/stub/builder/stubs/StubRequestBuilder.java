@@ -16,10 +16,10 @@ import java.util.Map;
 public final class StubRequestBuilder {
 
    private String url = null;
-   private ArrayList<String> methods = new ArrayList<String>();
+   private ArrayList<String> methods = new ArrayList<>();
    private String post = null;
-   private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new LinkedHashMap<String, String>();
+   private Map<String, String> headers = new LinkedHashMap<>();
+   private Map<String, String> query = new LinkedHashMap<>();
    private File file;
 
    public StubRequestBuilder() {

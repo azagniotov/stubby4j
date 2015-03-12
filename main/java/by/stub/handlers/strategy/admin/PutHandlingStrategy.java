@@ -11,10 +11,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/25/13 11:30 PM
- */
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws Exception {

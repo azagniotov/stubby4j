@@ -2,10 +2,6 @@ package by.stub.yaml;
 
 import by.stub.annotations.CoberturaIgnore;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 9/3/13 11:09 AM
- */
 public final class YamlProperties {
 
    public static final String BODY = "body";
