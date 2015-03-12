@@ -1,0 +1,30 @@
+tasks.withType(Test) {
+    Task testTask ->
+    def totalSuiteCount = 0
+    def successSuiteCount = 0
+    testLogging {
+       events /*"passed", */"skipped", "failed"
+       exceptionFormat "full"
+       showExceptions true
+       showCauses true
+       showStackTraces true
+    }
+    afterSuite { testDescriptor, testResult ->
+       if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
+          totalSuiteCount += testResult.getTestCount()
+          project(':').ext.totalTestCounter += testResult.getTestCount()
+          successSuiteCount += testResult.getSuccessfulTestCount()
+       }
+    }
+    doLast {
+       println ""
+       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+       println ":::::                         Ran " + project.name.toUpperCase() + " module tests"
+       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+       println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
+       println ":::::               Total tests executed in $stubbyProjectName project so far " + project(':').ext.totalTestCounter
+       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+       println ""
+    }
+}
+

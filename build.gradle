@@ -1,6 +1,7 @@
 // vim: ft=groovy
 import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
 ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
+project(':').ext.totalTestCounter = 0
 
 defaultTasks 'clean', 'build'
 description = 'Gradle configuration for stubby4j'
@@ -17,44 +18,11 @@ buildscript {
    }
 }
 
-def totalTestCounter = 0
 allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
    project.buildDir = 'target'
-
-   if (project.name != 'main') {
-      tasks.withType(Test) {
-         Task testTask ->
-            def totalSuiteCount = 0
-            def successSuiteCount = 0
-            testLogging {
-               events /*"passed", */"skipped", "failed"
-               exceptionFormat "full"
-               showExceptions true
-               showCauses true
-               showStackTraces true
-            }
-            afterSuite { testDescriptor, testResult ->
-               if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-                  totalSuiteCount += testResult.getTestCount()
-                  totalTestCounter += testResult.getTestCount()
-                  successSuiteCount += testResult.getSuccessfulTestCount()
-               }
-            }
-            doLast {
-               println ""
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                         Ran " + project.name.toUpperCase() + " module tests"
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
-               println ":::::               Total tests executed in $stubbyProjectName project so far " + totalTestCounter
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ""
-            } 
-      }
-   }
 }
 
 apply from: "$rootDir/conf/gradle/ides.gradle"
@@ -78,3 +46,4 @@ subprojects {
       
       apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
+
