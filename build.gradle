@@ -70,7 +70,7 @@ task allTestReport(type: TestReport) {
          println prefixSpace + prefixDots + "  " +  testProjectName.key + 
                                  " (" + testProjectName.value['success'] + "/" + testProjectName.value['total'] + ")"
          for ( testClassName in testProjectName.value ) {
-             if (testClassName.key == 'total' || testClassName.key == 'success') {
+             if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
                   continue;
              }
              println prefixSpace + prefixDots + "    " +  moduleTabs + testClassName.key + 
