@@ -21,7 +21,7 @@ jar {
    archiveName = "${stubbyProjectName}-${version}.jar"
    manifest = project.ext.projectManifest
    from sourceSets.main.output
-   destinationDir = file(project(':').buildDir.path + '/libs')
+   destinationDir = file(project(':').libsDir.path)
    from (project.ext.dependencies.collect { zipTree(it) }) {
       exclude 'META-INF/*.SF'
       exclude 'META-INF/*.DSA'
@@ -38,7 +38,7 @@ task skinnyJar(type: Jar) {
    description = 'Creates a skinny/no-dependencies of stubby4j'
    baseName = "${stubbyProjectName}"
    version = "${version}"
-   destinationDir = file(project(':').buildDir.path + '/libs')
+   destinationDir = file(project(':').libsDir.path)
    classifier = "no-dependencies"
    extension = "jar"
    from sourceSets.main.output

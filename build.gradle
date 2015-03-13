@@ -1,9 +1,10 @@
 // vim: ft=groovy
 import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
 ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
-project(':').ext.totalTestCounter = 0
+project(':').ext.subprojectTestTotals = [:]
+project(':').ext.subprojectTestTotals['total'] = 0
 
-defaultTasks 'clean', 'build'
+defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
 
 buildscript {
@@ -23,6 +24,10 @@ allprojects {
    apply plugin: 'idea'
    apply plugin: 'eclipse'
    project.buildDir = 'target'
+
+   if (project.name != 'main') {
+      apply from: "$rootDir/conf/gradle/console.gradle"
+   }
 }
 
 apply from: "$rootDir/conf/gradle/ides.gradle"
@@ -45,5 +50,32 @@ subprojects {
       }
       
       apply from: "$rootDir/conf/gradle/dependency.gradle"
+}
+
+task allTestReport(type: TestReport) {
+   destinationDir = file("$buildDir/reports/all")
+   reportOn subprojects*.test 
+   doLast {
+      def tabs = "\t\t\t";
+      println ""
+      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+      for ( testProjectName in project(':').ext.subprojectTestTotals ) {   
+         if (testProjectName.key == 'total') {
+            continue;
+         }         
+         if (testProjectName.key == 'UNIT') {
+            tabs += "\t"
+         } else {
+            tabs = "\t\t\t"
+         } 
+         println "       :::::      " +  testProjectName.key + tabs + "Passed (" + 
+                                       testProjectName.value['success'] + "/" + 
+                                       testProjectName.value['total']  + ")"       
+      }
+      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+      println "       :::::          Total tests executed in $stubbyProjectName " + project(':').ext.subprojectTestTotals['total']
+      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+      println ""
+   }
 }
 

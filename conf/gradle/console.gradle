@@ -1,9 +1,7 @@
 tasks.withType(Test) {
     Task testTask ->
-    def totalSuiteCount = 0
-    def successSuiteCount = 0
     testLogging {
-       events /*"passed", */"skipped", "failed"
+       events /*"passed",*/ "skipped", "failed"
        exceptionFormat "full"
        showExceptions true
        showCauses true
@@ -11,20 +9,15 @@ tasks.withType(Test) {
     }
     afterSuite { testDescriptor, testResult ->
        if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-          totalSuiteCount += testResult.getTestCount()
-          project(':').ext.totalTestCounter += testResult.getTestCount()
-          successSuiteCount += testResult.getSuccessfulTestCount()
+          if (project(':').ext.subprojectTestTotals[project.name.toUpperCase()] == null) {
+            project(':').ext.subprojectTestTotals[project.name.toUpperCase()] = [:]
+            project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['total'] = 0
+            project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['success'] = 0
+          }
+          project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['success'] += testResult.getSuccessfulTestCount()
+          project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['total'] += testResult.getTestCount()
+          project(':').ext.subprojectTestTotals['total'] += testResult.getTestCount()
        }
-    }
-    doLast {
-       println ""
-       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-       println ":::::                         Ran " + project.name.toUpperCase() + " module tests"
-       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-       println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
-       println ":::::               Total tests executed in $stubbyProjectName project so far " + project(':').ext.totalTestCounter
-       println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-       println ""
     }
 }
 
