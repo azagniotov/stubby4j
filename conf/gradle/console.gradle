@@ -1,22 +1,43 @@
 tasks.withType(Test) {
     Task testTask ->
     testLogging {
-       events /*"passed",*/ "skipped", "failed"
+       events /*"passed", */"skipped", "failed"
        exceptionFormat "full"
        showExceptions true
        showCauses true
        showStackTraces true
     }
-    afterSuite { testDescriptor, testResult ->
-       if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-          if (project(':').ext.subprojectTestTotals[project.name.toUpperCase()] == null) {
-            project(':').ext.subprojectTestTotals[project.name.toUpperCase()] = [:]
-            project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['total'] = 0
-            project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['success'] = 0
-          }
-          project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['success'] += testResult.getSuccessfulTestCount()
-          project(':').ext.subprojectTestTotals[project.name.toUpperCase()]['total'] += testResult.getTestCount()
-          project(':').ext.subprojectTestTotals['total'] += testResult.getTestCount()
+    beforeSuite { testDescriptor ->
+      if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
+         //logger.lifecycle("\tRunning suite: " + testDescriptor.getName())
+      }
+    }
+    beforeTest { testDescriptor ->
+      if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
+         def subproject = project.name.toUpperCase()
+         def testClass = testDescriptor.getClassName()
+         if (project(':').ext.map[subproject] == null) {
+            project(':').ext.map[subproject] = [:]
+            project(':').ext.map[subproject]['total'] = 0
+            project(':').ext.map[subproject]['success'] = 0
+         }
+         if (project(':').ext.map[subproject][testClass] == null) {
+            project(':').ext.map[subproject][testClass] = [:]
+            project(':').ext.map[subproject][testClass]['total'] = 1
+            project(':').ext.map[subproject][testClass]['success'] = 0
+         } else {
+            project(':').ext.map[subproject][testClass]['total'] += 1
+         }
+         project(':').ext.map['total'] += 1
+         project(':').ext.map[subproject]['total'] += 1
+      }
+    }
+    afterTest { testDescriptor, testResult ->
+       if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
+          def subproject = project.name.toUpperCase()
+          def testClass = testDescriptor.getClassName()
+          project(':').ext.map[subproject][testClass]['success'] += testResult.getSuccessfulTestCount()
+          project(':').ext.map[subproject]['success'] += testResult.getSuccessfulTestCount()
        }
     }
 }

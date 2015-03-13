@@ -1,8 +1,8 @@
 // vim: ft=groovy
 import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
 ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
-project(':').ext.subprojectTestTotals = [:]
-project(':').ext.subprojectTestTotals['total'] = 0
+project(':').ext.map = [:]
+project(':').ext.map['total'] = 0
 
 defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
@@ -56,25 +56,30 @@ task allTestReport(type: TestReport) {
    destinationDir = file("$buildDir/reports/all")
    reportOn subprojects*.test 
    doLast {
-      def tabs = "\t\t\t";
+      def moduleTabs = "\t";
+      def prefixSpace = "      ";
+      def prefixDots = ":::::";
+      def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
       println ""
-      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-      for ( testProjectName in project(':').ext.subprojectTestTotals ) {   
+      println hr
+      
+      for ( testProjectName in project(':').ext.map ) {   
          if (testProjectName.key == 'total') {
             continue;
          }         
-         if (testProjectName.key == 'UNIT') {
-            tabs += "\t"
-         } else {
-            tabs = "\t\t\t"
-         } 
-         println "       :::::      " +  testProjectName.key + tabs + "Passed (" + 
-                                       testProjectName.value['success'] + "/" + 
-                                       testProjectName.value['total']  + ")"       
+         println prefixSpace + prefixDots + "  " +  testProjectName.key + 
+                                 " (" + testProjectName.value['success'] + "/" + testProjectName.value['total'] + ")"
+         for ( testClassName in testProjectName.value ) {
+             if (testClassName.key == 'total' || testClassName.key == 'success') {
+                  continue;
+             }
+             println prefixSpace + prefixDots + "    " +  moduleTabs + testClassName.key + 
+                                     " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
+         }
+         println hr
       }
-      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-      println "       :::::          Total tests executed in $stubbyProjectName " + project(':').ext.subprojectTestTotals['total']
-      println "       ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+      println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName " + project(':').ext.map['total']
+      println hr
       println ""
    }
 }
