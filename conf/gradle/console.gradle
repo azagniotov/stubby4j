@@ -8,11 +8,6 @@ tasks.withType(Test) {
        showCauses true
        showStackTraces true
     }
-    beforeSuite { testDescriptor ->
-      if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-         //logger.lifecycle("\tRunning suite: " + testDescriptor.getName())
-      }
-    }
     beforeTest { testDescriptor ->
       if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
          def subproject = project.name.toUpperCase()
@@ -39,10 +34,16 @@ tasks.withType(Test) {
        if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
           def subproject = project.name.toUpperCase()
           def testClass = testDescriptor.getClassName()
-          project(':').ext.map[subproject][testClass]['success'] += testResult.getSuccessfulTestCount()
-          project(':').ext.map[subproject][testClass]['failure'] += testResult.getFailedTestCount()
-          project(':').ext.map[subproject]['success'] += testResult.getSuccessfulTestCount()
-          project(':').ext.map[subproject]['failure'] += testResult.getFailedTestCount()
+          def success = testResult.getSuccessfulTestCount();
+          def failure = testResult.getFailedTestCount()
+          if (success == 1) {
+            project(':').ext.map[subproject][testClass]['success'] += success
+            project(':').ext.map[subproject]['success'] += success
+          } else if (failure == 1) {
+            project(':').ext.map[subproject][testClass]['failure'] += failure
+            project(':').ext.map[subproject]['failure'] += failure
+            project(':').ext.map['failure'] += failure
+          }
        }
     }
 }
