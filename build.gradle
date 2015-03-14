@@ -2,8 +2,6 @@
 import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
 ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
 project(':').ext.map = [:]
-project(':').ext.map['total'] = 0
-project(':').ext.map['failure'] = 0
 
 defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
@@ -51,34 +49,35 @@ subprojects {
 
 task allTestReport(type: TestReport) {
    destinationDir = file("$buildDir/reports/all")
-   reportOn subprojects*.test 
+   reportOn subprojects*.test
    doLast {
+      def total = 0
+      def failure = 0
       def moduleTabs = "\t";
       def prefixSpace = "      ";
       def prefixDots = ":::::";
       def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
       println ""
       println hr
-      
-      for ( testProjectName in project(':').ext.map ) {   
-         if (testProjectName.key == 'total' || testProjectName.key == 'failure') {
-            continue;
-         }         
-         println prefixSpace + prefixDots + "  " +  testProjectName.key + 
+
+      for ( testProjectName in project(':').ext.map ) {
+         total += testProjectName.value['total']
+         failure += testProjectName.value['failure']
+         println prefixSpace + prefixDots + "  " +  testProjectName.key +
          " (failed: " + testProjectName.value['failure'] + ", passed: " + testProjectName.value['success'] + ", total: " + testProjectName.value['total'] + ")"
          for ( testClassName in testProjectName.value ) {
              if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
                   continue;
              }
-             println prefixSpace + prefixDots + "    " +  moduleTabs + testClassName.key + 
+             println prefixSpace + prefixDots + "    " +  moduleTabs + testClassName.key +
                                      " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
          }
          println hr
       }
-      println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + project(':').ext.map['total']
+      println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + total
       println hr
-      if (project(':').ext.map['failure'] > 0) {
-         throw new GradleException(project(':').ext.map['failure'] + " TESTS FAILED!!!")
+      if (failure > 0) {
+         throw new GradleException(failure + " TESTS FAILED!!!")
       }
    }
 }

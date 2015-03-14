@@ -26,7 +26,6 @@ tasks.withType(Test) {
          } else {
             project(':').ext.map[subproject][testClass]['total'] += 1
          }
-         project(':').ext.map['total'] += 1
          project(':').ext.map[subproject]['total'] += 1
       }
     }
@@ -42,7 +41,6 @@ tasks.withType(Test) {
           } else if (failure == 1) {
             project(':').ext.map[subproject][testClass]['failure'] += failure
             project(':').ext.map[subproject]['failure'] += failure
-            project(':').ext.map['failure'] += failure
           }
        }
     }
