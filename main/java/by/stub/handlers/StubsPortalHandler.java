@@ -63,6 +63,5 @@ public class StubsPortalHandler extends AbstractHandler {
       }
 
       ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
-
    }
 }

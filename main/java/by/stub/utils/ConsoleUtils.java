@@ -25,6 +25,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,6 +34,8 @@ import java.util.Locale;
  * @since 10/26/12, 1:00 PM
  */
 public final class ConsoleUtils {
+
+   private static boolean debug = false;
 
    private ConsoleUtils() {
 
@@ -50,6 +53,10 @@ public final class ConsoleUtils {
       ANSITerminal.error(logMessage);
    }
 
+   public static void logRawIncomingRequest(final HttpServletRequest request) {
+      ANSITerminal.info(HttpRequestUtils.dump(request));
+   }
+
    public static void logIncomingRequest(final HttpServletRequest request) {
 
       final String logMessage = String.format("[%s] -> %s [%s]",
@@ -58,6 +65,10 @@ public final class ConsoleUtils {
          request.getRequestURI()
       );
       ANSITerminal.incoming(logMessage);
+
+      if (debug) {
+         ConsoleUtils.logRawIncomingRequest(request);
+      }
    }
 
    public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
@@ -97,5 +108,14 @@ public final class ConsoleUtils {
          now.get(Calendar.MINUTE),
          now.get(Calendar.SECOND)
       );
+   }
+
+   /**
+    * Enables verbose console output
+    *
+    * @param isDebug if true, the incoming raw HTTP request will be dumped to console
+    */
+   public static void enableDebug(final boolean isDebug) {
+      debug = isDebug;
    }
 }

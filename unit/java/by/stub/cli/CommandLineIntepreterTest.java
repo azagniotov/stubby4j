@@ -52,6 +52,23 @@ public class CommandLineIntepreterTest {
       assertThat(isVersion).isTrue();
    }
 
+   @Test
+   public void testIsDebugWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--debug"});
+      final boolean isDebug = commandLineInterpreter.isDebug();
+
+      assertThat(isDebug).isTrue();
+   }
+
+   @Test
+   public void testIsDebugWhenShortgOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-o"});
+      final boolean isDebug = commandLineInterpreter.isDebug();
+
+      assertThat(isDebug).isTrue();
+   }
 
    @Test
    public void testIsMuteWhenShortOptionGiven() throws Exception {

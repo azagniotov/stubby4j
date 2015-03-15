@@ -36,7 +36,7 @@ import java.util.Set;
 public final class FileUtils {
 
    public static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
-      new HashSet<String>(
+      new HashSet<>(
          Arrays.asList(
             ".ajx", ".am", ".asa", ".asc", ".asp", ".aspx", ".awk", ".bat",
             ".c", ".cdf", ".cf", ".cfg", ".cfm", ".cgi", ".cnf", ".conf", ".cpp",

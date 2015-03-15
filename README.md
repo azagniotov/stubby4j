@@ -1137,6 +1137,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.0.1-SNAPSHOT
+* Added `--debug` option that dumps incoming raw HTTP request to the console.
 
 ##### 3.0.0
 * Built using Java v1.7.0_76

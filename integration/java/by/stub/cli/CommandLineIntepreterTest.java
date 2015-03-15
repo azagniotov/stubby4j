@@ -32,7 +32,7 @@ public class CommandLineIntepreterTest {
 
       final String expectedConsoleOutput = "usage:" + BR +
          "       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]" + BR +
-         "       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]" + BR +
+         "       [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]" + BR +
          " -a,--admin <arg>      Port for admin portal. Defaults to 8889." + BR +
          " -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1" + BR +
          "                       expected." + BR +
@@ -41,6 +41,7 @@ public class CommandLineIntepreterTest {
          "                       enabled using internal keystore." + BR +
          " -l,--location <arg>   Hostname at which to bind stubby." + BR +
          " -m,--mute             Prevent stubby from printing to the console." + BR +
+         " -o,--debug            Dumps raw HTTP request to the console." + BR +
          " -p,--password <arg>   Password for the provided keystore file." + BR +
          " -s,--stubs <arg>      Port for stub portal. Defaults to 8882." + BR +
          " -t,--tls <arg>        Port for TLS connection. Defaults to 7443." + BR +

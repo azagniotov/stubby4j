@@ -24,6 +24,7 @@ import by.stub.cli.CommandLineInterpreter;
 import by.stub.exception.Stubby4JException;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
+import by.stub.utils.ConsoleUtils;
 import org.apache.commons.cli.ParseException;
 
 import java.util.Map;
@@ -101,6 +102,7 @@ public final class Main {
          final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
          ANSITerminal.muteConsole(commandLineInterpreter.isMute());
+         ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
          final StubbyManager stubbyManager = new StubbyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
          stubbyManager.startJetty();
