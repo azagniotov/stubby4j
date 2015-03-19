@@ -109,15 +109,12 @@ public final class JettyFactory {
       final ContextHandlerCollection handlers = new ContextHandlerCollection();
       handlers.setHandlers(new Handler[]
             {
-               constructHandler(STUBS_CONNECTOR_NAME, "/default404.html", gzipHandler(staticResourceHandler("ui/html/default404.html"))),
-               constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(staticResourceHandler("ui/images/favicon.ico"))),
+               constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
                constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/default404.html"))),
-               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/favicon.ico"))),
+               constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
                constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-               constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", staticResourceHandler("ui/images/")),
                constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
                constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
@@ -128,8 +125,8 @@ public final class JettyFactory {
                constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
-               constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager))),
-               new FaviconHandler()
+               constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+               constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
             }
       );
 
