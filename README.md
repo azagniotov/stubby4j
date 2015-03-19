@@ -139,12 +139,12 @@ Run `gradle clean check` command to:
 stubby4j is a fat JAR, which contains the following dependencies:
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.2.9.v20150224.jar
-* jetty-servlets-9.2.9.v20150224.jar
-* jetty-http-9.2.9.v20150224.jar
-* jetty-io-9.2.9.v20150224.jar
-* jetty-continuation-9.2.9.v20150224.jar
-* jetty-util-9.2.9.v20150224.jar
+* jetty-server-9.2.10.v20150310.jar
+* jetty-servlets-9.2.10.v20150310.jar
+* jetty-http-9.2.10.v20150310.jar
+* jetty-io-9.2.10.v20150310.jar
+* jetty-continuation-9.2.10.v20150310.jar
+* jetty-util-9.2.10.v20150310.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.15.jar
 
@@ -1139,6 +1139,7 @@ for each <endpoint> of stored endpoints {
 
 ##### 3.0.1-SNAPSHOT
 * Added `--debug` option that dumps incoming raw HTTP request to the console.
+* Upgraded Jetty to v9.2.10.v20150310
 
 ##### 3.0.0
 * Built using Java v1.7.0_76
