@@ -26,6 +26,7 @@ import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminPortalHandler;
 import by.stub.handlers.AjaxEndpointStatsHandler;
 import by.stub.handlers.AjaxResourceContentHandler;
+import by.stub.handlers.FaviconHandler;
 import by.stub.handlers.StatusPageHandler;
 import by.stub.handlers.StubDataRefreshActionHandler;
 import by.stub.handlers.StubsPortalHandler;
@@ -43,7 +44,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import org.eclipse.jetty.util.resource.Resource;
@@ -102,20 +103,21 @@ public final class JettyFactory {
       return server;
    }
 
-   private HandlerList constructHandlers() {
+   private ContextHandlerCollection constructHandlers() {
 
       final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
-      final HandlerList handlers = new HandlerList();
+      final ContextHandlerCollection handlers = new ContextHandlerCollection();
       handlers.setHandlers(new Handler[]
             {
-               constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
-               constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
+               constructHandler(STUBS_CONNECTOR_NAME, "/default404.html", gzipHandler(staticResourceHandler("ui/html/default404.html"))),
+               constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(staticResourceHandler("ui/images/favicon.ico"))),
                constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
-               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
+               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/default404.html"))),
+               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/favicon.ico"))),
                constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
+               constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", staticResourceHandler("ui/images/")),
                constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
                constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
@@ -126,18 +128,18 @@ public final class JettyFactory {
                constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
                constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
-               constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
+               constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager))),
+               new FaviconHandler()
             }
       );
 
       return handlers;
    }
 
-   private ResourceHandler staticResourceHandler(final String classPathResource, final String... staticResources) {
+   private ResourceHandler staticResourceHandler(final String classPathResource) {
 
       final ResourceHandler resourceHandler = new ResourceHandler();
       resourceHandler.setDirectoriesListed(true);
-      resourceHandler.setWelcomeFiles(staticResources);
       resourceHandler.setBaseResource(Resource.newClassPathResource(classPathResource));
 
       return resourceHandler;
@@ -147,7 +149,7 @@ public final class JettyFactory {
 
       final GzipHandler gzipHandler = new GzipHandler();
       gzipHandler.setMimeTypes(
-         "text/html," +
+            "text/html," +
             "text/plain," +
             "text/xml," +
             "application/xhtml+xml," +
@@ -156,6 +158,7 @@ public final class JettyFactory {
             "application/javascript," +
             "application/x-javascript," +
             "image/svg+xml," +
+            "image/x-icon," +
             "image/gif," +
             "image/jpg," +
             "image/jpeg," +

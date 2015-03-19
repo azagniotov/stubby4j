@@ -75,7 +75,10 @@ public final class StatusPageHandler extends AbstractHandler {
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "status", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
       response.setContentType("text/html;charset=UTF-8");
       response.setStatus(HttpStatus.OK_200);

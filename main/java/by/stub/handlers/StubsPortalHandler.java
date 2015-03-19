@@ -49,7 +49,10 @@ public class StubsPortalHandler extends AbstractHandler {
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
