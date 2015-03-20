@@ -1138,8 +1138,9 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.0.1-SNAPSHOT
-* Added `--debug` option that dumps incoming raw HTTP request to the console.
+* Added `--debug` option that dumps incoming raw HTTP request to the console
 * Upgraded Jetty to v9.2.10.v20150310
+* Added a new API to start stubby programmatically without specifying a YAML file `StubbyClient.startJettyYamless(...)`
 
 ##### 3.0.0
 * Built using Java v1.7.0_76

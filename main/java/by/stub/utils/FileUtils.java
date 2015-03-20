@@ -54,12 +54,15 @@ public final class FileUtils {
       )
    );
 
+   //TODO Fallback to using System.lineSeparator()
    private static final String LINE_SEPARATOR_UNIX = "\n";
    private static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
    private static final String LINE_SEPARATOR_WINDOWS = "\r\n";
    private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
    public static final String BR;
 
+   // Instead of hard-coding '\n',
+   // makes the new line character be specific to the platform (Mac, *Nix or Win) where stubby4j is running
    static {
       final int initialSize = 4;
       final StringBuilderWriter stringBuilderWriter = new StringBuilderWriter(initialSize);

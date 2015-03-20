@@ -26,10 +26,12 @@ import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
 import by.stub.utils.ObjectUtils;
+import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpScheme;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,10 +119,28 @@ public final class StubbyClient {
     * @throws Exception
     */
    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
-      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort), "-d", yamlConfigurationFilename};
+      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
       commandLineInterpreter.parseCommandLine(args);
       stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, commandLineInterpreter.getCommandlineParams());
+      stubbyManager.startJetty();
+   }
+
+   /**
+    * Starts stubby using given Stubs, TlsStubs, Admin portals ports and host address without YAML configuration file.
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @throws Exception
+    */
+   public void startJettyYamless(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind) throws Exception {
+      final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(args);
+      final URL url = StubbyClient.class.getResource("/yaml/empty-stub.yaml");
+      stubbyManager = new StubbyManagerFactory().construct(url.getFile(), commandLineInterpreter.getCommandlineParams());
       stubbyManager.startJetty();
    }
 
