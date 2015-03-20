@@ -71,6 +71,42 @@ public class CommandLineIntepreterTest {
    }
 
    @Test
+   public void testIsAdminPortalDisabledWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--disable_admin_portal"});
+      final boolean isAdminDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_ADMIN);
+
+      assertThat(isAdminDisabled).isTrue();
+   }
+
+   @Test
+   public void testIsAdminPortalDisabledWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-da"});
+      final boolean isAdminDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_ADMIN);
+
+      assertThat(isAdminDisabled).isTrue();
+   }
+
+   @Test
+   public void testIsSslDisabledWhenLongOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"--disable_ssl"});
+      final boolean isSslDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL);
+
+      assertThat(isSslDisabled).isTrue();
+   }
+
+   @Test
+   public void testIsSslDisabledWhenShortOptionGiven() throws Exception {
+      final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+      commandLineInterpreter.parseCommandLine(new String[]{"-ds"});
+      final boolean isSslDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL);
+
+      assertThat(isSslDisabled).isTrue();
+   }
+
+   @Test
    public void testIsMuteWhenShortOptionGiven() throws Exception {
       final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
       commandLineInterpreter.parseCommandLine(new String[]{"-m"});

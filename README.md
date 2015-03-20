@@ -1152,6 +1152,7 @@ for each <endpoint> of stored endpoints {
 * Added `--debug` option that dumps incoming raw HTTP request to the console
 * Upgraded Jetty to v9.2.10.v20150310
 * Added a new API to start stubby programmatically without specifying a YAML file `StubbyClient.startJettyYamless(...)`
+* Added a new `FaviconHandler` to handle requests for `favicon.ico` under the context root
 
 ##### 3.0.0
 * Built using Java v1.7.0_76
