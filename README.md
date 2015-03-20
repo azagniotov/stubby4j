@@ -185,29 +185,34 @@ libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
 ### Command-line switches
 ```
 usage:
-       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
-       [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
- -a,--admin <arg>      Port for admin portal. Defaults to 8889.
- -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
-                       expected.
- -h,--help             This help text.
- -k,--keystore <arg>   Keystore file for custom TLS. By default TLS is
-                       enabled using internal keystore.
- -l,--location <arg>   Hostname at which to bind stubby.
- -m,--mute             Prevent stubby from printing to the console.
- -o,--debug            Dumps incoming raw HTTP request to the console.
- -p,--password <arg>   Password for the provided keystore file.
- -s,--stubs <arg>      Port for stub portal. Defaults to 8882.
- -t,--tls <arg>        Port for TLS connection. Defaults to 7443.
- -v,--version          Prints out to console stubby version.
- -w,--watch            Periodically scans for changes in last modification
-                       date of the main YAML and referenced external files
-                       (if any). The flag can accept an optional arg value
-                       which is the watch scan time in milliseconds. If
-                       milliseconds is not provided, the watch scans every
-                       100ms. If last modification date changed since the
-                       last scan period, the stub configuration is
-                       reloaded
+       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds]
+       [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t
+       <arg>] [-v] [-w]
+ -a,--admin <arg>             Port for admin portal. Defaults to 8889.
+ -d,--data <arg>              Data file to pre-load endpoints. Valid YAML
+                              1.1 expected.
+ -da,--disable_admin_portal   Does not start Admin portal
+ -ds,--disable_ssl            Does not enable SSL connections
+ -h,--help                    This help text.
+ -k,--keystore <arg>          Keystore file for custom TLS. By default TLS
+                              is enabled using internal keystore.
+ -l,--location <arg>          Hostname at which to bind stubby.
+ -m,--mute                    Mute console output.
+ -o,--debug                   Dumps raw HTTP request to the console (if
+                              console is not muted!).
+ -p,--password <arg>          Password for the provided keystore file.
+ -s,--stubs <arg>             Port for stub portal. Defaults to 8882.
+ -t,--tls <arg>               Port for TLS connection. Defaults to 7443.
+ -v,--version                 Prints out to console stubby version.
+ -w,--watch                   Periodically scans for changes in last
+                              modification date of the main YAML and
+                              referenced external files (if any). The flag
+                              can accept an optional arg value which is
+                              the watch scan time in milliseconds. If
+                              milliseconds is not provided, the watch
+                              scans every 100ms. If last modification date
+                              changed since the last scan period, the stub
+                              configuration is reloaded
 ```
 
 ### Endpoint configuration HOWTO
