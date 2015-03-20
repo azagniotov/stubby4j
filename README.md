@@ -968,6 +968,17 @@ for each <endpoint> of stored endpoints {
    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception
 
    /**
+    * Starts stubby using given Stubs, TlsStubs, Admin portals ports and host address without YAML configuration file.
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @throws Exception
+    */
+   public void startJettyYamless(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind) throws Exception
+
+   /**
     * Stops Jetty if it is up
     *
     * @throws Exception
