@@ -186,10 +186,13 @@ public final class JettyFactory {
 
       final List<Connector> connectors = new ArrayList<>();
 
-      connectors.add(buildAdminConnector(server));
+      if (!commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_ADMIN)) {
+         connectors.add(buildAdminConnector(server));
+      }
       connectors.add(buildStubsConnector(server));
-      connectors.add(buildStubsSslConnector(server));
-
+      if (!commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL)) {
+         connectors.add(buildStubsSslConnector(server));
+      }
       return connectors.toArray(new Connector[connectors.size()]);
    }
 

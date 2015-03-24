@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v3.0.0
+## User manual for stubby4j v3.0.1
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -151,35 +151,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.0.0` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.0.1` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="3.0.0" />
+<dependency org="by.stub" name="stubby4j" rev="3.0.1" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:3.0.0'
+'by.stub:stubby4j:jar:3.0.1'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:3.0.0'
+compile 'by.stub:stubby4j:3.0.1'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
+libraryDependencies += "by.stub" % "stubby4j" % "3.0.1"
 ```
 
 ### Command-line switches
@@ -1153,9 +1153,13 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 3.0.1-SNAPSHOT
-* Added `--debug` option that dumps incoming raw HTTP request to the console
+##### 3.0.2-SNAPSHOT
+
+##### 3.0.1
 * Upgraded Jetty to v9.2.10.v20150310
+* Added `--debug` option that dumps incoming raw HTTP request to the console
+* Added `--disable_admin_portal` option that does not configure Admin portal for stubby
+* Added `--disable_ssl` option that does not enable SSL for stubby
 * Added a new API to start stubby programmatically without specifying a YAML file `StubbyClient.startJettyYamless(...)`
 * Added a new `FaviconHandler` to handle requests for `favicon.ico` under the context root
 
