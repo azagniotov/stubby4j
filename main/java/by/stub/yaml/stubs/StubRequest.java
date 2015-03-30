@@ -42,7 +42,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class StubRequest {
 
-   public static final String AUTH_HEADER = "authorization";
+   public static final String HTTP_HEADER_AUTHORIZATION = "authorization";
 
    private final String url;
    private final String post;
@@ -66,7 +66,7 @@ public class StubRequest {
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
       this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
-      this.regexGroups = new TreeMap<String, String>();
+      this.regexGroups = new TreeMap<>();
    }
 
    public final ArrayList<String> getMethod() {
@@ -156,6 +156,29 @@ public class StubRequest {
       return StringUtils.isSet(getPostBody());
    }
 
+   public boolean isSecured() {
+      return getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString()) ||
+         getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString());
+   }
+
+   @VisibleForTesting StubHeaderTypes getStubbedAuthorizationTypeHeader() {
+      if (getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString())) {
+         return StubHeaderTypes.AUTHORIZATION_BASIC;
+      } else if (getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
+         return StubHeaderTypes.AUTHORIZATION_BEARER;
+      } else {
+         return StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED;
+      }
+   }
+
+   String getStubbedAuthorizationHeaderValue(final StubHeaderTypes stubbedAuthorizationHeaderType) {
+      return getHeaders().get(stubbedAuthorizationHeaderType.asString());
+   }
+
+   public String getRawAuthorizationHttpHeader() {
+      return getHeaders().get(HTTP_HEADER_AUTHORIZATION);
+   }
+
    public static StubRequest newStubRequest() {
       return new StubRequest(null, null, null, null, null, null);
    }
@@ -212,8 +235,9 @@ public class StubRequest {
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
-      final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
+      final Map<String, String> dataStoreHeadersCopy = new HashMap<>(dataStoreHeaders);
+      dataStoreHeadersCopy.remove(StubHeaderTypes.AUTHORIZATION_BASIC.asString()); //Auth header dealt with in StubbedDataManager after request was matched
+      dataStoreHeadersCopy.remove(StubHeaderTypes.AUTHORIZATION_BEARER.asString()); //Auth header dealt with in StubbedDataManager after request was matched
 
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
@@ -332,5 +356,4 @@ public class StubRequest {
 
       return sb.toString();
    }
-
 }

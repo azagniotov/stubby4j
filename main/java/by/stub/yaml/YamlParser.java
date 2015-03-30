@@ -24,6 +24,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -155,7 +156,7 @@ public class YamlParser {
             massagedFieldValue = rawFieldName;
 
          } else if (rawFieldName instanceof Map) {
-            massagedFieldValue = encodeAuthorizationHeader(rawFieldName);
+            massagedFieldValue = configureAuthorizationHeader(rawFieldName);
 
          } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
 
@@ -230,17 +231,27 @@ public class YamlParser {
       return SNAKE_YAML.dumpAs(yamlNode, null, DumperOptions.FlowStyle.BLOCK);
    }
 
-   private Map<String, String> encodeAuthorizationHeader(final Object value) {
+   private Map<String, String> configureAuthorizationHeader(final Object value) {
 
       final Map<String, String> pairValue = (Map<String, String>) value;
-      if (!pairValue.containsKey(StubRequest.AUTH_HEADER)) {
+      if (!pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString()) &&
+         !pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
          return pairValue;
       }
-      final String rawHeader = pairValue.get(StubRequest.AUTH_HEADER);
-      final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
-      pairValue.put(StubRequest.AUTH_HEADER, encodedAuthorizationHeader);
+
+      if (pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString())) {
+         final String rawHeader = pairValue.get(StubHeaderTypes.AUTHORIZATION_BASIC.asString());
+         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
+         pairValue.put(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), encodedAuthorizationHeader);
+
+      } else if (pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
+         final String rawHeader = pairValue.get(StubHeaderTypes.AUTHORIZATION_BEARER.asString());
+         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+         pairValue.put(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), String.format("%s %s", "Bearer", authorizationHeader));
+      }
 
       return pairValue;
    }
 }
+

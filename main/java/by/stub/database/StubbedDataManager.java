@@ -58,7 +58,7 @@ public class StubbedDataManager {
       this.dataYaml = dataYaml;
       this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
       this.stubbyHttpTransport = new StubbyHttpTransport();
-      this.resourceStats = new ConcurrentHashMap<String, AtomicLong>();
+      this.resourceStats = new ConcurrentHashMap<>();
    }
 
    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
@@ -81,7 +81,7 @@ public class StubbedDataManager {
       resourceStats.get(resourceId).incrementAndGet();
 
       final StubResponse stubResponse = matchedLifecycle.getResponse(true);
-      if (matchedLifecycle.isRestricted() && matchedLifecycle.hasNotAuthorized(assertingLifecycle)) {
+      if (matchedLifecycle.isAuthorizationRequired() && matchedLifecycle.isAssertingRequestUnauthorized(assertingLifecycle)) {
          return new UnauthorizedStubResponse();
       }
 
@@ -149,12 +149,12 @@ public class StubbedDataManager {
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public List<StubHttpLifecycle> getStubHttpLifecycles() {
-      return new LinkedList<StubHttpLifecycle>(stubHttpLifecycles);
+      return new LinkedList<>(stubHttpLifecycles);
    }
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public ConcurrentHashMap<String, AtomicLong> getResourceStats() {
-      return new ConcurrentHashMap<String, AtomicLong>(resourceStats);
+      return new ConcurrentHashMap<>(resourceStats);
    }
 
    public String getResourceStatsAsCsv() {
@@ -171,8 +171,8 @@ public class StubbedDataManager {
    }
 
    public synchronized Map<File, Long> getExternalFiles() {
-      final Set<String> escrow = new HashSet<String>();
-      final Map<File, Long> externalFiles = new HashMap<File, Long>();
+      final Set<String> escrow = new HashSet<>();
+      final Map<File, Long> externalFiles = new HashMap<>();
       for (StubHttpLifecycle cycle : stubHttpLifecycles) {
          storeExternalFileInCache(escrow, externalFiles, cycle.getRequest().getRawFile());
          storeExternalFileInCache(escrow, externalFiles, cycle.getResponse(false).getRawFile());

@@ -2,7 +2,9 @@ package by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
+import by.stub.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
 import by.stub.yaml.stubs.NotFoundStubResponse;
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
@@ -215,41 +217,59 @@ public class StubsPortalHandlerTest {
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
       when(mockStubbedDataManager.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
-      when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getBody()).thenReturn(someResultsMessage);
 
       final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubbedDataManager);
       stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "You are not authorized to view this page without supplied 'Authorization' HTTP header");
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 
-
    @Test
-   public void verifyBehaviourDuringHandleGetRequestWithEmptyAuthorizationHeaderSet() throws Exception {
+   public void verifyBehaviourDuringHandleGetRequestWithEmptyBasicAuthorizationHeaderSet() throws Exception {
 
       final String requestPathInfo = "/path/1";
 
-      // We already found that it was unauthorized
-      final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
-
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getHeader(StubRequest.AUTH_HEADER)).thenReturn("");
+      when(mockHttpServletRequest.getHeader(StubHeaderTypes.AUTHORIZATION_BASIC.asString())).thenReturn("");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-      when(mockStubbedDataManager.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
 
+      final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
+      when(mockStubbedDataManager.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
       when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
-      when(mockStubResponse.getStatus()).thenReturn("200");
 
       final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubbedDataManager);
       stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
       verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, "You are not authorized to view this page without supplied 'Authorization' HTTP header");
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
+      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+   }
+
+   @Test
+   public void verifyBehaviourDuringHandleGetRequestWithEmptyBearerAuthorizationHeaderSet() throws Exception {
+
+      final String requestPathInfo = "/path/1";
+
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+      when(mockHttpServletRequest.getHeader(StubHeaderTypes.AUTHORIZATION_BEARER.asString())).thenReturn("");
+      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+
+      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+      final UnauthorizedStubResponse mockStubResponse = Mockito.mock(UnauthorizedStubResponse.class);
+      when(mockStubbedDataManager.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
+      when(mockStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
+
+      final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubbedDataManager);
+      stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
+      verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
       verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
    }
 

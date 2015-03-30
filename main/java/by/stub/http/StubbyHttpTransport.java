@@ -5,6 +5,7 @@ import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
@@ -101,15 +102,7 @@ public class StubbyHttpTransport {
    }
 
    private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
-
-      final String encodedCredentials = headers.remove(StubRequest.AUTH_HEADER);
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
-      if (StringUtils.isSet(encodedCredentials) && !encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
-         connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
-      } else if (StringUtils.isSet(encodedCredentials) && encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
-         connection.setRequestProperty("Authorization", encodedCredentials);
-      }
-
       final String requestMethod = connection.getRequestMethod();
       if (HttpMethod.POST.asString().equals(requestMethod) || HttpMethod.PUT.asString().equals(requestMethod)) {
          connection.setDoOutput(true);

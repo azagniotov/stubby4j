@@ -2,7 +2,7 @@ package by.stub.client;
 
 import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminPortalHandler;
-import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
+import by.stub.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
 import by.stub.server.JettyFactory;
 import by.stub.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethod;
@@ -27,6 +27,8 @@ public class StubbyClientTest {
    private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
 
    private static final int SSL_PORT = 4443;
+   private static final String ENCODED_STRING = "Ym9iOndyb25nLXNlY3JldA==";
+   private static final String BOB_SECRET = "bob:secret";
 
    @BeforeClass
    public static void beforeClass() throws Exception {
@@ -101,56 +103,92 @@ public class StubbyClientTest {
 
    @Test
    public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
-
       final String host = "localhost";
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, encodedCredentials);
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat("{\"id\" : \"8\", \"description\" : \"authorized\"}").isEqualTo(stubbyResponse.getContent());
+      assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doGet_ShouldMakeSuccessfulGetWithBearerAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
    }
 
    @Test
    public void doGetOverSsl_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
-
       final String host = "localhost";
       final String uri = "/item/auth";
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, encodedCredentials);
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat("{\"id\" : \"8\", \"description\" : \"authorized\"}").isEqualTo(stubbyResponse.getContent());
+      assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doGetOverSsl_ShouldMakeSuccessfulGetWithBearerAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer";
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
    }
 
    @Test
    public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
       final String uri = "/item/auth";
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, encodedCredentials);
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-      assertThat("{\"id\" : \"8\", \"description\" : \"authorized\"}").isEqualTo(stubbyResponse.getContent());
+      assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
    }
 
+   @Test
+   public void doGetUsingDefaultStubbyPortAndHost_ShouldMakeSuccessfulGetWithBearerAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String uri = "/item/auth/bearer";
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+   }
 
    @Test
    public void doGet_ShouldMakeSuccessfulGetWithBasicAuth_WhenWrongAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:wrong-secret".getBytes(StringUtils.charsetUTF8())));
-
       final String host = "localhost";
       final String uri = "/item/auth";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, encodedCredentials);
-
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64("bob:wrong-secret")));
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-      assertThat("Unauthorized with supplied encoded credentials: 'Ym9iOndyb25nLXNlY3JldA==' which decodes to 'bob:wrong-secret'").isEqualTo(stubbyResponse.getContent());
+      assertThat(String.format(UnauthorizedResponseHandlingStrategy.WRONG_AUTHORIZATION_HEADER_TEMPLATE, "Basic Ym9iOndyb25nLXNlY3JldA==")).isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doGet_ShouldMakeSuccessfulGetWithBearerAuth_WhenWrongAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, "blahblahblah=="));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+      assertThat(String.format(UnauthorizedResponseHandlingStrategy.WRONG_AUTHORIZATION_HEADER_TEMPLATE, "Bearer blahblahblah==")).isEqualTo(stubbyResponse.getContent());
    }
 
    @Test
@@ -162,9 +200,20 @@ public class StubbyClientTest {
       final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-      assertThat("You are not authorized to view this page without supplied 'Authorization' HTTP header").isEqualTo(stubbyResponse.getContent());
+      assertThat(UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER).isEqualTo(stubbyResponse.getContent());
    }
 
+   @Test
+   public void doGet_ShouldMakeSuccessfulGetWithBearerAuth_WhenNoAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+      assertThat(UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER).isEqualTo(stubbyResponse.getContent());
+   }
 
    @Test
    public void doGet_ShouldMakeSuccessfulGet_WhenGivenEmptyUri() throws Exception {
@@ -193,14 +242,12 @@ public class StubbyClientTest {
 
    @Test
    public void doPost_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
-
       final String host = "localhost";
       final String uri = "/item/submit";
       final int port = JettyFactory.DEFAULT_STUBS_PORT;
       final String post = "{\"action\" : \"submit\"}";
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, encodedCredentials, post);
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)), post);
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("OK").isEqualTo(stubbyResponse.getContent());
@@ -208,12 +255,10 @@ public class StubbyClientTest {
 
    @Test
    public void doPostUsingDefaults_ShouldMakeSuccessfulPostWithBasicAuth_WhenAuthCredentialsIsProvided() throws Exception {
-      final String encodedCredentials = new String(Base64.encodeBase64("bob:secret".getBytes(StringUtils.charsetUTF8())));
-
       final String uri = "/item/submit";
       final String post = "{\"action\" : \"submit\"}";
 
-      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostUsingDefaults(uri, post, encodedCredentials);
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostUsingDefaults(uri, post, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
       assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("OK").isEqualTo(stubbyResponse.getContent());

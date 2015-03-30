@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v3.0.1
+## User manual for stubby4j v3.0.2
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -92,7 +92,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Verify that your code correctly handles HTTP error codes
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
 * Support for any of the available HTTP methods
-* Simulate support for Basic Authorization
+* Simulate support for two types of HTTP Authorizations: Basic & Bearer Token
 * Support for HTTP 30x redirects
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
@@ -151,35 +151,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.0.1` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.0.2` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="3.0.1" />
+<dependency org="by.stub" name="stubby4j" rev="3.0.2" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:3.0.1'
+'by.stub:stubby4j:jar:3.0.2'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:3.0.1'
+compile 'by.stub:stubby4j:3.0.2'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "3.0.1"
+libraryDependencies += "by.stub" % "stubby4j" % "3.0.2"
 ```
 
 ### Command-line switches
@@ -741,7 +741,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/something$
       method: POST
       headers:
-         authorization: "bob:password"
+         authorization-basic: "bob:password"  # for basic authorization DO NOT base64 encode when stubbing
          x-custom-header: "^this/is/\d/test"
       post: this is some post data in textual format
    response:
@@ -749,7 +749,19 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
          Content-Type: application/json
       latency: 1000
       status: 200
-      body: You're request was successfully processed!
+      body: Your request was successfully processed!
+
+-  request:
+      url: ^/path/to/bearer$
+      method: POST
+      headers:
+         authorization-bearer: "ForBearer_This_Must_BeEncoded_StringValue"
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Bearer was successfully authorized!
 
 -  request:
       url: ^/path/to/anotherThing
@@ -793,7 +805,7 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
       "url": "^/path/to/something$",
       "post": "this is some post data in textual format",
       "headers": {
-         "authorization": "bob:password"
+         "authorization-basic": "bob:password"  // for basic authorization DO NOT base64 encode when stubbing
       },
       "method": "POST"
     },
@@ -803,7 +815,7 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
         "Content-Type": "application/json"
       },
       "latency": 1000,
-      "body": "You're request was successfully processed!"
+      "body": "Your request was successfully processed!"
     }
   },
   {
@@ -1027,28 +1039,28 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param port               TLS port
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param port          TLS port
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception
 
    /**
     * Makes GET HTTP request to stubby
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param stubsPort          port that stubby4j Stubs is running on
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception
 
    /**
     * Makes GET HTTP request to stubby running on default host and port - localhost:8882
@@ -1064,12 +1076,12 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param uri                URI for the HTTP request
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param uri           URI for the HTTP request
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception
+   public StubbyResponse doGetUsingDefaults(final String uri, final Authorization authorization) throws Exception
 
    /**
     * Makes POST HTTP request to stubby
@@ -1088,15 +1100,15 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param stubsPort          port that stubby4j Stubs is running on
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @param post               data to POST to the server
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param post          data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String post) throws Exception
 
    /**
     * Makes POST HTTP request to stubby running on default host and port - localhost:8882
@@ -1113,13 +1125,13 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param uri                URI for the HTTP request
-    * @param post               data to POST to the server
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param uri           URI for the HTTP request
+    * @param post          data to POST to the server
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final Authorization authorization) throws Exception
 
    /**
     * Updated stubbed data with new data. This method creates a POST request to Admin portal
@@ -1128,7 +1140,6 @@ for each <endpoint> of stored endpoints {
     * @param stubsData data to post
     */
    public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception
-
 
    /**
     * Makes HTTP request to stubby.
@@ -1148,12 +1159,39 @@ for each <endpoint> of stored endpoints {
                                      final String uri,
                                      final int port,
                                      final String post) throws Exception
+
+   /**
+    * Makes HTTP request to stubby.
+    *
+    * @param scheme HTTP protocol scheme, HTTP or HTTPS
+    * @param method HTTP method, currently supported: GET, HEAD, PUT, POST
+    * @param host   host that stubby4j is running on
+    * @param uri    URI for the HTTP request
+    * @param port   port that stubby4j Stubs is running on
+    * @param post   data to POST to the server
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse makeRequest(final String scheme,
+                                     final String method,
+                                     final String host,
+                                     final String uri,
+                                     final int port,
+                                     final String post,
+                                     final Authorization authorization) throws Exception
 ```
 
 
 ### Change log
 
-##### 3.0.2-SNAPSHOT
+##### 3.0.3-SNAPSHOT
+
+##### 3.0.2
+* Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`
+* Renamed existing `header` property `authorization` to `authorization-basic`
+* Some changes around the programmatic APIs in `StubbyClient` class due to the above changes
+* Respective changes in the current README due to the above changes
 
 ##### 3.0.1
 * Upgraded Jetty to v9.2.10.v20150310

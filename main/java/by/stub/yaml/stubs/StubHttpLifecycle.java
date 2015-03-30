@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 
@@ -94,19 +95,29 @@ public class StubHttpLifecycle {
       return (LinkedList<StubResponse>) response;
    }
 
-   public boolean isRestricted() {
-      return StringUtils.isSet(getAuthorizationHeader());
+   public boolean isAuthorizationRequired() {
+      return request.isSecured();
    }
 
-   public boolean hasNotAuthorized(final StubHttpLifecycle assertingLifecycle) {
-      final String stubbedAuthorization = getAuthorizationHeader();
-      final String assertingAuthorization = assertingLifecycle.getAuthorizationHeader();
-
-      return !stubbedAuthorization.equals(assertingAuthorization);
+   @VisibleForTesting
+   String getRawAuthorizationHttpHeader() {
+      return request.getRawAuthorizationHttpHeader();
    }
 
-   private String getAuthorizationHeader() {
-      return request.getHeaders().get(StubRequest.AUTH_HEADER);
+   @VisibleForTesting
+   String getStubbedAuthorizationHeaderValue(final StubHeaderTypes stubbedAuthorizationHeaderType) {
+      return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
+   }
+
+   public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
+      final StubHeaderTypes stubbedAuthorizationHeaderType = request.getStubbedAuthorizationTypeHeader();
+      if (stubbedAuthorizationHeaderType == StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED) {
+         return true;
+      }
+      final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
+      final String assertingAuthorizationHeaderValue = assertingLifecycle.getRawAuthorizationHttpHeader();
+
+      return !stubbedAuthorizationHeaderValue.equals(assertingAuthorizationHeaderValue);
    }
 
    public String getResourceId() {

@@ -289,7 +289,7 @@
 
 -  request:
       headers:
-         authorization: bob:secret
+         authorization-basic: bob:secret
       method: GET
       url: /item/auth
 
@@ -298,7 +298,21 @@
          content-type: application/json
       status: 200
       body: >
-         {"id" : "8", "description" : "authorized"}
+         {"id" : "8", "description" : "authorized using basic"}
+
+
+-  request:
+      headers:
+         authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
+      method: GET
+      url: /item/auth/bearer
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"id" : "12", "description" : "authorized using bearer"}
 
 
 -  request:
@@ -329,7 +343,7 @@
 
 -  request:
       headers:
-         authorization: bob:secret
+         authorization-basic: bob:secret
       method: POST
       url: /item/submit
       post: >

@@ -1,6 +1,8 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
+import by.stub.yaml.stubs.StubHeaderTypes;
+import by.stub.yaml.stubs.StubRequest;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -216,7 +218,8 @@ public class YamlBuilderTest {
             "         content-type: application/json" + FileUtils.BR +
             "         content-language: US-en" + FileUtils.BR +
             "         content-length: 30" + FileUtils.BR +
-            "         authorization: bob:secret" + FileUtils.BR +
+            "         " + StubHeaderTypes.AUTHORIZATION_BASIC.asString() + ": bob:secret" + FileUtils.BR +
+            "         " + StubHeaderTypes.AUTHORIZATION_BEARER.asString() + ": jkRUTBUjghbjtUGT==" + FileUtils.BR +
             "      method: [GET]" + FileUtils.BR +
             "      url: /invoice" + FileUtils.BR +
             "" + FileUtils.BR +
@@ -234,7 +237,8 @@ public class YamlBuilderTest {
          withHeaderContentType("application/json").
          withHeaderContentLanguage("US-en").
          withHeaderContentLength("30").
-         withHeaderAuthorization("bob:secret").
+         withHeaderAuthorizationBasic("bob:secret").
+         withHeaderAuthorizationBearer("jkRUTBUjghbjtUGT==").
          withMethodGet().
          withUrl("/invoice").
          newStubbedResponse().

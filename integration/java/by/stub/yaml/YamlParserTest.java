@@ -3,6 +3,7 @@ package by.stub.yaml;
 import by.stub.builder.yaml.YamlBuilder;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -434,14 +435,14 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeader() throws Exception {
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeaderBasic() throws Exception {
 
       final String authorization = "bob:secret";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaderAuthorization(authorization)
+         .withHeaderAuthorizationBasic(authorization)
          .newStubbedResponse()
          .withStatus("301").build();
 
@@ -451,20 +452,18 @@ public class YamlParserTest {
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
-      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
+      final MapEntry headerOneEntry = MapEntry.entry(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeader() throws Exception {
-
-      final String authorization = "";
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeaderBasic() throws Exception {
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaderAuthorization("")
+         .withHeaderAuthorizationBasic("")
          .newStubbedResponse()
          .withStatus("301").build();
 
@@ -473,12 +472,55 @@ public class YamlParserTest {
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
-      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(""));
+      final MapEntry headerOneEntry = MapEntry.entry(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
 
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeaderBearer() throws Exception {
+
+      final String authorization = "Ym9iOnNlY3JldA==";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationBearer(authorization)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String authorizationHeader = String.format("%s %s", "Bearer", authorization);
+      final MapEntry headerOneEntry = MapEntry.entry(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), authorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeaderBearer() throws Exception {
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationBearer("")
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String authorizationHeader = String.format("%s %s", "Bearer", "");
+      final MapEntry headerOneEntry = MapEntry.entry(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), authorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
 
    @Test
    public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithMultipleHeaders() throws Exception {

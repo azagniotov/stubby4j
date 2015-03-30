@@ -582,6 +582,63 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
+   @Test
+   public void isSecured_WhenAuthorizationBasicStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isSecured_WhenAuthorizationBearerStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), "123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isNotSecured_WhenNoAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet().build();
+
+      assertThat(stubRequest.isSecured()).isFalse();
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeUnsupported_WhenNoAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet().build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED);
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeBasic_WhenBasicAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_BASIC);
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeBearer_WhenBearerAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), "123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_BEARER);
+   }
 
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenAllHttpHeadersMatch() throws Exception {

@@ -39,7 +39,15 @@ import java.util.Map;
 public final class ReflectionUtils {
 
    private static List<String> skipableProperties =
-      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "AUTH_HEADER", "REGEX_START", "REGEX_END", "regexGroups", "responseSequenceCounter", "fileBytes"));
+      Collections.unmodifiableList(Arrays.asList(
+         "STUBBY_RESOURCE_ID_HEADER",
+         "STUB_AUTHORIZATION_HEADER_BASIC",
+         "STUB_AUTHORIZATION_HEADER_BEARER",
+         "REGEX_START",
+         "REGEX_END",
+         "regexGroups",
+         "responseSequenceCounter",
+         "fileBytes"));
 
    private ReflectionUtils() {
 

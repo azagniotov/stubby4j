@@ -1,6 +1,8 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
+import by.stub.yaml.stubs.StubHeaderTypes;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.util.HashSet;
@@ -169,12 +171,21 @@ public final class YamlBuilder {
          return this;
       }
 
-
-      public Request withHeaderAuthorization(final String value) {
+      public Request withHeaderAuthorizationBasic(final String value) {
 
          checkHeadersNodeRequired();
 
-         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "authorization");
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubHeaderTypes.AUTHORIZATION_BASIC.asString());
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderAuthorizationBearer(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubHeaderTypes.AUTHORIZATION_BEARER.asString());
          REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;

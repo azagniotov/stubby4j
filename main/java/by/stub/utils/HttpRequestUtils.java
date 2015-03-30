@@ -116,6 +116,9 @@ public final class HttpRequestUtils {
     * @return A string with debug information on Request's header
     */
    public static String dump(HttpServletRequest request) {
+
+      //TODO If POST or PUT, HandlerUtils.extractPostRequestBody, MUST copy stream!!!
+
       final StringBuilder stringBuilder = new StringBuilder();
 
       stringBuilder.append(INDENT_UNIT + "PROTOCOL: ").append(request.getProtocol()).append(BR);

@@ -1,11 +1,11 @@
 package by.stub.builder.stubs;
 
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -98,8 +98,14 @@ public final class StubRequestBuilder {
       return this;
    }
 
-   public StubRequestBuilder withHeaderAuthorization(final String value) {
-      this.headers.put("authorization", value);
+   public StubRequestBuilder withHeaderAuthorizationBasic(final String value) {
+      this.headers.put(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderAuthorizationBearer(final String value) {
+      this.headers.put(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), value);
 
       return this;
    }

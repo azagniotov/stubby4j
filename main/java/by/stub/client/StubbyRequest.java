@@ -30,7 +30,7 @@ final class StubbyRequest {
    private final String uri;
    private final String host;
    private final String post;
-   private final String base64encodedCredentials;
+   private final Authorization authorization;
    private final int clientPort;
 
 
@@ -39,8 +39,8 @@ final class StubbyRequest {
                  final String uri,
                  final String host,
                  final int port,
-                 final String newBase64encodedCredentials) {
-      this(scheme, method, uri, host, port, newBase64encodedCredentials, null);
+                 final Authorization authorization) {
+      this(scheme, method, uri, host, port, authorization, null);
    }
 
    StubbyRequest(final String scheme,
@@ -48,7 +48,7 @@ final class StubbyRequest {
                  final String uri,
                  final String host,
                  final int clientPort,
-                 final String newBase64encodedCredentials,
+                 final Authorization authorization,
                  final String post) {
       this.scheme = scheme;
       this.method = method;
@@ -56,7 +56,7 @@ final class StubbyRequest {
       this.host = host;
       this.clientPort = clientPort;
       this.post = post;
-      this.base64encodedCredentials = newBase64encodedCredentials;
+      this.authorization = authorization;
    }
 
    String getMethod() {
@@ -67,8 +67,8 @@ final class StubbyRequest {
       return StringUtils.isSet(post) ? post : "";
    }
 
-   String getBase64encodedCredentials() {
-      return base64encodedCredentials;
+   Authorization getAuthorization() {
+      return authorization;
    }
 
    public String constructFullUrl() {

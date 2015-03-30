@@ -7,6 +7,7 @@ import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
+import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -253,18 +254,17 @@ public class StubbedDataManagerTest {
 
 
    @Test
-   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationHeaderSubmitted() throws Exception {
+   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationBasicHeaderSubmitted() throws Exception {
 
       final String url = "/invoice/555";
 
       final String expectedStatus = "200";
       final String expectedBody = "This is a response for 555";
-      final String expectedHeaderKey = "authorization";
       final String expectedHeaderValue = "'bob:secret'";
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(expectedHeaderKey, expectedHeaderValue)
+         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), expectedHeaderValue)
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withLiteralBody(expectedBody).build();
@@ -275,7 +275,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders(StubRequest.AUTH_HEADER, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
+            .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
 
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
@@ -287,6 +287,39 @@ public class StubbedDataManagerTest {
       assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
    }
 
+   @Test
+   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationBearerHeaderSubmitted() throws Exception {
+
+      final String url = "/invoice/555";
+
+      final String expectedStatus = "200";
+      final String expectedBody = "This is a response for 555";
+      final String expectedHeaderValue = "Ym9iOnNlY3JldA==";
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), expectedHeaderValue)
+         .newStubbedResponse()
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer Ym9iOnNlY3JldA==").build();
+
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
+   }
 
    @Test
    public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderNotSubmitted() throws Exception {
@@ -294,13 +327,12 @@ public class StubbedDataManagerTest {
       final String url = "/invoice/555";
       final String expectedStatus = "200";
       final String expectedBody = "This is a response for 555";
-      final String expectedHeaderKey = "authorization";
       final String expectedHeaderValue = "'bob:secret'";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(expectedHeaderKey, expectedHeaderValue)
+         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), expectedHeaderValue)
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withLiteralBody(expectedBody).build();
@@ -330,7 +362,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders("authorization", "'bob:secret'")
+         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "'bob:secret'")
          .newStubbedResponse()
          .withStatus("200")
          .withLiteralBody("This is a response for 555").build();
@@ -341,7 +373,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders(StubRequest.AUTH_HEADER, "Basic BadCredentials").build();
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "Basic BadCredentials").build();
 
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
@@ -360,7 +392,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders("authorization", "'bob:secret'")
+         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "'bob:secret'")
          .newStubbedResponse()
          .withStatus("200")
          .withLiteralBody("This is a response for 555").build();
@@ -371,7 +403,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders(StubRequest.AUTH_HEADER, null).build();
+            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), null).build();
 
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
