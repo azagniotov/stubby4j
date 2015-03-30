@@ -741,7 +741,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/something$
       method: POST
       headers:
-         authorization-basic: "bob:password"  # for basic authorization DO NOT base64 encode when stubbing
+         authorization-basic: "bob:password"  # no "Basic" prefix nor encoding in Base64 is required when stubbing 
          x-custom-header: "^this/is/\d/test"
       post: this is some post data in textual format
    response:
@@ -755,7 +755,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/bearer$
       method: POST
       headers:
-         authorization-bearer: "YTM0NZomIzI2OTsmIzM0NTueYQ==" # no "Bearer" prefix is required when stubbing, only hash
+         authorization-bearer: "YNZmIzI2Ts0Q==" # no "Bearer" prefix is required when stubbing, only the hash
       post: this is some post data in textual format
    response:
       headers:
