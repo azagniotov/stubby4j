@@ -205,7 +205,7 @@ public final class StubbyClient {
     * @param host          host that stubby4j is running on
     * @param uri           URI for the HTTP request
     * @param port          TLS port
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -224,7 +224,7 @@ public final class StubbyClient {
     * @param host          host that stubby4j is running on
     * @param uri           URI for the HTTP request
     * @param stubsPort     port that stubby4j Stubs is running on
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -254,7 +254,7 @@ public final class StubbyClient {
     * The credentials should be base-64 encoded using the following format - username:password
     *
     * @param uri           URI for the HTTP request
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -286,7 +286,7 @@ public final class StubbyClient {
     * @param host          host that stubby4j is running on
     * @param uri           URI for the HTTP request
     * @param stubsPort     port that stubby4j Stubs is running on
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @param post          data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
@@ -318,7 +318,7 @@ public final class StubbyClient {
     *
     * @param uri           URI for the HTTP request
     * @param post          data to POST to the server
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
@@ -371,7 +371,7 @@ public final class StubbyClient {
     * @param uri    URI for the HTTP request
     * @param port   port that stubby4j Stubs is running on
     * @param post   data to POST to the server
-    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
