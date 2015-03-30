@@ -715,29 +715,25 @@ After successful HTTP request verification, if your `body` or contents of local 
 ### Authorization Header
 ```yaml
 -  request:
-      url: ^/path/to/something$
-      method: POST
+      url: ^/path/to/basic$
+      method: GET
       headers:
          # no "Basic" prefix nor explicit encoding in Base64 is required when stubbing,
          # just plain username:password format. Stubby internally encodes the value in Base64
          authorization-basic: "bob:password" 
-         x-custom-header: "^this/is/\d/test"
-      post: this is some post data in textual format
    response:
       headers:
          Content-Type: application/json
-      latency: 1000
       status: 200
-      body: Your request was successfully processed!
+      body: Your request with Basic was successfully authorized!
 
 -  request:
       url: ^/path/to/bearer$
-      method: POST
+      method: GET
       headers:
          # no "Bearer" prefix is required when stubbing, only the hash string.
          # Stubby internally does not encode the value
          authorization-bearer: "YNZmIzI2Ts0Q=="
-      post: this is some post data in textual format
    response:
       headers:
          Content-Type: application/json
@@ -774,7 +770,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/something$
       method: POST
       headers:
-         authorization-basic: "bob:password"  # no "Basic" prefix nor encoding in Base64 is required when stubbing 
+         authorization-basic: "bob:password" 
          x-custom-header: "^this/is/\d/test"
       post: this is some post data in textual format
    response:
@@ -788,7 +784,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/bearer$
       method: POST
       headers:
-         authorization-bearer: "YNZmIzI2Ts0Q==" # no "Bearer" prefix is required when stubbing, only the hash
+         authorization-bearer: "YNZmIzI2Ts0Q=="
       post: this is some post data in textual format
    response:
       headers:
