@@ -30,6 +30,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
    * [Response](#response)
    * [Record and Play](#record-and-play)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
+   * [Authorization Header](#authorization-header)
 * [The admin portal](#the-admin-portal)
 * [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
@@ -711,6 +712,38 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
+### Authorization Header
+```yaml
+-  request:
+      url: ^/path/to/something$
+      method: POST
+      headers:
+         # no "Basic" prefix nor explicit encoding in Base64 is required when stubbing,
+         # just plain username:password format. Stubby internally encodes the value in Base64
+         authorization-basic: "bob:password" 
+         x-custom-header: "^this/is/\d/test"
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      latency: 1000
+      status: 200
+      body: Your request was successfully processed!
+
+-  request:
+      url: ^/path/to/bearer$
+      method: POST
+      headers:
+         # no "Bearer" prefix is required when stubbing, only the hash string.
+         # Stubby internally does not encode the value
+         authorization-bearer: "YNZmIzI2Ts0Q=="
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Bearer was successfully authorized!
+```
 
 ### The admin portal
 
