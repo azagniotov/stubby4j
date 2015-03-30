@@ -755,7 +755,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/bearer$
       method: POST
       headers:
-         authorization-bearer: "ForBearer_This_Must_BeEncoded_StringValue"
+         authorization-bearer: "YTM0NZomIzI2OTsmIzM0NTueYQ==" # no "Bearer" prefix is required when stubbing, only hash
       post: this is some post data in textual format
    response:
       headers:
