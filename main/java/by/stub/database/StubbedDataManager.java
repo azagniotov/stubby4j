@@ -175,7 +175,11 @@ public class StubbedDataManager {
       final Map<File, Long> externalFiles = new HashMap<>();
       for (StubHttpLifecycle cycle : stubHttpLifecycles) {
          storeExternalFileInCache(escrow, externalFiles, cycle.getRequest().getRawFile());
-         storeExternalFileInCache(escrow, externalFiles, cycle.getResponse(false).getRawFile());
+
+         final List<StubResponse> allResponses = cycle.getAllResponses();
+         for (StubResponse stubbedResponse : allResponses) {
+            storeExternalFileInCache(escrow, externalFiles, stubbedResponse.getRawFile());
+         }
       }
 
       return externalFiles;

@@ -731,8 +731,8 @@ After successful HTTP request verification, if your `body` or contents of local 
       url: ^/path/to/bearer$
       method: GET
       headers:
-         # no "Bearer" prefix is required when stubbing, only the value string.
-         # Stubby internally does not modify (encodes) the value string
+         # no "Bearer" prefix is required when stubbing, only the auth value.
+         # Stubby internally does not modify (encodes) the auth value
          authorization-bearer: "YNZmIzI2Ts0Q=="
    response:
       headers:
@@ -744,8 +744,8 @@ After successful HTTP request verification, if your `body` or contents of local 
       url: ^/path/to/custom$
       method: GET
       headers:
-         # custom authorization prefix is required when stubbing, followed by space & value string.
-         # Stubby internally does not modify (encodes) the value string
+         # custom prefix name is required when stubbing, followed by space & auth value.
+         # Stubby internally does not modify (encodes) the auth value
          authorization-custom: "CustomAuthorizationType YNZmIzI2Ts0Q=="
    response:
       headers:
@@ -1229,6 +1229,7 @@ for each <endpoint> of stored endpoints {
 
 ##### 3.0.3-SNAPSHOT
 * Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
+* Fixed issue #43 (Live refresh in response sequence only for first response)
 
 ##### 3.0.2
 * Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`
