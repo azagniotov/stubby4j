@@ -2,12 +2,10 @@ package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
-import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
-import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -30,6 +28,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static by.stub.utils.FileUtils.BR;
+import static by.stub.utils.FileUtils.uriToFile;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -264,7 +266,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), expectedHeaderValue)
+         .withHeaders(BASIC.asYamlProp(), expectedHeaderValue)
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withLiteralBody(expectedBody).build();
@@ -298,7 +300,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), expectedHeaderValue)
+         .withHeaders(BEARER.asYamlProp(), expectedHeaderValue)
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withLiteralBody(expectedBody).build();
@@ -322,6 +324,40 @@ public class StubbedDataManagerTest {
    }
 
    @Test
+   public void shouldReturnMatchingStubbedResponse_WhenValidAuthorizationCustomHeaderSubmitted() throws Exception {
+
+      final String url = "/invoice/555";
+
+      final String expectedStatus = "200";
+      final String expectedBody = "This is a response for 555";
+      final String expectedHeaderValue = "CustomAuthorizationName Ym9iOnNlY3JldA==";
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl(url)
+         .withHeaders(CUSTOM.asYamlProp(), expectedHeaderValue)
+         .newStubbedResponse()
+         .withStatus(expectedStatus)
+         .withLiteralBody(expectedBody).build();
+
+      loadYamlToDataStore(yaml);
+
+      final StubRequest assertingRequest =
+         REQUEST_BUILDER
+            .withUrl(url)
+            .withMethodGet()
+            .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "CustomAuthorizationName Ym9iOnNlY3JldA==").build();
+
+      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
+
+      assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
+      assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
+      assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+
+      assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+      assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
+   }
+
+   @Test
    public void shouldReturnMatchingUnauthorizedStubResponse_WhenAuthorizationHeaderNotSubmitted() throws Exception {
 
       final String url = "/invoice/555";
@@ -332,7 +368,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), expectedHeaderValue)
+         .withHeaders(BASIC.asYamlProp(), expectedHeaderValue)
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withLiteralBody(expectedBody).build();
@@ -362,7 +398,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "'bob:secret'")
+         .withHeaders(BASIC.asYamlProp(), "'bob:secret'")
          .newStubbedResponse()
          .withStatus("200")
          .withLiteralBody("This is a response for 555").build();
@@ -373,7 +409,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "Basic BadCredentials").build();
+            .withHeaders(BASIC.asYamlProp(), "Basic BadCredentials").build();
 
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
@@ -392,7 +428,7 @@ public class StubbedDataManagerTest {
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl(url)
-         .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "'bob:secret'")
+         .withHeaders(BASIC.asYamlProp(), "'bob:secret'")
          .newStubbedResponse()
          .withStatus("200")
          .withLiteralBody("This is a response for 555").build();
@@ -403,7 +439,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), null).build();
+            .withHeaders(BASIC.asYamlProp(), null).build();
 
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertingRequest);
 
@@ -692,8 +728,8 @@ public class StubbedDataManagerTest {
    @Test
    public void shouldReturnRequestAndResponseExternalFiles() throws Exception {
 
-      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
 
       final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.external.files.yaml");
       final InputStream stubsDatanputStream = yamlUrl.openStream();
@@ -709,7 +745,7 @@ public class StubbedDataManagerTest {
       assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
       assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
 
-      final Set<String> filenames = new HashSet<String>();
+      final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
          filenames.add(entry.getKey().getName());
       }
@@ -722,8 +758,8 @@ public class StubbedDataManagerTest {
    @Test
    public void shouldReturnOnlyResponseExternalFile() throws Exception {
 
-      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
 
       final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/one.external.files.yaml");
       final InputStream stubsDatanputStream = yamlUrl.openStream();
@@ -751,8 +787,8 @@ public class StubbedDataManagerTest {
    @Test
    public void shouldReturnDedupedExternalFile() throws Exception {
 
-      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
 
       final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/same.external.files.yaml");
       final InputStream stubsDatanputStream = yamlUrl.openStream();
@@ -767,7 +803,7 @@ public class StubbedDataManagerTest {
       assertThat(externalFiles.size()).isEqualTo(1);
       assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
 
-      final Set<String> filenames = new HashSet<String>();
+      final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
          filenames.add(entry.getKey().getName());
       }
@@ -780,8 +816,8 @@ public class StubbedDataManagerTest {
    @Test
    public void shouldReturnOnlyResponseExternalFileWhenRequestFileFailedToLoad() throws Exception {
 
-      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
 
       final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/request.null.external.files.yaml");
       final InputStream stubsDatanputStream = yamlUrl.openStream();
@@ -809,8 +845,8 @@ public class StubbedDataManagerTest {
    @Test
    public void shouldReturnOnlyRequestExternalFileWhenResponseFileFailedToLoad() throws Exception {
 
-      final File expectedRequestFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = FileUtils.uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
 
       final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/response.null.external.files.yaml");
       final InputStream stubsDatanputStream = yamlUrl.openStream();

@@ -198,10 +198,10 @@ public class StubHttpLifecycleTest {
       spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
       verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
-      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubHeaderTypes.class));
+      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
 
       verify(spyStubbedStubHttpLifecycle, never()).getRawAuthorizationHttpHeader();
-      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubHeaderTypes.AUTHORIZATION_BASIC);
+      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubAuthorizationTypes.BASIC);
    }
 
    @Test
@@ -226,10 +226,10 @@ public class StubHttpLifecycleTest {
       spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
       verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
-      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubHeaderTypes.class));
+      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
 
       verify(spyStubbedStubHttpLifecycle, never()).getRawAuthorizationHttpHeader();
-      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubHeaderTypes.AUTHORIZATION_BASIC);
+      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubAuthorizationTypes.BASIC);
    }
 
    @Test
@@ -254,10 +254,10 @@ public class StubHttpLifecycleTest {
       spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
       verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
-      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubHeaderTypes.class));
+      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
 
       verify(spyStubbedStubHttpLifecycle, never()).getRawAuthorizationHttpHeader();
-      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubHeaderTypes.AUTHORIZATION_BEARER);
+      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubAuthorizationTypes.BEARER);
    }
 
    @Test
@@ -282,10 +282,10 @@ public class StubHttpLifecycleTest {
       spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
       verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
-      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubHeaderTypes.class));
+      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
 
       verify(spyStubbedStubHttpLifecycle, never()).getRawAuthorizationHttpHeader();
-      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubHeaderTypes.AUTHORIZATION_BEARER);
+      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubAuthorizationTypes.BEARER);
    }
 
    @Test
@@ -312,10 +312,10 @@ public class StubHttpLifecycleTest {
       spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
       verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
-      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubHeaderTypes.class));
+      verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
 
       verify(spyStubbedStubHttpLifecycle, never()).getRawAuthorizationHttpHeader();
-      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubHeaderTypes.AUTHORIZATION_BEARER);
+      verify(spyStubbedStubHttpLifecycle, times(1)).getStubbedAuthorizationHeaderValue(StubAuthorizationTypes.BEARER);
    }
 
    @Test

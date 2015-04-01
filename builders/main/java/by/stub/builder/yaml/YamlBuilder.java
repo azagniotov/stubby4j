@@ -1,8 +1,7 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
-import by.stub.yaml.stubs.StubHeaderTypes;
-import by.stub.yaml.stubs.StubRequest;
+import by.stub.yaml.stubs.StubAuthorizationTypes;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.util.HashSet;
@@ -175,7 +174,7 @@ public final class YamlBuilder {
 
          checkHeadersNodeRequired();
 
-         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubHeaderTypes.AUTHORIZATION_BASIC.asString());
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BASIC.asYamlProp());
          REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;
@@ -185,7 +184,17 @@ public final class YamlBuilder {
 
          checkHeadersNodeRequired();
 
-         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubHeaderTypes.AUTHORIZATION_BEARER.asString());
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BEARER.asYamlProp());
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderAuthorizationCustom(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.CUSTOM.asYamlProp());
          REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;

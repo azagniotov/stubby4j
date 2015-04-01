@@ -1,7 +1,6 @@
 package by.stub.client;
 
 import by.stub.annotations.CoberturaIgnore;
-import by.stub.utils.ObjectUtils;
 
 public final class Authorization {
 
@@ -10,7 +9,8 @@ public final class Authorization {
 
    enum AuthorizationType {
       BASIC("Basic"),
-      BEARER("Bearer");
+      BEARER("Bearer"),
+      CUSTOM("Custom");
       private final String type;
 
       AuthorizationType(final String type) {
@@ -36,7 +36,11 @@ public final class Authorization {
    }
 
    public String asFullValue() {
-       return String.format("%s %s", type.asString(), value);
+      if (type == AuthorizationType.CUSTOM) {
+         return value;
+      } else {
+         return String.format("%s %s", type.asString(), value);
+      }
    }
 
    @Override

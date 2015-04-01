@@ -4,7 +4,7 @@ import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
 import by.stub.yaml.stubs.NotFoundStubResponse;
-import by.stub.yaml.stubs.StubHeaderTypes;
+import by.stub.yaml.stubs.StubAuthorizationTypes;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 import by.stub.yaml.stubs.StubResponseTypes;
@@ -233,7 +233,7 @@ public class StubsPortalHandlerTest {
       final String requestPathInfo = "/path/1";
 
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getHeader(StubHeaderTypes.AUTHORIZATION_BASIC.asString())).thenReturn("");
+      when(mockHttpServletRequest.getHeader(StubAuthorizationTypes.BASIC.asYamlProp())).thenReturn("");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -256,7 +256,7 @@ public class StubsPortalHandlerTest {
       final String requestPathInfo = "/path/1";
 
       when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getHeader(StubHeaderTypes.AUTHORIZATION_BEARER.asString())).thenReturn("");
+      when(mockHttpServletRequest.getHeader(StubAuthorizationTypes.BEARER.asYamlProp())).thenReturn("");
       when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);

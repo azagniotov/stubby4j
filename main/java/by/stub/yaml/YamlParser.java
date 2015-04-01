@@ -22,9 +22,7 @@ package by.stub.yaml;
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
-import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
@@ -42,6 +40,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static by.stub.utils.FileUtils.constructReader;
+import static by.stub.utils.FileUtils.uriToFile;
+import static by.stub.utils.StringUtils.encodeBase64;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
+import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 @SuppressWarnings("unchecked")
 public class YamlParser {
@@ -68,12 +74,12 @@ public class YamlParser {
    }
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
-      return parse(dataConfigHomeDirectory, FileUtils.constructReader(yaml));
+      return parse(dataConfigHomeDirectory, constructReader(yaml));
    }
 
    @CoberturaIgnore
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File yamlFile) throws Exception {
-      return parse(dataConfigHomeDirectory, FileUtils.constructReader(yamlFile));
+      return parse(dataConfigHomeDirectory, constructReader(yamlFile));
    }
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
@@ -85,7 +91,7 @@ public class YamlParser {
       this.dataConfigHomeDirectory = dataConfigHomeDirectory;
       final List<?> loadedYamlData = (List) loadedYaml;
 
-      final List<StubHttpLifecycle> httpLifecycles = new LinkedList<StubHttpLifecycle>();
+      final List<StubHttpLifecycle> httpLifecycles = new LinkedList<>();
       for (final Object rawParentNode : loadedYamlData) {
 
          final Map<String, Object> parentNodePropertiesMap = (Map<String, Object>) rawParentNode;
@@ -116,11 +122,11 @@ public class YamlParser {
 
       httpLifecycle.setHttpLifeCycleAsYaml(marshallNodeMapToYaml(parentNodesMap));
 
-      final Map<String, Object> requestMap = new HashMap<String, Object>();
+      final Map<String, Object> requestMap = new HashMap<>();
       requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
       httpLifecycle.setRequestAsYaml(marshallNodeToYaml(requestMap));
 
-      final Map<String, Object> responseMap = new HashMap<String, Object>();
+      final Map<String, Object> responseMap = new HashMap<>();
       responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
       httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
 
@@ -160,7 +166,7 @@ public class YamlParser {
 
          } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
 
-            final ArrayList<String> methods = new ArrayList<String>(1);
+            final ArrayList<String> methods = new ArrayList<>(1);
             methods.add(StringUtils.objectToString(rawFieldName));
             massagedFieldValue = methods;
 
@@ -211,7 +217,7 @@ public class YamlParser {
    private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
       final String filePath = StringUtils.objectToString(rawPairValue);
       try {
-         return FileUtils.uriToFile(dataConfigHomeDirectory, filePath);
+         return uriToFile(dataConfigHomeDirectory, filePath);
       } catch (final IOException ex) {
          ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
       }
@@ -224,33 +230,32 @@ public class YamlParser {
          add(parentNodesMap);
       }};
 
-      return SNAKE_YAML.dumpAs(placeholder, null, DumperOptions.FlowStyle.BLOCK);
+      return SNAKE_YAML.dumpAs(placeholder, null, FlowStyle.BLOCK);
    }
 
    private String marshallNodeToYaml(final Object yamlNode) {
-      return SNAKE_YAML.dumpAs(yamlNode, null, DumperOptions.FlowStyle.BLOCK);
+      return SNAKE_YAML.dumpAs(yamlNode, null, FlowStyle.BLOCK);
    }
 
    private Map<String, String> configureAuthorizationHeader(final Object value) {
-
       final Map<String, String> pairValue = (Map<String, String>) value;
-      if (!pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString()) &&
-         !pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
-         return pairValue;
-      }
 
-      if (pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString())) {
-         final String rawHeader = pairValue.get(StubHeaderTypes.AUTHORIZATION_BASIC.asString());
+      if (pairValue.containsKey(BASIC.asYamlProp())) {
+         final String rawHeader = pairValue.get(BASIC.asYamlProp());
          final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorizationHeader));
-         pairValue.put(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), encodedAuthorizationHeader);
+         final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
+         pairValue.put(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
-      } else if (pairValue.containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
-         final String rawHeader = pairValue.get(StubHeaderTypes.AUTHORIZATION_BEARER.asString());
+      } else if (pairValue.containsKey(BEARER.asYamlProp())) {
+         final String rawHeader = pairValue.get(BEARER.asYamlProp());
          final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-         pairValue.put(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), String.format("%s %s", "Bearer", authorizationHeader));
-      }
+         pairValue.put(BEARER.asYamlProp(), String.format("%s %s", BEARER.asString(), authorizationHeader));
 
+      } else if (pairValue.containsKey(CUSTOM.asYamlProp())) {
+         final String rawHeader = pairValue.get(CUSTOM.asYamlProp());
+         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+         pairValue.put(CUSTOM.asYamlProp(), authorizationHeader);
+      }
       return pairValue;
    }
 }

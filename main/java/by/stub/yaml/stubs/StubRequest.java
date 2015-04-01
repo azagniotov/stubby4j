@@ -36,6 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static by.stub.yaml.stubs.StubAuthorizationTypes.*;
+
 /**
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
@@ -157,22 +159,23 @@ public class StubRequest {
    }
 
    public boolean isSecured() {
-      return getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString()) ||
-         getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString());
+      return getHeaders().containsKey(BASIC.asYamlProp()) ||
+         getHeaders().containsKey(BEARER.asYamlProp()) ||
+         getHeaders().containsKey(CUSTOM.asYamlProp());
    }
 
-   @VisibleForTesting StubHeaderTypes getStubbedAuthorizationTypeHeader() {
-      if (getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BASIC.asString())) {
-         return StubHeaderTypes.AUTHORIZATION_BASIC;
-      } else if (getHeaders().containsKey(StubHeaderTypes.AUTHORIZATION_BEARER.asString())) {
-         return StubHeaderTypes.AUTHORIZATION_BEARER;
+   @VisibleForTesting StubAuthorizationTypes getStubbedAuthorizationTypeHeader() {
+      if (getHeaders().containsKey(BASIC.asYamlProp())) {
+         return BASIC;
+      } else if (getHeaders().containsKey(BEARER.asYamlProp())) {
+         return BEARER;
       } else {
-         return StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED;
+         return CUSTOM;
       }
    }
 
-   String getStubbedAuthorizationHeaderValue(final StubHeaderTypes stubbedAuthorizationHeaderType) {
-      return getHeaders().get(stubbedAuthorizationHeaderType.asString());
+   String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
+      return getHeaders().get(stubbedAuthorizationHeaderType.asYamlProp());
    }
 
    public String getRawAuthorizationHttpHeader() {
@@ -236,8 +239,9 @@ public class StubRequest {
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(StubHeaderTypes.AUTHORIZATION_BASIC.asString()); //Auth header dealt with in StubbedDataManager after request was matched
-      dataStoreHeadersCopy.remove(StubHeaderTypes.AUTHORIZATION_BEARER.asString()); //Auth header dealt with in StubbedDataManager after request was matched
+      dataStoreHeadersCopy.remove(BASIC.asYamlProp());   //Auth header dealt with in StubbedDataManager after request was matched
+      dataStoreHeadersCopy.remove(BEARER.asYamlProp());  //Auth header dealt with in StubbedDataManager after request was matched
+      dataStoreHeadersCopy.remove(CUSTOM.asYamlProp());  //Auth header dealt with in StubbedDataManager after request was matched
 
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
@@ -250,8 +254,8 @@ public class StubRequest {
          return false;
       }
 
-      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+      final Map<String, String> dataStoreMapCopy = new HashMap<>(dataStoreMap);
+      final Map<String, String> assertingMapCopy = new HashMap<>(thisAssertingMap);
 
       for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
          final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());

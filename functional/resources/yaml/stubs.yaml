@@ -316,6 +316,20 @@
 
 
 -  request:
+      headers:
+         authorization-custom: CustomAuthorizationName Ym9iOndyb25nLXNlY3JldA==
+      method: GET
+      url: /item/auth/custom
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"id" : "12", "description" : "authorized using custom"}
+
+
+-  request:
       method: POST
       url: /item/1
       post: post body

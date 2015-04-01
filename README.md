@@ -93,7 +93,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Verify that your code correctly handles HTTP error codes
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
 * Support for any of the available HTTP methods
-* Simulate support for two types of HTTP Authorizations: Basic & Bearer Token
+* Simulate support for different types of HTTP Authorizations: Basic, Bearer Token & others
 * Support for HTTP 30x redirects
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
@@ -731,14 +731,27 @@ After successful HTTP request verification, if your `body` or contents of local 
       url: ^/path/to/bearer$
       method: GET
       headers:
-         # no "Bearer" prefix is required when stubbing, only the hash string.
-         # Stubby internally does not encode the value
+         # no "Bearer" prefix is required when stubbing, only the value string.
+         # Stubby internally does not modify (encodes) the value string
          authorization-bearer: "YNZmIzI2Ts0Q=="
    response:
       headers:
          Content-Type: application/json
       status: 200
       body: Your request with Bearer was successfully authorized!
+
+-  request:
+      url: ^/path/to/custom$
+      method: GET
+      headers:
+         # custom authorization prefix is required when stubbing, followed by space & value string.
+         # Stubby internally does not modify (encodes) the value string
+         authorization-custom: "CustomAuthorizationType YNZmIzI2Ts0Q=="
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with custom authorization type was successfully authorized!
 ```
 
 ### The admin portal
@@ -1215,6 +1228,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.0.3-SNAPSHOT
+* Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
 
 ##### 3.0.2
 * Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`

@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 import static by.stub.utils.FileUtils.BR;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -587,7 +590,7 @@ public class StubRequestTest {
       final StubRequest stubRequest =
          BUILDER.withUrl("/invoice/123")
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "123").build();
+            .withHeaders(BASIC.asYamlProp(), "123").build();
 
       assertThat(stubRequest.isSecured()).isTrue();
    }
@@ -597,7 +600,17 @@ public class StubRequestTest {
       final StubRequest stubRequest =
          BUILDER.withUrl("/invoice/123")
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), "123").build();
+            .withHeaders(BEARER.asYamlProp(), "123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isSecured_WhenAuthorizationCustomStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
 
       assertThat(stubRequest.isSecured()).isTrue();
    }
@@ -612,22 +625,13 @@ public class StubRequestTest {
    }
 
    @Test
-   public void shouldGetAuthorizationTypeUnsupported_WhenNoAuthorizationStubbed() throws Exception {
-      final StubRequest stubRequest =
-         BUILDER.withUrl("/invoice/123")
-            .withMethodGet().build();
-
-      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED);
-   }
-
-   @Test
    public void shouldGetAuthorizationTypeBasic_WhenBasicAuthorizationStubbed() throws Exception {
       final StubRequest stubRequest =
          BUILDER.withUrl("/invoice/123")
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), "123").build();
+            .withHeaders(BASIC.asYamlProp(), "123").build();
 
-      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_BASIC);
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BASIC);
    }
 
    @Test
@@ -635,9 +639,19 @@ public class StubRequestTest {
       final StubRequest stubRequest =
          BUILDER.withUrl("/invoice/123")
             .withMethodGet()
-            .withHeaders(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), "123").build();
+            .withHeaders(BEARER.asYamlProp(), "123").build();
 
-      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(StubHeaderTypes.AUTHORIZATION_BEARER);
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BEARER);
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeCustom_WhenCustomAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(CUSTOM);
    }
 
    @Test

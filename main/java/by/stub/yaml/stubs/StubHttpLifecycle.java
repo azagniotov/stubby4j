@@ -105,19 +105,13 @@ public class StubHttpLifecycle {
    }
 
    @VisibleForTesting
-   String getStubbedAuthorizationHeaderValue(final StubHeaderTypes stubbedAuthorizationHeaderType) {
+   String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
       return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
    }
 
    public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
-      final StubHeaderTypes stubbedAuthorizationHeaderType = request.getStubbedAuthorizationTypeHeader();
-      if (stubbedAuthorizationHeaderType == StubHeaderTypes.AUTHORIZATION_TYPE_UNSUPPORTED) {
-         return true;
-      }
-      final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
-      final String assertingAuthorizationHeaderValue = assertingLifecycle.getRawAuthorizationHttpHeader();
-
-      return !stubbedAuthorizationHeaderValue.equals(assertingAuthorizationHeaderValue);
+      final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
+      return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
    }
 
    public String getResourceId() {

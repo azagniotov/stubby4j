@@ -5,7 +5,6 @@ import by.stub.client.StubbyResponse;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
-import by.stub.yaml.stubs.StubHeaderTypes;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;

@@ -1,6 +1,6 @@
 package by.stub.builder.stubs;
 
-import by.stub.yaml.stubs.StubHeaderTypes;
+import by.stub.yaml.stubs.StubAuthorizationTypes;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 
@@ -99,13 +99,13 @@ public final class StubRequestBuilder {
    }
 
    public StubRequestBuilder withHeaderAuthorizationBasic(final String value) {
-      this.headers.put(StubHeaderTypes.AUTHORIZATION_BASIC.asString(), value);
+      this.headers.put(StubAuthorizationTypes.BASIC.asYamlProp(), value);
 
       return this;
    }
 
    public StubRequestBuilder withHeaderAuthorizationBearer(final String value) {
-      this.headers.put(StubHeaderTypes.AUTHORIZATION_BEARER.asString(), value);
+      this.headers.put(StubAuthorizationTypes.BEARER.asYamlProp(), value);
 
       return this;
    }

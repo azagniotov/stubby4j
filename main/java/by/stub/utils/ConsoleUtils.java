@@ -25,7 +25,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 

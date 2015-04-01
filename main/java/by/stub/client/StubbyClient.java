@@ -26,7 +26,6 @@ import by.stub.server.JettyFactory;
 import by.stub.server.StubbyManager;
 import by.stub.server.StubbyManagerFactory;
 import by.stub.utils.ObjectUtils;
-import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpScheme;
 
