@@ -36,7 +36,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static by.stub.yaml.stubs.StubAuthorizationTypes.*;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 
 /**
  * @author Alexander Zagniotov
@@ -239,10 +241,10 @@ public class StubRequest {
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
       final Map<String, String> dataStoreHeadersCopy = new HashMap<>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(BASIC.asYamlProp());   //Auth header dealt with in StubbedDataManager after request was matched
-      dataStoreHeadersCopy.remove(BEARER.asYamlProp());  //Auth header dealt with in StubbedDataManager after request was matched
-      dataStoreHeadersCopy.remove(CUSTOM.asYamlProp());  //Auth header dealt with in StubbedDataManager after request was matched
-
+      for (StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
+         // auth header is dealt with in StubbedDataManager after request is matched
+         dataStoreHeadersCopy.remove(authorizationType.asYamlProp());
+      }
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
 

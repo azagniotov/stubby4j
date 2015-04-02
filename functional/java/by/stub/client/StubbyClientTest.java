@@ -15,7 +15,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 
-import static by.stub.client.Authorization.*;
+import static by.stub.client.Authorization.AuthorizationType;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 

@@ -1,11 +1,11 @@
 package by.stub.builder.yaml;
 
-import by.stub.utils.FileUtils;
-import by.stub.yaml.stubs.StubAuthorizationTypes;
 import org.junit.Test;
 
-import static by.stub.utils.FileUtils.*;
-import static by.stub.yaml.stubs.StubAuthorizationTypes.*;
+import static by.stub.utils.FileUtils.BR;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
