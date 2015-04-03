@@ -2,7 +2,6 @@ package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
-import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
@@ -29,11 +28,15 @@ import java.util.Set;
 
 import static by.stub.utils.FileUtils.BR;
 import static by.stub.utils.FileUtils.uriToFile;
+import static by.stub.utils.StringUtils.inputStreamToString;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -690,7 +693,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnNotFoundStubResponse_WhenQueryParamArrayHasNonMatchedElementsWithinUrlEncodedQuotes() throws Exception {
-
       final String url = "/entity.find";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
@@ -727,18 +729,10 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnRequestAndResponseExternalFiles() throws Exception {
-
       final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.external.files.yaml");
-      final InputStream stubsDatanputStream = yamlUrl.openStream();
-      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
-      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-
+      resetStubHttpLifecyclesFromYamlResource("/yaml/two.external.files.yaml");
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
 
       assertThat(externalFiles.size()).isEqualTo(2);
@@ -757,18 +751,10 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnOnlyResponseExternalFile() throws Exception {
-
       final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/one.external.files.yaml");
-      final InputStream stubsDatanputStream = yamlUrl.openStream();
-      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
-      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-
+      resetStubHttpLifecyclesFromYamlResource("/yaml/one.external.files.yaml");
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
 
       assertThat(externalFiles.size()).isEqualTo(1);
@@ -786,22 +772,14 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnDedupedExternalFile() throws Exception {
-
       final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/same.external.files.yaml");
-      final InputStream stubsDatanputStream = yamlUrl.openStream();
-      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
-      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-
+      resetStubHttpLifecyclesFromYamlResource("/yaml/same.external.files.yaml");
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
 
       assertThat(externalFiles.size()).isEqualTo(1);
-      assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
+      assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
 
       final Set<String> filenames = new HashSet<>();
       for (final Map.Entry<File, Long> entry : externalFiles.entrySet()) {
@@ -815,18 +793,10 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnOnlyResponseExternalFileWhenRequestFileFailedToLoad() throws Exception {
-
       final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/request.null.external.files.yaml");
-      final InputStream stubsDatanputStream = yamlUrl.openStream();
-      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
-      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-
+      resetStubHttpLifecyclesFromYamlResource("/yaml/request.null.external.files.yaml");
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
 
       assertThat(externalFiles.size()).isEqualTo(1);
@@ -844,18 +814,10 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldReturnOnlyRequestExternalFileWhenResponseFileFailedToLoad() throws Exception {
-
       final File expectedRequestFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/request.external.file.json").getFile());
-      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.external.file.json").getFile());
+      final File expectedResponseFile = uriToFile(StubbedDataManagerTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/response.null.external.files.yaml");
-      final InputStream stubsDatanputStream = yamlUrl.openStream();
-      final String yaml = StringUtils.inputStreamToString(stubsDatanputStream);
-      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-
-      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, yaml);
-      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
-
+      resetStubHttpLifecyclesFromYamlResource("/yaml/response.null.external.files.yaml");
       final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
 
       assertThat(externalFiles.size()).isEqualTo(1);
@@ -869,6 +831,58 @@ public class StubbedDataManagerTest {
       assertThat(filenames.size()).isEqualTo(externalFiles.size());
       assertThat(filenames.contains(expectedRequestFile.getName())).isTrue();
       assertThat(filenames.contains(expectedResponseFile.getName())).isFalse();
+   }
+
+   @Test
+   public void shouldVerifyGetAllResponsesInvokation_WhenInvokingGetExternalFiles() throws Exception {
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream));
+      assertThat(stubHttpLifecycles.size()).isEqualTo(2);
+      assertThat(stubHttpLifecycles.get(0).getAllResponses().size()).isEqualTo(2);
+      assertThat(stubHttpLifecycles.get(1).getAllResponses().size()).isEqualTo(2);
+
+      final List<StubHttpLifecycle> spyStubHttpLifecycles = new LinkedList<>();
+      final StubHttpLifecycle spyCycleOne = spy(stubHttpLifecycles.get(0));
+      final StubHttpLifecycle spyCycleTwo = spy(stubHttpLifecycles.get(1));
+      spyStubHttpLifecycles.add(spyCycleOne);
+      spyStubHttpLifecycles.add(spyCycleTwo);
+
+      stubbedDataManager.resetStubHttpLifecycles(spyStubHttpLifecycles);   // 1st time call to getAllResponses
+      stubbedDataManager.getExternalFiles();                               // 2nd time call to getAllResponses
+
+      verify(spyCycleOne, times(2)).getAllResponses();
+      verify(spyCycleTwo, times(2)).getAllResponses();
+   }
+
+   @Test
+   public void shouldVerifyGetRawFileInvokation_WhenInvokingGetExternalFiles() throws Exception {
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+      final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream));
+      assertThat(stubHttpLifecycles.size()).isEqualTo(2);
+      assertThat(stubHttpLifecycles.get(0).getAllResponses().size()).isEqualTo(2);
+      assertThat(stubHttpLifecycles.get(1).getAllResponses().size()).isEqualTo(2);
+
+      stubHttpLifecycles.get(0).setResponse(new LinkedList<StubResponse>() {{
+         add(spy(stubHttpLifecycles.get(0).getAllResponses().get(0)));
+         add(spy(stubHttpLifecycles.get(0).getAllResponses().get(1)));
+      }});
+
+      stubHttpLifecycles.get(1).setResponse(new LinkedList<StubResponse>() {{
+         add(spy(stubHttpLifecycles.get(1).getAllResponses().get(0)));
+         add(spy(stubHttpLifecycles.get(1).getAllResponses().get(1)));
+      }});
+
+      stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+      stubbedDataManager.getExternalFiles();
+
+      verify(stubHttpLifecycles.get(0).getAllResponses().get(0), times(1)).getRawFile();
+      verify(stubHttpLifecycles.get(0).getAllResponses().get(1), times(1)).getRawFile();
+      verify(stubHttpLifecycles.get(1).getAllResponses().get(0), times(1)).getRawFile();
+      verify(stubHttpLifecycles.get(1).getAllResponses().get(1), times(1)).getRawFile();
    }
 
    @Test
@@ -1002,7 +1016,6 @@ public class StubbedDataManagerTest {
       }
    }
 
-
    @Test
    public void shouldAdjustResourceIDHeadersAccordingly_WhenSomeHttpCycleWasUpdated() throws Exception {
 
@@ -1078,5 +1091,12 @@ public class StubbedDataManagerTest {
       final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", yaml);
 
       stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+   }
+
+   private void resetStubHttpLifecyclesFromYamlResource(final String resourcePath) throws Exception {
+      final URL yamlUrl = StubbedDataManagerTest.class.getResource(resourcePath);
+      final InputStream stubsDatanputStream = yamlUrl.openStream();
+      final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+      stubbedDataManager.resetStubHttpLifecycles(new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
    }
 }

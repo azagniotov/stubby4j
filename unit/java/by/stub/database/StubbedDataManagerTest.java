@@ -17,19 +17,17 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 5/15/13 5:25 PM
- */
 public class StubbedDataManagerTest {
 
    private static StubbedDataManager stubbedDataManager;
@@ -45,17 +43,15 @@ public class StubbedDataManagerTest {
 
    @Before
    public void beforeEach() throws Exception {
-      mockStubbyHttpTransport = Mockito.mock(StubbyHttpTransport.class);
-      mockYamlParser = Mockito.mock(YamlParser.class);
+      mockStubbyHttpTransport = mock(StubbyHttpTransport.class);
+      mockYamlParser = mock(YamlParser.class);
       stubbedDataManager.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
       ReflectionUtils.injectObjectFields(stubbedDataManager, "stubbyHttpTransport", mockStubbyHttpTransport);
+      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
    }
 
    @Test
    public void shouldExpungeOriginalHttpCycleList_WhenNewHttpCyclesGiven() throws Exception {
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
 
@@ -65,9 +61,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldMatchHttplifecycle_WhenValidIndexGiven() throws Exception {
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
       assertThat(resetResult).isTrue();
@@ -79,9 +72,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldNotMatchHttplifecycle_WhenInvalidIndexGiven() throws Exception {
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
       assertThat(resetResult).isTrue();
@@ -93,9 +83,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldDeleteOriginalHttpCycleList_WhenValidIndexGiven() throws Exception {
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
       assertThat(resetResult).isTrue();
@@ -108,9 +95,6 @@ public class StubbedDataManagerTest {
 
    @Test(expected = IndexOutOfBoundsException.class)
    public void shouldDeleteOriginalHttpCycleList_WhenInvalidIndexGiven() throws Exception {
-
-      assertThat(stubbedDataManager.getStubHttpLifecycles().size()).isZero();
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       final boolean resetResult = stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
       assertThat(resetResult).isTrue();
@@ -119,10 +103,8 @@ public class StubbedDataManagerTest {
       stubbedDataManager.deleteStubHttpLifecycleByIndex(9999);
    }
 
-
    @Test
    public void shouldGetMarshalledYamlByIndex_WhenValidHttpCycleListIndexGiven() throws Exception {
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
 
@@ -133,7 +115,6 @@ public class StubbedDataManagerTest {
 
    @Test(expected = IndexOutOfBoundsException.class)
    public void shouldFailToGetMarshalledYamlByIndex_WhenInvalidHttpCycleListIndexGiven() throws Exception {
-
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
       stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
 
@@ -142,7 +123,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldUpdateStubHttpLifecycleByIndex_WhenValidHttpCycleListIndexGiven() throws Exception {
-
       final String expectedOriginalUrl = "/resource/item/1";
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
       stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
@@ -161,7 +141,6 @@ public class StubbedDataManagerTest {
 
    @Test(expected = IndexOutOfBoundsException.class)
    public void shouldUpdateStubHttpLifecycleByIndex_WhenInvalidHttpCycleListIndexGiven() throws Exception {
-
       final String expectedOriginalUrl = "/resource/item/1";
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
       stubbedDataManager.resetStubHttpLifecycles(originalHttpLifecycles);
@@ -177,7 +156,6 @@ public class StubbedDataManagerTest {
 
    @Test
    public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
-
       final String expectedOriginalUrl = "/resource/item/1";
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
 
@@ -201,13 +179,11 @@ public class StubbedDataManagerTest {
          assertThat(expectedResponse.isRecordingRequired()).isFalse();
          assertThat(actualResponse.isRecordingRequired()).isFalse();
       }
-
       verify(mockStubbyHttpTransport, times(1)).fetchRecordableHTTPResponse(eq(matchedRequest), anyString());
    }
 
    @Test
    public void shouldNotUpdateStubResponseBody_WhenResponseIsNotRecordable() throws Exception {
-
       final String expectedOriginalUrl = "/resource/item/1";
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
 
@@ -229,7 +205,6 @@ public class StubbedDataManagerTest {
    @Test
    @SuppressWarnings("unchecked")
    public void shouldNotUpdateStubResponseBody_WhenResponseIsRecordableButExceptionThrown() throws Exception {
-
       final String expectedOriginalUrl = "/resource/item/1";
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles(expectedOriginalUrl);
 
@@ -251,7 +226,6 @@ public class StubbedDataManagerTest {
    @Test
    @SuppressWarnings("unchecked")
    public void shouldVerifyExpectedHttpLifeCycles_WhenRefreshingStubbedData() throws Exception {
-
       ArgumentCaptor<List> httpCycleCaptor = ArgumentCaptor.forClass(List.class);
 
       final List<StubHttpLifecycle> originalHttpLifecycles = buildHttpLifeCycles("/resource/item/1");
