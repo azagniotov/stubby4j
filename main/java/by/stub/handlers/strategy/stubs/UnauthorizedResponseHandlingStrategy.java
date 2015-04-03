@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -29,7 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
+   @VisibleForTesting
    public static final String NO_AUTHORIZATION_HEADER = "You are not authorized to view this page without supplied 'Authorization' HTTP header";
+   @VisibleForTesting
    public static final String WRONG_AUTHORIZATION_HEADER_TEMPLATE = "Unauthorized with supplied 'authorized' header value: '%s'";
 
    public UnauthorizedResponseHandlingStrategy() {
