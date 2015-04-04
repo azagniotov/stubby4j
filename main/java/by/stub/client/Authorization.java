@@ -4,7 +4,7 @@ import by.stub.annotations.CoberturaIgnore;
 
 public final class Authorization {
 
-   private final AuthorizationType type;
+   private final AuthorizationType authorizationType;
    private final String value;
 
    enum AuthorizationType {
@@ -22,24 +22,17 @@ public final class Authorization {
       }
    }
 
-   public Authorization(final AuthorizationType type, final String value) {
-      this.type = type;
+   public Authorization(final AuthorizationType authorizationType, final String value) {
+      this.authorizationType = authorizationType;
       this.value = value;
    }
 
-   public AuthorizationType getType() {
-      return type;
-   }
-
-   public String getValue() {
-      return value;
-   }
-
+   @CoberturaIgnore
    public String asFullValue() {
-      if (type == AuthorizationType.CUSTOM) {
+      if (authorizationType == AuthorizationType.CUSTOM) {
          return value;
       } else {
-         return String.format("%s %s", type.asString(), value);
+         return String.format("%s %s", authorizationType.asString(), value);
       }
    }
 
@@ -48,7 +41,7 @@ public final class Authorization {
    public final String toString() {
       final StringBuffer sb = new StringBuffer();
       sb.append("Authorization");
-      sb.append("{type=").append(type);
+      sb.append("{type=").append(authorizationType);
       sb.append(", value=").append(value);
       sb.append('}');
 

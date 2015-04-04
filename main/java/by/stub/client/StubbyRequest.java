@@ -71,11 +71,11 @@ final class StubbyRequest {
       return authorization;
    }
 
-   public String constructFullUrl() {
+   String constructFullUrl() {
       return String.format(URL_TEMPLATE, scheme.toLowerCase(), host, clientPort, StringUtils.isSet(uri) ? uri : "");
    }
 
-   public int calculatePostLength() {
+   int calculatePostLength() {
       return StringUtils.calculateStringLength(post);
    }
 }
