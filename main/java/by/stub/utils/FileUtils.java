@@ -61,8 +61,8 @@ public final class FileUtils {
    private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
    public static final String BR;
 
-   // Instead of hard-coding '\n',
-   // makes the new line character be specific to the platform (Mac, *Nix or Win) where stubby4j is running
+   // Instead of hard-coding '\n', makes the new line character be specific
+   // to the platform (Mac, *Nix or Win) where stubby4j is running
    static {
       final int initialSize = 4;
       final StringBuilderWriter stringBuilderWriter = new StringBuilderWriter(initialSize);
@@ -113,32 +113,30 @@ public final class FileUtils {
 
    public static String asciiFileToString(final File file) throws IOException {
       final String loadedContent = StringUtils.inputStreamToString(new BufferedInputStream(new FileInputStream(file)));
-
-      return FileUtils.enforceSystemLineSeparator(loadedContent);
+      return enforceSystemLineSeparator(loadedContent);
    }
 
    public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
-      final String loadedContent = FileUtils.asciiFileToString(file);
-
+      final String loadedContent = asciiFileToString(file);
       return loadedContent.getBytes(StringUtils.charsetUTF8());
    }
 
    public static boolean isAsciiFile(final File file) throws IOException {
-      return FileUtils.ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
+      return ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
    }
 
    public static boolean isTemplateFile(final File file) throws IOException {
-      if (FileUtils.isAsciiFile(file)) {
-         return FileUtils.asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+      if (isAsciiFile(file)) {
+         return asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN_LEFT);
       }
       return false;
    }
 
    public static byte[] fileToBytes(final File file) throws IOException {
-      if (FileUtils.isAsciiFile(file)) {
-         return FileUtils.asciiFileToUtf8Bytes(file);
+      if (isAsciiFile(file)) {
+         return asciiFileToUtf8Bytes(file);
       }
-      return FileUtils.binaryFileToBytes(file);
+      return binaryFileToBytes(file);
    }
 
 
