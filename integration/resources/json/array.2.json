@@ -1,0 +1,13 @@
+{
+   "colorsArray": [
+      {
+         "red": "#f00",
+         "yellow": "#ff0",
+         "green": "#0f0",
+         "cyan": "#0ff",
+         "magenta": "#f0f",
+         "black": "#000",
+         "blue": "#00f"
+      }
+   ]
+}

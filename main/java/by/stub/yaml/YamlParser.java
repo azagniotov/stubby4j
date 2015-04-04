@@ -26,11 +26,8 @@ import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.representer.Representer;
-import org.yaml.snakeyaml.resolver.Resolver;
+import parser.yaml.SnakeYaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,24 +51,7 @@ public class YamlParser {
 
    public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
    private String dataConfigHomeDirectory;
-   private final static Yaml SNAKE_YAML;
-
-   static {
-
-      final class YamlParserResolver extends Resolver {
-
-         YamlParserResolver() {
-            super();
-         }
-
-         @Override
-         protected void addImplicitResolvers() {
-            // no implicit resolvers - resolve everything to String
-         }
-      }
-
-      SNAKE_YAML = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
-   }
+   private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
 
    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
       return parse(dataConfigHomeDirectory, constructReader(yaml));
