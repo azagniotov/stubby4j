@@ -99,7 +99,7 @@ public class StubResponse {
    }
 
    public boolean isContainsTemplateTokens() {
-      final boolean isFileTemplate = fileBytes.length == 0 ? false : isTemplateFile();
+      final boolean isFileTemplate = fileBytes.length != 0 && isTemplateFile();
       return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
    }
 
@@ -127,7 +127,7 @@ public class StubResponse {
 
    void addResourceIDHeader(final int httplifeCycleIndex) {
       getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
-      final Map<String, String> shuffledHeaders = new LinkedHashMap<String, String>();
+      final Map<String, String> shuffledHeaders = new LinkedHashMap<>();
       shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
       shuffledHeaders.putAll(new LinkedHashMap<>(getHeaders()));
       getHeaders().clear();

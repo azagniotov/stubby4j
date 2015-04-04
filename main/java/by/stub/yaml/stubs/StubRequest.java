@@ -74,7 +74,7 @@ public class StubRequest {
    }
 
    public final ArrayList<String> getMethod() {
-      final ArrayList<String> uppercase = new ArrayList<String>(method.size());
+      final ArrayList<String> uppercase = new ArrayList<>(method.size());
 
       for (final String string : method) {
          uppercase.add(StringUtils.toUpper(string));
@@ -121,7 +121,7 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      final Map<String, String> headersCopy = new LinkedHashMap<String, String>(headers);
+      final Map<String, String> headersCopy = new LinkedHashMap<>(headers);
       final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
       this.headers.clear();
       for (final Map.Entry<String, String> entry : entrySet) {
@@ -141,7 +141,7 @@ public class StubRequest {
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public Map<String, String> getRegexGroups() {
-      return new TreeMap<String, String>(regexGroups);
+      return new TreeMap<>(regexGroups);
    }
 
    public File getRawFile() {
