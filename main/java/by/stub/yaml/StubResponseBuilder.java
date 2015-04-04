@@ -26,8 +26,8 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
       this.body = null;
       this.file = null;
       this.latency = null;
-      this.headers = new LinkedHashMap<String, String>();
-      this.fieldNameAndValues = new HashMap<String, Object>();
+      this.headers = new LinkedHashMap<>();
+      this.fieldNameAndValues = new HashMap<>();
    }
 
    @Override

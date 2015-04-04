@@ -35,6 +35,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.constructReader;
+
 public class StubbyManagerFactory {
 
    public StubbyManagerFactory() {
@@ -47,7 +49,7 @@ public class StubbyManagerFactory {
       Log.setLog(new EmptyLogger());
 
       final File dataYamlFile = new File(dataYamlFilename);
-      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
+      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), constructReader(dataYamlFile));
 
       System.out.println();
 

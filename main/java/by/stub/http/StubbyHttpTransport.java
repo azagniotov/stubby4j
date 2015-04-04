@@ -77,7 +77,7 @@ public class StubbyHttpTransport {
       setRequestHeaders(connection, headers, postLength);
 
       if (POSTING_METHODS.contains(method)) {
-         writeOutputStream(connection, post);
+         writePost(connection, post);
       }
 
       return buildStubbyResponse(connection);
@@ -103,7 +103,7 @@ public class StubbyHttpTransport {
    private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
       final String requestMethod = connection.getRequestMethod();
-      if (HttpMethod.POST.asString().equals(requestMethod) || HttpMethod.PUT.asString().equals(requestMethod)) {
+      if (POSTING_METHODS.contains(StringUtils.toUpper(requestMethod))) {
          connection.setDoOutput(true);
          connection.setRequestProperty(HttpHeader.CONTENT_TYPE.asString(), "application/x-www-form-urlencoded");
          connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.asString(), "en-US");
@@ -122,7 +122,7 @@ public class StubbyHttpTransport {
       }
    }
 
-   private void writeOutputStream(final HttpURLConnection connection, final String post) throws IOException {
+   private void writePost(final HttpURLConnection connection, final String post) throws IOException {
       final OutputStreamWriter streamWriter = new OutputStreamWriter(connection.getOutputStream(), StringUtils.charsetUTF8());
       try {
          streamWriter.write(post);
