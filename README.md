@@ -1228,6 +1228,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.0.4-SNAPSHOT
+* If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)
 
 ##### 3.0.3
 * Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
