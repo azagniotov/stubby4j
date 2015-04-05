@@ -1,5 +1,6 @@
 package by.stub.builder.yaml;
 
+import by.stub.common.Common;
 import org.junit.Test;
 
 import static by.stub.utils.FileUtils.BR;
@@ -46,15 +47,15 @@ public class YamlBuilderTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("Still going strong!")
          .withLineBreak()
          .withSequenceResponseStatus("500")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OMFG!!!")
          .withSequenceResponseFile("../../response.json")
          .withLineBreak()
@@ -95,15 +96,15 @@ public class YamlBuilderTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseFoldedBody("{\"status\", \"200\"}")
          .withLineBreak()
          .withSequenceResponseStatus("500")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseFile("../path/to/error.file")
          .withLineBreak()
          .build();
@@ -163,7 +164,7 @@ public class YamlBuilderTest {
          withMethodGet().
          withUrl("/invoice").
          newStubbedResponse().
-         withHeaders("content-type", "application/json").
+         withHeaders("content-type", Common.HEADER_APPLICATION_JSON).
          withHeaders("pragma", "no-cache").
          withStatus("200").
          withFile("../json/systemtest-body-response-as-file.json").build();
@@ -198,10 +199,10 @@ public class YamlBuilderTest {
          newStubbedRequest().
          withMethodPut().
          withUrl("/invoice/123").
-         withHeaders("content-type", "application/json").
+         withHeaders("content-type", Common.HEADER_APPLICATION_JSON).
          withFoldedPost("{\"name\": \"milk\", \"description\": \"full\", \"department\": \"savoury\"}").
          newStubbedResponse().
-         withHeaders("content-type", "application/json").
+         withHeaders("content-type", Common.HEADER_APPLICATION_JSON).
          withHeaders("pragma", "no-cache").
          withStatus("200").
          withFoldedBody("{\"id\": \"123\", \"status\": \"updated\"}").build();
@@ -236,7 +237,7 @@ public class YamlBuilderTest {
       final YamlBuilder yamlBuilder = new YamlBuilder();
       final String actualYaml = yamlBuilder.
          newStubbedRequest().
-         withHeaderContentType("application/json").
+         withHeaderContentType(Common.HEADER_APPLICATION_JSON).
          withHeaderContentLanguage("US-en").
          withHeaderContentLength("30").
          withHeaderAuthorizationBasic("bob:secret").
@@ -245,7 +246,7 @@ public class YamlBuilderTest {
          withMethodGet().
          withUrl("/invoice").
          newStubbedResponse().
-         withHeaderContentType("application/json").
+         withHeaderContentType(Common.HEADER_APPLICATION_JSON).
          withHeaderContentLanguage("US-en").
          withHeaderContentLength("30").
          withHeaderPragma("no-cache").

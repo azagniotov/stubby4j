@@ -4,6 +4,7 @@ import by.stub.builder.yaml.YamlBuilder;
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
+import by.stub.common.Common;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubResponse;
 import com.google.api.client.http.HttpHeaders;
@@ -126,7 +127,7 @@ public class StubsAdminPortalsTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -150,7 +151,7 @@ public class StubsAdminPortalsTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -193,7 +194,7 @@ public class StubsAdminPortalsTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType("application/json");
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -211,12 +212,12 @@ public class StubsAdminPortalsTest {
             "    method: POST" + BR +
             "    url: /invoice/new" + BR +
             "    headers:" + BR +
-            "      content-type: application/json" + BR +
+            "      content-type: " + Common.HEADER_APPLICATION_JSON + BR +
             "    post: |" + BR +
             "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}" + BR +
             "  response:" + BR +
             "    headers:" + BR +
-            "      content-type: application/json" + BR +
+            "      content-type: " + Common.HEADER_APPLICATION_JSON + BR +
             "      pragma: no-cache" + BR +
             "    status: 201" + BR +
             "    body: |" + BR +

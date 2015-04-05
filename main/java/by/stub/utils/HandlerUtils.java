@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
+import by.stub.common.Common;
 import by.stub.exception.Stubby4JException;
 import org.eclipse.jetty.http.HttpHeader;
 
@@ -89,12 +90,7 @@ public final class HandlerUtils {
    }
 
    public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
-      final Set<String> httpMethodsContainingBody = new HashSet<String>() {{
-         add("post");
-         add("put");
-      }};
-
-      if (!httpMethodsContainingBody.contains(request.getMethod().toLowerCase())) {
+      if (!Common.POSTING_METHODS.contains(request.getMethod().toUpperCase())) {
          return null;
       }
 

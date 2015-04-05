@@ -524,7 +524,19 @@
       url: /empty.single.param
       query:
          type_name:
-
    response:
       status: 200
       body: EMPTY SINGLE WORKS
+
+-  request:
+      method: POST
+      url: /complex/json/tree
+      headers:
+         content-type: application/json
+      file: ../json/graph.1.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: OK

@@ -21,12 +21,17 @@ package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.annotations.VisibleForTesting;
+import by.stub.common.Common;
 import by.stub.utils.CollectionUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
+import org.eclipse.jetty.http.HttpMethod;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -36,6 +41,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static by.stub.utils.StringUtils.isSet;
+import static by.stub.utils.StringUtils.isWithinSquareBrackets;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
@@ -84,7 +91,7 @@ public class StubRequest {
    }
 
    public void addMethod(final String newMethod) {
-      if (StringUtils.isSet(newMethod)) {
+      if (isSet(newMethod)) {
          method.add(newMethod);
       }
    }
@@ -157,7 +164,7 @@ public class StubRequest {
    }
 
    public boolean hasPostBody() {
-      return StringUtils.isSet(getPostBody());
+      return isSet(getPostBody());
    }
 
    public boolean isSecured() {
@@ -219,7 +226,7 @@ public class StubRequest {
 
          return urlsMatch(dataStoreRequest.url, this.url)
             && arraysIntersect(dataStoreRequest.getMethod(), this.getMethod())
-            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
+            && postBodiesMatch(dataStoreRequest.isPostStubbed(), dataStoreRequest.getPostBody(), this.getPostBody())
             && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
             && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
       }
@@ -227,12 +234,32 @@ public class StubRequest {
       return false;
    }
 
+   @VisibleForTesting boolean isPostStubbed() {
+      return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
+   }
+
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
       return stringsMatch(dataStoreUrl, thisAssertingUrl, YamlProperties.URL);
    }
 
-   private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+   private boolean postBodiesMatch(final boolean isDataStorePostStubbed, final String dataStorePostBody, final String thisAssertingPostBody) {
+      if (isDataStorePostStubbed) {
+         final String assertingContentType = this.getHeaders().get("content-type");
+         final boolean isAssertingValueSet = isSet(thisAssertingPostBody);
+         if (!isAssertingValueSet) {
+            return false;
+         } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
+            try {
+               return JSONCompare.compareJSON(dataStorePostBody, thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+            } catch (JSONException e) {
+               return false;
+            }
+         } else {
+            return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+         }
+      } else {
+         return true;
+      }
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
@@ -277,14 +304,14 @@ public class StubRequest {
 
    @VisibleForTesting
    boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
-      final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
-      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+      final boolean isDataStoreValueSet = isSet(dataStoreValue);
+      final boolean isAssertingValueSet = isSet(thisAssertingValue);
 
       if (!isDataStoreValueSet) {
          return true;
       } else if (!isAssertingValueSet) {
          return false;
-      } else if (StringUtils.isWithinSquareBrackets(dataStoreValue)) {
+      } else if (isWithinSquareBrackets(dataStoreValue)) {
          return dataStoreValue.equals(thisAssertingValue);
       } else {
          return regexMatch(dataStoreValue, thisAssertingValue, templateTokenName);

@@ -1,6 +1,7 @@
 package by.stub.yaml;
 
 import by.stub.builder.yaml.YamlBuilder;
+import by.stub.common.Common;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -83,7 +84,6 @@ public class YamlParserTest {
    public void shouldUnmarshall_WhenYAMLValid_WithOneSequenceResponse() throws Exception {
 
       final String sequenceResponseHeaderKey = "content-type";
-      final String sequenceResponseHeaderValue = "application/json";
       final String sequenceResponseStatus = "200";
       final String sequenceResponseBody = "OK";
 
@@ -93,7 +93,7 @@ public class YamlParserTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus(sequenceResponseStatus)
-         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody(sequenceResponseBody)
          .build();
 
@@ -101,7 +101,7 @@ public class YamlParserTest {
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
-      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON);
 
       assertThat(actualResponse).isInstanceOf(StubResponse.class);
       assertThat(actualResponse.getHeaders()).contains(sequenceHeaderEntry);
@@ -124,7 +124,7 @@ public class YamlParserTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
          .withSequenceResponseStatus(sequenceResponseStatus)

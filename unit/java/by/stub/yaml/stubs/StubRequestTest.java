@@ -1,6 +1,7 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
+import by.stub.common.Common;
 import by.stub.utils.FileUtils;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
@@ -559,7 +560,7 @@ public class StubRequestTest {
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
-            .withPost("some post").build();
+            .withPost("some stubbed post").build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
@@ -789,13 +790,12 @@ public class StubRequestTest {
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaderContentType("application/json")
+            .withHeaderContentType(Common.HEADER_APPLICATION_JSON)
             .withHeaderContentLength(contentLength)
             .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
-
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenNotAllHeadersSetToAssert() throws Exception {
@@ -1382,13 +1382,13 @@ public class StubRequestTest {
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
-            .withMethodGet()
+            .withMethodPost()
             .withMethodHead()
             .withPost(postRegex).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
-            .withMethodGet()
+            .withMethodPost()
             .withMethodHead()
             .withPost(postAssertingValue).build();
 
@@ -2261,5 +2261,85 @@ public class StubRequestTest {
          "headers={}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodGet() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("GET")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostStubbedAndMethodGet() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("GET")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost("").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostStubbed_WhenPostStubbedAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isTrue();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost("").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostStubbed_WhenPostStubbedAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isTrue();
    }
 }

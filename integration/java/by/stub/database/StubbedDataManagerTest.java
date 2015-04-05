@@ -2,6 +2,7 @@ package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.builder.yaml.YamlBuilder;
+import by.stub.common.Common;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.NotFoundStubResponse;
 import by.stub.yaml.stubs.RedirectStubResponse;
@@ -68,7 +69,7 @@ public class StubbedDataManagerTest {
 
       final String url = "/some/redirecting/uri";
       final String sequenceResponseHeaderKey = "content-type";
-      final String sequenceResponseHeaderValue = "application/json";
+      final String sequenceResponseHeaderValue = Common.HEADER_APPLICATION_JSON;
       final String sequenceResponseStatus = "200";
       final String sequenceResponseBody = "OK";
 
@@ -116,7 +117,7 @@ public class StubbedDataManagerTest {
          .withUrl(url)
          .newStubbedResponse()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
          .withSequenceResponseStatus(sequenceResponseStatus)
@@ -164,7 +165,7 @@ public class StubbedDataManagerTest {
          .withSequenceResponseLiteralBody(sequenceResponseBody)
          .withLineBreak()
          .withSequenceResponseStatus("500")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseFoldedBody("OMFG")
          .build();
 
@@ -624,7 +625,7 @@ public class StubbedDataManagerTest {
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withFoldedBody(expectedBody)
-         .withHeaders("content-type", "application/json").build();
+         .withHeaders("content-type", Common.HEADER_APPLICATION_JSON).build();
 
       loadYamlToDataStore(yaml);
 
@@ -666,7 +667,7 @@ public class StubbedDataManagerTest {
          .newStubbedResponse()
          .withStatus(expectedStatus)
          .withFoldedBody(expectedBody)
-         .withHeaders("content-type", "application/json").build();
+         .withHeaders("content-type", Common.HEADER_APPLICATION_JSON).build();
 
       loadYamlToDataStore(yaml);
 
@@ -705,7 +706,7 @@ public class StubbedDataManagerTest {
          .newStubbedResponse()
          .withStatus("200")
          .withFoldedBody("{\"status\": \"hello world\"}")
-         .withHeaders("content-type", "application/json").build();
+         .withHeaders("content-type", Common.HEADER_APPLICATION_JSON).build();
 
       loadYamlToDataStore(yaml);
 

@@ -2,6 +2,7 @@ package by.stub.database;
 
 import by.stub.builder.stubs.StubRequestBuilder;
 import by.stub.client.StubbyResponse;
+import by.stub.common.Common;
 import by.stub.http.StubbyHttpTransport;
 import by.stub.utils.ReflectionUtils;
 import by.stub.yaml.YamlParser;
@@ -245,7 +246,7 @@ public class StubbedDataManagerTest {
          REQUEST_BUILDER
             .withUrl(url)
             .withMethodGet()
-            .withHeaders("content-type", "application/json")
+            .withHeaders("content-type", Common.HEADER_APPLICATION_JSON)
             .build();
       final StubHttpLifecycle originalHttpLifecycle = new StubHttpLifecycle();
       originalHttpLifecycle.setRequest(originalRequest);

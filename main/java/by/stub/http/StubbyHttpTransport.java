@@ -2,6 +2,7 @@ package by.stub.http;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyResponse;
+import by.stub.common.Common;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
@@ -32,11 +33,6 @@ public class StubbyHttpTransport {
       add(HttpMethod.HEAD.asString());
       add(HttpMethod.TRACE.asString());
       add(HttpMethod.OPTIONS.asString());
-      add(HttpMethod.POST.asString());
-   }};
-
-   private static final Set<String> POSTING_METHODS = new HashSet<String>() {{
-      add(HttpMethod.PUT.asString());
       add(HttpMethod.POST.asString());
    }};
 
@@ -76,7 +72,7 @@ public class StubbyHttpTransport {
       connection.setInstanceFollowRedirects(false);
       setRequestHeaders(connection, headers, postLength);
 
-      if (POSTING_METHODS.contains(method)) {
+      if (Common.POSTING_METHODS.contains(method)) {
          writePost(connection, post);
       }
 
@@ -103,7 +99,7 @@ public class StubbyHttpTransport {
    private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
       final String requestMethod = connection.getRequestMethod();
-      if (POSTING_METHODS.contains(StringUtils.toUpper(requestMethod))) {
+      if (Common.POSTING_METHODS.contains(StringUtils.toUpper(requestMethod))) {
          connection.setDoOutput(true);
          connection.setRequestProperty(HttpHeader.CONTENT_TYPE.asString(), "application/x-www-form-urlencoded");
          connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.asString(), "en-US");
