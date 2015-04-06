@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.cli.ANSITerminal;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static by.stub.utils.FileUtils.BR;
 
 /**
  * @author Alexander Zagniotov
@@ -53,7 +56,9 @@ public final class ConsoleUtils {
    }
 
    public static void logRawIncomingRequest(final HttpServletRequest request) {
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
       ANSITerminal.info(HttpRequestUtils.dump(request));
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + BR);
    }
 
    public static void logIncomingRequest(final HttpServletRequest request) {
@@ -67,6 +72,14 @@ public final class ConsoleUtils {
 
       if (debug) {
          ConsoleUtils.logRawIncomingRequest(request);
+      }
+   }
+
+   public static void logAssertingRequest(final StubRequest assertingStubRequest) {
+      if (debug) {
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+         ANSITerminal.info(assertingStubRequest.toString());
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + BR);
       }
    }
 

@@ -23,6 +23,7 @@ import by.stub.annotations.CoberturaIgnore;
 import by.stub.annotations.VisibleForTesting;
 import by.stub.common.Common;
 import by.stub.utils.CollectionUtils;
+import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
@@ -215,6 +216,7 @@ public class StubRequest {
       }
 
       assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
+      ConsoleUtils.logAssertingRequest(assertionRequest);
 
       return assertionRequest;
    }

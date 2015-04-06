@@ -105,7 +105,7 @@ public final class HttpRequestUtils {
             append(HttpRequestUtils.debugStringHeader(indentString, headerName, headerValuesList)).
             append(COMMA).append(BR);
       }
-      stringBuilder.append(indentString).append(RIGHT_CURLY_BRACE).append(BR);
+      stringBuilder.append(indentString).append(RIGHT_CURLY_BRACE);
       return stringBuilder.toString();
    }
 
@@ -135,7 +135,7 @@ public final class HttpRequestUtils {
 
       stringBuilder.append(INDENT_UNIT + "PARAMETERS: ").append(HttpRequestUtils.debugStringParameters(request, 1)).append(BR);
 
-      stringBuilder.append(INDENT_UNIT + "HEADERS: ").append(HttpRequestUtils.debugStringHeaders(request, 1)).append(BR);
+      stringBuilder.append(INDENT_UNIT + "HEADERS: ").append(HttpRequestUtils.debugStringHeaders(request, 1));
 
       return stringBuilder.toString();
    }
