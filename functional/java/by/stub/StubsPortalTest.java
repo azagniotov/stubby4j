@@ -270,6 +270,25 @@ public class StubsPortalTest {
    }
 
    @Test
+   public void should_FindPostContentsEqual_WhenXmlContentOrderIrrelevant() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/xml/tree");
+
+      final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/graph.2.xml");
+      assertThat(jsonContentUrl).isNotNull();
+      final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_XML);
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(response.parseAsString().trim()).isEqualTo("OK");
+   }
+
+   @Test
    public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/pdf/hello-world");

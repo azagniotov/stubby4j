@@ -1180,7 +1180,7 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String contentType = "application/xml";
+      final String contentType = "application/blah";
       final String contentLength = "30";
       final String contentLanguage = "en-US";
 

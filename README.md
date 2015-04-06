@@ -107,7 +107,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 1.5MB
+##### All this goodness in just under 2.0MB
 
 
 ### Building
@@ -148,6 +148,8 @@ stubby4j is a fat JAR, which contains the following dependencies:
 * jetty-util-9.2.10.v20150310.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.15.jar
+* jsonassert-1.2.3.jar
+* xmlunit-1.6.jar
 
 
 ### Adding stubby4j to your project
@@ -1227,8 +1229,11 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 3.0.4-SNAPSHOT
+##### 3.2.3-SNAPSHOT
+
+##### 3.1.3
 * If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)
+* If POST'ed data type is `application/xml`, the comparison of stubbed to posted data will be done using XML entities with non-strict element & attribute checking
 
 ##### 3.0.3
 * Added support for custom authorization type header with the help of the new `header` property `authorization-custom`

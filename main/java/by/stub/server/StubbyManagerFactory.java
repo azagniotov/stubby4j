@@ -24,7 +24,6 @@ import by.stub.cli.EmptyLogger;
 import by.stub.database.StubbedDataManager;
 import by.stub.database.thread.ExternalFilesScanner;
 import by.stub.database.thread.MainYamlScanner;
-import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;

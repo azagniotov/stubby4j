@@ -540,3 +540,16 @@
          content-type: application/json
       status: 200
       body: OK
+
+-  request:
+      method: POST
+      url: /complex/xml/tree
+      headers:
+         content-type: application/xml
+      file: ../xml/graph.1.xml
+
+   response:
+      headers:
+         content-type: application/xml
+      status: 200
+      body: OK

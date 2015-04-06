@@ -5,7 +5,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
-import org.yaml.snakeyaml.nodes.Tag;
 
 public enum SnakeYaml {
 

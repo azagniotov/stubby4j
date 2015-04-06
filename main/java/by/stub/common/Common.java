@@ -16,4 +16,5 @@ public final class Common {
       add(HttpMethod.POST.asString());
    }};
    public static final String HEADER_APPLICATION_JSON = "application/json";
+   public static final String HEADER_APPLICATION_XML = "application/xml";
 }

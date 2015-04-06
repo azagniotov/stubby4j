@@ -28,10 +28,12 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
-import org.eclipse.jetty.http.HttpMethod;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -252,6 +254,14 @@ public class StubRequest {
             try {
                return JSONCompare.compareJSON(dataStorePostBody, thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
             } catch (JSONException e) {
+               return false;
+            }
+         } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
+            try {
+               final Diff diff = new Diff(dataStorePostBody, thisAssertingPostBody);
+               diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+               return (diff.similar() || diff.identical());
+            } catch (SAXException | IOException e) {
                return false;
             }
          } else {

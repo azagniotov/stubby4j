@@ -5,6 +5,7 @@ dependencies {
    compile "commons-cli:commons-cli:1.2"
    compile "org.yaml:snakeyaml:1.15"
    compile "org.skyscreamer:jsonassert:1.2.3"
+   compile "xmlunit:xmlunit:1.6"
 
    testCompile('junit:junit:4.12') { transitive = false }
    testCompile('org.hamcrest:hamcrest-core:1.3') { transitive = false }
