@@ -46,7 +46,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 ##### Minimum system requirements to run stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j)
 
-* version = 3.0.0:  Oracle JRE v1.7.0_76
+* version >= 3.0.0:  Oracle JRE v1.7.0_76
 * version = 2.0.22: Oracle JRE v1.7.0_04
 * version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
 
@@ -107,13 +107,11 @@ For more information and more complex examples, please dive into the rest of doc
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 2.0MB
-
 
 ### Building
 stubby4j is a multi-module Gradle project
 
-* IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files
+* IntelliJ IDEA 13 users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA 13 project files
 * Eclipse users should run ```gradle cleanEclipse eclipse``` in order to generate Eclipse project files
 
 Run `gradle` command to:
@@ -127,13 +125,7 @@ Run `gradle build -x test` command to:
 
 Run `gradle cobertura` command to:
 * Clean
-* Generate Cobertura report under the ```main``` module
-
-Run `gradle clean check` command to:
-* Clean
-* Generate PMD report under the ```main``` module
-* Generate JDepend report under the ```main``` module
-* Generate Cobertura report under the ```main``` module
+* Generate Cobertura report under the `stubby4j/main/target/reports/cobertura/`
 
 
 ### Third-party dependencies
@@ -150,6 +142,7 @@ stubby4j is a fat JAR, which contains the following dependencies:
 * snakeyaml-1.15.jar
 * jsonassert-1.2.3.jar
 * xmlunit-1.6.jar
+* json-20090211.jar
 
 
 ### Adding stubby4j to your project
@@ -1230,10 +1223,11 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 3.2.3-SNAPSHOT
+* Dumping more debug information to the console if `--debug` option is on, also for successfully matched requests
 
 ##### 3.1.3
 * If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)
-* If POST'ed data type is `application/xml`, the comparison of stubbed to posted data will be done using XML entities with non-strict element & attribute checking
+* If POST'ed data type is `application/xml`, the comparison of stubbed to posted data will be done using XML entities with non-strict checking (element & attribute ordering wont matter, as long as content is the same)
 
 ##### 3.0.3
 * Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
