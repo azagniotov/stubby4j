@@ -126,12 +126,7 @@ public class StubResponse {
    }
 
    void addResourceIDHeader(final int httplifeCycleIndex) {
-      getHeaders().remove(STUBBY_RESOURCE_ID_HEADER);
-      final Map<String, String> shuffledHeaders = new LinkedHashMap<>();
-      shuffledHeaders.put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
-      shuffledHeaders.putAll(new LinkedHashMap<>(getHeaders()));
-      getHeaders().clear();
-      getHeaders().putAll(shuffledHeaders);
+      getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
    }
 
    public StubResponseTypes getStubResponseType() {

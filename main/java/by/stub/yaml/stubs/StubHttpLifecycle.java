@@ -184,10 +184,6 @@ public class StubHttpLifecycle {
       }
 
       final StubHttpLifecycle that = (StubHttpLifecycle) o;
-      if (!request.equals(that.request)) {
-         return false;
-      }
-
-      return true;
+      return request.equals(that.request);
    }
 }

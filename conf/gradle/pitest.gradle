@@ -1,0 +1,16 @@
+apply plugin: "info.solidsoft.pitest"
+
+configurations { mutableCodeBase { transitive false } }
+dependencies { mutableCodeBase project(':main') }
+
+pitest {
+   mainSourceSets = [project.sourceSets.test, project(':main').sourceSets.main]
+   additionalMutableCodePaths = [configurations.mutableCodeBase.singleFile]
+   targetClasses = ['by.stub.*']
+   excludedClasses = ['by.stub.Main', 'by.stub.handlers.strategy.admin.*', 'by.stub.server.*', 'by.stub.repackaged.*', 'by.stub.database.thread.*', 'by.stub.http.*', 'by.stub.utils.ConsoleUtils']
+   threads = 4
+   outputFormats = ['HTML']
+   failWhenNoMutations = true
+   timestampedReports = false
+   verbose = false
+}
