@@ -8,9 +8,18 @@ pitest {
    additionalMutableCodePaths = [configurations.mutableCodeBase.singleFile]
    targetClasses = ['by.stub.*']
    excludedClasses = ['by.stub.Main', 'by.stub.handlers.strategy.admin.*', 'by.stub.server.*', 'by.stub.repackaged.*', 'by.stub.database.thread.*', 'by.stub.http.*', 'by.stub.utils.ConsoleUtils']
-   threads = 4
+   threads = 6
    outputFormats = ['HTML']
    failWhenNoMutations = true
    timestampedReports = false
    verbose = false
+   mutators = [
+      'INCREMENTS',
+      'CONDITIONALS_BOUNDARY',
+      'RETURN_VALS',
+      'VOID_METHOD_CALLS',
+      'NON_VOID_METHOD_CALLS',
+      'INVERT_NEGS',
+      'MATH',
+      'NEGATE_CONDITIONALS']
 }
