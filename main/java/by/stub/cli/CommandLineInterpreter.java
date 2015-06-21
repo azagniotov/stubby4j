@@ -53,6 +53,9 @@ public final class CommandLineInterpreter {
    public static final String OPTION_WATCH = "watch";
    public static final String OPTION_HELP = "help";
    public static final String OPTION_VERSION = "version";
+   public static final String OPTION_DEBUG = "debug";
+   public static final String OPTION_DISABLE_ADMIN = "disable_admin_portal";
+   public static final String OPTION_DISABLE_SSL = "disable_ssl";
 
    private static final CommandLineParser POSIX_PARSER = new PosixParser();
    private static final Options OPTIONS = new Options();
@@ -67,8 +70,11 @@ public final class CommandLineInterpreter {
       OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom TLS. By default TLS is enabled using internal keystore.");
       OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
       OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
-      OPTIONS.addOption("m", OPTION_MUTE, false, "Prevent stubby from printing to the console.");
+      OPTIONS.addOption("m", OPTION_MUTE, false, "Mute console output.");
       OPTIONS.addOption("v", OPTION_VERSION, false, "Prints out to console stubby version.");
+      OPTIONS.addOption("o", OPTION_DEBUG, false, "Dumps raw HTTP request to the console (if console is not muted!).");
+      OPTIONS.addOption("da", OPTION_DISABLE_ADMIN, false, "Does not start Admin portal");
+      OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable SSL connections");
       @SuppressWarnings("static-access")
       Option watch =
          OptionBuilder
@@ -118,6 +124,15 @@ public final class CommandLineInterpreter {
     */
    public boolean isVersion() {
       return line.hasOption(OPTION_VERSION);
+   }
+
+   /**
+    * Checks if debug option was provided
+    *
+    * @return true if the user has provided 'debug' command line arg
+    */
+   public boolean isDebug() {
+      return line.hasOption(OPTION_DEBUG);
    }
 
    /**

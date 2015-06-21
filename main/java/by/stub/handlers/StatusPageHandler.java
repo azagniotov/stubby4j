@@ -21,7 +21,6 @@ package by.stub.handlers;
 
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
@@ -32,10 +31,9 @@ import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubResponse;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpSchemes;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -77,21 +75,22 @@ public final class StatusPageHandler extends AbstractHandler {
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "status", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
-      wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setContentType("text/html;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeader.SERVER.asString().toLowerCase(), HandlerUtils.constructHeaderServerName());
 
       try {
-         wrapper.getWriter().println(buildStatusPageHtml());
+         response.getWriter().println(buildStatusPageHtml());
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 
    private String buildStatusPageHtml() throws Exception {
@@ -129,7 +128,7 @@ public final class StatusPageHandler extends AbstractHandler {
       final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
       for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
-         final boolean isResponsesSequenced =  allResponses.size() == 1 ? false : true;
+         final boolean isResponsesSequenced = allResponses.size() == 1 ? false : true;
          final int nextSequencedResponseId = stubHttpLifecycle.getNextSequencedResponseId();
          final String nextResponseLabel = (isResponsesSequenced && nextSequencedResponseId == sequenceId ? NEXT_IN_THE_QUEUE : "");
          final String responseTableTitle = (isResponsesSequenced ? String.format("%s/%s%s", YamlProperties.RESPONSE, sequenceId, nextResponseLabel) : YamlProperties.RESPONSE);
@@ -166,7 +165,7 @@ public final class StatusPageHandler extends AbstractHandler {
       builder.append(interpolateHtmlTableRowTemplate("ADMIN PORT", adminPort));
       builder.append(interpolateHtmlTableRowTemplate("STUBS PORT", jettyContext.getStubsPort()));
       builder.append(interpolateHtmlTableRowTemplate("STUBS TLS PORT", jettyContext.getStubsTlsPort()));
-      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, AdminPortalHandler.ADMIN_ROOT, host, adminPort);
+      final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), AdminPortalHandler.ADMIN_ROOT, host, adminPort);
       builder.append(interpolateHtmlTableRowTemplate("NEW STUB DATA POST URI", endpointRegistration));
 
       return String.format(TEMPLATE_HTML_TABLE, "jetty parameters", builder.toString());
@@ -247,8 +246,8 @@ public final class StatusPageHandler extends AbstractHandler {
 
       final String escapedValue = StringUtils.escapeHtmlEntities(value);
       if (fieldName.equals(YamlProperties.URL)) {
-         final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTP, escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
-         final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpSchemes.HTTPS, escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
+         final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
+         final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 
          final String tableRowWithUrl = interpolateHtmlTableRowTemplate(StringUtils.toUpper(fieldName), urlAsHyperlink);
          final String tableRowWithTlsUrl = interpolateHtmlTableRowTemplate("TLS " + StringUtils.toUpper(fieldName), tlsUrlAsHyperlink);

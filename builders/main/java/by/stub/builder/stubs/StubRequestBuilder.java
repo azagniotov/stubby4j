@@ -1,11 +1,11 @@
 package by.stub.builder.stubs;
 
+import by.stub.yaml.stubs.StubAuthorizationTypes;
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,10 +16,10 @@ import java.util.Map;
 public final class StubRequestBuilder {
 
    private String url = null;
-   private ArrayList<String> methods = new ArrayList<String>();
+   private ArrayList<String> methods = new ArrayList<>();
    private String post = null;
-   private Map<String, String> headers = new HashMap<String, String>();
-   private Map<String, String> query = new LinkedHashMap<String, String>();
+   private Map<String, String> headers = new LinkedHashMap<>();
+   private Map<String, String> query = new LinkedHashMap<>();
    private File file;
 
    public StubRequestBuilder() {
@@ -33,25 +33,25 @@ public final class StubRequestBuilder {
    }
 
    public StubRequestBuilder withMethodGet() {
-      this.methods.add(HttpMethods.GET);
+      this.methods.add(HttpMethod.GET.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPut() {
-      this.methods.add(HttpMethods.PUT);
+      this.methods.add(HttpMethod.PUT.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodPost() {
-      this.methods.add(HttpMethods.POST);
+      this.methods.add(HttpMethod.POST.asString());
 
       return this;
    }
 
    public StubRequestBuilder withMethodHead() {
-      this.methods.add(HttpMethods.HEAD);
+      this.methods.add(HttpMethod.HEAD.asString());
 
       return this;
    }
@@ -98,8 +98,14 @@ public final class StubRequestBuilder {
       return this;
    }
 
-   public StubRequestBuilder withHeaderAuthorization(final String value) {
-      this.headers.put("authorization", value);
+   public StubRequestBuilder withHeaderAuthorizationBasic(final String value) {
+      this.headers.put(StubAuthorizationTypes.BASIC.asYamlProp(), value);
+
+      return this;
+   }
+
+   public StubRequestBuilder withHeaderAuthorizationBearer(final String value) {
+      this.headers.put(StubAuthorizationTypes.BEARER.asYamlProp(), value);
 
       return this;
    }
@@ -132,11 +138,11 @@ public final class StubRequestBuilder {
       final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
 
       this.url = null;
-      this.methods = new ArrayList<String>();
+      this.methods = new ArrayList<>();
       this.post = null;
       this.file = null;
-      this.headers = new HashMap<String, String>();
-      this.query = new LinkedHashMap<String, String>();
+      this.headers = new LinkedHashMap<>();
+      this.query = new LinkedHashMap<>();
 
       return stubRequest;
    }

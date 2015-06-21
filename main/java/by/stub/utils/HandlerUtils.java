@@ -20,17 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.annotations.CoberturaIgnore;
+import by.stub.common.Common;
 import by.stub.exception.Stubby4JException;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.http.HttpHeader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,16 +67,16 @@ public final class HandlerUtils {
    }
 
    public static void setResponseMainHeaders(final HttpServletResponse response) {
-      response.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      response.setHeader(HttpHeaders.DATE, new Date().toString());
-      response.setHeader(HttpHeaders.CONTENT_TYPE, MimeTypes.TEXT_HTML_UTF_8);
-      response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      response.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      response.setDateHeader(HttpHeaders.EXPIRES, 0);
+      response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      response.setHeader(HttpHeader.DATE.asString(), new Date().toString());
+      response.setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      response.setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+      response.setHeader(HttpHeader.PRAGMA.asString(), "no-cache"); // HTTP 1.0.
+      response.setDateHeader(HttpHeader.EXPIRES.asString(), 0);
    }
 
    public static String linkifyRequestUrl(final String scheme, final Object uri, final String host, final int port) {
-      final String fullUrl = String.format("%s://%s:%s%s", scheme, host, port, uri);
+      final String fullUrl = String.format("%s://%s:%s%s", scheme.toLowerCase(), host, port, uri);
       final String href = StringUtils.encodeSingleQuotes(fullUrl);
       return String.format("<a target='_blank' href='%s'>%s</a>", href, fullUrl);
    }
@@ -90,12 +88,7 @@ public final class HandlerUtils {
    }
 
    public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
-      final Set<String> httpMethodsContainingBody = new HashSet<String>() {{
-         add("post");
-         add("put");
-      }};
-
-      if (!httpMethodsContainingBody.contains(request.getMethod().toLowerCase())) {
+      if (!Common.POSTING_METHODS.contains(request.getMethod().toUpperCase())) {
          return null;
       }
 

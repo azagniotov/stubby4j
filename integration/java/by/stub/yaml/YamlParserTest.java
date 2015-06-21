@@ -1,6 +1,7 @@
 package by.stub.yaml;
 
 import by.stub.builder.yaml.YamlBuilder;
+import by.stub.common.Common;
 import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -18,6 +19,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import static by.stub.utils.FileUtils.BR;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -32,7 +36,7 @@ public class YamlParserTest {
    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenEmptyYAMLGiven() throws Exception {
+   public void shouldUnmarshall_WhenEmptyYAMLGiven() throws Exception {
 
       expectedException.expect(IOException.class);
       expectedException.expectMessage("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
@@ -41,7 +45,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithNoProperties() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithNoProperties() throws Exception {
 
       final String yaml = YAML_BUILDER
          .newStubbedRequest()
@@ -57,7 +61,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithNoSequenceResponses() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithNoSequenceResponses() throws Exception {
 
       final String expectedStatus = "301";
       final String yaml = YAML_BUILDER
@@ -77,10 +81,9 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithOneSequenceResponse() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithOneSequenceResponse() throws Exception {
 
       final String sequenceResponseHeaderKey = "content-type";
-      final String sequenceResponseHeaderValue = "application/json";
       final String sequenceResponseStatus = "200";
       final String sequenceResponseBody = "OK";
 
@@ -90,7 +93,7 @@ public class YamlParserTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus(sequenceResponseStatus)
-         .withSequenceResponseHeaders(sequenceResponseHeaderKey, sequenceResponseHeaderValue)
+         .withSequenceResponseHeaders(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody(sequenceResponseBody)
          .build();
 
@@ -98,7 +101,7 @@ public class YamlParserTest {
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
-      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+      final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON);
 
       assertThat(actualResponse).isInstanceOf(StubResponse.class);
       assertThat(actualResponse.getHeaders()).contains(sequenceHeaderEntry);
@@ -108,7 +111,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_AndReturnResponsesInSequence_WithManySequenceResponse() throws Exception {
+   public void shouldUnmarshall_AndReturnResponsesInSequence_WithManySequenceResponse() throws Exception {
 
       final String sequenceResponseHeaderKey = "content-type";
       final String sequenceResponseHeaderValue = "application/xml";
@@ -121,7 +124,7 @@ public class YamlParserTest {
          .withUrl("/invoice")
          .newStubbedResponse()
          .withSequenceResponseStatus("200")
-         .withSequenceResponseHeaders("content-type", "application/json")
+         .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
          .withSequenceResponseLiteralBody("OK")
          .withLineBreak()
          .withSequenceResponseStatus(sequenceResponseStatus)
@@ -145,7 +148,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithUrlAsRegex() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithUrlAsRegex() throws Exception {
 
       final String url = "^/[a-z]{3}/[0-9]+/?$";
       final String yaml = YAML_BUILDER.newStubbedRequest()
@@ -162,7 +165,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithMultipleHTTPMethods() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithMultipleHTTPMethods() throws Exception {
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
@@ -178,7 +181,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithDefaultHTTPResponseStatus() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithDefaultHTTPResponseStatus() throws Exception {
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
@@ -193,7 +196,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFoldedPost() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithFoldedPost() throws Exception {
 
       final String stubbedRequestPost = "{\"message\", \"Hello, this is a request post\"}";
 
@@ -212,7 +215,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileFailedToLoadAndPostSet() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithFileFailedToLoadAndPostSet() throws Exception {
 
       final String stubbedRequestFile = "../../very.big.soap.request.xml";
 
@@ -266,7 +269,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFileFailedToLoadAndBodySet() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithFileFailedToLoadAndBodySet() throws Exception {
 
       final String stubbedResponseFile = "../../very.big.soap.response.xml";
 
@@ -317,7 +320,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithLiteralPost() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithLiteralPost() throws Exception {
 
       final String stubbedRequestPost = "Hello, this is a request post";
 
@@ -336,7 +339,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldFailUnmarshallYamlIntoObjectTree_WithJsonAsLiteralPost() throws Exception {
+   public void shouldFailUnmarshallYaml_WithJsonAsLiteralPost() throws Exception {
 
       expectedException.expect(IllegalArgumentException.class);
       expectedException.expectMessage("Can not set java.lang.String field by.stub.yaml.StubRequestBuilder.post to java.util.LinkedHashMap");
@@ -353,7 +356,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithFoldedBody() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithFoldedBody() throws Exception {
 
       final String stubbedResponseBody = "{\"message\", \"Hello, this is a response body\"}";
 
@@ -371,7 +374,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldFailUnmarshallYamlIntoObjectTree_WithJsonAsLiteralBody() throws Exception {
+   public void shouldFailUnmarshallYaml_WithJsonAsLiteralBody() throws Exception {
 
       expectedException.expect(IllegalArgumentException.class);
 
@@ -385,7 +388,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithLiteralBody() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithLiteralBody() throws Exception {
 
       final String stubbedResponseBody = "This is a sentence";
 
@@ -404,7 +407,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithMultipleQueryParams() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithMultipleQueryParams() throws Exception {
 
       final String expectedParamOne = "paramOne";
       final String expectedParamOneValue = "one";
@@ -434,54 +437,131 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithAuthorizationHeader() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithAuthorizationHeaderBasic() throws Exception {
 
       final String authorization = "bob:secret";
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaderAuthorization(authorization)
+         .withHeaderAuthorizationBasic(authorization)
          .newStubbedResponse()
          .withStatus("301").build();
-
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
       final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
-      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
+      final MapEntry headerOneEntry = MapEntry.entry(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithEmptyAuthorizationHeader() throws Exception {
-
-      final String authorization = "";
+   public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderBasic() throws Exception {
 
       final String yaml = YAML_BUILDER.newStubbedRequest()
          .withMethodGet()
          .withUrl("/some/uri")
-         .withHeaderAuthorization("")
+         .withHeaderAuthorizationBasic("")
          .newStubbedResponse()
          .withStatus("301").build();
-
 
       final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
       final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
       final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
-      final MapEntry headerOneEntry = MapEntry.entry("authorization", encodedAuthorizationHeader);
+      final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(""));
+      final MapEntry headerOneEntry = MapEntry.entry(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
       assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
    }
 
+   @Test
+   public void shouldUnmarshall_WhenYAMLValid_WithAuthorizationHeaderBearer() throws Exception {
+
+      final String authorization = "Ym9iOnNlY3JldA==";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationBearer(authorization)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String authorizationHeader = String.format("%s %s", "Bearer", authorization);
+      final MapEntry headerOneEntry = MapEntry.entry(BEARER.asYamlProp(), authorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WithMultipleHeaders() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderBearer() throws Exception {
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationBearer("")
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final String authorizationHeader = String.format("%s %s", "Bearer", "");
+      final MapEntry headerOneEntry = MapEntry.entry(BEARER.asYamlProp(), authorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshall_WhenYAMLValid_WithAuthorizationHeaderCustom() throws Exception {
+
+      final String authorizationHeader = "CustomAuthorizationName AuthorizationValue";
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationCustom(authorizationHeader)
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final MapEntry headerOneEntry = MapEntry.entry(CUSTOM.asYamlProp(), authorizationHeader);
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderCustom() throws Exception {
+
+      final String yaml = YAML_BUILDER.newStubbedRequest()
+         .withMethodGet()
+         .withUrl("/some/uri")
+         .withHeaderAuthorizationCustom("")
+         .newStubbedResponse()
+         .withStatus("301").build();
+
+      final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+      final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+      final StubRequest actualRequest = actualHttpLifecycle.getRequest();
+
+      final MapEntry headerOneEntry = MapEntry.entry(CUSTOM.asYamlProp(), "");
+
+      assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+   }
+
+   @Test
+   public void shouldUnmarshall_WhenYAMLValid_WithMultipleHeaders() throws Exception {
 
       final String location = "/invoice/123";
       final String contentType = "application-json";
@@ -506,7 +586,7 @@ public class YamlParserTest {
 
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WitQueryParamIsArrayHavingDoubleQuotes() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WitQueryParamIsArrayHavingDoubleQuotes() throws Exception {
 
       final String expectedParamOne = "fruits";
       final String expectedParamOneValue = "[\"apple\",\"orange\",\"banana\"]";
@@ -529,7 +609,7 @@ public class YamlParserTest {
    }
 
    @Test
-   public void shouldUnmarshallYamlIntoObjectTree_WhenYAMLValid_WitQueryParamIsArrayHavingSingleQuotes() throws Exception {
+   public void shouldUnmarshall_WhenYAMLValid_WitQueryParamIsArrayHavingSingleQuotes() throws Exception {
 
       final String expectedParamOne = "fruits";
       final String expectedParamOneValue = "['apple','orange','banana']";

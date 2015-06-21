@@ -1,62 +1,30 @@
 // vim: ft=groovy
-defaultTasks 'clean', 'build'
+import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
+ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
+project(':').ext.map = [:]
+
+defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
 
 buildscript {
    repositories {
       mavenCentral()
+      jcenter()
    }
-
    dependencies {
-      classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+      classpath 'com.bmuschko:gradle-nexus-plugin:2.3'
+      classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.3.1'
+      classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.4'
    }
-
 }
 
-def totalTestCounter = 0
 allprojects {
    apply plugin: 'java'
    apply plugin: 'idea'
    apply plugin: 'eclipse'
    project.buildDir = 'target'
-
    if (project.name != 'main') {
-      tasks.withType(Test) {
-         Task testTask ->
-            def totalSuiteCount = 0
-            def successSuiteCount = 0
-            testReport = false
-            testLogging {
-               events /*"passed", */"skipped", "failed"
-               exceptionFormat "full"
-               showExceptions true
-               showCauses true
-               showStackTraces true
-            }
-            doFirst {
-               //println ""
-               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               //println ":::::                         Running " + project.name.toUpperCase() + " module tests"
-               //println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-            }
-            afterSuite { testDescriptor, testResult ->
-               if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-                  totalSuiteCount += testResult.getTestCount()
-                  totalTestCounter += testResult.getTestCount()
-                  successSuiteCount += testResult.getSuccessfulTestCount()
-               }
-            }
-            doLast {
-               println ""
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                         Ran " + project.name.toUpperCase() + " module tests"
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ":::::                             Passed (" + successSuiteCount + "/" + totalSuiteCount  + ") tests"
-               println ":::::               Total tests executed in $stubbyProjectName project so far " + totalTestCounter
-               println "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-               println ""
-            } 
-      }
+      apply from: "$rootDir/conf/gradle/console.gradle"
    }
 }
 
@@ -64,46 +32,54 @@ apply from: "$rootDir/conf/gradle/ides.gradle"
 
 subprojects {
    subproject ->
-      sourceCompatibility = 1.6
-      tasks.withType(Compile) {
+      sourceCompatibility = 1.7
+      tasks.withType(JavaCompile) {
          doFirst {
-            assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
+            assert sourceCompatibility == "1.7": "The sourceCompatibility of $name was changed!"
          }
          options.encoding = 'UTF-8'
       }
-      targetCompatibility = 1.6
-
+      targetCompatibility = 1.7
       repositories {
          mavenCentral()
+         jcenter()
          mavenLocal()
       }
-
-      apply from: "$rootDir/conf/gradle/dependencies.gradle"
-      if (subproject.name != 'main' && subproject.name != 'builders') {
-         apply from: "$rootDir/conf/gradle/cobertura.gradle"
-      }
+      apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
 
-project(":").tasks.each {
-   task ->
-      def taskNameLowerCase = task.name.toLowerCase()
-      if (!taskNameLowerCase.contains("idea") && 
-         !taskNameLowerCase.contains("eclipse") &&
-         !taskNameLowerCase.contains("clean")) {
-         task.enabled = false
-         println ":" + task.name + " => Disabling task.." 
-      }
-}
+task allTestReport(type: TestReport) {
+   destinationDir = file("$buildDir/reports/all")
+   reportOn subprojects*.test
+   doLast {
+      def total = 0
+      def failure = 0
+      def moduleTabs = "\t";
+      def prefixSpace = "      ";
+      def prefixDots = ":::::";
+      def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
+      println ""
+      println hr
 
-def projects = [project(":unit"), project(":integration"), project(":functional") ]
-projects.each {
-   project ->
-      project.tasks.each {
-         task ->
-            def taskNameLowerCase = task.name.toLowerCase()
-            if (taskNameLowerCase.contains("jar")) {
-               task.enabled = false
-               println ":" + project.name + ":" + task.name + " => Disabling task.."
-            }
+      for ( testProjectName in project(':').ext.map ) {
+         total += testProjectName.value['total']
+         failure += testProjectName.value['failure']
+         println prefixSpace + prefixDots + "  " +  testProjectName.key +
+         " (failed: " + testProjectName.value['failure'] + ", passed: " + testProjectName.value['success'] + ", total: " + testProjectName.value['total'] + ")"
+         for ( testClassName in testProjectName.value ) {
+             if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
+                  continue;
+             }
+             println prefixSpace + prefixDots + "    " +  moduleTabs + testClassName.key +
+                                     " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
          }
+         println hr
+      }
+      println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + total
+      println hr
+      if (failure > 0) {
+         throw new GradleException(failure + " TESTS FAILED!!!")
+      }
+   }
 }
+

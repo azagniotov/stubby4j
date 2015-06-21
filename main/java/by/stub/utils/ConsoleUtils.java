@@ -20,19 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.utils;
 
 import by.stub.cli.ANSITerminal;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
+import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static by.stub.utils.FileUtils.BR;
 
 /**
  * @author Alexander Zagniotov
  * @since 10/26/12, 1:00 PM
  */
 public final class ConsoleUtils {
+
+   private static boolean debug = false;
 
    private ConsoleUtils() {
 
@@ -50,6 +55,12 @@ public final class ConsoleUtils {
       ANSITerminal.error(logMessage);
    }
 
+   public static void logRawIncomingRequest(final HttpServletRequest request) {
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+      ANSITerminal.info(HttpRequestUtils.dump(request));
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + BR);
+   }
+
    public static void logIncomingRequest(final HttpServletRequest request) {
 
       final String logMessage = String.format("[%s] -> %s [%s]",
@@ -58,11 +69,23 @@ public final class ConsoleUtils {
          request.getRequestURI()
       );
       ANSITerminal.incoming(logMessage);
+
+      if (debug) {
+         ConsoleUtils.logRawIncomingRequest(request);
+      }
    }
 
-   public static void logOutgoingResponse(final String url, final HttpServletResponseWithGetStatus wrapper) {
+   public static void logAssertingRequest(final StubRequest assertingStubRequest) {
+      if (debug) {
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+         ANSITerminal.info(assertingStubRequest.toString());
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + BR);
+      }
+   }
 
-      final int status = wrapper.getStatus();
+   public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
+
+      final int status = response.getStatus();
 
       final String logMessage = String.format("[%s] <- %s [%s] %s",
          getTime(),
@@ -97,5 +120,14 @@ public final class ConsoleUtils {
          now.get(Calendar.MINUTE),
          now.get(Calendar.SECOND)
       );
+   }
+
+   /**
+    * Enables verbose console output
+    *
+    * @param isDebug if true, the incoming raw HTTP request will be dumped to console
+    */
+   public static void enableDebug(final boolean isDebug) {
+      debug = isDebug;
    }
 }

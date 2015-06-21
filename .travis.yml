@@ -1,5 +1,15 @@
 language: java
+
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk7
+  - oraclejdk8
+
+env:
+  - TERM=dumb
+
+git:
+  depth: 10
+
+after_success:
+  - gradle cobertura coveralls

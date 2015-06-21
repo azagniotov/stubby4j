@@ -1,9 +1,11 @@
+apply plugin: 'com.github.kt3k.coveralls'
+
 configurations {
    coberturaRuntime { extendsFrom testRuntime }
 }
 
 dependencies {
-   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.0.3'
+   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.1.1'
 }
 
 task coberturaPrepare() {
@@ -24,7 +26,8 @@ task coberturaPrepare() {
 }
 
 task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
-   ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
+   ext.outputDir = project(":main").buildDir.path + "/classes-instrumented"
+   //ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
    doLast {
       ant.coberturaInstrument(
          ignoreTrivial: true,
@@ -42,11 +45,18 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
    }
 }
 
-task coberturaReport(dependsOn: ['coberturaInstrument', 'test'/*project(":unit").test*/]) << {
+task coberturaReport(dependsOn: ['coberturaInstrument', test]) << {
    ant.coberturaReport(
       format: "html", 
       destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
       srcdir: "$rootDir/main/java", 
+      datafile: coberturaPrepare.datafileLocation
+   )
+
+   ant.coberturaReport(
+      format: "xml",
+      destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
+      srcdir: "$rootDir/main/java",
       datafile: coberturaPrepare.datafileLocation
    )
 }
@@ -62,6 +72,11 @@ gradle.taskGraph.whenReady { graph ->
    }
 } 
 
+tasks.coveralls {
+   def factory = project(':').ext.coberturaSourceReportFactory
+   sourceReportFactoryMap[
+      file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = factory
+}
 
 task cobertura {
    dependsOn = ['clean', 'coberturaReport']

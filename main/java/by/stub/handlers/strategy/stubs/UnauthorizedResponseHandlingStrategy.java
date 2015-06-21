@@ -19,36 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
-import by.stub.repackaged.org.apache.commons.codec.binary.Base64;
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.HandlerUtils;
-import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 public final class UnauthorizedResponseHandlingStrategy implements StubResponseHandlingStrategy {
+
+   @VisibleForTesting
+   public static final String NO_AUTHORIZATION_HEADER = "You are not authorized to view this page without supplied 'Authorization' HTTP header";
+   @VisibleForTesting
+   public static final String WRONG_AUTHORIZATION_HEADER_TEMPLATE = "Unauthorized with supplied 'authorized' header value: '%s'";
 
    public UnauthorizedResponseHandlingStrategy() {
 
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
-      final String authorizationHeader = assertionStubRequest.getHeaders().get(StubRequest.AUTH_HEADER);
-      if (ObjectUtils.isNull(authorizationHeader)) {
-         String error = "You are not authorized to view this page without supplied 'Authorization' HTTP header";
-         HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, error);
+      final String authorizationHeader = assertionStubRequest.getRawAuthorizationHttpHeader();
+      if (!StringUtils.isSet(authorizationHeader)) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, NO_AUTHORIZATION_HEADER);
          return;
       }
-      final String expectedbase64encodedHeader = authorizationHeader.substring("Basic ".length());
-      final byte[] decodedHeaderBytes = Base64.decodeBase64(expectedbase64encodedHeader);
-      final String expectedbase64decodedHeader = StringUtils.newStringUtf8(decodedHeaderBytes);
 
-      final String template = "Unauthorized with supplied encoded credentials: '%s' which decodes to '%s'";
-      String error = String.format(template, expectedbase64encodedHeader, expectedbase64decodedHeader);
-      HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, error);
+      HandlerUtils.configureErrorResponse(response, HttpStatus.UNAUTHORIZED_401, String.format(WRONG_AUTHORIZATION_HEADER_TEMPLATE, authorizationHeader));
    }
 }

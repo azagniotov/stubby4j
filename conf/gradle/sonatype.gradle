@@ -1,115 +1,35 @@
-def dependencies = configurations.compile.resolve().findAll { file ->
-   return !file.name.contains("servlet-api") && !file.name.contains("-sources")
-}
+apply plugin: 'com.bmuschko.nexus'
 
-project.ext.projectManifest = manifest {
-   def manifestClasspath = dependencies.collect { it.getName() }.join(',')
-   attributes  'Main-Class': 'by.stub.Main',
-               'Package': 'by.stub',
-               'Class-Path': manifestClasspath,
-               'Implementation-Title': "${stubbyProjectName}",
-               'Implementation-Version': "${version}",
-               'Implementation-Vendor' : 'Alexander Zagniotov',
-               'Built-By': 'Alexander Zagniotov',
-               'Built-Date': new Date().toString(),
-               'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
-               'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
-}
-
-jar {
-   description = 'Creates a shaded/uberjar/fatjar of stubby4j'
-   archiveName = "${stubbyProjectName}-${version}.jar"
-   manifest = project.ext.projectManifest
-   from sourceSets.main.output
-
-   from (dependencies.collect { zipTree(it) }) {
-      exclude 'META-INF/*.SF'
-      exclude 'META-INF/*.DSA'
-      exclude 'META-INF/*.RSA'
-      exclude 'META-INF/*.INF'
-      exclude 'META-INF/*.inf'
-   }
-   doLast {
-      println ":" + name + " Packaged the following dependencies: " + dependencies.collect { File file -> file.name }
-   }
-}
-
-def doSign = !"${version}".contains('SNAPSHOT')
-if (!doSign) {
-   println ""
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ":::     ATTENTION: Latest development version is ${version}     :::"
-   println ":::         Remove the '-SNAPSHOT' before signing artifacts         :::"
-   println ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-   println ""
-   return
-}
-
-apply plugin: 'maven'
-apply plugin: 'nexus'
-apply plugin: 'signing'
-
-sourcesJar {
-   dependsOn = ['classes']
-   baseName = "${stubbyProjectName}"
-   version = "${version}"
-   classifier = "sources"
-   extension = "jar"
-   from sourceSets.main.java
-
-   doLast {
-      println ":" + name + " Packaged the following sources: " + sourceSets.main.java.collect { File file -> file.name }
-   }
-}
-
-javadocJar {
-   dependsOn = ['javadoc']
-   baseName = "${stubbyProjectName}"
-   version = "${version}"
-   classifier = "javadoc"
-   extension = "jar"
-   from javadoc.destinationDir
-}
-
-task skinnyJar(type: Jar) {
-   description = 'Creates a skinny/no-dependencies of stubby4j'
-   baseName = "${stubbyProjectName}"
-   version = "${version}"
-   classifier = "no-dependencies"
-   extension = "jar"
-   from sourceSets.main.output
-   manifest = project.ext.projectManifest
-
-   doLast {
-      println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDir
-   }
-}
-
-artifacts {
-   archives skinnyJar
+extraArchive {
+   sources = true
+   tests = false
+   javadoc = true
 }
 
 uploadArchives {
+
+   doFirst {
+      def doSign = !"${version}".contains('SNAPSHOT')
+      if (!doSign) {
+         def error = "\n"
+         error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+         error += ":::     ATTENTION: Latest development version is ${version}     :::\n"
+         error += ":::         Remove the '-SNAPSHOT' before signing artifacts         :::\n"
+         error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+         error += "\n"
+         throw new GradleException(error)
+      }
+   }
+
    repositories {
       mavenDeployer {
-
-         def ascPom = addFilter('asc') {artifact, file -> artifact.ext == "asc" }  
-         ascPom.version = "$version"
-         ascPom.artifactId = "$stubbyProjectName"
-         ascPom.groupId = "$stubbyProjectGroup"
- 
-         def jarPom = addFilter('jar') {artifact, file -> artifact.ext == "jar" }
-         jarPom.version = "$version"
-         jarPom.artifactId = "$stubbyProjectName"
-         jarPom.groupId = "$stubbyProjectGroup"
-         
-         def poms = [jarPom, ascPom]
-
-         poms.each {
-            pom ->
-            pom.project {
+         pom.version = "$version"
+         pom.artifactId = "$stubbyProjectName"
+         pom.groupId = "$stubbyProjectGroup"
+         modifyPom {
+            project {
                name 'stubby4j'
-               description 'A stub HTTP server written in Java with embedded Jetty server.'
+               description 'A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol. It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code. Allows stubbing of external systems with ease for integration testing'
                url 'https://github.com/azagniotov/stubby4j'
                inceptionYear '2012'
                packaging 'jar'
@@ -140,3 +60,4 @@ uploadArchives {
       }
    }
 }
+

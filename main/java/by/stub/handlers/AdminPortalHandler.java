@@ -22,12 +22,9 @@ package by.stub.handlers;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import by.stub.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
-import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -35,7 +32,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 public class AdminPortalHandler extends AbstractHandler {
 
@@ -52,25 +48,22 @@ public class AdminPortalHandler extends AbstractHandler {
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, NAME, "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
 
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-      wrapper.setContentType(MimeTypes.TEXT_HTML_UTF_8);
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      wrapper.setHeader(HttpHeaders.DATE, new Date().toString());
-      wrapper.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-      wrapper.setHeader(HttpHeaders.PRAGMA, "no-cache"); // HTTP 1.0.
-      wrapper.setDateHeader(HttpHeaders.EXPIRES, 0);
+      HandlerUtils.setResponseMainHeaders(response);
+      response.setStatus(HttpStatus.OK_200);
 
       final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
       try {
-         strategyStubResponse.handle(request, wrapper, stubbedDataManager);
+         strategyStubResponse.handle(request, response, stubbedDataManager);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 }

@@ -42,6 +42,7 @@ public final class StringUtils {
 
    }
 
+   public static final int PAD_LIMIT = 8192;
    public static final String TEMPLATE_TOKEN_LEFT = "<%";
    public static final String TEMPLATE_TOKEN_RIGHT = "%>";
    public static final String UTF_8 = "UTF-8";
@@ -185,5 +186,80 @@ public final class StringUtils {
 
          return (!valueAsStr.equalsIgnoreCase("null") ? valueAsStr : "");
       }
+   }
+
+   /*
+      http://commons.apache.org/proper/commons-lang/apidocs/src-html/org/apache/commons/lang3/StringUtils.html
+    */
+   public static String join(final String[] array, final char separator) {
+      if (array == null) {
+         return null;
+      }
+      final int startIndex = 0;
+      final int endIndex = array.length;
+      final int noOfItems = endIndex - startIndex;
+      if (noOfItems <= 0) {
+         return "";
+      }
+      final StringBuilder buf = new StringBuilder(noOfItems * 16);
+      for (int i = startIndex; i < endIndex; i++) {
+         if (i > startIndex) {
+            buf.append(separator);
+         }
+         if (array[i] != null) {
+            buf.append(array[i]);
+         }
+      }
+      return buf.toString();
+   }
+
+   /*
+      http://commons.apache.org/proper/commons-lang/apidocs/src-html/org/apache/commons/lang3/StringUtils.html
+    */
+   public static String repeat(final String str, final int repeat) {
+      // Performance tuned for 2.0 (JDK1.4)
+
+      if (str == null) {
+         return null;
+      }
+      if (repeat <= 0) {
+         return "";
+      }
+      final int inputLength = str.length();
+      if (repeat == 1 || inputLength == 0) {
+         return str;
+      }
+      if (inputLength == 1 && repeat <= PAD_LIMIT) {
+         return repeat(str.charAt(0), repeat);
+      }
+
+      final int outputLength = inputLength * repeat;
+      switch (inputLength) {
+         case 1:
+            return repeat(str.charAt(0), repeat);
+         case 2:
+            final char ch0 = str.charAt(0);
+            final char ch1 = str.charAt(1);
+            final char[] output2 = new char[outputLength];
+            for (int i = repeat * 2 - 2; i >= 0; i--, i--) {
+               output2[i] = ch0;
+               output2[i + 1] = ch1;
+            }
+            return new String(output2);
+         default:
+            final StringBuilder buf = new StringBuilder(outputLength);
+            for (int i = 0; i < repeat; i++) {
+               buf.append(str);
+            }
+            return buf.toString();
+      }
+   }
+
+   private static String repeat(final char ch, final int repeat) {
+      final char[] buf = new char[repeat];
+      for (int i = repeat - 1; i >= 0; i--) {
+         buf[i] = ch;
+      }
+      return new String(buf);
    }
 }

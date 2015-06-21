@@ -191,7 +191,7 @@ public class StringUtilsTest {
    @Test
    public void shouldReplaceTokensInATemplateWhenAllTokensPresent() throws Exception {
 
-      final Map<String, String> tokensAndValues = new HashMap<String, String>();
+      final Map<String, String> tokensAndValues = new HashMap<>();
       tokensAndValues.put("url.1", "ALEX");
       tokensAndValues.put("url.2", "JOHN");
       tokensAndValues.put("url.3", "TRACY");

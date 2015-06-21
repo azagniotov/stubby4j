@@ -26,22 +26,27 @@ import by.stub.exception.Stubby4JException;
 import by.stub.handlers.AdminPortalHandler;
 import by.stub.handlers.AjaxEndpointStatsHandler;
 import by.stub.handlers.AjaxResourceContentHandler;
+import by.stub.handlers.FaviconHandler;
 import by.stub.handlers.StatusPageHandler;
 import by.stub.handlers.StubDataRefreshActionHandler;
 import by.stub.handlers.StubsPortalHandler;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
+import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.GzipHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
@@ -63,10 +68,13 @@ public final class JettyFactory {
    public static final int DEFAULT_ADMIN_PORT = 8889;
    public static final int DEFAULT_STUBS_PORT = 8882;
    public static final int DEFAULT_SSL_PORT = 7443;
+   private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
+   private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
    public static final String DEFAULT_HOST = "localhost";
-   static final String ADMIN_CONNECTOR_NAME = "stubbyAdminConnector";
-   static final String STUBS_CONNECTOR_NAME = "stubsClientConnector";
-   static final String SSL_CONNECTOR_NAME = "stubsSslConnector";
+
+   static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
+   static final String STUBS_CONNECTOR_NAME = "StubsConnector";
+   static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
    private static final String ROOT_PATH_INFO = "/";
    private final Map<String, String> commandLineArgs;
    private final StubbedDataManager stubbedDataManager;
@@ -82,49 +90,53 @@ public final class JettyFactory {
 
    public Server construct() throws IOException {
 
+      //final Server server = new Server(new QueuedThreadPool(100, 10));
+      //server.addBean(new ScheduledExecutorScheduler());
       final Server server = new Server();
-      server.setConnectors(buildConnectors());
+      server.setDumpAfterStart(false);
+      server.setDumpBeforeStop(false);
+      server.setStopAtShutdown(true);
+
+      server.setConnectors(buildConnectors(server));
       server.setHandler(constructHandlers());
 
       return server;
    }
 
-   private HandlerList constructHandlers() {
+   private ContextHandlerCollection constructHandlers() {
 
       final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
-      final HandlerList handlers = new HandlerList();
+      final ContextHandlerCollection handlers = new ContextHandlerCollection();
       handlers.setHandlers(new Handler[]
-         {
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
-            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
+            {
+               constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+               constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/html/", "default404.html"))),
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(staticResourceHandler("ui/images/", "favicon.ico"))),
-            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
+               constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+               constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
 
-            constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
-            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
-         }
+               constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
+               constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+               constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
+            }
       );
 
       return handlers;
    }
 
-   private ResourceHandler staticResourceHandler(final String classPathResource, final String... staticResources) {
+   private ResourceHandler staticResourceHandler(final String classPathResource) {
 
       final ResourceHandler resourceHandler = new ResourceHandler();
       resourceHandler.setDirectoriesListed(true);
-      resourceHandler.setWelcomeFiles(staticResources);
       resourceHandler.setBaseResource(Resource.newClassPathResource(classPathResource));
 
       return resourceHandler;
@@ -143,6 +155,7 @@ public final class JettyFactory {
             "application/javascript," +
             "application/x-javascript," +
             "image/svg+xml," +
+            "image/x-icon," +
             "image/gif," +
             "image/jpg," +
             "image/jpeg," +
@@ -157,34 +170,41 @@ public final class JettyFactory {
       final ContextHandler contextHandler = new ContextHandler();
       contextHandler.setContextPath(pathInfo);
       contextHandler.setAllowNullPathInfo(true);
-      contextHandler.setConnectorNames(new String[]{connectorName});
+      // We prefix the name with an '@' because this is the way Jetty v9 finds a named connector
+      contextHandler.setVirtualHosts(new String[]{"@" + connectorName});
       contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
       contextHandler.setHandler(handler);
 
       final MimeTypes mimeTypes = new MimeTypes();
-      mimeTypes.setMimeMap(new HashMap());
+      mimeTypes.setMimeMap(new HashMap<String, String>());
       contextHandler.setMimeTypes(mimeTypes);
 
       return contextHandler;
    }
 
-   private Connector[] buildConnectors() throws IOException {
+   private Connector[] buildConnectors(final Server server) throws IOException {
 
-      final List<Connector> connectors = new ArrayList<Connector>();
+      final List<Connector> connectors = new ArrayList<>();
 
-      connectors.add(buildAdminConnector());
-      connectors.add(buildStubsConnector());
-      connectors.add(buildStubsSslConnector());
-
+      if (!commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_ADMIN)) {
+         connectors.add(buildAdminConnector(server));
+      }
+      connectors.add(buildStubsConnector(server));
+      if (!commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL)) {
+         connectors.add(buildStubsSslConnector(server));
+      }
       return connectors.toArray(new Connector[connectors.size()]);
    }
 
-   private SelectChannelConnector buildAdminConnector() {
-      final SelectChannelConnector adminChannel = new SelectChannelConnector();
+   private ServerConnector buildAdminConnector(final Server server) {
+
+      final HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      final ServerConnector adminChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
       adminChannel.setPort(getAdminPort(commandLineArgs));
 
       adminChannel.setName(ADMIN_CONNECTOR_NAME);
       adminChannel.setHost(DEFAULT_HOST);
+      adminChannel.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          adminChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -204,15 +224,15 @@ public final class JettyFactory {
       return adminChannel;
    }
 
-   private SelectChannelConnector buildStubsConnector() {
+   private ServerConnector buildStubsConnector(final Server server) {
 
-      final SelectChannelConnector stubsChannel = new SelectChannelConnector();
+      final HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      final ServerConnector stubsChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
       stubsChannel.setPort(getStubsPort(commandLineArgs));
-      final int idleTimeInMilliseconds = 45000;
-      stubsChannel.setMaxIdleTime(idleTimeInMilliseconds);
-      stubsChannel.setRequestHeaderSize(8192);
+
       stubsChannel.setName(STUBS_CONNECTOR_NAME);
       stubsChannel.setHost(DEFAULT_HOST);
+      stubsChannel.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          stubsChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -227,7 +247,7 @@ public final class JettyFactory {
       return stubsChannel;
    }
 
-   private SslSocketConnector buildStubsSslConnector() throws IOException {
+   private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
       String keystorePath = null;
       String password = "password";
@@ -237,11 +257,21 @@ public final class JettyFactory {
          keystorePath = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYSTORE);
       }
 
+      HttpConfiguration httpConfiguration = constructHttpConfiguration();
+      httpConfiguration.setSecureScheme(HttpScheme.HTTPS.asString());
+      httpConfiguration.setSecurePort(getStubsSslPort(commandLineArgs));
+      httpConfiguration.addCustomizer(new SecureRequestCustomizer());
+
       final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
-      final SslSocketConnector sslConnector = new SslSocketConnector(sslContextFactory);
+
+      ServerConnector sslConnector = new ServerConnector(server,
+         new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1),
+         new HttpConnectionFactory(httpConfiguration));
       sslConnector.setPort(getStubsSslPort(commandLineArgs));
-      sslConnector.setName(SSL_CONNECTOR_NAME);
+
       sslConnector.setHost(DEFAULT_HOST);
+      sslConnector.setName(SSL_CONNECTOR_NAME);
+      sslConnector.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
 
       if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ADDRESS)) {
          sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
@@ -283,6 +313,17 @@ public final class JettyFactory {
       } catch (final Exception ex) {
          throw new Stubby4JException(ex.toString(), ex);
       }
+   }
+
+   private HttpConfiguration constructHttpConfiguration() {
+      final HttpConfiguration httpConfiguration = new HttpConfiguration();
+      httpConfiguration.setSendServerVersion(true);
+      httpConfiguration.setSendXPoweredBy(true);
+      httpConfiguration.setOutputBufferSize(32768);
+      httpConfiguration.setRequestHeaderSize(8192);
+      httpConfiguration.setResponseHeaderSize(8192);
+
+      return httpConfiguration;
    }
 
    private int getStubsPort(final Map<String, String> commandLineArgs) {

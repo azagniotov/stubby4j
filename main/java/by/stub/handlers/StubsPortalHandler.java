@@ -22,7 +22,6 @@ package by.stub.handlers;
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -50,21 +49,22 @@ public class StubsPortalHandler extends AbstractHandler {
                       final HttpServletRequest request,
                       final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
 
       final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
       final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
       final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
 
       try {
-         strategyStubResponse.handle(wrapper, assertionStubRequest);
+         strategyStubResponse.handle(response, assertionStubRequest);
       } catch (final Exception ex) {
          HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), wrapper);
-
+      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
    }
 }

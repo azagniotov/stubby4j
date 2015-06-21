@@ -53,9 +53,6 @@ public final class StubbyManager {
          return;
       }
 
-      final int timeoutMilliseconds = 100;
-      server.setGracefulShutdown(timeoutMilliseconds);
-      server.setStopAtShutdown(true);
       server.stop();
 
       while (!isJettyDown()) {

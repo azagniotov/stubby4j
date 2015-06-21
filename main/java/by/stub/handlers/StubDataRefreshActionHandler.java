@@ -21,14 +21,12 @@ package by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.server.JettyContext;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -52,24 +50,25 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
    @Override
    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
       ConsoleUtils.logIncomingRequest(request);
-
-      final HttpServletResponseWithGetStatus wrapper = new HttpServletResponseWithGetStatus(response);
-
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "stubData", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
       baseRequest.setHandled(true);
-      wrapper.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
+      response.setContentType("text/plain;charset=UTF-8");
+      response.setStatus(HttpStatus.OK_200);
+      response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
       try {
          stubbedDataManager.refreshStubbedData(new YamlParser());
          final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
             stubbedDataManager.getDataYaml());
-         wrapper.getWriter().println(successMessage);
+         response.getWriter().println(successMessage);
          ANSITerminal.ok(successMessage);
       } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
       }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), wrapper);
+      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
    }
 }

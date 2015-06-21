@@ -21,12 +21,20 @@ package by.stub.yaml.stubs;
 
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.annotations.VisibleForTesting;
+import by.stub.common.Common;
 import by.stub.utils.CollectionUtils;
+import by.stub.utils.ConsoleUtils;
 import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.YamlProperties;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -36,13 +44,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static by.stub.utils.StringUtils.isSet;
+import static by.stub.utils.StringUtils.isWithinSquareBrackets;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
+
 /**
  * @author Alexander Zagniotov
  * @since 6/14/12, 1:09 AM
  */
 public class StubRequest {
 
-   public static final String AUTH_HEADER = "authorization";
+   public static final String HTTP_HEADER_AUTHORIZATION = "authorization";
 
    private final String url;
    private final String post;
@@ -66,11 +80,11 @@ public class StubRequest {
       this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
       this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
       this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
-      this.regexGroups = new TreeMap<String, String>();
+      this.regexGroups = new TreeMap<>();
    }
 
    public final ArrayList<String> getMethod() {
-      final ArrayList<String> uppercase = new ArrayList<String>(method.size());
+      final ArrayList<String> uppercase = new ArrayList<>(method.size());
 
       for (final String string : method) {
          uppercase.add(StringUtils.toUpper(string));
@@ -80,7 +94,7 @@ public class StubRequest {
    }
 
    public void addMethod(final String newMethod) {
-      if (StringUtils.isSet(newMethod)) {
+      if (isSet(newMethod)) {
          method.add(newMethod);
       }
    }
@@ -117,7 +131,7 @@ public class StubRequest {
    }
 
    public final Map<String, String> getHeaders() {
-      final Map<String, String> headersCopy = new LinkedHashMap<String, String>(headers);
+      final Map<String, String> headersCopy = new LinkedHashMap<>(headers);
       final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
       this.headers.clear();
       for (final Map.Entry<String, String> entry : entrySet) {
@@ -137,7 +151,7 @@ public class StubRequest {
 
    // Just a shallow copy that protects collection from modification, the points themselves are not copied
    public Map<String, String> getRegexGroups() {
-      return new TreeMap<String, String>(regexGroups);
+      return new TreeMap<>(regexGroups);
    }
 
    public File getRawFile() {
@@ -153,7 +167,31 @@ public class StubRequest {
    }
 
    public boolean hasPostBody() {
-      return StringUtils.isSet(getPostBody());
+      return isSet(getPostBody());
+   }
+
+   public boolean isSecured() {
+      return getHeaders().containsKey(BASIC.asYamlProp()) ||
+         getHeaders().containsKey(BEARER.asYamlProp()) ||
+         getHeaders().containsKey(CUSTOM.asYamlProp());
+   }
+
+   @VisibleForTesting StubAuthorizationTypes getStubbedAuthorizationTypeHeader() {
+      if (getHeaders().containsKey(BASIC.asYamlProp())) {
+         return BASIC;
+      } else if (getHeaders().containsKey(BEARER.asYamlProp())) {
+         return BEARER;
+      } else {
+         return CUSTOM;
+      }
+   }
+
+   String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
+      return getHeaders().get(stubbedAuthorizationHeaderType.asYamlProp());
+   }
+
+   public String getRawAuthorizationHttpHeader() {
+      return getHeaders().get(HTTP_HEADER_AUTHORIZATION);
    }
 
    public static StubRequest newStubRequest() {
@@ -178,6 +216,7 @@ public class StubRequest {
       }
 
       assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
+      ConsoleUtils.logAssertingRequest(assertionRequest);
 
       return assertionRequest;
    }
@@ -191,7 +230,7 @@ public class StubRequest {
 
          return urlsMatch(dataStoreRequest.url, this.url)
             && arraysIntersect(dataStoreRequest.getMethod(), this.getMethod())
-            && postBodiesMatch(dataStoreRequest.getPostBody(), this.getPostBody())
+            && postBodiesMatch(dataStoreRequest.isPostStubbed(), dataStoreRequest.getPostBody(), this.getPostBody())
             && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
             && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
       }
@@ -199,12 +238,40 @@ public class StubRequest {
       return false;
    }
 
+   @VisibleForTesting boolean isPostStubbed() {
+      return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
+   }
+
    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
       return stringsMatch(dataStoreUrl, thisAssertingUrl, YamlProperties.URL);
    }
 
-   private boolean postBodiesMatch(final String dataStorePostBody, final String thisAssertingPostBody) {
-      return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+   private boolean postBodiesMatch(final boolean isDataStorePostStubbed, final String dataStorePostBody, final String thisAssertingPostBody) {
+      if (isDataStorePostStubbed) {
+         final String assertingContentType = this.getHeaders().get("content-type");
+         final boolean isAssertingValueSet = isSet(thisAssertingPostBody);
+         if (!isAssertingValueSet) {
+            return false;
+         } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
+            try {
+               return JSONCompare.compareJSON(dataStorePostBody, thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+            } catch (JSONException e) {
+               return false;
+            }
+         } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
+            try {
+               final Diff diff = new Diff(dataStorePostBody, thisAssertingPostBody);
+               diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+               return (diff.similar() || diff.identical());
+            } catch (SAXException | IOException e) {
+               return false;
+            }
+         } else {
+            return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+         }
+      } else {
+         return true;
+      }
    }
 
    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
@@ -212,9 +279,11 @@ public class StubRequest {
    }
 
    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
-      final Map<String, String> dataStoreHeadersCopy = new HashMap<String, String>(dataStoreHeaders);
-      dataStoreHeadersCopy.remove(StubRequest.AUTH_HEADER); //Auth header dealt with in StubbedDataManager after request was matched
-
+      final Map<String, String> dataStoreHeadersCopy = new HashMap<>(dataStoreHeaders);
+      for (StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
+         // auth header is dealt with in StubbedDataManager after request is matched
+         dataStoreHeadersCopy.remove(authorizationType.asYamlProp());
+      }
       return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
    }
 
@@ -226,8 +295,8 @@ public class StubRequest {
          return false;
       }
 
-      final Map<String, String> dataStoreMapCopy = new HashMap<String, String>(dataStoreMap);
-      final Map<String, String> assertingMapCopy = new HashMap<String, String>(thisAssertingMap);
+      final Map<String, String> dataStoreMapCopy = new HashMap<>(dataStoreMap);
+      final Map<String, String> assertingMapCopy = new HashMap<>(thisAssertingMap);
 
       for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
          final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());
@@ -247,14 +316,14 @@ public class StubRequest {
 
    @VisibleForTesting
    boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
-      final boolean isDataStoreValueSet = StringUtils.isSet(dataStoreValue);
-      final boolean isAssertingValueSet = StringUtils.isSet(thisAssertingValue);
+      final boolean isDataStoreValueSet = isSet(dataStoreValue);
+      final boolean isAssertingValueSet = isSet(thisAssertingValue);
 
       if (!isDataStoreValueSet) {
          return true;
       } else if (!isAssertingValueSet) {
          return false;
-      } else if (StringUtils.isWithinSquareBrackets(dataStoreValue)) {
+      } else if (isWithinSquareBrackets(dataStoreValue)) {
          return dataStoreValue.equals(thisAssertingValue);
       } else {
          return regexMatch(dataStoreValue, thisAssertingValue, templateTokenName);
@@ -332,5 +401,4 @@ public class StubRequest {
 
       return sb.toString();
    }
-
 }

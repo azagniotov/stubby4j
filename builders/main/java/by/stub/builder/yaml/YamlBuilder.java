@@ -1,7 +1,8 @@
 package by.stub.builder.yaml;
 
 import by.stub.utils.FileUtils;
-import org.eclipse.jetty.http.HttpMethods;
+import by.stub.yaml.stubs.StubAuthorizationTypes;
+import org.eclipse.jetty.http.HttpMethod;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -88,19 +89,19 @@ public final class YamlBuilder {
       }
 
       public Request withMethodGet() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.GET);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.GET.asString());
       }
 
       public Request withMethodPut() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.PUT);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.PUT.asString());
       }
 
       public Request withMethodPost() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.POST);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.POST.asString());
       }
 
       public Request withMethodHead() {
-         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethods.HEAD);
+         return appendTemporaryMethodPlaceholderStoreMethod(HttpMethod.HEAD.asString());
       }
 
       public Request withUrl(final String value) {
@@ -169,12 +170,31 @@ public final class YamlBuilder {
          return this;
       }
 
-
-      public Request withHeaderAuthorization(final String value) {
+      public Request withHeaderAuthorizationBasic(final String value) {
 
          checkHeadersNodeRequired();
 
-         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "authorization");
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BASIC.asYamlProp());
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderAuthorizationBearer(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BEARER.asYamlProp());
+         REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+         return this;
+      }
+
+      public Request withHeaderAuthorizationCustom(final String value) {
+
+         checkHeadersNodeRequired();
+
+         final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.CUSTOM.asYamlProp());
          REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
          return this;

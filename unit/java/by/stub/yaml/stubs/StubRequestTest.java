@@ -1,6 +1,7 @@
 package by.stub.yaml.stubs;
 
 import by.stub.builder.stubs.StubRequestBuilder;
+import by.stub.common.Common;
 import by.stub.utils.FileUtils;
 import com.google.api.client.http.HttpMethods;
 import org.junit.Test;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import static by.stub.utils.FileUtils.BR;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BASIC;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.BEARER;
+import static by.stub.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -314,7 +318,9 @@ public class StubRequestTest {
    public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
       final Map<String, String> dataStoreMap = new HashMap<String, String>();
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("key", "value");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isTrue();
@@ -323,7 +329,9 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenDataStoreMapNotEmptyAndAssertingMapEmpty() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("key", "value");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("key", "value");
+      }};
       final Map<String, String> assertingMap = new HashMap<String, String>();
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
@@ -333,8 +341,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreKey() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("someKey", "someValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("someKey", "someValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isFalse();
@@ -343,8 +355,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreValue() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "someValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("requiredKey", "someValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isFalse();
@@ -353,8 +369,12 @@ public class StubRequestTest {
    @Test
    public void mapsMatch_ShouldReturnTrue_WhenAssertingMapMatchesDataStoreMap() throws Exception {
       final StubRequest stubRequest = StubRequest.newStubRequest();
-      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
-      final Map<String, String> assertingMap = new HashMap<String, String>() {{ put("requiredKey", "requiredValue");}};
+      final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
+      final Map<String, String> assertingMap = new HashMap<String, String>() {{
+         put("requiredKey", "requiredValue");
+      }};
       final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
       assertThat(isMapsMatch).isTrue();
@@ -540,7 +560,7 @@ public class StubRequestTest {
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
             .withMethodPost()
-            .withPost("some post").build();
+            .withPost("some stubbed post").build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
@@ -566,6 +586,74 @@ public class StubRequestTest {
       assertThat(expectedRequest).isEqualTo(assertingRequest);
    }
 
+   @Test
+   public void isSecured_WhenAuthorizationBasicStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(BASIC.asYamlProp(), "123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isSecured_WhenAuthorizationBearerStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(BEARER.asYamlProp(), "123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isSecured_WhenAuthorizationCustomStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
+
+      assertThat(stubRequest.isSecured()).isTrue();
+   }
+
+   @Test
+   public void isNotSecured_WhenNoAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet().build();
+
+      assertThat(stubRequest.isSecured()).isFalse();
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeBasic_WhenBasicAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(BASIC.asYamlProp(), "123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BASIC);
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeBearer_WhenBearerAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(BEARER.asYamlProp(), "123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BEARER);
+   }
+
+   @Test
+   public void shouldGetAuthorizationTypeCustom_WhenCustomAuthorizationStubbed() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("/invoice/123")
+            .withMethodGet()
+            .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
+
+      assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(CUSTOM);
+   }
 
    @Test
    public void stubbedRequestEqualsAssertingRequest_WhenAllHttpHeadersMatch() throws Exception {
@@ -702,13 +790,12 @@ public class StubRequestTest {
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
             .withMethodGet()
-            .withHeaderContentType("application/json")
+            .withHeaderContentType(Common.HEADER_APPLICATION_JSON)
             .withHeaderContentLength(contentLength)
             .withHeaderContentLanguage(contentLanguage).build();
 
       assertThat(expectedRequest).isNotEqualTo(assertingRequest);
    }
-
 
    @Test
    public void stubbedRequestNotEqualsAssertingRequest_WhenNotAllHeadersSetToAssert() throws Exception {
@@ -1093,7 +1180,7 @@ public class StubRequestTest {
       final String paramTwo = "paramTwo";
       final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-      final String contentType = "application/xml";
+      final String contentType = "application/blah";
       final String contentLength = "30";
       final String contentLanguage = "en-US";
 
@@ -1295,13 +1382,13 @@ public class StubRequestTest {
 
       final StubRequest expectedRequest =
          BUILDER.withUrl(url)
-            .withMethodGet()
+            .withMethodPost()
             .withMethodHead()
             .withPost(postRegex).build();
 
       final StubRequest assertingRequest =
          BUILDER.withUrl(url)
-            .withMethodGet()
+            .withMethodPost()
             .withMethodHead()
             .withPost(postAssertingValue).build();
 
@@ -2095,9 +2182,9 @@ public class StubRequestTest {
             .withPost("this is a post body")
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
+            .withHeaders("headerOne", "headerOneValue").build();
 
 
       final String expectedToStringOutput = "StubRequest{" +
@@ -2121,10 +2208,9 @@ public class StubRequestTest {
             .withPost(null)
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", "headerOneValue")
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
-
+            .withHeaders("headerOne", "headerOneValue").build();
 
       final String expectedToStringOutput = "StubRequest{" +
          "url=/invoice/123, " +
@@ -2146,10 +2232,9 @@ public class StubRequestTest {
             .withPost(null)
             .withQuery("paramOne", "paramOneValue")
             .withQuery("paramTwo", "paramTwoValue")
-            .withHeaders("headerOne", null)
+            .withHeaders("headerThree", "headerThreeValue")
             .withHeaders("headerTwo", "headerTwoValue")
-            .withHeaders("headerThree", "headerThreeValue").build();
-
+            .withHeaders("headerOne", null).build();
 
       final String expectedToStringOutput = "StubRequest{" +
          "url=/invoice/123, " +
@@ -2176,5 +2261,85 @@ public class StubRequestTest {
          "headers={}}";
 
       assertThat(actualRequest.toString()).isEqualTo(expectedToStringOutput);
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodGet() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("GET")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostStubbedAndMethodGet() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("GET")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost("").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostStubbed_WhenPostStubbedAndMethodPut() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("PUT")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isTrue();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostNullAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost(null).build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost("").build();
+
+      assertThat(stubRequest.isPostStubbed()).isFalse();
+   }
+
+   @Test
+   public void shouldFindPostStubbed_WhenPostStubbedAndMethodPost() throws Exception {
+      final StubRequest stubRequest =
+         BUILDER.withUrl("fssefewf")
+            .withMethod("POST")
+            .withPost("stubbed").build();
+
+      assertThat(stubRequest.isPostStubbed()).isTrue();
    }
 }

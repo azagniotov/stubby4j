@@ -5,6 +5,7 @@
          status: active
          type: full
       file: ../json/request.external.file.json
+
    response:
       headers:
          content-type: application/json

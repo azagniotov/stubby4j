@@ -69,6 +69,10 @@ public final class EmptyLogger implements Logger {
    public void debug(final String s, final Object... objects) {
    }
 
+   @Override public void debug(final String msg, final long value) {
+
+   }
+
    @Override
    public void debug(final Throwable throwable) {
    }

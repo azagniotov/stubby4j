@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package by.stub.yaml.stubs;
 
 
+import by.stub.annotations.VisibleForTesting;
 import by.stub.utils.ReflectionUtils;
 import by.stub.utils.StringUtils;
 
@@ -94,19 +95,23 @@ public class StubHttpLifecycle {
       return (LinkedList<StubResponse>) response;
    }
 
-   public boolean isRestricted() {
-      return StringUtils.isSet(getAuthorizationHeader());
+   public boolean isAuthorizationRequired() {
+      return request.isSecured();
    }
 
-   public boolean hasNotAuthorized(final StubHttpLifecycle assertingLifecycle) {
-      final String stubbedAuthorization = getAuthorizationHeader();
-      final String assertingAuthorization = assertingLifecycle.getAuthorizationHeader();
-
-      return !stubbedAuthorization.equals(assertingAuthorization);
+   @VisibleForTesting
+   String getRawAuthorizationHttpHeader() {
+      return request.getRawAuthorizationHttpHeader();
    }
 
-   private String getAuthorizationHeader() {
-      return request.getHeaders().get(StubRequest.AUTH_HEADER);
+   @VisibleForTesting
+   String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
+      return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
+   }
+
+   public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
+      final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
+      return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
    }
 
    public String getResourceId() {
@@ -122,7 +127,8 @@ public class StubHttpLifecycle {
    }
 
    /**
-    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    * Do not remove this method if your IDE complains that it is unused.
+    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
     */
    public String getRequestAsYaml() {
       return requestAsYaml;
@@ -133,7 +139,8 @@ public class StubHttpLifecycle {
    }
 
    /**
-    * Do not remove, used by {@link ReflectionUtils} when fetching content for Ajax response
+    * Do not remove this method if your IDE complains that it is unused.
+    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
     */
    public String getResponseAsYaml() {
       return responseAsYaml;
@@ -177,10 +184,6 @@ public class StubHttpLifecycle {
       }
 
       final StubHttpLifecycle that = (StubHttpLifecycle) o;
-      if (!request.equals(that.request)) {
-         return false;
-      }
-
-      return true;
+      return request.equals(that.request);
    }
 }

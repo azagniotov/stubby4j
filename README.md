@@ -1,4 +1,11 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
+[![Dependency Status](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017)
+[![Coverage Status](https://coveralls.io/repos/azagniotov/stubby4j/badge.svg?style=flat)](https://coveralls.io/r/azagniotov/stubby4j)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j)
+[![Github Issues](http://githubbadges.herokuapp.com/badges/badgerbadgerbadger/issues.svg?style=flat)](https://github.com/azagniotov/stubby4j/issues)
+[![Pending Pull-Requests](http://githubbadges.herokuapp.com/badges/badgerbadgerbadger/pulls.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
+
 
 # stubby4j
 A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol.
@@ -7,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v2.0.21
+## User manual for stubby4j v3.1.3
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -23,6 +30,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
    * [Response](#response)
    * [Record and Play](#record-and-play)
    * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
+   * [Authorization Header](#authorization-header)
 * [The admin portal](#the-admin-portal)
 * [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
@@ -36,9 +44,11 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
 
-##### Minimum system requirements
+##### Minimum system requirements to run stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j)
 
-* Oracle JRE 1.6 (stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) were built using the latter JRE) 
+* version >= 3.0.0:  Oracle JRE v1.7.0_76
+* version = 2.0.22: Oracle JRE v1.7.0_04
+* version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
 
 ##### Setup
 
@@ -83,7 +93,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Verify that your code correctly handles HTTP error codes
 * You want to trigger response from the server based on the request parameters over HTTP or HTTPS
 * Support for any of the available HTTP methods
-* Simulate support for Basic Authorization
+* Simulate support for different types of HTTP Authorizations: Basic, Bearer Token & others
 * Support for HTTP 30x redirects
 * Provide canned answers in your contract/integration tests
 * Enable delayed responses for performance and stability testing
@@ -97,106 +107,108 @@ For more information and more complex examples, please dive into the rest of doc
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
-##### All this goodness in just under 1.5MB
-
 
 ### Building
 stubby4j is a multi-module Gradle project
 
-* IntelliJ IDEA users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA project files
+* IntelliJ IDEA 13 users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA 13 project files
 * Eclipse users should run ```gradle cleanEclipse eclipse``` in order to generate Eclipse project files
 
 Run `gradle` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
 
 Run `gradle build -x test` command to:
 * Clean
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `main/target/libs/`)
+* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
 
 Run `gradle cobertura` command to:
 * Clean
-* Generate Cobertura report under the ```main``` module
-
-Run `gradle clean check` command to:
-* Clean
-* Generate PMD report under the ```main``` module
-* Generate JDepend report under the ```main``` module
-* Generate Cobertura report under the ```main``` module
+* Generate Cobertura report under the `stubby4j/main/target/reports/cobertura/`
 
 
 ### Third-party dependencies
 stubby4j is a fat JAR, which contains the following dependencies:
 
+* __javax.servlet-api-3.1.0.jar__
+* jetty-server-9.2.10.v20150310.jar
+* jetty-servlets-9.2.10.v20150310.jar
+* jetty-http-9.2.10.v20150310.jar
+* jetty-io-9.2.10.v20150310.jar
+* jetty-continuation-9.2.10.v20150310.jar
+* jetty-util-9.2.10.v20150310.jar
 * commons-cli-1.2.jar
-* snakeyaml-1.13.jar
-* javax.servlet-3.0.0.v201112011016.jar
-* jetty-server-8.1.7.v20120910.jar
-* jetty-continuation-8.1.7.v20120910.jar
-* jetty-util-8.1.7.v20120910.jar
-* jetty-io-8.1.7.v20120910.jar
-* jetty-http-8.1.7.v20120910.jar
+* snakeyaml-1.15.jar
+* jsonassert-1.2.3.jar
+* xmlunit-1.6.jar
+* json-20090211.jar
 
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.2.0.21` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.1.3` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>2.0.21</version>
+    <version>3.1.3</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="2.0.21" />
+<dependency org="by.stub" name="stubby4j" rev="3.1.3" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:2.0.21'
+'by.stub:stubby4j:jar:3.1.3'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:2.0.21'
+compile 'by.stub:stubby4j:3.1.3'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "2.0.13"
+libraryDependencies += "by.stub" % "stubby4j" % "3.1.3"
 ```
 
 ### Command-line switches
 ```
 usage:
-       java -jar stubby4j-2.0.21.jar [-a <arg>] [-d <arg>] [-h] [-k <arg>]
-       [-l <arg>] [-m] [-p <arg>] [-s <arg>] [-t <arg>] [-v] [-w]
- -a,--admin <arg>      Port for admin portal. __Defaults to 8889__.
- -d,--data <arg>       Data file to pre-load endpoints. Valid YAML 1.1
-                       expected.
- -h,--help             This help text.
- -k,--keystore <arg>   Keystore file for custom TLS. By default TLS is
-                       enabled using internal keystore.
- -l,--location <arg>   Hostname at which to bind stubby.
- -m,--mute             Prevent stubby from printing to the console.
- -p,--password <arg>   Password for the provided keystore file.
- -s,--stubs <arg>      Port for stub portal. __Defaults to 8882__.
- -t,--tls <arg>        Port for TLS (SSL) connection. __Defaults to 7443__.
- -v,--version          Prints out to console stubby version.
- -w,--watch            Periodically scans for changes in last modification
-                       date of the main YAML and referenced external files
-                       (if any). The flag can accept an optional arg value
-                       which is the watch scan time in milliseconds. If
-                       milliseconds is not provided, the watch scans every
-                       100ms. If last modification date changed since the
-                       last scan period, the stub configuration is
-                       reloaded
+       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds]
+       [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t
+       <arg>] [-v] [-w]
+ -a,--admin <arg>             Port for admin portal. Defaults to 8889.
+ -d,--data <arg>              Data file to pre-load endpoints. Valid YAML
+                              1.1 expected.
+ -da,--disable_admin_portal   Does not start Admin portal
+ -ds,--disable_ssl            Does not enable SSL connections
+ -h,--help                    This help text.
+ -k,--keystore <arg>          Keystore file for custom TLS. By default TLS
+                              is enabled using internal keystore.
+ -l,--location <arg>          Hostname at which to bind stubby.
+ -m,--mute                    Mute console output.
+ -o,--debug                   Dumps raw HTTP request to the console (if
+                              console is not muted!).
+ -p,--password <arg>          Password for the provided keystore file.
+ -s,--stubs <arg>             Port for stub portal. Defaults to 8882.
+ -t,--tls <arg>               Port for TLS connection. Defaults to 7443.
+ -v,--version                 Prints out to console stubby version.
+ -w,--watch                   Periodically scans for changes in last
+                              modification date of the main YAML and
+                              referenced external files (if any). The flag
+                              can accept an optional arg value which is
+                              the watch scan time in milliseconds. If
+                              milliseconds is not provided, the watch
+                              scans every 100ms. If last modification date
+                              changed since the last scan period, the stub
+                              configuration is reloaded
 ```
 
 ### Endpoint configuration HOWTO
@@ -695,6 +707,47 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
+### Authorization Header
+```yaml
+-  request:
+      url: ^/path/to/basic$
+      method: GET
+      headers:
+         # no "Basic" prefix nor explicit encoding in Base64 is required when stubbing,
+         # just plain username:password format. Stubby internally encodes the value in Base64
+         authorization-basic: "bob:password" 
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Basic was successfully authorized!
+
+-  request:
+      url: ^/path/to/bearer$
+      method: GET
+      headers:
+         # no "Bearer" prefix is required when stubbing, only the auth value.
+         # Stubby internally does not modify (encodes) the auth value
+         authorization-bearer: "YNZmIzI2Ts0Q=="
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Bearer was successfully authorized!
+
+-  request:
+      url: ^/path/to/custom$
+      method: GET
+      headers:
+         # custom prefix name is required when stubbing, followed by space & auth value.
+         # Stubby internally does not modify (encodes) the auth value
+         authorization-custom: "CustomAuthorizationType YNZmIzI2Ts0Q=="
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with custom authorization type was successfully authorized!
+```
 
 ### The admin portal
 
@@ -725,7 +778,7 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
       url: ^/path/to/something$
       method: POST
       headers:
-         authorization: "bob:password"
+         authorization-basic: "bob:password" 
          x-custom-header: "^this/is/\d/test"
       post: this is some post data in textual format
    response:
@@ -733,7 +786,19 @@ Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --dat
          Content-Type: application/json
       latency: 1000
       status: 200
-      body: You're request was successfully processed!
+      body: Your request was successfully processed!
+
+-  request:
+      url: ^/path/to/bearer$
+      method: POST
+      headers:
+         authorization-bearer: "YNZmIzI2Ts0Q=="
+      post: this is some post data in textual format
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Bearer was successfully authorized!
 
 -  request:
       url: ^/path/to/anotherThing
@@ -777,7 +842,7 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
       "url": "^/path/to/something$",
       "post": "this is some post data in textual format",
       "headers": {
-         "authorization": "bob:password"
+         "authorization-basic": "bob:password"  // for basic authorization DO NOT base64 encode when stubbing
       },
       "method": "POST"
     },
@@ -787,7 +852,7 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
         "Content-Type": "application/json"
       },
       "latency": 1000,
-      "body": "You're request was successfully processed!"
+      "body": "Your request was successfully processed!"
     }
   },
   {
@@ -957,6 +1022,17 @@ for each <endpoint> of stored endpoints {
    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception
 
    /**
+    * Starts stubby using given Stubs, TlsStubs, Admin portals ports and host address without YAML configuration file.
+    *
+    * @param stubsPort                 Stubs portal port
+    * @param tlsPort                   TLS Stubs portal port
+    * @param adminPort                 Admin portal port
+    * @param addressToBind             Address to bind Jetty
+    * @throws Exception
+    */
+   public void startJettyYamless(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind) throws Exception
+
+   /**
     * Stops Jetty if it is up
     *
     * @throws Exception
@@ -1000,28 +1076,28 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param port               TLS port
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param port          TLS port
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final String encodedCredentials) throws Exception
+   public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception
 
    /**
     * Makes GET HTTP request to stubby
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param stubsPort          port that stubby4j Stubs is running on
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final String encodedCredentials) throws Exception
+   public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception
 
    /**
     * Makes GET HTTP request to stubby running on default host and port - localhost:8882
@@ -1037,12 +1113,12 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param uri                URI for the HTTP request
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param uri           URI for the HTTP request
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doGetUsingDefaults(final String uri, final String encodedCredentials) throws Exception
+   public StubbyResponse doGetUsingDefaults(final String uri, final Authorization authorization) throws Exception
 
    /**
     * Makes POST HTTP request to stubby
@@ -1061,15 +1137,15 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param host               host that stubby4j is running on
-    * @param uri                URI for the HTTP request
-    * @param stubsPort          port that stubby4j Stubs is running on
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
-    * @param post               data to POST to the server
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @param post          data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String encodedCredentials, final String post) throws Exception
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String post) throws Exception
 
    /**
     * Makes POST HTTP request to stubby running on default host and port - localhost:8882
@@ -1086,13 +1162,13 @@ for each <endpoint> of stored endpoints {
     * Also sets basic authorisation HTTP header using provided encoded credentials.
     * The credentials should be base-64 encoded using the following format - username:password
     *
-    * @param uri                URI for the HTTP request
-    * @param post               data to POST to the server
-    * @param encodedCredentials Base 64 encoded username and password for the basic authorisation HTTP header
+    * @param uri           URI for the HTTP request
+    * @param post          data to POST to the server
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final String encodedCredentials) throws Exception
+   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final Authorization authorization) throws Exception
 
    /**
     * Updated stubbed data with new data. This method creates a POST request to Admin portal
@@ -1101,7 +1177,6 @@ for each <endpoint> of stored endpoints {
     * @param stubsData data to post
     */
    public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception
-
 
    /**
     * Makes HTTP request to stubby.
@@ -1121,10 +1196,66 @@ for each <endpoint> of stored endpoints {
                                      final String uri,
                                      final int port,
                                      final String post) throws Exception
+
+   /**
+    * Makes HTTP request to stubby.
+    *
+    * @param scheme HTTP protocol scheme, HTTP or HTTPS
+    * @param method HTTP method, currently supported: GET, HEAD, PUT, POST
+    * @param host   host that stubby4j is running on
+    * @param uri    URI for the HTTP request
+    * @param port   port that stubby4j Stubs is running on
+    * @param post   data to POST to the server
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse makeRequest(final String scheme,
+                                     final String method,
+                                     final String host,
+                                     final String uri,
+                                     final int port,
+                                     final String post,
+                                     final Authorization authorization) throws Exception
 ```
 
 
 ### Change log
+
+##### 3.2.3-SNAPSHOT
+* Dumping more debug information to the console if `--debug` option is on, also for successfully matched requests
+
+##### 3.1.3
+* If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)
+* If POST'ed data type is `application/xml`, the comparison of stubbed to posted data will be done using XML entities with non-strict checking (element & attribute ordering wont matter, as long as content is the same)
+
+##### 3.0.3
+* Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
+* Fixed issue #43 (Live refresh in response sequence only for first response)
+
+##### 3.0.2
+* Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`
+* Renamed existing `header` property `authorization` to `authorization-basic`
+* Some changes around the programmatic APIs in `StubbyClient` class due to the above changes
+* Respective changes in the current README due to the above changes
+
+##### 3.0.1
+* Upgraded Jetty to v9.2.10.v20150310
+* Added `--debug` option that dumps incoming raw HTTP request to the console
+* Added `--disable_admin_portal` option that does not configure Admin portal for stubby
+* Added `--disable_ssl` option that does not enable SSL for stubby
+* Added a new API to start stubby programmatically without specifying a YAML file `StubbyClient.startJettyYamless(...)`
+* Added a new `FaviconHandler` to handle requests for `favicon.ico` under the context root
+
+##### 3.0.0
+* Built using Java v1.7.0_76
+* Updated Jetty to v9.2.9.v20150224 (requires at least JRE v1.7.0_76: [Issue with Java v1.7.0_04](http://dev.eclipse.org/mhonarc/lists/jetty-users/msg05635.html))
+
+##### 2.0.22
+* Built using Java v1.7.0_04
+* Cleaned up project Gradle configuration 
+* Updated Gradle configuration to be compatible with Gradle v2.2.1 & Gradle Nexus plugin v2.3
+* Updated all (except Jetty) dependencies to their latest versions (as of May 10th, 2015)
 
 ##### 2.0.21
 * Added console outputs for record & play functionality
@@ -1303,4 +1434,7 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 
 
 ### Copyright
-See COPYRIGHT for details.
+Yes. See COPYRIGHT for details
+
+### License
+MIT. See LICENSE for details

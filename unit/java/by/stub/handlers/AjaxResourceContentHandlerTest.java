@@ -2,10 +2,9 @@ package by.stub.handlers;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.database.StubbedDataManager;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubTypes;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,7 +50,7 @@ public class AjaxResourceContentHandlerTest {
       mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
    }
 
    @Test
@@ -69,9 +68,9 @@ public class AjaxResourceContentHandlerTest {
 
       spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(5);
       assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.REQUEST);
@@ -93,9 +92,9 @@ public class AjaxResourceContentHandlerTest {
 
       spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(stubTypeCaptor.getValue()).isEqualTo(StubTypes.RESPONSE);
@@ -117,9 +116,9 @@ public class AjaxResourceContentHandlerTest {
 
       spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), httpCycleIndexCaptor.capture());
-      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
-      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+      verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
 
       assertThat(httpCycleIndexCaptor.getValue()).isEqualTo(15);
       assertThat(responseSequenceCaptor.getValue()).isEqualTo(8);
@@ -137,10 +136,10 @@ public class AjaxResourceContentHandlerTest {
 
       spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-      verify(spyAjaxResourceContentHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponseWithGetStatus.class), anyInt());
+      verify(spyAjaxResourceContentHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), anyInt());
       verify(mockPrintWriter, times(1)).println("Could not fetch the content for stub type: WRONG-STUB-TYPE");
 
-      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
-      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponseWithGetStatus.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
+      verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
    }
 }

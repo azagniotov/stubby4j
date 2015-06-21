@@ -289,7 +289,7 @@
 
 -  request:
       headers:
-         authorization: bob:secret
+         authorization-basic: bob:secret
       method: GET
       url: /item/auth
 
@@ -298,7 +298,35 @@
          content-type: application/json
       status: 200
       body: >
-         {"id" : "8", "description" : "authorized"}
+         {"id" : "8", "description" : "authorized using basic"}
+
+
+-  request:
+      headers:
+         authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
+      method: GET
+      url: /item/auth/bearer
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"id" : "12", "description" : "authorized using bearer"}
+
+
+-  request:
+      headers:
+         authorization-custom: CustomAuthorizationName Ym9iOndyb25nLXNlY3JldA==
+      method: GET
+      url: /item/auth/custom
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"id" : "12", "description" : "authorized using custom"}
 
 
 -  request:
@@ -329,7 +357,7 @@
 
 -  request:
       headers:
-         authorization: bob:secret
+         authorization-basic: bob:secret
       method: POST
       url: /item/submit
       post: >
@@ -496,7 +524,32 @@
       url: /empty.single.param
       query:
          type_name:
-
    response:
       status: 200
       body: EMPTY SINGLE WORKS
+
+-  request:
+      method: POST
+      url: /complex/json/tree
+      headers:
+         content-type: application/json
+      file: ../json/graph.1.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: OK
+
+-  request:
+      method: POST
+      url: /complex/xml/tree
+      headers:
+         content-type: application/xml
+      file: ../xml/graph.1.xml
+
+   response:
+      headers:
+         content-type: application/xml
+      status: 200
+      body: OK

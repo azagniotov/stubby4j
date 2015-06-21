@@ -26,10 +26,6 @@ public final class Stubby4JException extends RuntimeException {
       super(strMessage);
    }
 
-   public Stubby4JException(final Throwable throwable) {
-      super(throwable);
-   }
-
    public Stubby4JException(final String strMessage, final Throwable throwable) {
       super(strMessage, throwable);
    }

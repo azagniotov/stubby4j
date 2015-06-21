@@ -21,7 +21,7 @@ import by.stub.utils.StringUtils;
 
 /**
  * Abstract superclass for Base-N encoders and decoders.
- * <p/>
+ *
  * <p>
  * This class is not thread-safe.
  * Each thread should use its own instance.
@@ -29,10 +29,9 @@ import by.stub.utils.StringUtils;
  */
 public abstract class BaseNCodec {
 
-
    /**
     * MIME chunk size per RFC 2045 section 6.8.
-    * <p/>
+    *
     * <p>
     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
     * equal signs.
@@ -44,7 +43,7 @@ public abstract class BaseNCodec {
 
    /**
     * PEM chunk size per RFC 1421 section 4.3.2.4.
-    * <p/>
+    *
     * <p>
     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
     * equal signs.
@@ -119,7 +118,7 @@ public abstract class BaseNCodec {
 
    /**
     * Variable tracks how many characters have been written to the current line. Only used when encoding. We use it to
-    * make sure each encoded line never goes beyond lineLength (if lineLength > 0).
+    * make sure each encoded line never goes beyond lineLength (if lineLength &gt; 0).
     */
    protected int currentLinePos;
 
@@ -257,8 +256,6 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to encode
     * @return An object (of type byte[]) containing the Base-N encoded data which corresponds to the byte[] supplied.
-    * @throws org.apache.commons.codec.EncoderException
-    *          if the parameter supplied is not of type byte[]
     */
    public Object encode(Object pObject) throws Exception {
       if (!(pObject instanceof byte[])) {
@@ -283,8 +280,6 @@ public abstract class BaseNCodec {
     *
     * @param pObject Object to decode
     * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] or String supplied.
-    * @throws org.apache.commons.codec.DecoderException
-    *          if the parameter supplied is not of type byte[]
     */
    public Object decode(Object pObject) throws Exception {
       if (pObject instanceof byte[]) {
@@ -373,7 +368,7 @@ public abstract class BaseNCodec {
     * @param arrayOctet byte array to test
     * @param allowWSPad if <code>true</code>, then whitespace and PAD are also allowed
     * @return <code>true</code> if all bytes are valid characters in the alphabet or if the byte array is empty;
-    *         <code>false</code>, otherwise
+    * <code>false</code>, otherwise
     */
    public boolean isInAlphabet(byte[] arrayOctet, boolean allowWSPad) {
       for (int i = 0; i < arrayOctet.length; i++) {
@@ -391,7 +386,7 @@ public abstract class BaseNCodec {
     *
     * @param basen String to test
     * @return <code>true</code> if all characters in the String are valid characters in the alphabet or if
-    *         the String is empty; <code>false</code>, otherwise
+    * the String is empty; <code>false</code>, otherwise
     * @see #isInAlphabet(byte[], boolean)
     */
    public boolean isInAlphabet(String basen) {
@@ -400,7 +395,7 @@ public abstract class BaseNCodec {
 
    /**
     * Tests a given byte array to see if it contains any characters within the alphabet or PAD.
-    * <p/>
+    *
     * Intended for use in checking line-ending arrays
     *
     * @param arrayOctet byte array to test
@@ -423,7 +418,7 @@ public abstract class BaseNCodec {
     *
     * @param pArray byte[] array which will later be encoded
     * @return amount of space needed to encoded the supplied array.
-    *         Returns a long since a max-len array will require > Integer.MAX_VALUE
+    * Returns a long since a max-len array will require greater than Integer.MAX_VALUE
     */
    public long getEncodedLength(byte[] pArray) {
       // Calculate non-chunked size - rounded up to allow for padding

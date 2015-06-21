@@ -21,3 +21,5 @@ sourceSets {
       }
    }
 }
+
+tasks.uploadArchives.enabled = false

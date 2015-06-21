@@ -1,8 +1,10 @@
 package by.stub;
 
+import by.stub.annotations.CoberturaIgnore;
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyClient;
 import by.stub.client.StubbyResponse;
+import by.stub.common.Common;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubResponse;
 import com.google.api.client.http.HttpHeaders;
@@ -14,6 +16,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -27,8 +30,6 @@ import static by.stub.utils.FileUtils.BR;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsPortalTest {
-
-   private static final String HEADER_APPLICATION_JSON = "application/json";
 
    private static final int STUBS_PORT = 5892;
    private static final int STUBS_SSL_PORT = 5893;
@@ -237,6 +238,57 @@ public class StubsPortalTest {
    }
 
    @Test
+   public void should_FindPostContentsEqual_WhenJsonContentOrderIrrelevant() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/json/tree");
+
+      final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/graph.2.json");
+      assertThat(jsonContentUrl).isNotNull();
+      final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(response.parseAsString().trim()).isEqualTo("OK");
+   }
+
+   @Test
+   public void should_FindPostContentsNotEqual_WhenJsonParseExceptionThrown() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/json/tree");
+      final String content = "{this is an : invalid JSON string]";
+
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+      request.setHeaders(httpHeaders);
+
+      assertThat(request.execute().getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+   }
+
+   @Test
+   public void should_FindPostContentsEqual_WhenXmlContentOrderIrrelevant() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/xml/tree");
+
+      final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/graph.2.xml");
+      assertThat(jsonContentUrl).isNotNull();
+      final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+      final HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_XML);
+      request.setHeaders(httpHeaders);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(response.parseAsString().trim()).isEqualTo("OK");
+   }
+
+   @Test
    public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
 
       final String requestUrl = String.format("%s%s", STUBS_URL, "/pdf/hello-world");
@@ -244,7 +296,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(response.getHeaders()).containsKey("content-type");
-      assertThat(response.getHeaders().getContentType()).contains("application/pdf;charset=UTF-8");
+      assertThat(response.getHeaders().getContentType()).contains("application/pdf; charset=UTF-8");
       assertThat(response.getHeaders()).containsKey("content-disposition");
    }
 
@@ -263,7 +315,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(expectedContent).isEqualTo(responseContent);
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -291,7 +343,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat(expectedContent).isEqualTo(response.parseAsString().trim());
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -314,7 +366,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -323,7 +375,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -334,7 +386,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -343,7 +395,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
       assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -354,7 +406,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -373,7 +425,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -392,7 +444,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -402,7 +454,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -413,7 +465,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
       final HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+      httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
 
       request.setHeaders(httpHeaders);
 
@@ -423,7 +475,7 @@ public class StubsPortalTest {
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat("{\"id\": \"456\", \"status\": \"created\"}").isEqualTo(responseContentAsString);
-      assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
+      assertThat(contentTypeHeader).contains(Common.HEADER_APPLICATION_JSON);
    }
 
    @Test
@@ -607,7 +659,7 @@ public class StubsPortalTest {
       final HttpResponse response = request.execute();
 
       final HttpHeaders headers = response.getHeaders();
-      assertThat(headers.getContentType().contains("application/json")).isTrue();
+      assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
       assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
       final List<String> headerValues = (List<String>) headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
       assertThat(headerValues.get(0)).isEqualTo("1");
@@ -731,7 +783,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
       request.setHeaders(requestHeaders);
 
       final HttpResponse response = request.execute();
@@ -750,7 +802,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
       request.setHeaders(requestHeaders);
 
       final HttpResponse response = request.execute();
@@ -777,7 +829,7 @@ public class StubsPortalTest {
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
       final HttpHeaders requestHeaders = new HttpHeaders();
-      requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+      requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
       request.setHeaders(requestHeaders);
 
       final int LIMIT = 5;
@@ -801,6 +853,8 @@ public class StubsPortalTest {
     * This test really has value when there is an active connection to the Internet
     */
    @Test
+   @Ignore
+   @CoberturaIgnore
    public void should_ReturnExpectedRecordedResponse_FromGoogle() throws Exception {
 
       ANSITerminal.muteConsole(false);
@@ -813,7 +867,7 @@ public class StubsPortalTest {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
-      final int LIMIT = 5;
+      final int LIMIT = 1;
       for (int idx = 1; idx <= LIMIT; idx++) {
          final HttpResponse response = request.execute();
          final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
@@ -829,7 +883,7 @@ public class StubsPortalTest {
          }
 
          final HttpHeaders headers = response.getHeaders();
-         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+         assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
 
          String responseContent = response.parseAsString().trim();
          assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);

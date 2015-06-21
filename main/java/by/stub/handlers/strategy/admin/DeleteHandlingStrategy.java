@@ -2,24 +2,20 @@ package by.stub.handlers.strategy.admin;
 
 import by.stub.database.StubbedDataManager;
 import by.stub.handlers.AdminPortalHandler;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/25/13 11:30 PM
- */
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
    @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponseWithGetStatus wrapper, final StubbedDataManager stubbedDataManager) throws IOException {
+   public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws IOException {
 
       if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
-         wrapper.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-         wrapper.getWriter().println("Method DELETE is not allowed on URI " + request.getRequestURI());
+         response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
+         response.getWriter().println("Method DELETE is not allowed on URI " + request.getRequestURI());
          return;
       }
 
@@ -29,12 +25,12 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
 
       if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(stubIndexToDelete)) {
          final String errorMessage = String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
-         HandlerUtils.configureErrorResponse(wrapper, HttpStatus.NO_CONTENT_204, errorMessage);
+         HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
          return;
       }
 
       stubbedDataManager.deleteStubHttpLifecycleByIndex(stubIndexToDelete);
-      wrapper.setStatus(HttpStatus.OK_200);
-      wrapper.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
+      response.setStatus(HttpStatus.OK_200);
+      response.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
    }
 }

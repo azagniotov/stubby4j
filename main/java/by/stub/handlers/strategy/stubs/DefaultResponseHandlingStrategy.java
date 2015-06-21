@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
@@ -39,7 +38,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
    }
 
    @Override
-   public void handle(final HttpServletResponseWithGetStatus response, final StubRequest assertionStubRequest) throws Exception {
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
       HandlerUtils.setResponseMainHeaders(response);
       setStubResponseHeaders(foundStubResponse, response);
 

@@ -3,6 +3,7 @@ package by.stub.utils;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -69,7 +70,7 @@ public class CollectionUtilsTest {
    @Test
    public void constructQueryString_ShouldConstructQueryString_WhenParamMapGiven() throws Exception {
 
-      final Map<String, String> expectedParams = new HashMap<String, String>() {{
+      final Map<String, String> expectedParams = new LinkedHashMap<String, String>() {{
          put("paramTwo", "two");
          put("paramOne", "one");
       }};

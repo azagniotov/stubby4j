@@ -2,14 +2,14 @@ package by.stub.http;
 
 import by.stub.cli.ANSITerminal;
 import by.stub.client.StubbyResponse;
+import by.stub.common.Common;
 import by.stub.exception.Stubby4JException;
 import by.stub.utils.ConsoleUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,16 +29,11 @@ import static java.util.Map.Entry;
 public class StubbyHttpTransport {
 
    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
-      add(HttpMethods.GET);
-      add(HttpMethods.HEAD);
-      add(HttpMethods.TRACE);
-      add(HttpMethods.OPTIONS);
-      add(HttpMethods.POST);
-   }};
-
-   private static final Set<String> POSTING_METHODS = new HashSet<String>() {{
-      add(HttpMethods.PUT);
-      add(HttpMethods.POST);
+      add(HttpMethod.GET.asString());
+      add(HttpMethod.HEAD.asString());
+      add(HttpMethod.TRACE.asString());
+      add(HttpMethod.OPTIONS.asString());
+      add(HttpMethod.POST.asString());
    }};
 
    public StubbyHttpTransport() {
@@ -77,8 +72,8 @@ public class StubbyHttpTransport {
       connection.setInstanceFollowRedirects(false);
       setRequestHeaders(connection, headers, postLength);
 
-      if (POSTING_METHODS.contains(method)) {
-         writeOutputStream(connection, post);
+      if (Common.POSTING_METHODS.contains(method)) {
+         writePost(connection, post);
       }
 
       return buildStubbyResponse(connection);
@@ -102,23 +97,15 @@ public class StubbyHttpTransport {
    }
 
    private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
-
-      final String encodedCredentials = headers.remove(StubRequest.AUTH_HEADER);
       connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
-      if (StringUtils.isSet(encodedCredentials) && !encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
-         connection.setRequestProperty("Authorization", "Basic " + encodedCredentials);
-      } else if (StringUtils.isSet(encodedCredentials) && encodedCredentials.startsWith(StringUtils.toLower("Basic"))) {
-         connection.setRequestProperty("Authorization", encodedCredentials);
-      }
-
       final String requestMethod = connection.getRequestMethod();
-      if (HttpMethods.POST.equals(requestMethod) || HttpMethods.PUT.equals(requestMethod)) {
+      if (Common.POSTING_METHODS.contains(StringUtils.toUpper(requestMethod))) {
          connection.setDoOutput(true);
-         connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MimeTypes.FORM_ENCODED);
-         connection.setRequestProperty(HttpHeaders.CONTENT_LANGUAGE, "en-US");
-         connection.setRequestProperty(HttpHeaders.CONTENT_ENCODING, StringUtils.UTF_8);
+         connection.setRequestProperty(HttpHeader.CONTENT_TYPE.asString(), "application/x-www-form-urlencoded");
+         connection.setRequestProperty(HttpHeader.CONTENT_LANGUAGE.asString(), "en-US");
+         connection.setRequestProperty(HttpHeader.CONTENT_ENCODING.asString(), StringUtils.UTF_8);
 
-         connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(postLength));
+         connection.setRequestProperty(HttpHeader.CONTENT_LENGTH.asString(), Integer.toString(postLength));
          if (postLength > 0) {
             connection.setFixedLengthStreamingMode(postLength);
          } else {
@@ -126,12 +113,12 @@ public class StubbyHttpTransport {
          }
       }
 
-      for (Entry<String, String> entry : headers.entrySet())  {
+      for (Entry<String, String> entry : headers.entrySet()) {
          connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
    }
 
-   private void writeOutputStream(final HttpURLConnection connection, final String post) throws IOException {
+   private void writePost(final HttpURLConnection connection, final String post) throws IOException {
       final OutputStreamWriter streamWriter = new OutputStreamWriter(connection.getOutputStream(), StringUtils.charsetUTF8());
       try {
          streamWriter.write(post);

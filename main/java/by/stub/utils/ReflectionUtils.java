@@ -39,14 +39,14 @@ import java.util.Map;
 public final class ReflectionUtils {
 
    private static List<String> skipableProperties =
-      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "AUTH_HEADER", "REGEX_START", "REGEX_END", "regexGroups", "responseSequenceCounter", "fileBytes"));
+      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "regexGroups", "fileBytes"));
 
    private ReflectionUtils() {
 
    }
 
    public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
-      final Map<String, String> properties = new HashMap<String, String>();
+      final Map<String, String> properties = new HashMap<>();
 
       for (final Field field : object.getClass().getDeclaredFields()) {
 
@@ -75,7 +75,7 @@ public final class ReflectionUtils {
    }
 
    public static void injectObjectFields(final Object target, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
-      final Map<String, Object> fieldAndValue = new HashMap<String, Object>();
+      final Map<String, Object> fieldAndValue = new HashMap<>();
       fieldAndValue.put(fieldName.toLowerCase(), value);
       injectObjectFields(target, fieldAndValue);
    }

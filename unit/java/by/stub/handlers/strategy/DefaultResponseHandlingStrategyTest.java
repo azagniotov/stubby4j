@@ -2,19 +2,18 @@ package by.stub.handlers.strategy;
 
 import by.stub.handlers.strategy.stubs.DefaultResponseHandlingStrategy;
 import by.stub.handlers.strategy.stubs.StubResponseHandlingStrategy;
-import by.stub.javax.servlet.http.HttpServletResponseWithGetStatus;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.MimeTypes;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,17 +44,17 @@ public class DefaultResponseHandlingStrategyTest {
    }
 
    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.SERVER, HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CONTENT_TYPE, MimeTypes.TEXT_HTML_UTF_8);
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeaders.PRAGMA, "no-cache");
-      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeaders.EXPIRES, 0);
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate");
+      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
    }
 
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
 
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
@@ -63,6 +62,14 @@ public class DefaultResponseHandlingStrategyTest {
 
          @Override
          public void write(final int i) throws IOException {
+
+         }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
 
          }
       });
@@ -76,7 +83,7 @@ public class DefaultResponseHandlingStrategyTest {
    @Test
    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
 
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
@@ -86,6 +93,14 @@ public class DefaultResponseHandlingStrategyTest {
 
          @Override
          public void write(final int i) throws IOException {
+
+         }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
 
          }
       });
@@ -101,7 +116,7 @@ public class DefaultResponseHandlingStrategyTest {
    public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
 
       final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-      final HttpServletResponseWithGetStatus mockHttpServletResponse = Mockito.mock(HttpServletResponseWithGetStatus.class);
+      final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
 
       when(mockStubResponse.getStatus()).thenReturn("200");
       when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
@@ -111,6 +126,14 @@ public class DefaultResponseHandlingStrategyTest {
 
          @Override
          public void write(final int i) throws IOException {
+
+         }
+
+         @Override public boolean isReady() {
+            return false;
+         }
+
+         @Override public void setWriteListener(final WriteListener writeListener) {
 
          }
       });

@@ -34,6 +34,6 @@ public final class ObjectUtils {
    }
 
    public static boolean isNotNull(final Object instance) {
-      return !ObjectUtils.isNull(instance);
+      return !isNull(instance);
    }
 }

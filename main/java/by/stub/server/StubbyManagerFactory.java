@@ -24,7 +24,6 @@ import by.stub.cli.EmptyLogger;
 import by.stub.database.StubbedDataManager;
 import by.stub.database.thread.ExternalFilesScanner;
 import by.stub.database.thread.MainYamlScanner;
-import by.stub.utils.FileUtils;
 import by.stub.utils.ObjectUtils;
 import by.stub.yaml.YamlParser;
 import by.stub.yaml.stubs.StubHttpLifecycle;
@@ -35,6 +34,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static by.stub.utils.FileUtils.constructReader;
+
 public class StubbyManagerFactory {
 
    public StubbyManagerFactory() {
@@ -43,10 +44,11 @@ public class StubbyManagerFactory {
 
    public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
+      // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
       Log.setLog(new EmptyLogger());
 
       final File dataYamlFile = new File(dataYamlFilename);
-      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
+      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), constructReader(dataYamlFile));
 
       System.out.println();
 
