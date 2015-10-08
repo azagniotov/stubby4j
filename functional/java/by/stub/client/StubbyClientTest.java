@@ -500,4 +500,58 @@ public class StubbyClientTest {
       assertThat(firstSequencedStubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
       assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
    }
+
+   @Test
+   public void doPut_ShouldMakeSuccessfulPut() throws Exception {
+      final String host = "localhost";
+      final String uri = "/complex/json/tree/put";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/graph.2.json");
+      assertThat(jsonContentUrl).isNotNull();
+      final String payload = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPut(host, uri, port, null, payload);
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
+      assertThat("OK").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doPutOverSsl_ShouldMakeSuccessfulPut() throws Exception {
+      final String host = "localhost";
+      final String uri = "/complex/json/tree/put";
+
+      final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/graph.2.json");
+      assertThat(jsonContentUrl).isNotNull();
+      final String payload = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPutOverSsl(host, uri, SSL_PORT, null, payload);
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
+      assertThat("OK").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doDelete_ShouldMakeSuccessfulGetWithBearerAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer/1";
+      final int port = JettyFactory.DEFAULT_STUBS_PORT;
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doDelete(host, uri, port, new Authorization(AuthorizationType.BEARER, ENCODED_STRING));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+   }
+
+   @Test
+   public void doDeleteOverSsl_ShouldMakeSuccessfulGetWithBearerAuth_WhenAuthCredentialsIsProvided() throws Exception {
+      final String host = "localhost";
+      final String uri = "/item/auth/bearer/1";
+
+      final StubbyResponse stubbyResponse = STUBBY_CLIENT.doDeleteOverSsl(host, uri, SSL_PORT, new Authorization(AuthorizationType.BEARER, ENCODED_STRING));
+
+      assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+   }
 }

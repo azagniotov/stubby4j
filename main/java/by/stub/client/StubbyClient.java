@@ -268,13 +268,13 @@ public final class StubbyClient {
     * @param host      host that stubby4j is running on
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
-    * @param post      data to POST to the server
+    * @param payload   data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
    @CoberturaIgnore
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception {
-      return doPost(host, uri, stubsPort, null, post);
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String payload) throws Exception {
+      return doPost(host, uri, stubsPort, null, payload);
    }
 
    /**
@@ -286,13 +286,13 @@ public final class StubbyClient {
     * @param uri           URI for the HTTP request
     * @param stubsPort     port that stubby4j Stubs is running on
     * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
-    * @param post          data to POST to the server
+    * @param payload       data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
    @CoberturaIgnore
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String post) throws Exception {
-      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.POST.asString(), uri, host, stubsPort, authorization, post);
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.POST.asString(), uri, host, stubsPort, authorization, payload);
 
       return makeRequest(stubbyRequest);
    }
@@ -301,13 +301,13 @@ public final class StubbyClient {
     * Makes POST HTTP request to stubby running on default host and port - localhost:8882
     *
     * @param uri  URI for the HTTP request
-    * @param post data to POST to the server
+    * @param payload data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
    @CoberturaIgnore
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post) throws Exception {
-      return doPostUsingDefaults(uri, post, null);
+   public StubbyResponse doPostUsingDefaults(final String uri, final String payload) throws Exception {
+      return doPostUsingDefaults(uri, payload, null);
    }
 
    /**
@@ -316,14 +316,94 @@ public final class StubbyClient {
     * The credentials should be base-64 encoded using the following format - username:password
     *
     * @param uri           URI for the HTTP request
-    * @param post          data to POST to the server
+    * @param payload       data to POST to the server
     * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
    @CoberturaIgnore
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final Authorization authorization) throws Exception {
-      return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, authorization, post);
+   public StubbyResponse doPostUsingDefaults(final String uri, final String payload, final Authorization authorization) throws Exception {
+      return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, authorization, payload);
+   }
+
+   /**
+    * Makes PUT HTTP request to stubby
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @param payload       data to PUT to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public StubbyResponse doPut(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
+
+      return makeRequest(stubbyRequest);
+   }
+
+   /**
+    * Makes PUT HTTP request to stubby over TLS on stubby4j default TLS port: 7443
+    *
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @param payload       data to PUT to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public StubbyResponse doPutOverSsl(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
+
+      return makeRequest(stubbyRequest);
+   }
+
+   /**
+    * Makes DELETE HTTP request to stubby
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public StubbyResponse doDelete(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.DELETE.asString(), uri, host, stubsPort, authorization);
+
+      return makeRequest(stubbyRequest);
+   }
+
+   /**
+    * Makes DELETE HTTP request to stubby over TLS on stubby4j default TLS port: 7443
+    *
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param port          TLS port
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public StubbyResponse doDeleteOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception {
+      final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(), HttpMethod.DELETE.asString(), uri, host, port, authorization);
+
+      return makeRequest(stubbyRequest);
    }
 
    /**

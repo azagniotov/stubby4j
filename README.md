@@ -1126,11 +1126,11 @@ for each <endpoint> of stored endpoints {
     * @param host      host that stubby4j is running on
     * @param uri       URI for the HTTP request
     * @param stubsPort port that stubby4j Stubs is running on
-    * @param post      data to POST to the server
+    * @param payload   data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String post) throws Exception
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String payload) throws Exception
 
    /**
     * Makes POST HTTP request to stubby
@@ -1141,21 +1141,21 @@ for each <endpoint> of stored endpoints {
     * @param uri           URI for the HTTP request
     * @param stubsPort     port that stubby4j Stubs is running on
     * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
-    * @param post          data to POST to the server
+    * @param payload       data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String post) throws Exception
+   public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception
 
    /**
     * Makes POST HTTP request to stubby running on default host and port - localhost:8882
     *
     * @param uri  URI for the HTTP request
-    * @param post data to POST to the server
+    * @param payload data to POST to the server
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post) throws Exception
+   public StubbyResponse doPostUsingDefaults(final String uri, final String payload) throws Exception
 
    /**
     * Makes POST HTTP request to stubby running on default host and port - localhost:8882.
@@ -1163,12 +1163,72 @@ for each <endpoint> of stored endpoints {
     * The credentials should be base-64 encoded using the following format - username:password
     *
     * @param uri           URI for the HTTP request
-    * @param post          data to POST to the server
+    * @param payload       data to POST to the server
     * @param authorization {@link Authorization} object holding the HTTP header authorization type & value
     * @return StubbyResponse with HTTP status code and message from the server
     * @throws Exception
     */
-   public StubbyResponse doPostUsingDefaults(final String uri, final String post, final Authorization authorization) throws Exception
+   public StubbyResponse doPostUsingDefaults(final String uri, final String payload, final Authorization authorization) throws Exception
+
+   /**
+    * Makes PUT HTTP request to stubby
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @param payload       data to PUT to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPut(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception
+
+   /**
+    * Makes PUT HTTP request to stubby over TLS on stubby4j default TLS port: 7443
+    *
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @param payload       data to PUT to the server
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doPutOverSsl(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception
+
+   /**
+    * Makes DELETE HTTP request to stubby
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param stubsPort     port that stubby4j Stubs is running on
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value (can be null)
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doDelete(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception
+
+   /**
+    * Makes DELETE HTTP request to stubby over TLS on stubby4j default TLS port: 7443
+    *
+    * Also can set basic authorisation HTTP header using encoded credentials (if provided).
+    * The credentials should be base-64 encoded using the following format - username:password
+    *
+    * @param host          host that stubby4j is running on
+    * @param uri           URI for the HTTP request
+    * @param port          TLS port
+    * @param authorization {@link Authorization} object holding the HTTP header authorization type and value
+    * @return StubbyResponse with HTTP status code and message from the server
+    * @throws Exception
+    */
+   public StubbyResponse doDeleteOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception
 
    /**
     * Updated stubbed data with new data. This method creates a POST request to Admin portal
@@ -1222,8 +1282,12 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 3.2.3-SNAPSHOT
+##### 3.2.4-SNAPSHOT
+
+
+##### 3.2.3
 * Dumping more debug information to the console if `--debug` option is on, also for successfully matched requests
+* Added support for `PUT` and `DELETE` methods in `StubbyClient` class
 
 ##### 3.1.3
 * If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)

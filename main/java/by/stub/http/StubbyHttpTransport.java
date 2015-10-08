@@ -33,7 +33,9 @@ public class StubbyHttpTransport {
       add(HttpMethod.HEAD.asString());
       add(HttpMethod.TRACE.asString());
       add(HttpMethod.OPTIONS.asString());
+      add(HttpMethod.DELETE.asString());
       add(HttpMethod.POST.asString());
+      add(HttpMethod.PUT.asString());
    }};
 
    public StubbyHttpTransport() {
