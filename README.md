@@ -2,8 +2,8 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017)
 [![Coverage Status](https://coveralls.io/repos/azagniotov/stubby4j/badge.svg?style=flat)](https://coveralls.io/r/azagniotov/stubby4j)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j)
-[![Github Issues](http://githubbadges.herokuapp.com/badges/badgerbadgerbadger/issues.svg?style=flat)](https://github.com/azagniotov/stubby4j/issues)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/badges/badgerbadgerbadger/pulls.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls)
+[![Github Issues](http://githubbadges.herokuapp.com/badges/badgerbadgerbadger/issues.svg?style=flat)](https://github.com/azagniotov/stubby4j/issues)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 
