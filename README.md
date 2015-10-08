@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v3.1.3
+## User manual for stubby4j v3.2.3
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -147,35 +147,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.1.3` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.2.3` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>3.1.3</version>
+    <version>3.2.3</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="3.1.3" />
+<dependency org="by.stub" name="stubby4j" rev="3.2.3" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:3.1.3'
+'by.stub:stubby4j:jar:3.2.3'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:3.1.3'
+compile 'by.stub:stubby4j:3.2.3'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "3.1.3"
+libraryDependencies += "by.stub" % "stubby4j" % "3.2.3"
 ```
 
 ### Command-line switches
