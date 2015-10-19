@@ -103,6 +103,14 @@ public class StubResponse {
       return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
    }
 
+   public boolean doesFilePathContainTemplateTokens() {
+      try {
+         return FileUtils.doesFilePathContainTemplateTokens(file);
+      } catch (Exception e) {
+         return false;
+      }
+   }
+
    @CoberturaIgnore
    private boolean isTemplateFile() {
       try {

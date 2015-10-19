@@ -127,9 +127,17 @@ public final class FileUtils {
 
    public static boolean isTemplateFile(final File file) throws IOException {
       if (isAsciiFile(file)) {
-         return asciiFileToString(file).contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+         return containsTemplateToken(asciiFileToString(file));
       }
       return false;
+   }
+
+   public static boolean doesFilePathContainTemplateTokens(final File file) {
+      return containsTemplateToken(file.getAbsolutePath());
+   }
+
+   private static boolean containsTemplateToken(final String string) {
+      return string.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
    }
 
    public static byte[] fileToBytes(final File file) throws IOException {

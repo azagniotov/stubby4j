@@ -191,6 +191,27 @@ public class StubsPortalTest {
       assertThat("Got response").isEqualTo(responseContent);
    }
 
+   @Test
+   public void should_MakeSuccessfulRequest_WhenUrlMatchingAndFilePathIsRegexified() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/regex-fileserver/file.html");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+      final String responseContent = response.parseAsString().trim();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+      assertThat(responseContent).contains("Fileserver in stubby4j is working.");
+   }
+
+   @Test
+   public void should_NotMatchRequest_WhenUrlNotMatchingAndFilePathIsRegexified() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/regex-fileserver/123file.html");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+   }
 
    @Test
    public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {

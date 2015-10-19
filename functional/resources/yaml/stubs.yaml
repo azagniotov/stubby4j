@@ -507,6 +507,16 @@
       status: 200
       body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
 
+
+-  request:
+      method: [GET]
+      url: ^/regex-fileserver/([a-z]+).html$
+
+   response:
+      status: 200
+      file: functional/resources/html/<% url.1 %>.html
+
+
 -  request:
       method: GET
       url: /empty.param

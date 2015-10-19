@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.handlers.strategy.stubs;
 
+import by.stub.utils.FileUtils;
 import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +51,12 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
       response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
       byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
-      if (foundStubResponse.isContainsTemplateTokens()) {
+      if (foundStubResponse.doesFilePathContainTemplateTokens()) {
+         String resolvedPath = StringUtils.replaceTokensInString(
+            foundStubResponse.getRawFile().getAbsolutePath(),
+            assertionStubRequest.getRegexGroups());
+         responseBody = FileUtils.fileToBytes(new File(resolvedPath));
+      } else if (foundStubResponse.isContainsTemplateTokens()) {
          final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
          responseBody = StringUtils.getBytesUtf8(replacedTemplate);
       }
