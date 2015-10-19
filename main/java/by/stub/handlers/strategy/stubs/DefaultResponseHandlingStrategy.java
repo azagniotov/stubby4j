@@ -24,6 +24,7 @@ import by.stub.utils.HandlerUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubRequest;
 import by.stub.yaml.stubs.StubResponse;
+import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -55,7 +56,12 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
          String resolvedPath = StringUtils.replaceTokensInString(
             foundStubResponse.getRawFile().getAbsolutePath(),
             assertionStubRequest.getRegexGroups());
-         responseBody = FileUtils.fileToBytes(new File(resolvedPath));
+         File resolvedFile = new File(resolvedPath);
+         if(resolvedFile.exists()){
+            responseBody = FileUtils.fileToBytes(resolvedFile);
+         } else {
+            response.setStatus(HttpStatus.NOT_FOUND_404);
+         }
       } else if (foundStubResponse.isContainsTemplateTokens()) {
          final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
          responseBody = StringUtils.getBytesUtf8(replacedTemplate);

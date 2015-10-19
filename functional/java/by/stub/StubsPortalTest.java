@@ -214,6 +214,16 @@ public class StubsPortalTest {
    }
 
    @Test
+   public void should_FailRequest_WhenUrlMatchingButFilePathDoesNotExist() throws Exception {
+      final String requestUrl = String.format("%s%s", STUBS_URL, "/regex-fileserver/filexxx.html");
+      final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+      final HttpResponse response = request.execute();
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+   }
+
+   @Test
    public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
       final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
       final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
