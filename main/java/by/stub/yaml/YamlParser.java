@@ -199,7 +199,7 @@ public class YamlParser {
       final String filePath = StringUtils.objectToString(rawPairValue);
       try {
          if(FileUtils.doesFilePathContainTemplateTokens(new File(filePath))) {
-            return new File(filePath);
+            return new File(dataConfigHomeDirectory, filePath);
          }
 
          return uriToFile(dataConfigHomeDirectory, filePath);

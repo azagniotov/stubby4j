@@ -514,7 +514,7 @@
 
    response:
       status: 200
-      file: functional/resources/html/<% url.1 %>.html
+      file: ../html/<% url.1 %>.html
 
 
 -  request:
