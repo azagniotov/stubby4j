@@ -156,7 +156,7 @@ public final class StubbyClient {
    }
 
    /**
-    * Blocks until Jetty it stopped
+    * Blocks until Jetty has finished
     *
     * @throws Exception
     */
