@@ -156,6 +156,18 @@ public final class StubbyClient {
    }
 
    /**
+    * Blocks until Jetty it stopped
+    *
+    * @throws Exception
+    */
+   @CoberturaIgnore
+   public void joinJetty() throws Exception {
+      if (ObjectUtils.isNotNull(stubbyManager)) {
+         stubbyManager.joinJetty();
+      }
+   }
+
+   /**
     * Makes GET HTTP request to stubby
     *
     * @param host      host that stubby4j is running on
