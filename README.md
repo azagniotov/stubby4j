@@ -147,35 +147,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.2.3` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.3.0` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>by.stub</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>3.2.3</version>
+    <version>3.3.0</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="3.2.3" />
+<dependency org="by.stub" name="stubby4j" rev="3.3.0" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:3.2.3'
+'by.stub:stubby4j:jar:3.3.0'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:3.2.3'
+compile 'by.stub:stubby4j:3.3.0'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "3.2.3"
+libraryDependencies += "by.stub" % "stubby4j" % "3.3.0"
 ```
 
 ### Command-line switches
@@ -1283,8 +1283,11 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 3.2.4-SNAPSHOT
+##### 3.3.1-SNAPSHOT
 
+##### 3.3.0
+* Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)
+* Serving response files from a local path constructed with regex tokens from the stubbed request (Radek Ostrowski, https://github.com/radek1st)
 
 ##### 3.2.3
 * Dumping more debug information to the console if `--debug` option is on, also for successfully matched requests
