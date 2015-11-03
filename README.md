@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v3.2.3
+## User manual for stubby4j v3.3.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
