@@ -696,7 +696,8 @@ Another example, would be the earlier case where `headers` `custom-header` prope
 It is also worth to mention, that the __full__ regex match value replacing token `<% query.date.0 %>`, would be equal to the regex capturing group value replacing `<% query.date.1 %>`. This is due to how the `query` `date` property regex is defined - the one and only capturing group in the `query` `date` regex, is also the __full__ regex itself.
 
 ##### Where to specify the template
-You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced, __not__ the path to local file defined in `file`.
+You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced.
+Alternatively, you can also template the path to the file itself. When the request is recieved and the regex matches, the path to the file will get resolved and the file content will be served if it exists.
 
 ##### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.

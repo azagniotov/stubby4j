@@ -22,6 +22,7 @@ package by.stub.yaml;
 import by.stub.annotations.CoberturaIgnore;
 import by.stub.cli.ANSITerminal;
 import by.stub.utils.ConsoleUtils;
+import by.stub.utils.FileUtils;
 import by.stub.utils.StringUtils;
 import by.stub.yaml.stubs.StubHttpLifecycle;
 import by.stub.yaml.stubs.StubRequest;
@@ -197,6 +198,10 @@ public class YamlParser {
    private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
       final String filePath = StringUtils.objectToString(rawPairValue);
       try {
+         if(FileUtils.doesFilePathContainTemplateTokens(new File(filePath))) {
+            return new File(dataConfigHomeDirectory, filePath);
+         }
+
          return uriToFile(dataConfigHomeDirectory, filePath);
       } catch (final IOException ex) {
          ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);

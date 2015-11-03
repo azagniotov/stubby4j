@@ -98,7 +98,10 @@ public final class StringUtils {
    }
 
    public static String replaceTokens(final byte[] stringBytes, Map<String, String> tokensAndValues) {
-      String template = StringUtils.newStringUtf8(stringBytes);
+      return replaceTokensInString(StringUtils.newStringUtf8(stringBytes), tokensAndValues);
+   }
+
+   public static String replaceTokensInString(String template, Map<String, String> tokensAndValues) {
       for (Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
          final String regexifiedKey = String.format("%s\\s{0,}%s\\s{0,}%s", StringUtils.TEMPLATE_TOKEN_LEFT, entry.getKey(), StringUtils.TEMPLATE_TOKEN_RIGHT);
          template = template.replaceAll(regexifiedKey, entry.getValue());
