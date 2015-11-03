@@ -62,6 +62,10 @@ public final class StubbyManager {
       ANSITerminal.status("Jetty successfully shutdown");
    }
 
+   public synchronized void joinJetty() throws Exception {
+      server.join();
+   }
+
    private boolean isJettyStarting() throws Exception {
       return server.isStarting();
    }
