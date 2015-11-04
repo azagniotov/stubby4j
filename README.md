@@ -657,6 +657,14 @@ During HTTP request verification, you can leverage regex capturing groups as tok
 ```yaml
 -  request:
       method: [GET]
+      url: ^/regex-fileserver/([a-z]+).html$
+
+   response:
+      status: 200
+      file: ../html/<% url.1 %>.html
+      
+-  request:
+      method: [GET]
       url: ^/account/(\d{5})/category/([a-zA-Z]+)
       query:
          date: "([a-zA-Z]+)"
@@ -697,7 +705,18 @@ It is also worth to mention, that the __full__ regex match value replacing token
 
 ##### Where to specify the template
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced.
-Alternatively, you can also template the path to the file itself. When the request is recieved and the regex matches, the path to the file will get resolved and the file content will be served if it exists.
+
+Alternatively, you can also template the path to the file itself:
+```yaml
+-  request:
+      method: [GET]
+      url: ^/regex-fileserver/([a-z]+).html$
+
+   response:
+      status: 200
+      file: ../html/<% url.1 %>.html
+```
+When the request is recieved and the regex matches, the path to the file will get resolved and the file content will be served if it exists.
 
 ##### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
