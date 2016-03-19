@@ -1,0 +1,13 @@
+-  request:
+      method: [GET,POST,PUT,DELETE]
+      url: ^/delay/?$
+
+   response:
+      latency: 5000
+      status: 200
+
+-  request:
+      method: [GET,POST,PUT,DELETE]
+
+   response:
+      status: 200
