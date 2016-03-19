@@ -28,6 +28,11 @@ allprojects {
    }
 }
 
+project(':main') {
+   apply plugin:'application'
+   mainClassName = "by.stub.Main"
+   applicationName = "stubby4j"
+}
 apply from: "$rootDir/conf/gradle/ides.gradle"
 
 subprojects {
