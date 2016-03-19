@@ -33,6 +33,9 @@ project(':main') {
    mainClassName = "by.stub.Main"
    applicationName = "stubby4j"
 }
+
+task stage (dependsOn: ['clean', 'build', ':main:installDist'] )
+
 apply from: "$rootDir/conf/gradle/ides.gradle"
 
 subprojects {
