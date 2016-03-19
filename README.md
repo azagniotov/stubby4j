@@ -1,4 +1,31 @@
+Fork of [stubby4j](https://github.com/azagniotov/stubby4j) Heroku-deployable out-of-the-box
+=================================================
+1. Fork this repo.
+2. Edit `stubby4j/main/resources/yaml/stub.yaml` to configure your endpoints
+3. Make sure you have the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+4. Follow __Deploying locally__ or __Deploying to Heroku__ steps
+
+## Deploying locally
+```sh
+git clone git@github.com:YOUR_GITHUB_USER/stubby4j.git # clone your fork
+cd stubby4j
+./gradlew stage && heroku local web
+```
+Your fork should now be running on [localhost:5000](http://localhost:5000/).
+
+## Deploying to Heroku
+```
+git clone git@github.com:YOUR_GITHUB_USER/stubby4j.git # clone your fork
+cd stubby4j
+heroku create
+git push heroku master
+heroku open
+```
+Alternatively, you can deploy your own copy of the app using this button:
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+---
 
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 [![Dependency Status](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017)
