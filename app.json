@@ -1,0 +1,6 @@
+{
+  "name": "stubby4j-heroku",
+  "description": "A flexible HTTP stub server for testing application interactions stubbing for easy testing, Heroku-deployable out-of-the-box.",
+  "logo": "https://raw.githubusercontent.com/azagniotov/stubby4j/c25bd19737349baf4cd25ddb835171e4c5d44a2a/main/resources/ui/images/favicon.ico",
+  "keywords": ["http", "stub", "server" ,"testing", "web service", "rest"]
+}
