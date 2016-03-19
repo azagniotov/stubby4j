@@ -6,6 +6,10 @@ project(':').ext.map = [:]
 defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
 
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.11'
+}
+
 buildscript {
    repositories {
       mavenCentral()
