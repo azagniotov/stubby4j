@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package by.stub.server;
 
+import by.stub.cli.ANSITerminal;
 import by.stub.cli.CommandLineInterpreter;
 import by.stub.cli.EmptyLogger;
 import by.stub.database.StubbedDataManager;
@@ -60,6 +61,10 @@ public class StubbyManagerFactory {
          final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
          final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
          watchDataStore(stubbedDataManager, watchScanTime);
+      }
+
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
+         ANSITerminal.muteConsole(true);
       }
 
       return new StubbyManager(server);
