@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v3.3.0
+## User manual for stubby4j v4.0.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -132,50 +132,50 @@ Run `gradle cobertura` command to:
 stubby4j is a fat JAR, which contains the following dependencies:
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.2.10.v20150310.jar
-* jetty-servlets-9.2.10.v20150310.jar
-* jetty-http-9.2.10.v20150310.jar
-* jetty-io-9.2.10.v20150310.jar
-* jetty-continuation-9.2.10.v20150310.jar
+* jetty-server-9.3.12.v20160915.jar
+* jetty-servlets-9.3.12.v20160915.jar
+* jetty-http-9.3.12.v20160915.jar
+* jetty-io-9.3.12.v20160915.jar
+* jetty-continuation-9.3.12.v20160915.jar
 * jetty-util-9.2.10.v20150310.jar
 * commons-cli-1.2.jar
-* snakeyaml-1.15.jar
-* jsonassert-1.2.3.jar
+* snakeyaml-1.17.jar
+* jsonassert-1.3.0.jar
 * xmlunit-1.6.jar
 * json-20090211.jar
 
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes 5-8 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v.3.3.0` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.0` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
-    <groupId>by.stub</groupId>
+    <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>3.3.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="by.stub" name="stubby4j" rev="3.3.0" />
+<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.0" />
 ```
 
 ##### Apache Buildr
 ```xml
-'by.stub:stubby4j:jar:3.3.0'
+'io.github.azagniotov:stubby4j:jar:4.0.0'
 ```
 
 ##### Gradle
 ```xml
-compile 'by.stub:stubby4j:3.3.0'
+compile 'io.github.azagniotov:stubby4j:4.0.0'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "by.stub" % "stubby4j" % "3.3.0"
+libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.0"
 ```
 
 ### Command-line switches
@@ -1324,12 +1324,15 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 4.0.0-SNAPSHOT
+##### 4.0.1-SNAPSHOT
+
+##### 4.0.0
 * Built using Java v1.8 (`1.8.0_60`)
+* Updated Gradle `build.gradle` to compile using Java v1.8
 * Upgraded from Jetty `9.2.10.v20150310` to `9.3.12.v20160915`
 * Updated Docker config
-* Renamed package `by.stub` to `io.github.azagniotov.stubby4j`
-* Renamed Maven Central group ID `by.stub` to `io.github.azagniotov`
+* Renamed project root package from `by.stub` to `io.github.azagniotov.stubby4j`
+* Renamed Maven Central group ID from `by.stub` to `io.github.azagniotov`
 * Issue #55 - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
 * Issue #56 - Requests with query parameters values containing white spaces
 
