@@ -186,6 +186,22 @@
 
 
 -  request:
+      method: POST
+      url: /post-body-as-json
+      headers:
+         content-type: application/json
+      post: >
+         {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+
+
+-  request:
       url: /invoice/new/no/post
       method: POST
    response:

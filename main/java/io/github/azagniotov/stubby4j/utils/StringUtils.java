@@ -131,7 +131,7 @@ public final class StringUtils {
         return toCheck.startsWith("[") && toCheck.endsWith("]");
     }
 
-    public static String decodeUrl(final String toCheck) {
+    public static String decodeUrlEncoded(final String toCheck) {
         if (toCheck.contains("%2B")) {
             return toCheck.replaceAll("%2B", " ").replaceAll("\\s+", " ");
         } else if (toCheck.contains("%20")) {
@@ -141,6 +141,10 @@ public final class StringUtils {
         }
 
         return toCheck;
+    }
+
+    public static String escapeCurlyBraces(final String toEscape) {
+        return toEscape.replaceAll(Pattern.quote("{"), "\\\\{").replaceAll(Pattern.quote("}"), "\\\\}");
     }
 
     public static String decodeUrlEncodedQuotes(final String toBeFiltered) {

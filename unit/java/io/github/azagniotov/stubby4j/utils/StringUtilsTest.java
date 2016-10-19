@@ -189,6 +189,16 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void shouldEscapeCurlyBraces() throws Exception {
+
+        final String escaped = StringUtils.escapeCurlyBraces("[{'key': 'value'}, {'key': 'value'}]");
+
+        assertThat(escaped).isEqualTo("[\\{'key': 'value'\\}, \\{'key': 'value'\\}]");
+    }
+
+
+
+    @Test
     public void shouldReplaceTokensInATemplateWhenAllTokensPresent() throws Exception {
 
         final Map<String, String> tokensAndValues = new HashMap<>();

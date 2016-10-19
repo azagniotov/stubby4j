@@ -1591,6 +1591,55 @@ public class StubRequestTest {
     }
 
     @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenPlainPostRegexStubbedAndPlainTextPosted() throws Exception {
+
+        final String postRegex = "This is a text with (.*) the end of summer!";
+        final String postAssertingValue = "This is a text with DANCING IN THE RAIN, the end of summer!";
+        final String url = "/post";
+
+        final StubRequest expectedRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withPost(postRegex).build();
+
+        final StubRequest assertingRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withPost(postAssertingValue).build();
+
+        assertThat(expectedRequest).isEqualTo(assertingRequest);
+    }
+
+    @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenJsonPostRegexStubbedAndJsonPosted() throws Exception {
+
+        final String postRegex = "{\"userId\":\"19\",\"requestId\":\"(.*)\",\"transactionDate\":\"(.*)\",\"transactionTime\":\"(.*)\"}";
+        final String postAssertingValue = "{\"userId\":\"19\",\"requestId\":\"12345\",\"transactionDate\":\"98765\",\"transactionTime\":\"11111\"}";
+        final String url = "/post";
+        final String contentType = "application/json";
+
+        final StubRequest expectedRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withHeaderContentType(contentType)
+                        .withPost(postRegex).build();
+
+        final StubRequest assertingRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withHeaderContentType(contentType)
+                        .withPost(postAssertingValue).build();
+
+        assertThat(expectedRequest).isEqualTo(assertingRequest);
+
+        final Map<String, String> regexGroups = assertingRequest.getRegexGroups();
+        assertThat(regexGroups.get("post.0")).isEqualTo(postAssertingValue);
+        assertThat(regexGroups.get("post.1")).isEqualTo("12345");
+        assertThat(regexGroups.get("post.2")).isEqualTo("98765");
+        assertThat(regexGroups.get("post.3")).isEqualTo("11111");
+    }
+
+    @Test
     public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingSubsectionOfMultiLineJsonPost() throws Exception {
 
         final String postRegex = ".*(\"id\": \"123\").*";

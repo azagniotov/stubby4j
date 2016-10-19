@@ -35,7 +35,7 @@ public final class CollectionUtils {
                 splittedPairValue = StringUtils.trimSpacesBetweenCSVElements(bracketedQueryValueAsCSV);
             }
 
-            paramMap.put(splittedPairKey, StringUtils.decodeUrl(splittedPairValue));
+            paramMap.put(splittedPairKey, StringUtils.decodeUrlEncoded(splittedPairValue));
         }
         return paramMap;
     }

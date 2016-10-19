@@ -27,7 +27,6 @@ import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -54,8 +53,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeCurlyBraces;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isWithinSquareBrackets;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
@@ -97,7 +101,7 @@ public class StubRequest {
         final ArrayList<String> uppercase = new ArrayList<>(method.size());
 
         for (final String string : method) {
-            uppercase.add(StringUtils.toUpper(string));
+            uppercase.add(toUpper(string));
         }
 
         return uppercase;
@@ -131,7 +135,7 @@ public class StubRequest {
         if (fileBytes.length == 0) {
             return FileUtils.enforceSystemLineSeparator(post);
         }
-        final String utf8FileContent = StringUtils.newStringUtf8(fileBytes);
+        final String utf8FileContent = newStringUtf8(fileBytes);
         return FileUtils.enforceSystemLineSeparator(utf8FileContent);
     }
 
@@ -145,7 +149,7 @@ public class StubRequest {
         final Set<Map.Entry<String, String>> entrySet = headersCopy.entrySet();
         this.headers.clear();
         for (final Map.Entry<String, String> entry : entrySet) {
-            this.headers.put(StringUtils.toLower(entry.getKey()), entry.getValue());
+            this.headers.put(toLower(entry.getKey()), entry.getValue());
         }
 
         return headers;
@@ -223,7 +227,7 @@ public class StubRequest {
                 ? Collections.list(request.getHeaderNames()) : new LinkedList<String>();
         for (final String headerName : headerNames) {
             final String headerValue = request.getHeader(headerName);
-            assertionRequest.getHeaders().put(StringUtils.toLower(headerName), headerValue);
+            assertionRequest.getHeaders().put(toLower(headerName), headerValue);
         }
 
         assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
@@ -237,13 +241,13 @@ public class StubRequest {
         if (this == o) {
             return true;
         } else if (o instanceof StubRequest) {
-            final StubRequest dataStoreRequest = (StubRequest) o;
+            final StubRequest stubbedRequest = (StubRequest) o;
 
-            return urlsMatch(dataStoreRequest.url, this.url)
-                    && arraysIntersect(dataStoreRequest.getMethod(), this.getMethod())
-                    && postBodiesMatch(dataStoreRequest.isPostStubbed(), dataStoreRequest.getPostBody(), this.getPostBody())
-                    && headersMatch(dataStoreRequest.getHeaders(), this.getHeaders())
-                    && queriesMatch(dataStoreRequest.getQuery(), this.getQuery());
+            return urlsMatch(stubbedRequest.url, this.url)
+                    && arraysIntersect(stubbedRequest.getMethod(), this.getMethod())
+                    && postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())
+                    && headersMatch(stubbedRequest.getHeaders(), this.getHeaders())
+                    && queriesMatch(stubbedRequest.getQuery(), this.getQuery());
         }
 
         return false;
@@ -254,72 +258,83 @@ public class StubRequest {
         return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
     }
 
-    private boolean urlsMatch(final String dataStoreUrl, final String thisAssertingUrl) {
-        return stringsMatch(dataStoreUrl, thisAssertingUrl, YamlProperties.URL);
+    private boolean urlsMatch(final String stubbedUrl, final String assertingUrl) {
+        return stringsMatch(stubbedUrl, assertingUrl, YamlProperties.URL);
     }
 
-    private boolean postBodiesMatch(final boolean isDataStorePostStubbed, final String dataStorePostBody, final String thisAssertingPostBody) {
-        if (isDataStorePostStubbed) {
+    private boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final String assertingPostBody) {
+        if (isPostStubbed) {
             final String assertingContentType = this.getHeaders().get("content-type");
-            final boolean isAssertingValueSet = isSet(thisAssertingPostBody);
+            final boolean isAssertingValueSet = isSet(assertingPostBody);
             if (!isAssertingValueSet) {
                 return false;
             } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
                 try {
-                    return JSONCompare.compareJSON(dataStorePostBody, thisAssertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
-                } catch (JSONException e) {
-                    return false;
+                    boolean passed = JSONCompare.compareJSON(stubbedPostBody, assertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+                    if (passed) {
+                        return true;
+                    } else {
+                        final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                        return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+                    }
+                } catch (final JSONException e) {
+                    final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                    return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
                 }
             } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
                 try {
-                    final Diff diff = new Diff(dataStorePostBody, thisAssertingPostBody);
+                    final Diff diff = new Diff(stubbedPostBody, assertingPostBody);
                     diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+
                     return (diff.similar() || diff.identical());
                 } catch (SAXException | IOException e) {
                     return false;
                 }
             } else {
-                return stringsMatch(dataStorePostBody, thisAssertingPostBody, YamlProperties.POST);
+                final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                boolean regexMatch = regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+
+                return regexMatch || stringsMatch(stubbedPostBody, assertingPostBody, YamlProperties.POST);
             }
         } else {
             return true;
         }
     }
 
-    private boolean queriesMatch(final Map<String, String> dataStoreQuery, final Map<String, String> thisAssertingQuery) {
-        return mapsMatch(dataStoreQuery, thisAssertingQuery, YamlProperties.QUERY);
+    private boolean queriesMatch(final Map<String, String> stubbedQuery, final Map<String, String> assertingQuery) {
+        return mapsMatch(stubbedQuery, assertingQuery, YamlProperties.QUERY);
     }
 
-    private boolean headersMatch(final Map<String, String> dataStoreHeaders, final Map<String, String> thisAssertingHeaders) {
-        final Map<String, String> dataStoreHeadersCopy = new HashMap<>(dataStoreHeaders);
-        for (StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
+    private boolean headersMatch(final Map<String, String> stubbedHeaders, final Map<String, String> assertingHeaders) {
+        final Map<String, String> stubbedHeadersCopy = new HashMap<>(stubbedHeaders);
+        for (final StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
             // auth header is dealt with in StubbedDataManager after request is matched
-            dataStoreHeadersCopy.remove(authorizationType.asYamlProp());
+            stubbedHeadersCopy.remove(authorizationType.asYamlProp());
         }
-        return mapsMatch(dataStoreHeadersCopy, thisAssertingHeaders, YamlProperties.HEADERS);
+        return mapsMatch(stubbedHeadersCopy, assertingHeaders, YamlProperties.HEADERS);
     }
 
     @VisibleForTesting
-    boolean mapsMatch(final Map<String, String> dataStoreMap, final Map<String, String> thisAssertingMap, final String mapName) {
-        if (dataStoreMap.isEmpty()) {
+    boolean mapsMatch(final Map<String, String> stubbedMappings, final Map<String, String> assertingMappings, final String mapName) {
+        if (stubbedMappings.isEmpty()) {
             return true;
-        } else if (thisAssertingMap.isEmpty()) {
+        } else if (assertingMappings.isEmpty()) {
             return false;
         }
 
-        final Map<String, String> dataStoreMapCopy = new HashMap<>(dataStoreMap);
-        final Map<String, String> assertingMapCopy = new HashMap<>(thisAssertingMap);
+        final Map<String, String> stubbedMappingsCopy = new HashMap<>(stubbedMappings);
+        final Map<String, String> assertingMappingsCopy = new HashMap<>(assertingMappings);
 
-        for (Map.Entry<String, String> dataStoreParam : dataStoreMapCopy.entrySet()) {
-            final boolean containsRequiredParam = assertingMapCopy.containsKey(dataStoreParam.getKey());
+        for (Map.Entry<String, String> stubbedMappingEntry : stubbedMappingsCopy.entrySet()) {
+            final boolean containsRequiredParam = assertingMappingsCopy.containsKey(stubbedMappingEntry.getKey());
             if (!containsRequiredParam) {
                 return false;
             } else {
-                final String assertedQueryValue = assertingMapCopy.get(dataStoreParam.getKey());
-                final String templateTokenName = String.format("%s.%s", mapName, dataStoreParam.getKey());
-                final String dataStoreQueryValue = dataStoreParam.getValue();
-                //final String dataStoreQueryValue = StringUtils.urlEncode(dataStoreParam.getValue());
-                if (!stringsMatch(dataStoreQueryValue, assertedQueryValue, templateTokenName)) {
+                final String assertingValue = assertingMappingsCopy.get(stubbedMappingEntry.getKey());
+                final String templateTokenName = String.format("%s.%s", mapName, stubbedMappingEntry.getKey());
+                final String stubbedValue = stubbedMappingEntry.getValue();
+                //final String stubbedValue = StringUtils.urlEncode(stubbedMappingEntry.getValue());
+                if (!stringsMatch(stubbedValue, assertingValue, templateTokenName)) {
                     return false;
                 }
             }
@@ -329,55 +344,55 @@ public class StubRequest {
     }
 
     @VisibleForTesting
-    boolean stringsMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
-        final boolean isDataStoreValueSet = isSet(dataStoreValue);
-        final boolean isAssertingValueSet = isSet(thisAssertingValue);
+    boolean stringsMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
+        final boolean stubbedValueSet = isSet(stubbedValue);
+        final boolean assertingValueSet = isSet(assertingValue);
 
-        if (!isDataStoreValueSet) {
+        if (!stubbedValueSet) {
             return true;
-        } else if (!isAssertingValueSet) {
+        } else if (!assertingValueSet) {
             return false;
-        } else if (isWithinSquareBrackets(dataStoreValue)) {
-            return dataStoreValue.equals(thisAssertingValue);
+        } else if (isWithinSquareBrackets(stubbedValue)) {
+            return stubbedValue.equals(assertingValue);
         } else {
-            return regexMatch(dataStoreValue, thisAssertingValue, templateTokenName);
+            return regexMatch(stubbedValue, assertingValue, templateTokenName);
         }
     }
 
-    private boolean regexMatch(final String dataStoreValue, final String thisAssertingValue, final String templateTokenName) {
+    private boolean regexMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
         try {
             // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
             // it does not mean that newline feeds and carriage return will be matched by default
             // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
             // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
-            final Matcher matcher = Pattern.compile(dataStoreValue, Pattern.MULTILINE).matcher(thisAssertingValue);
+            final Matcher matcher = Pattern.compile(stubbedValue, Pattern.MULTILINE).matcher(assertingValue);
             final boolean isMatch = matcher.matches();
             if (isMatch) {
                 // group(0) holds the full regex match
-                regexGroups.put(StringUtils.buildToken(templateTokenName, 0), matcher.group(0));
+                regexGroups.put(buildToken(templateTokenName, 0), matcher.group(0));
 
                 //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
                 // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
                 final int groupCount = matcher.groupCount();
                 if (groupCount > 0) {
                     for (int idx = 1; idx <= groupCount; idx++) {
-                        regexGroups.put(StringUtils.buildToken(templateTokenName, idx), matcher.group(idx));
+                        regexGroups.put(buildToken(templateTokenName, idx), matcher.group(idx));
                     }
                 }
             }
             return isMatch;
         } catch (PatternSyntaxException e) {
-            return dataStoreValue.equals(thisAssertingValue);
+            return stubbedValue.equals(assertingValue);
         }
     }
 
     @VisibleForTesting
-    boolean arraysIntersect(final ArrayList<String> dataStoreArray, final ArrayList<String> thisAssertingArray) {
-        if (dataStoreArray.isEmpty()) {
+    boolean arraysIntersect(final ArrayList<String> stubbedArray, final ArrayList<String> assertingArray) {
+        if (stubbedArray.isEmpty()) {
             return true;
-        } else if (!thisAssertingArray.isEmpty()) {
-            for (final String entry : thisAssertingArray) {
-                if (dataStoreArray.contains(entry)) {
+        } else if (!assertingArray.isEmpty()) {
+            for (final String entry : assertingArray) {
+                if (stubbedArray.contains(entry)) {
                     return true;
                 }
             }

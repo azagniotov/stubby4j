@@ -426,6 +426,23 @@ A demonstration using regular expressions:
       post: "^this/is/\\d/post/body"
 ```
 
+```yaml
+-  request:
+      method: POST
+      url: /post-body-as-json
+      headers:
+         content-type: application/json
+      post: >
+         {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+```
+
 ##### file
 
 * holds a path to a local file (absolute or relative to the YAML specified in `-d` or `--data`)
@@ -752,6 +769,24 @@ Alternatively, you can also template the path to the file itself:
       file: ../html/<% url.1 %>.html
 ```
 When the request is recieved and the regex matches, the path to the file will get resolved and the file content will be served if it exists.
+
+```yaml
+-  request:
+      method: POST
+      url: /post-body-as-json
+      headers:
+         content-type: application/json
+      post: >
+         {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+```
+Another example demonstrating the usage of tokens from the matched regex groups
 
 ##### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
@@ -1337,7 +1372,10 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 4.0.1-SNAPSHOT
+##### 4.0.2-SNAPSHOT
+
+##### 4.0.1
+* Issue #54 - Support regular expression in Json POST request
 
 ##### 4.0.0
 * Built using Java v1.8 (`1.8.0_60`)
