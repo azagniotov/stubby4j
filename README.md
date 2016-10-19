@@ -1304,7 +1304,7 @@ for each <endpoint> of stored endpoints {
 
 ##### 4.0.0-SNAPSHOT
 * Built using Java v1.8 (`1.8.0_60`)
-* Upgraded from Jetty `9.2.10.v20150310` to `9.3.10.v20160621`
+* Upgraded from Jetty `9.2.10.v20150310` to `9.3.12.v20160915`
 * Updated Docker config
 * Renamed package `by.stub` to `io.github.azagniotov.stubby4j`
 * Renamed Maven Central group ID `by.stub` to `io.github.azagniotov`
