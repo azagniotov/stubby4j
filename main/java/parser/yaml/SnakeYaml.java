@@ -8,26 +8,26 @@ import org.yaml.snakeyaml.resolver.Resolver;
 
 public enum SnakeYaml {
 
-   INSTANCE;
+    INSTANCE;
 
-   private final Yaml snakeYaml;
+    private final Yaml snakeYaml;
 
-   private SnakeYaml() {
-      snakeYaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
-   }
+    private SnakeYaml() {
+        snakeYaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
+    }
 
-   public Yaml getSnakeYaml() {
-      return snakeYaml;
-   }
+    public Yaml getSnakeYaml() {
+        return snakeYaml;
+    }
 
-   private final class YamlParserResolver extends Resolver {
-      YamlParserResolver() {
-         super();
-      }
+    private final class YamlParserResolver extends Resolver {
+        YamlParserResolver() {
+            super();
+        }
 
-      @Override
-      protected void addImplicitResolvers() {
-         // no implicit resolvers - resolve everything to String
-      }
-   }
+        @Override
+        protected void addImplicitResolvers() {
+            // no implicit resolvers - resolve everything to String
+        }
+    }
 }

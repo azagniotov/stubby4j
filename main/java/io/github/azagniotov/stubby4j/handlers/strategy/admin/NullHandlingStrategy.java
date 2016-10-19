@@ -9,10 +9,10 @@ import java.io.IOException;
 
 public class NullHandlingStrategy implements AdminResponseHandlingStrategy {
 
-   @Override
-   public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws IOException {
-      response.setStatus(HttpStatus.NOT_IMPLEMENTED_501);
-      response.getWriter().println(String.format("Method %s is not implemented on URI %s", request.getMethod(), request.getRequestURI()));
+    @Override
+    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws IOException {
+        response.setStatus(HttpStatus.NOT_IMPLEMENTED_501);
+        response.getWriter().println(String.format("Method %s is not implemented on URI %s", request.getMethod(), request.getRequestURI()));
 
-   }
+    }
 }

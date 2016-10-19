@@ -98,6 +98,33 @@
       headers:
          content-type: application/json
 
+-  request:
+      method: GET
+      url: /entity.find.spaces.within
+      query:
+         key: "stalin and truman are best buddies"
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world with spaces within values"}
+      headers:
+         content-type: application/json
+
+
+-  request:
+      method: GET
+      url: /entity.find.single.quote.spaces.within
+      query:
+         key: "['stalin and truman','are best friends']"
+
+   response:
+      status: 200
+      body: >
+         {"status": "hello world with single quote and spaces within"}
+      headers:
+         content-type: application/json
+
 
 -  request:
       method: GET

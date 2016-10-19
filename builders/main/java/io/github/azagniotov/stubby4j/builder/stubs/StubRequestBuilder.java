@@ -15,135 +15,135 @@ import java.util.Map;
  */
 public final class StubRequestBuilder {
 
-   private String url = null;
-   private ArrayList<String> methods = new ArrayList<>();
-   private String post = null;
-   private Map<String, String> headers = new LinkedHashMap<>();
-   private Map<String, String> query = new LinkedHashMap<>();
-   private File file;
+    private String url = null;
+    private ArrayList<String> methods = new ArrayList<>();
+    private String post = null;
+    private Map<String, String> headers = new LinkedHashMap<>();
+    private Map<String, String> query = new LinkedHashMap<>();
+    private File file;
 
-   public StubRequestBuilder() {
+    public StubRequestBuilder() {
 
-   }
+    }
 
-   public StubRequestBuilder withMethod(final String value) {
-      this.methods.add(value);
+    public StubRequestBuilder withMethod(final String value) {
+        this.methods.add(value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withMethodGet() {
-      this.methods.add(HttpMethod.GET.asString());
+    public StubRequestBuilder withMethodGet() {
+        this.methods.add(HttpMethod.GET.asString());
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withMethodPut() {
-      this.methods.add(HttpMethod.PUT.asString());
+    public StubRequestBuilder withMethodPut() {
+        this.methods.add(HttpMethod.PUT.asString());
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withMethodPost() {
-      this.methods.add(HttpMethod.POST.asString());
+    public StubRequestBuilder withMethodPost() {
+        this.methods.add(HttpMethod.POST.asString());
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withMethodHead() {
-      this.methods.add(HttpMethod.HEAD.asString());
+    public StubRequestBuilder withMethodHead() {
+        this.methods.add(HttpMethod.HEAD.asString());
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withUrl(final String value) {
-      this.url = value;
+    public StubRequestBuilder withUrl(final String value) {
+        this.url = value;
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaders(final String key, final String value) {
-      this.headers.put(key, value);
+    public StubRequestBuilder withHeaders(final String key, final String value) {
+        this.headers.put(key, value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderContentType(final String value) {
-      this.headers.put("content-type", value);
+    public StubRequestBuilder withHeaderContentType(final String value) {
+        this.headers.put("content-type", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderContentLength(final String value) {
-      this.headers.put("content-length", value);
+    public StubRequestBuilder withHeaderContentLength(final String value) {
+        this.headers.put("content-length", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderContentLanguage(final String value) {
-      this.headers.put("content-language", value);
+    public StubRequestBuilder withHeaderContentLanguage(final String value) {
+        this.headers.put("content-language", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderContentEncoding(final String value) {
-      this.headers.put("content-encoding", value);
+    public StubRequestBuilder withHeaderContentEncoding(final String value) {
+        this.headers.put("content-encoding", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderPragma(final String value) {
-      this.headers.put("pragma", value);
+    public StubRequestBuilder withHeaderPragma(final String value) {
+        this.headers.put("pragma", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderAuthorizationBasic(final String value) {
-      this.headers.put(StubAuthorizationTypes.BASIC.asYamlProp(), value);
+    public StubRequestBuilder withHeaderAuthorizationBasic(final String value) {
+        this.headers.put(StubAuthorizationTypes.BASIC.asYamlProp(), value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderAuthorizationBearer(final String value) {
-      this.headers.put(StubAuthorizationTypes.BEARER.asYamlProp(), value);
+    public StubRequestBuilder withHeaderAuthorizationBearer(final String value) {
+        this.headers.put(StubAuthorizationTypes.BEARER.asYamlProp(), value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withHeaderLocation(final String value) {
-      this.headers.put("location", value);
+    public StubRequestBuilder withHeaderLocation(final String value) {
+        this.headers.put("location", value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withPost(final String post) {
-      this.post = post;
+    public StubRequestBuilder withPost(final String post) {
+        this.post = post;
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withFile(final File file) {
-      this.file = file;
+    public StubRequestBuilder withFile(final File file) {
+        this.file = file;
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequestBuilder withQuery(final String key, final String value) {
-      this.query.put(key, value);
+    public StubRequestBuilder withQuery(final String key, final String value) {
+        this.query.put(key, value);
 
-      return this;
-   }
+        return this;
+    }
 
-   public StubRequest build() {
-      final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
+    public StubRequest build() {
+        final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
 
-      this.url = null;
-      this.methods = new ArrayList<>();
-      this.post = null;
-      this.file = null;
-      this.headers = new LinkedHashMap<>();
-      this.query = new LinkedHashMap<>();
+        this.url = null;
+        this.methods = new ArrayList<>();
+        this.post = null;
+        this.file = null;
+        this.headers = new LinkedHashMap<>();
+        this.query = new LinkedHashMap<>();
 
-      return stubRequest;
-   }
+        return stubRequest;
+    }
 }

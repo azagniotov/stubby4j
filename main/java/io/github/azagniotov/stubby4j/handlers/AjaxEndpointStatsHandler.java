@@ -33,36 +33,36 @@ import java.io.IOException;
 
 public class AjaxEndpointStatsHandler extends AbstractHandler {
 
-   private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_stats");
-   private final StubbedDataManager stubbedDataManager;
+    private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_stats");
+    private final StubbedDataManager stubbedDataManager;
 
-   public AjaxEndpointStatsHandler(final StubbedDataManager stubbedDataManager) {
-      this.stubbedDataManager = stubbedDataManager;
-   }
+    public AjaxEndpointStatsHandler(final StubbedDataManager stubbedDataManager) {
+        this.stubbedDataManager = stubbedDataManager;
+    }
 
-   @Override
-   public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
+    @Override
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
 
-      HandlerUtils.setResponseMainHeaders(response);
-      response.setContentType("text/plain;charset=UTF-8");
-      response.setStatus(HttpStatus.OK_200);
+        HandlerUtils.setResponseMainHeaders(response);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.setStatus(HttpStatus.OK_200);
 
-      try {
-         if (request.getRequestURI().contains("stats/check")) {
-            response.getWriter().println(!stubbedDataManager.getResourceStats().isEmpty());
-         } else {
-            ConsoleUtils.logIncomingRequest(request);
-            final String htmlPopup = String.format(POPUP_STATS_HTML_TEMPLATE, stubbedDataManager.getResourceStatsAsCsv());
-            response.getWriter().println(htmlPopup);
-            ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
-         }
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-   }
+        try {
+            if (request.getRequestURI().contains("stats/check")) {
+                response.getWriter().println(!stubbedDataManager.getResourceStats().isEmpty());
+            } else {
+                ConsoleUtils.logIncomingRequest(request);
+                final String htmlPopup = String.format(POPUP_STATS_HTML_TEMPLATE, stubbedDataManager.getResourceStatsAsCsv());
+                response.getWriter().println(htmlPopup);
+                ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+            }
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
+    }
 }

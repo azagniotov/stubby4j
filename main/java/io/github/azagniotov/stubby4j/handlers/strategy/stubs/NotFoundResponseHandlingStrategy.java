@@ -29,21 +29,21 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-   public NotFoundResponseHandlingStrategy() {
+    public NotFoundResponseHandlingStrategy() {
 
-   }
+    }
 
-   @Override
-   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
+    @Override
+    public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
 
-      HandlerUtils.setResponseMainHeaders(response);
+        HandlerUtils.setResponseMainHeaders(response);
 
-      final String postMessage = assertionStubRequest.hasPostBody() ? String.format(BR + "\t%s%s", "With post data: ", assertionStubRequest.getPostBody()) : "";
-      final String headersMessage = assertionStubRequest.hasHeaders() ? String.format(BR + "\t%s%s", "With headers: ", assertionStubRequest.getHeaders()) : "";
-      final String queryMessage = (assertionStubRequest.hasQuery() ? String.format(BR + "\t%s%s", "With query params: ", assertionStubRequest.getQuery()) : "");
+        final String postMessage = assertionStubRequest.hasPostBody() ? String.format(BR + "\t%s%s", "With post data: ", assertionStubRequest.getPostBody()) : "";
+        final String headersMessage = assertionStubRequest.hasHeaders() ? String.format(BR + "\t%s%s", "With headers: ", assertionStubRequest.getHeaders()) : "";
+        final String queryMessage = (assertionStubRequest.hasQuery() ? String.format(BR + "\t%s%s", "With query params: ", assertionStubRequest.getQuery()) : "");
 
-      final String error = String.format("(404) Nothing found for %s request at URI %s%s%s%s", assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage, headersMessage, queryMessage);
+        final String error = String.format("(404) Nothing found for %s request at URI %s%s%s%s", assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage, headersMessage, queryMessage);
 
-      HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
-   }
+        HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
+    }
 }

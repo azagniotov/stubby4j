@@ -30,23 +30,23 @@ import java.util.concurrent.TimeUnit;
 
 public class RedirectResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-   private final StubResponse foundStubResponse;
+    private final StubResponse foundStubResponse;
 
-   public RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
-      this.foundStubResponse = foundStubResponse;
-   }
+    public RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
+        this.foundStubResponse = foundStubResponse;
+    }
 
-   @Override
-   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
-      HandlerUtils.setResponseMainHeaders(response);
+    @Override
+    public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
+        HandlerUtils.setResponseMainHeaders(response);
 
-      if (StringUtils.isSet(foundStubResponse.getLatency())) {
-         final long latency = Long.parseLong(foundStubResponse.getLatency());
-         TimeUnit.MILLISECONDS.sleep(latency);
-      }
+        if (StringUtils.isSet(foundStubResponse.getLatency())) {
+            final long latency = Long.parseLong(foundStubResponse.getLatency());
+            TimeUnit.MILLISECONDS.sleep(latency);
+        }
 
-      response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
-      response.setHeader(HttpHeader.LOCATION.asString(), foundStubResponse.getHeaders().get("location"));
-      response.setHeader(HttpHeader.CONNECTION.asString(), "close");
-   }
+        response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
+        response.setHeader(HttpHeader.LOCATION.asString(), foundStubResponse.getHeaders().get("location"));
+        response.setHeader(HttpHeader.CONNECTION.asString(), "close");
+    }
 }

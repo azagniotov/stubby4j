@@ -27,62 +27,62 @@ import static org.mockito.Mockito.when;
 
 public class RedirectResponseHandlingStrategyTest {
 
-   private static final StubResponse mockStubResponse = mock(StubResponse.class);
-   private static final StubRequest mockAssertionRequest = mock(StubRequest.class);
+    private static final StubResponse mockStubResponse = mock(StubResponse.class);
+    private static final StubRequest mockAssertionRequest = mock(StubRequest.class);
 
-   private static StubResponseHandlingStrategy redirectResponseStubResponseHandlingStrategy;
-   private HttpServletResponse mockHttpServletResponse;
+    private static StubResponseHandlingStrategy redirectResponseStubResponseHandlingStrategy;
+    private HttpServletResponse mockHttpServletResponse;
 
-   @BeforeClass
-   public static void beforeClass() throws Exception {
-      redirectResponseStubResponseHandlingStrategy = new RedirectResponseHandlingStrategy(mockStubResponse);
-   }
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        redirectResponseStubResponseHandlingStrategy = new RedirectResponseHandlingStrategy(mockStubResponse);
+    }
 
-   @Before
-   public void beforeEach() throws Exception {
-      mockHttpServletResponse = mock(HttpServletResponse.class);
-   }
+    @Before
+    public void beforeEach() throws Exception {
+        mockHttpServletResponse = mock(HttpServletResponse.class);
+    }
 
-   private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate");
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
-      verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
-   }
+    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
+    }
 
-   @Test
-   public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
+    @Test
+    public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
 
-      final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
+        final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
 
-      when(mockStubResponse.getStatus()).thenReturn("301");
-      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
+        when(mockStubResponse.getStatus()).thenReturn("301");
+        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
 
-      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+        redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
-      verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
-      verifyMainHeaders(mockHttpServletResponse);
-   }
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
+        verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
+        verifyMainHeaders(mockHttpServletResponse);
+    }
 
-   @Test
-   public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithLatency() throws Exception {
+    @Test
+    public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithLatency() throws Exception {
 
-      final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
+        final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
 
-      when(mockStubResponse.getStatus()).thenReturn("301");
-      when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-      when(mockStubResponse.getLatency()).thenReturn("100");
+        when(mockStubResponse.getStatus()).thenReturn("301");
+        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
+        when(mockStubResponse.getLatency()).thenReturn("100");
 
-      redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+        redirectResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-      verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
-      verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
-      verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
-      verifyMainHeaders(mockHttpServletResponse);
-   }
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
+        verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
+        verifyMainHeaders(mockHttpServletResponse);
+    }
 }

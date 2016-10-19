@@ -35,97 +35,97 @@ import java.util.Locale;
  */
 public final class ConsoleUtils {
 
-   private static boolean debug = false;
+    private static boolean debug = false;
 
-   private ConsoleUtils() {
+    private ConsoleUtils() {
 
-   }
+    }
 
-   public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
+    public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
 
-      final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-         getTime(),
-         request.getMethod(),
-         source,
-         request.getRequestURI(),
-         error
-      );
-      ANSITerminal.error(logMessage);
-   }
+        final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
+                getTime(),
+                request.getMethod(),
+                source,
+                request.getRequestURI(),
+                error
+        );
+        ANSITerminal.error(logMessage);
+    }
 
-   public static void logRawIncomingRequest(final HttpServletRequest request) {
-      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
-      ANSITerminal.info(HttpRequestUtils.dump(request));
-      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + FileUtils.BR);
-   }
+    public static void logRawIncomingRequest(final HttpServletRequest request) {
+        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+        ANSITerminal.info(HttpRequestUtils.dump(request));
+        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + FileUtils.BR);
+    }
 
-   public static void logIncomingRequest(final HttpServletRequest request) {
+    public static void logIncomingRequest(final HttpServletRequest request) {
 
-      final String logMessage = String.format("[%s] -> %s [%s]",
-         getTime(),
-         request.getMethod(),
-         request.getRequestURI()
-      );
-      ANSITerminal.incoming(logMessage);
+        final String logMessage = String.format("[%s] -> %s [%s]",
+                getTime(),
+                request.getMethod(),
+                request.getRequestURI()
+        );
+        ANSITerminal.incoming(logMessage);
 
-      if (debug) {
-         ConsoleUtils.logRawIncomingRequest(request);
-      }
-   }
+        if (debug) {
+            ConsoleUtils.logRawIncomingRequest(request);
+        }
+    }
 
-   public static void logAssertingRequest(final StubRequest assertingStubRequest) {
-      if (debug) {
-         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
-         ANSITerminal.info(assertingStubRequest.toString());
-         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + FileUtils.BR);
-      }
-   }
+    public static void logAssertingRequest(final StubRequest assertingStubRequest) {
+        if (debug) {
+            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+            ANSITerminal.info(assertingStubRequest.toString());
+            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + FileUtils.BR);
+        }
+    }
 
-   public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
+    public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
 
-      final int status = response.getStatus();
+        final int status = response.getStatus();
 
-      final String logMessage = String.format("[%s] <- %s [%s] %s",
-         getTime(),
-         status,
-         url,
-         HttpStatus.getMessage(status)
-      );
+        final String logMessage = String.format("[%s] <- %s [%s] %s",
+                getTime(),
+                status,
+                url,
+                HttpStatus.getMessage(status)
+        );
 
-      if (status >= HttpStatus.BAD_REQUEST_400) {
-         ANSITerminal.error(logMessage);
-      } else if (status >= HttpStatus.MULTIPLE_CHOICES_300) {
-         ANSITerminal.warn(logMessage);
-      } else if (status >= HttpStatus.OK_200) {
-         ANSITerminal.ok(logMessage);
-      } else if (status >= HttpStatus.CONTINUE_100) {
-         ANSITerminal.info(logMessage);
-      } else {
-         ANSITerminal.log(logMessage);
-      }
-   }
+        if (status >= HttpStatus.BAD_REQUEST_400) {
+            ANSITerminal.error(logMessage);
+        } else if (status >= HttpStatus.MULTIPLE_CHOICES_300) {
+            ANSITerminal.warn(logMessage);
+        } else if (status >= HttpStatus.OK_200) {
+            ANSITerminal.ok(logMessage);
+        } else if (status >= HttpStatus.CONTINUE_100) {
+            ANSITerminal.info(logMessage);
+        } else {
+            ANSITerminal.log(logMessage);
+        }
+    }
 
-   public static void logUnmarshalledStubRequest(final List<String> methods, final String url) {
-      final String loadedMsg = String.format("Loaded: %s %s", methods, url);
+    public static void logUnmarshalledStubRequest(final List<String> methods, final String url) {
+        final String loadedMsg = String.format("Loaded: %s %s", methods, url);
 
-      ANSITerminal.loaded(loadedMsg);
-   }
+        ANSITerminal.loaded(loadedMsg);
+    }
 
-   public static String getTime() {
-      final Calendar now = Calendar.getInstance(Locale.US);
-      return String.format("%02d:%02d:%02d",
-         now.get(Calendar.HOUR_OF_DAY),
-         now.get(Calendar.MINUTE),
-         now.get(Calendar.SECOND)
-      );
-   }
+    public static String getTime() {
+        final Calendar now = Calendar.getInstance(Locale.US);
+        return String.format("%02d:%02d:%02d",
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                now.get(Calendar.SECOND)
+        );
+    }
 
-   /**
-    * Enables verbose console output
-    *
-    * @param isDebug if true, the incoming raw HTTP request will be dumped to console
-    */
-   public static void enableDebug(final boolean isDebug) {
-      debug = isDebug;
-   }
+    /**
+     * Enables verbose console output
+     *
+     * @param isDebug if true, the incoming raw HTTP request will be dumped to console
+     */
+    public static void enableDebug(final boolean isDebug) {
+        debug = isDebug;
+    }
 }

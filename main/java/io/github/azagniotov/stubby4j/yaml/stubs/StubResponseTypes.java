@@ -24,8 +24,8 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
  * @since 7/17/12, 10:07 AM
  */
 public enum StubResponseTypes {
-   NOTFOUND,
-   UNAUTHORIZED,
-   REDIRECT,
-   OK_200
+    NOTFOUND,
+    UNAUTHORIZED,
+    REDIRECT,
+    OK_200
 }

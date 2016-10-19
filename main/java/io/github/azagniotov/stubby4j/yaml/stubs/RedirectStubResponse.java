@@ -30,31 +30,31 @@ import java.util.Map;
  */
 public class RedirectStubResponse extends StubResponse {
 
-   public RedirectStubResponse(final String status,
-                               final String body,
-                               final File file,
-                               final String latency,
-                               final Map<String, String> headers) {
-      super(status, body, file, latency, headers);
-   }
+    public RedirectStubResponse(final String status,
+                                final String body,
+                                final File file,
+                                final String latency,
+                                final Map<String, String> headers) {
+        super(status, body, file, latency, headers);
+    }
 
-   @Override
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.REDIRECT;
-   }
+    @Override
+    public StubResponseTypes getStubResponseType() {
+        return StubResponseTypes.REDIRECT;
+    }
 
-   public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
-      if (ObjectUtils.isNull(stubResponse)) {
-         return new RedirectStubResponse(null, null, null, null, null);
-      }
-      final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
-         stubResponse.getStatus(),
-         stubResponse.getBody(),
-         stubResponse.getRawFile(),
-         stubResponse.getLatency(),
-         stubResponse.getHeaders()
-      );
+    public static RedirectStubResponse newRedirectStubResponse(final StubResponse stubResponse) {
+        if (ObjectUtils.isNull(stubResponse)) {
+            return new RedirectStubResponse(null, null, null, null, null);
+        }
+        final RedirectStubResponse redirectStubResponse = new RedirectStubResponse(
+                stubResponse.getStatus(),
+                stubResponse.getBody(),
+                stubResponse.getRawFile(),
+                stubResponse.getLatency(),
+                stubResponse.getHeaders()
+        );
 
-      return redirectStubResponse;
-   }
+        return redirectStubResponse;
+    }
 }

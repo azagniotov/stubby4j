@@ -14,30 +14,30 @@ import java.util.Map;
  */
 final class StubResponseBuilder implements StubBuilder<StubResponse> {
 
-   private final Map<String, Object> fieldNameAndValues;
-   private String status;
-   private String body;
-   private File file;
-   private String latency;
-   private Map<String, String> headers;
+    private final Map<String, Object> fieldNameAndValues;
+    private String status;
+    private String body;
+    private File file;
+    private String latency;
+    private Map<String, String> headers;
 
-   StubResponseBuilder() {
-      this.status = null;
-      this.body = null;
-      this.file = null;
-      this.latency = null;
-      this.headers = new LinkedHashMap<>();
-      this.fieldNameAndValues = new HashMap<>();
-   }
+    StubResponseBuilder() {
+        this.status = null;
+        this.body = null;
+        this.file = null;
+        this.latency = null;
+        this.headers = new LinkedHashMap<>();
+        this.fieldNameAndValues = new HashMap<>();
+    }
 
-   @Override
-   public void store(final String fieldName, final Object fieldValue) {
-      fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
-   }
+    @Override
+    public void store(final String fieldName, final Object fieldValue) {
+        fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
+    }
 
-   @Override
-   public StubResponse build() throws Exception {
-      ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
-      return new StubResponse(status, body, file, latency, headers);
-   }
+    @Override
+    public StubResponse build() throws Exception {
+        ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
+        return new StubResponse(status, body, file, latency, headers);
+    }
 }

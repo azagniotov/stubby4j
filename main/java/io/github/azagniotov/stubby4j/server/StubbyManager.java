@@ -26,58 +26,58 @@ import org.eclipse.jetty.server.Server;
 
 public final class StubbyManager {
 
-   private final Server server;
+    private final Server server;
 
-   public StubbyManager(final Server server) {
-      this.server = server;
-   }
+    public StubbyManager(final Server server) {
+        this.server = server;
+    }
 
-   public synchronized void startJetty() throws Exception {
-      if (isJettyStarting() || isJettyUp()) {
-         return;
-      }
+    public synchronized void startJetty() throws Exception {
+        if (isJettyStarting() || isJettyUp()) {
+            return;
+        }
 
-      server.start();
+        server.start();
 
-      while (!isJettyUp()) {
-         ANSITerminal.warn("Waiting for Jetty to finish starting up..");
-         Thread.sleep(250);
-      }
-      ANSITerminal.status("Jetty successfully started");
-      ANSITerminal.info(FileUtils.BR + "Quit: ctrl-c" + FileUtils.BR);
-   }
+        while (!isJettyUp()) {
+            ANSITerminal.warn("Waiting for Jetty to finish starting up..");
+            Thread.sleep(250);
+        }
+        ANSITerminal.status("Jetty successfully started");
+        ANSITerminal.info(FileUtils.BR + "Quit: ctrl-c" + FileUtils.BR);
+    }
 
-   public synchronized void stopJetty() throws Exception {
-      if (isJettyStopping() || isJettyDown()) {
-         return;
-      }
+    public synchronized void stopJetty() throws Exception {
+        if (isJettyStopping() || isJettyDown()) {
+            return;
+        }
 
-      server.stop();
+        server.stop();
 
-      while (!isJettyDown()) {
-         ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
-         Thread.sleep(250);
-      }
-      ANSITerminal.status("Jetty successfully shutdown");
-   }
+        while (!isJettyDown()) {
+            ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
+            Thread.sleep(250);
+        }
+        ANSITerminal.status("Jetty successfully shutdown");
+    }
 
-   public synchronized void joinJetty() throws Exception {
-      server.join();
-   }
+    public synchronized void joinJetty() throws Exception {
+        server.join();
+    }
 
-   private boolean isJettyStarting() throws Exception {
-      return server.isStarting();
-   }
+    private boolean isJettyStarting() throws Exception {
+        return server.isStarting();
+    }
 
-   private boolean isJettyUp() throws Exception {
-      return (server.isStarted() && server.isRunning());
-   }
+    private boolean isJettyUp() throws Exception {
+        return (server.isStarted() && server.isRunning());
+    }
 
-   private boolean isJettyStopping() throws Exception {
-      return server.isStopping();
-   }
+    private boolean isJettyStopping() throws Exception {
+        return server.isStopping();
+    }
 
-   private boolean isJettyDown() throws Exception {
-      return (server.isStopped() && !server.isRunning());
-   }
+    private boolean isJettyDown() throws Exception {
+        return (server.isStopped() && !server.isRunning());
+    }
 }

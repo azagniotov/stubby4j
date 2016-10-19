@@ -37,34 +37,34 @@ import java.io.IOException;
 
 public class StubsPortalHandler extends AbstractHandler {
 
-   private final StubbedDataManager stubbedDataManager;
+    private final StubbedDataManager stubbedDataManager;
 
-   public StubsPortalHandler(final StubbedDataManager stubbedDataManager) {
-      this.stubbedDataManager = stubbedDataManager;
-   }
+    public StubsPortalHandler(final StubbedDataManager stubbedDataManager) {
+        this.stubbedDataManager = stubbedDataManager;
+    }
 
-   @Override
-   public void handle(final String target,
-                      final Request baseRequest,
-                      final HttpServletRequest request,
-                      final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request);
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
+    @Override
+    public void handle(final String target,
+                       final Request baseRequest,
+                       final HttpServletRequest request,
+                       final HttpServletResponse response) throws IOException, ServletException {
+        ConsoleUtils.logIncomingRequest(request);
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
 
-      final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
-      final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
-      final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
+        final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
+        final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
+        final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
 
-      try {
-         strategyStubResponse.handle(response, assertionStubRequest);
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
+        try {
+            strategyStubResponse.handle(response, assertionStubRequest);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
 
-      ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
-   }
+        ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
+    }
 }

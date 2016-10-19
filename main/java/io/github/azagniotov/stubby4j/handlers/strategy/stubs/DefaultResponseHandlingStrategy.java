@@ -34,49 +34,49 @@ import java.util.concurrent.TimeUnit;
 
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-   private final StubResponse foundStubResponse;
+    private final StubResponse foundStubResponse;
 
-   public DefaultResponseHandlingStrategy(final StubResponse foundStubResponse) {
-      this.foundStubResponse = foundStubResponse;
-   }
+    public DefaultResponseHandlingStrategy(final StubResponse foundStubResponse) {
+        this.foundStubResponse = foundStubResponse;
+    }
 
-   @Override
-   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
-      HandlerUtils.setResponseMainHeaders(response);
-      setStubResponseHeaders(foundStubResponse, response);
+    @Override
+    public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
+        HandlerUtils.setResponseMainHeaders(response);
+        setStubResponseHeaders(foundStubResponse, response);
 
-      if (StringUtils.isSet(foundStubResponse.getLatency())) {
-         final long latency = Long.parseLong(foundStubResponse.getLatency());
-         TimeUnit.MILLISECONDS.sleep(latency);
-      }
-      response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
+        if (StringUtils.isSet(foundStubResponse.getLatency())) {
+            final long latency = Long.parseLong(foundStubResponse.getLatency());
+            TimeUnit.MILLISECONDS.sleep(latency);
+        }
+        response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
 
-      byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
-      if (foundStubResponse.doesFilePathContainTemplateTokens()) {
-         String resolvedPath = StringUtils.replaceTokensInString(
-            foundStubResponse.getRawFile().getAbsolutePath(),
-            assertionStubRequest.getRegexGroups());
-         File resolvedFile = new File(resolvedPath);
-         if(resolvedFile.exists()){
-            responseBody = FileUtils.fileToBytes(resolvedFile);
-         } else {
-            response.setStatus(HttpStatus.NOT_FOUND_404);
-         }
-      } else if (foundStubResponse.isContainsTemplateTokens()) {
-         final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-         responseBody = StringUtils.getBytesUtf8(replacedTemplate);
-      }
+        byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
+        if (foundStubResponse.doesFilePathContainTemplateTokens()) {
+            String resolvedPath = StringUtils.replaceTokensInString(
+                    foundStubResponse.getRawFile().getAbsolutePath(),
+                    assertionStubRequest.getRegexGroups());
+            File resolvedFile = new File(resolvedPath);
+            if (resolvedFile.exists()) {
+                responseBody = FileUtils.fileToBytes(resolvedFile);
+            } else {
+                response.setStatus(HttpStatus.NOT_FOUND_404);
+            }
+        } else if (foundStubResponse.isContainsTemplateTokens()) {
+            final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
+            responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+        }
 
-      final OutputStream streamOut = response.getOutputStream();
-      streamOut.write(responseBody);
-      streamOut.flush();
-      streamOut.close();
-   }
+        final OutputStream streamOut = response.getOutputStream();
+        streamOut.write(responseBody);
+        streamOut.flush();
+        streamOut.close();
+    }
 
-   private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
-      response.setCharacterEncoding(StringUtils.UTF_8);
-      for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-         response.setHeader(entry.getKey(), entry.getValue());
-      }
-   }
+    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
+        response.setCharacterEncoding(StringUtils.UTF_8);
+        for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
+            response.setHeader(entry.getKey(), entry.getValue());
+        }
+    }
 }

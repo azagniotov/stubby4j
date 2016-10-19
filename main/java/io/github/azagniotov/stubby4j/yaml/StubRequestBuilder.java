@@ -16,32 +16,32 @@ import java.util.Map;
  */
 final class StubRequestBuilder implements StubBuilder<StubRequest> {
 
-   private final Map<String, Object> fieldNameAndValues;
-   private String url;
-   private List<String> method;
-   private String post;
-   private Map<String, String> headers;
-   private Map<String, String> query;
-   private File file;
+    private final Map<String, Object> fieldNameAndValues;
+    private String url;
+    private List<String> method;
+    private String post;
+    private Map<String, String> headers;
+    private Map<String, String> query;
+    private File file;
 
-   StubRequestBuilder() {
-      this.url = null;
-      this.method = new ArrayList<>();
-      this.post = null;
-      this.file = null;
-      this.headers = new LinkedHashMap<>();
-      this.query = new LinkedHashMap<>();
-      this.fieldNameAndValues = new HashMap<>();
-   }
+    StubRequestBuilder() {
+        this.url = null;
+        this.method = new ArrayList<>();
+        this.post = null;
+        this.file = null;
+        this.headers = new LinkedHashMap<>();
+        this.query = new LinkedHashMap<>();
+        this.fieldNameAndValues = new HashMap<>();
+    }
 
-   @Override
-   public void store(final String fieldName, final Object fieldValue) {
-      fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
-   }
+    @Override
+    public void store(final String fieldName, final Object fieldValue) {
+        fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
+    }
 
-   @Override
-   public StubRequest build() throws Exception {
-      ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
-      return new StubRequest(url, post, file, method, headers, query);
-   }
+    @Override
+    public StubRequest build() throws Exception {
+        ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
+        return new StubRequest(url, post, file, method, headers, query);
+    }
 }

@@ -180,6 +180,30 @@ public class StubsPortalTest {
     }
 
     @Test
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedPlus() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.spaces.within?key=stalin%2B%2B%2Band%2B%2Btruman%2Bare%2B%2B%2Bbest%2B%2B%2Bbuddies");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"status\": \"hello world with spaces within values\"}").isEqualTo(responseContent);
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedPlusWithEscapedSingleQuoteElements() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin%2B%2B%2Band%2B%2B%2Btruman%27,%27are%2B%2B%2Bbest%2B%2B%2Bfriends%27%5D");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+    }
+
+    @Test
     public void should_MakeSuccessfulRequest_WhenUrlAndQueryParamsAreRegexified() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/feeds/paymentz?start-index=12&max-records=500");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);

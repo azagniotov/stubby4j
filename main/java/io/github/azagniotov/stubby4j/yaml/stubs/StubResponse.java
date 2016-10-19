@@ -34,118 +34,118 @@ import java.util.Map;
  */
 public class StubResponse {
 
-   public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
+    public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
-   private final String status;
-   private final String body;
-   private final File file;
-   private final byte[] fileBytes;
-   private final String latency;
-   private final Map<String, String> headers;
+    private final String status;
+    private final String body;
+    private final File file;
+    private final byte[] fileBytes;
+    private final String latency;
+    private final Map<String, String> headers;
 
-   public StubResponse(final String status,
-                       final String body,
-                       final File file,
-                       final String latency,
-                       final Map<String, String> headers) {
-      this.status = ObjectUtils.isNull(status) ? "200" : status;
-      this.body = body;
-      this.file = file;
-      this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
-      this.latency = latency;
-      this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
-   }
+    public StubResponse(final String status,
+                        final String body,
+                        final File file,
+                        final String latency,
+                        final Map<String, String> headers) {
+        this.status = ObjectUtils.isNull(status) ? "200" : status;
+        this.body = body;
+        this.file = file;
+        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
+        this.latency = latency;
+        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
+    }
 
-   public String getStatus() {
-      return status;
-   }
+    public String getStatus() {
+        return status;
+    }
 
-   public String getBody() {
-      return (StringUtils.isSet(body) ? body : "");
-   }
+    public String getBody() {
+        return (StringUtils.isSet(body) ? body : "");
+    }
 
-   public boolean isRecordingRequired() {
-      final String body = getBody();
-      if (StringUtils.toLower(body).startsWith("http")) {
-         return true;
-      }
+    public boolean isRecordingRequired() {
+        final String body = getBody();
+        if (StringUtils.toLower(body).startsWith("http")) {
+            return true;
+        }
 
-      return false;
-   }
+        return false;
+    }
 
-   public Map<String, String> getHeaders() {
-      return headers;
-   }
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
-   public String getLatency() {
-      return latency;
-   }
+    public String getLatency() {
+        return latency;
+    }
 
-   //Used by reflection when populating stubby admin page with stubbed information
-   public byte[] getFile() {
-      return fileBytes;
-   }
+    //Used by reflection when populating stubby admin page with stubbed information
+    public byte[] getFile() {
+        return fileBytes;
+    }
 
-   public File getRawFile() {
-      return file;
-   }
+    public File getRawFile() {
+        return file;
+    }
 
-   public byte[] getResponseBodyAsBytes() {
+    public byte[] getResponseBodyAsBytes() {
 
-      if (fileBytes.length == 0) {
-         return getBody().getBytes(StringUtils.charsetUTF8());
-      }
-      return fileBytes;
-   }
+        if (fileBytes.length == 0) {
+            return getBody().getBytes(StringUtils.charsetUTF8());
+        }
+        return fileBytes;
+    }
 
-   public boolean isContainsTemplateTokens() {
-      final boolean isFileTemplate = fileBytes.length != 0 && isTemplateFile();
-      return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
-   }
+    public boolean isContainsTemplateTokens() {
+        final boolean isFileTemplate = fileBytes.length != 0 && isTemplateFile();
+        return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+    }
 
-   public boolean doesFilePathContainTemplateTokens() {
-      try {
-         return FileUtils.doesFilePathContainTemplateTokens(file);
-      } catch (Exception e) {
-         return false;
-      }
-   }
+    public boolean doesFilePathContainTemplateTokens() {
+        try {
+            return FileUtils.doesFilePathContainTemplateTokens(file);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-   @CoberturaIgnore
-   private boolean isTemplateFile() {
-      try {
-         return FileUtils.isTemplateFile(file);
-      } catch (Exception e) {
-         return false;
-      }
-   }
+    @CoberturaIgnore
+    private boolean isTemplateFile() {
+        try {
+            return FileUtils.isTemplateFile(file);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-   @CoberturaIgnore
-   private byte[] getFileBytes() {
-      try {
-         return FileUtils.fileToBytes(file);
-      } catch (Exception e) {
-         return new byte[]{};
-      }
-   }
+    @CoberturaIgnore
+    private byte[] getFileBytes() {
+        try {
+            return FileUtils.fileToBytes(file);
+        } catch (Exception e) {
+            return new byte[]{};
+        }
+    }
 
-   public boolean hasHeaderLocation() {
-      return getHeaders().containsKey("location");
-   }
+    public boolean hasHeaderLocation() {
+        return getHeaders().containsKey("location");
+    }
 
-   void addResourceIDHeader(final int httplifeCycleIndex) {
-      getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
-   }
+    void addResourceIDHeader(final int httplifeCycleIndex) {
+        getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
+    }
 
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.OK_200;
-   }
+    public StubResponseTypes getStubResponseType() {
+        return StubResponseTypes.OK_200;
+    }
 
-   public static StubResponse newStubResponse() {
-      return new StubResponse(null, null, null, null, null);
-   }
+    public static StubResponse newStubResponse() {
+        return new StubResponse(null, null, null, null, null);
+    }
 
-   public static StubResponse newStubResponse(final String status, final String body) {
-      return new StubResponse(status, body, null, null, null);
-   }
+    public static StubResponse newStubResponse(final String status, final String body) {
+        return new StubResponse(status, body, null, null, null);
+    }
 }

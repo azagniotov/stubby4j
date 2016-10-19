@@ -23,25 +23,25 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 
 public final class StubsResponseHandlingStrategyFactory {
 
-   private StubsResponseHandlingStrategyFactory() {
+    private StubsResponseHandlingStrategyFactory() {
 
-   }
+    }
 
-   public static StubResponseHandlingStrategy getStrategy(final StubResponse foundStubResponse) {
+    public static StubResponseHandlingStrategy getStrategy(final StubResponse foundStubResponse) {
 
-      switch (foundStubResponse.getStubResponseType()) {
-         case NOTFOUND:
-            return new NotFoundResponseHandlingStrategy();
+        switch (foundStubResponse.getStubResponseType()) {
+            case NOTFOUND:
+                return new NotFoundResponseHandlingStrategy();
 
-         case UNAUTHORIZED:
-            return new UnauthorizedResponseHandlingStrategy();
+            case UNAUTHORIZED:
+                return new UnauthorizedResponseHandlingStrategy();
 
-         case REDIRECT:
-            return new RedirectResponseHandlingStrategy(foundStubResponse);
+            case REDIRECT:
+                return new RedirectResponseHandlingStrategy(foundStubResponse);
 
-         default:
-            return new DefaultResponseHandlingStrategy(foundStubResponse);
+            default:
+                return new DefaultResponseHandlingStrategy(foundStubResponse);
 
-      }
-   }
+        }
+    }
 }

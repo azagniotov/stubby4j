@@ -39,36 +39,36 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public final class StubDataRefreshActionHandler extends AbstractHandler {
 
-   private final StubbedDataManager stubbedDataManager;
-   private final JettyContext jettyContext;
+    private final StubbedDataManager stubbedDataManager;
+    private final JettyContext jettyContext;
 
-   public StubDataRefreshActionHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
-      this.jettyContext = newContext;
-      this.stubbedDataManager = newStubbedDataManager;
-   }
+    public StubDataRefreshActionHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
+        this.jettyContext = newContext;
+        this.stubbedDataManager = newStubbedDataManager;
+    }
 
-   @Override
-   public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request);
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, "stubData", "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
-      response.setContentType("text/plain;charset=UTF-8");
-      response.setStatus(HttpStatus.OK_200);
-      response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+    @Override
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        ConsoleUtils.logIncomingRequest(request);
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, "stubData", "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.setStatus(HttpStatus.OK_200);
+        response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
-      try {
-         stubbedDataManager.refreshStubbedData(new YamlParser());
-         final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
-            stubbedDataManager.getDataYaml());
-         response.getWriter().println(successMessage);
-         ANSITerminal.ok(successMessage);
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
+        try {
+            stubbedDataManager.refreshStubbedData(new YamlParser());
+            final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
+                    stubbedDataManager.getDataYaml());
+            response.getWriter().println(successMessage);
+            ANSITerminal.ok(successMessage);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
-   }
+        ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+    }
 }

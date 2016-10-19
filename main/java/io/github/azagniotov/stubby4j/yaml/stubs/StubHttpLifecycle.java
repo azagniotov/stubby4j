@@ -35,155 +35,155 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("unchecked")
 public class StubHttpLifecycle {
 
-   private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
+    private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
 
-   public static final StubHttpLifecycle NULL = null;
-   private String httpLifeCycleAsYaml;
-   private StubRequest request;
-   private Object response;
-   private String requestAsYaml;
-   private String responseAsYaml;
+    public static final StubHttpLifecycle NULL = null;
+    private String httpLifeCycleAsYaml;
+    private StubRequest request;
+    private Object response;
+    private String requestAsYaml;
+    private String responseAsYaml;
 
-   public StubHttpLifecycle() {
-      response = StubResponse.newStubResponse();
-   }
+    public StubHttpLifecycle() {
+        response = StubResponse.newStubResponse();
+    }
 
-   public void setRequest(final StubRequest request) {
-      this.request = request;
-   }
+    public void setRequest(final StubRequest request) {
+        this.request = request;
+    }
 
-   public void setResponse(final Object response) {
-      this.response = response;
-   }
+    public void setResponse(final Object response) {
+        this.response = response;
+    }
 
-   public StubRequest getRequest() {
-      return request;
-   }
+    public StubRequest getRequest() {
+        return request;
+    }
 
-   public StubResponse getResponse(final boolean incrementSequencedResponseId) {
+    public StubResponse getResponse(final boolean incrementSequencedResponseId) {
 
-      if (response instanceof StubResponse) {
-         return (StubResponse) response;
-      }
+        if (response instanceof StubResponse) {
+            return (StubResponse) response;
+        }
 
-      final List<StubResponse> responses = (LinkedList<StubResponse>) response;
-      if (responses.isEmpty()) {
-         return StubResponse.newStubResponse();
-      }
+        final List<StubResponse> responses = (LinkedList<StubResponse>) response;
+        if (responses.isEmpty()) {
+            return StubResponse.newStubResponse();
+        }
 
-      if (incrementSequencedResponseId) {
-         final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
-         responseSequencedIdCounter.compareAndSet(responses.size(), 0);
-         return responses.get(responseSequencedId);
-      }
+        if (incrementSequencedResponseId) {
+            final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
+            responseSequencedIdCounter.compareAndSet(responses.size(), 0);
+            return responses.get(responseSequencedId);
+        }
 
-      return responses.get(responseSequencedIdCounter.get());
-   }
+        return responses.get(responseSequencedIdCounter.get());
+    }
 
-   public int getNextSequencedResponseId() {
-      return responseSequencedIdCounter.get();
-   }
+    public int getNextSequencedResponseId() {
+        return responseSequencedIdCounter.get();
+    }
 
-   public List<StubResponse> getAllResponses() {
+    public List<StubResponse> getAllResponses() {
 
-      if (response instanceof StubResponse) {
-         return new LinkedList<StubResponse>() {{
-            add((StubResponse) response);
-         }};
-      }
+        if (response instanceof StubResponse) {
+            return new LinkedList<StubResponse>() {{
+                add((StubResponse) response);
+            }};
+        }
 
-      return (LinkedList<StubResponse>) response;
-   }
+        return (LinkedList<StubResponse>) response;
+    }
 
-   public boolean isAuthorizationRequired() {
-      return request.isSecured();
-   }
+    public boolean isAuthorizationRequired() {
+        return request.isSecured();
+    }
 
-   @VisibleForTesting
-   String getRawAuthorizationHttpHeader() {
-      return request.getRawAuthorizationHttpHeader();
-   }
+    @VisibleForTesting
+    String getRawAuthorizationHttpHeader() {
+        return request.getRawAuthorizationHttpHeader();
+    }
 
-   @VisibleForTesting
-   String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
-      return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
-   }
+    @VisibleForTesting
+    String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
+        return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
+    }
 
-   public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
-      final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
-      return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
-   }
+    public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
+        final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
+        return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
+    }
 
-   public String getResourceId() {
-      return getAllResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-   }
+    public String getResourceId() {
+        return getAllResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+    }
 
-   public String getHttpLifeCycleAsYaml() {
-      return httpLifeCycleAsYaml;
-   }
+    public String getHttpLifeCycleAsYaml() {
+        return httpLifeCycleAsYaml;
+    }
 
-   public void setHttpLifeCycleAsYaml(final String httpLifeCycleAsYaml) {
-      this.httpLifeCycleAsYaml = httpLifeCycleAsYaml;
-   }
+    public void setHttpLifeCycleAsYaml(final String httpLifeCycleAsYaml) {
+        this.httpLifeCycleAsYaml = httpLifeCycleAsYaml;
+    }
 
-   /**
-    * Do not remove this method if your IDE complains that it is unused.
-    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
-    */
-   public String getRequestAsYaml() {
-      return requestAsYaml;
-   }
+    /**
+     * Do not remove this method if your IDE complains that it is unused.
+     * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
+     */
+    public String getRequestAsYaml() {
+        return requestAsYaml;
+    }
 
-   public void setRequestAsYaml(final String requestAsYaml) {
-      this.requestAsYaml = requestAsYaml;
-   }
+    public void setRequestAsYaml(final String requestAsYaml) {
+        this.requestAsYaml = requestAsYaml;
+    }
 
-   /**
-    * Do not remove this method if your IDE complains that it is unused.
-    * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
-    */
-   public String getResponseAsYaml() {
-      return responseAsYaml;
-   }
+    /**
+     * Do not remove this method if your IDE complains that it is unused.
+     * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
+     */
+    public String getResponseAsYaml() {
+        return responseAsYaml;
+    }
 
-   public void setResponseAsYaml(final String responseAsYaml) {
-      this.responseAsYaml = responseAsYaml;
-   }
+    public void setResponseAsYaml(final String responseAsYaml) {
+        this.responseAsYaml = responseAsYaml;
+    }
 
-   public void setResourceId(final int listIndex) {
-      for (final StubResponse response : getAllResponses()) {
-         response.addResourceIDHeader(listIndex);
-      }
-   }
+    public void setResourceId(final int listIndex) {
+        for (final StubResponse response : getAllResponses()) {
+            response.addResourceIDHeader(listIndex);
+        }
+    }
 
-   public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {
-      switch (stubType) {
-         case REQUEST:
-            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(request, propertyName));
-         case RESPONSE:
-            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(getResponse(false), propertyName));
-         default:
-            return StringUtils.objectToString(ReflectionUtils.getPropertyValue(this, propertyName));
-      }
-   }
+    public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {
+        switch (stubType) {
+            case REQUEST:
+                return StringUtils.objectToString(ReflectionUtils.getPropertyValue(request, propertyName));
+            case RESPONSE:
+                return StringUtils.objectToString(ReflectionUtils.getPropertyValue(getResponse(false), propertyName));
+            default:
+                return StringUtils.objectToString(ReflectionUtils.getPropertyValue(this, propertyName));
+        }
+    }
 
-   public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
-      final List<StubResponse> allResponses = getAllResponses();
-      final StubResponse sequencedResponse = allResponses.get(sequencedResponseId);
-      return StringUtils.objectToString(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
-   }
+    public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
+        final List<StubResponse> allResponses = getAllResponses();
+        final StubResponse sequencedResponse = allResponses.get(sequencedResponseId);
+        return StringUtils.objectToString(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
+    }
 
-   @Override
-   public boolean equals(final Object o) {
-      if (this == o) {
-         return true;
-      }
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
 
-      if (!(o instanceof StubHttpLifecycle)) {
-         return false;
-      }
+        if (!(o instanceof StubHttpLifecycle)) {
+            return false;
+        }
 
-      final StubHttpLifecycle that = (StubHttpLifecycle) o;
-      return request.equals(that.request);
-   }
+        final StubHttpLifecycle that = (StubHttpLifecycle) o;
+        return request.equals(that.request);
+    }
 }

@@ -42,6 +42,8 @@ public final class Main {
     public static void main(String[] args) {
         commandLineInterpreter = new CommandLineInterpreter();
 
+        args = new String[]{"-w", "--debug", "--data", "/Users/alexanderzagniotov/config.yaml"};
+
         parseCommandLineArgs(args);
         if (printHelpIfRequested() || printVersionIfRequested()) {
             return;

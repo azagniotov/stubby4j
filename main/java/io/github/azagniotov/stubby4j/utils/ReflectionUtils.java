@@ -38,73 +38,73 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public final class ReflectionUtils {
 
-   private static List<String> skipableProperties =
-      Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "regexGroups", "fileBytes"));
+    private static List<String> skipableProperties =
+            Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "regexGroups", "fileBytes"));
 
-   private ReflectionUtils() {
+    private ReflectionUtils() {
 
-   }
+    }
 
-   public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
-      final Map<String, String> properties = new HashMap<>();
+    public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
+        final Map<String, String> properties = new HashMap<>();
 
-      for (final Field field : object.getClass().getDeclaredFields()) {
+        for (final Field field : object.getClass().getDeclaredFields()) {
 
-         AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-            public Boolean run() {
-               if (!field.isAccessible()) {
-                  field.setAccessible(true);
-               }
-               return true;
-            }
-         });
-
-         if (skipableProperties.contains(field.getName())) {
-            continue;
-         }
-
-         final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
-         final String value = StringUtils.objectToString(fieldObject);
-
-         if (!value.equals(StringUtils.NOT_PROVIDED) && !value.equals("{}")) {
-            properties.put(StringUtils.toLower(field.getName()), value);
-         }
-      }
-
-      return properties;
-   }
-
-   public static void injectObjectFields(final Object target, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
-      final Map<String, Object> fieldAndValue = new HashMap<>();
-      fieldAndValue.put(fieldName.toLowerCase(), value);
-      injectObjectFields(target, fieldAndValue);
-   }
-
-   public static void injectObjectFields(final Object object, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
-
-      for (final Field field : object.getClass().getDeclaredFields()) {
-         final String fieldName = field.getName().toLowerCase();
-         if (fieldsAndValues.containsKey(fieldName)) {
             AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-               public Boolean run() {
-                  if (!field.isAccessible()) {
-                     field.setAccessible(true);
-                  }
-                  return true;
-               }
+                public Boolean run() {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    return true;
+                }
             });
 
-            field.set(object, fieldsAndValues.get(fieldName));
-         }
-      }
-   }
+            if (skipableProperties.contains(field.getName())) {
+                continue;
+            }
 
-   public static Object getPropertyValue(final Object object, final String fieldName) throws InvocationTargetException, IllegalAccessException {
-      for (final Method method : object.getClass().getDeclaredMethods()) {
-         if (method.getName().equalsIgnoreCase("get" + fieldName)) {
-            return method.invoke(object);
-         }
-      }
-      return null;
-   }
+            final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
+            final String value = StringUtils.objectToString(fieldObject);
+
+            if (!value.equals(StringUtils.NOT_PROVIDED) && !value.equals("{}")) {
+                properties.put(StringUtils.toLower(field.getName()), value);
+            }
+        }
+
+        return properties;
+    }
+
+    public static void injectObjectFields(final Object target, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
+        final Map<String, Object> fieldAndValue = new HashMap<>();
+        fieldAndValue.put(fieldName.toLowerCase(), value);
+        injectObjectFields(target, fieldAndValue);
+    }
+
+    public static void injectObjectFields(final Object object, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
+
+        for (final Field field : object.getClass().getDeclaredFields()) {
+            final String fieldName = field.getName().toLowerCase();
+            if (fieldsAndValues.containsKey(fieldName)) {
+                AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                    public Boolean run() {
+                        if (!field.isAccessible()) {
+                            field.setAccessible(true);
+                        }
+                        return true;
+                    }
+                });
+
+                field.set(object, fieldsAndValues.get(fieldName));
+            }
+        }
+    }
+
+    public static Object getPropertyValue(final Object object, final String fieldName) throws InvocationTargetException, IllegalAccessException {
+        for (final Method method : object.getClass().getDeclaredMethods()) {
+            if (method.getName().equalsIgnoreCase("get" + fieldName)) {
+                return method.invoke(object);
+            }
+        }
+        return null;
+    }
 }

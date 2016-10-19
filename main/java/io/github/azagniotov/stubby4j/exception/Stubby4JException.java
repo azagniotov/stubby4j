@@ -20,13 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.exception;
 
 public final class Stubby4JException extends RuntimeException {
-   private static final long serialVersionUID = 8L;
+    private static final long serialVersionUID = 8L;
 
-   public Stubby4JException(final String strMessage) {
-      super(strMessage);
-   }
+    public Stubby4JException(final String strMessage) {
+        super(strMessage);
+    }
 
-   public Stubby4JException(final String strMessage, final Throwable throwable) {
-      super(strMessage, throwable);
-   }
+    public Stubby4JException(final String strMessage, final Throwable throwable) {
+        super(strMessage, throwable);
+    }
 }

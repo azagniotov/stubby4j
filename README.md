@@ -366,6 +366,28 @@ A demonstration using regular expressions:
          filter: month
 ```
 
+* The following will match:
+    * From the browser: `http://localhost:8882/with/parameters?term=boo+and+foo`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=boo%2Band%2Bfoo"`
+
+```yaml
+-  request:
+      url: ^/with/parameters$
+      query:
+         term: "boo and foo"
+```
+
+* The following will match:
+    * From the browser: `http://localhost:8882/with/parameters?term=['stalin+and+truman']`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=%5B%27stalin%2Band%2Btruman%27%5D"`
+
+```yaml
+-  request:
+      url: ^/with/parameters$
+      query:
+         term: "['stalin and truman']"
+```
+
 ##### post
 
 * Represents the body POST of incoming request, ie.: form data
@@ -1308,7 +1330,8 @@ for each <endpoint> of stored endpoints {
 * Updated Docker config
 * Renamed package `by.stub` to `io.github.azagniotov.stubby4j`
 * Renamed Maven Central group ID `by.stub` to `io.github.azagniotov`
-* Issue #55 - When running in `--debug` not dumping `HttpServletRequest` parameters, which would implicitly call `ServletRequest#getInputStream()`
+* Issue #55 - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
+* Issue #56 - Requests with query parameters values containing white spaces
 
 ##### 3.3.0
 * Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)

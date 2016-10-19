@@ -21,35 +21,35 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class HandlingStrategyFactoryTest {
 
-   @Test
-   public void shouldIdentifyResponseStrategyForDefaultResponse() throws Exception {
-      final StubResponse stubResponse = StubResponse.newStubResponse();
+    @Test
+    public void shouldIdentifyResponseStrategyForDefaultResponse() throws Exception {
+        final StubResponse stubResponse = StubResponse.newStubResponse();
 
-      final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
-      assertThat(stubResponseHandlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
-   }
+        final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
+        assertThat(stubResponseHandlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
+    }
 
-   @Test
-   public void shouldIdentifyResponseStrategyForNotFoundResponse() throws Exception {
-      final StubResponse stubResponse = new NotFoundStubResponse();
+    @Test
+    public void shouldIdentifyResponseStrategyForNotFoundResponse() throws Exception {
+        final StubResponse stubResponse = new NotFoundStubResponse();
 
-      final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
-      assertThat(stubResponseHandlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
-   }
+        final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
+        assertThat(stubResponseHandlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
+    }
 
-   @Test
-   public void shouldIdentifyResponseStrategyForUnauthorizedResponse() throws Exception {
-      final StubResponse stubResponse = new UnauthorizedStubResponse();
+    @Test
+    public void shouldIdentifyResponseStrategyForUnauthorizedResponse() throws Exception {
+        final StubResponse stubResponse = new UnauthorizedStubResponse();
 
-      final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
-      assertThat(stubResponseHandlingStrategy).isInstanceOf(UnauthorizedResponseHandlingStrategy.class);
-   }
+        final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
+        assertThat(stubResponseHandlingStrategy).isInstanceOf(UnauthorizedResponseHandlingStrategy.class);
+    }
 
-   @Test
-   public void shouldIdentifyResponseStrategyForRedirectResponse() throws Exception {
-      final StubResponse stubResponse = RedirectStubResponse.newRedirectStubResponse(null);
+    @Test
+    public void shouldIdentifyResponseStrategyForRedirectResponse() throws Exception {
+        final StubResponse stubResponse = RedirectStubResponse.newRedirectStubResponse(null);
 
-      final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
-      assertThat(stubResponseHandlingStrategy).isInstanceOf(RedirectResponseHandlingStrategy.class);
-   }
+        final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
+        assertThat(stubResponseHandlingStrategy).isInstanceOf(RedirectResponseHandlingStrategy.class);
+    }
 }

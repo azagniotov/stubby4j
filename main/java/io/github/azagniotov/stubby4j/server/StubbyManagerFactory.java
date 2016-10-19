@@ -25,10 +25,10 @@ import io.github.azagniotov.stubby4j.cli.EmptyLogger;
 import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.database.thread.ExternalFilesScanner;
 import io.github.azagniotov.stubby4j.database.thread.MainYamlScanner;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 
@@ -36,47 +36,45 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.azagniotov.stubby4j.utils.FileUtils.constructReader;
-
 public class StubbyManagerFactory {
 
-   public StubbyManagerFactory() {
+    public StubbyManagerFactory() {
 
-   }
+    }
 
-   public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
+    public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
 
-      // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
-      Log.setLog(new EmptyLogger());
+        // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
+        Log.setLog(new EmptyLogger());
 
-      final File dataYamlFile = new File(dataYamlFilename);
-      final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
+        final File dataYamlFile = new File(dataYamlFilename);
+        final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
 
-      System.out.println();
+        System.out.println();
 
-      final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, httpLifecycles);
-      final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubbedDataManager);
-      final Server server = jettyFactory.construct();
+        final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, httpLifecycles);
+        final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubbedDataManager);
+        final Server server = jettyFactory.construct();
 
-      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
-         final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
-         final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
-         watchDataStore(stubbedDataManager, watchScanTime);
-      }
+        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
+            final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
+            final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
+            watchDataStore(stubbedDataManager, watchScanTime);
+        }
 
-      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
-         ANSITerminal.muteConsole(true);
-      }
+        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
+            ANSITerminal.muteConsole(true);
+        }
 
-      return new StubbyManager(server);
-   }
+        return new StubbyManager(server);
+    }
 
-   private void watchDataStore(final StubbedDataManager stubbedDataManager, final long sleepTime) {
+    private void watchDataStore(final StubbedDataManager stubbedDataManager, final long sleepTime) {
 
-      final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubbedDataManager, sleepTime);
-      new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
+        final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubbedDataManager, sleepTime);
+        new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
 
-      final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubbedDataManager, sleepTime);
-      new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
-   }
+        final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubbedDataManager, sleepTime);
+        new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
+    }
 }

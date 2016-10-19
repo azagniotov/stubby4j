@@ -38,87 +38,87 @@ import java.util.regex.Pattern;
 
 public class AjaxResourceContentHandler extends AbstractHandler {
 
-   private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
-   private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
-   private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
-   private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
-   private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_generic");
+    private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
+    private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
+    private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
+    private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
+    private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_generic");
 
-   private final StubbedDataManager stubbedDataManager;
+    private final StubbedDataManager stubbedDataManager;
 
-   public AjaxResourceContentHandler(final StubbedDataManager stubbedDataManager) {
-      this.stubbedDataManager = stubbedDataManager;
-   }
+    public AjaxResourceContentHandler(final StubbedDataManager stubbedDataManager) {
+        this.stubbedDataManager = stubbedDataManager;
+    }
 
-   @Override
-   public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request);
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, "ajaxResource", "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
+    @Override
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        ConsoleUtils.logIncomingRequest(request);
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, "ajaxResource", "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
 
-      HandlerUtils.setResponseMainHeaders(response);
-      response.setContentType("text/plain;charset=UTF-8");
-      response.setStatus(HttpStatus.OK_200);
+        HandlerUtils.setResponseMainHeaders(response);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.setStatus(HttpStatus.OK_200);
 
-      final String[] uriFragments = request.getRequestURI().split("/");
-      final int urlFragmentsLength = uriFragments.length;
-      final String targetFieldName = uriFragments[urlFragmentsLength - 1];
-      final String stubType = uriFragments[urlFragmentsLength - 2];
+        final String[] uriFragments = request.getRequestURI().split("/");
+        final int urlFragmentsLength = uriFragments.length;
+        final String targetFieldName = uriFragments[urlFragmentsLength - 1];
+        final String stubType = uriFragments[urlFragmentsLength - 2];
 
-      if (REGEX_NUMERIC.matcher(stubType).matches()) {
-         final int sequencedResponseId = Integer.parseInt(stubType);
-         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
-         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
-         renderAjaxResponseContent(response, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
-      } else {
+        if (REGEX_NUMERIC.matcher(stubType).matches()) {
+            final int sequencedResponseId = Integer.parseInt(stubType);
+            final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
+            final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
+            renderAjaxResponseContent(response, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
+        } else {
 
-         final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
-         final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
-         if (REGEX_REQUEST.matcher(stubType).matches()) {
-            renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStubHttpLifecycle);
-         } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
-            renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStubHttpLifecycle);
-         } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
-            renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStubHttpLifecycle);
-         } else {
-            response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
-         }
-      }
+            final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+            final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
+            if (REGEX_REQUEST.matcher(stubType).matches()) {
+                renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStubHttpLifecycle);
+            } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
+                renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStubHttpLifecycle);
+            } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
+                renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStubHttpLifecycle);
+            } else {
+                response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+            }
+        }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
-   }
+        ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+    }
 
-   @VisibleForTesting
-   void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
-      try {
-         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
-         final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
-         response.getWriter().println(htmlPopup);
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-   }
+    @VisibleForTesting
+    void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+        try {
+            final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
+            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+            response.getWriter().println(htmlPopup);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
+    }
 
-   @VisibleForTesting
-   void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
-      try {
-         final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
-         final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
-         response.getWriter().println(htmlPopup);
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-   }
+    @VisibleForTesting
+    void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+        try {
+            final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
+            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+            response.getWriter().println(htmlPopup);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
+    }
 
-   @VisibleForTesting
-   StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponse response, final int stubHttpCycleIndex) throws IOException {
-      final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
-      if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
-         response.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
-      }
-      return foundStubHttpLifecycle;
-   }
+    @VisibleForTesting
+    StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponse response, final int stubHttpCycleIndex) throws IOException {
+        final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
+        if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
+            response.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
+        }
+        return foundStubHttpLifecycle;
+    }
 }

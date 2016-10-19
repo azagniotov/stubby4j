@@ -25,12 +25,12 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
  */
 public class NotFoundStubResponse extends StubResponse {
 
-   public NotFoundStubResponse() {
-      super("404", null, null, null, null);
-   }
+    public NotFoundStubResponse() {
+        super("404", null, null, null, null);
+    }
 
-   @Override
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.NOTFOUND;
-   }
+    @Override
+    public StubResponseTypes getStubResponseType() {
+        return StubResponseTypes.NOTFOUND;
+    }
 }

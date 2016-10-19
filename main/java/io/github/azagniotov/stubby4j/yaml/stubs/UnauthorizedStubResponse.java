@@ -26,12 +26,12 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
 public class UnauthorizedStubResponse extends StubResponse {
 
 
-   public UnauthorizedStubResponse() {
-      super("401", null, null, null, null);
-   }
+    public UnauthorizedStubResponse() {
+        super("401", null, null, null, null);
+    }
 
-   @Override
-   public StubResponseTypes getStubResponseType() {
-      return StubResponseTypes.UNAUTHORIZED;
-   }
+    @Override
+    public StubResponseTypes getStubResponseType() {
+        return StubResponseTypes.UNAUTHORIZED;
+    }
 }

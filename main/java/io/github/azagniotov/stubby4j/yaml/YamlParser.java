@@ -50,198 +50,198 @@ import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 @SuppressWarnings("unchecked")
 public class YamlParser {
 
-   public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
-   private String dataConfigHomeDirectory;
-   private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
+    public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
+    private String dataConfigHomeDirectory;
+    private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
 
-   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
-      return parse(dataConfigHomeDirectory, constructReader(yaml));
-   }
+    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String yaml) throws Exception {
+        return parse(dataConfigHomeDirectory, constructReader(yaml));
+    }
 
-   @CoberturaIgnore
-   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File yamlFile) throws Exception {
-      return parse(dataConfigHomeDirectory, constructReader(yamlFile));
-   }
+    @CoberturaIgnore
+    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File yamlFile) throws Exception {
+        return parse(dataConfigHomeDirectory, constructReader(yamlFile));
+    }
 
-   public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
-      final Object loadedYaml = SNAKE_YAML.load(yamlReader);
-      if (!(loadedYaml instanceof List)) {
-         throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
-      }
+    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final Reader yamlReader) throws Exception {
+        final Object loadedYaml = SNAKE_YAML.load(yamlReader);
+        if (!(loadedYaml instanceof List)) {
+            throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+        }
 
-      this.dataConfigHomeDirectory = dataConfigHomeDirectory;
-      final List<?> loadedYamlData = (List) loadedYaml;
+        this.dataConfigHomeDirectory = dataConfigHomeDirectory;
+        final List<?> loadedYamlData = (List) loadedYaml;
 
-      final List<StubHttpLifecycle> httpLifecycles = new LinkedList<>();
-      for (final Object rawParentNode : loadedYamlData) {
+        final List<StubHttpLifecycle> httpLifecycles = new LinkedList<>();
+        for (final Object rawParentNode : loadedYamlData) {
 
-         final Map<String, Object> parentNodePropertiesMap = (Map<String, Object>) rawParentNode;
-         final StubHttpLifecycle stubHttpLifecycle = unmarshallYamlNodeToHttpLifeCycle(parentNodePropertiesMap);
-         httpLifecycles.add(stubHttpLifecycle);
-         stubHttpLifecycle.setResourceId(httpLifecycles.size() - 1);
-      }
+            final Map<String, Object> parentNodePropertiesMap = (Map<String, Object>) rawParentNode;
+            final StubHttpLifecycle stubHttpLifecycle = unmarshallYamlNodeToHttpLifeCycle(parentNodePropertiesMap);
+            httpLifecycles.add(stubHttpLifecycle);
+            stubHttpLifecycle.setResourceId(httpLifecycles.size() - 1);
+        }
 
-      return httpLifecycles;
-   }
-
-
-   private StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
-
-      final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
-
-      for (final Map.Entry<String, Object> parentNode : parentNodesMap.entrySet()) {
-
-         final Object parentNodeValue = parentNode.getValue();
-
-         if (parentNodeValue instanceof Map) {
-            handleMapNode(httpLifecycle, parentNode);
-
-         } else if (parentNodeValue instanceof List) {
-            handleListNode(httpLifecycle, parentNode);
-         }
-      }
-
-      httpLifecycle.setHttpLifeCycleAsYaml(marshallNodeMapToYaml(parentNodesMap));
-
-      final Map<String, Object> requestMap = new HashMap<>();
-      requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
-      httpLifecycle.setRequestAsYaml(marshallNodeToYaml(requestMap));
-
-      final Map<String, Object> responseMap = new HashMap<>();
-      responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
-      httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
-
-      return httpLifecycle;
-   }
-
-   private void handleMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
-
-      final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
-
-      if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
-         final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
-         stubHttpLifecycle.setRequest(targetStub);
-
-         ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
-
-      } else {
-         final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubResponseBuilder());
-         stubHttpLifecycle.setResponse(targetStub);
-      }
-   }
+        return httpLifecycles;
+    }
 
 
-   private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final B stubBuilder) throws Exception {
+    private StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
 
-      for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
 
-         final Object rawFieldName = pair.getValue();
-         final String fieldName = pair.getKey();
-         final Object massagedFieldValue;
+        for (final Map.Entry<String, Object> parentNode : parentNodesMap.entrySet()) {
 
-         if (rawFieldName instanceof List) {
-            massagedFieldValue = rawFieldName;
+            final Object parentNodeValue = parentNode.getValue();
 
-         } else if (rawFieldName instanceof Map) {
-            massagedFieldValue = configureAuthorizationHeader(rawFieldName);
+            if (parentNodeValue instanceof Map) {
+                handleMapNode(httpLifecycle, parentNode);
 
-         } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
-
-            final ArrayList<String> methods = new ArrayList<>(1);
-            methods.add(StringUtils.objectToString(rawFieldName));
-            massagedFieldValue = methods;
-
-         } else if (isPairKeyEqualsToYamlNodeFile(fieldName)) {
-            massagedFieldValue = loadFileContentFromFileUrl(rawFieldName);
-         } else {
-            massagedFieldValue = StringUtils.objectToString(rawFieldName);
-         }
-         stubBuilder.store(fieldName, massagedFieldValue);
-      }
-
-      return stubBuilder.build();
-   }
-
-   private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
-
-      final List yamlProperties = (List) parentNode.getValue();
-      final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, new StubResponseBuilder());
-      stubHttpLifecycle.setResponse(populatedResponseStub);
-   }
-
-   private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final B stubBuilder) throws Exception {
-
-      final List<T> targetStubList = new LinkedList<T>();
-      for (final Object arrayListEntry : yamlProperties) {
-
-         final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
-
-         for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
-            final String rawFieldName = mapEntry.getKey();
-            Object rawFieldValue = mapEntry.getValue();
-            if (isPairKeyEqualsToYamlNodeFile(rawFieldName)) {
-               rawFieldValue = loadFileContentFromFileUrl(rawFieldValue);
+            } else if (parentNodeValue instanceof List) {
+                handleListNode(httpLifecycle, parentNode);
             }
-            stubBuilder.store(rawFieldName, rawFieldValue);
-         }
+        }
 
-         targetStubList.add(stubBuilder.build());
-      }
+        httpLifecycle.setHttpLifeCycleAsYaml(marshallNodeMapToYaml(parentNodesMap));
 
-      return targetStubList;
-   }
+        final Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
+        httpLifecycle.setRequestAsYaml(marshallNodeToYaml(requestMap));
 
-   private boolean isPairKeyEqualsToYamlNodeFile(final String pairKey) {
-      return pairKey.toLowerCase().equals(YamlProperties.FILE);
-   }
+        final Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
+        httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
 
-   private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
-      final String filePath = StringUtils.objectToString(rawPairValue);
-      try {
-         if(FileUtils.doesFilePathContainTemplateTokens(new File(filePath))) {
-            return new File(dataConfigHomeDirectory, filePath);
-         }
+        return httpLifecycle;
+    }
 
-         return uriToFile(dataConfigHomeDirectory, filePath);
-      } catch (final IOException ex) {
-         ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
-      }
+    private void handleMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
 
-      return null;
-   }
+        final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
-   private String marshallNodeMapToYaml(final Map<String, Object> parentNodesMap) {
-      final ArrayList<Map<String, Object>> placeholder = new ArrayList<Map<String, Object>>() {{
-         add(parentNodesMap);
-      }};
+        if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
+            final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
+            stubHttpLifecycle.setRequest(targetStub);
 
-      return SNAKE_YAML.dumpAs(placeholder, null, FlowStyle.BLOCK);
-   }
+            ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
 
-   private String marshallNodeToYaml(final Object yamlNode) {
-      return SNAKE_YAML.dumpAs(yamlNode, null, FlowStyle.BLOCK);
-   }
+        } else {
+            final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubResponseBuilder());
+            stubHttpLifecycle.setResponse(targetStub);
+        }
+    }
 
-   private Map<String, String> configureAuthorizationHeader(final Object value) {
-      final Map<String, String> pairValue = (Map<String, String>) value;
 
-      if (pairValue.containsKey(BASIC.asYamlProp())) {
-         final String rawHeader = pairValue.get(BASIC.asYamlProp());
-         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-         final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
-         pairValue.put(BASIC.asYamlProp(), encodedAuthorizationHeader);
+    private <T, B extends StubBuilder<T>> T unmarshallYamlMapToTargetStub(final Map<String, Object> yamlProperties, final B stubBuilder) throws Exception {
 
-      } else if (pairValue.containsKey(BEARER.asYamlProp())) {
-         final String rawHeader = pairValue.get(BEARER.asYamlProp());
-         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-         pairValue.put(BEARER.asYamlProp(), String.format("%s %s", BEARER.asString(), authorizationHeader));
+        for (final Map.Entry<String, Object> pair : yamlProperties.entrySet()) {
 
-      } else if (pairValue.containsKey(CUSTOM.asYamlProp())) {
-         final String rawHeader = pairValue.get(CUSTOM.asYamlProp());
-         final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
-         pairValue.put(CUSTOM.asYamlProp(), authorizationHeader);
-      }
-      return pairValue;
-   }
+            final Object rawFieldName = pair.getValue();
+            final String fieldName = pair.getKey();
+            final Object massagedFieldValue;
+
+            if (rawFieldName instanceof List) {
+                massagedFieldValue = rawFieldName;
+
+            } else if (rawFieldName instanceof Map) {
+                massagedFieldValue = configureAuthorizationHeader(rawFieldName);
+
+            } else if (fieldName.toLowerCase().equals(YamlProperties.METHOD)) {
+
+                final ArrayList<String> methods = new ArrayList<>(1);
+                methods.add(StringUtils.objectToString(rawFieldName));
+                massagedFieldValue = methods;
+
+            } else if (isPairKeyEqualsToYamlNodeFile(fieldName)) {
+                massagedFieldValue = loadFileContentFromFileUrl(rawFieldName);
+            } else {
+                massagedFieldValue = StringUtils.objectToString(rawFieldName);
+            }
+            stubBuilder.store(fieldName, massagedFieldValue);
+        }
+
+        return stubBuilder.build();
+    }
+
+    private void handleListNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+
+        final List yamlProperties = (List) parentNode.getValue();
+        final List<StubResponse> populatedResponseStub = unmarshallYamlListToTargetStub(yamlProperties, new StubResponseBuilder());
+        stubHttpLifecycle.setResponse(populatedResponseStub);
+    }
+
+    private <T, B extends StubBuilder<T>> List<T> unmarshallYamlListToTargetStub(final List yamlProperties, final B stubBuilder) throws Exception {
+
+        final List<T> targetStubList = new LinkedList<T>();
+        for (final Object arrayListEntry : yamlProperties) {
+
+            final Map<String, Object> rawSequenceEntry = (Map<String, Object>) arrayListEntry;
+
+            for (final Map.Entry<String, Object> mapEntry : rawSequenceEntry.entrySet()) {
+                final String rawFieldName = mapEntry.getKey();
+                Object rawFieldValue = mapEntry.getValue();
+                if (isPairKeyEqualsToYamlNodeFile(rawFieldName)) {
+                    rawFieldValue = loadFileContentFromFileUrl(rawFieldValue);
+                }
+                stubBuilder.store(rawFieldName, rawFieldValue);
+            }
+
+            targetStubList.add(stubBuilder.build());
+        }
+
+        return targetStubList;
+    }
+
+    private boolean isPairKeyEqualsToYamlNodeFile(final String pairKey) {
+        return pairKey.toLowerCase().equals(YamlProperties.FILE);
+    }
+
+    private Object loadFileContentFromFileUrl(final Object rawPairValue) throws IOException {
+        final String filePath = StringUtils.objectToString(rawPairValue);
+        try {
+            if (FileUtils.doesFilePathContainTemplateTokens(new File(filePath))) {
+                return new File(dataConfigHomeDirectory, filePath);
+            }
+
+            return uriToFile(dataConfigHomeDirectory, filePath);
+        } catch (final IOException ex) {
+            ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
+        }
+
+        return null;
+    }
+
+    private String marshallNodeMapToYaml(final Map<String, Object> parentNodesMap) {
+        final ArrayList<Map<String, Object>> placeholder = new ArrayList<Map<String, Object>>() {{
+            add(parentNodesMap);
+        }};
+
+        return SNAKE_YAML.dumpAs(placeholder, null, FlowStyle.BLOCK);
+    }
+
+    private String marshallNodeToYaml(final Object yamlNode) {
+        return SNAKE_YAML.dumpAs(yamlNode, null, FlowStyle.BLOCK);
+    }
+
+    private Map<String, String> configureAuthorizationHeader(final Object value) {
+        final Map<String, String> pairValue = (Map<String, String>) value;
+
+        if (pairValue.containsKey(BASIC.asYamlProp())) {
+            final String rawHeader = pairValue.get(BASIC.asYamlProp());
+            final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+            final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
+            pairValue.put(BASIC.asYamlProp(), encodedAuthorizationHeader);
+
+        } else if (pairValue.containsKey(BEARER.asYamlProp())) {
+            final String rawHeader = pairValue.get(BEARER.asYamlProp());
+            final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+            pairValue.put(BEARER.asYamlProp(), String.format("%s %s", BEARER.asString(), authorizationHeader));
+
+        } else if (pairValue.containsKey(CUSTOM.asYamlProp())) {
+            final String rawHeader = pairValue.get(CUSTOM.asYamlProp());
+            final String authorizationHeader = StringUtils.isSet(rawHeader) ? rawHeader.trim() : rawHeader;
+            pairValue.put(CUSTOM.asYamlProp(), authorizationHeader);
+        }
+        return pairValue;
+    }
 }
 

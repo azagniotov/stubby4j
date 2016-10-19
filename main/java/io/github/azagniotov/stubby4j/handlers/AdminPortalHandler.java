@@ -35,35 +35,35 @@ import java.io.IOException;
 
 public class AdminPortalHandler extends AbstractHandler {
 
-   public static final String NAME = "admin";
+    public static final String NAME = "admin";
 
-   //Do not remove this constant without changing the example in documentation
-   public static final String ADMIN_ROOT = "/";
-   private final StubbedDataManager stubbedDataManager;
+    //Do not remove this constant without changing the example in documentation
+    public static final String ADMIN_ROOT = "/";
+    private final StubbedDataManager stubbedDataManager;
 
-   public AdminPortalHandler(final StubbedDataManager stubbedDataManager) {
-      this.stubbedDataManager = stubbedDataManager;
-   }
+    public AdminPortalHandler(final StubbedDataManager stubbedDataManager) {
+        this.stubbedDataManager = stubbedDataManager;
+    }
 
-   @Override
-   public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      ConsoleUtils.logIncomingRequest(request);
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, NAME, "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
+    @Override
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        ConsoleUtils.logIncomingRequest(request);
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, NAME, "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
 
-      HandlerUtils.setResponseMainHeaders(response);
-      response.setStatus(HttpStatus.OK_200);
+        HandlerUtils.setResponseMainHeaders(response);
+        response.setStatus(HttpStatus.OK_200);
 
-      final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
-      try {
-         strategyStubResponse.handle(request, response, stubbedDataManager);
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
-      }
+        final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
+        try {
+            strategyStubResponse.handle(request, response, stubbedDataManager);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
+        }
 
-      ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
-   }
+        ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+    }
 }
