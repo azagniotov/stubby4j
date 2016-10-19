@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v4.0.0
+## User manual for stubby4j v4.0.1
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -147,35 +147,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.0` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.1` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.0" />
+<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.1" />
 ```
 
 ##### Apache Buildr
 ```xml
-'io.github.azagniotov:stubby4j:jar:4.0.0'
+'io.github.azagniotov:stubby4j:jar:4.0.1'
 ```
 
 ##### Gradle
 ```xml
-compile 'io.github.azagniotov:stubby4j:4.0.0'
+compile 'io.github.azagniotov:stubby4j:4.0.1'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.0"
+libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.1"
 ```
 
 ### Command-line switches
@@ -1375,7 +1375,7 @@ for each <endpoint> of stored endpoints {
 ##### 4.0.2-SNAPSHOT
 
 ##### 4.0.1
-* Issue #54 - Support regular expression in Json POST request
+* Issue #54 - Support for regular expression in Json POST
 
 ##### 4.0.0
 * Built using Java v1.8 (`1.8.0_60`)
