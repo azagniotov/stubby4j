@@ -148,6 +148,7 @@
          content-type: application/json
       post: >
          {"name": "chocolate", "description": "full", "department": "savoury"}
+
    response:
       headers:
          content-type: application/json
@@ -155,6 +156,7 @@
       status: 201
       body: >
          {"id": "456", "status": "created"}
+
 
 -  request:
       url: /invoice/new/no/post

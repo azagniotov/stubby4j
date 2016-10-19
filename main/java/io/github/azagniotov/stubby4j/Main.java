@@ -33,85 +33,84 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class Main {
 
-   private static CommandLineInterpreter commandLineInterpreter;
+    private static CommandLineInterpreter commandLineInterpreter;
 
-   private Main() {
+    private Main() {
 
-   }
+    }
 
-   public static void main(final String[] args) {
+    public static void main(String[] args) {
+        commandLineInterpreter = new CommandLineInterpreter();
 
-      commandLineInterpreter = new CommandLineInterpreter();
+        parseCommandLineArgs(args);
+        if (printHelpIfRequested() || printVersionIfRequested()) {
+            return;
+        }
 
-      parseCommandLineArgs(args);
-      if (printHelpIfRequested() || printVersionIfRequested()) {
-         return;
-      }
+        verifyYamlDataProvided();
+        startStubby4jUsingCommandLineArgs();
+    }
 
-      verifyYamlDataProvided();
-      startStubby4jUsingCommandLineArgs();
-   }
+    private static void parseCommandLineArgs(final String[] args) {
+        try {
+            commandLineInterpreter.parseCommandLine(args);
+        } catch (final ParseException ex) {
+            final String msg =
+                    String.format("Could not parse provided command line arguments, error: %s",
+                            ex.toString());
 
-   private static void parseCommandLineArgs(final String[] args) {
-      try {
-         commandLineInterpreter.parseCommandLine(args);
-      } catch (final ParseException ex) {
-         final String msg =
-            String.format("Could not parse provided command line arguments, error: %s",
-               ex.toString());
+            throw new Stubby4JException(msg);
+        }
+    }
 
-         throw new Stubby4JException(msg);
-      }
-   }
+    private static boolean printHelpIfRequested() {
+        if (!commandLineInterpreter.isHelp()) {
+            return false;
+        }
 
-   private static boolean printHelpIfRequested() {
-      if (!commandLineInterpreter.isHelp()) {
-         return false;
-      }
+        commandLineInterpreter.printHelp();
 
-      commandLineInterpreter.printHelp();
+        return true;
+    }
 
-      return true;
-   }
+    private static boolean printVersionIfRequested() {
+        if (!commandLineInterpreter.isVersion()) {
+            return false;
+        }
 
-   private static boolean printVersionIfRequested() {
-      if (!commandLineInterpreter.isVersion()) {
-         return false;
-      }
+        commandLineInterpreter.printVersion();
 
-      commandLineInterpreter.printVersion();
+        return true;
+    }
 
-      return true;
-   }
+    private static void verifyYamlDataProvided() {
+        if (commandLineInterpreter.isYamlProvided()) {
+            return;
+        }
+        final String msg =
+                String.format("YAML data was not provided using command line option '--%s'. %s"
+                                + "To see all command line options run again with option '--%s'",
+                        CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
 
-   private static void verifyYamlDataProvided() {
-      if (commandLineInterpreter.isYamlProvided()) {
-         return;
-      }
-      final String msg =
-         String.format("YAML data was not provided using command line option '--%s'. %s"
-               + "To see all command line options run again with option '--%s'",
-            CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
+        throw new Stubby4JException(msg);
+    }
 
-      throw new Stubby4JException(msg);
-   }
+    private static void startStubby4jUsingCommandLineArgs() {
+        try {
+            final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
+            final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
-   private static void startStubby4jUsingCommandLineArgs() {
-      try {
-         final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
-         final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
+            ANSITerminal.muteConsole(commandLineInterpreter.isMute());
+            ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
-         ANSITerminal.muteConsole(commandLineInterpreter.isMute());
-         ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
+            final StubbyManager stubbyManager = new StubbyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
+            stubbyManager.startJetty();
 
-         final StubbyManager stubbyManager = new StubbyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
-         stubbyManager.startJetty();
+        } catch (final Exception ex) {
+            final String msg =
+                    String.format("Could not init stubby4j, error: %s", ex.toString());
 
-      } catch (final Exception ex) {
-         final String msg =
-            String.format("Could not init stubby4j, error: %s", ex.toString());
-
-         throw new Stubby4JException(msg, ex);
-      }
-   }
+            throw new Stubby4JException(msg, ex);
+        }
+    }
 }

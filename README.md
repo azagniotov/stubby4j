@@ -1308,6 +1308,7 @@ for each <endpoint> of stored endpoints {
 * Updated Docker config
 * Renamed package `by.stub` to `io.github.azagniotov.stubby4j`
 * Renamed Maven Central group ID `by.stub` to `io.github.azagniotov`
+* Issue #55 - When running in `--debug` not dumping `HttpServletRequest` parameters, which would implicitly call `ServletRequest#getInputStream()`
 
 ##### 3.3.0
 * Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)
