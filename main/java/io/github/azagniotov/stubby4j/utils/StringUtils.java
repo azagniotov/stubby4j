@@ -29,6 +29,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexander Zagniotov
@@ -130,9 +131,13 @@ public final class StringUtils {
         return toCheck.startsWith("[") && toCheck.endsWith("]");
     }
 
-    public static String decodeUrlEncodedPlus(final String toCheck) {
+    public static String decodeUrl(final String toCheck) {
         if (toCheck.contains("%2B")) {
             return toCheck.replaceAll("%2B", " ").replaceAll("\\s+", " ");
+        } else if (toCheck.contains("%20")) {
+            return toCheck.replaceAll("%20", " ").replaceAll("\\s+", " ");
+        } else if (toCheck.contains("+")) {
+            return toCheck.replaceAll(Pattern.quote("+"), " ").replaceAll("\\s+", " ");
         }
 
         return toCheck;

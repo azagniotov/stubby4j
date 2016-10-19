@@ -204,6 +204,42 @@ public class StubsPortalTest {
     }
 
     @Test
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithRawPlusWithEscapedSingleQuoteElements() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin+and+++truman%27,%27are+best++friends%27%5D");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEmptySpacesWithEscapedSingleQuoteElements() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin and   truman%27,%27are best   friends%27%5D");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedSpacesWithEscapedSingleQuoteElements() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin%20and%20%20truman%27,%27are%20best%20%20friends%27%5D");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+    }
+
+    @Test
     public void should_MakeSuccessfulRequest_WhenUrlAndQueryParamsAreRegexified() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/feeds/paymentz?start-index=12&max-records=500");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);

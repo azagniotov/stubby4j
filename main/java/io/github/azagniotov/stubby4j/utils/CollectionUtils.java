@@ -16,13 +16,13 @@ public final class CollectionUtils {
 
     }
 
-    public static Map<String, String> constructParamMap(final String queryString) {
-        if (!StringUtils.isSet(queryString)) {
+    public static Map<String, String> constructParamMap(final String requestQueryString) {
+        if (!StringUtils.isSet(requestQueryString)) {
             return new LinkedHashMap<>();
         }
 
         final Map<String, String> paramMap = new LinkedHashMap<>();
-        final String[] pairs = queryString.split("&");
+        final String[] pairs = requestQueryString.split("&");
         for (final String pair : pairs) {
             final String[] splittedPair = pair.split("=");
 
@@ -35,7 +35,7 @@ public final class CollectionUtils {
                 splittedPairValue = StringUtils.trimSpacesBetweenCSVElements(bracketedQueryValueAsCSV);
             }
 
-            paramMap.put(splittedPairKey, StringUtils.decodeUrlEncodedPlus(splittedPairValue));
+            paramMap.put(splittedPairKey, StringUtils.decodeUrl(splittedPairValue));
         }
         return paramMap;
     }

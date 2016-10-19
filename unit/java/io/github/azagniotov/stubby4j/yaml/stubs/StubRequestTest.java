@@ -1173,6 +1173,30 @@ public class StubRequestTest {
     }
 
     @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenQueryValuesHaveMultipleRawPluses() throws Exception {
+
+        final String paramOne = "names";
+        final String paramOneValue = "stalin lenin truman";
+        final String encodedRawQuery = paramOneValue.replaceAll("\\s+", "+++");
+
+        final String url = "/invoice/789";
+
+        final StubRequest expectedRequest =
+                BUILDER.withUrl(url)
+                        .withMethodGet()
+                        .withQuery(paramOne, paramOneValue).build();
+
+        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
+
+        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+        assertThat(expectedRequest).isEqualTo(assertingRequest);
+    }
+
+    @Test
     public void stubbedRequestEqualsAssertingRequest_WhenQueryValuesHaveEncodedMultiplePluses() throws Exception {
 
         final String paramOne = "names";
@@ -1197,7 +1221,36 @@ public class StubRequestTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithSpacesWithinUrlEncodedSingleQuotes() throws Exception {
+    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedSpacesWithinUrlEncodedSingleQuotes() throws Exception {
+
+        final String paramOne = "names";
+        final String paramOneValue = "['stalin and truman','are best friends']";
+        final String encodedRawQuery = paramOneValue
+                .replaceAll("\\s+", "%20%20")
+                .replaceAll(Pattern.quote("["), "%5B")
+                .replaceAll("\\]", "%5D")
+                .replaceAll("'", "%27");
+
+        final String url = "/invoice/789";
+
+        final StubRequest expectedRequest =
+                BUILDER.withUrl(url)
+                        .withMethodGet()
+                        .withMethodHead()
+                        .withQuery(paramOne, paramOneValue).build();
+
+        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
+
+        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+
+        assertThat(expectedRequest).isEqualTo(assertingRequest);
+    }
+
+    @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedPlusWithinUrlEncodedSingleQuotes() throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "['stalin and truman','are best friends']";

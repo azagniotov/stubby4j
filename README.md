@@ -368,7 +368,13 @@ A demonstration using regular expressions:
 
 * The following will match:
     * From the browser: `http://localhost:8882/with/parameters?term=boo+and+foo`
+    * From the browser: `http://localhost:8882/with/parameters?term=boo%2Band%2Bfoo`
+    * From the browser: `http://localhost:8882/with/parameters?term=boo  and   foo`
+    * From the browser: `http://localhost:8882/with/parameters?term=boo%20and%20foo`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=boo+and+foo"`
     * From the code: `String request = "http://localhost:8882/with/parameters?term=boo%2Band%2Bfoo"`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=boo and foo"`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=boo%20and%20foo"`
 
 ```yaml
 -  request:
@@ -379,7 +385,14 @@ A demonstration using regular expressions:
 
 * The following will match:
     * From the browser: `http://localhost:8882/with/parameters?term=['stalin+and+truman']`
+    * From the browser: `http://localhost:8882/with/parameters?term=['stalin+and+++++++++++truman']`
+    * From the browser: `http://localhost:8882/with/parameters?term=['stalin%2Band%2Btruman']`
+    * From the browser: `http://localhost:8882/with/parameters?term=['stalin and    truman']`
+    * From the browser: `http://localhost:8882/with/parameters?term=['stalin%20and%20truman']`
     * From the code: `String request = "http://localhost:8882/with/parameters?term=%5B%27stalin%2Band%2Btruman%27%5D"`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=%5B%27stalin+++++and+truman%27%5D"`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=%5B%27stalin and   truman%27%5D"`
+    * From the code: `String request = "http://localhost:8882/with/parameters?term=%5B%27stalin%20and%20truman%27%5D"`
 
 ```yaml
 -  request:
