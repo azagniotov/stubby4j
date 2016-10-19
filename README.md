@@ -1,7 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 [![Dependency Status](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017)
 [![Coverage Status](https://coveralls.io/repos/azagniotov/stubby4j/badge.svg?style=flat)](https://coveralls.io/r/azagniotov/stubby4j)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/by.stub/stubby4j)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/azagniotov/stubby4j/pulls.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls)
 [![Github Issues](http://githubbadges.herokuapp.com/azagniotov/stubby4j/issues.svg?style=flat)](https://github.com/azagniotov/stubby4j/issues)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
@@ -1302,7 +1302,12 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 3.3.1-SNAPSHOT
+##### 4.0.0-SNAPSHOT
+* Built using Java v1.8 (`1.8.0_60`)
+* Upgraded from Jetty `9.2.10.v20150310` to `9.3.10.v20160621`
+* Updated Docker config
+* Renamed package `by.stub` to `io.github.azagniotov.stubby4j`
+* Renamed Maven Central group ID `by.stub` to `io.github.azagniotov`
 
 ##### 3.3.0
 * Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)

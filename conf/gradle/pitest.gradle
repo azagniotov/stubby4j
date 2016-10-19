@@ -6,8 +6,8 @@ dependencies { mutableCodeBase project(':main') }
 pitest {
    mainSourceSets = [project.sourceSets.test, project(':main').sourceSets.main]
    additionalMutableCodePaths = [configurations.mutableCodeBase.singleFile]
-   targetClasses = ['by.stub.*']
-   excludedClasses = ['by.stub.Main', 'by.stub.handlers.strategy.admin.*', 'by.stub.server.*', 'by.stub.repackaged.*', 'by.stub.database.thread.*', 'by.stub.http.*', 'by.stub.utils.ConsoleUtils']
+   targetClasses = ['io.github.azagniotov.stubby4j.*']
+   excludedClasses = ['io.github.azagniotov.stubby4j.Main', 'io.github.azagniotov.stubby4j.handlers.strategy.admin.*', 'io.github.azagniotov.stubby4j.server.*', 'io.github.azagniotov.stubby4j.repackaged.*', 'io.github.azagniotov.stubby4j.database.thread.*', 'io.github.azagniotov.stubby4j.http.*', 'io.github.azagniotov.stubby4j.utils.ConsoleUtils']
    threads = 6
    outputFormats = ['HTML']
    failWhenNoMutations = true

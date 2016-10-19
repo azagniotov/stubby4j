@@ -34,11 +34,11 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
          todir: outputDir, 
          datafile: coberturaPrepare.datafileLocation) {
             ignoreMethodAnnotation(
-               annotationName: "by.stub.annotations.CoberturaIgnore"
+               annotationName: "io.github.azagniotov.stubby4j.annotations.CoberturaIgnore"
             )
             fileset(
                dir: project(':main').sourceSets.main.output.classesDir, 
-               includes: "by/stub/client/**/*.class, by/stub/cli/CommandLineInterpreter.class, by/stub/database/*.class, by/stub/utils/*.class, by/stub/yaml/**/*.class, by/stub/handlers/AjaxHandler.class, by/stub/handlers/strategy/**/*.class",
+               includes: "io/github/azagniotov/stubby4j/client/**/*.class, io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, io/github/azagniotov/stubby4j/database/*.class, io/github/azagniotov/stubby4j/utils/*.class, io/github/azagniotov/stubby4j/yaml/**/*.class, io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
                excludes: "**/*\$*.class"
          )
       }   

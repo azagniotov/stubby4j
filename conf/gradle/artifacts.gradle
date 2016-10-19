@@ -4,8 +4,8 @@ project.ext.dependencies = configurations.compile.resolve().findAll { file ->
 
 project.ext.projectManifest = manifest {
    def manifestClasspath = project.ext.dependencies.collect { it.getName() }.join(',')
-   attributes  'Main-Class': 'by.stub.Main',
-               'Package': 'by.stub',
+   attributes  'Main-Class': 'io.github.azagniotov.stubby4j.Main',
+               'Package': 'io.github.azagniotov.stubby4j',
                'Class-Path': manifestClasspath,
                'Implementation-Title': "${stubbyProjectName}",
                'Implementation-Version': "${version}",
