@@ -46,6 +46,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 ##### Minimum system requirements to run stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j)
 
+* version >= 4.0.0:  Oracle JRE v1.8.0_60
 * version >= 3.0.0:  Oracle JRE v1.7.0_76
 * version = 2.0.22: Oracle JRE v1.7.0_04
 * version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
