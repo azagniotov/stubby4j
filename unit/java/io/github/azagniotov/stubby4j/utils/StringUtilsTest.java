@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Alexander Zagniotov
@@ -196,8 +198,6 @@ public class StringUtilsTest {
         assertThat(escaped).isEqualTo("[\\{'key': 'value'\\}, \\{'key': 'value'\\}]");
     }
 
-
-
     @Test
     public void shouldReplaceTokensInATemplateWhenAllTokensPresent() throws Exception {
 
@@ -222,5 +222,33 @@ public class StringUtilsTest {
 
         final String replacedTemplate = StringUtils.replaceTokens(StringUtils.getBytesUtf8(template), tokensAndValues);
         assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be <% query.1 %> returned");
+    }
+
+
+    /*
+       https://github.com/apache/commons-lang/blob/master/src/test/java/org/apache/commons/lang3/StringUtilsTest.java
+     */
+    private static final char SEPARATOR = ',';
+    private static final String TEXT_LIST = "foo,bar,baz";
+    private static final String[] EMPTY_ARRAY_LIST = {};
+    private static final String[] ARRAY_LIST = {"foo", "bar", "baz"};
+    private static final String[] MIXED_ARRAY_LIST = {null, "", "foo"};
+
+    @Test
+    public void testJoin_ArrayString() {
+        assertEquals("", StringUtils.join(EMPTY_ARRAY_LIST, SEPARATOR));
+        assertEquals(TEXT_LIST, StringUtils.join(ARRAY_LIST, SEPARATOR));
+        assertEquals(",,foo", StringUtils.join(MIXED_ARRAY_LIST, SEPARATOR));
+    }
+
+    @Test
+    public void testRepeat_StringInt() {
+        assertNull(StringUtils.repeat(null, 2));
+        assertEquals("", StringUtils.repeat("ab", 0));
+        assertEquals("", StringUtils.repeat("", 3));
+        assertEquals("aaa", StringUtils.repeat("a", 3));
+        assertEquals("", StringUtils.repeat("a", -2));
+        assertEquals("ababab", StringUtils.repeat("ab", 3));
+        assertEquals("abcabcabc", StringUtils.repeat("abc", 3));
     }
 }

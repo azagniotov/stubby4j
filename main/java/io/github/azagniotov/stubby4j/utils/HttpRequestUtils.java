@@ -26,27 +26,6 @@ public final class HttpRequestUtils {
 
     }
 
-    private static String debugStringParameter(final String indentString, final String parameterName, final String[] parameterValues) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.
-                append(indentString).
-                append(INDENT_UNIT).
-                append("'").append(parameterName).append("': ");
-        if (parameterValues == null || parameterValues.length == 0) {
-            stringBuilder.append("None");
-        } else {
-            if (parameterValues.length > 1) {
-                stringBuilder.append(LEFT_BRACKET);
-            }
-            final String joined = StringUtils.join(parameterValues, COMMA.charAt(0));
-            stringBuilder.append(joined.trim().equals("") ? "''" : joined);
-            if (parameterValues.length > 1) {
-                stringBuilder.append(RIGHT_BRACKET);
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     private static String debugStringHeader(final String indentString, final String headerName, final List<String> headerValues) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.

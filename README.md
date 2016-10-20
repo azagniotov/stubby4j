@@ -1374,6 +1374,7 @@ for each <endpoint> of stored endpoints {
 ### Change log
 
 ##### 4.0.2-SNAPSHOT
+* Log why a request fails to match `https://github.com/soundcloud/stubby4j/commit/5901710efd31653a05804ebec62f67184c212832`
 
 ##### 4.0.1
 * Issue #54 - Support for regular expression in Json POST

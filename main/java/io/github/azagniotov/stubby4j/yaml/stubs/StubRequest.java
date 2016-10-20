@@ -21,6 +21,7 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.CollectionUtils;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -243,11 +244,27 @@ public class StubRequest {
         } else if (o instanceof StubRequest) {
             final StubRequest stubbedRequest = (StubRequest) o;
 
-            return urlsMatch(stubbedRequest.url, this.url)
-                    && arraysIntersect(stubbedRequest.getMethod(), this.getMethod())
-                    && postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())
-                    && headersMatch(stubbedRequest.getHeaders(), this.getHeaders())
-                    && queriesMatch(stubbedRequest.getQuery(), this.getQuery());
+            if (!urlsMatch(stubbedRequest.url, this.url)) {
+                ANSITerminal.dump(String.format("URL %s failed match for %s", stubbedRequest.url, this.url));
+                return false;
+            }
+            if (!arraysIntersect(stubbedRequest.getMethod(), this.getMethod())) {
+                ANSITerminal.dump(String.format("METHOD %s failed match for %s", stubbedRequest.getMethod(), this.getMethod()));
+                return false;
+            }
+            if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
+                ANSITerminal.dump(String.format("POST BODY %s failed match for %s", stubbedRequest.getPostBody(), this.getPostBody()));
+                return false;
+            }
+            if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
+                ANSITerminal.dump(String.format("HEADERS %s failed match for %s", stubbedRequest.getHeaders(), this.getHeaders()));
+                return false;
+            }
+            if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
+                ANSITerminal.dump(String.format("QUERY %s failed match for %s", stubbedRequest.getQuery(), this.getQuery()));
+                return false;
+            }
+            return true;
         }
 
         return false;
