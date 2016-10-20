@@ -1388,6 +1388,7 @@ for each <endpoint> of stored endpoints {
 * Renamed Maven Central group ID from `by.stub` to `io.github.azagniotov`
 * Issue #55 - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
 * Issue #56 - Requests with query parameters values containing white spaces
+* Pull request #57 - `StubbyClient` starts Jetty with `-m` to mute the console logger, but it wasn't actually muted 
 
 ##### 3.3.0
 * Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)
