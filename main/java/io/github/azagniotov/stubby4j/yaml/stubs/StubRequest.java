@@ -245,23 +245,23 @@ public class StubRequest {
             final StubRequest stubbedRequest = (StubRequest) o;
 
             if (!urlsMatch(stubbedRequest.url, this.url)) {
-                ANSITerminal.dump(String.format("URL %s failed match for %s", stubbedRequest.url, this.url));
+                ANSITerminal.error(String.format("Failed match for URL %s WITH %s", stubbedRequest.url, this.url));
                 return false;
             }
             if (!arraysIntersect(stubbedRequest.getMethod(), this.getMethod())) {
-                ANSITerminal.dump(String.format("METHOD %s failed match for %s", stubbedRequest.getMethod(), this.getMethod()));
+                ANSITerminal.error(String.format("Failed match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
                 return false;
             }
             if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
-                ANSITerminal.dump(String.format("POST BODY %s failed match for %s", stubbedRequest.getPostBody(), this.getPostBody()));
+                ANSITerminal.error(String.format("Failed match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
                 return false;
             }
             if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
-                ANSITerminal.dump(String.format("HEADERS %s failed match for %s", stubbedRequest.getHeaders(), this.getHeaders()));
+                ANSITerminal.error(String.format("Failed match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
                 return false;
             }
             if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
-                ANSITerminal.dump(String.format("QUERY %s failed match for %s", stubbedRequest.getQuery(), this.getQuery()));
+                ANSITerminal.error(String.format("Failed match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
                 return false;
             }
             return true;
