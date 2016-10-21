@@ -9,6 +9,7 @@ description = 'Gradle configuration for stubby4j'
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
     }
@@ -51,9 +52,9 @@ subprojects {
         }
         targetCompatibility = 1.8
         repositories {
+            mavenLocal()
             mavenCentral()
             jcenter()
-            mavenLocal()
         }
         apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
