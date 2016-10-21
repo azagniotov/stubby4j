@@ -20,7 +20,8 @@ enum RegexParser {
     static final Map<Integer, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
 
     // A very primitive way to test if string is *maybe* a regex pattern, instead of compiling a Pattern
-    private final Pattern SPECIAL_REGEX_CHARS = Pattern.compile(String.format(".*([%s%s%s%s%s%s%s%s%s%s]).*",
+    @VisibleForTesting
+    static final Pattern SPECIAL_REGEX_CHARS = Pattern.compile(String.format(".*([%s%s%s%s%s%s%s%s%s%s]).*",
             quote("^"),
             quote("$"),
             quote("["),
