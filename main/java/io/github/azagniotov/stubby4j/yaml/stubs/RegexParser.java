@@ -42,7 +42,7 @@ enum RegexParser {
                 PATTERN_CACHE.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, flags));
             }
         } catch (final PatternSyntaxException e) {
-            // We could not compile a Pattern because probably of some characters that are special for Pattern
+            // We could not compile, probably because of some characters that are special for Pattern
             compilePatternAndCache(value, Pattern.LITERAL | Pattern.MULTILINE);
         }
     }
@@ -77,7 +77,7 @@ enum RegexParser {
             }
             return isMatch;
         } catch (final PatternSyntaxException e) {
-            // We could not compile a Pattern because probably of some characters that are special for Pattern
+            // We could not compile, probably because of some characters that are special for Pattern
             return match(patternCandidate, subject, templateTokenName, regexGroups, Pattern.LITERAL | Pattern.MULTILINE);
         }
     }

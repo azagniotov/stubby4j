@@ -59,15 +59,19 @@ public final class StringUtils {
         return (ObjectUtils.isNotNull(toTest) && toTest.trim().length() > 0);
     }
 
+    public static boolean isNotSet(final String toTest) {
+        return !isSet(toTest);
+    }
+
     public static String toUpper(final String toUpper) {
-        if (!isSet(toUpper)) {
+        if (isNotSet(toUpper)) {
             return "";
         }
         return toUpper.toUpperCase(Locale.US);
     }
 
     public static String toLower(final String toLower) {
-        if (!isSet(toLower)) {
+        if (isNotSet(toLower)) {
             return "";
         }
         return toLower.toLowerCase(Locale.US);

@@ -220,7 +220,7 @@ public class StubRequestTest {
     @Test
     public void arraysIntersect_ShouldReturnTrue_WhenDataStoreArrayEmpty() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.arraysIntersect(new ArrayList<String>(), new ArrayList<String>() {{
+        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<String>(), new ArrayList<String>() {{
             add("apple");
         }});
 
@@ -230,7 +230,7 @@ public class StubRequestTest {
     @Test
     public void arraysIntersect_ShouldReturnFalse_WhenAssertingArrayEmpty() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.arraysIntersect(new ArrayList<String>() {{
+        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<String>() {{
             add("apple");
         }}, new ArrayList<String>());
 
@@ -240,7 +240,7 @@ public class StubRequestTest {
     @Test
     public void arraysIntersect_ShouldReturnTrue_WhenTwoArraysHaveTheSameElements() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.arraysIntersect(
+        final boolean isArraysIntersect = stubRequest.listsIntersect(
                 new ArrayList<String>() {{
                     add("apple");
                 }}, new ArrayList<String>() {{
@@ -254,7 +254,7 @@ public class StubRequestTest {
     @Test
     public void arraysIntersect_ShouldReturnFalse_WhenTwoArraysDontHaveTheSameElements() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.arraysIntersect(
+        final boolean isArraysIntersect = stubRequest.listsIntersect(
                 new ArrayList<String>() {{
                     add("apple");
                 }}, new ArrayList<String>() {{

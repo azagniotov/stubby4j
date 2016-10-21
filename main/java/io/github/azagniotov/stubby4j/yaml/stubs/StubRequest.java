@@ -53,6 +53,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isWithinSquareBrackets;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
@@ -247,7 +248,7 @@ public class StubRequest {
                 ANSITerminal.error(String.format("Failed match for URL %s WITH %s", stubbedRequest.url, this.url));
                 return false;
             }
-            if (!arraysIntersect(stubbedRequest.getMethod(), this.getMethod())) {
+            if (!listsIntersect(stubbedRequest.getMethod(), this.getMethod())) {
                 ANSITerminal.error(String.format("Failed match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
                 return false;
             }
@@ -281,40 +282,18 @@ public class StubRequest {
     private boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final String assertingPostBody) {
         if (isPostStubbed) {
             final String assertingContentType = this.getHeaders().get("content-type");
-            final boolean isAssertingValueSet = isSet(assertingPostBody);
-            if (!isAssertingValueSet) {
+            if (isNotSet(assertingPostBody)) {
                 return false;
             } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
-                try {
-                    boolean passed = JSONCompare.compareJSON(stubbedPostBody, assertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
-                    if (passed) {
-                        return true;
-                    } else {
-                        final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
-                        return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
-                    }
-                } catch (final JSONException e) {
-                    final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
-                    return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
-                }
+                return jsonMatch(stubbedPostBody, assertingPostBody);
             } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
-                try {
-                    final Diff diff = new Diff(stubbedPostBody, assertingPostBody);
-                    diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-
-                    return (diff.similar() || diff.identical());
-                } catch (SAXException | IOException e) {
-                    return false;
-                }
+                return xmlMatch(stubbedPostBody, assertingPostBody);
             } else {
-                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
-                boolean regexMatch = regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
-
-                return regexMatch || stringsMatch(stubbedPostBody, assertingPostBody, YamlProperties.POST);
+                return stringsMatch(stubbedPostBody, assertingPostBody, YamlProperties.POST);
             }
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     private boolean queriesMatch(final Map<String, String> stubbedQuery, final Map<String, String> assertingQuery) {
@@ -341,16 +320,15 @@ public class StubRequest {
         final Map<String, String> stubbedMappingsCopy = new HashMap<>(stubbedMappings);
         final Map<String, String> assertingMappingsCopy = new HashMap<>(assertingMappings);
 
-        for (Map.Entry<String, String> stubbedMappingEntry : stubbedMappingsCopy.entrySet()) {
+        for (final Map.Entry<String, String> stubbedMappingEntry : stubbedMappingsCopy.entrySet()) {
             final boolean containsRequiredParam = assertingMappingsCopy.containsKey(stubbedMappingEntry.getKey());
             if (!containsRequiredParam) {
                 return false;
             } else {
                 final String assertingValue = assertingMappingsCopy.get(stubbedMappingEntry.getKey());
                 final String templateTokenName = String.format("%s.%s", mapName, stubbedMappingEntry.getKey());
-                final String stubbedValue = stubbedMappingEntry.getValue();
-                //final String stubbedValue = StringUtils.urlEncode(stubbedMappingEntry.getValue());
-                if (!stringsMatch(stubbedValue, assertingValue, templateTokenName)) {
+
+                if (!stringsMatch(stubbedMappingEntry.getValue(), assertingValue, templateTokenName)) {
                     return false;
                 }
             }
@@ -361,12 +339,9 @@ public class StubRequest {
 
     @VisibleForTesting
     boolean stringsMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
-        final boolean stubbedValueSet = isSet(stubbedValue);
-        final boolean assertingValueSet = isSet(assertingValue);
-
-        if (!stubbedValueSet) {
+        if (isNotSet(stubbedValue)) {
             return true;
-        } else if (!assertingValueSet) {
+        } else if (isNotSet(assertingValue)) {
             return false;
         } else if (isWithinSquareBrackets(stubbedValue)) {
             return stubbedValue.equals(assertingValue);
@@ -380,7 +355,7 @@ public class StubRequest {
     }
 
     @VisibleForTesting
-    boolean arraysIntersect(final ArrayList<String> stubbedArray, final ArrayList<String> assertingArray) {
+    boolean listsIntersect(final List<String> stubbedArray, final List<String> assertingArray) {
         if (stubbedArray.isEmpty()) {
             return true;
         } else if (!assertingArray.isEmpty()) {
@@ -391,6 +366,32 @@ public class StubRequest {
             }
         }
         return false;
+    }
+
+    private boolean jsonMatch(final String stubbedPostBody, final String assertingPostBody) {
+        try {
+            boolean passed = JSONCompare.compareJSON(stubbedPostBody, assertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+            if (passed) {
+                return true;
+            } else {
+                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
+                return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+            }
+        } catch (final JSONException e) {
+            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
+            return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+        }
+    }
+
+    private boolean xmlMatch(String stubbedPostBody, String assertingPostBody) {
+        try {
+            final Diff diff = new Diff(stubbedPostBody, assertingPostBody);
+            diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+
+            return (diff.similar() || diff.identical());
+        } catch (SAXException | IOException e) {
+            return false;
+        }
     }
 
     public void computeRegexPatterns() {
