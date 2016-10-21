@@ -368,24 +368,24 @@ public class StubRequest {
         return false;
     }
 
-    private boolean jsonMatch(final String stubbedPostBody, final String assertingPostBody) {
+    private boolean jsonMatch(final String stubbedJsony, final String assertingJson) {
         try {
-            boolean passed = JSONCompare.compareJSON(stubbedPostBody, assertingPostBody, JSONCompareMode.NON_EXTENSIBLE).passed();
+            boolean passed = JSONCompare.compareJSON(stubbedJsony, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
             if (passed) {
                 return true;
             } else {
-                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
-                return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJsony);
+                return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
             }
         } catch (final JSONException e) {
-            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
-            return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
+            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJsony);
+            return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
         }
     }
 
-    private boolean xmlMatch(String stubbedPostBody, String assertingPostBody) {
+    private boolean xmlMatch(final String stubbedXml, final String assertingXml) {
         try {
-            final Diff diff = new Diff(stubbedPostBody, assertingPostBody);
+            final Diff diff = new Diff(stubbedXml, assertingXml);
             diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
 
             return (diff.similar() || diff.identical());

@@ -14,7 +14,7 @@ It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v4.0.1
+## User manual for stubby4j v4.0.2
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -148,35 +148,35 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 ### Adding stubby4j to your project
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.1` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.2` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
 ##### Apache Maven
 ```xml
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
 </dependency>
 ```
 
 ##### Apache Ivy
 ```xml
-<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.1" />
+<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.2" />
 ```
 
 ##### Apache Buildr
 ```xml
-'io.github.azagniotov:stubby4j:jar:4.0.1'
+'io.github.azagniotov:stubby4j:jar:4.0.2'
 ```
 
 ##### Gradle
 ```xml
-compile 'io.github.azagniotov:stubby4j:4.0.1'
+compile 'io.github.azagniotov:stubby4j:4.0.2'
 ```
 
 ##### Scala SBT
 ```xml
-libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.1"
+libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.2"
 ```
 
 ### Command-line switches
@@ -442,6 +442,23 @@ A demonstration using regular expressions:
       status: 200
       body: >
          {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+```
+
+```yaml
+-  request:
+      method: POST
+      url: /post-body-as-json-2
+      headers:
+         content-type: application/json
+      post: >
+         {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"internalKey": "<%post.1%>"}
 ```
 
 ##### file
@@ -1373,8 +1390,12 @@ for each <endpoint> of stored endpoints {
 
 ### Change log
 
-##### 4.0.2-SNAPSHOT
-* Log why a request fails to match `https://github.com/soundcloud/stubby4j/commit/5901710efd31653a05804ebec62f67184c212832`
+##### 4.0.3-SNAPSHOT
+
+##### 4.0.2
+* Log to terminal why a request fails to match https://github.com/soundcloud/stubby4j/commit/5901710efd31653a05804ebec62f67184c212832
+* Square brackets were not escaped as literals for regular expression in Json POST [BUG]
+* Precompiling & caching stubbed regex patterns upon parsing YAML stub configuration
 
 ##### 4.0.1
 * Issue #54 - Support for regular expression in Json POST
