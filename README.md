@@ -24,6 +24,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Building](#building)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
+* [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
@@ -150,7 +151,11 @@ stubby4j is a fat JAR, which contains the following dependencies:
 stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
 Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.2` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
 
-##### Apache Maven
+##### Gradle
+```xml
+compile 'io.github.azagniotov:stubby4j:4.0.2'
+```
+##### Maven
 ```xml
 <dependency>
     <groupId>io.github.azagniotov</groupId>
@@ -158,26 +163,18 @@ Keep in mind that __it takes ~3 hours for a new release to appear on live Maven 
     <version>4.0.2</version>
 </dependency>
 ```
+### Installing stubby4j to local .m2 repository
 
-##### Apache Ivy
+Run `gradle install` command to:
+
+* Install `stubby4j-4.0.3-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.3-SNAPSHOT/`
+
+Now you can include installed stubby4j `SNAPSHOT` in your project:
 ```xml
-<dependency org="io.github.azagniotov" name="stubby4j" rev="4.0.2" />
+compile 'io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT'
 ```
 
-##### Apache Buildr
-```xml
-'io.github.azagniotov:stubby4j:jar:4.0.2'
-```
-
-##### Gradle
-```xml
-compile 'io.github.azagniotov:stubby4j:4.0.2'
-```
-
-##### Scala SBT
-```xml
-libraryDependencies += "io.github.azagniotov" % "stubby4j" % "4.0.2"
-```
 
 ### Command-line switches
 ```
