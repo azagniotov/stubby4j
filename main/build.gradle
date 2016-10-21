@@ -14,3 +14,12 @@ sourceSets {
    }
 }
 
+apply plugin: 'maven'
+install {
+   repositories.mavenInstaller {
+      pom.version = "$version"
+      pom.artifactId = "$stubbyProjectName"
+      pom.groupId = "$stubbyProjectGroup"
+      pom.packaging = "jar"
+   }
+}
