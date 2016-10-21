@@ -33,26 +33,30 @@ enum RegexParser {
             quote("?")));
 
     void compilePatternAndCache(final String value) {
+        compilePatternAndCache(value, Pattern.MULTILINE);
+    }
+
+    private void compilePatternAndCache(final String value, final int flags) {
         try {
             if (SPECIAL_REGEX_CHARS.matcher(value).matches()) {
-                PATTERN_CACHE.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, Pattern.MULTILINE));
+                PATTERN_CACHE.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, flags));
             }
         } catch (final PatternSyntaxException e) {
-            PATTERN_CACHE.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, Pattern.LITERAL | Pattern.MULTILINE));
+            // We could not compile a Pattern because probably of some characters that are special for Pattern
+            compilePatternAndCache(value, Pattern.LITERAL | Pattern.MULTILINE);
         }
     }
 
     boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups) {
+        // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
+        // it does not mean that newline feeds and carriage return will be matched by default
+        // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
+        // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
         return match(patternCandidate, subject, templateTokenName, regexGroups, Pattern.MULTILINE);
     }
 
     private boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups, final int flags) {
         try {
-            // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
-            // it does not mean that newline feeds and carriage return will be matched by default
-            // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
-            // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
-
             final Pattern pattern = PATTERN_CACHE.computeIfAbsent(
                     patternCandidate.hashCode(), hashCode -> Pattern.compile(patternCandidate, flags));
 
@@ -72,7 +76,8 @@ enum RegexParser {
                 }
             }
             return isMatch;
-        } catch (PatternSyntaxException e) {
+        } catch (final PatternSyntaxException e) {
+            // We could not compile a Pattern because probably of some characters that are special for Pattern
             return match(patternCandidate, subject, templateTokenName, regexGroups, Pattern.LITERAL | Pattern.MULTILINE);
         }
     }

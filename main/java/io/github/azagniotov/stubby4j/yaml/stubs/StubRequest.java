@@ -28,6 +28,7 @@ import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -50,11 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
-import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isWithinSquareBrackets;
@@ -72,6 +69,8 @@ import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CU
 public class StubRequest {
 
     public static final String HTTP_HEADER_AUTHORIZATION = "authorization";
+
+    private final RegexParser regexParser = RegexParser.INSTANCE;
 
     private final String url;
     private final String post;
@@ -377,30 +376,7 @@ public class StubRequest {
     }
 
     private boolean regexMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
-        try {
-            // Pattern.MULTILINE changes the behavior of '^' and '$' characters,
-            // it does not mean that newline feeds and carriage return will be matched by default
-            // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
-            // It is achievable by using symbol '\s+' which covers both \r (carriage return) and \n (linefeed).
-            final Matcher matcher = Pattern.compile(stubbedValue, Pattern.MULTILINE).matcher(assertingValue);
-            final boolean isMatch = matcher.matches();
-            if (isMatch) {
-                // group(0) holds the full regex match
-                regexGroups.put(buildToken(templateTokenName, 0), matcher.group(0));
-
-                //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
-                // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
-                final int groupCount = matcher.groupCount();
-                if (groupCount > 0) {
-                    for (int idx = 1; idx <= groupCount; idx++) {
-                        regexGroups.put(buildToken(templateTokenName, idx), matcher.group(idx));
-                    }
-                }
-            }
-            return isMatch;
-        } catch (PatternSyntaxException e) {
-            return stubbedValue.equals(assertingValue);
-        }
+        return regexParser.match(stubbedValue, assertingValue, templateTokenName, regexGroups);
     }
 
     @VisibleForTesting
@@ -415,6 +391,17 @@ public class StubRequest {
             }
         }
         return false;
+    }
+
+    public void computeRegexPatterns() {
+        if (StringUtils.isSet(this.url)) {
+            regexParser.compilePatternAndCache(this.url);
+        }
+        if (isPostStubbed()) {
+            regexParser.compilePatternAndCache(getPostBody());
+        }
+
+        this.getQuery().values().forEach(regexParser::compilePatternAndCache);
     }
 
     @Override
@@ -433,7 +420,7 @@ public class StubRequest {
     @Override
     @CoberturaIgnore
     public final String toString() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("StubRequest");
         sb.append("{url=").append(url);
         sb.append(", method=").append(method);

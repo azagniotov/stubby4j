@@ -39,7 +39,7 @@ public final class Authorization {
     @Override
     @CoberturaIgnore
     public final String toString() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Authorization");
         sb.append("{type=").append(authorizationType);
         sb.append(", value=").append(value);

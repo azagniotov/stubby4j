@@ -120,6 +120,7 @@ public class YamlParser {
 
         if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
             final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
+            targetStub.computeRegexPatterns();
             stubHttpLifecycle.setRequest(targetStub);
 
             ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());

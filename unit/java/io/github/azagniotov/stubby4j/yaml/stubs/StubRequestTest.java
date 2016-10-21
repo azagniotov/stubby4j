@@ -1667,6 +1667,27 @@ public class StubRequestTest {
     }
 
     @Test
+    public void shouldComputeRegexPatterns() throws Exception {
+
+        RegexParser.PATTERN_CACHE.clear();
+
+        final String url = "^/resources/asn/.*$";
+        final String post = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
+        final String contentType = "application/json";
+
+        final StubRequest stubRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withHeaderContentType(contentType)
+                        .withPost(post).build();
+        stubRequest.computeRegexPatterns();
+
+        assertThat(RegexParser.PATTERN_CACHE.size()).isEqualTo(2);
+        assertThat(RegexParser.PATTERN_CACHE.get(url.hashCode())).isInstanceOf(Pattern.class);
+        assertThat(RegexParser.PATTERN_CACHE.get(post.hashCode())).isInstanceOf(Pattern.class);
+    }
+
+    @Test
     public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingSubsectionOfMultiLineJsonPost() throws Exception {
 
         final String postRegex = ".*(\"id\": \"123\").*";
