@@ -143,8 +143,11 @@ public final class StringUtils {
         return toCheck;
     }
 
-    public static String escapeCurlyBraces(final String toEscape) {
-        return toEscape.replaceAll(Pattern.quote("{"), "\\\\{").replaceAll(Pattern.quote("}"), "\\\\}");
+    public static String escapeSpecialRegexCharacters(final String toEscape) {
+        return toEscape.replaceAll(Pattern.quote("{"), "\\\\{")
+                .replaceAll(Pattern.quote("}"), "\\\\}")
+                .replaceAll(Pattern.quote("["), "\\\\[")
+                .replaceAll(Pattern.quote("]"), "\\\\]");
     }
 
     public static String decodeUrlEncodedQuotes(final String toBeFiltered) {

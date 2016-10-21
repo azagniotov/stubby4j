@@ -1640,6 +1640,33 @@ public class StubRequestTest {
     }
 
     @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenComplexJsonPostRegexStubbedAndJsonPosted() throws Exception {
+
+        final String postRegex = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
+        final String postAssertingValue = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
+        final String url = "/post";
+        final String contentType = "application/json";
+
+        final StubRequest expectedRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withHeaderContentType(contentType)
+                        .withPost(postRegex).build();
+
+        final StubRequest assertingRequest =
+                BUILDER.withUrl(url)
+                        .withMethodPost()
+                        .withHeaderContentType(contentType)
+                        .withPost(postAssertingValue).build();
+
+        assertThat(expectedRequest).isEqualTo(assertingRequest);
+
+        final Map<String, String> regexGroups = assertingRequest.getRegexGroups();
+        assertThat(regexGroups.get("post.0")).isEqualTo(postAssertingValue);
+        assertThat(regexGroups.get("post.1")).isEqualTo("12345");
+    }
+
+    @Test
     public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingSubsectionOfMultiLineJsonPost() throws Exception {
 
         final String postRegex = ".*(\"id\": \"123\").*";

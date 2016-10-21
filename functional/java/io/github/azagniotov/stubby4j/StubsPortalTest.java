@@ -741,7 +741,7 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenJsonPostRegexMatchingPostJson() throws Exception {
+    public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesPostJson() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/post-body-as-json");
         final String content = "{\"userId\":\"19\",\"requestId\":\"12345\",\"transactionDate\":\"98765\",\"transactionTime\":\"11111\"}";
@@ -755,6 +755,23 @@ public class StubsPortalTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(response.parseAsString().trim()).isEqualTo("{\"requestId\": \"12345\", \"transactionDate\": \"98765\", \"transactionTime\": \"11111\"}");
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesPostComplexJson() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/post-body-as-json-2");
+        final String content = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+
+        final HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+        request.setHeaders(requestHeaders);
+
+        final HttpResponse response = request.execute();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.parseAsString().trim()).isEqualTo("{\"internalKey\": \"12345\"}");
     }
 
     @SuppressWarnings("unchecked")

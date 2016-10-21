@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeCurlyBraces;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isWithinSquareBrackets;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
@@ -92,9 +92,9 @@ public class StubRequest {
         this.post = post;
         this.file = file;
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
-        this.method = ObjectUtils.isNull(method) ? new ArrayList<String>() : method;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
-        this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<String, String>() : query;
+        this.method = ObjectUtils.isNull(method) ? new ArrayList<>() : method;
+        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
+        this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<>() : query;
         this.regexGroups = new TreeMap<>();
     }
 
@@ -291,11 +291,11 @@ public class StubRequest {
                     if (passed) {
                         return true;
                     } else {
-                        final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                        final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
                         return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
                     }
                 } catch (final JSONException e) {
-                    final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                    final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
                     return regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
                 }
             } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
@@ -308,7 +308,7 @@ public class StubRequest {
                     return false;
                 }
             } else {
-                final String escapedStubbedPostBody = escapeCurlyBraces(stubbedPostBody);
+                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedPostBody);
                 boolean regexMatch = regexMatch(escapedStubbedPostBody, assertingPostBody, YamlProperties.POST);
 
                 return regexMatch || stringsMatch(stubbedPostBody, assertingPostBody, YamlProperties.POST);

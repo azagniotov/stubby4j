@@ -200,6 +200,21 @@
       body: >
          {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
 
+-  request:
+      method: POST
+      url: /post-body-as-json-2
+      headers:
+         content-type: application/json
+      post: >
+         {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"internalKey": "<%post.1%>"}
+
 
 -  request:
       url: /invoice/new/no/post

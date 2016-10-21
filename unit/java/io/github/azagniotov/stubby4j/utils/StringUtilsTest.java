@@ -193,9 +193,9 @@ public class StringUtilsTest {
     @Test
     public void shouldEscapeCurlyBraces() throws Exception {
 
-        final String escaped = StringUtils.escapeCurlyBraces("[{'key': 'value'}, {'key': 'value'}]");
+        final String escaped = StringUtils.escapeSpecialRegexCharacters("[{'key': 'value'}, {'key': 'value'}]");
 
-        assertThat(escaped).isEqualTo("[\\{'key': 'value'\\}, \\{'key': 'value'\\}]");
+        assertThat(escaped).isEqualTo("\\[\\{'key': 'value'\\}, \\{'key': 'value'\\}\\]");
     }
 
     @Test
