@@ -5,6 +5,8 @@
 
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -26,6 +28,7 @@ public final class HttpRequestUtils {
 
     }
 
+    @CoberturaIgnore
     private static String debugStringHeader(final String indentString, final String headerName, final List<String> headerValues) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.
@@ -46,6 +49,7 @@ public final class HttpRequestUtils {
         return stringBuilder.toString();
     }
 
+    @CoberturaIgnore
     private static String debugStringHeaders(final HttpServletRequest request, final int indent) {
         final Enumeration<String> headerNames = request.getHeaderNames();
         if (headerNames == null || !headerNames.hasMoreElements()) {
@@ -75,6 +79,7 @@ public final class HttpRequestUtils {
      * @param request Request parameter.
      * @return A string with debug information on Request's header
      */
+    @CoberturaIgnore
     public static String dump(HttpServletRequest request) {
         final StringBuilder stringBuilder = new StringBuilder();
 

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
@@ -41,6 +42,7 @@ public final class ConsoleUtils {
 
     }
 
+    @CoberturaIgnore
     public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
 
         final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
@@ -53,12 +55,14 @@ public final class ConsoleUtils {
         ANSITerminal.error(logMessage);
     }
 
+    @CoberturaIgnore
     public static void logRawIncomingRequest(final HttpServletRequest request) {
         ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
         ANSITerminal.info(HttpRequestUtils.dump(request));
         ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + FileUtils.BR);
     }
 
+    @CoberturaIgnore
     public static void logIncomingRequest(final HttpServletRequest request) {
 
         final String logMessage = String.format("[%s] -> %s [%s]",
@@ -73,6 +77,7 @@ public final class ConsoleUtils {
         }
     }
 
+    @CoberturaIgnore
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
         if (debug) {
             ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
@@ -81,8 +86,8 @@ public final class ConsoleUtils {
         }
     }
 
+    @CoberturaIgnore
     public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
-
         final int status = response.getStatus();
 
         final String logMessage = String.format("[%s] <- %s [%s] %s",
@@ -105,12 +110,14 @@ public final class ConsoleUtils {
         }
     }
 
+    @CoberturaIgnore
     public static void logUnmarshalledStubRequest(final List<String> methods, final String url) {
         final String loadedMsg = String.format("Loaded: %s %s", methods, url);
 
         ANSITerminal.loaded(loadedMsg);
     }
 
+    @CoberturaIgnore
     public static String getTime() {
         final Calendar now = Calendar.getInstance(Locale.US);
         return String.format("%02d:%02d:%02d",
@@ -125,6 +132,7 @@ public final class ConsoleUtils {
      *
      * @param isDebug if true, the incoming raw HTTP request will be dumped to console
      */
+    @CoberturaIgnore
     public static void enableDebug(final boolean isDebug) {
         debug = isDebug;
     }
