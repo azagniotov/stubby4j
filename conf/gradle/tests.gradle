@@ -1,0 +1,33 @@
+testSets {
+    integration {
+        dirName = 'integration'
+    }
+
+    functional {
+        dirName = 'functional'
+    }
+}
+
+project.functional {
+    outputs.upToDateWhen {
+        false
+    }
+}
+
+project.integration {
+    outputs.upToDateWhen {
+        false
+    }
+}
+
+project.test {
+    outputs.upToDateWhen {
+        false
+    }
+}
+
+check.dependsOn integration
+integration.mustRunAfter test
+
+check.dependsOn functional
+functional.mustRunAfter test

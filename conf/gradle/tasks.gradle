@@ -1,0 +1,102 @@
+tasks.withType(Test) {
+    Task testTask ->
+        ignoreFailures = true
+        testLogging {
+            events /*"passed", */ "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+        beforeTest { testDescriptor ->
+
+            if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
+                def testTaskName = testTask.name.toUpperCase()
+
+                def testClass = testDescriptor.getClassName()
+                if (project(':').ext.map[testTaskName] == null) {
+                    project(':').ext.map[testTaskName] = [:]
+                    project(':').ext.map[testTaskName]['total'] = 0
+                    project(':').ext.map[testTaskName]['success'] = 0
+                    project(':').ext.map[testTaskName]['failure'] = 0
+                }
+                if (project(':').ext.map[testTaskName][testClass] == null) {
+                    project(':').ext.map[testTaskName][testClass] = [:]
+                    project(':').ext.map[testTaskName][testClass]['total'] = 1
+                    project(':').ext.map[testTaskName][testClass]['success'] = 0
+                    project(':').ext.map[testTaskName][testClass]['failure'] = 0
+                } else {
+                    project(':').ext.map[testTaskName][testClass]['total'] += 1
+                }
+                project(':').ext.map[testTaskName]['total'] += 1
+            }
+        }
+        afterTest { testDescriptor, testResult ->
+            if (testDescriptor.getClassName().contains("$stubbyProjectGroup")) {
+                def testTaskName = testTask.name.toUpperCase()
+                def testClass = testDescriptor.getClassName()
+                def success = testResult.getSuccessfulTestCount();
+                def failure = testResult.getFailedTestCount()
+                if (success == 1) {
+                    project(':').ext.map[testTaskName][testClass]['success'] += success
+                    project(':').ext.map[testTaskName]['success'] += success
+                } else if (failure == 1) {
+                    project(':').ext.map[testTaskName][testClass]['failure'] += failure
+                    project(':').ext.map[testTaskName]['failure'] += failure
+                }
+            }
+        }
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+install {
+    repositories {
+        mavenInstaller {
+            pom.version = "$version"
+            pom.artifactId = "$stubbyProjectName"
+            pom.groupId = "$stubbyProjectGroup"
+            pom.packaging = "jar"
+        }
+    }
+}
+
+task allTestReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/all")
+    reportOn test
+
+    doLast {
+        def total = 0
+        def failure = 0
+        def moduleTabs = "\t";
+        def prefixSpace = "      ";
+        def prefixDots = ":::::";
+        def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
+        println ""
+        println hr
+
+        for (testProjectName in project(':').ext.map) {
+            total += testProjectName.value['total']
+            failure += testProjectName.value['failure']
+            println prefixSpace + prefixDots + "  " + testProjectName.key +
+                    " (failed: " + testProjectName.value['failure'] + ", passed: " + testProjectName.value['success'] + ", total: " + testProjectName.value['total'] + ")"
+            for (testClassName in testProjectName.value) {
+                if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
+                    continue;
+                }
+                println prefixSpace + prefixDots + "    " + moduleTabs + testClassName.key +
+                        " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
+            }
+            println hr
+        }
+        println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + total
+        println hr
+        if (failure > 0) {
+            throw new GradleException(failure + " TESTS FAILED!!!")
+        }
+    }
+}
