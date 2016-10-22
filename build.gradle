@@ -94,3 +94,6 @@ task allTestReport(type: TestReport) {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}

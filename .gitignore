@@ -42,3 +42,6 @@ stubby4j.iml
 stubby4j.ipr
 stubby4j.iws
 *.iml
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
