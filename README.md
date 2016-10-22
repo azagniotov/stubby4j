@@ -1061,7 +1061,7 @@ for each <endpoint> of stored endpoints {
 
 ### Programmatic API
 
-Starting and using stubby4j with the help of [StubbyClient](blob/master/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java
+Starting and using stubby4j with the help of [StubbyClient](blob/master/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java)
 
 ### Change log
 
