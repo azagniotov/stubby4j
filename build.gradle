@@ -1,11 +1,9 @@
-// vim: ft=groovy
-import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
+defaultTasks 'clean', 'test', 'integration', 'functional', 'allTestReport'
+description = 'Gradle configuration for stubby4j'
 
+import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
 ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
 project(':').ext.map = [:]
-
-defaultTasks 'clean', 'build', 'allTestReport'
-description = 'Gradle configuration for stubby4j'
 
 buildscript {
     repositories {
@@ -17,80 +15,35 @@ buildscript {
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.3.1'
         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.4'
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0'
     }
 }
 
-allprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
-    apply plugin: 'eclipse'
-    project.buildDir = 'target'
-    if (project.name != 'main') {
-        apply from: "$rootDir/conf/gradle/console.gradle"
-    }
+repositories {
+   mavenLocal()
+   mavenCentral()
+   jcenter()
 }
 
-apply from: "$rootDir/conf/gradle/ides.gradle"
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'org.unbroken-dome.test-sets'
+apply plugin: 'idea'
+apply from: "$rootDir/conf/gradle/dependency.gradle"
+apply from: "$rootDir/conf/gradle/cobertura.gradle"
+apply from: "$rootDir/conf/gradle/artifacts.gradle"
+apply from: "$rootDir/conf/gradle/sonatype.gradle"
+apply from: "$rootDir/conf/gradle/tasks.gradle"
+apply from: "$rootDir/conf/gradle/tests.gradle"
 
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
 
-subprojects {
-    subproject ->
-        sourceCompatibility = 1.8
-        tasks.withType(JavaCompile) {
-            doFirst {
-                assert sourceCompatibility == "1.8": "The sourceCompatibility of $name was changed!"
-            }
-            options.encoding = 'UTF-8'
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-        targetCompatibility = 1.8
-        repositories {
-            mavenLocal()
-            mavenCentral()
-            jcenter()
-        }
-        apply from: "$rootDir/conf/gradle/dependency.gradle"
-}
-
-task allTestReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/all")
-    reportOn subprojects*.test
-    doLast {
-        def total = 0
-        def failure = 0
-        def moduleTabs = "\t";
-        def prefixSpace = "      ";
-        def prefixDots = ":::::";
-        def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
-        println ""
-        println hr
-
-        for (testProjectName in project(':').ext.map) {
-            total += testProjectName.value['total']
-            failure += testProjectName.value['failure']
-            println prefixSpace + prefixDots + "  " + testProjectName.key +
-                    " (failed: " + testProjectName.value['failure'] + ", passed: " + testProjectName.value['success'] + ", total: " + testProjectName.value['total'] + ")"
-            for (testClassName in testProjectName.value) {
-                if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
-                    continue;
-                }
-                println prefixSpace + prefixDots + "    " + moduleTabs + testClassName.key +
-                        " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
-            }
-            println hr
-        }
-        println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + total
-        println hr
-        if (failure > 0) {
-            throw new GradleException(failure + " TESTS FAILED!!!")
-        }
-    }
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+/*[compileJava, compileTestJava]*.options*.compilerArgs = [
+      "-Xlint:serial", "-Xlint:-varargs", "-Xlint:cast", "-Xlint:classfile",
+      "-Xlint:dep-ann", "-Xlint:divzero", "-Xlint:empty", "-Xlint:finally",
+      "-Xlint:overrides", "-Xlint:path", "-Xlint:processing", "-Xlint:static",
+      "-Xlint:try", "-Xlint:-fallthrough", "-Xlint:-rawtypes", "-Xlint:-deprecation",
+      "-Xlint:-unchecked", "-Xlint:-options"]*/
 
