@@ -50,7 +50,7 @@ import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 @SuppressWarnings("unchecked")
 public class YAMLParser {
 
-    public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
+    static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private String dataConfigHomeDirectory;
     private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
 
@@ -76,7 +76,7 @@ public class YAMLParser {
         for (final Object rawParentNode : loadedYamlData) {
 
             final Map<String, Object> parentNodePropertiesMap = (Map<String, Object>) rawParentNode;
-            final StubHttpLifecycle stubHttpLifecycle = unmarshallYamlNodeToHttpLifeCycle(parentNodePropertiesMap);
+            final StubHttpLifecycle stubHttpLifecycle = convertYamlObjectTreeToStub(parentNodePropertiesMap);
             httpLifecycles.add(stubHttpLifecycle);
             stubHttpLifecycle.setResourceId(httpLifecycles.size() - 1);
         }
@@ -85,49 +85,50 @@ public class YAMLParser {
     }
 
 
-    private StubHttpLifecycle unmarshallYamlNodeToHttpLifeCycle(final Map<String, Object> parentNodesMap) throws Exception {
+    private StubHttpLifecycle convertYamlObjectTreeToStub(final Map<String, Object> parentNodesMap) throws Exception {
 
-        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle();
+        final StubHttpLifecycle stub = new StubHttpLifecycle();
 
         for (final Map.Entry<String, Object> parentNode : parentNodesMap.entrySet()) {
 
             final Object parentNodeValue = parentNode.getValue();
 
             if (parentNodeValue instanceof Map) {
-                handleMapNode(httpLifecycle, parentNode);
+                handleMapNode(stub, parentNode);
 
             } else if (parentNodeValue instanceof List) {
-                handleListNode(httpLifecycle, parentNode);
+                handleListNode(stub, parentNode);
             }
         }
 
-        httpLifecycle.setCompleteYAML(marshallNodeMapToYaml(parentNodesMap));
+        stub.setCompleteYAML(marshallNodeMapToYaml(parentNodesMap));
 
         final Map<String, Object> requestMap = new HashMap<>();
         requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
-        httpLifecycle.setRequestAsYAML(marshallNodeToYaml(requestMap));
+        stub.setRequestAsYAML(marshallNodeToYaml(requestMap));
 
         final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
-        httpLifecycle.setResponseAsYAML(marshallNodeToYaml(responseMap));
+        stub.setResponseAsYAML(marshallNodeToYaml(responseMap));
 
-        return httpLifecycle;
+        return stub;
     }
 
-    private void handleMapNode(final StubHttpLifecycle stubHttpLifecycle, final Map.Entry<String, Object> parentNode) throws Exception {
+    private void handleMapNode(final StubHttpLifecycle stub, final Map.Entry<String, Object> parentNode) throws Exception {
 
         final Map<String, Object> yamlProperties = (Map<String, Object>) parentNode.getValue();
 
         if (parentNode.getKey().equals(YamlProperties.REQUEST)) {
-            final StubRequest targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
-            targetStub.computeRegexPatterns();
-            stubHttpLifecycle.setRequest(targetStub);
+            final StubRequest requestStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubRequestBuilder());
 
-            ConsoleUtils.logUnmarshalledStubRequest(targetStub.getMethod(), targetStub.getUrl());
+            requestStub.computeRegexPatterns();
+
+            stub.setRequest(requestStub);
+            ConsoleUtils.logUnmarshalledStubRequest(requestStub.getMethod(), requestStub.getUrl());
 
         } else {
-            final StubResponse targetStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubResponseBuilder());
-            stubHttpLifecycle.setResponse(targetStub);
+            final StubResponse responseStub = unmarshallYamlMapToTargetStub(yamlProperties, new StubResponseBuilder());
+            stub.setResponse(responseStub);
         }
     }
 

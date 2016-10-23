@@ -2,7 +2,7 @@ package io.github.azagniotov.stubby4j.database;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.builder.yaml.YamlBuilder;
+import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -51,7 +51,7 @@ public class StubbedDataManagerTest {
 
     private static StubbedDataManager stubbedDataManager;
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
-    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
+    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
 
     @BeforeClass
     public static void beforeClass() throws Exception {

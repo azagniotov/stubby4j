@@ -42,20 +42,20 @@ if (JavaVersion.current().isJava8Compatible()) {
 
 subprojects {
     subproject ->
-        sourceCompatibility = 1.8
-        tasks.withType(JavaCompile) {
-            doFirst {
-                assert sourceCompatibility == "1.8": "The sourceCompatibility of $name was changed!"
-            }
-            options.encoding = 'UTF-8'
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-        targetCompatibility = 1.8
         repositories {
             mavenLocal()
             mavenCentral()
             jcenter()
         }
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+        [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+        [compileJava]*.options*.compilerArgs = [
+                "-Xlint:-varargs", "-Xlint:cast", "-Xlint:classfile",
+                "-Xlint:dep-ann", "-Xlint:divzero", "-Xlint:empty", "-Xlint:finally",
+                "-Xlint:overrides", "-Xlint:path", "-Xlint:processing",
+                "-Xlint:try", "-Xlint:-fallthrough", "-Xlint:-rawtypes", "-Xlint:-deprecation",
+                "-Xlint:-unchecked", "-Xlint:-options"]
         apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
 

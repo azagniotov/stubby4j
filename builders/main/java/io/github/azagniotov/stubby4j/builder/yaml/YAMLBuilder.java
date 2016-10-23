@@ -15,7 +15,7 @@ import java.util.Set;
  * @since 4/13/13, 12:13 AM
  */
 @SuppressWarnings("unchecked")
-public final class YamlBuilder {
+public final class YAMLBuilder {
 
     private static final String TWO_SPACE = String.format("%1$2s", "");
     private static final String THREE_SPACE = String.format("%1$3s", "");
@@ -58,7 +58,7 @@ public final class YamlBuilder {
     private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
 
 
-    final Set<String> storedStubbedMethods = new LinkedHashSet<String>();
+    final Set<String> storedStubbedMethods = new LinkedHashSet<>();
 
     final Set<String> unusedNodes = new HashSet<String>() {{
         add(REQUEST_HEADERS_KEY);
@@ -71,7 +71,7 @@ public final class YamlBuilder {
     private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
 
-    public YamlBuilder() {
+    public YAMLBuilder() {
 
     }
 

@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
-import io.github.azagniotov.stubby4j.builder.yaml.YamlBuilder;
+import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
@@ -19,7 +19,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class YAMLParserLoadTest {
 
-    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
+    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
 
 
     @Test

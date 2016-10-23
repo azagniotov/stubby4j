@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -182,6 +183,13 @@ public class StubHttpLifecycle {
     }
 
     @Override
+    @CoberturaIgnore
+    public int hashCode() {
+        return request.hashCode();
+    }
+
+    @Override
+    @CoberturaIgnore
     public boolean equals(final Object o) {
         if (this == o) {
             return true;

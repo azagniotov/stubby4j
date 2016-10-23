@@ -14,7 +14,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author Alexander Zagniotov
  * @since 4/13/13, 12:50 AM
  */
-public class YamlBuilderTest {
+public class YAMLBuilderTest {
 
     @Test
     public void shouldBuildStubbedResponseWithSequenceResponses() throws Exception {
@@ -40,8 +40,8 @@ public class YamlBuilderTest {
                         "         body: OMFG!!!" + FileUtils.BR +
                         "         file: ../../response.json";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -89,8 +89,8 @@ public class YamlBuilderTest {
                         "            content-type: application/json" + FileUtils.BR +
                         "         file: ../path/to/error.file";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -124,8 +124,8 @@ public class YamlBuilderTest {
                         "      status: 200" + FileUtils.BR +
                         "      body: OK";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder.
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder.
                 newStubbedRequest().
                 withMethodHead().
                 withMethodGet().
@@ -156,8 +156,8 @@ public class YamlBuilderTest {
                         "      status: 200" + FileUtils.BR +
                         "      file: ../json/systemtest-body-response-as-file.json";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder.
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder.
                 newStubbedRequest().
                 withQuery("status", "active").
                 withQuery("type", "full").
@@ -194,8 +194,8 @@ public class YamlBuilderTest {
                         "      body: >" + FileUtils.BR +
                         "         {\"id\": \"123\", \"status\": \"updated\"}";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder.
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder.
                 newStubbedRequest().
                 withMethodPut().
                 withUrl("/invoice/123").
@@ -234,8 +234,8 @@ public class YamlBuilderTest {
                         "         pragma: no-cache" + FileUtils.BR +
                         "         location: /invoice/exit";
 
-        final YamlBuilder yamlBuilder = new YamlBuilder();
-        final String actualYaml = yamlBuilder.
+        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
+        final String actualYaml = YAMLBuilder.
                 newStubbedRequest().
                 withHeaderContentType(Common.HEADER_APPLICATION_JSON).
                 withHeaderContentLanguage("US-en").

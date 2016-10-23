@@ -4,7 +4,7 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import io.github.azagniotov.stubby4j.builder.yaml.YamlBuilder;
+import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -62,7 +62,7 @@ public class StubsAdminPortalsTest {
     @Test
     public void should_UpdateStubsDataAndGetNewResource_WhenSuccessfulValidPostMade_ToAdminPortalRoot() throws Exception {
 
-        final String yamlToUpdate = new YamlBuilder()
+        final String yamlToUpdate = new YAMLBuilder()
                 .newStubbedRequest()
                 .withUrl("^/new/resource/.*$")
                 .withMethodGet()

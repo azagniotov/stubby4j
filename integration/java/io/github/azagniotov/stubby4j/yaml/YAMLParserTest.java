@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.yaml;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builder.yaml.YamlBuilder;
+import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -33,7 +33,7 @@ public class YAMLParserTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
+    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
 
     @Test
     public void shouldUnmarshall_WhenEmptyYAMLGiven() throws Exception {
