@@ -343,7 +343,7 @@ public class StubbyClientTest {
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
         assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
-        assertThat(stubbyResponse.getContent()).contains("With post data: post body");
+        assertThat(stubbyResponse.getContent()).contains("post body");
     }
 
 
@@ -357,7 +357,7 @@ public class StubbyClientTest {
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
         assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
-        assertThat(stubbyResponse.getContent()).contains("With post data: post body");
+        assertThat(stubbyResponse.getContent()).contains("post body");
     }
 
     @Test
@@ -370,7 +370,7 @@ public class StubbyClientTest {
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
         assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1");
-        assertThat(stubbyResponse.getContent()).contains("With post data: unexpected or wrong post body");
+        assertThat(stubbyResponse.getContent()).contains("unexpected or wrong post body");
     }
 
     @Test

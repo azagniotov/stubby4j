@@ -27,6 +27,7 @@ import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxEndpointStatsHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxResourceContentHandler;
 import io.github.azagniotov.stubby4j.handlers.FaviconHandler;
+import io.github.azagniotov.stubby4j.handlers.JsonErrorHandler;
 import io.github.azagniotov.stubby4j.handlers.StatusPageHandler;
 import io.github.azagniotov.stubby4j.handlers.StubDataRefreshActionHandler;
 import io.github.azagniotov.stubby4j.handlers.StubsPortalHandler;
@@ -175,8 +176,10 @@ public final class JettyFactory {
         contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
         contextHandler.setHandler(handler);
 
+        contextHandler.setErrorHandler(new JsonErrorHandler());
+
         final MimeTypes mimeTypes = new MimeTypes();
-        mimeTypes.setMimeMap(new HashMap<String, String>());
+        mimeTypes.setMimeMap(new HashMap<>());
         contextHandler.setMimeTypes(mimeTypes);
 
         return contextHandler;

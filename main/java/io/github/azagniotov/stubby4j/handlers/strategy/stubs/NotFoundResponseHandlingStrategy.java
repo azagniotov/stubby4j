@@ -22,10 +22,9 @@ package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletResponse;
-
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
@@ -38,12 +37,24 @@ public final class NotFoundResponseHandlingStrategy implements StubResponseHandl
 
         HandlerUtils.setResponseMainHeaders(response);
 
-        final String postMessage = assertionStubRequest.hasPostBody() ? String.format(BR + "\t%s%s", "With post data: ", assertionStubRequest.getPostBody()) : "";
-        final String headersMessage = assertionStubRequest.hasHeaders() ? String.format(BR + "\t%s%s", "With headers: ", assertionStubRequest.getHeaders()) : "";
-        final String queryMessage = (assertionStubRequest.hasQuery() ? String.format(BR + "\t%s%s", "With query params: ", assertionStubRequest.getQuery()) : "");
+        final String reason = String.format("(404) Nothing found for %s request at URI %s", assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl());
 
-        final String error = String.format("(404) Nothing found for %s request at URI %s%s%s%s", assertionStubRequest.getMethod().get(0), assertionStubRequest.getUrl(), postMessage, headersMessage, queryMessage);
+        final JSONObject json404Response = new JSONObject();
+        json404Response.put("reason", reason);
+        json404Response.put("method", assertionStubRequest.getMethod().get(0));
+        json404Response.put("url", assertionStubRequest.getUrl());
 
-        HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, error);
+        if (assertionStubRequest.hasQuery()) {
+            json404Response.put("query", new JSONObject(assertionStubRequest.getQuery()));
+        }
+
+        if (assertionStubRequest.hasHeaders()) {
+            json404Response.put("headers", new JSONObject(assertionStubRequest.getHeaders()));
+        }
+
+        if (assertionStubRequest.hasPostBody()) {
+            json404Response.put("post", assertionStubRequest.getPostBody());
+        }
+        HandlerUtils.configureErrorResponse(response, HttpStatus.NOT_FOUND_404, json404Response.toString());
     }
 }
