@@ -101,7 +101,7 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(buildStubbyParametersHtmlTable());
         builder.append(buildEndpointStatsHtmlTable());
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubHttpLifecycles();
+        final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubs();
         for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
             final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
             builder.append(buildStubRequestHtmlTable(stubHttpLifecycle));
@@ -115,7 +115,7 @@ public final class StatusPageHandler extends AbstractHandler {
 
     private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
         final String resourceId = stubHttpLifecycle.getResourceId();
-        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYaml");
+        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYAML");
         final StringBuilder requestTableBuilder = buildStubHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
         requestTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
@@ -125,17 +125,17 @@ public final class StatusPageHandler extends AbstractHandler {
     private String buildStubResponseHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
         final String resourceId = stubHttpLifecycle.getResourceId();
         final StringBuilder responseTableBuilder = new StringBuilder();
-        final List<StubResponse> allResponses = stubHttpLifecycle.getAllResponses();
+        final List<StubResponse> allResponses = stubHttpLifecycle.getResponses();
         for (int sequenceId = 0; sequenceId < allResponses.size(); sequenceId++) {
 
-            final boolean isResponsesSequenced = allResponses.size() == 1 ? false : true;
+            final boolean isResponsesSequenced = allResponses.size() != 1;
             final int nextSequencedResponseId = stubHttpLifecycle.getNextSequencedResponseId();
             final String nextResponseLabel = (isResponsesSequenced && nextSequencedResponseId == sequenceId ? NEXT_IN_THE_QUEUE : "");
             final String responseTableTitle = (isResponsesSequenced ? String.format("%s/%s%s", YamlProperties.RESPONSE, sequenceId, nextResponseLabel) : YamlProperties.RESPONSE);
             final StubResponse stubResponse = allResponses.get(sequenceId);
             final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
             final StringBuilder sequencedResponseBuilder = buildStubHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
-            final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYaml");
+            final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYAML");
             sequencedResponseBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToResponseAsYaml));
 
             responseTableBuilder.append(String.format(TEMPLATE_HTML_TABLE, responseTableTitle, sequencedResponseBuilder.toString()));
@@ -179,8 +179,8 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(interpolateHtmlTableRowTemplate("LOCAL BUILT DATE", JarUtils.readManifestBuiltDate()));
         builder.append(interpolateHtmlTableRowTemplate("UPTIME", HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
         builder.append(interpolateHtmlTableRowTemplate("INPUT ARGS", CommandLineInterpreter.PROVIDED_OPTIONS));
-        builder.append(interpolateHtmlTableRowTemplate("STUBBED ENDPOINTS", stubbedDataManager.getStubHttpLifecycles().size()));
-        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubbedDataManager.getDataYaml())));
+        builder.append(interpolateHtmlTableRowTemplate("STUBBED ENDPOINTS", stubbedDataManager.getStubs().size()));
+        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubbedDataManager.getYAMLConfig())));
 
         if (!stubbedDataManager.getExternalFiles().isEmpty()) {
             final StringBuilder externalFilesMetadata = new StringBuilder();

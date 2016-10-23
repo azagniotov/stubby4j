@@ -64,11 +64,11 @@ enum RegexParser {
             final Matcher matcher = pattern.matcher(subject);
             final boolean isMatch = matcher.matches();
             if (isMatch) {
-                // group(0) holds the full regex match
+                // group(0) holds the full regex matchStubByIndex
                 regexGroups.put(buildToken(templateTokenName, 0), matcher.group(0));
 
                 //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
-                // of whether the capturing groups actually participated in the match. It does not include matcher.group(0)
+                // of whether the capturing groups actually participated in the matchStubByIndex. It does not include matcher.group(0)
                 final int groupCount = matcher.groupCount();
                 if (groupCount > 0) {
                     for (int idx = 1; idx <= groupCount; idx++) {

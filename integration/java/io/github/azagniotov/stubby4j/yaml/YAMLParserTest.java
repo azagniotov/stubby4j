@@ -28,7 +28,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author Alexander Zagniotov
  * @since 10/6/12, 8:13 PM
  */
-public class YamlParserTest {
+public class YAMLParserTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -57,7 +57,7 @@ public class YamlParserTest {
         final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
-        assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
+        assertThat(actualHttpLifecycle.getResponses()).hasSize(1);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class YamlParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
-        assertThat(actualHttpLifecycle.getAllResponses()).hasSize(1);
+        assertThat(actualHttpLifecycle.getResponses()).hasSize(1);
         assertThat(actualResponse.getStatus()).isEqualTo(expectedStatus);
     }
 
@@ -264,7 +264,7 @@ public class YamlParserTest {
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
         assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.request.xml");
-        assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
+        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
     }
 
 
@@ -316,7 +316,7 @@ public class YamlParserTest {
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
         assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.response.xml");
-        assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
+        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
     }
 
     @Test
@@ -683,7 +683,7 @@ public class YamlParserTest {
         assertThat(loadedHttpCycles.size()).isEqualTo(1);
 
         final StubHttpLifecycle cycle = loadedHttpCycles.get(0);
-        final List<StubResponse> allResponses = cycle.getAllResponses();
+        final List<StubResponse> allResponses = cycle.getResponses();
 
         for (int idx = 0; idx < allResponses.size(); idx++) {
             final StubResponse sequenceStubResponse = allResponses.get(idx);
@@ -730,7 +730,7 @@ public class YamlParserTest {
 
         for (int resourceId = 0; resourceId < loadedHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = loadedHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -742,6 +742,6 @@ public class YamlParserTest {
 
 
     private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
-        return new YamlParser().parse(".", FileUtils.constructReader(yaml));
+        return new YAMLParser().parse(".", FileUtils.constructReader(yaml));
     }
 }

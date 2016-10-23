@@ -245,23 +245,23 @@ public class StubRequest {
             final StubRequest stubbedRequest = (StubRequest) o;
 
             if (!urlsMatch(stubbedRequest.url, this.url)) {
-                ANSITerminal.error(String.format("Failed match for URL %s WITH %s", stubbedRequest.url, this.url));
+                ANSITerminal.error(String.format("Failed matchStubByIndex for URL %s WITH %s", stubbedRequest.url, this.url));
                 return false;
             }
             if (!listsIntersect(stubbedRequest.getMethod(), this.getMethod())) {
-                ANSITerminal.error(String.format("Failed match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
+                ANSITerminal.error(String.format("Failed matchStubByIndex for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
                 return false;
             }
             if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
-                ANSITerminal.error(String.format("Failed match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
+                ANSITerminal.error(String.format("Failed matchStubByIndex for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
                 return false;
             }
             if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
-                ANSITerminal.error(String.format("Failed match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
+                ANSITerminal.error(String.format("Failed matchStubByIndex for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
                 return false;
             }
             if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
-                ANSITerminal.error(String.format("Failed match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
+                ANSITerminal.error(String.format("Failed matchStubByIndex for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
                 return false;
             }
             return true;

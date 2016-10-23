@@ -24,7 +24,7 @@ import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.server.JettyContext;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
@@ -60,9 +60,9 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
         try {
-            stubbedDataManager.refreshStubbedData(new YamlParser());
+            stubbedDataManager.refreshStubsFromYAMLConfig(new YAMLParser());
             final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
-                    stubbedDataManager.getDataYaml());
+                    stubbedDataManager.getYAMLConfig());
             response.getWriter().println(successMessage);
             ANSITerminal.ok(successMessage);
         } catch (final Exception ex) {

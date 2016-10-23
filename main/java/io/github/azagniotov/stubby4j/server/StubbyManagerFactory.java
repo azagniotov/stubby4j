@@ -27,7 +27,7 @@ import io.github.azagniotov.stubby4j.database.thread.ExternalFilesScanner;
 import io.github.azagniotov.stubby4j.database.thread.MainYamlScanner;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -48,7 +48,7 @@ public class StubbyManagerFactory {
         Log.setLog(new EmptyLogger());
 
         final File dataYamlFile = new File(dataYamlFilename);
-        final List<StubHttpLifecycle> httpLifecycles = new YamlParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
+        final List<StubHttpLifecycle> httpLifecycles = new YAMLParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
 
         System.out.println();
 

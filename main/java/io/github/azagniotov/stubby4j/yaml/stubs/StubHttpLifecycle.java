@@ -38,11 +38,11 @@ public class StubHttpLifecycle {
     private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
 
     public static final StubHttpLifecycle NULL = null;
-    private String httpLifeCycleAsYaml;
+    private String completeYAML;
     private StubRequest request;
     private Object response;
-    private String requestAsYaml;
-    private String responseAsYaml;
+    private String requestAsYAML;
+    private String responseAsYAML;
 
     public StubHttpLifecycle() {
         response = StubResponse.newStubResponse();
@@ -84,7 +84,7 @@ public class StubHttpLifecycle {
         return responseSequencedIdCounter.get();
     }
 
-    public List<StubResponse> getAllResponses() {
+    public List<StubResponse> getResponses() {
 
         if (response instanceof StubResponse) {
             return new LinkedList<StubResponse>() {{
@@ -109,49 +109,57 @@ public class StubHttpLifecycle {
         return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
     }
 
-    public boolean isAssertingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
+    public boolean isIncomingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
         final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
         return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
     }
 
     public String getResourceId() {
-        return getAllResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        return getResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
     }
 
-    public String getHttpLifeCycleAsYaml() {
-        return httpLifeCycleAsYaml;
-    }
-
-    public void setHttpLifeCycleAsYaml(final String httpLifeCycleAsYaml) {
-        this.httpLifeCycleAsYaml = httpLifeCycleAsYaml;
+    public String getStubbedUrl() {
+        return request.getUrl();
     }
 
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
      */
-    public String getRequestAsYaml() {
-        return requestAsYaml;
+    public String getCompleteYAML() {
+        return completeYAML;
     }
 
-    public void setRequestAsYaml(final String requestAsYaml) {
-        this.requestAsYaml = requestAsYaml;
+    public void setCompleteYAML(final String completeYAML) {
+        this.completeYAML = completeYAML;
     }
 
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
      */
-    public String getResponseAsYaml() {
-        return responseAsYaml;
+    public String getRequestAsYAML() {
+        return requestAsYAML;
     }
 
-    public void setResponseAsYaml(final String responseAsYaml) {
-        this.responseAsYaml = responseAsYaml;
+    public void setRequestAsYAML(final String requestAsYAML) {
+        this.requestAsYAML = requestAsYAML;
+    }
+
+    /**
+     * Do not remove this method if your IDE complains that it is unused.
+     * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
+     */
+    public String getResponseAsYAML() {
+        return responseAsYAML;
+    }
+
+    public void setResponseAsYAML(final String responseAsYAML) {
+        this.responseAsYAML = responseAsYAML;
     }
 
     public void setResourceId(final int listIndex) {
-        for (final StubResponse response : getAllResponses()) {
+        for (final StubResponse response : getResponses()) {
             response.addResourceIDHeader(listIndex);
         }
     }
@@ -168,7 +176,7 @@ public class StubHttpLifecycle {
     }
 
     public String getAjaxResponseContent(final String propertyName, final int sequencedResponseId) throws Exception {
-        final List<StubResponse> allResponses = getAllResponses();
+        final List<StubResponse> allResponses = getResponses();
         final StubResponse sequencedResponse = allResponses.get(sequencedResponseId);
         return StringUtils.objectToString(ReflectionUtils.getPropertyValue(sequencedResponse, propertyName));
     }

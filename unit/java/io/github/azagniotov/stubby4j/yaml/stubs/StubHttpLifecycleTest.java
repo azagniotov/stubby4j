@@ -173,7 +173,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle stubbedStubHttpLifecycle = new StubHttpLifecycle();
         stubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
-        assertThat(stubbedStubHttpLifecycle.isAssertingRequestUnauthorized(assertingStubHttpLifecycle)).isTrue();
+        assertThat(stubbedStubHttpLifecycle.isIncomingRequestUnauthorized(assertingStubHttpLifecycle)).isTrue();
     }
 
     @Test
@@ -184,7 +184,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
-        assertThat(spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
+        assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
     }
 
     @Test
@@ -195,7 +195,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
-        spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
+        spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
         verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
         verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
@@ -212,7 +212,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
-        assertThat(spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
+        assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
     }
 
     @Test
@@ -223,7 +223,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
-        spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
+        spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
         verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
         verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
@@ -240,7 +240,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
-        assertThat(spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
+        assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
     }
 
     @Test
@@ -251,7 +251,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
-        spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
+        spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
         verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
         verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
@@ -268,7 +268,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer("Bearer Ym9iOnNlY3JldA==").build());
 
-        assertThat(spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
+        assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
     }
 
     @Test
@@ -279,7 +279,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer("Bearer Ym9iOnNlY3JldA==").build());
 
-        spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
+        spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
         verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
         verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));
@@ -297,7 +297,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
-        assertThat(spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
+        assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
     }
 
     @Test
@@ -309,7 +309,7 @@ public class StubHttpLifecycleTest {
         final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
-        spyStubbedStubHttpLifecycle.isAssertingRequestUnauthorized(spyAssertingStubHttpLifecycle);
+        spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
 
         verify(spyAssertingStubHttpLifecycle, times(1)).getRawAuthorizationHttpHeader();
         verify(spyAssertingStubHttpLifecycle, never()).getStubbedAuthorizationHeaderValue(any(StubAuthorizationTypes.class));

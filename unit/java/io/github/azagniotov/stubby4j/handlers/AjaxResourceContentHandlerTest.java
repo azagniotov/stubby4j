@@ -68,7 +68,7 @@ public class AjaxResourceContentHandlerTest {
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-        verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+        verify(spyAjaxResourceContentHandler).throwErrorOnNonExistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
         verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
         verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
@@ -92,7 +92,7 @@ public class AjaxResourceContentHandlerTest {
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-        verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+        verify(spyAjaxResourceContentHandler).throwErrorOnNonExistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
         verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), stubTypeCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
         verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), anyInt(), anyString(), any(StubHttpLifecycle.class));
 
@@ -116,7 +116,7 @@ public class AjaxResourceContentHandlerTest {
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-        verify(spyAjaxResourceContentHandler).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
+        verify(spyAjaxResourceContentHandler).throwErrorOnNonExistentResourceIndex(any(HttpServletResponse.class), httpCycleIndexCaptor.capture());
         verify(spyAjaxResourceContentHandler, times(1)).renderAjaxResponseContent(any(HttpServletResponse.class), responseSequenceCaptor.capture(), fieldCaptor.capture(), any(StubHttpLifecycle.class));
         verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));
 
@@ -136,7 +136,7 @@ public class AjaxResourceContentHandlerTest {
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
-        verify(spyAjaxResourceContentHandler, times(1)).throwErrorOnNonexistentResourceIndex(any(HttpServletResponse.class), anyInt());
+        verify(spyAjaxResourceContentHandler, times(1)).throwErrorOnNonExistentResourceIndex(any(HttpServletResponse.class), anyInt());
         verify(mockPrintWriter, times(1)).println("Could not fetch the content for stub type: WRONG-STUB-TYPE");
 
         verify(spyAjaxResourceContentHandler, never()).renderAjaxResponseContent(any(HttpServletResponse.class), any(StubTypes.class), anyString(), any(StubHttpLifecycle.class));

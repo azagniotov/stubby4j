@@ -48,7 +48,7 @@ import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CU
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 @SuppressWarnings("unchecked")
-public class YamlParser {
+public class YAMLParser {
 
     public static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private String dataConfigHomeDirectory;
@@ -101,15 +101,15 @@ public class YamlParser {
             }
         }
 
-        httpLifecycle.setHttpLifeCycleAsYaml(marshallNodeMapToYaml(parentNodesMap));
+        httpLifecycle.setCompleteYAML(marshallNodeMapToYaml(parentNodesMap));
 
         final Map<String, Object> requestMap = new HashMap<>();
         requestMap.put(YamlProperties.REQUEST, parentNodesMap.get(YamlProperties.REQUEST));
-        httpLifecycle.setRequestAsYaml(marshallNodeToYaml(requestMap));
+        httpLifecycle.setRequestAsYAML(marshallNodeToYaml(requestMap));
 
         final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put(YamlProperties.RESPONSE, parentNodesMap.get(YamlProperties.RESPONSE));
-        httpLifecycle.setResponseAsYaml(marshallNodeToYaml(responseMap));
+        httpLifecycle.setResponseAsYAML(marshallNodeToYaml(responseMap));
 
         return httpLifecycle;
     }

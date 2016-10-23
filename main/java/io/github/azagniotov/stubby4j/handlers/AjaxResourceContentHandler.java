@@ -70,19 +70,19 @@ public class AjaxResourceContentHandler extends AbstractHandler {
 
         if (REGEX_NUMERIC.matcher(stubType).matches()) {
             final int sequencedResponseId = Integer.parseInt(stubType);
-            final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
-            final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
-            renderAjaxResponseContent(response, sequencedResponseId, targetFieldName, foundStubHttpLifecycle);
+            final int resourceIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
+            final StubHttpLifecycle foundStub = throwErrorOnNonExistentResourceIndex(response, resourceIndex);
+            renderAjaxResponseContent(response, sequencedResponseId, targetFieldName, foundStub);
         } else {
 
-            final int stubHttpCycleIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
-            final StubHttpLifecycle foundStubHttpLifecycle = throwErrorOnNonexistentResourceIndex(response, stubHttpCycleIndex);
+            final int resourceIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
+            final StubHttpLifecycle foundStub = throwErrorOnNonExistentResourceIndex(response, resourceIndex);
             if (REGEX_REQUEST.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStubHttpLifecycle);
+                renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStub);
             } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStubHttpLifecycle);
+                renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStub);
             } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStubHttpLifecycle);
+                renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStub);
             } else {
                 response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
             }
@@ -92,10 +92,10 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     }
 
     @VisibleForTesting
-    void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+    void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
         try {
-            final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(stubType, targetFieldName);
-            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+            final String ajaxResponse = foundStub.getAjaxResponseContent(stubType, targetFieldName);
+            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStub.getResourceId(), targetFieldName, ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -103,10 +103,10 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     }
 
     @VisibleForTesting
-    void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStubHttpLifecycle) throws IOException {
+    void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
         try {
-            final String ajaxResponse = foundStubHttpLifecycle.getAjaxResponseContent(targetFieldName, sequencedResponseId);
-            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStubHttpLifecycle.getResourceId(), targetFieldName, ajaxResponse);
+            final String ajaxResponse = foundStub.getAjaxResponseContent(targetFieldName, sequencedResponseId);
+            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStub.getResourceId(), targetFieldName, ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -114,11 +114,11 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     }
 
     @VisibleForTesting
-    StubHttpLifecycle throwErrorOnNonexistentResourceIndex(final HttpServletResponse response, final int stubHttpCycleIndex) throws IOException {
-        final StubHttpLifecycle foundStubHttpLifecycle = stubbedDataManager.getMatchedStubHttpLifecycle(stubHttpCycleIndex);
-        if (ObjectUtils.isNull(foundStubHttpLifecycle)) {
-            response.getWriter().println("Resource does not exist for ID: " + stubHttpCycleIndex);
+    StubHttpLifecycle throwErrorOnNonExistentResourceIndex(final HttpServletResponse response, final int resourceIndex) throws IOException {
+        final StubHttpLifecycle foundStub = stubbedDataManager.matchStubByIndex(resourceIndex);
+        if (ObjectUtils.isNull(foundStub)) {
+            response.getWriter().println("Resource does not exist for ID: " + resourceIndex);
         }
-        return foundStubHttpLifecycle;
+        return foundStub;
     }
 }

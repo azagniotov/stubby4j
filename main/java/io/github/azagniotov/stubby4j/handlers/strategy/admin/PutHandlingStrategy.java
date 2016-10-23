@@ -4,7 +4,7 @@ import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -25,7 +25,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
         final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
         final int stubIndexToUpdate = Integer.parseInt(pathInfoNoHeadingSlash);
 
-        if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(stubIndexToUpdate)) {
+        if (!stubbedDataManager.canMatchStubByIndex(stubIndexToUpdate)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
             HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
@@ -38,7 +38,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        final String updatedCycleUrl = stubbedDataManager.refreshStubbedData(new YamlParser(), put, stubIndexToUpdate);
+        final String updatedCycleUrl = stubbedDataManager.refreshStubByIndex(new YAMLParser(), put, stubIndexToUpdate);
 
         response.setStatus(HttpStatus.CREATED_201);
         response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);

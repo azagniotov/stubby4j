@@ -23,13 +23,13 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
         final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
         final int stubIndexToDelete = Integer.parseInt(pathInfoNoHeadingSlash);
 
-        if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(stubIndexToDelete)) {
+        if (!stubbedDataManager.canMatchStubByIndex(stubIndexToDelete)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
             HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
         }
 
-        stubbedDataManager.deleteStubHttpLifecycleByIndex(stubIndexToDelete);
+        stubbedDataManager.deleteStubByIndex(stubIndexToDelete);
         response.setStatus(HttpStatus.OK_200);
         response.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
     }

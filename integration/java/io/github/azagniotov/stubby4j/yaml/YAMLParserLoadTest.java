@@ -17,7 +17,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author: Alexander Zagniotov
  * Created: 4/22/13 6:39 PM
  */
-public class YamlParserLoadTest {
+public class YAMLParserLoadTest {
 
     private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
 
@@ -75,7 +75,7 @@ public class YamlParserLoadTest {
     }
 
     private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
-        return new YamlParser().parse(".", FileUtils.constructReader(yaml));
+        return new YAMLParser().parse(".", FileUtils.constructReader(yaml));
     }
 
 }

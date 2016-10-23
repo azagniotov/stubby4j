@@ -4,7 +4,7 @@ import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -28,9 +28,9 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        stubbedDataManager.refreshStubbedData(new YamlParser(), post);
+        stubbedDataManager.refreshStubsByPost(new YAMLParser(), post);
 
-        if (stubbedDataManager.getStubHttpLifecycles().size() == 1) {
+        if (stubbedDataManager.getStubs().size() == 1) {
             response.addHeader(HttpHeader.LOCATION.asString(), stubbedDataManager.getOnlyStubRequestUrl());
         }
 

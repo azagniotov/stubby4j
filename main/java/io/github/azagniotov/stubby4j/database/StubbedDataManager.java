@@ -25,7 +25,7 @@ import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
 import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.RedirectStubResponse;
@@ -34,6 +34,7 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -48,39 +49,40 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class StubbedDataManager {
 
-    private final File dataYaml;
-    private final List<StubHttpLifecycle> stubHttpLifecycles;
+    private final File yamlConfig;
+    private final List<StubHttpLifecycle> stubs;
     private StubbyHttpTransport stubbyHttpTransport;
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
 
-    public StubbedDataManager(final File dataYaml, final List<StubHttpLifecycle> stubHttpLifecycles) {
-        this.dataYaml = dataYaml;
-        this.stubHttpLifecycles = Collections.synchronizedList(stubHttpLifecycles);
+    public StubbedDataManager(final File yamlConfig, final List<StubHttpLifecycle> loadedStubs) {
+        this.yamlConfig = yamlConfig;
+        this.stubs = Collections.synchronizedList(loadedStubs);
         this.stubbyHttpTransport = new StubbyHttpTransport();
         this.resourceStats = new ConcurrentHashMap<>();
     }
 
-    public StubResponse findStubResponseFor(final StubRequest assertingRequest) {
-        final StubHttpLifecycle assertingLifecycle = new StubHttpLifecycle();
-        assertingLifecycle.setRequest(assertingRequest);
-        assertingLifecycle.setResponse(StubResponse.newStubResponse());
+    public StubResponse findStubResponseFor(final StubRequest incomingRequest) {
+        final StubHttpLifecycle incomingLifecycle = new StubHttpLifecycle();
+        incomingLifecycle.setRequest(incomingRequest);
+        incomingLifecycle.setResponse(StubResponse.newStubResponse());
 
-        return identifyStubResponseType(assertingLifecycle);
+        return findMatch(incomingLifecycle);
     }
 
-    private StubResponse identifyStubResponseType(final StubHttpLifecycle assertingLifecycle) {
+    private StubResponse findMatch(final StubHttpLifecycle incomingLifecycle) {
 
-        final StubHttpLifecycle matchedLifecycle = getMatchedStubHttpLifecycle(assertingLifecycle);
-        if (ObjectUtils.isNull(matchedLifecycle)) {
+        final StubHttpLifecycle matchedStub = matchStub(incomingLifecycle);
+
+        if (ObjectUtils.isNull(matchedStub)) {
             return new NotFoundStubResponse();
         }
 
-        final String resourceId = matchedLifecycle.getResourceId();
+        final String resourceId = matchedStub.getResourceId();
         resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
         resourceStats.get(resourceId).incrementAndGet();
 
-        final StubResponse stubResponse = matchedLifecycle.getResponse(true);
-        if (matchedLifecycle.isAuthorizationRequired() && matchedLifecycle.isAssertingRequestUnauthorized(assertingLifecycle)) {
+        final StubResponse stubResponse = matchedStub.getResponse(true);
+        if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingLifecycle)) {
             return new UnauthorizedStubResponse();
         }
 
@@ -91,7 +93,7 @@ public class StubbedDataManager {
         if (stubResponse.isRecordingRequired()) {
             final String recordingSource = stubResponse.getBody();
             try {
-                final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedLifecycle.getRequest(), recordingSource);
+                final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
                 ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
             } catch (Exception e) {
                 ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
@@ -100,55 +102,66 @@ public class StubbedDataManager {
         return stubResponse;
     }
 
-    private synchronized StubHttpLifecycle getMatchedStubHttpLifecycle(final StubHttpLifecycle assertingLifecycle) {
-        final int listIndex = stubHttpLifecycles.indexOf(assertingLifecycle);
-        if (listIndex < 0) {
+    /**
+     * That's the point where the incoming {@link StubHttpLifecycle} that was created from the incoming
+     * raw {@link HttpServletRequest request} is matched to the loaded stubs.
+     * <p>
+     * The {@link List<StubHttpLifecycle>#indexOf(Object)} implicitly invokes {@link StubHttpLifecycle#equals(Object)},
+     * which invokes the {@link StubRequest#equals(Object)}.
+     *
+     * @param incomingRequest {@link StubHttpLifecycle}
+     * @return matched {@link StubHttpLifecycle}
+     * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
+     * @see StubHttpLifecycle#equals(Object)
+     * @see StubRequest#equals(Object)
+     */
+    private synchronized StubHttpLifecycle matchStub(final StubHttpLifecycle incomingRequest) {
+        final int index = stubs.indexOf(incomingRequest);
+        if (index < 0) {
             return StubHttpLifecycle.NULL;
         }
-        final StubHttpLifecycle foundStubHttpLifecycle = stubHttpLifecycles.get(listIndex);
-        foundStubHttpLifecycle.setResourceId(listIndex);
+        final StubHttpLifecycle matched = stubs.get(index);
+        matched.setResourceId(index);
 
-        return foundStubHttpLifecycle;
+        return matched;
     }
 
-    public synchronized StubHttpLifecycle getMatchedStubHttpLifecycle(final int index) {
+    public synchronized StubHttpLifecycle matchStubByIndex(final int index) {
 
-        if (!isStubHttpLifecycleExistsByIndex(index)) {
+        if (!canMatchStubByIndex(index)) {
             return StubHttpLifecycle.NULL;
         }
-        return stubHttpLifecycles.get(index);
+        return stubs.get(index);
     }
 
-    public synchronized boolean resetStubHttpLifecycles(final List<StubHttpLifecycle> stubHttpLifecycles) {
-        this.stubHttpLifecycles.clear();
-        final boolean added = this.stubHttpLifecycles.addAll(stubHttpLifecycles);
+    synchronized boolean resetStubsCache(final List<StubHttpLifecycle> newStubs) {
+        this.stubs.clear();
+        final boolean added = this.stubs.addAll(newStubs);
         if (added) {
             updateResourceIDHeaders();
         }
         return added;
     }
 
-    public synchronized void refreshStubbedData(final YamlParser yamlParser) throws Exception {
-        final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), dataYaml);
-        resetStubHttpLifecycles(stubHttpLifecycles);
+    public synchronized void refreshStubsFromYAMLConfig(final YAMLParser yamlParser) throws Exception {
+        resetStubsCache(yamlParser.parse(this.yamlConfig.getParent(), yamlConfig));
     }
 
-    public synchronized void refreshStubbedData(final YamlParser yamlParser, final String post) throws Exception {
-        final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), post);
-        resetStubHttpLifecycles(stubHttpLifecycles);
+    public synchronized void refreshStubsByPost(final YAMLParser yamlParser, final String postPayload) throws Exception {
+        resetStubsCache(yamlParser.parse(this.yamlConfig.getParent(), postPayload));
     }
 
-    public synchronized String refreshStubbedData(final YamlParser yamlParser, final String put, final int stubIndexToUpdate) throws Exception {
-        final List<StubHttpLifecycle> stubHttpLifecycles = yamlParser.parse(this.dataYaml.getParent(), put);
-        final StubHttpLifecycle newStubHttpLifecycle = stubHttpLifecycles.get(0);
-        updateStubHttpLifecycleByIndex(stubIndexToUpdate, newStubHttpLifecycle);
+    public synchronized String refreshStubByIndex(final YAMLParser yamlParser, final String putPayload, final int index) throws Exception {
+        final List<StubHttpLifecycle> parsedStubs = yamlParser.parse(this.yamlConfig.getParent(), putPayload);
+        final StubHttpLifecycle newStub = parsedStubs.get(0);
+        updateStubByIndex(index, newStub);
 
-        return newStubHttpLifecycle.getRequest().getUrl();
+        return newStub.getStubbedUrl();
     }
 
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
-    public List<StubHttpLifecycle> getStubHttpLifecycles() {
-        return new LinkedList<>(stubHttpLifecycles);
+    public List<StubHttpLifecycle> getStubs() {
+        return new LinkedList<>(stubs);
     }
 
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
@@ -162,76 +175,76 @@ public class StubbedDataManager {
     }
 
     public synchronized String getOnlyStubRequestUrl() {
-        return stubHttpLifecycles.get(0).getRequest().getUrl();
+        return stubs.get(0).getStubbedUrl();
     }
 
-    public File getDataYaml() {
-        return dataYaml;
+    public File getYAMLConfig() {
+        return yamlConfig;
     }
 
     public synchronized Map<File, Long> getExternalFiles() {
         final Set<String> escrow = new HashSet<>();
         final Map<File, Long> externalFiles = new HashMap<>();
-        for (StubHttpLifecycle cycle : stubHttpLifecycles) {
-            storeExternalFileInCache(escrow, externalFiles, cycle.getRequest().getRawFile());
+        for (final StubHttpLifecycle stub : stubs) {
+            cacheExternalFile(escrow, externalFiles, stub.getRequest().getRawFile());
 
-            final List<StubResponse> allResponses = cycle.getAllResponses();
-            for (StubResponse stubbedResponse : allResponses) {
-                storeExternalFileInCache(escrow, externalFiles, stubbedResponse.getRawFile());
+            final List<StubResponse> responses = stub.getResponses();
+            for (final StubResponse stubbedResponse : responses) {
+                cacheExternalFile(escrow, externalFiles, stubbedResponse.getRawFile());
             }
         }
 
         return externalFiles;
     }
 
-    private void storeExternalFileInCache(final Set<String> escrow, final Map<File, Long> externalFiles, final File file) {
+    private void cacheExternalFile(final Set<String> escrow, final Map<File, Long> externalFiles, final File file) {
         if (ObjectUtils.isNotNull(file) && !escrow.contains(file.getName())) {
             escrow.add(file.getName());
             externalFiles.put(file, file.lastModified());
         }
     }
 
-    public String getYamlCanonicalPath() {
+    public String getYAMLConfigCanonicalPath() {
         try {
-            return this.dataYaml.getCanonicalPath();
+            return this.yamlConfig.getCanonicalPath();
         } catch (IOException e) {
-            return this.dataYaml.getAbsolutePath();
+            return this.yamlConfig.getAbsolutePath();
         }
     }
 
-    public synchronized String getMarshalledYaml() {
+    public synchronized String getStubYAML() {
         final StringBuilder builder = new StringBuilder();
-        for (final StubHttpLifecycle cycle : stubHttpLifecycles) {
-            builder.append(cycle.getHttpLifeCycleAsYaml()).append(FileUtils.BR + FileUtils.BR);
+        for (final StubHttpLifecycle stub : stubs) {
+            builder.append(stub.getCompleteYAML()).append(FileUtils.BR).append(FileUtils.BR);
         }
 
         return builder.toString();
     }
 
-    public synchronized String getMarshalledYamlByIndex(final int httpLifecycleIndex) {
-        return stubHttpLifecycles.get(httpLifecycleIndex).getHttpLifeCycleAsYaml();
+    public synchronized String getStubYAMLByIndex(final int index) {
+        return stubs.get(index).getCompleteYAML();
     }
 
-    public synchronized void updateStubHttpLifecycleByIndex(final int httpLifecycleIndex, final StubHttpLifecycle newStubHttpLifecycle) {
-        deleteStubHttpLifecycleByIndex(httpLifecycleIndex);
-        stubHttpLifecycles.add(httpLifecycleIndex, newStubHttpLifecycle);
+    synchronized void updateStubByIndex(final int index, final StubHttpLifecycle newStub) {
+        deleteStubByIndex(index);
+        stubs.add(index, newStub);
         updateResourceIDHeaders();
     }
 
-    public synchronized boolean isStubHttpLifecycleExistsByIndex(final int httpLifecycleIndex) {
-        return stubHttpLifecycles.size() - 1 >= httpLifecycleIndex;
+    public synchronized boolean canMatchStubByIndex(final int index) {
+        return stubs.size() - 1 >= index;
     }
 
-    public synchronized StubHttpLifecycle deleteStubHttpLifecycleByIndex(final int httpLifecycleIndex) {
-        final StubHttpLifecycle removedLifecycle = stubHttpLifecycles.remove(httpLifecycleIndex);
+    public synchronized StubHttpLifecycle deleteStubByIndex(final int index) {
+        final StubHttpLifecycle removedStub = stubs.remove(index);
         updateResourceIDHeaders();
 
-        return removedLifecycle;
+        return removedStub;
     }
 
     private void updateResourceIDHeaders() {
-        for (int index = 0; index < stubHttpLifecycles.size(); index++) {
-            stubHttpLifecycles.get(index).setResourceId(index);
+        for (int index = 0; index < stubs.size(); index++) {
+            stubs.get(index).setResourceId(index);
         }
     }
 }

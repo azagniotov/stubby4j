@@ -6,7 +6,7 @@ import io.github.azagniotov.stubby4j.builder.yaml.YamlBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.RedirectStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
@@ -60,7 +60,7 @@ public class StubbedDataManagerTest {
 
     @Before
     public void beforeEach() throws Exception {
-        stubbedDataManager.resetStubHttpLifecycles(new LinkedList<StubHttpLifecycle>());
+        stubbedDataManager.resetStubsCache(new LinkedList<StubHttpLifecycle>());
     }
 
 
@@ -839,10 +839,10 @@ public class StubbedDataManagerTest {
         final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
-        assertThat(stubHttpLifecycles.get(0).getAllResponses().size()).isEqualTo(2);
-        assertThat(stubHttpLifecycles.get(1).getAllResponses().size()).isEqualTo(2);
+        assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
+        assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
 
         final List<StubHttpLifecycle> spyStubHttpLifecycles = new LinkedList<>();
         final StubHttpLifecycle spyCycleOne = spy(stubHttpLifecycles.get(0));
@@ -850,11 +850,11 @@ public class StubbedDataManagerTest {
         spyStubHttpLifecycles.add(spyCycleOne);
         spyStubHttpLifecycles.add(spyCycleTwo);
 
-        stubbedDataManager.resetStubHttpLifecycles(spyStubHttpLifecycles);   // 1st time call to getAllResponses
-        stubbedDataManager.getExternalFiles();                               // 2nd time call to getAllResponses
+        stubbedDataManager.resetStubsCache(spyStubHttpLifecycles);   // 1st time call to getResponses
+        stubbedDataManager.getExternalFiles();                               // 2nd time call to getResponses
 
-        verify(spyCycleOne, times(2)).getAllResponses();
-        verify(spyCycleTwo, times(2)).getAllResponses();
+        verify(spyCycleOne, times(2)).getResponses();
+        verify(spyCycleTwo, times(2)).getResponses();
     }
 
     @Test
@@ -862,28 +862,28 @@ public class StubbedDataManagerTest {
         final URL yamlUrl = StubbedDataManagerTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
-        assertThat(stubHttpLifecycles.get(0).getAllResponses().size()).isEqualTo(2);
-        assertThat(stubHttpLifecycles.get(1).getAllResponses().size()).isEqualTo(2);
+        assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
+        assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
 
         stubHttpLifecycles.get(0).setResponse(new LinkedList<StubResponse>() {{
-            add(spy(stubHttpLifecycles.get(0).getAllResponses().get(0)));
-            add(spy(stubHttpLifecycles.get(0).getAllResponses().get(1)));
+            add(spy(stubHttpLifecycles.get(0).getResponses().get(0)));
+            add(spy(stubHttpLifecycles.get(0).getResponses().get(1)));
         }});
 
         stubHttpLifecycles.get(1).setResponse(new LinkedList<StubResponse>() {{
-            add(spy(stubHttpLifecycles.get(1).getAllResponses().get(0)));
-            add(spy(stubHttpLifecycles.get(1).getAllResponses().get(1)));
+            add(spy(stubHttpLifecycles.get(1).getResponses().get(0)));
+            add(spy(stubHttpLifecycles.get(1).getResponses().get(1)));
         }});
 
-        stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+        stubbedDataManager.resetStubsCache(stubHttpLifecycles);
         stubbedDataManager.getExternalFiles();
 
-        verify(stubHttpLifecycles.get(0).getAllResponses().get(0), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(0).getAllResponses().get(1), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(1).getAllResponses().get(0), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(1).getAllResponses().get(1), times(1)).getRawFile();
+        verify(stubHttpLifecycles.get(0).getResponses().get(0), times(1)).getRawFile();
+        verify(stubHttpLifecycles.get(0).getResponses().get(1), times(1)).getRawFile();
+        verify(stubHttpLifecycles.get(1).getResponses().get(0), times(1)).getRawFile();
+        verify(stubHttpLifecycles.get(1).getResponses().get(1), times(1)).getRawFile();
     }
 
     @Test
@@ -920,12 +920,12 @@ public class StubbedDataManagerTest {
 
         loadYamlToDataStore(String.format("%s%s%s%s%s", cycleOne, FileUtils.BR, cycleTwo, FileUtils.BR, cycleThree));
 
-        List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = stubbedDataManager.getStubs();
         assertThat(beforeDeletionLoadedHttpCycles.size()).isEqualTo(3);
 
         for (int resourceId = 0; resourceId < beforeDeletionLoadedHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = beforeDeletionLoadedHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -934,14 +934,14 @@ public class StubbedDataManagerTest {
             }
         }
 
-        stubbedDataManager.deleteStubHttpLifecycleByIndex(1);
+        stubbedDataManager.deleteStubByIndex(1);
 
-        List<StubHttpLifecycle> afterDeletionLoadedHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        List<StubHttpLifecycle> afterDeletionLoadedHttpCycles = stubbedDataManager.getStubs();
         assertThat(afterDeletionLoadedHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < afterDeletionLoadedHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = afterDeletionLoadedHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -964,12 +964,12 @@ public class StubbedDataManagerTest {
 
         loadYamlToDataStore(cycleOne);
 
-        List<StubHttpLifecycle> beforeResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        List<StubHttpLifecycle> beforeResetHttpCycles = stubbedDataManager.getStubs();
         assertThat(beforeResetHttpCycles.size()).isEqualTo(1);
 
         for (int resourceId = 0; resourceId < beforeResetHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = beforeResetHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -999,15 +999,15 @@ public class StubbedDataManagerTest {
                 .withStatus("201")
                 .build();
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
-        stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
+        stubbedDataManager.resetStubsCache(stubHttpLifecycles);
 
-        List<StubHttpLifecycle> afterResetHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        List<StubHttpLifecycle> afterResetHttpCycles = stubbedDataManager.getStubs();
         assertThat(afterResetHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < afterResetHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = afterResetHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -1043,12 +1043,12 @@ public class StubbedDataManagerTest {
 
         loadYamlToDataStore(String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
 
-        List<StubHttpLifecycle> beforeUpdateHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        List<StubHttpLifecycle> beforeUpdateHttpCycles = stubbedDataManager.getStubs();
         assertThat(beforeUpdateHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < beforeUpdateHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = beforeUpdateHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -1066,19 +1066,19 @@ public class StubbedDataManagerTest {
                 .withStatus("200")
                 .build();
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", cycleOne);
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", cycleOne);
         final StubHttpLifecycle updatingStubHttpLifecycle = stubHttpLifecycles.get(0);
 
-        stubbedDataManager.updateStubHttpLifecycleByIndex(0, updatingStubHttpLifecycle);
-        List<StubHttpLifecycle> afterUpdateHttpCycles = stubbedDataManager.getStubHttpLifecycles();
+        stubbedDataManager.updateStubByIndex(0, updatingStubHttpLifecycle);
+        final List<StubHttpLifecycle> afterUpdateHttpCycles = stubbedDataManager.getStubs();
 
         assertThat(afterUpdateHttpCycles.size()).isEqualTo(2);
-        final String firstCycleUrl = afterUpdateHttpCycles.get(0).getRequest().getUrl();
+        final String firstCycleUrl = afterUpdateHttpCycles.get(0).getStubbedUrl();
         assertThat(firstCycleUrl).isEqualTo("/some/uri/updating/cycle?paramName1=paramValue1");
 
         for (int resourceId = 0; resourceId < afterUpdateHttpCycles.size(); resourceId++) {
             final StubHttpLifecycle cycle = afterUpdateHttpCycles.get(resourceId);
-            final List<StubResponse> allResponses = cycle.getAllResponses();
+            final List<StubResponse> allResponses = cycle.getResponses();
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
@@ -1089,15 +1089,15 @@ public class StubbedDataManagerTest {
     }
 
     private void loadYamlToDataStore(final String yaml) throws Exception {
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", yaml);
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", yaml);
 
-        stubbedDataManager.resetStubHttpLifecycles(stubHttpLifecycles);
+        stubbedDataManager.resetStubsCache(stubHttpLifecycles);
     }
 
     private void resetStubHttpLifecyclesFromYamlResource(final String resourcePath) throws Exception {
         final URL yamlUrl = StubbedDataManagerTest.class.getResource(resourcePath);
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        stubbedDataManager.resetStubHttpLifecycles(new YamlParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream)));
+        stubbedDataManager.resetStubsCache(new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream)));
     }
 }

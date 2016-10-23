@@ -23,15 +23,15 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
         if (StringUtils.isSet(pathInfoNoHeadingSlash)) {
             final int targetHttpStubCycleIndex = Integer.parseInt(pathInfoNoHeadingSlash);
 
-            if (!stubbedDataManager.isStubHttpLifecycleExistsByIndex(targetHttpStubCycleIndex)) {
+            if (!stubbedDataManager.canMatchStubByIndex(targetHttpStubCycleIndex)) {
                 final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
                 HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
                 return;
             }
 
-            yamlAppender.append(stubbedDataManager.getMarshalledYamlByIndex(targetHttpStubCycleIndex));
+            yamlAppender.append(stubbedDataManager.getStubYAMLByIndex(targetHttpStubCycleIndex));
         } else {
-            yamlAppender.append(stubbedDataManager.getMarshalledYaml());
+            yamlAppender.append(stubbedDataManager.getStubYAML());
         }
 
         response.setContentType("text/plain;charset=UTF-8");

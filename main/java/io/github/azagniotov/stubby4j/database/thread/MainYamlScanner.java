@@ -2,7 +2,7 @@ package io.github.azagniotov.stubby4j.database.thread;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.database.StubbedDataManager;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 
 import java.io.File;
 import java.util.Date;
@@ -21,14 +21,14 @@ public final class MainYamlScanner implements Runnable {
     public MainYamlScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
         this.sleepTime = sleepTime;
         this.stubbedDataManager = stubbedDataManager;
-        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYamlCanonicalPath()));
+        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYAMLConfigCanonicalPath()));
     }
 
     @Override
     public void run() {
 
         try {
-            final File dataYaml = stubbedDataManager.getDataYaml();
+            final File dataYaml = stubbedDataManager.getYAMLConfig();
             long mainYamlLastModified = dataYaml.lastModified();
 
             while (!Thread.currentThread().isInterrupted()) {
@@ -40,11 +40,11 @@ public final class MainYamlScanner implements Runnable {
                     continue;
                 }
 
-                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubbedDataManager.getYamlCanonicalPath(), BR));
+                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubbedDataManager.getYAMLConfigCanonicalPath(), BR));
 
                 try {
                     mainYamlLastModified = currentFileModified;
-                    stubbedDataManager.refreshStubbedData(new YamlParser());
+                    stubbedDataManager.refreshStubsFromYAMLConfig(new YAMLParser());
                     ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s on [" + new Date().toString().trim() + "]%s",
                             BR,
                             dataYaml.getAbsolutePath(),

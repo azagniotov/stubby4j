@@ -187,7 +187,7 @@ public class StubsAdminPortalsTest {
     }
 
     @Test
-    public void should_ReturnAjaxResponseContentYaml_WhenSuccessfulRequestMade() throws Exception {
+    public void should_ReturnAjaxHttpLifecycleYAMLResponse_WhenSuccessfulRequestMade() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
         final String postContent = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
@@ -202,7 +202,7 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/httpLifeCycleAsYaml");
+        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/completeYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
@@ -222,5 +222,67 @@ public class StubsAdminPortalsTest {
                         "    status: 201" + BR +
                         "    body: |" + BR +
                         "      {\"id\": \"456\", \"status\": \"created\"}");
+    }
+
+    @Test
+    public void should_ReturnAjaxStubRequestYAMLResponse_WhenSuccessfulRequestMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
+        final String postContent = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+
+        request.setHeaders(httpHeaders);
+
+        final HttpResponse response = request.execute();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/requestAsYAML");
+        final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
+
+        final HttpResponse ajaxResponse = ajaxRequest.execute();
+        assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(ajaxResponse.parseAsString().trim()).contains(
+                "request:" + BR +
+                        "  method: POST" + BR +
+                        "  url: /invoice/new" + BR +
+                        "  headers:" + BR +
+                        "    content-type: application/json" + BR +
+                        "  post: |" + BR +
+                        "    {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}");
+    }
+
+    @Test
+    public void should_ReturnAjaxStubResponseYAMLResponse_WhenSuccessfulRequestMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice/new");
+        final String postContent = "{\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}";
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, postContent);
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+
+        request.setHeaders(httpHeaders);
+
+        final HttpResponse response = request.execute();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/responseAsYAML");
+        final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
+
+        final HttpResponse ajaxResponse = ajaxRequest.execute();
+        assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(ajaxResponse.parseAsString().trim()).contains(
+                "response:" + BR +
+                        "  headers:" + BR +
+                        "    content-type: application/json" + BR +
+                        "    pragma: no-cache" + BR +
+                        "  status: 201" + BR +
+                        "  body: |" + BR +
+                        "    {\"id\": \"456\", \"status\": \"created\"}");
     }
 }
