@@ -368,17 +368,17 @@ public class StubRequest {
         return false;
     }
 
-    private boolean jsonMatch(final String stubbedJsony, final String assertingJson) {
+    private boolean jsonMatch(final String stubbedJson, final String assertingJson) {
         try {
-            boolean passed = JSONCompare.compareJSON(stubbedJsony, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
+            boolean passed = JSONCompare.compareJSON(stubbedJson, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
             if (passed) {
                 return true;
             } else {
-                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJsony);
+                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
                 return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
             }
         } catch (final JSONException e) {
-            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJsony);
+            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
             return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
         }
     }

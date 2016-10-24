@@ -4,7 +4,6 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -17,7 +16,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -47,9 +45,9 @@ public class StubsPortalTest {
         ANSITerminal.muteConsole(true);
 
         final URL url = StubsPortalTest.class.getResource("/yaml/stubs.yaml");
-        final InputStream stubsDatanputStream = url.openStream();
-        stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
-        stubsDatanputStream.close();
+        final InputStream stubsDataInputStream = url.openStream();
+        stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
+        stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
     }
@@ -758,7 +756,7 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesPostComplexJson() throws Exception {
+    public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesComplexJsonPost() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/post-body-as-json-2");
         final String content = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
@@ -772,6 +770,44 @@ public class StubsPortalTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(response.parseAsString().trim()).isEqualTo("{\"internalKey\": \"12345\"}");
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenStubbedValidJsonMatchesComplexValidJsonPost() throws Exception {
+
+        final URL dataPostUrl = StubsPortalTest.class.getResource("/json/jsonapi.post.rearranged.json");
+        final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-object-comparison");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+
+        final HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+        request.setHeaders(requestHeaders);
+
+        final HttpResponse response = request.execute();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.parseAsString().trim()).isEqualTo("{\"status\": \"OK\"}");
+    }
+
+    @Test
+    public void should_MakeSuccessfulRequest_WhenStubbedJsonRegexMatchesComplexValidJsonPost() throws Exception {
+
+        final URL dataPostUrl = StubsPortalTest.class.getResource("/json/jsonapi.post.json");
+        final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-regex");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+
+        final HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(Common.HEADER_APPLICATION_JSON);
+        request.setHeaders(requestHeaders);
+
+        final HttpResponse response = request.execute();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(response.parseAsString().trim()).isEqualTo("{\"people#id\": \"9\"}");
     }
 
     @SuppressWarnings("unchecked")

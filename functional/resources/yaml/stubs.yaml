@@ -217,6 +217,36 @@
 
 
 -  request:
+      method: POST
+      url: /jsonapi-json-object-comparison
+      headers:
+         content-type: application/json
+      file: ../json/jsonapi.post.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"status": "OK"}
+
+
+-  request:
+      method: POST
+      url: /jsonapi-json-regex
+      headers:
+         content-type: application/json
+      file: ../json/jsonapi.regex.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"people#id": "<% post.2 %>"}
+
+
+-  request:
       url: /invoice/new/no/post
       method: POST
    response:
