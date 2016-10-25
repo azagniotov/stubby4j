@@ -183,9 +183,14 @@ Run `gradle install` command to:
 * Install `stubby4j-4.0.3-SNAPSHOT*.jar` to local `~/.m2/repository`
 * All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.3-SNAPSHOT/`
 
-Now you can include installed stubby4j `SNAPSHOT` in your project:
+Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile 'io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT'
+compile("io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT")
+```
+or 
+
+```xml
+compile("io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT:no-dependencies")
 ```
 
 
