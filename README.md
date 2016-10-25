@@ -149,8 +149,14 @@ The following are the stubby4j artifacts that are hosted on [Maven Central](http
 
 ##### Gradle
 ```xml
-compile 'io.github.azagniotov:stubby4j:4.0.2'
+compile("io.github.azagniotov:stubby4j:4.0.2")
 ```
+or
+
+```xml
+compile("io.github.azagniotov:stubby4j:4.0.2:no-dependencies")
+```
+
 ##### Maven
 ```xml
 <dependency>
@@ -159,6 +165,17 @@ compile 'io.github.azagniotov:stubby4j:4.0.2'
     <version>4.0.2</version>
 </dependency>
 ```
+or
+
+```xml
+<dependency>
+    <groupId>io.github.azagniotov</groupId>
+    <artifactId>stubby4j</artifactId>
+    <version>4.0.2</version>
+    <classifier>no-dependencies</classifier>
+</dependency>
+```
+
 ### Installing stubby4j to local .m2 repository
 
 Run `gradle install` command to:
