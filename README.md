@@ -112,17 +112,10 @@ For more information and more complex examples, please dive into the rest of doc
 ### Building
 stubby4j is a multi-module Gradle project
 
-* IntelliJ IDEA 13 users should run ```gradle cleanIdea idea``` in order to generate IntelliJ IDEA 13 project files
-* Eclipse users should run ```gradle cleanEclipse eclipse``` in order to generate Eclipse project files
-
 Run `gradle` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
-
-Run `gradle build -x test` command to:
-* Clean
-* Build (the generated `stubby4j-x.x.x-SNAPSHOT.jar` will be located under `stubby4j/target/libs/`)
+* Build (the generated JAR artifacts will be located under `stubby4j/target/libs/`)
 
 Run `gradle cobertura` command to:
 * Clean
@@ -130,7 +123,6 @@ Run `gradle cobertura` command to:
 
 
 ### Third-party dependencies
-stubby4j is a fat JAR, which contains the following dependencies:
 
 * __javax.servlet-api-3.1.0.jar__
 * jetty-server-9.3.12.v20160915.jar
@@ -147,8 +139,13 @@ stubby4j is a fat JAR, which contains the following dependencies:
 
 
 ### Adding stubby4j to your project
-stubby4j is hosted on [Maven Central](http://search.maven.org) and can be added as a dependency in your project's build script.
-Keep in mind that __it takes ~3 hours for a new release to appear on live Maven Central repo__. In other words, if you cannot fetch `v4.0.2` as a dependency yet, it means [Maven Central](http://search.maven.org) has not been synced yet ;)
+The following are the stubby4j artifacts that are hosted on [Maven Central](http://search.maven.org):
+
+* `stubby4j-x.x.x.jar` - an uber JAR, which contains all the 3rd-party dependencies
+* `stubby4j-x.x.x-no-dependencies.jar` - a skinny JAR, which contains no 3rd-party dependencies at all
+* `stubby4j-x.x.x-no-jetty.jar` - an uber-ish JAR, which contains all the 3rd-party dependencies __except__ Jetty
+* `stubby4j-x.x.x-sources.jar`
+* `stubby4j-x.x.x-javadoc.jar`
 
 ##### Gradle
 ```xml
