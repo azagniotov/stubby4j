@@ -141,9 +141,9 @@ Run `gradle cobertura` command to:
 ### Adding stubby4j to your project
 The following are the stubby4j artifacts that are hosted on [Maven Central](http://search.maven.org):
 
-* `stubby4j-x.x.x.jar` - an uber JAR, which contains all the 3rd-party deps
-* `stubby4j-x.x.x-no-dependencies.jar` - a skinny JAR, which contains no 3rd-party dependencies at all
-* `stubby4j-x.x.x-no-jetty.jar` (as of `v4.0.3`) - an uber-ish JAR, which contains all the 3rd-party deps __except__ Jetty
+* `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
+* `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
+* `stubby4j-x.x.x-no-jetty.jar` (as of `v4.0.3`) - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty
 * `stubby4j-x.x.x-sources.jar`
 * `stubby4j-x.x.x-javadoc.jar`
 
