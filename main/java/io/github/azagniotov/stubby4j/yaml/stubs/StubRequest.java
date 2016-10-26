@@ -237,41 +237,42 @@ public class StubRequest {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
+    public boolean equals(final Object that) {
+        // The 'this' is actually the incoming asserting StubRequest, the 'that' is the stubbed one
+        if (this == that) {
             return true;
-        } else if (o instanceof StubRequest) {
-            final StubRequest stubbedRequest = (StubRequest) o;
+        } else if (that instanceof StubRequest) {
+            final StubRequest stubbedRequest = (StubRequest) that;
 
             if (!urlsMatch(stubbedRequest.url, this.url)) {
-                ANSITerminal.error(String.format("Failed match for URL %s WITH %s", stubbedRequest.url, this.url));
+                ANSITerminal.error(String.format("Failed to match on URL [%s] WITH [%s]", stubbedRequest.url, this.url));
                 return false;
             }
-            ANSITerminal.info(String.format("Found match for URL %s WITH %s", stubbedRequest.url, this.url));
+            ANSITerminal.info(String.format("Matched on URL [%s] WITH [%s]", stubbedRequest.url, this.url));
 
             if (!listsIntersect(stubbedRequest.getMethod(), this.getMethod())) {
-                ANSITerminal.error(String.format("Failed match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
+                ANSITerminal.error(String.format("Failed to match on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), this.getMethod()));
                 return false;
             }
-            ANSITerminal.info(String.format("Found match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
+            ANSITerminal.info(String.format("Matched on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), this.getMethod()));
 
             if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
-                ANSITerminal.error(String.format("Failed match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
+                ANSITerminal.error(String.format("Failed to match on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), this.getPostBody()));
                 return false;
             }
-            ANSITerminal.info(String.format("Found match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
+            ANSITerminal.info(String.format("Matched on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), this.getPostBody()));
 
             if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
-                ANSITerminal.error(String.format("Failed match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
+                ANSITerminal.error(String.format("Failed to match on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), this.getHeaders()));
                 return false;
             }
-            ANSITerminal.info(String.format("Found match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
+            ANSITerminal.info(String.format("Matched on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), this.getHeaders()));
 
             if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
-                ANSITerminal.error(String.format("Failed match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
+                ANSITerminal.error(String.format("Failed to match on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), this.getQuery()));
                 return false;
             }
-            ANSITerminal.info(String.format("Found match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
+            ANSITerminal.info(String.format("Matched on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), this.getQuery()));
 
             return true;
         }

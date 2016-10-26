@@ -119,7 +119,7 @@ public class StubHttpLifecycle {
         return getResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
     }
 
-    public String getStubbedUrl() {
+    public String getUrl() {
         return request.getUrl();
     }
 
@@ -199,6 +199,7 @@ public class StubHttpLifecycle {
             return false;
         }
 
+        // The 'this' is actually the incoming asserting StubHttpLifecycle, the 'that' is the stubbed one
         final StubHttpLifecycle that = (StubHttpLifecycle) o;
         return request.equals(that.request);
     }

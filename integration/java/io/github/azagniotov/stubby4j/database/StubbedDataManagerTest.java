@@ -1073,7 +1073,7 @@ public class StubbedDataManagerTest {
         final List<StubHttpLifecycle> afterUpdateHttpCycles = stubbedDataManager.getStubs();
 
         assertThat(afterUpdateHttpCycles.size()).isEqualTo(2);
-        final String firstCycleUrl = afterUpdateHttpCycles.get(0).getStubbedUrl();
+        final String firstCycleUrl = afterUpdateHttpCycles.get(0).getUrl();
         assertThat(firstCycleUrl).isEqualTo("/some/uri/updating/cycle?paramName1=paramValue1");
 
         for (int resourceId = 0; resourceId < afterUpdateHttpCycles.size(); resourceId++) {

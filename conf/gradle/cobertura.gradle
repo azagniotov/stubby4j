@@ -1,83 +1,87 @@
 apply plugin: 'com.github.kt3k.coveralls'
 
 configurations {
-   coberturaRuntime { extendsFrom testRuntime }
+    coberturaRuntime { extendsFrom testRuntime }
 }
 
 dependencies {
-   coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.1.1'
+    coberturaRuntime 'net.sourceforge.cobertura:cobertura:2.1.1'
 }
 
 task coberturaPrepare() {
-   ext.datafileLocation = project(":main").buildDir.path + "/cobertura.ser"
+    ext.datafileLocation = project(":main").buildDir.path + "/cobertura.ser"
     doLast {
-      ant.taskdef(
-         name: 'coberturaInstrument', 
-         classname: 'net.sourceforge.cobertura.ant.InstrumentTask',
-         classpath: configurations.coberturaRuntime.asPath
-      )
-     
-      ant.taskdef(
-         name: 'coberturaReport', 
-         classname: 'net.sourceforge.cobertura.ant.ReportTask',
-         classpath: configurations.coberturaRuntime.asPath
-      )
-   }
+        ant.taskdef(
+                name: 'coberturaInstrument',
+                classname: 'net.sourceforge.cobertura.ant.InstrumentTask',
+                classpath: configurations.coberturaRuntime.asPath
+        )
+
+        ant.taskdef(
+                name: 'coberturaReport',
+                classname: 'net.sourceforge.cobertura.ant.ReportTask',
+                classpath: configurations.coberturaRuntime.asPath
+        )
+    }
 }
 
 task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
-   ext.outputDir = project(":main").buildDir.path + "/classes-instrumented"
-   //ext.outputDir = "${sourceSets.main.output.classesDir}-instrumented"
-   doLast {
-      ant.coberturaInstrument(
-         ignoreTrivial: true,
-         todir: outputDir, 
-         datafile: coberturaPrepare.datafileLocation) {
+    ext.outputDir = project(":main").buildDir.path + "/classes-instrumented"
+    doLast {
+        ant.coberturaInstrument(
+                ignoreTrivial: true,
+                todir: outputDir,
+                datafile: coberturaPrepare.datafileLocation) {
             ignoreMethodAnnotation(
-               annotationName: "io.github.azagniotov.stubby4j.annotations.CoberturaIgnore"
+                    annotationName: "io.github.azagniotov.stubby4j.annotations.CoberturaIgnore"
             )
             fileset(
-               dir: project(':main').sourceSets.main.output.classesDir, 
-               includes: "io/github/azagniotov/stubby4j/client/**/*.class, io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, io/github/azagniotov/stubby4j/database/*.class, io/github/azagniotov/stubby4j/utils/*.class, io/github/azagniotov/stubby4j/yaml/**/*.class, io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
-               excludes: "**/*\$*.class"
-         )
-      }   
-   }
+                    dir: project(':main').sourceSets.main.output.classesDir,
+                    includes: "io/github/azagniotov/stubby4j/client/**/*.class, io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, io/github/azagniotov/stubby4j/database/*.class, io/github/azagniotov/stubby4j/utils/*.class, io/github/azagniotov/stubby4j/yaml/**/*.class, io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
+                    excludes: "**/*\$*.class"
+            )
+            fileset(
+                    dir: project(':builders').sourceSets.main.output.classesDir,
+                    includes: "io/github/azagniotov/stubby4j/builder/**/*.class",
+                    excludes: "**/*\$*.class"
+            )
+        }
+    }
 }
 
 task coberturaReport(dependsOn: ['coberturaInstrument', test]) << {
-   ant.coberturaReport(
-      format: "html", 
-      destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
-      srcdir: "$rootDir/main/java", 
-      datafile: coberturaPrepare.datafileLocation
-   )
+    ant.coberturaReport(
+            format: "html",
+            destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
+            srcdir: "$rootDir/main/java",
+            datafile: coberturaPrepare.datafileLocation
+    )
 
-   ant.coberturaReport(
-      format: "xml",
-      destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
-      srcdir: "$rootDir/main/java",
-      datafile: coberturaPrepare.datafileLocation
-   )
+    ant.coberturaReport(
+            format: "xml",
+            destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
+            srcdir: "$rootDir/main/java",
+            datafile: coberturaPrepare.datafileLocation
+    )
 }
 
 gradle.taskGraph.whenReady { graph ->
-   if (graph.hasTask(cobertura)) { 
-      tasks.withType(Test) {
-         doFirst {
-            systemProperty 'net.sourceforge.cobertura.datafile', coberturaPrepare.datafileLocation
-            classpath = files(coberturaInstrument.outputDir) + classpath + configurations.coberturaRuntime
-         }
-      }
-   }
-} 
+    if (graph.hasTask(cobertura)) {
+        tasks.withType(Test) {
+            doFirst {
+                systemProperty 'net.sourceforge.cobertura.datafile', coberturaPrepare.datafileLocation
+                classpath = files(coberturaInstrument.outputDir) + classpath + configurations.coberturaRuntime
+            }
+        }
+    }
+}
 
 tasks.coveralls {
-   def factory = project(':').ext.coberturaSourceReportFactory
-   sourceReportFactoryMap[
-      file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = factory
+    def factory = project(':').ext.coberturaSourceReportFactory
+    sourceReportFactoryMap[
+            file(project(":main").reporting.baseDir.path + "/cobertura/xml/coverage.xml").absolutePath] = factory
 }
 
 task cobertura {
-   dependsOn = ['clean', 'coberturaReport']
+    dependsOn = ['clean', 'coberturaReport']
 }

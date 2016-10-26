@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.database;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
@@ -53,12 +54,14 @@ public class StubbedDataManager {
     private final List<StubHttpLifecycle> stubs;
     private StubbyHttpTransport stubbyHttpTransport;
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
+    private final ConcurrentHashMap<String, StubHttpLifecycle> matchedStubsCache;
 
     public StubbedDataManager(final File yamlConfig, final List<StubHttpLifecycle> loadedStubs) {
         this.yamlConfig = yamlConfig;
         this.stubs = Collections.synchronizedList(loadedStubs);
         this.stubbyHttpTransport = new StubbyHttpTransport();
         this.resourceStats = new ConcurrentHashMap<>();
+        this.matchedStubsCache = new ConcurrentHashMap<>();
     }
 
     public StubResponse findStubResponseFor(final StubRequest incomingRequest) {
@@ -106,22 +109,48 @@ public class StubbedDataManager {
      * That's the point where the incoming {@link StubHttpLifecycle} that was created from the incoming
      * raw {@link HttpServletRequest request} is matched to the loaded stubs.
      * <p>
+     * First, the local matches cache is checked if there is a potential match for the incoming
+     * {@link StubHttpLifecycle request} URI. If potential {@link StubHttpLifecycle match} found in the cache, then
+     * the match and the incoming {@link StubHttpLifecycle} are compared to each other to determine a full equality
+     * based on the {@link StubRequest#equals(Object)}.
+     * <p>
+     * If full equality with the cached potential {@link StubHttpLifecycle match} was not achieved, the incoming
+     * {@link StubHttpLifecycle request} is compared to every {@link StubHttpLifecycle element} in the list
+     * of loaded stubs.
+     * <p>
      * The {@link List<StubHttpLifecycle>#indexOf(Object)} implicitly invokes {@link StubHttpLifecycle#equals(Object)},
      * which invokes the {@link StubRequest#equals(Object)}.
      *
-     * @param incomingRequest {@link StubHttpLifecycle}
+     * @param incomingStub {@link StubHttpLifecycle}
      * @return matched {@link StubHttpLifecycle}
      * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)
      */
-    private synchronized StubHttpLifecycle matchStub(final StubHttpLifecycle incomingRequest) {
-        final int index = stubs.indexOf(incomingRequest);
+    private synchronized StubHttpLifecycle matchStub(final StubHttpLifecycle incomingStub) {
+
+        final String incomingRequestUrl = incomingStub.getUrl();
+        if (matchedStubsCache.containsKey(incomingRequestUrl)) {
+            ANSITerminal.loaded(String.format("Found potential match for the URL [%s] in local cache", incomingRequestUrl));
+            final StubHttpLifecycle potentialMatch = matchedStubsCache.get(incomingRequestUrl);
+            // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
+            if (incomingStub.equals(potentialMatch)) {
+                ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
+                return potentialMatch;
+            }
+            ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
+            matchedStubsCache.remove(incomingRequestUrl);
+        }
+
+        final int index = stubs.indexOf(incomingStub);
         if (index < 0) {
             return StubHttpLifecycle.NULL;
         }
         final StubHttpLifecycle matched = stubs.get(index);
         matched.setResourceId(index);
+
+        ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
+        matchedStubsCache.put(incomingRequestUrl, matched);
 
         return matched;
     }
@@ -135,9 +164,11 @@ public class StubbedDataManager {
     }
 
     synchronized boolean resetStubsCache(final List<StubHttpLifecycle> newStubs) {
+        this.matchedStubsCache.clear();
         this.stubs.clear();
         final boolean added = this.stubs.addAll(newStubs);
         if (added) {
+            this.matchedStubsCache.clear();
             updateResourceIDHeaders();
         }
         return added;
@@ -156,7 +187,7 @@ public class StubbedDataManager {
         final StubHttpLifecycle newStub = parsedStubs.get(0);
         updateStubByIndex(index, newStub);
 
-        return newStub.getStubbedUrl();
+        return newStub.getUrl();
     }
 
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
@@ -169,13 +200,14 @@ public class StubbedDataManager {
         return new ConcurrentHashMap<>(resourceStats);
     }
 
+    @CoberturaIgnore
     public String getResourceStatsAsCsv() {
         final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", FileUtils.BR).replaceAll("=", ",");
         return String.format("resourceId,hits%s%s", FileUtils.BR, csvNoHeader);
     }
 
     public synchronized String getOnlyStubRequestUrl() {
-        return stubs.get(0).getStubbedUrl();
+        return stubs.get(0).getUrl();
     }
 
     public File getYAMLConfig() {
@@ -204,6 +236,7 @@ public class StubbedDataManager {
         }
     }
 
+    @CoberturaIgnore
     public String getYAMLConfigCanonicalPath() {
         try {
             return this.yamlConfig.getCanonicalPath();
