@@ -1085,6 +1085,8 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ##### 4.0.3-SNAPSHOT
 * Suppressed Jetty's default [ErrorHandler](http://download.eclipse.org/jetty/9.3.12.v20160915/apidocs/org/eclipse/jetty/server/handler/ErrorHandler.html) with a custom [JsonErrorHandler](main/java/io/github/azagniotov/stubby4j/handlers/JsonErrorHandler.java) to send errors in JSON format
+* Got rid off repackaged classes from Aapache Commons in favor of Java 8 APIs
+* Using Java NIO for file operations
 
 ##### 4.0.2
 * Log to terminal why a request fails to match https://github.com/soundcloud/stubby4j/commit/5901710efd31653a05804ebec62f67184c212832
