@@ -184,7 +184,7 @@ public class StubRequest {
         return isSet(getPostBody());
     }
 
-    public boolean isSecured() {
+    boolean isSecured() {
         return getHeaders().containsKey(BASIC.asYamlProp()) ||
                 getHeaders().containsKey(BEARER.asYamlProp()) ||
                 getHeaders().containsKey(CUSTOM.asYamlProp());
@@ -213,7 +213,7 @@ public class StubRequest {
         return new StubRequest(null, null, null, null, null, null);
     }
 
-    public static StubRequest newStubRequest(final String url, final String post) {
+    static StubRequest newStubRequest(final String url, final String post) {
         return new StubRequest(url, post, null, null, null, null);
     }
 
@@ -244,25 +244,35 @@ public class StubRequest {
             final StubRequest stubbedRequest = (StubRequest) o;
 
             if (!urlsMatch(stubbedRequest.url, this.url)) {
-                ANSITerminal.error(String.format("Failed matchStubByIndex for URL %s WITH %s", stubbedRequest.url, this.url));
+                ANSITerminal.error(String.format("Failed match for URL %s WITH %s", stubbedRequest.url, this.url));
                 return false;
             }
+            ANSITerminal.info(String.format("Found match for URL %s WITH %s", stubbedRequest.url, this.url));
+
             if (!listsIntersect(stubbedRequest.getMethod(), this.getMethod())) {
-                ANSITerminal.error(String.format("Failed matchStubByIndex for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
+                ANSITerminal.error(String.format("Failed match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
                 return false;
             }
+            ANSITerminal.info(String.format("Found match for METHOD %s WITH %s", stubbedRequest.getMethod(), this.getMethod()));
+
             if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
-                ANSITerminal.error(String.format("Failed matchStubByIndex for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
+                ANSITerminal.error(String.format("Failed match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
                 return false;
             }
+            ANSITerminal.info(String.format("Found match for POST BODY %s WITH %s", stubbedRequest.getPostBody(), this.getPostBody()));
+
             if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
-                ANSITerminal.error(String.format("Failed matchStubByIndex for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
+                ANSITerminal.error(String.format("Failed match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
                 return false;
             }
+            ANSITerminal.info(String.format("Found match for HEADERS %s WITH %s", stubbedRequest.getHeaders(), this.getHeaders()));
+
             if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
-                ANSITerminal.error(String.format("Failed matchStubByIndex for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
+                ANSITerminal.error(String.format("Failed match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
                 return false;
             }
+            ANSITerminal.info(String.format("Found match for QUERY %s WITH %s", stubbedRequest.getQuery(), this.getQuery()));
+
             return true;
         }
 

@@ -56,7 +56,7 @@ public final class ConsoleUtils {
     }
 
     @CoberturaIgnore
-    public static void logRawIncomingRequest(final HttpServletRequest request) {
+    private static void logRawIncomingRequest(final HttpServletRequest request) {
         ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
         ANSITerminal.info(HttpRequestUtils.dump(request));
         ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + FileUtils.BR);

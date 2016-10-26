@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
+
 /**
  * @author Alexander Zagniotov
  * @since 6/24/12, 1:00 AM
@@ -95,7 +97,6 @@ public final class HandlerUtils {
         try {
             final String requestContent = StringUtils.inputStreamToString(request.getInputStream());
 
-
             return requestContent.replaceAll("\\\\/", "/"); //https://code.google.com/p/snakeyaml/issues/detail?id=93
         } catch (final Exception ex) {
             final String err = String.format("Error when extracting POST body: %s, returning null..", ex.toString());
@@ -112,9 +113,5 @@ public final class HandlerUtils {
 
         return String.format("%d day%s, %d hour%s, %d min%s, %d sec%s",
                 days, pluralize(days), hours, pluralize(hours), mins, pluralize(mins), secs, pluralize(secs));
-    }
-
-    private static String pluralize(final long timeUnit) {
-        return timeUnit == 1 ? "" : "s";
     }
 }

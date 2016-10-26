@@ -45,7 +45,6 @@ public final class StringUtils {
     static final String FAILED = "Failed to load response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
     private static final String TEMPLATE_TOKEN_RIGHT = "%>";
-    private static final int PAD_LIMIT = 8192;
     private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
     private static final Base64.Encoder BASE_64_ENCODER = Base64.getEncoder();
@@ -224,15 +223,11 @@ public final class StringUtils {
         return toCheck;
     }
 
-    private static boolean isUSAscii(final String toTest) {
-        return US_ASCII_ENCODER.canEncode(toTest);
+    static String pluralize(final long timeUnit) {
+        return timeUnit == 1 ? "" : "s";
     }
 
-    private static String repeat(final char ch, final int repeat) {
-        final char[] buf = new char[repeat];
-        for (int i = repeat - 1; i >= 0; i--) {
-            buf[i] = ch;
-        }
-        return new String(buf);
+    private static boolean isUSAscii(final String toTest) {
+        return US_ASCII_ENCODER.canEncode(toTest);
     }
 }
