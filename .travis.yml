@@ -11,3 +11,4 @@ git:
 
 after_success:
   - gradle cobertura coveralls
+  - bash <(curl -s https://codecov.io/bash)
