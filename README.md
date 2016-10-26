@@ -13,7 +13,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v4.0.2
+## User manual for stubby4j v4.0.3
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -149,12 +149,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central](http
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.2")
+compile("io.github.azagniotov:stubby4j:4.0.3")
 ```
 or
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.2:no-dependencies")
+compile("io.github.azagniotov:stubby4j:4.0.3:no-dependencies")
 ```
 
 ##### Maven
@@ -162,7 +162,7 @@ compile("io.github.azagniotov:stubby4j:4.0.2:no-dependencies")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3</version>
 </dependency>
 ```
 or
@@ -171,7 +171,7 @@ or
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -180,17 +180,17 @@ or
 
 Run `gradle install` command to:
 
-* Install `stubby4j-4.0.3-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.3-SNAPSHOT/`
+* Install `stubby4j-4.0.4-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.4-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT")
 ```
 or 
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.3-SNAPSHOT:no-dependencies")
+compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT:no-dependencies")
 ```
 
 
@@ -1083,7 +1083,9 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 4.0.3-SNAPSHOT
+##### 4.0.4-SNAPSHOT
+
+##### 4.0.3
 * Optimized the stub matching algorithm by caching the previous matches
 * Suppressed Jetty's default [ErrorHandler](http://download.eclipse.org/jetty/9.3.12.v20160915/apidocs/org/eclipse/jetty/server/handler/ErrorHandler.html) with a custom [JsonErrorHandler](main/java/io/github/azagniotov/stubby4j/handlers/JsonErrorHandler.java) to send errors in JSON format
 * Got rid off repackaged classes from Aapache Commons in favor of Java 8 APIs
