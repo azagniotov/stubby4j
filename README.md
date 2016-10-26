@@ -1086,7 +1086,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 ##### 4.0.4-SNAPSHOT
 
 ##### 4.0.3
-* Optimized the stub matching algorithm by caching the previous matches
+* Optimized the stub matching algorithm by caching the previous matches [StubbedDataManager#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubbedDataManager.java)
 * Suppressed Jetty's default [ErrorHandler](http://download.eclipse.org/jetty/9.3.12.v20160915/apidocs/org/eclipse/jetty/server/handler/ErrorHandler.html) with a custom [JsonErrorHandler](main/java/io/github/azagniotov/stubby4j/handlers/JsonErrorHandler.java) to send errors in JSON format
 * Got rid off repackaged classes from Aapache Commons in favor of Java 8 APIs
 * Using Java NIO for file operations
