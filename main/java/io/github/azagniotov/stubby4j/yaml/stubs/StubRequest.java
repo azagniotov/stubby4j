@@ -55,7 +55,6 @@ import java.util.TreeMap;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.isWithinSquareBrackets;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
@@ -343,11 +342,8 @@ public class StubRequest {
             return true;
         } else if (isNotSet(assertingValue)) {
             return false;
-        } else if (isWithinSquareBrackets(stubbedValue)) {
-            return stubbedValue.equals(assertingValue);
-        } else {
-            return regexMatch(stubbedValue, assertingValue, templateTokenName);
         }
+        return regexMatch(stubbedValue, assertingValue, templateTokenName) || stubbedValue.equals(assertingValue);
     }
 
     private boolean regexMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
@@ -375,11 +371,11 @@ public class StubRequest {
                 return true;
             } else {
                 final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-                return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
+                return stringsMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
             }
         } catch (final JSONException e) {
             final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-            return regexMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
+            return stringsMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
         }
     }
 
@@ -390,7 +386,7 @@ public class StubRequest {
 
             return (diff.similar() || diff.identical());
         } catch (SAXException | IOException e) {
-            return false;
+            return stringsMatch(stubbedXml, assertingXml, YamlProperties.POST);
         }
     }
 
@@ -403,6 +399,7 @@ public class StubRequest {
         }
 
         this.getQuery().values().forEach(regexParser::compilePatternAndCache);
+        this.getHeaders().values().forEach(regexParser::compilePatternAndCache);
     }
 
     @Override

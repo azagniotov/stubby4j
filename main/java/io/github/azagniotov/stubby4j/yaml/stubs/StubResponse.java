@@ -53,7 +53,7 @@ public class StubResponse {
         this.file = file;
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
         this.latency = latency;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<String, String>() : headers;
+        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
     }
 
     public String getStatus() {
@@ -66,11 +66,7 @@ public class StubResponse {
 
     public boolean isRecordingRequired() {
         final String body = getBody();
-        if (StringUtils.toLower(body).startsWith("http")) {
-            return true;
-        }
-
-        return false;
+        return StringUtils.toLower(body).startsWith("http");
     }
 
     public Map<String, String> getHeaders() {
@@ -81,7 +77,9 @@ public class StubResponse {
         return latency;
     }
 
-    //Used by reflection when populating stubby admin page with stubbed information
+    /**
+     * Used by reflection when populating stubby admin page with stubbed information
+     */
     public byte[] getFile() {
         return fileBytes;
     }
@@ -93,7 +91,7 @@ public class StubResponse {
     public byte[] getResponseBodyAsBytes() {
 
         if (fileBytes.length == 0) {
-            return getBody().getBytes(StringUtils.charsetUTF8());
+            return StringUtils.getBytesUtf8(getBody());
         }
         return fileBytes;
     }
@@ -133,8 +131,8 @@ public class StubResponse {
         return getHeaders().containsKey("location");
     }
 
-    void addResourceIDHeader(final int httplifeCycleIndex) {
-        getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(httplifeCycleIndex));
+    void addResourceIDHeader(final int resourceIndex) {
+        getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(resourceIndex));
     }
 
     public StubResponseTypes getStubResponseType() {

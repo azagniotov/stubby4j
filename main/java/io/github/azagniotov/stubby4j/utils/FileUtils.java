@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
-import io.github.azagniotov.stubby4j.repackaged.org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -28,7 +27,6 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +35,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,7 +49,7 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public final class FileUtils {
 
-    public static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
+    private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
             new HashSet<>(
                     Arrays.asList(
                             ".ajx", ".am", ".asa", ".asc", ".asp", ".aspx", ".awk", ".bat",
@@ -80,11 +80,11 @@ public final class FileUtils {
     static {
         final int initialSize = 4;
         final StringBuilderWriter stringBuilderWriter = new StringBuilderWriter(initialSize);
-        final PrintWriter out = new PrintWriter(stringBuilderWriter);
-        out.println();
-        BR = stringBuilderWriter.toString();
-        out.flush();
-        out.close();
+        try (final PrintWriter out = new PrintWriter(stringBuilderWriter)) {
+            out.println();
+            BR = stringBuilderWriter.toString();
+            out.flush();
+        }
     }
 
     private FileUtils() {
@@ -112,70 +112,46 @@ public final class FileUtils {
     }
 
     @CoberturaIgnore
-    public static File fileFromString(final String content) {
-        try {
-            final File temp = File.createTempFile("tmp", ".tmp");
-            temp.deleteOnExit();
-            final BufferedWriter out = new BufferedWriter(new FileWriter(temp));
+    public static File fileFromString(final String content) throws IOException {
+        final File temp = File.createTempFile("tmp", ".tmp");
+        temp.deleteOnExit();
+        try (final BufferedWriter out = new BufferedWriter(new FileWriter(temp))) {
             out.write(content);
-            out.close();
             return temp;
-        } catch (IOException e) {
         }
-        return null;
-    }
-
-    public static String asciiFileToString(final File file) throws IOException {
-        final String loadedContent = StringUtils.inputStreamToString(new BufferedInputStream(new FileInputStream(file)));
-        return enforceSystemLineSeparator(loadedContent);
-    }
-
-    public static byte[] asciiFileToUtf8Bytes(final File file) throws IOException {
-        final String loadedContent = asciiFileToString(file);
-        return loadedContent.getBytes(StringUtils.charsetUTF8());
-    }
-
-    public static boolean isAsciiFile(final File file) throws IOException {
-        return ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
     }
 
     public static boolean isTemplateFile(final File file) throws IOException {
-        if (isAsciiFile(file)) {
-            return containsTemplateToken(asciiFileToString(file));
-        }
-        return false;
+        return isCharacterFile(file) && containsTemplateToken(characterFileToString(file));
     }
 
     public static boolean doesFilePathContainTemplateTokens(final File file) {
         return containsTemplateToken(file.getAbsolutePath());
     }
 
-    private static boolean containsTemplateToken(final String string) {
-        return string.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
-    }
-
     public static byte[] fileToBytes(final File file) throws IOException {
-        if (isAsciiFile(file)) {
-            return asciiFileToUtf8Bytes(file);
+        if (isCharacterFile(file)) {
+            return characterFileToUtf8Bytes(file);
         }
         return binaryFileToBytes(file);
     }
 
 
     @CoberturaIgnore
-    public static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+    static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
         final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
         if (!contentFile.isFile()) {
             throw new IOException(String.format("Could not load file from path: %s", relativePath));
         }
 
-        return IOUtils.toByteArray(new BufferedInputStream(new FileInputStream(contentFile)));
+        return Files.readAllBytes(Paths.get(contentFile.toURI()));
     }
 
 
-    public static byte[] binaryFileToBytes(final File file) throws IOException {
-        return IOUtils.toByteArray(new BufferedInputStream(new FileInputStream(file)));
+    @CoberturaIgnore
+    static byte[] binaryFileToBytes(final File file) throws IOException {
+        return Files.readAllBytes(Paths.get(file.toURI()));
     }
 
 
@@ -198,11 +174,27 @@ public final class FileUtils {
         return new BufferedReader(reader);
     }
 
+    public static BufferedReader constructReader(final File file) throws IOException {
+        return Files.newBufferedReader(Paths.get(file.toURI()));
+    }
 
-    public static BufferedReader constructReader(final File file) throws FileNotFoundException {
-        final Reader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)), StringUtils.charsetUTF8());
+    private static String characterFileToString(final File file) throws IOException {
+        final String loadedContent = StringUtils.inputStreamToString(new BufferedInputStream(new FileInputStream(file)));
+        return enforceSystemLineSeparator(loadedContent);
+    }
 
-        return new BufferedReader(reader);
+    private static byte[] characterFileToUtf8Bytes(final File file) throws IOException {
+        final String loadedContent = characterFileToString(file);
+
+        return StringUtils.getBytesUtf8(loadedContent);
+    }
+
+    private static boolean isCharacterFile(final File file) throws IOException {
+        return ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
+    }
+
+    private static boolean containsTemplateToken(final String string) {
+        return string.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
     }
 
     private static final class StringBuilderWriter extends Writer implements Serializable {
@@ -215,9 +207,7 @@ public final class FileUtils {
 
         @Override
         public void write(char[] value, int offset, int length) {
-            if (ObjectUtils.isNotNull(value)) {
-                builder.append(value, offset, length);
-            }
+            builder.append(value, offset, length);
         }
 
         @Override

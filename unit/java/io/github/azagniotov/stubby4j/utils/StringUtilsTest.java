@@ -11,13 +11,18 @@ import java.util.NoSuchElementException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author Alexander Zagniotov
  * @since 4/14/13, 11:14 AM
  */
 public class StringUtilsTest {
+
+    private static final String SEPARATOR = ",";
+    private static final String TEXT_LIST = "foo,bar,baz";
+    private static final String[] EMPTY_ARRAY_LIST = {};
+    private static final String[] ARRAY_LIST = {"foo", "bar", "baz"};
+    private static final String[] MIXED_ARRAY_LIST = {null, "", "foo"};
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -224,26 +229,16 @@ public class StringUtilsTest {
         assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be <% query.1 %> returned");
     }
 
-
-    /*
-       https://github.com/apache/commons-lang/blob/master/src/test/java/org/apache/commons/lang3/StringUtilsTest.java
-     */
-    private static final char SEPARATOR = ',';
-    private static final String TEXT_LIST = "foo,bar,baz";
-    private static final String[] EMPTY_ARRAY_LIST = {};
-    private static final String[] ARRAY_LIST = {"foo", "bar", "baz"};
-    private static final String[] MIXED_ARRAY_LIST = {null, "", "foo"};
-
     @Test
-    public void testJoin_ArrayString() {
+    public void shouldJoinArrayString() {
         assertEquals("", StringUtils.join(EMPTY_ARRAY_LIST, SEPARATOR));
         assertEquals(TEXT_LIST, StringUtils.join(ARRAY_LIST, SEPARATOR));
-        assertEquals(",,foo", StringUtils.join(MIXED_ARRAY_LIST, SEPARATOR));
+        assertEquals("null,,foo", StringUtils.join(MIXED_ARRAY_LIST, SEPARATOR));
     }
 
     @Test
-    public void testRepeat_StringInt() {
-        assertNull(StringUtils.repeat(null, 2));
+    public void shouldRepeatString() {
+        assertEquals("", StringUtils.repeat(null, 2));
         assertEquals("", StringUtils.repeat("ab", 0));
         assertEquals("", StringUtils.repeat("", 3));
         assertEquals("aaa", StringUtils.repeat("a", 3));

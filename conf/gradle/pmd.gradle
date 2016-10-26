@@ -14,7 +14,7 @@ pmd {
    ruleSetFiles = files("$rootDir/conf/pmd/pmd-rulesets.xml")
 }
 pmdMain {
-   excludes = ["by/stub/repackaged/**/*.java", "by/stub/cli/**/*.java", "**/ConsoleUtils.java", "**/FakeX509TrustManager.java", "**/ConfigurationScanner.java", "**/Stubby4JException.java", "**/Main.java", "**/HttpServletResponseWithGetStatus.java"]
+   excludes = ["io/github/azagniotov/cli/**/*.java", "**/ConsoleUtils.java", "**/FakeX509TrustManager.java", "**/*Scanner.java", "**/Stubby4JException.java", "**/Main.java"]
    reports {
       xml.enabled true
       html.enabled false

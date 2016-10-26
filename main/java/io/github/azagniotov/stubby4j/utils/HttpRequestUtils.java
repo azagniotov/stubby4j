@@ -41,7 +41,7 @@ public final class HttpRequestUtils {
             if (headerValues.size() > 1) {
                 stringBuilder.append(LEFT_BRACKET);
             }
-            stringBuilder.append(StringUtils.join(headerValues.toArray(new String[headerValues.size()]), COMMA.charAt(0)));
+            stringBuilder.append(StringUtils.join(headerValues.toArray(new String[headerValues.size()]), COMMA));
             if (headerValues.size() > 1) {
                 stringBuilder.append(RIGHT_BRACKET);
             }
