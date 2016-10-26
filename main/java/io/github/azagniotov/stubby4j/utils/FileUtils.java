@@ -21,20 +21,15 @@ package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Serializable;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -68,24 +63,11 @@ public final class FileUtils {
             )
     );
 
-    //TODO Fallback to using System.lineSeparator()
     private static final String LINE_SEPARATOR_UNIX = "\n";
     private static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
     private static final String LINE_SEPARATOR_WINDOWS = "\r\n";
     private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
-    public static final String BR;
-
-    // Instead of hard-coding '\n', makes the new line character be specific
-    // to the platform (Mac, *Nix or Win) where stubby4j is running
-    static {
-        final int initialSize = 4;
-        final StringBuilderWriter stringBuilderWriter = new StringBuilderWriter(initialSize);
-        try (final PrintWriter out = new PrintWriter(stringBuilderWriter)) {
-            out.println();
-            BR = stringBuilderWriter.toString();
-            out.flush();
-        }
-    }
+    public static final String BR = System.lineSeparator();
 
     private FileUtils() {
 
@@ -179,7 +161,7 @@ public final class FileUtils {
     }
 
     private static String characterFileToString(final File file) throws IOException {
-        final String loadedContent = StringUtils.inputStreamToString(new BufferedInputStream(new FileInputStream(file)));
+        final String loadedContent = StringUtils.inputStreamToString(Files.newInputStream(Paths.get(file.toURI())));
         return enforceSystemLineSeparator(loadedContent);
     }
 
@@ -195,32 +177,5 @@ public final class FileUtils {
 
     private static boolean containsTemplateToken(final String string) {
         return string.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
-    }
-
-    private static final class StringBuilderWriter extends Writer implements Serializable {
-
-        private final StringBuilder builder;
-
-        private StringBuilderWriter(int capacity) {
-            this.builder = new StringBuilder(capacity);
-        }
-
-        @Override
-        public void write(char[] value, int offset, int length) {
-            builder.append(value, offset, length);
-        }
-
-        @Override
-        public void flush() throws IOException {
-        }
-
-        @Override
-        public void close() throws IOException {
-        }
-
-        @Override
-        public String toString() {
-            return builder.toString();
-        }
     }
 }
