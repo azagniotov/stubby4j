@@ -25,19 +25,6 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     project.buildDir = 'target'
-    if (project.name != 'main') {
-        apply from: "$rootDir/conf/gradle/console.gradle"
-    }
-}
-
-apply from: "$rootDir/conf/gradle/ides.gradle"
-
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
 }
 
 subprojects {
@@ -59,41 +46,5 @@ subprojects {
         apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
 
-task allTestReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/all")
-    reportOn subprojects*.test
-    doLast {
-        def total = 0
-        def failure = 0
-        def moduleTabs = "\t";
-        def prefixSpace = "      ";
-        def prefixDots = ":::::";
-        def hr = prefixSpace + "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::";
-        println ""
-        println hr
-
-        for (testProjectName in project(':').ext.map) {
-            total += testProjectName.value['total']
-            failure += testProjectName.value['failure']
-            println prefixSpace + prefixDots + "  " + testProjectName.key +
-                    " (failed: " + testProjectName.value['failure'] + ", passed: " + testProjectName.value['success'] + ", total: " + testProjectName.value['total'] + ")"
-            for (testClassName in testProjectName.value) {
-                if (testClassName.key == 'total' || testClassName.key == 'success' || testClassName.key == 'failure') {
-                    continue;
-                }
-                println prefixSpace + prefixDots + "    " + moduleTabs + testClassName.key +
-                        " (" + testClassName.value['success'] + "/" + testClassName.value['total'] + ")"
-            }
-            println hr
-        }
-        println prefixSpace + prefixDots + "                  Total tests executed in $stubbyProjectName: " + total
-        println hr
-        if (failure > 0) {
-            throw new GradleException(failure + " TESTS FAILED!!!")
-        }
-    }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
-}
+apply from: "$rootDir/conf/gradle/ides.gradle"
+apply from: "$rootDir/conf/gradle/tasks.gradle"
