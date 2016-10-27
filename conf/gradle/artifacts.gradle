@@ -1,0 +1,117 @@
+project.ext.dependenciesWithJetty = configurations.compile.resolve().findAll { file ->
+    return /*!file.name.contains("servlet-api") && */ !file.name.contains("-sources")
+}
+
+project.ext.jettylessDependencies = configurations.compile.resolve().findAll { file ->
+    return !file.name.contains("jetty") && !file.name.contains("-sources")
+}
+
+project.ext.projectManifest = manifest {
+    def manifestClasspath = project.ext.dependenciesWithJetty.collect { it.getName() }.join(',')
+    attributes 'Main-Class': 'io.github.azagniotov.stubby4j.Main',
+            'Package': 'io.github.azagniotov.stubby4j',
+            'Class-Path': manifestClasspath,
+            'Implementation-Title': "${stubbyProjectName}",
+            'Implementation-Version': "${version}",
+            'Implementation-Vendor': 'Alexander Zagniotov',
+            'Built-By': 'Alexander Zagniotov',
+            'Built-Date': new Date().toString(),
+            'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+            'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+}
+
+project.ext.projectManifestNoJetty = manifest {
+    def manifestClasspath = project.ext.jettylessDependencies.collect { it.getName() }.join(',')
+    attributes 'Main-Class': 'io.github.azagniotov.stubby4j.Main',
+            'Package': 'io.github.azagniotov.stubby4j',
+            'Class-Path': manifestClasspath,
+            'Implementation-Title': "${stubbyProjectName}",
+            'Implementation-Version': "${version}",
+            'Implementation-Vendor': 'Alexander Zagniotov',
+            'Built-By': 'Alexander Zagniotov',
+            'Built-Date': new Date().toString(),
+            'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+            'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+}
+
+jar {
+    description = 'Creates a shaded/uberjar/fatjar of stubby4j'
+    archiveName = "${stubbyProjectName}-${version}.jar"
+    destinationDir = file(project(':').libsDir.path)
+    manifest = project.ext.projectManifest
+    from sourceSets.main.output
+    from(project.ext.dependenciesWithJetty.collect { zipTree(it) }) {
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/*.INF'
+        exclude 'META-INF/*.inf'
+    }
+    doLast {
+        println ":" + name + " Packaged the following dependencies: " + project.ext.dependenciesWithJetty.collect { File file -> file.name }
+    }
+}
+
+task skinnyJar(type: Jar) {
+    description = 'Creates a skinny/no-dependencies of stubby4j'
+    baseName = "${stubbyProjectName}"
+    version = "${version}"
+    classifier = "no-dependencies"
+    extension = "jar"
+    destinationDir = file(project(':').libsDir.path)
+    manifest = project.ext.projectManifest
+    from sourceSets.main.output
+
+    doLast {
+        println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDir
+    }
+}
+
+task noJettyJar(type: Jar) {
+    description = 'Creates a shaded/uberjar/fatjar of stubby4j WITHOUT Jetty classes'
+    baseName = "${stubbyProjectName}"
+    version = "${version}"
+    classifier = "no-jetty"
+    extension = "jar"
+    destinationDir = file(project(':').libsDir.path)
+    manifest = project.ext.projectManifestNoJetty
+    from sourceSets.main.output
+    from(project.ext.jettylessDependencies.collect { zipTree(it) }) {
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/*.INF'
+        exclude 'META-INF/*.inf'
+    }
+    doLast {
+        println ":" + name + " Packaged the following dependencies: " + project.ext.jettylessDependencies.collect { File file -> file.name }
+    }
+}
+
+task javadocJar(type: Jar, overwrite: true) {
+    description = 'Creates a Javadoc JAR of stubby4j'
+    baseName = "${stubbyProjectName}"
+    version = "${version}"
+    classifier = "javadoc"
+    extension = "jar"
+    destinationDir = file(project(':').libsDir.path)
+    from project(":main").tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
+}
+
+task sourceJar(type: Jar, overwrite: true) {
+    description = 'Creates a Source JAR of stubby4j'
+    baseName = "${stubbyProjectName}"
+    version = "${version}"
+    classifier = "sources"
+    extension = "jar"
+    destinationDir = file(project(':').libsDir.path)
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives noJettyJar
+    archives skinnyJar
+    archives javadocJar
+    archives sourceJar
+}
+

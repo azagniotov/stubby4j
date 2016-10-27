@@ -1,90 +1,50 @@
 // vim: ft=groovy
-defaultTasks 'clean', 'build'
+import org.kt3k.gradle.plugin.coveralls.domain.CoberturaSourceReportFactory
+
+ext.coberturaSourceReportFactory = new CoberturaSourceReportFactory()
+project(':').ext.map = [:]
+
+defaultTasks 'clean', 'build', 'allTestReport'
 description = 'Gradle configuration for stubby4j'
 
 buildscript {
-   repositories {
-      mavenCentral()
-   }
-
-   dependencies {
-      classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
-   }
-
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.3.1'
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.4'
+    }
 }
 
 allprojects {
-   apply plugin: 'java'
-   apply plugin: 'idea'
-   apply plugin: 'eclipse'
-   apply plugin: 'project-report'
-   project.buildDir = 'target'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    project.buildDir = 'target'
+}
+
+subprojects {
+    subproject ->
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            jcenter()
+        }
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+        [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+        [compileJava]*.options*.compilerArgs = [
+                "-Xlint:-varargs", "-Xlint:cast", "-Xlint:classfile",
+                "-Xlint:dep-ann", "-Xlint:divzero", "-Xlint:empty", "-Xlint:finally",
+                "-Xlint:overrides", "-Xlint:path", "-Xlint:processing",
+                "-Xlint:try", "-Xlint:-fallthrough", "-Xlint:-rawtypes", "-Xlint:-deprecation",
+                "-Xlint:-unchecked", "-Xlint:-options"]
+        apply from: "$rootDir/conf/gradle/dependency.gradle"
 }
 
 apply from: "$rootDir/conf/gradle/ides.gradle"
-
-subprojects {
-   subproject ->
-      sourceCompatibility = 1.6
-      tasks.withType(Compile) {
-         doFirst {
-            assert sourceCompatibility == "1.6": "The sourceCompatibility of $name was changed!"
-         }
-         options.encoding = 'UTF-8'
-      }
-      targetCompatibility = 1.6
-
-      repositories {
-         mavenCentral()
-         mavenLocal()
-      }
-
-      test {
-         testReport = false
-         testLogging {
-            events "passed", "skipped", "failed"
-            exceptionFormat "full"
-            showExceptions true
-            showCauses true
-            showStackTraces true
-
-            if (subproject.name != 'main') {
-                def testCounter = 0
-                afterSuite { testDescriptor, testResult ->
-                  if (testDescriptor.getName().contains("$stubbyProjectGroup")) {
-                     testCounter += testResult.getTestCount()
-                  }
-               }
-               doFirst {
-                  println ""
-                  println "*******************************************************************************************"
-                  println "********                 Running " + subproject.name.toUpperCase() + " Module Tests"
-                  println "*******************************************************************************************"
-               }
-
-               doLast {
-                  println "*******************************************************************************************"
-                  println "********                 Finished " + (testCounter + 3) + " " + subproject.name.toUpperCase() + " Tests!"
-                  println "*******************************************************************************************"
-                  println ""
-               }
-            }
-         }
-      }
-
-      apply from: "$rootDir/conf/gradle/dependencies.gradle"
-      if (subproject.name != 'main' && subproject.name != 'builders') {
-         apply from: "$rootDir/conf/gradle/cobertura.gradle"
-      }
-}
-
-project(":").tasks.each {
-   task ->
-      def taskNameLowerCase = task.name.toLowerCase()
-      if (!taskNameLowerCase.contains("idea") && 
-         !taskNameLowerCase.contains("eclipse") &&
-         !taskNameLowerCase.contains("clean")) {
-         task.enabled = false
-         println ":" + task.name + " => Disabling task.." 
-      }
-}
+apply from: "$rootDir/conf/gradle/tasks.gradle"

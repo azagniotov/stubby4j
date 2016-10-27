@@ -79,7 +79,7 @@
       <priority>4</priority>
    </rule>
    <rule ref="rulesets/java/design.xml/CloseResource"/>
-   <rule ref="rulesets/java/design.xml/NonStaticInitializer"/>
+   <!-- <rule ref="rulesets/java/design.xml/NonStaticInitializer"/> -->
    <rule ref="rulesets/java/design.xml/DefaultLabelNotLastInSwitchStmt"/>
    <rule ref="rulesets/java/design.xml/NonCaseLabelInSwitchStatement"/>
    <rule ref="rulesets/java/design.xml/OptimizableToArrayCall"/>
@@ -167,6 +167,9 @@
    </rule>
    <rule ref="rulesets/java/naming.xml/LongVariable">
       <priority>5</priority>
+      <properties>
+         <property name="minimum" value="25"/>
+      </properties>
    </rule>
    <rule ref="rulesets/java/naming.xml/ShortMethodName">
       <priority>5</priority>
@@ -282,7 +285,7 @@
    <rule ref="rulesets/java/codesize.xml/NPathComplexity">
       <priority>1</priority>
       <properties>
-            <property name="minimum" value="100"/>
+            <property name="minimum" value="175"/>
       </properties>
    </rule>
    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
@@ -297,7 +300,7 @@
    <rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">
       <priority>1</priority>
       <properties>
-            <property name="reportLevel" value="6"/>
+            <property name="reportLevel" value="10"/>
             <property name="showClassesComplexity" value="false"/>
       </properties>
    </rule>

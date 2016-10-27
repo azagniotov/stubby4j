@@ -1,0 +1,25 @@
+apply plugin: "info.solidsoft.pitest"
+
+configurations { mutableCodeBase { transitive false } }
+dependencies { mutableCodeBase project(':main') }
+
+pitest {
+   mainSourceSets = [project.sourceSets.test, project(':main').sourceSets.main]
+   additionalMutableCodePaths = [configurations.mutableCodeBase.singleFile]
+   targetClasses = ['io.github.azagniotov.stubby4j.*']
+   excludedClasses = ['io.github.azagniotov.stubby4j.Main', 'io.github.azagniotov.stubby4j.handlers.strategy.admin.*', 'io.github.azagniotov.stubby4j.server.*', 'io.github.azagniotov.stubby4j.repackaged.*', 'io.github.azagniotov.stubby4j.database.thread.*', 'io.github.azagniotov.stubby4j.http.*', 'io.github.azagniotov.stubby4j.utils.ConsoleUtils']
+   threads = 6
+   outputFormats = ['HTML']
+   failWhenNoMutations = true
+   timestampedReports = false
+   verbose = false
+   mutators = [
+      'INCREMENTS',
+      'CONDITIONALS_BOUNDARY',
+      'RETURN_VALS',
+      'VOID_METHOD_CALLS',
+      'NON_VOID_METHOD_CALLS',
+      'INVERT_NEGS',
+      'MATH',
+      'NEGATE_CONDITIONALS']
+}

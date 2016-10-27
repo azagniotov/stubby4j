@@ -1,0 +1,14 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  - TERM=dumb
+
+git:
+  depth: 10
+
+after_success:
+  - gradle cobertura coveralls
+  - bash <(curl -s https://codecov.io/bash)

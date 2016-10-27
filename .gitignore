@@ -21,6 +21,12 @@ builders/builders.iml
 unit/unit.iml
 integration/integration.iml
 functional/functional.iml
+.classpath
+builders/.classpath
+functional/.classpath
+integration/.classpath
+main/.classpath
+unit/.classpath
 build/*
 out/*
 .idea/*
@@ -35,3 +41,7 @@ Thumbs.db
 stubby4j.iml
 stubby4j.ipr
 stubby4j.iws
+*.iml
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+

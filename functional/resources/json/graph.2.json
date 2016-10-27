@@ -1,0 +1,59 @@
+{
+   "first": "John",
+   "last": "Doe",
+   "age": 39,
+   "favorites": {
+      "color": "Blue",
+      "sport": "Soccer",
+      "food": "Spaghetti"
+   },
+   "sex": "M",
+   "salary": 70000,
+   "registered": true,
+   "interests": [
+      "Reading",
+      "Mountain Biking",
+      "Hacking"
+   ],
+   "skills": [
+      {
+         "category": "CouchDB",
+         "tests": [
+            {
+               "name": "One",
+               "score": 79
+            },
+            {
+               "name": "Two",
+               "score": 84
+            }
+         ]
+      },
+      {
+         "category": "JavaScript",
+         "tests": [
+            {
+               "name": "One",
+               "score": 90
+            },
+            {
+               "name": "Two",
+               "score": 96
+            }
+         ]
+      },
+      {
+         "category": "Node.js",
+         "tests": [
+            {
+               "name": "Two",
+               "score": 93
+            },
+            {
+               "name": "One",
+               "score": 97
+            }
+         ]
+      }
+   ]
+}

@@ -1,6 +1,10 @@
+apply from: "$rootDir/conf/gradle/cobertura.gradle"
+apply from: "$rootDir/conf/gradle/pitest.gradle"
+apply from: "$rootDir/conf/gradle/console.gradle"
+
 dependencies {
    compile project(':main')
-   compile project(':builders')
+   testCompile project(':builders')
 }
 
 sourceSets {
@@ -13,3 +17,6 @@ sourceSets {
       }
    }
 }
+
+tasks.uploadArchives.enabled = false
+tasks.jar.enabled = false
