@@ -1,5 +1,5 @@
 [![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
-[![Dependency Status](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54fd17e14f31081ed1000017)
+[![Dependency Status](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f)
 [![codecov](https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg)](https://codecov.io/gh/azagniotov/stubby4j)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/azagniotov/stubby4j/pulls.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls)
