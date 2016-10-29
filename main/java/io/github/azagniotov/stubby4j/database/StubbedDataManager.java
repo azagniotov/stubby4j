@@ -38,7 +38,7 @@ import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,19 +46,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StubbedDataManager {
 
-    private final File yamlConfig;
+    private final File configFile;
     private final List<StubHttpLifecycle> stubs;
-    private StubbyHttpTransport stubbyHttpTransport;
+    private final Future<List<StubHttpLifecycle>> stubLoadComputation;
+    private final StubbyHttpTransport stubbyHttpTransport;
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
     private final ConcurrentHashMap<String, StubHttpLifecycle> matchedStubsCache;
 
-    public StubbedDataManager(final File yamlConfig, final List<StubHttpLifecycle> loadedStubs) {
-        this.yamlConfig = yamlConfig;
-        this.stubs = Collections.synchronizedList(loadedStubs);
+    public StubbedDataManager(final File configFile, final Future<List<StubHttpLifecycle>> stubLoadComputation) {
+        this.stubs = new ArrayList<>();
+        this.configFile = configFile;
+        this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = new StubbyHttpTransport();
         this.resourceStats = new ConcurrentHashMap<>();
         this.matchedStubsCache = new ConcurrentHashMap<>();
@@ -175,15 +179,15 @@ public class StubbedDataManager {
     }
 
     public synchronized void refreshStubsFromYAMLConfig(final YAMLParser yamlParser) throws Exception {
-        resetStubsCache(yamlParser.parse(this.yamlConfig.getParent(), yamlConfig));
+        resetStubsCache(yamlParser.parse(this.configFile.getParent(), configFile));
     }
 
     public synchronized void refreshStubsByPost(final YAMLParser yamlParser, final String postPayload) throws Exception {
-        resetStubsCache(yamlParser.parse(this.yamlConfig.getParent(), postPayload));
+        resetStubsCache(yamlParser.parse(this.configFile.getParent(), postPayload));
     }
 
     public synchronized String refreshStubByIndex(final YAMLParser yamlParser, final String putPayload, final int index) throws Exception {
-        final List<StubHttpLifecycle> parsedStubs = yamlParser.parse(this.yamlConfig.getParent(), putPayload);
+        final List<StubHttpLifecycle> parsedStubs = yamlParser.parse(this.configFile.getParent(), putPayload);
         final StubHttpLifecycle newStub = parsedStubs.get(0);
         updateStubByIndex(index, newStub);
 
@@ -211,7 +215,7 @@ public class StubbedDataManager {
     }
 
     public File getYAMLConfig() {
-        return yamlConfig;
+        return configFile;
     }
 
     public synchronized Map<File, Long> getExternalFiles() {
@@ -239,9 +243,9 @@ public class StubbedDataManager {
     @CoberturaIgnore
     public String getYAMLConfigCanonicalPath() {
         try {
-            return this.yamlConfig.getCanonicalPath();
+            return this.configFile.getCanonicalPath();
         } catch (IOException e) {
-            return this.yamlConfig.getAbsolutePath();
+            return this.configFile.getAbsolutePath();
         }
     }
 
@@ -278,6 +282,14 @@ public class StubbedDataManager {
     private void updateResourceIDHeaders() {
         for (int index = 0; index < stubs.size(); index++) {
             stubs.get(index).setResourceId(index);
+        }
+    }
+
+    public void retrieveLoadedStubs() {
+        try {
+            stubs.addAll(stubLoadComputation.get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 }

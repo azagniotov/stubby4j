@@ -26,7 +26,6 @@ import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.database.thread.ExternalFilesScanner;
 import io.github.azagniotov.stubby4j.database.thread.MainYamlScanner;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -34,6 +33,7 @@ import org.eclipse.jetty.util.log.Log;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 public class StubbyManagerFactory {
 
@@ -41,17 +41,14 @@ public class StubbyManagerFactory {
 
     }
 
-    public synchronized StubbyManager construct(final String dataYamlFilename, final Map<String, String> commandLineArgs) throws Exception {
+    public synchronized StubbyManager construct(final File configFile,
+                                                final Map<String, String> commandLineArgs,
+                                                final Future<List<StubHttpLifecycle>> stubLoadComputation) throws Exception {
 
         // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
         Log.setLog(new EmptyLogger());
 
-        final File dataYamlFile = new File(dataYamlFilename);
-        final List<StubHttpLifecycle> stubs = new YAMLParser().parse(dataYamlFile.getParent(), dataYamlFile);
-
-        System.out.println();
-
-        final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, stubs);
+        final StubbedDataManager stubbedDataManager = new StubbedDataManager(configFile, stubLoadComputation);
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubbedDataManager);
         final Server server = jettyFactory.construct();
 
@@ -65,7 +62,7 @@ public class StubbyManagerFactory {
             ANSITerminal.muteConsole(true);
         }
 
-        return new StubbyManager(server);
+        return new StubbyManager(server, jettyFactory, stubbedDataManager);
     }
 
     private void watchDataStore(final StubbedDataManager stubbedDataManager, final long sleepTime) {

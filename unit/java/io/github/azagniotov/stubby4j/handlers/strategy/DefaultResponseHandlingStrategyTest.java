@@ -1,16 +1,18 @@
 package io.github.azagniotov.stubby4j.handlers.strategy;
 
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.DefaultResponseHandlingStrategy;
-import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -28,20 +30,25 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 7/18/12, 10:11 AM
  */
-
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultResponseHandlingStrategyTest {
 
-    private static final StubResponse mockStubResponse = Mockito.mock(StubResponse.class);
-    private static final StubRequest mockAssertionRequest = Mockito.mock(StubRequest.class);
+    private static final String SOME_RESULTS_MESSAGE = "we have results";
 
-    private final String someResultsMessage = "we have results";
+    @Mock
+    private StubResponse mockStubResponse;
 
-    private static StubResponseHandlingStrategy defaultResponseStubResponseHandlingStrategy;
+    @Mock
+    private StubRequest mockAssertionRequest;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        defaultResponseStubResponseHandlingStrategy = new DefaultResponseHandlingStrategy(mockStubResponse);
-    }
+    @Mock
+    private PrintWriter mockPrintWriter;
+
+    @Mock
+    private HttpServletResponse mockHttpServletResponse;
+
+    @InjectMocks
+    private DefaultResponseHandlingStrategy defaultResponseHandlingStrategy;
 
     private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
@@ -53,9 +60,6 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
-
-        final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
-
         when(mockStubResponse.getStatus()).thenReturn("200");
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
         Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
@@ -76,7 +80,7 @@ public class DefaultResponseHandlingStrategyTest {
             }
         });
 
-        defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
         verifyMainHeaders(mockHttpServletResponse);
@@ -84,9 +88,6 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
-
-        final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
-
         when(mockStubResponse.getStatus()).thenReturn("200");
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
         when(mockStubResponse.getLatency()).thenReturn("100");
@@ -110,7 +111,7 @@ public class DefaultResponseHandlingStrategyTest {
         });
 
         when(mockAssertionRequest.getQuery()).thenReturn(new HashMap<String, String>());
-        defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
         verifyMainHeaders(mockHttpServletResponse);
@@ -118,13 +119,9 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
-
-        final PrintWriter mockPrintWriter = Mockito.mock(PrintWriter.class);
-        final HttpServletResponse mockHttpServletResponse = Mockito.mock(HttpServletResponse.class);
-
         when(mockStubResponse.getStatus()).thenReturn("200");
         when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(someResultsMessage.getBytes(StringUtils.UTF_8));
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(SOME_RESULTS_MESSAGE.getBytes(StringUtils.UTF_8));
         when(mockStubResponse.getLatency()).thenReturn("100");
         Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
 
@@ -145,7 +142,7 @@ public class DefaultResponseHandlingStrategyTest {
         });
 
         long before = System.currentTimeMillis();
-        defaultResponseStubResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
         long after = System.currentTimeMillis();
 
         assertThat(after - before).isGreaterThanOrEqualTo(100);

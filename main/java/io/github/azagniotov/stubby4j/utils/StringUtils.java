@@ -43,7 +43,7 @@ public final class StringUtils {
     public static final String UTF_8 = "UTF-8";
 
     static final String NOT_PROVIDED = "Not provided";
-    static final String FAILED = "Failed to load response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
+    static final String FAILED = "Failed to retrieveLoadedStubs response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
     private static final String TEMPLATE_TOKEN_RIGHT = "%>";
     private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();

@@ -25,14 +25,22 @@ import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.apache.commons.cli.ParseException;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class Main {
 
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
     private static CommandLineInterpreter commandLineInterpreter;
 
     private Main() {
@@ -42,6 +50,8 @@ public final class Main {
     public static void main(String[] args) {
         commandLineInterpreter = new CommandLineInterpreter();
 
+        //String[] args2 = new String[]{"--data", "/Users/alexanderzagniotov/yaml/stubs.yaml"};
+        //parseCommandLineArgs(args2);
         parseCommandLineArgs(args);
         if (printHelpIfRequested() || printVersionIfRequested()) {
             return;
@@ -97,14 +107,27 @@ public final class Main {
 
     private static void startStubby4jUsingCommandLineArgs() {
         try {
+
+            final long initialStart = System.currentTimeMillis();
             final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
-            final String yamlConfigFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
+            final String configFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
             ANSITerminal.muteConsole(commandLineInterpreter.isMute());
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
-            final StubbyManager stubbyManager = new StubbyManagerFactory().construct(yamlConfigFilename, commandLineArgs);
+            final File configFile = new File(configFilename);
+            final Future<List<StubHttpLifecycle>> stubLoadComputation =
+                    EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+            final StubbyManager stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineArgs, stubLoadComputation);
             stubbyManager.startJetty();
+            final long totalEnd = System.currentTimeMillis();
+
+            ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds", (totalEnd - initialStart)) + BR);
+
+            stubbyManager.statuses().forEach(ANSITerminal::status);
+
+            ANSITerminal.info(BR + "Quit: ctrl-c" + BR);
 
         } catch (final Exception ex) {
             final String msg =

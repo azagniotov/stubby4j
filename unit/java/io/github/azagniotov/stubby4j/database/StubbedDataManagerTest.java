@@ -10,44 +10,48 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StubbedDataManagerTest {
 
-    private static StubbedDataManager stubbedDataManager;
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
+    private static final File CONFIG_FILE = new File(".");
 
+    private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
+            CompletableFuture.completedFuture(new LinkedList<StubHttpLifecycle>());
+
+    @Mock
     private StubbyHttpTransport mockStubbyHttpTransport;
+
+    @Mock
     private YAMLParser mockYAMLParser;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        stubbedDataManager = new StubbedDataManager(new File("."), new LinkedList<StubHttpLifecycle>());
-    }
+    private StubbedDataManager stubbedDataManager;
 
     @Before
     public void beforeEach() throws Exception {
-        mockStubbyHttpTransport = mock(StubbyHttpTransport.class);
-        mockYAMLParser = mock(YAMLParser.class);
-        stubbedDataManager.resetStubsCache(new LinkedList<StubHttpLifecycle>());
+        stubbedDataManager = new StubbedDataManager(CONFIG_FILE, COMPLETED_FUTURE);
         ReflectionUtils.injectObjectFields(stubbedDataManager, "stubbyHttpTransport", mockStubbyHttpTransport);
-        assertThat(stubbedDataManager.getStubs().size()).isZero();
     }
 
     @Test

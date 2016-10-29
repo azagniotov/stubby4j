@@ -1085,6 +1085,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ##### 4.0.4-SNAPSHOT
 * Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`
+* Shaved off ~130ms from stubby's start-up time due to async YAML parsing
 
 ##### 4.0.3
 * Optimized the stub matching algorithm by caching the previous matches [StubbedDataManager#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubbedDataManager.java)

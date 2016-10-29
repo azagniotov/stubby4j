@@ -21,15 +21,21 @@ package io.github.azagniotov.stubby4j.server;
 
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import org.eclipse.jetty.server.Server;
+
+import java.util.List;
 
 public final class StubbyManager {
 
     private final Server server;
+    private final JettyFactory jettyFactory;
+    private final StubbedDataManager stubbedDataManager;
 
-    public StubbyManager(final Server server) {
+    StubbyManager(final Server server, final JettyFactory jettyFactory, final StubbedDataManager stubbedDataManager) {
         this.server = server;
+        this.jettyFactory = jettyFactory;
+        this.stubbedDataManager = stubbedDataManager;
     }
 
     public synchronized void startJetty() throws Exception {
@@ -38,13 +44,11 @@ public final class StubbyManager {
         }
 
         server.start();
-
         while (!isJettyUp()) {
             ANSITerminal.warn("Waiting for Jetty to finish starting up..");
             Thread.sleep(250);
         }
-        ANSITerminal.status("Jetty successfully started");
-        ANSITerminal.info(FileUtils.BR + "Quit: ctrl-c" + FileUtils.BR);
+        stubbedDataManager.retrieveLoadedStubs();
     }
 
     public synchronized void stopJetty() throws Exception {
@@ -63,6 +67,10 @@ public final class StubbyManager {
 
     public synchronized void joinJetty() throws Exception {
         server.join();
+    }
+
+    public List<String> statuses() {
+        return jettyFactory.statuses();
     }
 
     private boolean isJettyStarting() throws Exception {

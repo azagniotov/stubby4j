@@ -17,8 +17,10 @@ import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.data.MapEntry;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -29,12 +31,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,22 +50,25 @@ import static org.mockito.Mockito.when;
 
 
 @SuppressWarnings("serial")
+@RunWith(MockitoJUnitRunner.class)
 public class StubbedDataManagerTest {
 
-    private static StubbedDataManager stubbedDataManager;
-    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
     private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
+    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        stubbedDataManager = new StubbedDataManager(new File("."), new LinkedList<StubHttpLifecycle>());
-    }
+    private static final File CONFIG_FILE = new File(".");
+    private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
+            CompletableFuture.completedFuture(new LinkedList<StubHttpLifecycle>());
+
+    @Mock
+    private HttpServletRequest mockHttpServletRequest;
+
+    private StubbedDataManager stubbedDataManager;
 
     @Before
     public void beforeEach() throws Exception {
-        stubbedDataManager.resetStubsCache(new LinkedList<StubHttpLifecycle>());
+        stubbedDataManager = new StubbedDataManager(CONFIG_FILE, COMPLETED_FUTURE);
     }
-
 
     @Test
     public void shouldReturnMatchingStubbedSequenceResponse_WhenSequenceHasOneResponse() throws Exception {
@@ -671,7 +677,6 @@ public class StubbedDataManagerTest {
 
         loadYamlToDataStore(yaml);
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString())
@@ -710,7 +715,6 @@ public class StubbedDataManagerTest {
 
         loadYamlToDataStore(yaml);
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString())

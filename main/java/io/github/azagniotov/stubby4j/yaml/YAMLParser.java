@@ -50,7 +50,7 @@ import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {
 
-    static final String FAILED_TO_LOAD_FILE_ERR = "Failed to load response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
+    static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private String dataConfigHomeDirectory;
     private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
 

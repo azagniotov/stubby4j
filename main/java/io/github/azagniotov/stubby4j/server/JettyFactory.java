@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.server;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.exception.Stubby4JException;
@@ -55,6 +54,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -73,26 +73,25 @@ public final class JettyFactory {
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
     public static final String DEFAULT_HOST = "localhost";
 
-    static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
-    static final String STUBS_CONNECTOR_NAME = "StubsConnector";
-    static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
+    private static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
+    private static final String STUBS_CONNECTOR_NAME = "StubsConnector";
+    private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
     private static final String ROOT_PATH_INFO = "/";
     private final Map<String, String> commandLineArgs;
     private final StubbedDataManager stubbedDataManager;
+    private final List<String> statuses;
     private String currentHost;
     private int currentStubsPort;
     private int currentAdminPort;
     private int currentStubsSslPort;
 
-    public JettyFactory(final Map<String, String> commandLineArgs, final StubbedDataManager stubbedDataManager) {
+    JettyFactory(final Map<String, String> commandLineArgs, final StubbedDataManager stubbedDataManager) {
         this.commandLineArgs = commandLineArgs;
         this.stubbedDataManager = stubbedDataManager;
+        this.statuses = new LinkedList<>();
     }
 
-    public Server construct() throws IOException {
-
-        //final Server server = new Server(new QueuedThreadPool(100, 10));
-        //server.addBean(new ScheduledExecutorScheduler());
+    Server construct() throws IOException {
         final Server server = new Server();
         server.setDumpAfterStart(false);
         server.setDumpBeforeStop(false);
@@ -215,11 +214,10 @@ public final class JettyFactory {
 
         final String configured = String.format("Admin portal configured at http://%s:%s",
                 adminChannel.getHost(), adminChannel.getPort());
-        ANSITerminal.status(configured);
-
+        statuses.add(configured);
         final String status = String.format("Admin portal status enabled at http://%s:%s/status",
                 adminChannel.getHost(), adminChannel.getPort());
-        ANSITerminal.status(status);
+        statuses.add(status);
 
         currentHost = adminChannel.getHost();
         currentAdminPort = adminChannel.getPort();
@@ -243,7 +241,7 @@ public final class JettyFactory {
 
         final String status = String.format("Stubs portal configured at http://%s:%s",
                 stubsChannel.getHost(), stubsChannel.getPort());
-        ANSITerminal.status(status);
+        statuses.add(status);
 
         currentStubsPort = stubsChannel.getPort();
 
@@ -282,7 +280,7 @@ public final class JettyFactory {
 
         final String status = String.format("Stubs portal configured with TLS at https://%s:%s using %s keystore",
                 sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal" : "provided " + keystorePath));
-        ANSITerminal.status(status);
+        statuses.add(status);
 
         currentStubsSslPort = sslConnector.getPort();
 
@@ -348,5 +346,9 @@ public final class JettyFactory {
             return Integer.parseInt(commandLineArgs.get(CommandLineInterpreter.OPTION_ADMINPORT));
         }
         return DEFAULT_ADMIN_PORT;
+    }
+
+    public List<String> statuses() {
+        return statuses;
     }
 }

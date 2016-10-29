@@ -5,6 +5,9 @@ import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -27,9 +30,13 @@ import static org.mockito.Mockito.when;
  * @author Alexander Zagniotov
  * @since 11/6/12, 3:44 PM
  */
+@RunWith(MockitoJUnitRunner.class)
 public class StubRequestTest {
 
     private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
+
+    @Mock
+    private HttpServletRequest mockHttpServletRequest;
 
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenNullUrlStubbed_AndNullUrlSubmitted() throws Exception {
@@ -1090,7 +1097,6 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
@@ -1114,7 +1120,6 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
@@ -1138,7 +1143,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
@@ -1162,7 +1167,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1186,7 +1191,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1210,7 +1215,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1239,7 +1244,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1268,7 +1273,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+        
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1292,7 +1297,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        final HttpServletRequest mockHttpServletRequest = mock(HttpServletRequest.class);
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");

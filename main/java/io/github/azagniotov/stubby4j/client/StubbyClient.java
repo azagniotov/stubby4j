@@ -26,14 +26,23 @@ import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpScheme;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public final class StubbyClient {
+
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
 
     private StubbyManager stubbyManager;
 
@@ -120,7 +129,12 @@ public final class StubbyClient {
         final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(args);
-        stubbyManager = new StubbyManagerFactory().construct(yamlConfigurationFilename, commandLineInterpreter.getCommandlineParams());
+
+        final File configFile = new File(yamlConfigurationFilename);
+        final Future<List<StubHttpLifecycle>> stubLoadComputation =
+                EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+        stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
     }
 
@@ -139,7 +153,12 @@ public final class StubbyClient {
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(args);
         final URL url = StubbyClient.class.getResource("/yaml/empty-stub.yaml");
-        stubbyManager = new StubbyManagerFactory().construct(url.getFile(), commandLineInterpreter.getCommandlineParams());
+
+        final File configFile = new File(url.getFile());
+        final Future<List<StubHttpLifecycle>> stubLoadComputation =
+                EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+        stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
     }
 
