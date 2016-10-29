@@ -31,7 +31,7 @@ final class StubResponseBuilder implements StubBuilder<StubResponse> {
     }
 
     @Override
-    public void store(final String fieldName, final Object fieldValue) {
+    public void stage(final String fieldName, final Object fieldValue) {
         fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
     }
 

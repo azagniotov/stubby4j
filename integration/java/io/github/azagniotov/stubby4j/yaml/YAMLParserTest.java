@@ -3,7 +3,6 @@ package io.github.azagniotov.stubby4j.yaml;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
@@ -742,6 +741,6 @@ public class YAMLParserTest {
 
 
     private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
-        return new YAMLParser().parse(".", FileUtils.constructReader(yaml));
+        return new YAMLParser().parse(".", yaml);
     }
 }

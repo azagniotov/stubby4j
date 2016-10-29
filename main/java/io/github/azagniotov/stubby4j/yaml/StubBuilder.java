@@ -7,5 +7,5 @@ package io.github.azagniotov.stubby4j.yaml;
 interface StubBuilder<T> {
     T build() throws Exception;
 
-    void store(final String fieldName, final Object fieldValue);
+    void stage(final String fieldName, final Object fieldValue);
 }

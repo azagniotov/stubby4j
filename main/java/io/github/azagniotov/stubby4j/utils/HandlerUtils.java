@@ -72,7 +72,7 @@ public final class HandlerUtils {
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
         response.setHeader(HttpHeader.DATE.asString(), new Date().toString());
         response.setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-        response.setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+        response.setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate"); // HTTP 1.1.
         response.setHeader(HttpHeader.PRAGMA.asString(), "no-cache"); // HTTP 1.0.
         response.setDateHeader(HttpHeader.EXPIRES.asString(), 0);
     }

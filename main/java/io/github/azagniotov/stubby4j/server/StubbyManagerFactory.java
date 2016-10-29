@@ -25,7 +25,6 @@ import io.github.azagniotov.stubby4j.cli.EmptyLogger;
 import io.github.azagniotov.stubby4j.database.StubbedDataManager;
 import io.github.azagniotov.stubby4j.database.thread.ExternalFilesScanner;
 import io.github.azagniotov.stubby4j.database.thread.MainYamlScanner;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
@@ -48,11 +47,11 @@ public class StubbyManagerFactory {
         Log.setLog(new EmptyLogger());
 
         final File dataYamlFile = new File(dataYamlFilename);
-        final List<StubHttpLifecycle> httpLifecycles = new YAMLParser().parse(dataYamlFile.getParent(), FileUtils.constructReader(dataYamlFile));
+        final List<StubHttpLifecycle> stubs = new YAMLParser().parse(dataYamlFile.getParent(), dataYamlFile);
 
         System.out.println();
 
-        final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, httpLifecycles);
+        final StubbedDataManager stubbedDataManager = new StubbedDataManager(dataYamlFile, stubs);
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubbedDataManager);
         final Server server = jettyFactory.construct();
 

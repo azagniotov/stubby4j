@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
@@ -52,7 +51,7 @@ public class YAMLParserLoadTest {
                     .withHeaders(expectedHeaderKey, expectedHeaderValue)
                     .withLiteralBody(stubbedResponseBody).build();
 
-            BUILDER.append(yaml).append(BR + BR);
+            BUILDER.append(yaml).append(BR).append(BR);
         }
 
         BUILDER.trimToSize();
@@ -75,7 +74,7 @@ public class YAMLParserLoadTest {
     }
 
     private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
-        return new YAMLParser().parse(".", FileUtils.constructReader(yaml));
+        return new YAMLParser().parse(".", yaml);
     }
 
 }

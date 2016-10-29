@@ -21,6 +21,7 @@ package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -93,7 +94,11 @@ public final class StringUtils {
         }
         // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
         // the entire stream, from beginning to (illogical) next beginning.
-        return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
+        if (inputStream instanceof BufferedInputStream) {
+            return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
+        }
+
+        return new Scanner(FileUtils.makeBuffered(inputStream), StringUtils.UTF_8).useDelimiter("\\A").next().trim();
     }
 
     public static String buildToken(final String propertyName, final int capturingGroupIdx) {

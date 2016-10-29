@@ -21,15 +21,13 @@ package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -149,19 +147,20 @@ public final class FileUtils {
                 .replace(LINE_SEPARATOR_TOKEN, BR);
     }
 
-    public static BufferedReader constructReader(final String content) {
-        final InputStream is = new ByteArrayInputStream(content.getBytes(StringUtils.charsetUTF8()));
-        final Reader reader = new InputStreamReader(is, StringUtils.charsetUTF8());
-
-        return new BufferedReader(reader);
+    public static InputStream constructInputStream(final File file) throws IOException {
+        return makeBuffered(Files.newInputStream(Paths.get(file.toURI())));
     }
 
-    public static BufferedReader constructReader(final File file) throws IOException {
-        return Files.newBufferedReader(Paths.get(file.toURI()));
+    public static InputStream constructInputStream(final String content) throws IOException {
+        return makeBuffered(new ByteArrayInputStream(content.getBytes(StringUtils.charsetUTF8())));
+    }
+
+    static InputStream makeBuffered(final InputStream inputStream) {
+        return new BufferedInputStream(inputStream);
     }
 
     private static String characterFileToString(final File file) throws IOException {
-        final String loadedContent = StringUtils.inputStreamToString(Files.newInputStream(Paths.get(file.toURI())));
+        final String loadedContent = StringUtils.inputStreamToString(constructInputStream(file));
         return enforceSystemLineSeparator(loadedContent);
     }
 
