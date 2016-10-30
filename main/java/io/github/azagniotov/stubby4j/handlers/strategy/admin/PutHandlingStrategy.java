@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws Exception {
+    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws Exception {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -25,7 +25,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
         final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
         final int stubIndexToUpdate = Integer.parseInt(pathInfoNoHeadingSlash);
 
-        if (!stubbedDataManager.canMatchStubByIndex(stubIndexToUpdate)) {
+        if (!stubRepository.canMatchStubByIndex(stubIndexToUpdate)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
             HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
@@ -38,7 +38,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        final String updatedCycleUrl = stubbedDataManager.refreshStubByIndex(new YAMLParser(), put, stubIndexToUpdate);
+        final String updatedCycleUrl = stubRepository.refreshStubByIndex(new YAMLParser(), put, stubIndexToUpdate);
 
         response.setStatus(HttpStatus.CREATED_201);
         response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);

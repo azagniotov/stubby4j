@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws Exception {
+    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws Exception {
 
         if (!request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -28,10 +28,10 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        stubbedDataManager.refreshStubsByPost(new YAMLParser(), post);
+        stubRepository.refreshStubsByPost(new YAMLParser(), post);
 
-        if (stubbedDataManager.getStubs().size() == 1) {
-            response.addHeader(HttpHeader.LOCATION.asString(), stubbedDataManager.getOnlyStubRequestUrl());
+        if (stubRepository.getStubs().size() == 1) {
+            response.addHeader(HttpHeader.LOCATION.asString(), stubRepository.getOnlyStubRequestUrl());
         }
 
         response.setStatus(HttpStatus.CREATED_201);

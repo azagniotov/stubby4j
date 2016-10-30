@@ -50,7 +50,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class StubbedDataManager {
+public class StubRepository {
 
     private final File configFile;
     private final List<StubHttpLifecycle> stubs;
@@ -59,7 +59,7 @@ public class StubbedDataManager {
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
     private final ConcurrentHashMap<String, StubHttpLifecycle> matchedStubsCache;
 
-    public StubbedDataManager(final File configFile, final Future<List<StubHttpLifecycle>> stubLoadComputation) {
+    public StubRepository(final File configFile, final Future<List<StubHttpLifecycle>> stubLoadComputation) {
         this.stubs = new ArrayList<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;

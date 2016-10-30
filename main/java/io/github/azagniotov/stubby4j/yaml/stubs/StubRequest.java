@@ -313,7 +313,7 @@ public class StubRequest {
     private boolean headersMatch(final Map<String, String> stubbedHeaders, final Map<String, String> assertingHeaders) {
         final Map<String, String> stubbedHeadersCopy = new HashMap<>(stubbedHeaders);
         for (final StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
-            // auth header is dealt with in StubbedDataManager after request is matched
+            // auth header is dealt with in StubRepository after request is matched
             stubbedHeadersCopy.remove(authorizationType.asYamlProp());
         }
         return mapsMatch(stubbedHeadersCopy, assertingHeaders, YamlProperties.HEADERS);

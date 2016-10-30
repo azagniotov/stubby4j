@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpMethod;
@@ -40,7 +40,7 @@ public class AjaxResourceContentHandlerTest {
     private PrintWriter mockPrintWriter;
 
     @Mock
-    private StubbedDataManager mockStubbedDataManager;
+    private StubRepository mockStubRepository;
 
     @Mock
     private HttpServletRequest mockHttpServletRequest;
@@ -78,7 +78,7 @@ public class AjaxResourceContentHandlerTest {
     public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedRequestContent() throws Exception {
 
         final String requestURI = "/ajax/resource/5/request/post";
-        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubbedDataManager);
+        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubRepository);
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
@@ -98,7 +98,7 @@ public class AjaxResourceContentHandlerTest {
     public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedResponseContent() throws Exception {
 
         final String requestURI = "/ajax/resource/15/response/file";
-        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubbedDataManager);
+        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubRepository);
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
@@ -118,7 +118,7 @@ public class AjaxResourceContentHandlerTest {
     public void verifyBehaviourWhenAjaxSubmittedToFetchStubbedSequencedResponseContent() throws Exception {
 
         final String requestURI = "/ajax/resource/15/response/8/file";
-        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubbedDataManager);
+        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubRepository);
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
@@ -138,7 +138,7 @@ public class AjaxResourceContentHandlerTest {
     public void verifyBehaviourWhenAjaxSubmittedToFetchContentForWrongStubType() throws Exception {
 
         final String requestURI = "/ajax/resource/5/WRONG-STUB-TYPE/post";
-        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubbedDataManager);
+        final AjaxResourceContentHandler ajaxResourceContentHandler = new AjaxResourceContentHandler(mockStubRepository);
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);

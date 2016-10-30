@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubbedDataManager stubbedDataManager) throws IOException {
+    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws IOException {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -23,13 +23,13 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
         final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
         final int stubIndexToDelete = Integer.parseInt(pathInfoNoHeadingSlash);
 
-        if (!stubbedDataManager.canMatchStubByIndex(stubIndexToDelete)) {
+        if (!stubRepository.canMatchStubByIndex(stubIndexToDelete)) {
             final String errorMessage = String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
             HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
         }
 
-        stubbedDataManager.deleteStubByIndex(stubIndexToDelete);
+        stubRepository.deleteStubByIndex(stubIndexToDelete);
         response.setStatus(HttpStatus.OK_200);
         response.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
     }

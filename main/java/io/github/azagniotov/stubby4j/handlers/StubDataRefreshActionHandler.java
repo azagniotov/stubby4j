@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.server.JettyContext;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
@@ -39,12 +39,12 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public final class StubDataRefreshActionHandler extends AbstractHandler {
 
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
     private final JettyContext jettyContext;
 
-    public StubDataRefreshActionHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
+    public StubDataRefreshActionHandler(final JettyContext newContext, final StubRepository newStubRepository) {
         this.jettyContext = newContext;
-        this.stubbedDataManager = newStubbedDataManager;
+        this.stubRepository = newStubRepository;
     }
 
     @Override
@@ -60,9 +60,9 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
         try {
-            stubbedDataManager.refreshStubsFromYAMLConfig(new YAMLParser());
+            stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
             final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
-                    stubbedDataManager.getYAMLConfig());
+                    stubRepository.getYAMLConfig());
             response.getWriter().println(successMessage);
             ANSITerminal.ok(successMessage);
         } catch (final Exception ex) {

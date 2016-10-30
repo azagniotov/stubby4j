@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.database.thread;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 
 import java.io.File;
@@ -16,19 +16,19 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 public final class MainYamlScanner implements Runnable {
 
     private final long sleepTime;
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
 
-    public MainYamlScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
+    public MainYamlScanner(final StubRepository stubRepository, final long sleepTime) {
         this.sleepTime = sleepTime;
-        this.stubbedDataManager = stubbedDataManager;
-        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubbedDataManager.getYAMLConfigCanonicalPath()));
+        this.stubRepository = stubRepository;
+        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubRepository.getYAMLConfigCanonicalPath()));
     }
 
     @Override
     public void run() {
 
         try {
-            final File dataYaml = stubbedDataManager.getYAMLConfig();
+            final File dataYaml = stubRepository.getYAMLConfig();
             long mainYamlLastModified = dataYaml.lastModified();
 
             while (!Thread.currentThread().isInterrupted()) {
@@ -40,11 +40,11 @@ public final class MainYamlScanner implements Runnable {
                     continue;
                 }
 
-                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubbedDataManager.getYAMLConfigCanonicalPath(), BR));
+                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubRepository.getYAMLConfigCanonicalPath(), BR));
 
                 try {
                     mainYamlLastModified = currentFileModified;
-                    stubbedDataManager.refreshStubsFromYAMLConfig(new YAMLParser());
+                    stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
                     ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s on [" + new Date().toString().trim() + "]%s",
                             BR,
                             dataYaml.getAbsolutePath(),

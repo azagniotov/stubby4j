@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.server.JettyContext;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
@@ -64,12 +64,12 @@ public final class StatusPageHandler extends AbstractHandler {
     private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("_table");
     private static final String NEXT_IN_THE_QUEUE = " NEXT IN THE QUEUE";
 
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
     private final JettyContext jettyContext;
 
-    public StatusPageHandler(final JettyContext newContext, final StubbedDataManager newStubbedDataManager) {
+    public StatusPageHandler(final JettyContext newContext, final StubRepository newStubRepository) {
         this.jettyContext = newContext;
-        this.stubbedDataManager = newStubbedDataManager;
+        this.stubRepository = newStubRepository;
     }
 
     @Override
@@ -101,7 +101,7 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(buildStubbyParametersHtmlTable());
         builder.append(buildEndpointStatsHtmlTable());
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = stubbedDataManager.getStubs();
+        final List<StubHttpLifecycle> stubHttpLifecycles = stubRepository.getStubs();
         for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
             final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
             builder.append(buildStubRequestHtmlTable(stubHttpLifecycle));
@@ -179,12 +179,12 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(interpolateHtmlTableRowTemplate("LOCAL BUILT DATE", JarUtils.readManifestBuiltDate()));
         builder.append(interpolateHtmlTableRowTemplate("UPTIME", HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
         builder.append(interpolateHtmlTableRowTemplate("INPUT ARGS", CommandLineInterpreter.PROVIDED_OPTIONS));
-        builder.append(interpolateHtmlTableRowTemplate("STUBBED ENDPOINTS", stubbedDataManager.getStubs().size()));
-        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubbedDataManager.getYAMLConfig())));
+        builder.append(interpolateHtmlTableRowTemplate("STUBBED ENDPOINTS", stubRepository.getStubs().size()));
+        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubRepository.getYAMLConfig())));
 
-        if (!stubbedDataManager.getExternalFiles().isEmpty()) {
+        if (!stubRepository.getExternalFiles().isEmpty()) {
             final StringBuilder externalFilesMetadata = new StringBuilder();
-            for (Map.Entry<File, Long> entry : stubbedDataManager.getExternalFiles().entrySet()) {
+            for (Map.Entry<File, Long> entry : stubRepository.getExternalFiles().entrySet()) {
                 final File externalFile = entry.getKey();
                 externalFilesMetadata.append(buildLoadedFileMetadata(externalFile));
             }
@@ -197,7 +197,7 @@ public final class StatusPageHandler extends AbstractHandler {
     private String buildEndpointStatsHtmlTable() throws Exception {
 
         final StringBuilder builder = new StringBuilder();
-        if (stubbedDataManager.getResourceStats().isEmpty()) {
+        if (stubRepository.getResourceStats().isEmpty()) {
             builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", "No requests were made to stubby yet"));
         } else {
             builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));

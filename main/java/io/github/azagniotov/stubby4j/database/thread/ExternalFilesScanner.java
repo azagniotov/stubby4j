@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.database.thread;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 
@@ -16,19 +16,19 @@ import java.util.Map;
 public final class ExternalFilesScanner implements Runnable {
 
     private final long sleepTime;
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
 
-    public ExternalFilesScanner(final StubbedDataManager stubbedDataManager, final long sleepTime) {
+    public ExternalFilesScanner(final StubRepository stubRepository, final long sleepTime) {
         this.sleepTime = sleepTime;
-        this.stubbedDataManager = stubbedDataManager;
-        ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubbedDataManager.getYAMLConfigCanonicalPath()));
+        this.stubRepository = stubRepository;
+        ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubRepository.getYAMLConfigCanonicalPath()));
     }
 
     @Override
     public void run() {
 
         try {
-            final Map<File, Long> externalFiles = stubbedDataManager.getExternalFiles();
+            final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
 
             while (!Thread.currentThread().isInterrupted()) {
 
@@ -56,10 +56,10 @@ public final class ExternalFilesScanner implements Runnable {
                 ANSITerminal.info(String.format("%sExternal file scan detected change in %s%s", FileUtils.BR, offendingFilename, FileUtils.BR));
 
                 try {
-                    stubbedDataManager.refreshStubsFromYAMLConfig(new YAMLParser());
+                    stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
                     ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + new Date().toString().trim() + "]%s",
                             FileUtils.BR,
-                            stubbedDataManager.getYAMLConfig(),
+                            stubRepository.getYAMLConfig(),
                             FileUtils.BR));
                 } catch (final Exception ex) {
                     ANSITerminal.error("Could not refresh YAML configuration: " + ex.toString());

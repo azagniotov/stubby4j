@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
@@ -44,10 +44,10 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
     private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_generic");
 
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
 
-    public AjaxResourceContentHandler(final StubbedDataManager stubbedDataManager) {
-        this.stubbedDataManager = stubbedDataManager;
+    public AjaxResourceContentHandler(final StubRepository stubRepository) {
+        this.stubRepository = stubRepository;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class AjaxResourceContentHandler extends AbstractHandler {
 
     @VisibleForTesting
     StubHttpLifecycle throwErrorOnNonExistentResourceIndex(final HttpServletResponse response, final int resourceIndex) throws IOException {
-        final StubHttpLifecycle foundStub = stubbedDataManager.matchStubByIndex(resourceIndex);
+        final StubHttpLifecycle foundStub = stubRepository.matchStubByIndex(resourceIndex);
         if (ObjectUtils.isNull(foundStub)) {
             response.getWriter().println("Resource does not exist for ID: " + resourceIndex);
         }

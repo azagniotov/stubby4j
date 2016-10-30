@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.server;
 
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxEndpointStatsHandler;
@@ -78,16 +78,16 @@ public final class JettyFactory {
     private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
     private static final String ROOT_PATH_INFO = "/";
     private final Map<String, String> commandLineArgs;
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
     private final List<String> statuses;
     private String currentHost;
     private int currentStubsPort;
     private int currentAdminPort;
     private int currentStubsSslPort;
 
-    JettyFactory(final Map<String, String> commandLineArgs, final StubbedDataManager stubbedDataManager) {
+    JettyFactory(final Map<String, String> commandLineArgs, final StubRepository stubRepository) {
         this.commandLineArgs = commandLineArgs;
-        this.stubbedDataManager = stubbedDataManager;
+        this.stubRepository = stubRepository;
         this.statuses = new LinkedList<>();
     }
 
@@ -110,23 +110,23 @@ public final class JettyFactory {
         handlers.setHandlers(new Handler[]
                 {
                         constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
+                        constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
 
                         constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubbedDataManager))),
+                        constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
 
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubbedDataManager))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubbedDataManager)),
+                        constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubRepository))),
+                        constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(jettyContext, stubRepository)),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubbedDataManager))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubbedDataManager))),
+                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubRepository))),
+                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubRepository))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubbedDataManager)))
+                        constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubRepository)))
                 }
         );
 

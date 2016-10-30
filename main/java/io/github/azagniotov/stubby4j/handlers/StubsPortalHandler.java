@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -37,10 +37,10 @@ import java.io.IOException;
 
 public class StubsPortalHandler extends AbstractHandler {
 
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
 
-    public StubsPortalHandler(final StubbedDataManager stubbedDataManager) {
-        this.stubbedDataManager = stubbedDataManager;
+    public StubsPortalHandler(final StubRepository stubRepository) {
+        this.stubRepository = stubRepository;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class StubsPortalHandler extends AbstractHandler {
         baseRequest.setHandled(true);
 
         final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
-        final StubResponse foundStubResponse = stubbedDataManager.findStubResponseFor(assertionStubRequest);
+        final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertionStubRequest);
         final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
 
         try {

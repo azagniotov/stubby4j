@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.database.StubbedDataManager;
+import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -39,10 +39,10 @@ public class AdminPortalHandler extends AbstractHandler {
 
     //Do not remove this constant without changing the example in documentation
     public static final String ADMIN_ROOT = "/";
-    private final StubbedDataManager stubbedDataManager;
+    private final StubRepository stubRepository;
 
-    public AdminPortalHandler(final StubbedDataManager stubbedDataManager) {
-        this.stubbedDataManager = stubbedDataManager;
+    public AdminPortalHandler(final StubRepository stubRepository) {
+        this.stubRepository = stubRepository;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AdminPortalHandler extends AbstractHandler {
 
         final AdminResponseHandlingStrategy strategyStubResponse = AdminResponseHandlingStrategyFactory.getStrategy(request);
         try {
-            strategyStubResponse.handle(request, response, stubbedDataManager);
+            strategyStubResponse.handle(request, response, stubRepository);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, "Problem handling request in Admin handler: " + ex.toString());
         }
