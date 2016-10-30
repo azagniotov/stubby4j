@@ -44,7 +44,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -136,7 +135,7 @@ public class StubRepository {
 
         final String incomingRequestUrl = incomingStub.getUrl();
         if (matchedStubsCache.containsKey(incomingRequestUrl)) {
-            ANSITerminal.loaded(String.format("Found potential match for the URL [%s] in local cache", incomingRequestUrl));
+            ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
             final StubHttpLifecycle cachedPotentialMatch = matchedStubsCache.get(incomingRequestUrl);
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedPotentialMatch)) {
@@ -147,13 +146,14 @@ public class StubRepository {
             matchedStubsCache.remove(incomingRequestUrl);
         }
 
-        final Optional<StubHttpLifecycle> potentialMatch = stubs.stream().filter(incomingStub::equals).findFirst();
-        if (potentialMatch.isPresent()) {
-            final StubHttpLifecycle matched = potentialMatch.get();
-            ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
-            matchedStubsCache.put(incomingRequestUrl, matched);
-
-            return matched;
+        final long initialStart = System.currentTimeMillis();
+        for (final StubHttpLifecycle stubbed : stubs) {
+            if (incomingStub.equals(stubbed)) {
+                final long elapsed = System.currentTimeMillis() - initialStart;
+                ANSITerminal.status(String.format("Found a match after %s milliseconds, caching the found match for URL [%s]", elapsed, incomingRequestUrl));
+                matchedStubsCache.put(incomingRequestUrl, stubbed);
+                return stubbed;
+            }
         }
 
         return StubHttpLifecycle.NULL;
