@@ -151,10 +151,10 @@ The following are the stubby4j artifacts that are hosted on [Maven Central](http
 ```xml
 compile("io.github.azagniotov:stubby4j:4.0.3")
 ```
-or
+or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.3:no-dependencies")
+compile("io.github.azagniotov:stubby4j:4.0.3:no-jetty")
 ```
 
 ##### Maven
@@ -165,7 +165,7 @@ compile("io.github.azagniotov:stubby4j:4.0.3:no-dependencies")
     <version>4.0.3</version>
 </dependency>
 ```
-or
+or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
 <dependency>
