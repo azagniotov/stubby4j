@@ -23,7 +23,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Building](#building)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
-* [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
+   * [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
