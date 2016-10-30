@@ -159,10 +159,8 @@ public class StubHttpLifecycle {
         this.responseAsYAML = responseAsYAML;
     }
 
-    public void setResourceId(final int listIndex) {
-        for (final StubResponse response : getResponses()) {
-            response.addResourceIDHeader(listIndex);
-        }
+    public void setResourceId(final int resourceId) {
+        getResponses().forEach(response -> response.addResourceIDHeader(resourceId));
     }
 
     public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {
@@ -185,7 +183,7 @@ public class StubHttpLifecycle {
     @Override
     @CoberturaIgnore
     public int hashCode() {
-        return request.hashCode();
+        return this.request.hashCode();
     }
 
     @Override
@@ -199,8 +197,8 @@ public class StubHttpLifecycle {
             return false;
         }
 
-        // The 'this' is actually the incoming asserting StubHttpLifecycle, the 'that' is the stubbed one
         final StubHttpLifecycle that = (StubHttpLifecycle) o;
-        return request.equals(that.request);
+        // The 'this' is actually the incoming asserting StubRequest, the 'that' is the stubbed one
+        return this.request.equals(that.request);
     }
 }

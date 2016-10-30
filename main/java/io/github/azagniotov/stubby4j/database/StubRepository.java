@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -136,31 +137,29 @@ public class StubRepository {
         final String incomingRequestUrl = incomingStub.getUrl();
         if (matchedStubsCache.containsKey(incomingRequestUrl)) {
             ANSITerminal.loaded(String.format("Found potential match for the URL [%s] in local cache", incomingRequestUrl));
-            final StubHttpLifecycle potentialMatch = matchedStubsCache.get(incomingRequestUrl);
+            final StubHttpLifecycle cachedPotentialMatch = matchedStubsCache.get(incomingRequestUrl);
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
-            if (incomingStub.equals(potentialMatch)) {
+            if (incomingStub.equals(cachedPotentialMatch)) {
                 ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
-                return potentialMatch;
+                return cachedPotentialMatch;
             }
             ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
             matchedStubsCache.remove(incomingRequestUrl);
         }
 
-        final int index = stubs.indexOf(incomingStub);
-        if (index < 0) {
-            return StubHttpLifecycle.NULL;
+        final Optional<StubHttpLifecycle> potentialMatch = stubs.stream().filter(incomingStub::equals).findFirst();
+        if (potentialMatch.isPresent()) {
+            final StubHttpLifecycle matched = potentialMatch.get();
+            ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
+            matchedStubsCache.put(incomingRequestUrl, matched);
+
+            return matched;
         }
-        final StubHttpLifecycle matched = stubs.get(index);
-        matched.setResourceId(index);
 
-        ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
-        matchedStubsCache.put(incomingRequestUrl, matched);
-
-        return matched;
+        return StubHttpLifecycle.NULL;
     }
 
     public synchronized StubHttpLifecycle matchStubByIndex(final int index) {
-
         if (!canMatchStubByIndex(index)) {
             return StubHttpLifecycle.NULL;
         }

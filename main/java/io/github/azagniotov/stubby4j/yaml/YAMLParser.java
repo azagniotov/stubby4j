@@ -38,6 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.doesFilePathContainTemplateTokens;
@@ -49,6 +50,8 @@ import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CU
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {
+
+    private final AtomicInteger unmarshalledStubCounter = new AtomicInteger();
 
     static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private String dataConfigHomeDirectory;
@@ -75,9 +78,7 @@ public class YAMLParser {
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
         for (final Object rawHttpMessageConfig : (List) loadedConfig) {
             final Map httpMessageConfig = (Map) rawHttpMessageConfig;
-            final StubHttpLifecycle stub = unmarshallHttpMessageConfigToStub(httpMessageConfig);
-            stubs.add(stub);
-            stub.setResourceId(stubs.size() - 1);
+            stubs.add(unmarshallHttpMessageConfigToStub(httpMessageConfig));
         }
 
         return stubs;
@@ -102,6 +103,7 @@ public class YAMLParser {
         stub.setCompleteYAML(marshallHttpMessage(httpMessageConfig));
         stub.setRequestAsYAML(marshallHttpType(httpMessageConfig, YamlProperties.REQUEST));
         stub.setResponseAsYAML(marshallHttpType(httpMessageConfig, YamlProperties.RESPONSE));
+        stub.setResourceId(unmarshalledStubCounter.getAndIncrement());
 
         return stub;
     }
