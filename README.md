@@ -187,10 +187,10 @@ Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your proj
 ```xml
 compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT")
 ```
-or 
+or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT:no-dependencies")
+compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT:no-jetty")
 ```
 
 
