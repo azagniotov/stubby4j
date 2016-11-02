@@ -42,15 +42,14 @@ public class StubbyHttpTransport {
 
     }
 
-    public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String destinationToRecordUrl) throws IOException {
+    public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
-        final String fullUrl = String.format("%s%s", destinationToRecordUrl, request.getUrl());
         if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, fullUrl);
+            final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
         return getResponse(method,
-                fullUrl,
+                recordingSource,
                 request.getPostBody(),
                 request.getHeaders(),
                 StringUtils.calculateStringLength(request.getPostBody()));

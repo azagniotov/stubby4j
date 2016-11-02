@@ -2,7 +2,6 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +22,6 @@ import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BA
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -227,7 +225,7 @@ public class StubRequestTest {
     @Test
     public void arraysIntersect_ShouldReturnTrue_WhenDataStoreArrayEmpty() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<String>(), new ArrayList<String>() {{
+        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<>(), new ArrayList<String>() {{
             add("apple");
         }});
 
@@ -239,7 +237,7 @@ public class StubRequestTest {
         final StubRequest stubRequest = StubRequest.newStubRequest();
         final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<String>() {{
             add("apple");
-        }}, new ArrayList<String>());
+        }}, new ArrayList<>());
 
         assertThat(isArraysIntersect).isFalse();
     }
@@ -315,8 +313,8 @@ public class StubRequestTest {
     @Test
     public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmptyAndAssertingMapEmpty() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>();
-        final Map<String, String> assertingMap = new HashMap<String, String>();
+        final Map<String, String> dataStoreMap = new HashMap<>();
+        final Map<String, String> assertingMap = new HashMap<>();
         final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
         assertThat(isMapsMatch).isTrue();
@@ -325,7 +323,7 @@ public class StubRequestTest {
     @Test
     public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
         final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>();
+        final Map<String, String> dataStoreMap = new HashMap<>();
         final Map<String, String> assertingMap = new HashMap<String, String>() {{
             put("key", "value");
         }};
@@ -340,7 +338,7 @@ public class StubRequestTest {
         final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
             put("key", "value");
         }};
-        final Map<String, String> assertingMap = new HashMap<String, String>();
+        final Map<String, String> assertingMap = new HashMap<>();
         final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
 
         assertThat(isMapsMatch).isFalse();
@@ -667,20 +665,19 @@ public class StubRequestTest {
     public void stubbedRequestEqualsAssertingRequest_WhenAllHttpHeadersMatch() throws Exception {
 
         final String url = "/invoice/123";
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -696,7 +693,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType("application/xml")
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength("30")
                         .withHeaderContentLanguage("en-US").build();
 
@@ -720,7 +717,7 @@ public class StubRequestTest {
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType("application/xml")
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength("30")
                         .withHeaderContentLanguage("en-US").build();
 
@@ -731,7 +728,6 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenAllHeadersSubmittedCamelCased() throws Exception {
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
         final String url = "/invoice/123";
@@ -739,14 +735,14 @@ public class StubRequestTest {
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaders("Content-Type", contentType)
+                        .withApplicationXmlContentType()
                         .withHeaders("Content-Length", contentLength)
                         .withHeaders("Content-Language", contentLanguage).build();
 
@@ -757,7 +753,6 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenAllHeadersStubbedCamelCased() throws Exception {
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
         final String url = "/invoice/123";
@@ -765,14 +760,14 @@ public class StubRequestTest {
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaders("Content-Type", contentType)
+                        .withApplicationXmlContentType()
                         .withHeaders("Content-Length", contentLength)
                         .withHeaders("Content-Language", contentLanguage).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -798,7 +793,7 @@ public class StubRequestTest {
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(Common.HEADER_APPLICATION_JSON)
+                        .withApplicationJsonContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -815,7 +810,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType("application/xml")
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -832,7 +827,6 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenAllStubbedHeadersMatch() throws Exception {
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
         final String url = "/invoice/123";
@@ -840,14 +834,14 @@ public class StubRequestTest {
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodGet()
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage)
                         .withHeaderContentEncoding("UTF-8")
@@ -1143,7 +1137,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
@@ -1167,7 +1161,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1191,7 +1185,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1215,7 +1209,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1244,7 +1238,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1273,7 +1267,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
 
-        
+
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
@@ -1621,18 +1615,17 @@ public class StubRequestTest {
         final String postRegex = "{\"userId\":\"19\",\"requestId\":\"(.*)\",\"transactionDate\":\"(.*)\",\"transactionTime\":\"(.*)\"}";
         final String postAssertingValue = "{\"userId\":\"19\",\"requestId\":\"12345\",\"transactionDate\":\"98765\",\"transactionTime\":\"11111\"}";
         final String url = "/post";
-        final String contentType = "application/json";
 
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodPost()
-                        .withHeaderContentType(contentType)
+                        .withApplicationJsonContentType()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodPost()
-                        .withHeaderContentType(contentType)
+                        .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
 
         assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -1650,18 +1643,17 @@ public class StubRequestTest {
         final String postRegex = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
         final String postAssertingValue = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
         final String url = "/post";
-        final String contentType = "application/json";
 
         final StubRequest expectedRequest =
                 BUILDER.withUrl(url)
                         .withMethodPost()
-                        .withHeaderContentType(contentType)
+                        .withApplicationJsonContentType()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 BUILDER.withUrl(url)
                         .withMethodPost()
-                        .withHeaderContentType(contentType)
+                        .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
 
         assertThat(expectedRequest).isEqualTo(assertingRequest);
@@ -1678,12 +1670,11 @@ public class StubRequestTest {
 
         final String url = "^/resources/asn/.*$";
         final String post = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
-        final String contentType = "application/json";
 
         final StubRequest stubRequest =
                 BUILDER.withUrl(url)
                         .withMethodPost()
-                        .withHeaderContentType(contentType)
+                        .withApplicationJsonContentType()
                         .withPost(post).build();
         stubRequest.computeRegexPatterns();
 
@@ -1758,7 +1749,6 @@ public class StubRequestTest {
         final String paramTwo = "paramTwo";
         final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
 
@@ -1773,7 +1763,7 @@ public class StubRequestTest {
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -1783,7 +1773,7 @@ public class StubRequestTest {
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength("888")
                         .withHeaderContentLanguage(contentLanguage)
                         .withHeaderContentEncoding("UTF-8")
@@ -2239,9 +2229,8 @@ public class StubRequestTest {
     @Test
     public void shouldfindStubRequestEqual_WhenComparedToSameIdentity() throws Exception {
         final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-        final StubRequest assertingRequest = expectedRequest;
 
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
+        assertThat(expectedRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -2254,7 +2243,6 @@ public class StubRequestTest {
         final String paramTwo = "paramTwo";
         final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
 
@@ -2270,7 +2258,7 @@ public class StubRequestTest {
                         .withFile(FileUtils.fileFromString("bytes"))
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -2283,7 +2271,7 @@ public class StubRequestTest {
                         .withFile(FileUtils.fileFromString("bytes"))
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -2299,7 +2287,6 @@ public class StubRequestTest {
         final String paramTwo = "paramTwo";
         final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
 
@@ -2314,7 +2301,7 @@ public class StubRequestTest {
                         .withPost(null)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -2326,7 +2313,7 @@ public class StubRequestTest {
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -2342,7 +2329,6 @@ public class StubRequestTest {
         final String paramTwo = "paramTwo";
         final String paramTwoValue = "[%22alex%22,%22tracy%22]";
 
-        final String contentType = "application/xml";
         final String contentLength = "30";
         final String contentLanguage = "en-US";
 
@@ -2357,7 +2343,7 @@ public class StubRequestTest {
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
@@ -2369,7 +2355,7 @@ public class StubRequestTest {
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
-                        .withHeaderContentType(contentType)
+                        .withApplicationXmlContentType()
                         .withHeaderContentLength("31")
                         .withHeaderContentLanguage(contentLanguage).build();
 

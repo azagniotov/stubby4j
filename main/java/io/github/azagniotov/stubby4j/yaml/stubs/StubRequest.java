@@ -113,6 +113,11 @@ public class StubRequest {
         }
     }
 
+    /**
+     * Returns url and query string parameters (if present), separated by a question mark.
+     *
+     * @return {@link String url}
+     */
     public String getUrl() {
         if (getQuery().isEmpty()) {
             return url;
@@ -224,7 +229,7 @@ public class StubRequest {
 
         final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
         final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
-                ? Collections.list(request.getHeaderNames()) : new LinkedList<String>();
+                ? Collections.list(request.getHeaderNames()) : new LinkedList<>();
         for (final String headerName : headerNames) {
             final String headerValue = request.getHeader(headerName);
             assertionRequest.getHeaders().put(toLower(headerName), headerValue);

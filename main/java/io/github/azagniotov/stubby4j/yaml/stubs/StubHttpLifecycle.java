@@ -119,6 +119,9 @@ public class StubHttpLifecycle {
         return getResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
     }
 
+    /**
+     * @see StubRequest#getUrl()
+     */
     public String getUrl() {
         return request.getUrl();
     }

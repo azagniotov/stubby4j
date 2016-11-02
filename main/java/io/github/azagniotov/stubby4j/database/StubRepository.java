@@ -76,9 +76,9 @@ public class StubRepository {
         return findMatch(incomingLifecycle);
     }
 
-    private StubResponse findMatch(final StubHttpLifecycle incomingLifecycle) {
+    private StubResponse findMatch(final StubHttpLifecycle incomingRequest) {
 
-        final StubHttpLifecycle matchedStub = matchStub(incomingLifecycle);
+        final StubHttpLifecycle matchedStub = matchStub(incomingRequest);
 
         if (ObjectUtils.isNull(matchedStub)) {
             return new NotFoundStubResponse();
@@ -89,7 +89,7 @@ public class StubRepository {
         resourceStats.get(resourceId).incrementAndGet();
 
         final StubResponse stubResponse = matchedStub.getResponse(true);
-        if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingLifecycle)) {
+        if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingRequest)) {
             return new UnauthorizedStubResponse();
         }
 
@@ -98,7 +98,7 @@ public class StubRepository {
         }
 
         if (stubResponse.isRecordingRequired()) {
-            final String recordingSource = stubResponse.getBody();
+            final String recordingSource = String.format("%s%s", stubResponse.getBody(), incomingRequest.getUrl());
             try {
                 final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
                 ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());

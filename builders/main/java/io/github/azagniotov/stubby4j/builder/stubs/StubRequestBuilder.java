@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.builder.stubs;
 
+import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
@@ -70,6 +71,18 @@ public final class StubRequestBuilder {
 
     public StubRequestBuilder withHeaderContentType(final String value) {
         this.headers.put("content-type", value);
+
+        return this;
+    }
+
+    public StubRequestBuilder withApplicationJsonContentType() {
+        this.headers.put("content-type", Common.HEADER_APPLICATION_JSON);
+
+        return this;
+    }
+
+    public StubRequestBuilder withApplicationXmlContentType() {
+        this.headers.put("content-type", Common.HEADER_APPLICATION_XML);
 
         return this;
     }
