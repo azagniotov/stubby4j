@@ -13,7 +13,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v4.0.3
+## User manual for stubby4j v4.0.4
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -143,18 +143,18 @@ The following are the stubby4j artifacts that are hosted on [Maven Central](http
 
 * `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
 * `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
-* `stubby4j-x.x.x-no-jetty.jar` (as of `v4.0.3`) - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty
+* `stubby4j-x.x.x-no-jetty.jar` (as of `v4.0.4`) - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty
 * `stubby4j-x.x.x-sources.jar`
 * `stubby4j-x.x.x-javadoc.jar`
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.3")
+compile("io.github.azagniotov:stubby4j:4.0.4")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.3:no-jetty")
+compile("io.github.azagniotov:stubby4j:4.0.4:no-jetty")
 ```
 
 ##### Maven
@@ -162,7 +162,7 @@ compile("io.github.azagniotov:stubby4j:4.0.3:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.4</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -171,7 +171,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.4</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -180,17 +180,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-4.0.4-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.4-SNAPSHOT/`
+* Install `stubby4j-4.0.5-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.5-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:4.0.5-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.4-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:4.0.5-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1083,10 +1083,12 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 4.0.4-SNAPSHOT
+##### 4.0.5-SNAPSHOT
+
+##### 4.0.4
 * Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`
 * Shaved off stubby's start-up time due to parsing YAML config asynchronously
-* Issue #61 - When record & play, stubbed query being sent in-place of the actual incoming request query params
+* Issue #61 - During record & play, the stubbed query params were sent with recording request instead of the actual request query params
 
 ##### 4.0.3
 * Optimized the stub matching algorithm by caching the previous matches [StubRepository#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubRepository.java)
