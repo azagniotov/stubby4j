@@ -79,14 +79,13 @@ For more information and more complex examples, please dive into the rest of doc
 ### Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
-* Regex support for dynamic matching on URI, query params, headers, POST body (ie:. `mod_rewrite` in Apache)
+* Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
 * Fault injection, where after X good responses on the same URI you get a bad one
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
-* Over 98% test coverage (the percentile alone should not be taken as an indicator of test quality, but nevertheless - the library is thoroughly tested)
 
 ### Why would a developer use stubby4j?
 ####You want to:
@@ -127,12 +126,12 @@ Run `gradle cobertura` command to:
 ### Third-party dependencies
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.3.12.v20160915.jar
-* jetty-servlets-9.3.12.v20160915.jar
-* jetty-http-9.3.12.v20160915.jar
-* jetty-io-9.3.12.v20160915.jar
-* jetty-continuation-9.3.12.v20160915.jar
-* jetty-util-9.2.10.v20150310.jar
+* jetty-server-9.3.13.v20161014.jar
+* jetty-servlets-9.3.13.v20161014.jar
+* jetty-http-9.3.13.v20161014.jar
+* jetty-io-9.3.13.v20161014.jar
+* jetty-continuation-9.3.13.v20161014.jar
+* jetty-util-9.3.13.v20161014.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.17.jar
 * jsonassert-1.3.0.jar
@@ -1095,7 +1094,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 ##### 4.0.3
 * Optimized the stub matching algorithm by caching the previous matches [StubRepository#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubRepository.java)
 * Suppressed Jetty's default [ErrorHandler](http://download.eclipse.org/jetty/9.3.12.v20160915/apidocs/org/eclipse/jetty/server/handler/ErrorHandler.html) with a custom [JsonErrorHandler](main/java/io/github/azagniotov/stubby4j/handlers/JsonErrorHandler.java) to send errors in JSON format
-* Got rid off repackaged classes from Aapache Commons in favor of Java 8 APIs
+* Got rid off repackaged classes from Apache Commons in favor of Java 8 APIs
 * Using Java NIO for file operations
 
 ##### 4.0.2
