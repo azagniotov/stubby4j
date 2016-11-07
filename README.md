@@ -7,7 +7,7 @@
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
 
 
-[![stubb4j](https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo.svg)](https://github.com/azagniotov/stubby4j)
+[![stubb4j](https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-2.svg)](https://github.com/azagniotov/stubby4j)
 
 
 A highly flexible and configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol. It is an actual HTTP server (stubby4j uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract & behavior testing. Please refer to [Key features](#key-features) for more information
