@@ -29,9 +29,10 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
+      * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
    * [Response](#response)
+      * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
    * [Record and Play](#record-and-play)
-   * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
    * [Authorization Header](#authorization-header)
 * [The admin portal](#the-admin-portal)
 * [The stubs portal](#the-stubs-portal)
@@ -265,6 +266,16 @@ Here is a fully-populated, unrealistic endpoint:
 ### Request
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
+
+### Regex stubbing for dynamic matching
+
+stubby supports regex stubbing for dynamic matching on the following properties:
+`url`, `query` param values, `header` name values, `post` payloads & `file` names & payloads.
+
+Under the hood, stubby first attempts to compile the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.MULTILINE` flag. If the pattern compilation fails and `PatternSyntaxException` exception is thrown, stubby compiles the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.LITERAL | Pattern.MULTILINE` flags.
+
+__Please note__, before using regex patterns in stubs, first it is best to ensure that the desired regex pattern "works" outside of stubby. One of the safest (and easiest) ways to test the desired pattern would be to check if the following condition is met `Pattern.compile("YOUR_PATTERN").matcher("YOUR_TEST_STRING").matches() == true`. This way there is a confidence that the stubbed regex pattern actually works, also it is easier to debug a simple unit test case instead of trying to figure out why stub matching failed
+
 
 ##### url (required)
 
@@ -519,6 +530,7 @@ The following endpoint only accepts requests with `application/json` post values
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
 
+
 ### Response
 
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
@@ -703,38 +715,6 @@ Assuming a match has been made against the given `request` object, data from `re
       body: Hello, World!
 ```
 
-### Record and play
-
-If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
-from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
-
-##### Example
-```yaml
--  request:
-      method: [GET]
-      url: /maps/api/geocode/json
-      query:
-         address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
-         sensor: false
-
-   response:
-      status: 200
-      headers:
-         content-type: application/json
-      body: http://maps.googleapis.com
-```
-##### Example explained
-
-Upon successful HTTP request verification, properties of stubbed `request` (`method`, `url`, `headers`, `post` and `query`) are used to construct
-an HTTP request to the destination URL specified in `body` of the stubbed `response`.
-
-In the above example, stubby will record HTTP response received after submitting an HTTP GET request to the url below:
-`http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA`
-
-##### Please note
-* Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
-* Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
-
 ### Dynamic token replacement in stubbed response
 
 During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response.
@@ -830,6 +810,40 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
+
+
+### Record and play
+
+If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
+from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
+
+##### Example
+```yaml
+-  request:
+      method: [GET]
+      url: /maps/api/geocode/json
+      query:
+         address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
+         sensor: false
+
+   response:
+      status: 200
+      headers:
+         content-type: application/json
+      body: http://maps.googleapis.com
+```
+##### Example explained
+
+Upon successful HTTP request verification, properties of stubbed `request` (`method`, `url`, `headers`, `post` and `query`) are used to construct
+an HTTP request to the destination URL specified in `body` of the stubbed `response`.
+
+In the above example, stubby will record HTTP response received after submitting an HTTP GET request to the url below:
+`http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA`
+
+##### Please note
+* Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
+* Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
+
 
 ### Authorization Header
 ```yaml
