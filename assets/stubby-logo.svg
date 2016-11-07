@@ -19,10 +19,10 @@
           <stop offset="30%" stop-color="#EE373A" />
           <stop offset="70%" stop-color="#EF4D4F" />
         </linearGradient>
-		<linearGradient id="duke-nose-gradient">
-          <stop offset="20%" stop-color="#EE373A" />
-          <stop offset="80%" stop-color="#F47B7D" />
-        </linearGradient>
+		<radialGradient id="duke-nose-gradient" cx="0.65" cy="0.35" r="0.45">
+          <stop offset="8%" stop-color="#F8AAAB" />
+          <stop offset="92%" stop-color="#EE373A" />
+        </radialGradient>
 		<linearGradient id="duke-body-gradient">
           <stop offset="20%" stop-color="#0A0C0C" />
           <stop offset="80%" stop-color="#202727" />
