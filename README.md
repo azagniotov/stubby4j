@@ -30,10 +30,10 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
+      * [Authorization Header](#authorization-header)
    * [Response](#response)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
-   * [Record and Play](#record-and-play)
-   * [Authorization Header](#authorization-header)
+      * [Record and Play](#record-and-play)
 * [The admin portal](#the-admin-portal)
 * [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
@@ -266,18 +266,6 @@ Here is a fully-populated, unrealistic endpoint:
 ### Request
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
-
-### Regex stubbing for dynamic matching
-
-stubby supports regex stubbing for dynamic matching on the following properties:
-`url`, `query` param values, `header` name values, `post` payloads & `file` names & payloads.
-
-Under the hood, stubby first attempts to compile the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.MULTILINE` flag. If the pattern compilation fails and `PatternSyntaxException` exception is thrown, stubby compiles the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.LITERAL | Pattern.MULTILINE` flags.
-
-__Please note__, before using regex patterns in stubs, first it is best to ensure that the desired regex pattern "works" outside of stubby. One of the safest (and easiest) ways to test the desired pattern would be to check if the following condition is met: `Pattern.compile("YOUR_PATTERN").matcher("YOUR_TEST_STRING").matches() == true`. 
-
-The latter would ensure that the stubbed regex pattern actually works, also it is easier to debug a simple unit test case instead of trying to figure out why stub matching failed
-
 
 ##### url (required)
 
@@ -530,6 +518,60 @@ The following endpoint only accepts requests with `application/json` post values
          content-type: application/json
          x-custom-header: "^this/is/\d/test"
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
+```
+
+### Regex stubbing for dynamic matching
+
+stubby supports regex stubbing for dynamic matching on the following properties:
+`url`, `query` param values, `header` name values, `post` payloads & `file` names & payloads.
+
+Under the hood, stubby first attempts to compile the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.MULTILINE` flag. If the pattern compilation fails and `PatternSyntaxException` exception is thrown, stubby compiles the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.LITERAL | Pattern.MULTILINE` flags.
+
+__Please note__, before using regex patterns in stubs, first it is best to ensure that the desired regex pattern "works" outside of stubby. One of the safest (and easiest) ways to test the desired pattern would be to check if the following condition is met: `Pattern.compile("YOUR_PATTERN").matcher("YOUR_TEST_STRING").matches() == true`. 
+
+The latter would ensure that the stubbed regex pattern actually works, also it is easier to debug a simple unit test case instead of trying to figure out why stub matching failed
+
+
+### Authorization Header
+```yaml
+-  request:
+      url: ^/path/to/basic$
+      method: GET
+      headers:
+         # no "Basic" prefix nor explicit encoding in Base64 is required when stubbing,
+         # just plain username:password format. Stubby internally encodes the value in Base64
+         authorization-basic: "bob:password" 
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Basic was successfully authorized!
+
+-  request:
+      url: ^/path/to/bearer$
+      method: GET
+      headers:
+         # no "Bearer" prefix is required when stubbing, only the auth value.
+         # Stubby internally does not modify (encodes) the auth value
+         authorization-bearer: "YNZmIzI2Ts0Q=="
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with Bearer was successfully authorized!
+
+-  request:
+      url: ^/path/to/custom$
+      method: GET
+      headers:
+         # custom prefix name is required when stubbing, followed by space & auth value.
+         # Stubby internally does not modify (encodes) the auth value
+         authorization-custom: "CustomAuthorizationType YNZmIzI2Ts0Q=="
+   response:
+      headers:
+         Content-Type: application/json
+      status: 200
+      body: Your request with custom authorization type was successfully authorized!
 ```
 
 
@@ -846,48 +888,6 @@ In the above example, stubby will record HTTP response received after submitting
 * Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
-
-### Authorization Header
-```yaml
--  request:
-      url: ^/path/to/basic$
-      method: GET
-      headers:
-         # no "Basic" prefix nor explicit encoding in Base64 is required when stubbing,
-         # just plain username:password format. Stubby internally encodes the value in Base64
-         authorization-basic: "bob:password" 
-   response:
-      headers:
-         Content-Type: application/json
-      status: 200
-      body: Your request with Basic was successfully authorized!
-
--  request:
-      url: ^/path/to/bearer$
-      method: GET
-      headers:
-         # no "Bearer" prefix is required when stubbing, only the auth value.
-         # Stubby internally does not modify (encodes) the auth value
-         authorization-bearer: "YNZmIzI2Ts0Q=="
-   response:
-      headers:
-         Content-Type: application/json
-      status: 200
-      body: Your request with Bearer was successfully authorized!
-
--  request:
-      url: ^/path/to/custom$
-      method: GET
-      headers:
-         # custom prefix name is required when stubbing, followed by space & auth value.
-         # Stubby internally does not modify (encodes) the auth value
-         authorization-custom: "CustomAuthorizationType YNZmIzI2Ts0Q=="
-   response:
-      headers:
-         Content-Type: application/json
-      status: 200
-      body: Your request with custom authorization type was successfully authorized!
-```
 
 ### The admin portal
 
