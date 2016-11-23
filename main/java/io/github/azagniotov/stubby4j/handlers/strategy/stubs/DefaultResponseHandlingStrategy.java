@@ -43,7 +43,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
     @Override
     public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
         HandlerUtils.setResponseMainHeaders(response);
-        setStubResponseHeaders(foundStubResponse, response);
+        setStubResponseHeaders(foundStubResponse, assertionStubRequest, response);
 
         if (StringUtils.isSet(foundStubResponse.getLatency())) {
             final long latency = Long.parseLong(foundStubResponse.getLatency());
@@ -73,10 +73,14 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
         streamOut.close();
     }
 
-    private void setStubResponseHeaders(final StubResponse stubResponse, final HttpServletResponse response) {
+    private void setStubResponseHeaders(final StubResponse stubResponse, final StubRequest assertionStubRequest, final HttpServletResponse response) {
         response.setCharacterEncoding(StringUtils.UTF_8);
         for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-            response.setHeader(entry.getKey(), entry.getValue());
+            String responseHeaderValue = entry.getValue();
+            if (entry.getValue().contains(StringUtils.TEMPLATE_TOKEN_LEFT)) {
+                responseHeaderValue = StringUtils.replaceTokens(entry.getValue().getBytes(), assertionStubRequest.getRegexGroups());
+            }
+            response.setHeader(entry.getKey(), responseHeaderValue);
         }
     }
 }
