@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.UUID;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Alexander Zagniotov
@@ -147,6 +147,40 @@ public class DefaultResponseHandlingStrategyTest {
 
         assertThat(after - before).isGreaterThanOrEqualTo(100);
 
+        verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    @Test
+    public void shouldReturnReplacedValueInResponseHeaderWhenRequestBodyHasDynamicToken() throws Exception {
+        String generatedNonce = UUID.randomUUID().toString();
+        String expectedResponseLocationHeaderValue = "redirect-uri=https://google.com&nonce="+generatedNonce;
+        String templateResponseLocationHeaderValue = "redirect-uri=https://google.com&nonce=<%post.1%>";
+
+        when(mockStubResponse.getStatus()).thenReturn("302");
+        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{ put("Location", templateResponseLocationHeaderValue); }});
+        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+
+            @Override
+            public void write(final int i) throws IOException {
+
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setWriteListener(final WriteListener writeListener) {
+
+            }
+        });
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(SOME_RESULTS_MESSAGE.getBytes(StringUtils.UTF_8));
+        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{ put("post.1", generatedNonce); }});
+
+        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), expectedResponseLocationHeaderValue);
         verifyMainHeaders(mockHttpServletResponse);
     }
 }
