@@ -1101,6 +1101,8 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 ### Change log
 
 ##### 4.0.5-SNAPSHOT
+* Pull request #63 - Dynamic token replacement in stubbed response has been applied for response headers as well
+* Upgraded from Jetty `9.3.13.v20161014` to `9.3.14.v20161028`
 
 ##### 4.0.4
 * Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`
