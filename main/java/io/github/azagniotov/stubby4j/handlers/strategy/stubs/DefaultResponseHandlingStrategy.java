@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
 
-import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
@@ -28,59 +26,69 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.setResponseMainHeaders;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isTokenized;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokens;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokensInString;
+
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-    private final StubResponse foundStubResponse;
+    private final StubResponse stubbedResponse;
 
-    public DefaultResponseHandlingStrategy(final StubResponse foundStubResponse) {
-        this.foundStubResponse = foundStubResponse;
+    DefaultResponseHandlingStrategy(final StubResponse stubbedResponse) {
+        this.stubbedResponse = stubbedResponse;
     }
 
     @Override
     public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
-        HandlerUtils.setResponseMainHeaders(response);
-        setStubResponseHeaders(foundStubResponse, assertionStubRequest, response);
+        final Map<String, String> regexGroups = assertionStubRequest.getRegexGroups();
 
-        if (StringUtils.isSet(foundStubResponse.getLatency())) {
-            final long latency = Long.parseLong(foundStubResponse.getLatency());
+        setResponseMainHeaders(response);
+        setResponseStubbedHeaders(response, stubbedResponse, regexGroups);
+
+        if (StringUtils.isSet(stubbedResponse.getLatency())) {
+            final long latency = Long.parseLong(stubbedResponse.getLatency());
             TimeUnit.MILLISECONDS.sleep(latency);
         }
-        response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
+        response.setStatus(Integer.parseInt(stubbedResponse.getStatus()));
 
-        byte[] responseBody = foundStubResponse.getResponseBodyAsBytes();
-        if (foundStubResponse.doesFilePathContainTemplateTokens()) {
-            String resolvedPath = StringUtils.replaceTokensInString(
-                    foundStubResponse.getRawFile().getAbsolutePath(),
-                    assertionStubRequest.getRegexGroups());
-            File resolvedFile = new File(resolvedPath);
+        final byte[] responseBody = stubbedResponse.getResponseBodyAsBytes();
+        if (stubbedResponse.isFilePathContainsTemplateTokens()) {
+            final String resolvedPath = replaceTokensInString(stubbedResponse.getRawFileAbsolutePath(), regexGroups);
+            final File resolvedFile = new File(resolvedPath);
             if (resolvedFile.exists()) {
-                responseBody = FileUtils.fileToBytes(resolvedFile);
+                writeOutputStream(response, fileToBytes(resolvedFile));
             } else {
                 response.setStatus(HttpStatus.NOT_FOUND_404);
             }
-        } else if (foundStubResponse.isContainsTemplateTokens()) {
-            final String replacedTemplate = StringUtils.replaceTokens(responseBody, assertionStubRequest.getRegexGroups());
-            responseBody = StringUtils.getBytesUtf8(replacedTemplate);
+        } else if (stubbedResponse.isBodyContainsTemplateTokens()) {
+            writeOutputStream(response, getBytesUtf8(replaceTokens(responseBody, regexGroups)));
+        } else {
+            writeOutputStream(response, responseBody);
         }
+    }
 
+    private void setResponseStubbedHeaders(final HttpServletResponse response, final StubResponse stubResponse, final Map<String, String> regexGroups) {
+        for (final Map.Entry<String, String> headerPair : stubResponse.getHeaders().entrySet()) {
+            String responseHeaderValue = headerPair.getValue();
+            if (isTokenized(responseHeaderValue)) {
+                responseHeaderValue = replaceTokens(getBytesUtf8(headerPair.getValue()), regexGroups);
+            }
+            response.setHeader(headerPair.getKey(), responseHeaderValue);
+        }
+    }
+
+    private void writeOutputStream(final HttpServletResponse response, final byte[] responseBody) throws IOException {
         final OutputStream streamOut = response.getOutputStream();
         streamOut.write(responseBody);
         streamOut.flush();
         streamOut.close();
-    }
-
-    private void setStubResponseHeaders(final StubResponse stubResponse, final StubRequest assertionStubRequest, final HttpServletResponse response) {
-        response.setCharacterEncoding(StringUtils.UTF_8);
-        for (Map.Entry<String, String> entry : stubResponse.getHeaders().entrySet()) {
-            String responseHeaderValue = entry.getValue();
-            if (entry.getValue().contains(StringUtils.TEMPLATE_TOKEN_LEFT)) {
-                responseHeaderValue = StringUtils.replaceTokens(entry.getValue().getBytes(), assertionStubRequest.getRegexGroups());
-            }
-            response.setHeader(entry.getKey(), responseHeaderValue);
-        }
     }
 }

@@ -93,7 +93,7 @@ public final class FileUtils {
 
     @CoberturaIgnore
     public static File fileFromString(final String content) throws IOException {
-        final File temp = File.createTempFile("tmp", ".tmp");
+        final File temp = File.createTempFile("tmp", ".txt");
         temp.deleteOnExit();
         try (final BufferedWriter out = new BufferedWriter(new FileWriter(temp))) {
             out.write(content);
@@ -102,11 +102,11 @@ public final class FileUtils {
     }
 
     public static boolean isTemplateFile(final File file) throws IOException {
-        return isCharacterFile(file) && containsTemplateToken(characterFileToString(file));
+        return isCharacterFile(file) && StringUtils.isTokenized(characterFileToString(file));
     }
 
-    public static boolean doesFilePathContainTemplateTokens(final File file) {
-        return containsTemplateToken(file.getAbsolutePath());
+    public static boolean isFilePathContainTemplateTokens(final File file) {
+        return StringUtils.isTokenized(file.getAbsolutePath());
     }
 
     public static byte[] fileToBytes(final File file) throws IOException {
@@ -172,9 +172,5 @@ public final class FileUtils {
 
     private static boolean isCharacterFile(final File file) throws IOException {
         return ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
-    }
-
-    private static boolean containsTemplateToken(final String string) {
-        return string.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
     }
 }

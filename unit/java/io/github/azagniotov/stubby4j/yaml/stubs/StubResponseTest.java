@@ -1,11 +1,11 @@
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
-import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.junit.Test;
 
 import java.io.File;
 
+import static io.github.azagniotov.stubby4j.utils.FileUtils.fileFromString;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
@@ -63,7 +63,7 @@ public class StubResponseTest {
     public void shouldReturnFile_WhenFileNotEmpty_AndRegardlessOfBody() throws Exception {
 
         final String expectedResponseBody = "content";
-        final StubResponse stubResponse = new StubResponse("200", "something", FileUtils.fileFromString(expectedResponseBody), null, null);
+        final StubResponse stubResponse = new StubResponse("200", "something", fileFromString(expectedResponseBody), null, null);
 
         final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
         assertThat(expectedResponseBody).isEqualTo(actualResponseBody);
@@ -103,5 +103,32 @@ public class StubResponseTest {
         final StubResponse stubResponse = new StubResponse("200", expectedResponseBody, null, null, null);
 
         assertThat(stubResponse.isRecordingRequired()).isFalse();
+    }
+
+    @Test
+    public void shouldFindBodyTokenized_WhenBodyContainsTemplateTokens() throws Exception {
+
+        final String body = "some body with a <% token %>";
+        final StubResponse stubResponse = new StubResponse("200", body, null, null, null);
+
+        assertThat(stubResponse.isBodyContainsTemplateTokens()).isTrue();
+    }
+
+    @Test
+    public void shouldFindBodyNotTokenized_WhenRawFileIsTemplateFile() throws Exception {
+
+        final String body = "some body";
+        final StubResponse stubResponse = new StubResponse("200", body, fileFromString("file content with a <% token %>"), null, null);
+
+        assertThat(stubResponse.isBodyContainsTemplateTokens()).isTrue();
+    }
+
+    @Test
+    public void shouldFindBodyNotTokenized_WhenRawFileNotTemplateFile() throws Exception {
+
+        final String body = "some body";
+        final StubResponse stubResponse = new StubResponse("200", body, fileFromString("file content"), null, null);
+
+        assertThat(stubResponse.isBodyContainsTemplateTokens()).isFalse();
     }
 }

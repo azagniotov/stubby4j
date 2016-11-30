@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-    public NotFoundResponseHandlingStrategy() {
+    NotFoundResponseHandlingStrategy() {
 
     }
 

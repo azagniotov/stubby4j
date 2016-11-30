@@ -42,15 +42,6 @@ public class RedirectResponseHandlingStrategyTest {
     @InjectMocks
     private RedirectResponseHandlingStrategy redirectResponseHandlingStrategy;
 
-
-    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
-        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
-    }
-
     @Test
     public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("301");
@@ -78,5 +69,13 @@ public class RedirectResponseHandlingStrategyTest {
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
         verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
     }
 }

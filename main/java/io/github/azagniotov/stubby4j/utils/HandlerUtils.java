@@ -69,6 +69,7 @@ public final class HandlerUtils {
     }
 
     public static void setResponseMainHeaders(final HttpServletResponse response) {
+        response.setCharacterEncoding(StringUtils.UTF_8);
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
         response.setHeader(HttpHeader.DATE.asString(), new Date().toString());
         response.setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");

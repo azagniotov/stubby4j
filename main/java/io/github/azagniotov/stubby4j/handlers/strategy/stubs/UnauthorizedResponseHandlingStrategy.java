@@ -35,7 +35,7 @@ public final class UnauthorizedResponseHandlingStrategy implements StubResponseH
     @VisibleForTesting
     public static final String WRONG_AUTHORIZATION_HEADER_TEMPLATE = "Unauthorized with supplied 'authorized' header value: '%s'";
 
-    public UnauthorizedResponseHandlingStrategy() {
+    UnauthorizedResponseHandlingStrategy() {
 
     }
 

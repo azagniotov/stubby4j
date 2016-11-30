@@ -2,7 +2,6 @@ package io.github.azagniotov.stubby4j.handlers.strategy;
 
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.DefaultResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeader;
@@ -11,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.ServletOutputStream;
@@ -23,8 +21,11 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Alexander Zagniotov
@@ -34,6 +35,24 @@ import static org.mockito.Mockito.*;
 public class DefaultResponseHandlingStrategyTest {
 
     private static final String SOME_RESULTS_MESSAGE = "we have results";
+    private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
+
+        @Override
+        public void write(final int i) throws IOException {
+
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setWriteListener(final WriteListener writeListener) {
+
+        }
+    };
+    private static final byte[] EMPTY_BYTES = {};
 
     @Mock
     private StubResponse mockStubResponse;
@@ -50,35 +69,11 @@ public class DefaultResponseHandlingStrategyTest {
     @InjectMocks
     private DefaultResponseHandlingStrategy defaultResponseHandlingStrategy;
 
-    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
-        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
-    }
-
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("200");
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
-        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
-
-            @Override
-            public void write(final int i) throws IOException {
-
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setWriteListener(final WriteListener writeListener) {
-
-            }
-        });
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
@@ -89,28 +84,11 @@ public class DefaultResponseHandlingStrategyTest {
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("200");
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
         when(mockStubResponse.getLatency()).thenReturn("100");
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
-        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
-
-            @Override
-            public void write(final int i) throws IOException {
-
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setWriteListener(final WriteListener writeListener) {
-
-            }
-        });
-
-        when(mockAssertionRequest.getQuery()).thenReturn(new HashMap<String, String>());
+        when(mockAssertionRequest.getQuery()).thenReturn(new HashMap<>());
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
@@ -121,25 +99,9 @@ public class DefaultResponseHandlingStrategyTest {
     public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("200");
         when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(SOME_RESULTS_MESSAGE.getBytes(StringUtils.UTF_8));
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
         when(mockStubResponse.getLatency()).thenReturn("100");
-        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
-
-            @Override
-            public void write(final int i) throws IOException {
-
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setWriteListener(final WriteListener writeListener) {
-
-            }
-        });
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
         long before = System.currentTimeMillis();
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
@@ -152,35 +114,31 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldReturnReplacedValueInResponseHeaderWhenRequestBodyHasDynamicToken() throws Exception {
-        String generatedNonce = UUID.randomUUID().toString();
-        String expectedResponseLocationHeaderValue = "redirect-uri=https://google.com&nonce="+generatedNonce;
-        String templateResponseLocationHeaderValue = "redirect-uri=https://google.com&nonce=<%post.1%>";
+        final String nonce = UUID.randomUUID().toString();
+        final String headerValuePrefix = "redirect-uri=https://google.com&nonce=";
+
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
+            put("post.1", nonce);
+        }});
 
         when(mockStubResponse.getStatus()).thenReturn("302");
-        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{ put("Location", templateResponseLocationHeaderValue); }});
-        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
-
-            @Override
-            public void write(final int i) throws IOException {
-
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setWriteListener(final WriteListener writeListener) {
-
-            }
-        });
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(SOME_RESULTS_MESSAGE.getBytes(StringUtils.UTF_8));
-        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{ put("post.1", generatedNonce); }});
+        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
+            put("Location", headerValuePrefix + "<%post.1%>");
+        }});
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
 
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), expectedResponseLocationHeaderValue);
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
         verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
     }
 }

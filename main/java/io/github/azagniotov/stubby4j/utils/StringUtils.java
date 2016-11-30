@@ -117,6 +117,10 @@ public final class StringUtils {
         return template;
     }
 
+    public static boolean isTokenized(final String target) {
+        return target.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+    }
+
     public static String escapeHtmlEntities(final String toBeEscaped) {
         return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }

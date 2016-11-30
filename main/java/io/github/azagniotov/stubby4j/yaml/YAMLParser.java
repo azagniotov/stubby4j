@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
-import static io.github.azagniotov.stubby4j.utils.FileUtils.doesFilePathContainTemplateTokens;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
@@ -193,7 +193,7 @@ public class YAMLParser {
     private Object loadFileContentFromFileUrl(final Object configPropertyNamedFile) throws IOException {
         final String filePath = StringUtils.objectToString(configPropertyNamedFile);
         try {
-            if (doesFilePathContainTemplateTokens(new File(filePath))) {
+            if (isFilePathContainTemplateTokens(new File(filePath))) {
                 return new File(dataConfigHomeDirectory, filePath);
             }
 

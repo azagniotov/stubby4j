@@ -32,7 +32,7 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
 
     private final StubResponse foundStubResponse;
 
-    public RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
+    RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
         this.foundStubResponse = foundStubResponse;
     }
 

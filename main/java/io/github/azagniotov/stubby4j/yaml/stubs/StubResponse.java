@@ -88,6 +88,10 @@ public class StubResponse {
         return file;
     }
 
+    public String getRawFileAbsolutePath() {
+        return file.getAbsolutePath();
+    }
+
     public byte[] getResponseBodyAsBytes() {
 
         if (fileBytes.length == 0) {
@@ -96,14 +100,14 @@ public class StubResponse {
         return fileBytes;
     }
 
-    public boolean isContainsTemplateTokens() {
+    public boolean isBodyContainsTemplateTokens() {
         final boolean isFileTemplate = fileBytes.length != 0 && isTemplateFile();
-        return isFileTemplate || getBody().contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+        return isFileTemplate || StringUtils.isTokenized(getBody());
     }
 
-    public boolean doesFilePathContainTemplateTokens() {
+    public boolean isFilePathContainsTemplateTokens() {
         try {
-            return FileUtils.doesFilePathContainTemplateTokens(file);
+            return FileUtils.isFilePathContainTemplateTokens(file);
         } catch (Exception e) {
             return false;
         }
