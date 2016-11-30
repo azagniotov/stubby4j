@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
+
 public class JsonErrorHandler extends ErrorHandler {
 
     @Override
@@ -50,7 +52,7 @@ public class JsonErrorHandler extends ErrorHandler {
                                   final String message,
                                   final boolean showStacks) throws IOException {
 
-        final String error = message == null ? HttpStatus.getMessage(code) : message;
+        final String error = isNull(message) ? HttpStatus.getMessage(code) : message;
         if (code == 404) {
             try {
                 final JSONObject jsonObject = new JSONObject(error);

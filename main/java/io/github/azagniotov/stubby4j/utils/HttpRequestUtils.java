@@ -13,6 +13,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
 
 public final class HttpRequestUtils {
 
@@ -35,7 +37,7 @@ public final class HttpRequestUtils {
                 append(indentString).
                 append(INDENT_UNIT).
                 append("'").append(headerName).append("': ");
-        if (headerValues == null || headerValues.size() == 0) {
+        if (isNull(headerValues) || headerValues.size() == 0) {
             stringBuilder.append("None");
         } else {
             if (headerValues.size() > 1) {
@@ -52,7 +54,7 @@ public final class HttpRequestUtils {
     @CoberturaIgnore
     private static String debugStringHeaders(final HttpServletRequest request, final int indent) {
         final Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames == null || !headerNames.hasMoreElements()) {
+        if (isNull(headerNames) || !headerNames.hasMoreElements()) {
             return EMPTY_BRACES;
         }
         final String indentString = StringUtils.repeat(INDENT_UNIT, indent);
@@ -62,7 +64,7 @@ public final class HttpRequestUtils {
             final String headerName = headerNames.nextElement();
             final Enumeration<String> headerValues = request.getHeaders(headerName);
             final List<String> headerValuesList = new ArrayList<>();
-            while (headerValues != null && headerValues.hasMoreElements()) {
+            while (isNotNull(headerValues) && headerValues.hasMoreElements()) {
                 headerValuesList.add(headerValues.nextElement());
             }
             stringBuilder.
