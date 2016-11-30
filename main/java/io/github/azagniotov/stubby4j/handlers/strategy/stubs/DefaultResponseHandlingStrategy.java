@@ -79,7 +79,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
         for (final Map.Entry<String, String> headerPair : stubResponse.getHeaders().entrySet()) {
             String responseHeaderValue = headerPair.getValue();
             if (isTokenized(responseHeaderValue)) {
-                responseHeaderValue = replaceTokens(getBytesUtf8(headerPair.getValue()), regexGroups);
+                responseHeaderValue = replaceTokensInString(headerPair.getValue(), regexGroups);
             }
             response.setHeader(headerPair.getKey(), responseHeaderValue);
         }

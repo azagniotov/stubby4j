@@ -39,15 +39,15 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
-    public static final String TEMPLATE_TOKEN_LEFT = "<%";
     public static final String UTF_8 = "UTF-8";
 
     static final String NOT_PROVIDED = "Not provided";
     static final String FAILED = "Failed to retrieveLoadedStubs response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
-    private static final String TEMPLATE_TOKEN_RIGHT = "%>";
     private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
 
+    private static final String TEMPLATE_TOKEN_LEFT = "<%";
+    private static final String TEMPLATE_TOKEN_RIGHT = "%>";
     private static final Base64.Encoder BASE_64_ENCODER = Base64.getEncoder();
 
     private StringUtils() {
@@ -105,20 +105,20 @@ public final class StringUtils {
         return String.format("%s.%s", propertyName, capturingGroupIdx);
     }
 
-    public static String replaceTokens(final byte[] stringBytes, Map<String, String> tokensAndValues) {
+    public static String replaceTokens(final byte[] stringBytes, final Map<String, String> tokensAndValues) {
         return replaceTokensInString(StringUtils.newStringUtf8(stringBytes), tokensAndValues);
     }
 
     public static String replaceTokensInString(String template, final Map<String, String> tokensAndValues) {
         for (final Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
-            final String regexifiedKey = String.format("%s\\s{0,}%s\\s{0,}%s", StringUtils.TEMPLATE_TOKEN_LEFT, entry.getKey(), StringUtils.TEMPLATE_TOKEN_RIGHT);
+            final String regexifiedKey = String.format("%s\\s{0,}%s\\s{0,}%s", TEMPLATE_TOKEN_LEFT, entry.getKey(), TEMPLATE_TOKEN_RIGHT);
             template = template.replaceAll(regexifiedKey, entry.getValue());
         }
         return template;
     }
 
     public static boolean isTokenized(final String target) {
-        return target.contains(StringUtils.TEMPLATE_TOKEN_LEFT);
+        return target.contains(TEMPLATE_TOKEN_LEFT);
     }
 
     public static String escapeHtmlEntities(final String toBeEscaped) {
