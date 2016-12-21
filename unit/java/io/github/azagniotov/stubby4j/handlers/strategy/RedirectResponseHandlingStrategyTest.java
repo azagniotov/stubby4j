@@ -10,8 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -20,10 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/18/12, 10:11 AM
- */
+
 @RunWith(MockitoJUnitRunner.class)
 public class RedirectResponseHandlingStrategyTest {
 
@@ -45,7 +41,6 @@ public class RedirectResponseHandlingStrategyTest {
     @Test
     public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("301");
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
 
         redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
@@ -59,7 +54,6 @@ public class RedirectResponseHandlingStrategyTest {
     @Test
     public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithLatency() throws Exception {
         when(mockStubResponse.getStatus()).thenReturn("301");
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
         when(mockStubResponse.getLatency()).thenReturn("100");
 
         redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);

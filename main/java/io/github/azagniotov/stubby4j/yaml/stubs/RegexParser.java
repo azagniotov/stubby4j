@@ -2,7 +2,6 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
 
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

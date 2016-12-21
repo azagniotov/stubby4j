@@ -14,7 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +82,7 @@ public class AjaxResourceContentHandlerTest {
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
+        when(mockStubRepository.matchStubByIndex(anyInt())).thenReturn(new StubHttpLifecycle());
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
@@ -102,6 +103,7 @@ public class AjaxResourceContentHandlerTest {
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
+        when(mockStubRepository.matchStubByIndex(anyInt())).thenReturn(new StubHttpLifecycle());
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 
@@ -122,6 +124,7 @@ public class AjaxResourceContentHandlerTest {
         final AjaxResourceContentHandler spyAjaxResourceContentHandler = Mockito.spy(ajaxResourceContentHandler);
 
         when(mockHttpServletRequest.getRequestURI()).thenReturn(requestURI);
+        when(mockStubRepository.matchStubByIndex(anyInt())).thenReturn(new StubHttpLifecycle());
 
         spyAjaxResourceContentHandler.handle(requestURI, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
 

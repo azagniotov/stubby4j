@@ -2,6 +2,9 @@ package io.github.azagniotov.stubby4j.yaml.stubs;
 
 import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,9 +16,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created: 4/20/13 5:29 PM
- */
+@RunWith(MockitoJUnitRunner.class)
 public class StubHttpLifecycleTest {
 
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
@@ -23,6 +24,12 @@ public class StubHttpLifecycleTest {
     private static final String AUTHORIZATION_HEADER_BASIC = "Basic Ym9iOnNlY3JldA==";
     private static final String AUTHORIZATION_HEADER_BASIC_INVALID = "Basic 888888888888==";
     private static final String AUTHORIZATION_HEADER_BEARER = "Bearer Ym9iOnNlY3JldA==";
+
+    @Spy
+    private StubHttpLifecycle spyAssertingStubHttpLifecycle = new StubHttpLifecycle();
+
+    @Spy
+    private StubHttpLifecycle spyStubbedStubHttpLifecycle = new StubHttpLifecycle();
 
     @Test
     public void shouldFindStubHttpLifecycleEqual_WhenComparedToItself() throws Exception {
@@ -189,10 +196,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldVerifyBehaviour_WhenAuthorizationHeaderBasicIsNotTheSame() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC_INVALID).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
         spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
@@ -206,10 +211,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldAuthorizeViaBasic_WhenAuthorizationHeaderBasicEquals() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, AUTHORIZATION_HEADER_BASIC).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
         assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
@@ -217,10 +220,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldVerifyBehaviour_WhenAuthorizationHeaderBasicEquals() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, AUTHORIZATION_HEADER_BASIC).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBasic(AUTHORIZATION_HEADER_BASIC).build());
 
         spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
@@ -234,10 +235,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldNotAuthorizeViaBearer_WhenAssertingAuthorizationHeaderBearerIsNotSet() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
         assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
@@ -245,10 +244,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldVerifyBehaviour_WhenAuthorizationHeaderBearerIsNotSet() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
         spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
@@ -262,10 +259,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldNotAuthorizeViaBearer_WhenAuthorizationHeaderBearerIsNotTheSame() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer 888888888888==").build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer("Bearer Ym9iOnNlY3JldA==").build());
 
         assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isTrue();
@@ -273,10 +268,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldVerifyBehaviour_WhenAuthorizationHeaderBearerIsNotTheSame() throws Exception {
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer 888888888888==").build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer("Bearer Ym9iOnNlY3JldA==").build());
 
         spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);
@@ -290,11 +283,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldAuthorizeViaBearer_WhenAuthorizationHeaderBearerEquals() throws Exception {
-
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, AUTHORIZATION_HEADER_BEARER).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
         assertThat(spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle)).isFalse();
@@ -302,11 +292,8 @@ public class StubHttpLifecycleTest {
 
     @Test
     public void shouldVerifyBehaviour_WhenAuthorizationHeaderBearerEquals() throws Exception {
-
-        final StubHttpLifecycle spyAssertingStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyAssertingStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, AUTHORIZATION_HEADER_BEARER).build());
 
-        final StubHttpLifecycle spyStubbedStubHttpLifecycle = spy(new StubHttpLifecycle());
         spyStubbedStubHttpLifecycle.setRequest(REQUEST_BUILDER.withUrl(SOME_RESOURCE_URI).withHeaderAuthorizationBearer(AUTHORIZATION_HEADER_BEARER).build());
 
         spyStubbedStubHttpLifecycle.isIncomingRequestUnauthorized(spyAssertingStubHttpLifecycle);

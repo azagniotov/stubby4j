@@ -4,7 +4,6 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponseTypes;
@@ -17,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -36,10 +35,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-/**
- * @author Alexander Zagniotov
- * @since 6/30/12, 8:15 PM
- */
 @SuppressWarnings("serial")
 @RunWith(MockitoJUnitRunner.class)
 public class StubsPortalHandlerTest {
@@ -201,7 +196,6 @@ public class StubsPortalHandlerTest {
 
         final String requestPathInfo = "/path/1";
 
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
@@ -215,18 +209,15 @@ public class StubsPortalHandlerTest {
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
     }
 
-
     @Test
     public void verifyBehaviourDuringHandleGetRequestWithNoAuthorizationHeaderSet() throws Exception {
 
         final String requestPathInfo = "/path/1";
 
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockUnauthorizedStubResponse);
         when(mockUnauthorizedStubResponse.getStubResponseType()).thenReturn(StubResponseTypes.UNAUTHORIZED);
-        when(mockUnauthorizedStubResponse.getBody()).thenReturn(SOME_RESULTS_MESSAGE);
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -242,7 +233,6 @@ public class StubsPortalHandlerTest {
         final String requestPathInfo = "/path/1";
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-        when(mockHttpServletRequest.getHeader(StubAuthorizationTypes.BASIC.asYamlProp())).thenReturn("");
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
         final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -264,7 +254,6 @@ public class StubsPortalHandlerTest {
         final String requestPathInfo = "/path/1";
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-        when(mockHttpServletRequest.getHeader(StubAuthorizationTypes.BEARER.asYamlProp())).thenReturn("");
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
         final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
@@ -285,7 +274,6 @@ public class StubsPortalHandlerTest {
         final String postData = "postData";
         final String requestPathInfo = "/path/1";
 
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getStatus()).thenReturn("200");
@@ -328,7 +316,6 @@ public class StubsPortalHandlerTest {
 
         final String requestPathInfo = "/path/1";
 
-        when(mockHttpServletResponse.getWriter()).thenReturn(mockPrintWriter);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getLatency()).thenReturn("50");

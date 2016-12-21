@@ -15,8 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -25,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -202,9 +200,6 @@ public class StubRepositoryTest {
         final StubResponse expectedResponse = stubRepository.getStubs().get(0).getResponse(true);
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
-        final StubRequest stubbedRequest = stubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, "OK, this is recorded response text!"));
-
         final StubResponse failedToRecordResponse = stubRepository.findStubResponseFor(stubs.get(0).getRequest());
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
         assertThat(failedToRecordResponse.getBody()).isEqualTo(recordingSource);
@@ -263,24 +258,6 @@ public class StubRepositoryTest {
         final StubResponse actualResponse = stubRepository.findStubResponseFor(stubs.get(0).getRequest());
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
         assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void shouldVerifyExpectedHttpLifeCycles_WhenRefreshingStubbedData() throws Exception {
-        ArgumentCaptor<List> httpCycleCaptor = ArgumentCaptor.forClass(List.class);
-
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
-
-        when(mockYAMLParser.parse(anyString(), any(File.class))).thenReturn(stubs);
-
-        final StubRepository spyStubRepository = Mockito.spy(stubRepository);
-
-        spyStubRepository.refreshStubsFromYAMLConfig(mockYAMLParser);
-
-        verify(spyStubRepository, times(1)).resetStubsCache(httpCycleCaptor.capture());
-
-        assertThat(httpCycleCaptor.getValue()).isEqualTo(stubs);
     }
 
     private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) {

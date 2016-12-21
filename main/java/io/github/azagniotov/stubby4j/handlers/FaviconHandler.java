@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.Request;
