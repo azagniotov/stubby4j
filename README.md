@@ -1,10 +1,9 @@
-[![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.png?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
+[![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.svg?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
 [![Dependency Status](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f)
 [![codecov](https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg)](https://codecov.io/gh/azagniotov/stubby4j)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j)
-[![Pending Pull-Requests](http://githubbadges.herokuapp.com/azagniotov/stubby4j/pulls.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls)
-[![Github Issues](http://githubbadges.herokuapp.com/azagniotov/stubby4j/issues.svg?style=flat)](https://github.com/azagniotov/stubby4j/issues)
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat)](http://badges.mit-license.org)
+[![Stackoverflow stubby4j](https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat)](http://stackoverflow.com/questions/tagged/stubby4j)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://badges.mit-license.org)
 
 
 [![stubb4j](https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg)](https://github.com/azagniotov/stubby4j)
