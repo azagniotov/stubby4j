@@ -10,11 +10,14 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
@@ -24,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -34,10 +38,13 @@ import static org.mockito.Mockito.when;
 public class StubRepositoryTest {
 
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
-    private static final File CONFIG_FILE = new File(".");
+    private static final File CONFIG_FILE = new File("parentPath", "childPath");
 
     private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
             CompletableFuture.completedFuture(new LinkedList<StubHttpLifecycle>());
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private StubbyHttpTransport mockStubbyHttpTransport;
@@ -45,8 +52,17 @@ public class StubRepositoryTest {
     @Mock
     private YAMLParser mockYAMLParser;
 
+    @Spy
+    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
+
     @Captor
-    private ArgumentCaptor<String> urlToRecordCaptor;
+    private ArgumentCaptor<String> stringCaptor;
+
+    @Captor
+    private ArgumentCaptor<File> fileCaptor;
+
+    @Captor
+    private ArgumentCaptor<List<StubHttpLifecycle>> stubsCaptor;
 
     private StubRepository stubRepository;
 
@@ -99,14 +115,34 @@ public class StubRepositoryTest {
         assertThat(stubRepository.getStubs().size()).isZero();
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void shouldDeleteOriginalHttpCycleList_WhenInvalidIndexGiven() throws Exception {
+
+        expectedException.expect(IndexOutOfBoundsException.class);
+
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isNotZero();
 
         stubRepository.deleteStubByIndex(9999);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldVerifyExpectedHttpLifeCycles_WhenRefreshingStubbedData() throws Exception {
+        final List<StubHttpLifecycle> expectedStubs = buildHttpLifeCycles("/resource/item/1");
+
+        when(mockYAMLParser.parse(anyString(), any(File.class))).thenReturn(expectedStubs);
+
+        spyStubRepository.refreshStubsFromYAMLConfig(mockYAMLParser);
+
+        verify(mockYAMLParser, times(1)).parse(stringCaptor.capture(), fileCaptor.capture());
+        verify(spyStubRepository, times(1)).resetStubsCache(stubsCaptor.capture());
+
+        assertThat(stubsCaptor.getValue()).isEqualTo(expectedStubs);
+        assertThat(stringCaptor.getValue()).isEqualTo(CONFIG_FILE.getParent());
+        assertThat(fileCaptor.getValue()).isEqualTo(CONFIG_FILE);
     }
 
     @Test
@@ -119,8 +155,10 @@ public class StubRepositoryTest {
         assertThat(actualMarshalledYaml).isEqualTo("This is marshalled yaml snippet");
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void shouldFailToGetMarshalledYamlByIndex_WhenInvalidHttpCycleListIndexGiven() throws Exception {
+        expectedException.expect(IndexOutOfBoundsException.class);
+
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         stubRepository.resetStubsCache(stubs);
 
@@ -145,8 +183,10 @@ public class StubRepositoryTest {
         assertThat(stubbedNewRequest.getUrl()).isEqualTo(expectedNewUrl);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void shouldUpdateStubHttpLifecycleByIndex_WhenInvalidHttpCycleListIndexGiven() throws Exception {
+        expectedException.expect(IndexOutOfBoundsException.class);
+
         final String expectedOriginalUrl = "/resource/item/1";
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
         stubRepository.resetStubsCache(stubs);
@@ -222,7 +262,7 @@ public class StubRepositoryTest {
         stubRepository.resetStubsCache(stubs);
 
         final String actualResponseText = "OK, this is recorded response text!";
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), urlToRecordCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
+        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
 
         final StubRequest incomingRequest =
                 REQUEST_BUILDER
@@ -236,7 +276,7 @@ public class StubRepositoryTest {
         final StubResponse recordedResponse = stubRepository.findStubResponseFor(incomingRequest);
 
         assertThat(recordedResponse.getBody()).isEqualTo(actualResponseText);
-        assertThat(urlToRecordCaptor.getValue()).isEqualTo(String.format("%s%s", sourceToRecord, incomingRequest.getUrl()));
+        assertThat(stringCaptor.getValue()).isEqualTo(String.format("%s%s", sourceToRecord, incomingRequest.getUrl()));
     }
 
     @Test

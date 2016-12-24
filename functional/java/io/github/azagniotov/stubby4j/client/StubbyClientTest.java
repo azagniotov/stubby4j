@@ -10,7 +10,9 @@ import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -18,10 +20,6 @@ import java.net.URL;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-/**
- * @author Alexander Zagniotov
- * @since 6/28/12, 2:54 PM
- */
 public class StubbyClientTest {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
@@ -30,6 +28,9 @@ public class StubbyClientTest {
     private static final String ENCODED_STRING = "Ym9iOndyb25nLXNlY3JldA==";
     private static final String AUTHORIZATION_HEADER_CUSTOM = String.format("CustomAuthorizationName %s", ENCODED_STRING);
     private static final String BOB_SECRET = "bob:secret";
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -71,8 +72,10 @@ public class StubbyClientTest {
         assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.getContent());
     }
 
-    @Test(expected = Stubby4JException.class)
+    @Test
     public void makeRequest_ShouldFailToMakeRequest_WhenUnsupportedMethodGiven() throws Exception {
+
+        expectedException.expect(Stubby4JException.class);
 
         STUBBY_CLIENT.makeRequest(HttpScheme.HTTPS.asString(), HttpMethod.MOVE.asString(), JettyFactory.DEFAULT_HOST,
                 "/item/1", SSL_PORT, null);

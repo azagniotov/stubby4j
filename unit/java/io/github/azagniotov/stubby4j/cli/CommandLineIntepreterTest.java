@@ -2,7 +2,9 @@ package io.github.azagniotov.stubby4j.cli;
 
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Map;
 
@@ -15,6 +17,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class CommandLineIntepreterTest {
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testIsHelpWhenShortOptionGiven() throws Exception {
@@ -279,26 +283,34 @@ public class CommandLineIntepreterTest {
         assertThat(isYamlProvided).isFalse();
     }
 
-    @Test(expected = ParseException.class)
+    @Test
     public void shouldFailOnInvalidCommandlineLongOptionString() throws Exception {
+        expectedException.expect(ParseException.class);
+
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(new String[]{"--alex"});
     }
 
-    @Test(expected = ParseException.class)
+    @Test
     public void shouldFailOnInvalidCommandlineShortOptionString() throws Exception {
+        expectedException.expect(ParseException.class);
+
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(new String[]{"-z"});
     }
 
-    @Test(expected = MissingArgumentException.class)
+    @Test
     public void shouldFailOnMissingArgumentForExistingShortOption() throws Exception {
+        expectedException.expect(MissingArgumentException.class);
+
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(new String[]{"-a"});
     }
 
-    @Test(expected = MissingArgumentException.class)
+    @Test
     public void shouldFailOnMissingArgumentForExistingLongOption() throws Exception {
+        expectedException.expect(MissingArgumentException.class);
+
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(new String[]{"--data"});
     }
