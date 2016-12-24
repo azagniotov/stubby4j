@@ -7,7 +7,7 @@ import org.junit.Test;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 
 /**

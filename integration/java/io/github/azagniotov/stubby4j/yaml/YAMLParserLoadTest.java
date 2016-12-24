@@ -4,18 +4,13 @@ import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
-import org.fest.assertions.data.MapEntry;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/22/13 6:39 PM
- */
 public class YAMLParserLoadTest {
 
     private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
@@ -69,8 +64,7 @@ public class YAMLParserLoadTest {
         assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamOne, 499));
         assertThat(actualRequest.getUrl()).contains(String.format("%s=%s", expectedParamTwo, 499));
 
-        final MapEntry headerEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
-        assertThat(actualResponse.getHeaders()).contains(headerEntry);
+        assertThat(actualResponse.getHeaders()).containsEntry(expectedHeaderKey, expectedHeaderValue);
     }
 
     private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {

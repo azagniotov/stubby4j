@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
@@ -42,7 +42,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(null).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(null).withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(null).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(null).withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("^/$").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -119,7 +119,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/?").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/?").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -137,7 +137,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123$").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123.*").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/1").withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -182,7 +182,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/1").withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -200,7 +200,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123$").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/some/beggining/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -209,7 +209,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123.*").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -218,7 +218,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl("(.*)(/invoice/123)(.*)").withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -411,7 +411,7 @@ public class StubRequestTest {
                         .withQuery(paramTwo, paramTwoValue)
                         .withQuery(paramOne, paramOneValue).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
 
@@ -423,7 +423,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(url).withMethod("get").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -435,7 +435,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(url).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -446,7 +446,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).build();
         final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -458,7 +458,7 @@ public class StubRequestTest {
         expectedRequest.addMethod("HEAD");
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(3);
-        assertThat(expectedRequest.getMethod()).contains("GET", "POST", "HEAD");
+        assertThat(expectedRequest.getMethod()).containsExactly("GET", "POST", "HEAD");
     }
 
     @Test
@@ -470,7 +470,7 @@ public class StubRequestTest {
         expectedRequest.addMethod("HEAD");
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
-        assertThat(expectedRequest.getMethod()).contains("GET", "HEAD");
+        assertThat(expectedRequest.getMethod()).containsExactly("GET", "HEAD");
     }
 
     @Test
@@ -482,7 +482,7 @@ public class StubRequestTest {
         expectedRequest.addMethod("HEAD");
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
-        assertThat(expectedRequest.getMethod()).contains("GET", "HEAD");
+        assertThat(expectedRequest.getMethod()).containsExactly("GET", "HEAD");
     }
 
     @Test
@@ -537,7 +537,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodPost().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -555,7 +555,7 @@ public class StubRequestTest {
                         .withMethodPost()
                         .withPost("different post").build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -572,7 +572,7 @@ public class StubRequestTest {
                 BUILDER.withUrl(url)
                         .withMethodPost().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -589,7 +589,7 @@ public class StubRequestTest {
                         .withMethodPost()
                         .withPost("some post").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -681,7 +681,7 @@ public class StubRequestTest {
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -701,7 +701,7 @@ public class StubRequestTest {
                 BUILDER.withUrl(url)
                         .withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
 
@@ -721,7 +721,7 @@ public class StubRequestTest {
                         .withHeaderContentLength("30")
                         .withHeaderContentLanguage("en-US").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -746,7 +746,7 @@ public class StubRequestTest {
                         .withHeaders("Content-Length", contentLength)
                         .withHeaders("Content-Language", contentLanguage).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -772,7 +772,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -797,7 +797,7 @@ public class StubRequestTest {
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -820,7 +820,7 @@ public class StubRequestTest {
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
 
@@ -847,7 +847,7 @@ public class StubRequestTest {
                         .withHeaderContentEncoding("UTF-8")
                         .withHeaderPragma("no-cache").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -874,7 +874,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -900,7 +900,7 @@ public class StubRequestTest {
                         .withMethodGet()
                         .withMethodHead().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
 
@@ -929,7 +929,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -959,7 +959,7 @@ public class StubRequestTest {
                         .withQuery(paramTwo, paramTwoValue)
                         .withQuery("paramThree", "three").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -989,7 +989,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1017,7 +1017,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, "three").build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1045,7 +1045,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1073,7 +1073,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -1097,7 +1097,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1120,7 +1120,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1144,7 +1144,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1168,7 +1168,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1192,7 +1192,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1216,7 +1216,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1245,7 +1245,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1274,7 +1274,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1298,7 +1298,7 @@ public class StubRequestTest {
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1341,7 +1341,7 @@ public class StubRequestTest {
                         .withHeaderContentEncoding("UTF-8")
                         .withHeaderPragma("no-cache").build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
 
@@ -1371,7 +1371,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1400,7 +1400,7 @@ public class StubRequestTest {
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoAssertingValue).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1429,7 +1429,7 @@ public class StubRequestTest {
                         .withHeaders(headerOne, headerOneValue)
                         .withHeaders(headerTwo, headerTwoAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1458,7 +1458,7 @@ public class StubRequestTest {
                         .withHeaders(headerOne, headerOneValue)
                         .withHeaders(headerTwo, headerTwoAssertingValue).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1490,7 +1490,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1522,7 +1522,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1554,7 +1554,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1586,7 +1586,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1606,7 +1606,7 @@ public class StubRequestTest {
                         .withMethodPost()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1628,7 +1628,7 @@ public class StubRequestTest {
                         .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
 
         final Map<String, String> regexGroups = assertingRequest.getRegexGroups();
         assertThat(regexGroups.get("post.0")).isEqualTo(postAssertingValue);
@@ -1656,7 +1656,7 @@ public class StubRequestTest {
                         .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
 
         final Map<String, String> regexGroups = assertingRequest.getRegexGroups();
         assertThat(regexGroups.get("post.0")).isEqualTo(postAssertingValue);
@@ -1714,7 +1714,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1737,7 +1737,7 @@ public class StubRequestTest {
                         .withMethodHead()
                         .withPost(postValue).build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1779,7 +1779,7 @@ public class StubRequestTest {
                         .withHeaderContentEncoding("UTF-8")
                         .withHeaderPragma("no-cache").build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
@@ -1790,7 +1790,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1801,7 +1801,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1812,7 +1812,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1823,7 +1823,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/abc/12345/").withMethodGet().build();
 
-        assertThat(expectedRequest).isEqualTo(assertingRequest);
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
@@ -1842,7 +1842,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isEqualTo(assertingRequest);
+            assertThat(assertingRequest).isEqualTo(expectedRequest);
         }
     }
 
@@ -1861,7 +1861,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isEqualTo(assertingRequest);
+            assertThat(assertingRequest).isEqualTo(expectedRequest);
         }
     }
 
@@ -1874,7 +1874,7 @@ public class StubRequestTest {
         final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
 
-        assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
 
@@ -1892,7 +1892,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isEqualTo(assertingRequest);
+            assertThat(assertingRequest).isEqualTo(expectedRequest);
         }
     }
 
@@ -1913,7 +1913,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+            assertThat(assertingRequest).isNotEqualTo(expectedRequest);
         }
     }
 
@@ -2072,7 +2072,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isEqualTo(assertingRequest);
+            assertThat(assertingRequest).isEqualTo(expectedRequest);
         }
     }
 
@@ -2100,7 +2100,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+            assertThat(assertingRequest).isNotEqualTo(expectedRequest);
         }
     }
 
@@ -2129,7 +2129,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isEqualTo(assertingRequest);
+            assertThat(assertingRequest).isEqualTo(expectedRequest);
         }
     }
 
@@ -2157,7 +2157,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+            assertThat(assertingRequest).isNotEqualTo(expectedRequest);
         }
     }
 
@@ -2185,7 +2185,7 @@ public class StubRequestTest {
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
-            assertThat(expectedRequest).isNotEqualTo(assertingRequest);
+            assertThat(assertingRequest).isNotEqualTo(expectedRequest);
         }
     }
 

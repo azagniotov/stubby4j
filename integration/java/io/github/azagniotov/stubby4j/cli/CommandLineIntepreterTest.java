@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov

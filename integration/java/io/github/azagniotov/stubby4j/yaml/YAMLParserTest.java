@@ -7,7 +7,6 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
-import org.fest.assertions.data.MapEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,11 +16,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -100,10 +99,8 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
-        final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON);
-
         assertThat(actualResponse).isInstanceOf(StubResponse.class);
-        assertThat(actualResponse.getHeaders()).contains(sequenceHeaderEntry);
+        assertThat(actualResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, Common.HEADER_APPLICATION_JSON);
         assertThat(actualResponse.getStatus()).isEqualTo(sequenceResponseStatus);
         assertThat(actualResponse.getBody()).isEqualTo(sequenceResponseBody);
     }
@@ -137,10 +134,8 @@ public class YAMLParserTest {
         final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse(true);
         final StubResponse actualSequenceResponse = actualHttpLifecycle.getResponse(true);
 
-        final MapEntry sequenceHeaderEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
-
         assertThat(actualSequenceResponse).isInstanceOf(StubResponse.class);
-        assertThat(actualSequenceResponse.getHeaders()).contains(sequenceHeaderEntry);
+        assertThat(actualSequenceResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
         assertThat(actualSequenceResponse.getStatus()).isEqualTo(sequenceResponseStatus);
         assertThat(actualSequenceResponse.getBody()).isEqualTo(sequenceResponseBody);
     }
@@ -176,7 +171,7 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-        assertThat(actualRequest.getMethod()).contains(HttpMethods.GET, HttpMethods.HEAD);
+        assertThat(actualRequest.getMethod()).containsExactly(HttpMethods.GET, HttpMethods.HEAD);
     }
 
     @Test
@@ -427,12 +422,11 @@ public class YAMLParserTest {
         final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
-        final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
-        final MapEntry queryEntryTwo = MapEntry.entry(expectedParamTwo, expectedParamTwoValue);
 
         assertThat(actualRequest.getUrl()).contains(fullQueryOne);
         assertThat(actualRequest.getUrl()).contains(fullQueryTwo);
-        assertThat(actualRequest.getQuery()).contains(queryEntryOne, queryEntryTwo);
+        assertThat(actualRequest.getQuery()).containsEntry(expectedParamOne, expectedParamOneValue);
+        assertThat(actualRequest.getQuery()).containsEntry(expectedParamTwo, expectedParamTwoValue);
     }
 
     @Test
@@ -452,9 +446,8 @@ public class YAMLParserTest {
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
-        final MapEntry headerOneEntry = MapEntry.entry(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYamlProp(), encodedAuthorizationHeader);
     }
 
     @Test
@@ -472,9 +465,8 @@ public class YAMLParserTest {
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(""));
-        final MapEntry headerOneEntry = MapEntry.entry(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYamlProp(), encodedAuthorizationHeader);
     }
 
     @Test
@@ -494,9 +486,8 @@ public class YAMLParserTest {
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
         final String authorizationHeader = String.format("%s %s", "Bearer", authorization);
-        final MapEntry headerOneEntry = MapEntry.entry(BEARER.asYamlProp(), authorizationHeader);
 
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYamlProp(), authorizationHeader);
     }
 
     @Test
@@ -514,9 +505,8 @@ public class YAMLParserTest {
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
         final String authorizationHeader = String.format("%s %s", "Bearer", "");
-        final MapEntry headerOneEntry = MapEntry.entry(BEARER.asYamlProp(), authorizationHeader);
 
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYamlProp(), authorizationHeader);
     }
 
     @Test
@@ -535,9 +525,7 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-        final MapEntry headerOneEntry = MapEntry.entry(CUSTOM.asYamlProp(), authorizationHeader);
-
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYamlProp(), authorizationHeader);
     }
 
     @Test
@@ -554,9 +542,7 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-        final MapEntry headerOneEntry = MapEntry.entry(CUSTOM.asYamlProp(), "");
-
-        assertThat(actualRequest.getHeaders()).contains(headerOneEntry);
+        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYamlProp(), "");
     }
 
     @Test
@@ -572,15 +558,12 @@ public class YAMLParserTest {
                 .withHeaderContentType(contentType)
                 .withHeaderLocation(location).build();
 
-
         final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
-        final MapEntry headerOneEntry = MapEntry.entry("location", location);
-        final MapEntry headerTwoEntry = MapEntry.entry("content-type", contentType);
 
-        assertThat(actualResponse.getHeaders()).contains(headerOneEntry);
-        assertThat(actualResponse.getHeaders()).contains(headerTwoEntry);
+        assertThat(actualResponse.getHeaders()).containsEntry("location", location);
+        assertThat(actualResponse.getHeaders()).containsEntry("content-type", contentType);
     }
 
 
@@ -601,10 +584,9 @@ public class YAMLParserTest {
         final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
-        final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
 
         assertThat(actualRequest.getUrl()).contains(fullQueryOne);
-        assertThat(actualRequest.getQuery()).contains(queryEntryOne);
+        assertThat(actualRequest.getQuery()).containsEntry(expectedParamOne, expectedParamOneValue);
     }
 
     @Test
@@ -624,10 +606,9 @@ public class YAMLParserTest {
         final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
-        final MapEntry queryEntryOne = MapEntry.entry(expectedParamOne, expectedParamOneValue);
 
         assertThat(actualRequest.getUrl()).contains(fullQueryOne);
-        assertThat(actualRequest.getQuery()).contains(queryEntryOne);
+        assertThat(actualRequest.getQuery()).containsEntry(expectedParamOne, expectedParamOneValue);
     }
 
     @Test

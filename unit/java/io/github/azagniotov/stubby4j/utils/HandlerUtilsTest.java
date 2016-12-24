@@ -3,7 +3,7 @@ package io.github.azagniotov.stubby4j.utils;
 import org.eclipse.jetty.http.HttpScheme;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov

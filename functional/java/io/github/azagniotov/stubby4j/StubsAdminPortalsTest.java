@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 public class StubsAdminPortalsTest {
 

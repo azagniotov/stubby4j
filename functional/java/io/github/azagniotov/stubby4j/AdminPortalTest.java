@@ -17,7 +17,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 public class AdminPortalTest {
 
@@ -141,10 +141,10 @@ public class AdminPortalTest {
         final String responseContentAsString = httpResponse.parseAsString().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContentAsString).containsOnlyOnce("request");
-        assertThat(responseContentAsString).containsOnlyOnce("url: ^/resources/asn/");
-        assertThat(responseContentAsString).containsOnlyOnce("response");
-        assertThat(responseContentAsString).containsOnlyOnce("content-type: application/json");
+        assertThat(responseContentAsString).contains("request");
+        assertThat(responseContentAsString).contains("url: ^/resources/asn/");
+        assertThat(responseContentAsString).contains("response");
+        assertThat(responseContentAsString).contains("content-type: application/json");
     }
 
     @Test
@@ -216,10 +216,10 @@ public class AdminPortalTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/resources/asn/");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
 
         final String yamlToUpdate = new YAMLBuilder()
                 .newStubbedRequest()
@@ -248,11 +248,11 @@ public class AdminPortalTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("query");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: ^/resources/something/new");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
 
         assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
         assertThat(getResponseContent).doesNotContain("content-type: application/json");
@@ -267,10 +267,10 @@ public class AdminPortalTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/resources/asn/");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
 
         final URL url = AdminPortalTest.class.getResource("/json/update.request.without.escaped.slashes.json");
         final InputStream jsonInputStream = url.openStream();
@@ -292,11 +292,11 @@ public class AdminPortalTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("query");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: ^/resources/something/new");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
 
         assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
         assertThat(getResponseContent).doesNotContain("content-type: application/json");
@@ -311,10 +311,10 @@ public class AdminPortalTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/resources/asn/");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
 
         final URL url = AdminPortalTest.class.getResource("/json/update.request.with.enquoted.escaped.forward.slashes.json");
         final InputStream jsonInputStream = url.openStream();
@@ -336,11 +336,11 @@ public class AdminPortalTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("query");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: ^/resources/something/new");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
 
         assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
         assertThat(getResponseContent).doesNotContain("content-type: application/json");
@@ -355,10 +355,10 @@ public class AdminPortalTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/asn/");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/resources/asn/");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
 
         final URL url = AdminPortalTest.class.getResource("/json/update.request.with.escaped.forward.slashes.json");
         final InputStream jsonInputStream = url.openStream();
@@ -380,11 +380,11 @@ public class AdminPortalTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("query");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/resources/something/new");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/xml");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: ^/resources/something/new");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
 
         assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
         assertThat(getResponseContent).doesNotContain("content-type: application/json");
@@ -430,10 +430,10 @@ public class AdminPortalTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).containsOnlyOnce("request");
-        assertThat(getResponseContent).containsOnlyOnce("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
-        assertThat(getResponseContent).containsOnlyOnce("response");
-        assertThat(getResponseContent).containsOnlyOnce("content-type: application/json");
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
 
 
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);

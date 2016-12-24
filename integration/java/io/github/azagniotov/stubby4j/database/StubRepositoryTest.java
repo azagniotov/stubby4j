@@ -14,8 +14,6 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponseTypes;
 import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
-import org.fest.assertions.api.Assertions;
-import org.fest.assertions.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,10 +32,10 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -98,13 +96,12 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
         assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        Assertions.assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
+        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
 
         assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
 
-        final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
-        assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
+        assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
     @Test
@@ -147,8 +144,7 @@ public class StubRepositoryTest {
         assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
 
-        final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
-        assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
+        assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
     @Test
@@ -192,8 +188,7 @@ public class StubRepositoryTest {
         assertThat(firstSequenceResponseRestarted.getStatus()).isEqualTo(sequenceResponseStatus);
         assertThat(firstSequenceResponseRestarted.getBody()).isEqualTo(sequenceResponseBody);
 
-        final MapEntry mapEntry = MapEntry.entry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
-        assertThat(firstSequenceResponseRestarted.getHeaders()).contains(mapEntry);
+        assertThat(firstSequenceResponseRestarted.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
     @Test
@@ -228,8 +223,7 @@ public class StubRepositoryTest {
         assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
 
-        final MapEntry mapEntry = MapEntry.entry(expectedHeaderKey, expectedHeaderValue);
-        assertThat(foundStubResponse.getHeaders()).contains(mapEntry);
+        assertThat(foundStubResponse.getHeaders()).containsEntry(expectedHeaderKey, expectedHeaderValue);
     }
 
 

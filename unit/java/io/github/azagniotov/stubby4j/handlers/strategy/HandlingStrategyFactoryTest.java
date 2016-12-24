@@ -12,7 +12,7 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov

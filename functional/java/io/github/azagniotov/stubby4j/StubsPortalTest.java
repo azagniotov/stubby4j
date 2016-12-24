@@ -25,9 +25,9 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 public class StubsPortalTest {
 
@@ -1024,8 +1024,8 @@ public class StubsPortalTest {
 
             String firstCallResponseContent = actualResponse.parseAsString().trim();
             assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
-            // Make sure we only hitting recordabe source once
-            assertThat(actualConsoleOutput).containsOnlyOnce("Recording HTTP response using");
+            // Make sure we only hitting recordable source once
+            assertThat(actualConsoleOutput).contains("Recording HTTP response using");
 
             if (idx == LIMIT) {
                 System.setOut(oldPrintStream);

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -78,7 +78,7 @@ public class StubRepositoryTest {
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
 
         assertThat(resetResult).isTrue();
-        assertThat(stubRepository.getStubs().size()).isNotZero();
+        assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
-        assertThat(stubRepository.getStubs().size()).isNotZero();
+        assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
 
         final StubHttpLifecycle matchedHttpLifecycle = stubRepository.matchStubByIndex(0);
         assertThat(matchedHttpLifecycle).isNotNull();
@@ -97,7 +97,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
-        assertThat(stubRepository.getStubs().size()).isNotZero();
+        assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
 
         final StubHttpLifecycle matchedHttpLifecycle = stubRepository.matchStubByIndex(9999);
         assertThat(matchedHttpLifecycle).isNull();
@@ -108,11 +108,11 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
-        assertThat(stubRepository.getStubs().size()).isNotZero();
+        assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
 
         final StubHttpLifecycle deletedHttpLifecycle = stubRepository.deleteStubByIndex(0);
         assertThat(deletedHttpLifecycle).isNotNull();
-        assertThat(stubRepository.getStubs().size()).isZero();
+        assertThat(stubRepository.getStubs()).isEmpty();
     }
 
     @Test
@@ -123,7 +123,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
-        assertThat(stubRepository.getStubs().size()).isNotZero();
+        assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
 
         stubRepository.deleteStubByIndex(9999);
     }

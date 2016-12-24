@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -105,7 +105,7 @@ public class DefaultResponseHandlingStrategyTest {
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
         long after = System.currentTimeMillis();
 
-        assertThat(after - before).isGreaterThanOrEqualTo(100);
+        assertThat(after - before).isAtLeast(100L);
 
         verifyMainHeaders(mockHttpServletResponse);
     }

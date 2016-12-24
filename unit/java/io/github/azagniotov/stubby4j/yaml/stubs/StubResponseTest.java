@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.File;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileFromString;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov

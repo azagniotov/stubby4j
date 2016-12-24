@@ -8,7 +8,7 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Map;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -331,7 +331,7 @@ public class CommandLineIntepreterTest {
         commandLineInterpreter.parseCommandLine(new String[]{});
         final Map<String, String> params = commandLineInterpreter.getCommandlineParams();
 
-        assertThat(params.size()).isZero();
+        assertThat(params).isEmpty();
     }
 
     @Test

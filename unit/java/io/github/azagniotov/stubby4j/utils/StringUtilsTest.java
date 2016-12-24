@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 /**
  * @author Alexander Zagniotov
@@ -231,19 +230,19 @@ public class StringUtilsTest {
 
     @Test
     public void shouldJoinArrayString() {
-        assertEquals("", StringUtils.join(EMPTY_ARRAY_LIST, SEPARATOR));
-        assertEquals(TEXT_LIST, StringUtils.join(ARRAY_LIST, SEPARATOR));
-        assertEquals("null,,foo", StringUtils.join(MIXED_ARRAY_LIST, SEPARATOR));
+        assertThat("").isEqualTo(StringUtils.join(EMPTY_ARRAY_LIST, SEPARATOR));
+        assertThat(TEXT_LIST).isEqualTo(StringUtils.join(ARRAY_LIST, SEPARATOR));
+        assertThat("null,,foo").isEqualTo(StringUtils.join(MIXED_ARRAY_LIST, SEPARATOR));
     }
 
     @Test
     public void shouldRepeatString() {
-        assertEquals("", StringUtils.repeat(null, 2));
-        assertEquals("", StringUtils.repeat("ab", 0));
-        assertEquals("", StringUtils.repeat("", 3));
-        assertEquals("aaa", StringUtils.repeat("a", 3));
-        assertEquals("", StringUtils.repeat("a", -2));
-        assertEquals("ababab", StringUtils.repeat("ab", 3));
-        assertEquals("abcabcabc", StringUtils.repeat("abc", 3));
+        assertThat("").isEqualTo(StringUtils.repeat(null, 2));
+        assertThat("").isEqualTo(StringUtils.repeat("ab", 0));
+        assertThat("").isEqualTo(StringUtils.repeat("", 3));
+        assertThat("aaa").isEqualTo(StringUtils.repeat("a", 3));
+        assertThat("").isEqualTo(StringUtils.repeat("a", -2));
+        assertThat("ababab").isEqualTo(StringUtils.repeat("ab", 3));
+        assertThat("abcabcabc").isEqualTo(StringUtils.repeat("abc", 3));
     }
 }
