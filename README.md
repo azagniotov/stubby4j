@@ -1,7 +1,7 @@
-[![Build Status](https://secure.travis-ci.org/azagniotov/stubby4j.svg?branch=master)](http://travis-ci.org/azagniotov/stubby4j)
-[![Dependency Status](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f)
+[![Travis build master branch](https://img.shields.io/travis/azagniotov/stubby4j/master.svg)](http://travis-ci.org/azagniotov/stubby4j)
+[![VersionEye Dependency status](https://img.shields.io/versioneye/d/ruby/rails.svg)](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f)
 [![codecov](https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg)](https://codecov.io/gh/azagniotov/stubby4j)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.github.azagniotov/stubby4j)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.azagniotov/stubby4j.svg?style=flat&label=maven-central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%22)
 [![Stackoverflow stubby4j](https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat)](http://stackoverflow.com/questions/tagged/stubby4j)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://badges.mit-license.org)
 
