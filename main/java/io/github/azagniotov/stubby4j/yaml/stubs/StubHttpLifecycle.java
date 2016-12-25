@@ -38,7 +38,6 @@ public class StubHttpLifecycle {
 
     private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
 
-    public static final StubHttpLifecycle NULL = null;
     private String completeYAML;
     private StubRequest request;
     private Object response;

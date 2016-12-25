@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class AjaxResourceContentHandler extends AbstractHandler {
@@ -115,10 +116,12 @@ public class AjaxResourceContentHandler extends AbstractHandler {
 
     @VisibleForTesting
     StubHttpLifecycle throwErrorOnNonExistentResourceIndex(final HttpServletResponse response, final int resourceIndex) throws IOException {
-        final StubHttpLifecycle foundStub = stubRepository.matchStubByIndex(resourceIndex);
-        if (ObjectUtils.isNull(foundStub)) {
-            response.getWriter().println("Resource does not exist for ID: " + resourceIndex);
+        final Optional<StubHttpLifecycle> foundStubOptional = stubRepository.matchStubByIndex(resourceIndex);
+        if (!foundStubOptional.isPresent()) {
+            final String error = "Resource does not exist for ID: " + resourceIndex;
+            response.getWriter().println(error);
+            throw new IOException(error);
         }
-        return foundStub;
+        return foundStubOptional.get();
     }
 }

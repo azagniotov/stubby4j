@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -78,12 +79,13 @@ public class StubRepository {
 
     private StubResponse findMatch(final StubHttpLifecycle incomingRequest) {
 
-        final StubHttpLifecycle matchedStub = matchStub(incomingRequest);
+        final Optional<StubHttpLifecycle> matchedStubOptional = matchStub(incomingRequest);
 
-        if (ObjectUtils.isNull(matchedStub)) {
+        if (!matchedStubOptional.isPresent()) {
             return new NotFoundStubResponse();
         }
 
+        final StubHttpLifecycle matchedStub = matchedStubOptional.get();
         final String resourceId = matchedStub.getResourceId();
         resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
         resourceStats.get(resourceId).incrementAndGet();
@@ -111,27 +113,27 @@ public class StubRepository {
 
     /**
      * That's the point where the incoming {@link StubHttpLifecycle} that was created from the incoming
-     * raw {@link HttpServletRequest request} is matched to the loaded stubs.
+     * raw {@link HttpServletRequest request} is matched to the in-memory stubs.
      * <p>
-     * First, the local matches cache is checked if there is a potential match for the incoming
-     * {@link StubHttpLifecycle request} URI. If potential {@link StubHttpLifecycle match} found in the cache, then
-     * the match and the incoming {@link StubHttpLifecycle} are compared to each other to determine a full equality
-     * based on the {@link StubRequest#equals(Object)}.
+     * First, the local cache holding previously matched stubs is checked to see if there is a match for the incoming
+     * {@link StubHttpLifecycle request} URI. If the incoming {@link StubHttpLifecycle} URI found in the cache, then the
+     * cached match and the incoming {@link StubHttpLifecycle} are compared to each other to determine a complete
+     * equality based on the {@link StubRequest#equals(Object)}.
      * <p>
-     * If full equality with the cached potential {@link StubHttpLifecycle match} was not achieved, the incoming
-     * {@link StubHttpLifecycle request} is compared to every {@link StubHttpLifecycle element} in the list
-     * of loaded stubs.
+     * If a complete equality with the cached {@link StubHttpLifecycle match} was not achieved, the incoming
+     * {@link StubHttpLifecycle request} is compared to every {@link StubHttpLifecycle element} in the list of loaded
+     * stubs.
      * <p>
      * The {@link List<StubHttpLifecycle>#indexOf(Object)} implicitly invokes {@link StubHttpLifecycle#equals(Object)},
      * which invokes the {@link StubRequest#equals(Object)}.
      *
      * @param incomingStub {@link StubHttpLifecycle}
-     * @return matched {@link StubHttpLifecycle}
+     * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
      * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)
      */
-    private synchronized StubHttpLifecycle matchStub(final StubHttpLifecycle incomingStub) {
+    private synchronized Optional<StubHttpLifecycle> matchStub(final StubHttpLifecycle incomingStub) {
 
         final String incomingRequestUrl = incomingStub.getUrl();
         if (matchedStubsCache.containsKey(incomingRequestUrl)) {
@@ -140,7 +142,8 @@ public class StubRepository {
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedPotentialMatch)) {
                 ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
-                return cachedPotentialMatch;
+
+                return Optional.of(cachedPotentialMatch);
             }
             ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
             matchedStubsCache.remove(incomingRequestUrl);
@@ -152,18 +155,19 @@ public class StubRepository {
                 final long elapsed = System.currentTimeMillis() - initialStart;
                 ANSITerminal.status(String.format("Found a match after %s milliseconds, caching the found match for URL [%s]", elapsed, incomingRequestUrl));
                 matchedStubsCache.put(incomingRequestUrl, stubbed);
-                return stubbed;
+
+                return Optional.of(stubbed);
             }
         }
 
-        return StubHttpLifecycle.NULL;
+        return Optional.empty();
     }
 
-    public synchronized StubHttpLifecycle matchStubByIndex(final int index) {
+    public synchronized Optional<StubHttpLifecycle> matchStubByIndex(final int index) {
         if (!canMatchStubByIndex(index)) {
-            return StubHttpLifecycle.NULL;
+            return Optional.empty();
         }
-        return stubs.get(index);
+        return Optional.of(stubs.get(index));
     }
 
     synchronized boolean resetStubsCache(final List<StubHttpLifecycle> newStubs) {

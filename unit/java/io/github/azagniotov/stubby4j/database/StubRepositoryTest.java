@@ -23,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -88,8 +89,8 @@ public class StubRepositoryTest {
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
 
-        final StubHttpLifecycle matchedHttpLifecycle = stubRepository.matchStubByIndex(0);
-        assertThat(matchedHttpLifecycle).isNotNull();
+        final Optional<StubHttpLifecycle> matchedStubOptional = stubRepository.matchStubByIndex(0);
+        assertThat(matchedStubOptional.isPresent()).isTrue();
     }
 
     @Test
@@ -98,9 +99,9 @@ public class StubRepositoryTest {
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
-
-        final StubHttpLifecycle matchedHttpLifecycle = stubRepository.matchStubByIndex(9999);
-        assertThat(matchedHttpLifecycle).isNull();
+        
+        final Optional<StubHttpLifecycle> matchedStubOptional = stubRepository.matchStubByIndex(9999);
+        assertThat(matchedStubOptional.isPresent()).isFalse();
     }
 
     @Test
