@@ -4,9 +4,9 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.azagniotov/stubby4j.svg?style=flat&label=maven-central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%22)
 [![Stackoverflow stubby4j](https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat)](http://stackoverflow.com/questions/tagged/stubby4j)
 [![Total commits for stubby4j](https://img.shields.io/github/commits-since/azagniotov/stubby4j/1.0.0.svg?label=commits&style=flat)](https://github.com/azagniotov/stubby4j/commits/master)
-[![Opened pull requests for stubby4j](https://img.shields.io/github/issues-pr-raw/azagniotov/stubby4j.svg?style=flat&label=open%20pull%20requests)](https://github.com/azagniotov/stubby4j/pulls?q=is%3Aopen+is%3Apr)
-[![Closed pull requests for stubby4j](https://img.shields.io/github/issues-pr-closed-raw/azagniotov/stubby4j.svg?style=flat)](https://github.com/azagniotov/stubby4j/pulls?q=is%3Apr+is%3Aclosed)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://badges.mit-license.org)
+[![Opened pull requests for stubby4j][open-pr-badge]][open-pr-link]
+[![Closed pull requests for stubby4j][closed-pr-badge]][closed-pr-link]
+[![License][license-badge]][license-link]
 
 
 [![stubb4j][logo-badge]][logo-link]
@@ -1360,5 +1360,15 @@ MIT. See LICENSE for details
 
 
 <!-- references -->
+
+[open-pr-badge]: https://img.shields.io/github/issues-pr-raw/azagniotov/stubby4j.svg?style=flat&label=open%20pull%20requests
+[open-pr-link]: https://github.com/azagniotov/stubby4j/pulls?q=is%3Aopen+is%3Apr
+
+[closed-pr-badge]: https://img.shields.io/github/issues-pr-closed-raw/azagniotov/stubby4j.svg?style=flat
+[closed-pr-link]: https://github.com/azagniotov/stubby4j/pulls?q=is%3Apr+is%3Aclosed
+
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-link]: http://badges.mit-license.org
+
 [logo-badge]: https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg
 [logo-link]: https://github.com/azagniotov/stubby4j
