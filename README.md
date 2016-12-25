@@ -47,7 +47,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
 
-##### Minimum system requirements to run stubby4j archives hosted on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j)
+##### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
 * version >= 4.0.0:  Oracle JRE v1.8.0_60
 * version >= 3.0.0:  Oracle JRE v1.7.0_76
@@ -56,7 +56,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 ##### Setup
 
-* Download the [latest stubby4j version](http://search.maven.org/#search%7Cga%7C1%7Cstubby4j) (the JAR archive).
+* Download the [latest stubby4j version][maven-link] (the JAR archive).
 * Create the following local YAML file: 
 ```yaml
 -  request:
@@ -127,12 +127,8 @@ Run `gradle cobertura` command to:
 ### Third-party dependencies
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.3.13.v20161014.jar
-* jetty-servlets-9.3.13.v20161014.jar
-* jetty-http-9.3.13.v20161014.jar
-* jetty-io-9.3.13.v20161014.jar
-* jetty-continuation-9.3.13.v20161014.jar
-* jetty-util-9.3.13.v20161014.jar
+* jetty-server-9.4.0.v20161208.jar
+* jetty-servlets-9.4.0.v20161208.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.17.jar
 * jsonassert-1.3.0.jar
@@ -141,7 +137,7 @@ Run `gradle cobertura` command to:
 
 
 ### Adding stubby4j to your project
-The following are the stubby4j artifacts that are hosted on [Maven Central](http://search.maven.org):
+The following are the stubby4j artifacts that are hosted on [Maven Central][maven-link]:
 
 * `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
 * `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
