@@ -1,6 +1,6 @@
-[![Travis build master branch](https://img.shields.io/travis/azagniotov/stubby4j/master.svg)](http://travis-ci.org/azagniotov/stubby4j)
-[![VersionEye Dependency status](https://img.shields.io/versioneye/d/ruby/rails.svg)](https://www.versioneye.com/user/projects/5812971fd33a710043fba01f)
-[![codecov](https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg)](https://codecov.io/gh/azagniotov/stubby4j)
+[![Travis build master branch][travis-badge]][travis-link]
+[![VersionEye Dependency status][versioneye-badge]][versioneye-link]
+[![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
 [![Total commits for stubby4j][commits-badge]][commits-link]
@@ -1360,6 +1360,15 @@ MIT. See LICENSE for details
 
 
 <!-- references -->
+
+[travis-badge]: https://img.shields.io/travis/azagniotov/stubby4j/master.svg
+[travis-link]: http://travis-ci.org/azagniotov/stubby4j
+
+[versioneye-badge]: https://img.shields.io/versioneye/d/ruby/rails.svg
+[versioneye-link]: https://www.versioneye.com/user/projects/5812971fd33a710043fba01f
+
+[codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg
+[codecov-link]: https://codecov.io/gh/azagniotov/stubby4j
 
 [maven-badge]: https://img.shields.io/maven-central/v/io.github.azagniotov/stubby4j.svg?style=flat&label=maven-central
 [maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%22
