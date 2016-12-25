@@ -3,9 +3,6 @@
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
-[![Total commits for stubby4j][commits-badge]][commits-link]
-[![Opened pull requests for stubby4j][open-pr-badge]][open-pr-link]
-[![Closed pull requests for stubby4j][closed-pr-badge]][closed-pr-link]
 [![Chat on gitter about stubby4j][chat-badge]][chat-link]
 [![License][license-badge]][license-link]
 
@@ -1376,15 +1373,6 @@ MIT. See LICENSE for details
 
 [stackoverflow-badge]: https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat
 [stackoverflow-link]: http://stackoverflow.com/questions/tagged/stubby4j
-
-[commits-badge]: https://img.shields.io/github/commits-since/azagniotov/stubby4j/1.0.0.svg?label=commits&style=flat
-[commits-link]: https://github.com/azagniotov/stubby4j/commits/master
-
-[open-pr-badge]: https://img.shields.io/github/issues-pr-raw/azagniotov/stubby4j.svg?style=flat&label=open%20pull%20requests
-[open-pr-link]: https://github.com/azagniotov/stubby4j/pulls?q=is%3Aopen+is%3Apr
-
-[closed-pr-badge]: https://img.shields.io/github/issues-pr-closed-raw/azagniotov/stubby4j.svg?style=flat
-[closed-pr-link]: https://github.com/azagniotov/stubby4j/pulls?q=is%3Apr+is%3Aclosed
 
 [chat-badge]: https://img.shields.io/gitter/room/stubby4j/stubby4j.svg?style=flat
 [chat-link]: https://gitter.im/stubby4j/Lobby
