@@ -4,7 +4,6 @@ import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
-import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
@@ -18,9 +17,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +71,9 @@ public class StubRepositoryTest {
     @Before
     public void beforeEach() throws Exception {
         stubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
-        ReflectionUtils.injectObjectFields(stubRepository, "stubbyHttpTransport", mockStubbyHttpTransport);
+
+        final Field stubbyHttpTransportField = stubRepository.getClass().getDeclaredField("stubbyHttpTransport");
+        FieldSetter.setField(stubRepository, stubbyHttpTransportField, mockStubbyHttpTransport);
     }
 
     @Test
@@ -99,7 +102,7 @@ public class StubRepositoryTest {
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
-        
+
         final Optional<StubHttpLifecycle> matchedStubOptional = stubRepository.matchStubByIndex(9999);
         assertThat(matchedStubOptional.isPresent()).isFalse();
     }

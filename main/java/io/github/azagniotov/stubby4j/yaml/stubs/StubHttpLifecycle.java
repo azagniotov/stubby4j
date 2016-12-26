@@ -1,21 +1,4 @@
-/*
-A Java-based HTTP stub server
 
-Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
@@ -28,12 +11,9 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/14/12, 1:21 AM
- */
-@SuppressWarnings("unchecked")
+
 public class StubHttpLifecycle {
 
     private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
@@ -66,18 +46,18 @@ public class StubHttpLifecycle {
             return (StubResponse) response;
         }
 
-        final List<StubResponse> responses = (LinkedList<StubResponse>) response;
-        if (responses.isEmpty()) {
+        final LinkedList<?> rawResponses = (LinkedList<?>) this.response;
+        if (rawResponses.isEmpty()) {
             return StubResponse.newStubResponse();
         }
 
         if (incrementSequencedResponseId) {
             final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
-            responseSequencedIdCounter.compareAndSet(responses.size(), 0);
-            return responses.get(responseSequencedId);
+            responseSequencedIdCounter.compareAndSet(rawResponses.size(), 0);
+            return (StubResponse) rawResponses.get(responseSequencedId);
         }
 
-        return responses.get(responseSequencedIdCounter.get());
+        return (StubResponse) rawResponses.get(responseSequencedIdCounter.get());
     }
 
     public int getNextSequencedResponseId() {
@@ -92,7 +72,11 @@ public class StubHttpLifecycle {
             }};
         }
 
-        return (LinkedList<StubResponse>) response;
+        final LinkedList<?> rawResponses = (LinkedList<?>) this.response;
+
+        return rawResponses.stream()
+                .map(rawResponse -> (StubResponse) rawResponse)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     public boolean isAuthorizationRequired() {

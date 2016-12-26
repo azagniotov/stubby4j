@@ -31,11 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/2/12, 10:10 AM
- */
-@SuppressWarnings("serial")
+
 public final class ReflectionUtils {
 
     private static List<String> skipableProperties =
