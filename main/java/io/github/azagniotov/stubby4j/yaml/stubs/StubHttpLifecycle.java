@@ -11,7 +11,8 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+
+import static io.github.azagniotov.stubby4j.utils.GenericsUtils.toCheckedLinkedList;
 
 
 public class StubHttpLifecycle {
@@ -46,18 +47,18 @@ public class StubHttpLifecycle {
             return (StubResponse) response;
         }
 
-        final LinkedList<?> rawResponses = (LinkedList<?>) this.response;
-        if (rawResponses.isEmpty()) {
+        final LinkedList<StubResponse> stubResponses = toCheckedLinkedList(this.response);
+        if (stubResponses.isEmpty()) {
             return StubResponse.newStubResponse();
         }
 
         if (incrementSequencedResponseId) {
             final int responseSequencedId = responseSequencedIdCounter.getAndIncrement();
-            responseSequencedIdCounter.compareAndSet(rawResponses.size(), 0);
-            return (StubResponse) rawResponses.get(responseSequencedId);
+            responseSequencedIdCounter.compareAndSet(stubResponses.size(), 0);
+            return stubResponses.get(responseSequencedId);
         }
 
-        return (StubResponse) rawResponses.get(responseSequencedIdCounter.get());
+        return stubResponses.get(responseSequencedIdCounter.get());
     }
 
     public int getNextSequencedResponseId() {
@@ -72,11 +73,7 @@ public class StubHttpLifecycle {
             }};
         }
 
-        final LinkedList<?> rawResponses = (LinkedList<?>) this.response;
-
-        return rawResponses.stream()
-                .map(rawResponse -> (StubResponse) rawResponse)
-                .collect(Collectors.toCollection(LinkedList::new));
+        return toCheckedLinkedList(this.response);
     }
 
     public boolean isAuthorizationRequired() {
