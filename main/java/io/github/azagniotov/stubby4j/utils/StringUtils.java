@@ -58,6 +58,10 @@ public final class StringUtils {
         return (ObjectUtils.isNotNull(toTest) && toTest.trim().length() > 0);
     }
 
+    public static String trimIfSet(final String toTest) {
+        return StringUtils.isSet(toTest) ? toTest.trim() : toTest;
+    }
+
     public static boolean isNotSet(final String toTest) {
         return !isSet(toTest);
     }

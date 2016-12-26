@@ -22,7 +22,6 @@ package io.github.azagniotov.stubby4j.yaml;
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
@@ -47,6 +46,7 @@ import static io.github.azagniotov.stubby4j.utils.GenericsUtils.toCheckedArrayLi
 import static io.github.azagniotov.stubby4j.utils.GenericsUtils.toCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
@@ -79,23 +79,22 @@ public class YAMLParser {
         }
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
-        final List<Map<String, ?>> httpMessageConfigs = toCheckedArrayList(loadedConfig);
+        final List<Map<String, Object>> httpMessageConfigs = toCheckedArrayList(loadedConfig);
 
-        for (final Map<String, ?> httpMessageConfig : httpMessageConfigs) {
+        for (final Map<String, Object> httpMessageConfig : httpMessageConfigs) {
             stubs.add(unmarshallHttpMessageConfigToStub(httpMessageConfig));
         }
 
         return stubs;
     }
 
-    private StubHttpLifecycle unmarshallHttpMessageConfigToStub(final Map<String, ?> httpMessageConfig) throws Exception {
+    private StubHttpLifecycle unmarshallHttpMessageConfigToStub(final Map<String, Object> httpMessageConfig) throws Exception {
 
         final StubHttpLifecycle stub = new StubHttpLifecycle();
-        for (final Map.Entry<String, ?> httpType : httpMessageConfig.entrySet()) {
+        for (final Map.Entry<String, Object> httpType : httpMessageConfig.entrySet()) {
 
             if (httpType.getValue() instanceof Map) {
                 unmarshallMapProperties(stub, httpType);
-
             } else if (httpType.getValue() instanceof List) {
                 unmarshallStubResponseList(stub, httpType);
             }
@@ -109,8 +108,8 @@ public class YAMLParser {
         return stub;
     }
 
-    private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, ?> httpTypeConfig) throws Exception {
-        final Map<String, ?> httpTypeProperties = toCheckedLinkedHashMap(httpTypeConfig.getValue());
+    private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
+        final Map<String, Object> httpTypeProperties = toCheckedLinkedHashMap(httpTypeConfig.getValue());
 
         if (httpTypeConfig.getKey().equals(YamlProperties.REQUEST)) {
             final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequestBuilder());
@@ -127,9 +126,9 @@ public class YAMLParser {
     }
 
 
-    private <T, B extends StubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, ?> httpTypeProperties, final B stubTypeBuilder) throws Exception {
+    private <T, B extends StubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
 
-        for (final Map.Entry<String, ?> propertyPair : httpTypeProperties.entrySet()) {
+        for (final Map.Entry<String, Object> propertyPair : httpTypeProperties.entrySet()) {
 
             final Object rawFieldName = propertyPair.getValue();
             final String stageableFieldName = propertyPair.getKey();
@@ -159,16 +158,16 @@ public class YAMLParser {
         return stubTypeBuilder.build();
     }
 
-    private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry httpTypeConfig) throws Exception {
-        final List<Map<String, ?>> responseProperties = toCheckedArrayList(httpTypeConfig.getValue());
+    private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
+        final List<Map<String, Object>> responseProperties = toCheckedArrayList(httpTypeConfig.getValue());
         stub.setResponse(buildStubResponseList(responseProperties, new StubResponseBuilder()));
     }
 
-    private List<StubResponse> buildStubResponseList(final List<Map<String, ?>> responseProperties, final StubResponseBuilder stubResponseBuilder) throws Exception {
+    private List<StubResponse> buildStubResponseList(final List<Map<String, Object>> responseProperties, final StubResponseBuilder stubResponseBuilder) throws Exception {
         final List<StubResponse> stubResponses = new LinkedList<>();
 
-        for (final Map<String, ?> rawPropertyPairs : responseProperties) {
-            for (final Map.Entry<String, ?> propertyPair : rawPropertyPairs.entrySet()) {
+        for (final Map<String, Object> rawPropertyPairs : responseProperties) {
+            for (final Map.Entry<String, Object> propertyPair : rawPropertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
                 Object stageableFieldValue = propertyPair.getValue();
                 if (isConfigPropertyNamedFile(stageableFieldName)) {
@@ -202,15 +201,15 @@ public class YAMLParser {
         return null;
     }
 
-    private String marshallHttpMessage(final Map<String, ?> httpMessageConfig) {
-        final List<Map<String, ?>> root = new ArrayList<Map<String, ?>>() {{
+    private String marshallHttpMessage(final Map<String, Object> httpMessageConfig) {
+        final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
             add(httpMessageConfig);
         }};
 
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
-    private String marshallHttpType(final Map<String, ?> httpMessageConfig, final String httpTypeName) {
+    private String marshallHttpType(final Map<String, Object> httpMessageConfig, final String httpTypeName) {
         final Map<String, Object> httpType = new HashMap<String, Object>() {{
             put(httpTypeName, httpMessageConfig.get(httpTypeName));
         }};
@@ -227,19 +226,17 @@ public class YAMLParser {
 
             if (headers.containsKey(BASIC.asYamlProp())) {
                 final String headerValue = headers.get(BASIC.asYamlProp());
-                final String authorizationHeader = StringUtils.isSet(headerValue) ? headerValue.trim() : headerValue;
+                final String authorizationHeader = trimIfSet(headerValue);
                 final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
                 headers.put(BASIC.asYamlProp(), encodedAuthorizationHeader);
 
             } else if (headers.containsKey(BEARER.asYamlProp())) {
                 final String headerValue = headers.get(BEARER.asYamlProp());
-                final String authorizationHeader = StringUtils.isSet(headerValue) ? headerValue.trim() : headerValue;
-                headers.put(BEARER.asYamlProp(), String.format("%s %s", BEARER.asString(), authorizationHeader));
+                headers.put(BEARER.asYamlProp(), String.format("%s %s", BEARER.asString(), trimIfSet(headerValue)));
 
             } else if (headers.containsKey(CUSTOM.asYamlProp())) {
                 final String headerValue = headers.get(CUSTOM.asYamlProp());
-                final String authorizationHeader = StringUtils.isSet(headerValue) ? headerValue.trim() : headerValue;
-                headers.put(CUSTOM.asYamlProp(), authorizationHeader);
+                headers.put(CUSTOM.asYamlProp(), trimIfSet(headerValue));
             }
         }
 
