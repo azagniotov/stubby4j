@@ -42,15 +42,23 @@ public class SafeGenericsUtilsTest {
 
     @Test
     public void shouldCastAs() throws Exception {
-        SafeGenericsUtils.as(SomeType.class, RAW_INSTANCE_SOME_TYPE);
+        final SomeType casted = SafeGenericsUtils.as(SomeType.class, RAW_INSTANCE_SOME_TYPE);
     }
 
     @Test
-    public void shouldThrowWhenCastAs() throws Exception {
+    public void shouldThrowWhenCastAsWrongType() throws Exception {
         expectedException.expect(ClassCastException.class);
         expectedException.expectMessage("Expected: io.github.azagniotov.stubby4j.utils.helpers.AnotherType, instead got: io.github.azagniotov.stubby4j.utils.helpers.SomeType");
 
         SafeGenericsUtils.as(AnotherType.class, RAW_INSTANCE_SOME_TYPE);
+    }
+
+    @Test
+    public void shouldThrowWhenCastAsWrongGenericType() throws Exception {
+        expectedException.expect(ClassCastException.class);
+        expectedException.expectMessage("io.github.azagniotov.stubby4j.utils.helpers.SomeType cannot be cast to io.github.azagniotov.stubby4j.utils.helpers.AnotherType");
+
+        final AnotherType wrongType = SafeGenericsUtils.as(SomeType.class, RAW_INSTANCE_SOME_TYPE);
     }
 
     @Test
