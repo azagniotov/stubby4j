@@ -79,7 +79,7 @@ public class YAMLParser {
         }
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
-        final List<Map<String, Object>> httpMessageConfigs = asCheckedList(loadedConfig, Map.class, ArrayList::new);
+        final List<Map<String, Object>> httpMessageConfigs = asCheckedList(loadedConfig, Map.class, new ArrayList<>());
 
         for (final Map<String, Object> httpMessageConfig : httpMessageConfigs) {
             stubs.add(unmarshallHttpMessageConfigToStub(httpMessageConfig));
@@ -109,7 +109,7 @@ public class YAMLParser {
     }
 
     private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final Map<String, Object> httpTypeProperties = asCheckedMap(httpTypeConfig.getValue(), String.class, Object.class, LinkedHashMap::new);
+        final Map<String, Object> httpTypeProperties = asCheckedMap(httpTypeConfig.getValue(), String.class, Object.class);
 
         if (httpTypeConfig.getKey().equals(YamlProperties.REQUEST)) {
             final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequestBuilder());
@@ -138,7 +138,7 @@ public class YAMLParser {
                 stageableFieldValue = rawFieldName;
 
             } else if (rawFieldName instanceof Map) {
-                final Map<String, String> rawHeaders = asCheckedMap(rawFieldName, String.class, String.class, LinkedHashMap::new);
+                final Map<String, String> rawHeaders = asCheckedMap(rawFieldName, String.class, String.class);
                 stageableFieldValue = configureAuthorizationHeader(rawHeaders);
 
             } else if (stageableFieldName.toLowerCase().equals(YamlProperties.METHOD)) {
@@ -159,7 +159,7 @@ public class YAMLParser {
     }
 
     private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final List<Map<String, Object>> responseProperties = asCheckedList(httpTypeConfig.getValue(), Map.class, ArrayList::new);
+        final List<Map<String, Object>> responseProperties = asCheckedList(httpTypeConfig.getValue(), Map.class, new ArrayList<>());
         stub.setResponse(buildStubResponseList(responseProperties, new StubResponseBuilder()));
     }
 

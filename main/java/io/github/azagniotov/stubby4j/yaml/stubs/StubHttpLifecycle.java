@@ -47,7 +47,7 @@ public class StubHttpLifecycle {
             return (StubResponse) response;
         }
 
-        final List<StubResponse> stubResponses = asCheckedList((List) this.response, StubResponse.class, LinkedList::new);
+        final List<StubResponse> stubResponses = asCheckedList(this.response, StubResponse.class, new LinkedList<>());
         if (stubResponses.isEmpty()) {
             return StubResponse.newStubResponse();
         }
@@ -73,7 +73,7 @@ public class StubHttpLifecycle {
             }};
         }
 
-        return asCheckedList((List) this.response, StubResponse.class, LinkedList::new);
+        return asCheckedList(this.response, StubResponse.class, new LinkedList<>());
     }
 
     public boolean isAuthorizationRequired() {
