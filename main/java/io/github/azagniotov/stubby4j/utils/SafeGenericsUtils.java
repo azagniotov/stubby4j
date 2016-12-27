@@ -21,7 +21,8 @@ public final class SafeGenericsUtils {
         throw new InstantiationException();
     }
 
-    public static <T> Collection<T> asCheckedCollection(final Collection<?> rawCollection, final Class<?> valueClassType, final Supplier<Collection<T>> collectionFactory) {
+    public static <T> Collection<T> asCheckedCollection(final Object collectionObject, final Class<?> valueClassType, final Supplier<Collection<T>> collectionFactory) {
+        final Collection<?> rawCollection = (Collection) collectionObject;
         final Collection<T> collection = collectionFactory.get();
         final Iterator<?> rawIterator = rawCollection.iterator();
         while (rawIterator.hasNext()) {
