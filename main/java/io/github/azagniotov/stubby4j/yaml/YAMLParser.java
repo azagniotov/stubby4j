@@ -42,8 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
-import static io.github.azagniotov.stubby4j.utils.GenericsUtils.toCheckedArrayList;
-import static io.github.azagniotov.stubby4j.utils.GenericsUtils.toCheckedLinkedHashMap;
+import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedList;
+import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedMap;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
@@ -79,7 +79,7 @@ public class YAMLParser {
         }
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
-        final List<Map<String, Object>> httpMessageConfigs = toCheckedArrayList(loadedConfig);
+        final List<Map<String, Object>> httpMessageConfigs = asCheckedList(loadedConfig, Map.class, ArrayList::new);
 
         for (final Map<String, Object> httpMessageConfig : httpMessageConfigs) {
             stubs.add(unmarshallHttpMessageConfigToStub(httpMessageConfig));
@@ -109,7 +109,7 @@ public class YAMLParser {
     }
 
     private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final Map<String, Object> httpTypeProperties = toCheckedLinkedHashMap(httpTypeConfig.getValue());
+        final Map<String, Object> httpTypeProperties = asCheckedMap(httpTypeConfig.getValue(), String.class, Object.class, LinkedHashMap::new);
 
         if (httpTypeConfig.getKey().equals(YamlProperties.REQUEST)) {
             final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequestBuilder());
@@ -138,7 +138,7 @@ public class YAMLParser {
                 stageableFieldValue = rawFieldName;
 
             } else if (rawFieldName instanceof Map) {
-                final Map<String, String> rawHeaders = toCheckedLinkedHashMap(rawFieldName);
+                final Map<String, String> rawHeaders = asCheckedMap(rawFieldName, String.class, String.class, LinkedHashMap::new);
                 stageableFieldValue = configureAuthorizationHeader(rawHeaders);
 
             } else if (stageableFieldName.toLowerCase().equals(YamlProperties.METHOD)) {
@@ -159,7 +159,7 @@ public class YAMLParser {
     }
 
     private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final List<Map<String, Object>> responseProperties = toCheckedArrayList(httpTypeConfig.getValue());
+        final List<Map<String, Object>> responseProperties = asCheckedList(httpTypeConfig.getValue(), Map.class, ArrayList::new);
         stub.setResponse(buildStubResponseList(responseProperties, new StubResponseBuilder()));
     }
 
