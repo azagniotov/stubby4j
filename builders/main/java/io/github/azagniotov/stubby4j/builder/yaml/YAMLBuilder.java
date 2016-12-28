@@ -10,11 +10,7 @@ import java.util.Set;
 
 /**
  * Please refer to the accompanied unit tests for usage examples.
- *
- * @author Alexander Zagniotov
- * @since 4/13/13, 12:13 AM
  */
-@SuppressWarnings("unchecked")
 public final class YAMLBuilder {
 
     private static final String TWO_SPACE = String.format("%1$2s", "");

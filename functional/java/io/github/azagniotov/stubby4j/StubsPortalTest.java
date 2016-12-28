@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
@@ -812,7 +813,6 @@ public class StubsPortalTest {
         assertThat(response.parseAsString().trim()).isEqualTo("{\"people#id\": \"9\"}");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void should_ReturnExpectedResourceIdHeader_WhenSuccessfulRequestMade() throws Exception {
 
@@ -824,7 +824,9 @@ public class StubsPortalTest {
         final HttpHeaders headers = response.getHeaders();
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
         assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
-        final List<String> headerValues = (List<String>) headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+
+        final List<String> headerValues = asCheckedArrayList(headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER), String.class);
+
         assertThat(headerValues.get(0)).isEqualTo("1");
     }
 
