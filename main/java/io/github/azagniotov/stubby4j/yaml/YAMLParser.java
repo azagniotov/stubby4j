@@ -42,8 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
-import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedList;
-import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedMap;
+import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedArrayList;
+import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
@@ -79,9 +79,10 @@ public class YAMLParser {
         }
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
-        final List<Map<String, Object>> httpMessageConfigs = asCheckedList(loadedConfig, Map.class, new ArrayList<>());
+        final List<Map> httpMessageConfigs = asCheckedArrayList(loadedConfig, Map.class);
 
-        for (final Map<String, Object> httpMessageConfig : httpMessageConfigs) {
+        for (final Map rawHttpMessageConfig : httpMessageConfigs) {
+            final Map<String, Object> httpMessageConfig = asCheckedLinkedHashMap(rawHttpMessageConfig, String.class, Object.class);
             stubs.add(unmarshallHttpMessageConfigToStub(httpMessageConfig));
         }
 
@@ -109,7 +110,7 @@ public class YAMLParser {
     }
 
     private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final Map<String, Object> httpTypeProperties = asCheckedMap(httpTypeConfig.getValue(), String.class, Object.class);
+        final Map<String, Object> httpTypeProperties = asCheckedLinkedHashMap(httpTypeConfig.getValue(), String.class, Object.class);
 
         if (httpTypeConfig.getKey().equals(YamlProperties.REQUEST)) {
             final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequestBuilder());
@@ -138,7 +139,7 @@ public class YAMLParser {
                 stageableFieldValue = rawFieldName;
 
             } else if (rawFieldName instanceof Map) {
-                final Map<String, String> rawHeaders = asCheckedMap(rawFieldName, String.class, String.class);
+                final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldName, String.class, String.class);
                 stageableFieldValue = configureAuthorizationHeader(rawHeaders);
 
             } else if (stageableFieldName.toLowerCase().equals(YamlProperties.METHOD)) {
@@ -159,15 +160,16 @@ public class YAMLParser {
     }
 
     private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
-        final List<Map<String, Object>> responseProperties = asCheckedList(httpTypeConfig.getValue(), Map.class, new ArrayList<>());
+        final List<Map> responseProperties = asCheckedArrayList(httpTypeConfig.getValue(), Map.class);
         stub.setResponse(buildStubResponseList(responseProperties, new StubResponseBuilder()));
     }
 
-    private List<StubResponse> buildStubResponseList(final List<Map<String, Object>> responseProperties, final StubResponseBuilder stubResponseBuilder) throws Exception {
+    private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponseBuilder stubResponseBuilder) throws Exception {
         final List<StubResponse> stubResponses = new LinkedList<>();
 
-        for (final Map<String, Object> rawPropertyPairs : responseProperties) {
-            for (final Map.Entry<String, Object> propertyPair : rawPropertyPairs.entrySet()) {
+        for (final Map rawPropertyPairs : responseProperties) {
+            final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
+            for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
                 Object stageableFieldValue = propertyPair.getValue();
                 if (isConfigPropertyNamedFile(stageableFieldName)) {

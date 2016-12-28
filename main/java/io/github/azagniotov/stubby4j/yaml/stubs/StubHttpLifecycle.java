@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedList;
+import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedLinkedList;
 
 
 public class StubHttpLifecycle {
@@ -47,7 +47,7 @@ public class StubHttpLifecycle {
             return (StubResponse) response;
         }
 
-        final List<StubResponse> stubResponses = asCheckedList(this.response, StubResponse.class, new LinkedList<>());
+        final List<StubResponse> stubResponses = asCheckedLinkedList(this.response, StubResponse.class);
         if (stubResponses.isEmpty()) {
             return StubResponse.newStubResponse();
         }
@@ -73,7 +73,7 @@ public class StubHttpLifecycle {
             }};
         }
 
-        return asCheckedList(this.response, StubResponse.class, new LinkedList<>());
+        return asCheckedLinkedList(this.response, StubResponse.class);
     }
 
     public boolean isAuthorizationRequired() {
