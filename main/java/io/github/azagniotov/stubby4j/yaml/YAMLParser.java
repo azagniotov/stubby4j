@@ -39,11 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
-import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedArrayList;
-import static io.github.azagniotov.stubby4j.utils.SafeGenericsUtils.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
