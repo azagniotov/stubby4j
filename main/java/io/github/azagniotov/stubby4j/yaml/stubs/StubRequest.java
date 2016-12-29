@@ -62,10 +62,7 @@ import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BA
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/14/12, 1:09 AM
- */
+
 public class StubRequest {
 
     public static final String HTTP_HEADER_AUTHORIZATION = "authorization";

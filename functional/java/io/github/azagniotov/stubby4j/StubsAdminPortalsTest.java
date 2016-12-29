@@ -4,7 +4,7 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -20,8 +20,8 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public class StubsAdminPortalsTest {
 

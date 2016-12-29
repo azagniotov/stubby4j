@@ -20,13 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+import io.github.azagniotov.stubby4j.builders.stubs.StubReflectiveBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.yaml.snakeyaml.Yaml;
-import parser.yaml.SnakeYaml;
+import io.github.azagniotov.stubby4j.yaml.parser.SnakeYaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,11 +57,10 @@ import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {
 
-    private final AtomicInteger unmarshalledStubCounter = new AtomicInteger();
-
     static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
-    private String dataConfigHomeDirectory;
     private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
+    private final AtomicInteger unmarshalledStubCounter = new AtomicInteger();
+    private String dataConfigHomeDirectory;
 
     @CoberturaIgnore
     public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String configContent) throws Exception {
@@ -127,7 +129,7 @@ public class YAMLParser {
     }
 
 
-    private <T, B extends StubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
+    private <T, B extends StubReflectiveBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
 
         for (final Map.Entry<String, Object> propertyPair : httpTypeProperties.entrySet()) {
 

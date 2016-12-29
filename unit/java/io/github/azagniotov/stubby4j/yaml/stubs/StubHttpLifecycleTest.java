@@ -1,6 +1,8 @@
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
-import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
+import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.verify;
 public class StubHttpLifecycleTest {
 
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
+    private static final StubResponseBuilder RESPONSE_BUILDER = new StubResponseBuilder();
     private static final String SOME_RESOURCE_URI = "/some/resource/uri";
     private static final String AUTHORIZATION_HEADER_BASIC = "Basic Ym9iOnNlY3JldA==";
     private static final String AUTHORIZATION_HEADER_BASIC_INVALID = "Basic 888888888888==";
@@ -42,7 +45,7 @@ public class StubHttpLifecycleTest {
     @Test
     public void shouldFindStubHttpLifecycleNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
         final StubHttpLifecycle expectedStubHttpLifecycle = new StubHttpLifecycle();
-        final Object assertingObject = StubResponse.newStubResponse();
+        final Object assertingObject = StubResponse.okResponse();
 
         final boolean assertionResult = expectedStubHttpLifecycle.equals(assertingObject);
         assertThat(assertionResult).isFalse();
@@ -51,7 +54,10 @@ public class StubHttpLifecycleTest {
     @Test
     public void shouldReturnStubResponse_WhenNoSequenceResponses() throws Exception {
 
-        final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
+        final StubResponse stubResponse = RESPONSE_BUILDER
+                .withHttpStatusCode(Code.CREATED)
+                .withBody("SELF")
+                .build();
 
         final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
         stubHttpLifecycle.setResponse(stubResponse);
@@ -68,20 +74,23 @@ public class StubHttpLifecycleTest {
         stubHttpLifecycle.setResponse(sequence);
 
         final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
-        assertThat(actualStubbedResponse.getStatus()).isEqualTo("200");
+        assertThat(actualStubbedResponse.getHttpStatusCode()).isEqualTo(Code.OK);
         assertThat(actualStubbedResponse.getBody()).isEmpty();
     }
 
     @Test
     public void shouldReturnSequenceResponse_WhenOneSequenceResponsePresent() throws Exception {
 
-        final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
+        final StubResponse stubResponse = RESPONSE_BUILDER
+                .withHttpStatusCode(Code.CREATED)
+                .withBody("SELF")
+                .build();
 
-        final String expectedStatus = "200";
+        final Code expectedStatus = Code.OK;
         final String expectedBody = "This is a sequence response #1";
 
         final List<StubResponse> sequence = new LinkedList<StubResponse>() {{
-            add(StubResponse.newStubResponse(expectedStatus, expectedBody));
+            add(RESPONSE_BUILDER.withHttpStatusCode(expectedStatus).withBody(expectedBody).build());
         }};
 
         final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
@@ -89,7 +98,7 @@ public class StubHttpLifecycleTest {
 
         final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
         assertThat(actualStubbedResponse).isNotEqualTo(stubResponse);
-        assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(actualStubbedResponse.getHttpStatusCode()).isEqualTo(expectedStatus);
         assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
         assertThat(stubHttpLifecycle.getNextSequencedResponseId()).isEqualTo(0);
     }
@@ -97,14 +106,17 @@ public class StubHttpLifecycleTest {
     @Test
     public void shouldReturnSecondSequenceResponseAfterSecondCall_WhenTwoSequenceResponsePresent() throws Exception {
 
-        final StubResponse stubResponse = StubResponse.newStubResponse("201", "SELF");
+        final StubResponse stubResponse = RESPONSE_BUILDER
+                .withHttpStatusCode(Code.CREATED)
+                .withBody("SELF")
+                .build();
 
-        final String expectedStatus = "500";
+        final Code expectedStatus = Code.INTERNAL_SERVER_ERROR;
         final String expectedBody = "This is a sequence response #2";
 
         final List<StubResponse> sequence = new LinkedList<StubResponse>() {{
-            add(StubResponse.newStubResponse("200", "This is a sequence response #1"));
-            add(StubResponse.newStubResponse(expectedStatus, expectedBody));
+            add(RESPONSE_BUILDER.withHttpStatusCode(Code.OK).withBody("This is a sequence response #1").build());
+            add(RESPONSE_BUILDER.withHttpStatusCode(expectedStatus).withBody(expectedBody).build());
         }};
 
         final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
@@ -115,7 +127,7 @@ public class StubHttpLifecycleTest {
         final StubResponse actualStubbedResponse = stubHttpLifecycle.getResponse(true);
 
         assertThat(actualStubbedResponse).isNotEqualTo(stubResponse);
-        assertThat(actualStubbedResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(actualStubbedResponse.getHttpStatusCode()).isEqualTo(expectedStatus);
         assertThat(actualStubbedResponse.getBody()).isEqualTo(expectedBody);
         assertThat(stubHttpLifecycle.getNextSequencedResponseId()).isEqualTo(0);
     }
@@ -323,7 +335,10 @@ public class StubHttpLifecycleTest {
     public void shouldReturnAjaxResponseContent_WhenStubTypeResponse() throws Exception {
 
         final String expectedBody = "this is a response body";
-        final StubResponse stubResponse = StubResponse.newStubResponse("201", expectedBody);
+        final StubResponse stubResponse = RESPONSE_BUILDER
+                .withHttpStatusCode(Code.CREATED)
+                .withBody(expectedBody)
+                .build();
 
         final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
         stubHttpLifecycle.setResponse(stubResponse);

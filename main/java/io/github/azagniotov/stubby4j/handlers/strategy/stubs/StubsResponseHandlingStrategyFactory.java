@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
 
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
+import org.eclipse.jetty.http.HttpStatus;
 
 public final class StubsResponseHandlingStrategyFactory {
 
@@ -29,14 +30,16 @@ public final class StubsResponseHandlingStrategyFactory {
 
     public static StubResponseHandlingStrategy getStrategy(final StubResponse foundStubResponse) {
 
-        switch (foundStubResponse.getStubResponseType()) {
-            case NOTFOUND:
+        final HttpStatus.Code httpStatusCode = foundStubResponse.getHttpStatusCode();
+        switch (httpStatusCode) {
+            case NOT_FOUND:
                 return new NotFoundResponseHandlingStrategy();
 
             case UNAUTHORIZED:
                 return new UnauthorizedResponseHandlingStrategy();
 
-            case REDIRECT:
+            case MOVED_TEMPORARILY:
+            case MOVED_PERMANENTLY:
                 return new RedirectResponseHandlingStrategy(foundStubResponse);
 
             default:

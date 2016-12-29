@@ -6,6 +6,7 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -39,13 +40,24 @@ public class RedirectResponseHandlingStrategyTest {
     private RedirectResponseHandlingStrategy redirectResponseHandlingStrategy;
 
     @Test
-    public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithoutLatency() throws Exception {
-        when(mockStubResponse.getStatus()).thenReturn("301");
+    public void shouldVerifyBehaviourWhenHandlingTemporaryRedirectResponseWithoutLatency() throws Exception {
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_TEMPORARILY);
+
+        redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_TEMPORARILY_302);
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
+        verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    @Test
+    public void shouldVerifyBehaviourWhenHandlingPermanentRedirectResponseWithoutLatency() throws Exception {
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_PERMANENTLY);
 
         redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
-        verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
         verifyMainHeaders(mockHttpServletResponse);
@@ -53,13 +65,12 @@ public class RedirectResponseHandlingStrategyTest {
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingRedirectResponseWithLatency() throws Exception {
-        when(mockStubResponse.getStatus()).thenReturn("301");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_PERMANENTLY);
         when(mockStubResponse.getLatency()).thenReturn("100");
 
         redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_PERMANENTLY_301);
-        verify(mockHttpServletResponse, times(1)).setStatus(Integer.parseInt(mockStubResponse.getStatus()));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
         verifyMainHeaders(mockHttpServletResponse);

@@ -1,4 +1,4 @@
-package parser.yaml;
+package io.github.azagniotov.stubby4j.yaml.parser;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -12,7 +12,7 @@ public enum SnakeYaml {
 
     private final Yaml snakeYaml;
 
-    private SnakeYaml() {
+    SnakeYaml() {
         snakeYaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new YamlParserResolver());
     }
 

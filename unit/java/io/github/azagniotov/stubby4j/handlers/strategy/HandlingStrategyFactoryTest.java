@@ -6,24 +6,19 @@ import io.github.azagniotov.stubby4j.handlers.strategy.stubs.RedirectResponseHan
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
-import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.RedirectStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/15/12, 1:42 PM
- */
 
 public class HandlingStrategyFactoryTest {
 
     @Test
     public void shouldIdentifyResponseStrategyForDefaultResponse() throws Exception {
-        final StubResponse stubResponse = StubResponse.newStubResponse();
+        final StubResponse stubResponse = StubResponse.okResponse();
 
         final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
         assertThat(stubResponseHandlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
@@ -31,7 +26,7 @@ public class HandlingStrategyFactoryTest {
 
     @Test
     public void shouldIdentifyResponseStrategyForNotFoundResponse() throws Exception {
-        final StubResponse stubResponse = new NotFoundStubResponse();
+        final StubResponse stubResponse = StubResponse.notFoundResponse();
 
         final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
         assertThat(stubResponseHandlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
@@ -39,7 +34,7 @@ public class HandlingStrategyFactoryTest {
 
     @Test
     public void shouldIdentifyResponseStrategyForUnauthorizedResponse() throws Exception {
-        final StubResponse stubResponse = new UnauthorizedStubResponse();
+        final StubResponse stubResponse = StubResponse.unauthorizedResponse();
 
         final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
         assertThat(stubResponseHandlingStrategy).isInstanceOf(UnauthorizedResponseHandlingStrategy.class);
@@ -47,7 +42,7 @@ public class HandlingStrategyFactoryTest {
 
     @Test
     public void shouldIdentifyResponseStrategyForRedirectResponse() throws Exception {
-        final StubResponse stubResponse = RedirectStubResponse.newRedirectStubResponse(null);
+        final StubResponse stubResponse = StubResponse.redirectResponse(Optional.empty());
 
         final StubResponseHandlingStrategy stubResponseHandlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(stubResponse);
         assertThat(stubResponseHandlingStrategy).isInstanceOf(RedirectResponseHandlingStrategy.class);

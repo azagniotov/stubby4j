@@ -57,7 +57,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
             final long latency = Long.parseLong(stubbedResponse.getLatency());
             TimeUnit.MILLISECONDS.sleep(latency);
         }
-        response.setStatus(Integer.parseInt(stubbedResponse.getStatus()));
+        response.setStatus(stubbedResponse.getHttpStatusCode().getCode());
 
         final byte[] responseBody = stubbedResponse.getResponseBodyAsBytes();
         if (stubbedResponse.isFilePathContainsTemplateTokens()) {

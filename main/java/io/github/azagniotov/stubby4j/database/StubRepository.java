@@ -28,12 +28,9 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
-import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.RedirectStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -50,6 +47,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.notFoundResponse;
+import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.redirectResponse;
+import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.unauthorizedResponse;
 
 public class StubRepository {
 
@@ -72,7 +73,6 @@ public class StubRepository {
     public StubResponse findStubResponseFor(final StubRequest incomingRequest) {
         final StubHttpLifecycle incomingLifecycle = new StubHttpLifecycle();
         incomingLifecycle.setRequest(incomingRequest);
-        incomingLifecycle.setResponse(StubResponse.newStubResponse());
 
         return findMatch(incomingLifecycle);
     }
@@ -82,7 +82,7 @@ public class StubRepository {
         final Optional<StubHttpLifecycle> matchedStubOptional = matchStub(incomingRequest);
 
         if (!matchedStubOptional.isPresent()) {
-            return new NotFoundStubResponse();
+            return notFoundResponse();
         }
 
         final StubHttpLifecycle matchedStub = matchedStubOptional.get();
@@ -90,25 +90,25 @@ public class StubRepository {
         resourceStats.putIfAbsent(resourceId, new AtomicLong(0));
         resourceStats.get(resourceId).incrementAndGet();
 
-        final StubResponse stubResponse = matchedStub.getResponse(true);
+        final StubResponse matchedStubResponse = matchedStub.getResponse(true);
         if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingRequest)) {
-            return new UnauthorizedStubResponse();
+            return unauthorizedResponse();
         }
 
-        if (stubResponse.hasHeaderLocation()) {
-            return RedirectStubResponse.newRedirectStubResponse(stubResponse);
+        if (matchedStubResponse.hasHeaderLocation()) {
+            return redirectResponse(Optional.of(matchedStubResponse));
         }
 
-        if (stubResponse.isRecordingRequired()) {
-            final String recordingSource = String.format("%s%s", stubResponse.getBody(), incomingRequest.getUrl());
+        if (matchedStubResponse.isRecordingRequired()) {
+            final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
             try {
                 final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
-                ReflectionUtils.injectObjectFields(stubResponse, YamlProperties.BODY, stubbyResponse.getContent());
+                ReflectionUtils.injectObjectFields(matchedStubResponse, YamlProperties.BODY, stubbyResponse.getContent());
             } catch (Exception e) {
                 ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
             }
         }
-        return stubResponse;
+        return matchedStubResponse;
     }
 
     /**
@@ -128,7 +128,7 @@ public class StubRepository {
      * which invokes the {@link StubRequest#equals(Object)}.
      *
      * @param incomingStub {@link StubHttpLifecycle}
-     * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
+     * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an okResponse {@link Optional} if there was no match.
      * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)

@@ -45,7 +45,7 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
             TimeUnit.MILLISECONDS.sleep(latency);
         }
 
-        response.setStatus(Integer.parseInt(foundStubResponse.getStatus()));
+        response.setStatus(foundStubResponse.getHttpStatusCode().getCode());
         response.setHeader(HttpHeader.LOCATION.asString(), foundStubResponse.getHeaders().get("location"));
         response.setHeader(HttpHeader.CONNECTION.asString(), "close");
     }

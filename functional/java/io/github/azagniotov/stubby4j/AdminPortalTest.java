@@ -3,7 +3,7 @@ package io.github.azagniotov.stubby4j;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -188,7 +188,7 @@ public class AdminPortalTest {
         final String statusMessage = httpResponse.getStatusMessage().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
+        assertThat(statusMessage).isEqualTo("PUT request on URI /1 was okResponse");
     }
 
     @Test
@@ -479,7 +479,7 @@ public class AdminPortalTest {
         final String statusMessage = httpResponse.getStatusMessage().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(statusMessage).isEqualTo("POST request on URI / was empty");
+        assertThat(statusMessage).isEqualTo("POST request on URI / was okResponse");
     }
 
     @Test

@@ -1,5 +1,3 @@
-
-
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
 
@@ -8,11 +6,13 @@ import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedList;
+import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.okResponse;
 
 
 public class StubHttpLifecycle {
@@ -26,7 +26,7 @@ public class StubHttpLifecycle {
     private String responseAsYAML;
 
     public StubHttpLifecycle() {
-        response = StubResponse.newStubResponse();
+        response = okResponse();
     }
 
     public void setRequest(final StubRequest request) {
@@ -34,7 +34,11 @@ public class StubHttpLifecycle {
     }
 
     public void setResponse(final Object response) {
-        this.response = response;
+        if (response instanceof StubResponse || response instanceof Collection) {
+            this.response = response;
+        } else {
+            throw new IllegalArgumentException("Trying to set response of the wrong type");
+        }
     }
 
     public StubRequest getRequest() {
@@ -49,7 +53,7 @@ public class StubHttpLifecycle {
 
         final List<StubResponse> stubResponses = asCheckedLinkedList(this.response, StubResponse.class);
         if (stubResponses.isEmpty()) {
-            return StubResponse.newStubResponse();
+            return okResponse();
         }
 
         if (incrementSequencedResponseId) {

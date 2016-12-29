@@ -1,19 +1,15 @@
-package io.github.azagniotov.stubby4j.builder.yaml;
+package io.github.azagniotov.stubby4j.builders.yaml;
 
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
 import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
-import static com.google.common.truth.Truth.assertThat;
 
 
-/**
- * @author Alexander Zagniotov
- * @since 4/13/13, 12:50 AM
- */
 public class YAMLBuilderTest {
 
     @Test

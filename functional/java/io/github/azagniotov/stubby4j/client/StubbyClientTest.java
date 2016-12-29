@@ -464,7 +464,7 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat("POST request on URI / was empty").isEqualTo(stubbyResponse.getContent());
+        assertThat("POST request on URI / was okResponse").isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -476,7 +476,7 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(stubbyResponse.getContent()).isEqualTo("POST request on URI / was empty");
+        assertThat(stubbyResponse.getContent()).isEqualTo("POST request on URI / was okResponse");
     }
 
     @Test

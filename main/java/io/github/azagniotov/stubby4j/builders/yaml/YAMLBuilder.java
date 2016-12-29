@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.builder.yaml;
+package io.github.azagniotov.stubby4j.builders.yaml;
 
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;

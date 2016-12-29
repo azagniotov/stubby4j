@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.database;
 
-import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
@@ -40,6 +41,8 @@ import static org.mockito.Mockito.when;
 public class StubRepositoryTest {
 
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
+    private static final StubResponseBuilder RESPONSE_BUILDER = new StubResponseBuilder();
+
     private static final File CONFIG_FILE = new File("parentPath", "childPath");
 
     private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
@@ -210,7 +213,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
 
         final String sourceToRecord = "http://google.com";
-        stubs.get(0).setResponse(StubResponse.newStubResponse("200", sourceToRecord));
+        stubs.get(0).setResponse(RESPONSE_BUILDER.okResponseWithBody(sourceToRecord).build());
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse stubbedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -238,7 +241,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
 
         final String recordingSource = "htt://google.com";  //makes it non recordable
-        stubs.get(0).setResponse(StubResponse.newStubResponse("200", recordingSource));
+        stubs.get(0).setResponse(RESPONSE_BUILDER.okResponseWithBody(recordingSource).build());
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse expectedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -262,7 +265,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(stubbedRequest);
 
         final String sourceToRecord = "http://127.0.0.1:8888";
-        stubs.get(0).setResponse(StubResponse.newStubResponse("200", sourceToRecord));
+        stubs.get(0).setResponse(RESPONSE_BUILDER.okResponseWithBody(sourceToRecord).build());
         stubRepository.resetStubsCache(stubs);
 
         final String actualResponseText = "OK, this is recorded response text!";
@@ -290,7 +293,7 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
 
         final String recordingSource = "http://google.com";
-        stubs.get(0).setResponse(StubResponse.newStubResponse("200", recordingSource));
+        stubs.get(0).setResponse(RESPONSE_BUILDER.okResponseWithBody(recordingSource).build());
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse expectedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -304,7 +307,7 @@ public class StubRepositoryTest {
         assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
     }
 
-    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) {
+    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) throws Exception {
         final StubRequest originalRequest =
                 REQUEST_BUILDER
                         .withUrl(url)
@@ -317,7 +320,7 @@ public class StubRepositoryTest {
     private List<StubHttpLifecycle> buildHttpLifeCycles(final StubRequest stubRequest) {
         final StubHttpLifecycle stub = new StubHttpLifecycle();
         stub.setRequest(stubRequest);
-        stub.setResponse(StubResponse.newStubResponse());
+        stub.setResponse(StubResponse.okResponse());
         final String expectedMarshalledYaml = "This is marshalled yaml snippet";
         stub.setCompleteYAML(expectedMarshalledYaml);
 

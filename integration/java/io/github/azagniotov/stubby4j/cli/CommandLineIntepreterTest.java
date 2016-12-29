@@ -6,8 +6,8 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 /**
  * @author Alexander Zagniotov

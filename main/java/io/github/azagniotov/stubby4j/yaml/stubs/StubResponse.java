@@ -23,10 +23,12 @@ import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import org.eclipse.jetty.http.HttpStatus.Code;
 
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Alexander Zagniotov
@@ -36,19 +38,19 @@ public class StubResponse {
 
     public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
-    private final String status;
+    private final Code httpStatusCode;
     private final String body;
     private final File file;
     private final byte[] fileBytes;
     private final String latency;
     private final Map<String, String> headers;
 
-    public StubResponse(final String status,
+    public StubResponse(final Code httpStatusCode,
                         final String body,
                         final File file,
                         final String latency,
                         final Map<String, String> headers) {
-        this.status = ObjectUtils.isNull(status) ? "200" : status;
+        this.httpStatusCode = httpStatusCode;
         this.body = body;
         this.file = file;
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
@@ -56,8 +58,8 @@ public class StubResponse {
         this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
     }
 
-    public String getStatus() {
-        return status;
+    public Code getHttpStatusCode() {
+        return httpStatusCode;
     }
 
     public String getBody() {
@@ -139,15 +141,28 @@ public class StubResponse {
         getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(resourceIndex));
     }
 
-    public StubResponseTypes getStubResponseType() {
-        return StubResponseTypes.OK_200;
+    public static StubResponse okResponse() {
+        return new StubResponse(Code.OK, null, null, null, null);
     }
 
-    public static StubResponse newStubResponse() {
-        return new StubResponse(null, null, null, null, null);
+    public static StubResponse notFoundResponse() {
+        return new StubResponse(Code.NOT_FOUND, null, null, null, null);
     }
 
-    public static StubResponse newStubResponse(final String status, final String body) {
-        return new StubResponse(status, body, null, null, null);
+    public static StubResponse unauthorizedResponse() {
+        return new StubResponse(Code.UNAUTHORIZED, null, null, null, null);
+    }
+
+    public static StubResponse redirectResponse(final Optional<StubResponse> stubResponseOptional) {
+        if (!stubResponseOptional.isPresent()) {
+            return new StubResponse(Code.MOVED_TEMPORARILY, null, null, null, null);
+        }
+        final StubResponse foundStubResponse = stubResponseOptional.get();
+        return new StubResponse(
+                foundStubResponse.getHttpStatusCode(),
+                foundStubResponse.getBody(),
+                foundStubResponse.getRawFile(),
+                foundStubResponse.getLatency(),
+                foundStubResponse.getHeaders());
     }
 }

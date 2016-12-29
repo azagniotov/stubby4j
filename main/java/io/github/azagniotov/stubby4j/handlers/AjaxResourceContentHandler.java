@@ -23,7 +23,6 @@ import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpStatus;

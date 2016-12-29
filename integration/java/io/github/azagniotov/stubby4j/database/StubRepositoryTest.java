@@ -1,19 +1,16 @@
 package io.github.azagniotov.stubby4j.database;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.builder.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
-import io.github.azagniotov.stubby4j.yaml.stubs.NotFoundStubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.RedirectStubResponse;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponseTypes;
-import io.github.azagniotov.stubby4j.yaml.stubs.UnauthorizedStubResponse;
+import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +37,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-/**
- * @author Alexander Zagniotov
- * @since 6/20/12, 5:27 PM
- */
 
 
 @SuppressWarnings("serial")
@@ -95,12 +87,9 @@ public class StubRepositoryTest {
                         .withMethodGet().build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
 
-        assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
-
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
@@ -138,12 +127,8 @@ public class StubRepositoryTest {
         final StubResponse irrelevantFirstSequenceResponse = stubRepository.findStubResponseFor(assertingRequest);
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(sequenceResponseStatus);
+        assertThat(Code.INTERNAL_SERVER_ERROR).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
-
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
@@ -182,12 +167,8 @@ public class StubRepositoryTest {
         final StubResponse irrelevantLastSequenceResponse = stubRepository.findStubResponseFor(assertingRequest);
         final StubResponse firstSequenceResponseRestarted = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(firstSequenceResponseRestarted).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(firstSequenceResponseRestarted.getStubResponseType());
-
-        assertThat(firstSequenceResponseRestarted.getStatus()).isEqualTo(sequenceResponseStatus);
+        assertThat(Code.OK).isSameAs(firstSequenceResponseRestarted.getHttpStatusCode());
         assertThat(firstSequenceResponseRestarted.getBody()).isEqualTo(sequenceResponseBody);
-
         assertThat(firstSequenceResponseRestarted.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
 
@@ -217,12 +198,8 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(RedirectStubResponse.class);
-        assertThat(StubResponseTypes.REDIRECT).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.MOVED_PERMANENTLY).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
-
         assertThat(foundStubResponse.getHeaders()).containsEntry(expectedHeaderKey, expectedHeaderValue);
     }
 
@@ -250,11 +227,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -285,11 +258,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -319,11 +288,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -353,11 +318,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -386,10 +347,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
-        assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -417,10 +375,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
-        assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -447,13 +402,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(UnauthorizedStubResponse.class);
-        assertThat(StubResponseTypes.UNAUTHORIZED).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("401");
+        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
-
 
     @Test
     public void shouldReturnNotFoundStubResponse_WhenAssertingRequestWasNotMatched() throws Exception {
@@ -474,13 +425,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
-        assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
-
 
     @Test
     public void shouldReturnMatchingStubbedResponse_WhenValidPostRequestMade() throws Exception {
@@ -508,14 +455,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.SERVICE_UNAVAILABLE).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
-
 
     @Test
     public void shouldReturnNotFoundStubResponse_WhenPostBodyMissing() throws Exception {
@@ -539,13 +481,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
-        assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
-
 
     @Test
     public void shouldReturnNotFoundStubResponse_WhenHittingCorrectUrlButWrongMethod() throws Exception {
@@ -568,13 +506,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
-        assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
-
 
     @Test
     public void shouldReturnNotFoundStubResponse_WhenPostRequestMadeToIncorrectUrl() throws Exception {
@@ -600,13 +534,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
-        assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
-
 
     @Test
     public void shouldReturnMatchingStubbedResponse_WhenQueryParamIsArray() throws Exception {
@@ -641,14 +571,9 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
-
 
     @Test
     public void shouldReturnMatchingStubbedResponse_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
@@ -679,17 +604,11 @@ public class StubRepositoryTest {
                 );
 
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
-
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isNotInstanceOf(NotFoundStubResponse.class);
-        assertThat(foundStubResponse).isInstanceOf(StubResponse.class);
-        assertThat(StubResponseTypes.OK_200).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo(expectedStatus);
+        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
-
 
     @Test
     public void shouldReturnNotFoundStubResponse_WhenQueryParamArrayHasNonMatchedElementsWithinUrlEncodedQuotes() throws Exception {
@@ -719,10 +638,7 @@ public class StubRepositoryTest {
         final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
-        assertThat(foundStubResponse).isInstanceOf(NotFoundStubResponse.class);
-        assertThat(StubResponseTypes.NOTFOUND).isSameAs(foundStubResponse.getStubResponseType());
-
-        assertThat(foundStubResponse.getStatus()).isEqualTo("404");
+        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 

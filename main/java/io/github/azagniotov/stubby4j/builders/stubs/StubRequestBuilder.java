@@ -1,58 +1,65 @@
-package io.github.azagniotov.stubby4j.builder.stubs;
+package io.github.azagniotov.stubby4j.builders.stubs;
 
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 4/14/13, 4:54 PM
- */
-public final class StubRequestBuilder {
 
-    private String url = null;
-    private ArrayList<String> methods = new ArrayList<>();
-    private String post = null;
-    private Map<String, String> headers = new LinkedHashMap<>();
-    private Map<String, String> query = new LinkedHashMap<>();
+public final class StubRequestBuilder implements StubReflectiveBuilder<StubRequest> {
+
+    private Map<String, Object> fieldNameAndValues;
+    private String url;
+    private List<String> method;
+    private String post;
     private File file;
+    private Map<String, String> headers;
+    private Map<String, String> query;
 
     public StubRequestBuilder() {
-
+        this.url = null;
+        this.method = new ArrayList<>();
+        this.post = null;
+        this.file = null;
+        this.headers = new LinkedHashMap<>();
+        this.query = new LinkedHashMap<>();
+        this.fieldNameAndValues = new HashMap<>();
     }
 
     public StubRequestBuilder withMethod(final String value) {
-        this.methods.add(value);
+        this.method.add(value);
 
         return this;
     }
 
     public StubRequestBuilder withMethodGet() {
-        this.methods.add(HttpMethod.GET.asString());
+        this.method.add(HttpMethod.GET.asString());
 
         return this;
     }
 
     public StubRequestBuilder withMethodPut() {
-        this.methods.add(HttpMethod.PUT.asString());
+        this.method.add(HttpMethod.PUT.asString());
 
         return this;
     }
 
     public StubRequestBuilder withMethodPost() {
-        this.methods.add(HttpMethod.POST.asString());
+        this.method.add(HttpMethod.POST.asString());
 
         return this;
     }
 
     public StubRequestBuilder withMethodHead() {
-        this.methods.add(HttpMethod.HEAD.asString());
+        this.method.add(HttpMethod.HEAD.asString());
 
         return this;
     }
@@ -147,15 +154,23 @@ public final class StubRequestBuilder {
         return this;
     }
 
-    public StubRequest build() {
-        final StubRequest stubRequest = new StubRequest(url, post, file, methods, headers, query);
+    @Override
+    public void stage(final String fieldName, final Object fieldValue) {
+        fieldNameAndValues.put(fieldName.toLowerCase(), fieldValue);
+    }
+
+    @Override
+    public StubRequest build() throws Exception {
+        ReflectionUtils.injectObjectFields(this, fieldNameAndValues);
+        final StubRequest stubRequest = new StubRequest(url, post, file, method, headers, query);
 
         this.url = null;
-        this.methods = new ArrayList<>();
+        this.method = new ArrayList<>();
         this.post = null;
         this.file = null;
         this.headers = new LinkedHashMap<>();
         this.query = new LinkedHashMap<>();
+        this.fieldNameAndValues = new HashMap<>();
 
         return stubRequest;
     }

@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.yaml.stubs;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builder.stubs.StubRequestBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -2199,7 +2199,7 @@ public class StubRequestTest {
     @Test
     public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
         final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-        final Object assertingObject = StubResponse.newStubResponse();
+        final Object assertingObject = StubResponse.okResponse();
 
         final boolean assertionResult = expectedRequest.equals(assertingObject);
         assertThat(assertionResult).isFalse();

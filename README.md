@@ -1100,6 +1100,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 * Pull request #63 - Dynamic token replacement is also applied to stubbed response headers
 * Upgraded from Jetty `9.3.13.v20161014` to `9.4.0.v20161208`
 * Added dependency on https://github.com/azagniotov/collection-type-safe-converter
+* 'Builder' sub-project got merged into the 'Main' sub-project
 
 ##### 4.0.4
 * Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`

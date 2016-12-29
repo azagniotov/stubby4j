@@ -6,6 +6,7 @@ import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,10 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/18/12, 10:11 AM
- */
+
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultResponseHandlingStrategyTest {
 
@@ -71,7 +69,7 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
-        when(mockStubResponse.getStatus()).thenReturn("200");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
         when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
@@ -83,7 +81,7 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
-        when(mockStubResponse.getStatus()).thenReturn("200");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
         when(mockStubResponse.getLatency()).thenReturn("100");
         when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
@@ -96,7 +94,7 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Test
     public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
-        when(mockStubResponse.getStatus()).thenReturn("200");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
         when(mockStubResponse.getLatency()).thenReturn("100");
         when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
@@ -120,7 +118,7 @@ public class DefaultResponseHandlingStrategyTest {
             put("post.1", nonce);
         }});
 
-        when(mockStubResponse.getStatus()).thenReturn("302");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_TEMPORARILY);
         when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
             put("Location", headerValuePrefix + "<%post.1%>");
         }});
