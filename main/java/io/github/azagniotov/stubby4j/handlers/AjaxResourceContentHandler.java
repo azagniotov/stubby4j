@@ -20,11 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.database.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubTypes;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -36,13 +36,14 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+
 public class AjaxResourceContentHandler extends AbstractHandler {
 
     private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
     private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
     private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
     private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
-    private static final String POPUP_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_generic");
 
     private final StubRepository stubRepository;
 
@@ -95,7 +96,8 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(stubType, targetFieldName);
-            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStub.getResourceId(), targetFieldName, ajaxResponse);
+            final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
+            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), targetFieldName, ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -106,7 +108,8 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(targetFieldName, sequencedResponseId);
-            final String htmlPopup = String.format(POPUP_HTML_TEMPLATE, foundStub.getResourceId(), targetFieldName, ajaxResponse);
+            final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
+            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), targetFieldName, ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

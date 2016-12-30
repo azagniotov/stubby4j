@@ -7,21 +7,6 @@ public final class Authorization {
     private final AuthorizationType authorizationType;
     private final String value;
 
-    enum AuthorizationType {
-        BASIC("Basic"),
-        BEARER("Bearer"),
-        CUSTOM("Custom");
-        private final String type;
-
-        AuthorizationType(final String type) {
-            this.type = type;
-        }
-
-        public String asString() {
-            return type;
-        }
-    }
-
     public Authorization(final AuthorizationType authorizationType, final String value) {
         this.authorizationType = authorizationType;
         this.value = value;
@@ -46,5 +31,20 @@ public final class Authorization {
         sb.append('}');
 
         return sb.toString();
+    }
+
+    enum AuthorizationType {
+        BASIC("Basic"),
+        BEARER("Bearer"),
+        CUSTOM("Custom");
+        private final String type;
+
+        AuthorizationType(final String type) {
+            this.type = type;
+        }
+
+        public String asString() {
+            return type;
+        }
     }
 }

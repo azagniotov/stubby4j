@@ -9,8 +9,8 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,15 +48,15 @@ public class StubsAdminPortalsTest {
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
     }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
+        STUBBY_CLIENT.stopJetty();
+    }
+
     @Before
     public void beforeEach() throws Exception {
         final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
         assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        STUBBY_CLIENT.stopJetty();
     }
 
     @Test

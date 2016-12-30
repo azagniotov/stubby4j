@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 
 public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
@@ -36,9 +38,9 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
 
         response.setContentType("text/plain;charset=UTF-8");
 
-        final OutputStream streamOut = response.getOutputStream();
-        streamOut.write(StringUtils.getBytesUtf8(yamlAppender.toString()));
-        streamOut.flush();
-        streamOut.close();
+        try (final OutputStream outputStream = response.getOutputStream()) {
+            outputStream.write(getBytesUtf8(yamlAppender.toString()));
+            outputStream.flush();
+        }
     }
 }

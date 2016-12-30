@@ -1,10 +1,10 @@
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;

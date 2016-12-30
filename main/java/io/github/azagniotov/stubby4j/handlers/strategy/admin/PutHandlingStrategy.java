@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
@@ -33,7 +33,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
 
         final String put = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
         if (!StringUtils.isSet(put)) {
-            final String errorMessage = String.format("%s request on URI %s was okResponse", request.getMethod(), request.getRequestURI());
+            final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
             HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
             return;
         }

@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.handlers.strategy.admin.AdminResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.handlers.strategy.admin.AdminResponseHandlingStrategyFactory;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;

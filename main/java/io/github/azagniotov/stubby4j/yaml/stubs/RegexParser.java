@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;

@@ -1,8 +1,9 @@
 package io.github.azagniotov.stubby4j.builders.stubs;
 
+import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpStatus.Code;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import static org.eclipse.jetty.http.HttpStatus.getCode;
 
 public final class StubResponseBuilder implements StubReflectiveBuilder<StubResponse> {
 
-    private Code httpStatusCode;
     private Map<String, Object> fieldNameAndValues;
     private String status;
     private String body;
@@ -26,7 +26,6 @@ public final class StubResponseBuilder implements StubReflectiveBuilder<StubResp
 
     public StubResponseBuilder() {
         this.status = null;
-        this.httpStatusCode = null;
         this.body = null;
         this.file = null;
         this.latency = null;
@@ -34,15 +33,15 @@ public final class StubResponseBuilder implements StubReflectiveBuilder<StubResp
         this.fieldNameAndValues = new HashMap<>();
     }
 
-    public StubResponseBuilder okResponseWithBody(final String body) {
-        this.httpStatusCode = Code.OK;
+    public StubResponseBuilder emptyWithBody(final String body) {
+        this.status = String.valueOf(Code.OK.getCode());
         this.body = body;
 
         return this;
     }
 
     public StubResponseBuilder withHttpStatusCode(final Code httpStatusCode) {
-        this.httpStatusCode = httpStatusCode;
+        this.status = String.valueOf(httpStatusCode.getCode());
 
         return this;
     }
@@ -70,7 +69,6 @@ public final class StubResponseBuilder implements StubReflectiveBuilder<StubResp
         final StubResponse stubResponse = new StubResponse(getHttpStatusCode(), body, file, latency, headers);
 
         this.status = null;
-        this.httpStatusCode = null;
         this.body = null;
         this.file = null;
         this.latency = null;
@@ -80,9 +78,8 @@ public final class StubResponseBuilder implements StubReflectiveBuilder<StubResp
         return stubResponse;
     }
 
-    private Code getHttpStatusCode() {
-        return ObjectUtils.isNull(this.status) ?
-                (ObjectUtils.isNull(this.httpStatusCode) ? Code.OK : this.httpStatusCode) :
-                getCode(parseInt(this.status));
+    @VisibleForTesting
+    Code getHttpStatusCode() {
+        return ObjectUtils.isNull(this.status) ? Code.OK : getCode(parseInt(this.status));
     }
 }

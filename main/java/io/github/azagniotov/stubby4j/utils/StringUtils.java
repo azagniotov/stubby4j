@@ -94,7 +94,7 @@ public final class StringUtils {
 
     public static String inputStreamToString(final InputStream inputStream) {
         if (ObjectUtils.isNull(inputStream)) {
-            return "Could not convert okResponse or null input stream to string";
+            return "Could not convert null input stream to string";
         }
         // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
         // the entire stream, from beginning to (illogical) next beginning.

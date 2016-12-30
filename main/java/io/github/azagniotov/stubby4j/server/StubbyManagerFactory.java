@@ -22,11 +22,11 @@ package io.github.azagniotov.stubby4j.server;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.cli.EmptyLogger;
-import io.github.azagniotov.stubby4j.database.StubRepository;
-import io.github.azagniotov.stubby4j.database.thread.ExternalFilesScanner;
-import io.github.azagniotov.stubby4j.database.thread.MainYamlScanner;
+import io.github.azagniotov.stubby4j.filesystem.ExternalFilesScanner;
+import io.github.azagniotov.stubby4j.filesystem.MainYamlScanner;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 

@@ -1,9 +1,9 @@
 package io.github.azagniotov.stubby4j.builders.stubs;
 
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;

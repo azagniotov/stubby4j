@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.utils;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.junit.Test;
 
 import java.util.HashMap;

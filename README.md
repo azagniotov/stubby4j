@@ -117,11 +117,11 @@ stubby4j is a multi-module Gradle project
 Run `gradle` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
-* Build (the generated JAR artifacts will be located under `stubby4j/target/libs/`)
+* Build (the generated JAR artifacts will be located under `<PROJECT_ROOT>/build/libs/`)
 
 Run `gradle cobertura` command to:
 * Clean
-* Generate Cobertura report under the `stubby4j/main/target/reports/cobertura/`
+* Generate Cobertura report under the `<PROJECT_ROOT>/main/build/reports/cobertura/`
 
 
 ### Third-party dependencies

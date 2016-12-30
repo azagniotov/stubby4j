@@ -1,7 +1,8 @@
-package io.github.azagniotov.stubby4j.database.thread;
+package io.github.azagniotov.stubby4j.filesystem;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 
 import java.io.File;
@@ -9,10 +10,7 @@ import java.util.Date;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 8:01 AM
- */
+@CoberturaIgnore
 public final class MainYamlScanner implements Runnable {
 
     private final long sleepTime;

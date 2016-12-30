@@ -5,11 +5,6 @@ import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/27/12, 10:26 AM
- */
-
 public class HandlerUtilsTest {
 
     private final static int HOURS_IN_DAY = 24;

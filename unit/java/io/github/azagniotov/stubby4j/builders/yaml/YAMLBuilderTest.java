@@ -5,9 +5,9 @@ import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 
 
 public class YAMLBuilderTest {

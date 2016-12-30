@@ -37,32 +37,35 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
             )
             fileset(
                     dir: project(':main').sourceSets.main.output.classesDir,
-                    includes: "io/github/azagniotov/stubby4j/client/**/*.class, io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, io/github/azagniotov/stubby4j/database/*.class, io/github/azagniotov/stubby4j/utils/*.class, io/github/azagniotov/stubby4j/yaml/**/*.class, io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
-                    excludes: "**/*\$*.class"
-            )
-            fileset(
-                    dir: project(':builders').sourceSets.main.output.classesDir,
-                    includes: "io/github/azagniotov/stubby4j/builder/**/*.class",
+                    includes: "io/github/azagniotov/stubby4j/builders/**/*.class, " +
+                            "io/github/azagniotov/stubby4j/client/**/*.class, " +
+                            "io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, " +
+                            "io/github/azagniotov/stubby4j/utils/*.class, " +
+                            "io/github/azagniotov/stubby4j/yaml/**/*.class, " +
+                            "io/github/azagniotov/stubby4j/stubs/**/*.class, " +
+                            "io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, " +
+                            "io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
                     excludes: "**/*\$*.class"
             )
         }
     }
 }
 
-task coberturaReport(dependsOn: ['coberturaInstrument', test]) << {
-    ant.coberturaReport(
-            format: "html",
-            destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
-            srcdir: "$rootDir/main/java",
-            datafile: coberturaPrepare.datafileLocation
-    )
-
-    ant.coberturaReport(
-            format: "xml",
-            destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
-            srcdir: "$rootDir/main/java",
-            datafile: coberturaPrepare.datafileLocation
-    )
+task coberturaReport(dependsOn: ['coberturaInstrument', test]) {
+    doLast {
+        ant.coberturaReport(
+                format: "html",
+                destdir: project(":main").reporting.baseDir.path + "/cobertura/html",
+                srcdir: "$rootDir/main/java",
+                datafile: coberturaPrepare.datafileLocation
+        )
+        ant.coberturaReport(
+                format: "xml",
+                destdir: project(":main").reporting.baseDir.path + "/cobertura/xml",
+                srcdir: "$rootDir/main/java",
+                datafile: coberturaPrepare.datafileLocation
+        )
+    }
 }
 
 gradle.taskGraph.whenReady { graph ->

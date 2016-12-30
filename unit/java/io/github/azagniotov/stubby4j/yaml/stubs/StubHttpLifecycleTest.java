@@ -1,13 +1,16 @@
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import org.eclipse.jetty.http.HttpStatus.Code;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +26,14 @@ public class StubHttpLifecycleTest {
 
     private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
     private static final StubResponseBuilder RESPONSE_BUILDER = new StubResponseBuilder();
+
     private static final String SOME_RESOURCE_URI = "/some/resource/uri";
     private static final String AUTHORIZATION_HEADER_BASIC = "Basic Ym9iOnNlY3JldA==";
     private static final String AUTHORIZATION_HEADER_BASIC_INVALID = "Basic 888888888888==";
     private static final String AUTHORIZATION_HEADER_BEARER = "Bearer Ym9iOnNlY3JldA==";
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Spy
     private StubHttpLifecycle spyAssertingStubHttpLifecycle = new StubHttpLifecycle();
@@ -63,6 +70,24 @@ public class StubHttpLifecycleTest {
         stubHttpLifecycle.setResponse(stubResponse);
 
         assertThat(stubHttpLifecycle.getResponse(true)).isEqualTo(stubResponse);
+    }
+
+    @Test
+    public void shouldThrow_WhenResponseObjectIsNotStubResponseType() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Trying to set response of the wrong type");
+
+        final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+        stubHttpLifecycle.setResponse(8);
+    }
+
+    @Test
+    public void shouldThrow_WhenResponseObjectIsNotCollectionType() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("Trying to set response of the wrong type");
+
+        final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle();
+        stubHttpLifecycle.setResponse(new HashMap<String, String>());
     }
 
     @Test

@@ -20,8 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.database.StubRepository;
 import io.github.azagniotov.stubby4j.server.JettyContext;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.JarUtils;
@@ -29,8 +31,6 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+
 public final class StatusPageHandler extends AbstractHandler {
 
     private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
@@ -61,7 +63,6 @@ public final class StatusPageHandler extends AbstractHandler {
     private static final String TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK = "<strong><a class='ajax-resource' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>";
     private static final String TEMPLATE_AJAX_TO_STATS_HYPERLINK = "<strong><a class='ajax-stats' href='/ajax/stats'>[view]</a></strong>";
     private static final String TEMPLATE_HTML_TABLE_ROW = "<tr><td width='250px' valign='top' align='left'>%s</td><td align='left'>%s</td></tr>";
-    private static final String TEMPLATE_HTML_TABLE = HandlerUtils.getHtmlResourceByName("_table");
     private static final String NEXT_IN_THE_QUEUE = " NEXT IN THE QUEUE";
 
     private final StubRepository stubRepository;
@@ -96,16 +97,18 @@ public final class StatusPageHandler extends AbstractHandler {
     private String buildStatusPageHtml() throws Exception {
         final StringBuilder builder = new StringBuilder();
 
-        builder.append(buildJvmParametersHtmlTable());
-        builder.append(buildJettyParametersHtmlTable());
-        builder.append(buildStubbyParametersHtmlTable());
-        builder.append(buildEndpointStatsHtmlTable());
+        final String templateHtmlTable = getHtmlResourceByName("_table");
+
+        builder.append(buildJvmParametersHtmlTable(templateHtmlTable));
+        builder.append(buildJettyParametersHtmlTable(templateHtmlTable));
+        builder.append(buildStubbyParametersHtmlTable(templateHtmlTable));
+        builder.append(buildEndpointStatsHtmlTable(templateHtmlTable));
 
         final List<StubHttpLifecycle> stubHttpLifecycles = stubRepository.getStubs();
         for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
             final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
-            builder.append(buildStubRequestHtmlTable(stubHttpLifecycle));
-            builder.append(buildStubResponseHtmlTable(stubHttpLifecycle));
+            builder.append(buildStubRequestHtmlTable(stubHttpLifecycle, templateHtmlTable));
+            builder.append(buildStubResponseHtmlTable(stubHttpLifecycle, templateHtmlTable));
             builder.append("<br /><br />");
         }
 
@@ -113,16 +116,16 @@ public final class StatusPageHandler extends AbstractHandler {
         return HandlerUtils.populateHtmlTemplate("status", timestamp, timestamp, builder.toString());
     }
 
-    private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
+    private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle, final String templateHtmlTable) throws Exception {
         final String resourceId = stubHttpLifecycle.getResourceId();
         final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYAML");
         final StringBuilder requestTableBuilder = buildStubHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
         requestTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
-        return String.format(TEMPLATE_HTML_TABLE, YamlProperties.REQUEST, requestTableBuilder.toString());
+        return String.format(templateHtmlTable, YamlProperties.REQUEST, requestTableBuilder.toString());
     }
 
-    private String buildStubResponseHtmlTable(final StubHttpLifecycle stubHttpLifecycle) throws Exception {
+    private String buildStubResponseHtmlTable(final StubHttpLifecycle stubHttpLifecycle, final String templateHtmlTable) throws Exception {
         final String resourceId = stubHttpLifecycle.getResourceId();
         final StringBuilder responseTableBuilder = new StringBuilder();
         final List<StubResponse> allResponses = stubHttpLifecycle.getResponses();
@@ -138,13 +141,13 @@ public final class StatusPageHandler extends AbstractHandler {
             final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYAML");
             sequencedResponseBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToResponseAsYaml));
 
-            responseTableBuilder.append(String.format(TEMPLATE_HTML_TABLE, responseTableTitle, sequencedResponseBuilder.toString()));
+            responseTableBuilder.append(String.format(templateHtmlTable, responseTableTitle, sequencedResponseBuilder.toString()));
         }
 
         return responseTableBuilder.toString();
     }
 
-    private String buildJvmParametersHtmlTable() throws Exception {
+    private String buildJvmParametersHtmlTable(final String templateHtmlTable) throws Exception {
 
         final StringBuilder builder = new StringBuilder();
         if (!RUNTIME_MX_BEAN.getInputArguments().isEmpty()) {
@@ -153,10 +156,10 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(interpolateHtmlTableRowTemplate("HEAP MEMORY USAGE", MEMORY_MX_BEAN.getHeapMemoryUsage()));
         builder.append(interpolateHtmlTableRowTemplate("NON-HEAP MEMORY USAGE", MEMORY_MX_BEAN.getNonHeapMemoryUsage()));
 
-        return String.format(TEMPLATE_HTML_TABLE, "jvm", builder.toString());
+        return String.format(templateHtmlTable, "jvm", builder.toString());
     }
 
-    private String buildJettyParametersHtmlTable() throws Exception {
+    private String buildJettyParametersHtmlTable(final String templateHtmlTable) throws Exception {
 
         final StringBuilder builder = new StringBuilder();
         final String host = jettyContext.getHost();
@@ -168,10 +171,10 @@ public final class StatusPageHandler extends AbstractHandler {
         final String endpointRegistration = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), AdminPortalHandler.ADMIN_ROOT, host, adminPort);
         builder.append(interpolateHtmlTableRowTemplate("NEW STUB DATA POST URI", endpointRegistration));
 
-        return String.format(TEMPLATE_HTML_TABLE, "jetty parameters", builder.toString());
+        return String.format(templateHtmlTable, "jetty parameters", builder.toString());
     }
 
-    private String buildStubbyParametersHtmlTable() throws Exception {
+    private String buildStubbyParametersHtmlTable(final String templateHtmlTable) throws Exception {
 
         final StringBuilder builder = new StringBuilder();
         builder.append(interpolateHtmlTableRowTemplate("VERSION", JarUtils.readManifestImplementationVersion()));
@@ -191,10 +194,10 @@ public final class StatusPageHandler extends AbstractHandler {
             builder.append(interpolateHtmlTableRowTemplate("LOADED EXTERNAL FILES", externalFilesMetadata.toString()));
         }
 
-        return String.format(TEMPLATE_HTML_TABLE, "stubby4j parameters", builder.toString());
+        return String.format(templateHtmlTable, "stubby4j parameters", builder.toString());
     }
 
-    private String buildEndpointStatsHtmlTable() throws Exception {
+    private String buildEndpointStatsHtmlTable(final String templateHtmlTable) throws Exception {
 
         final StringBuilder builder = new StringBuilder();
         if (stubRepository.getResourceStats().isEmpty()) {
@@ -203,7 +206,7 @@ public final class StatusPageHandler extends AbstractHandler {
             builder.append(interpolateHtmlTableRowTemplate("ENDPOINT HITS", TEMPLATE_AJAX_TO_STATS_HYPERLINK));
         }
 
-        return String.format(TEMPLATE_HTML_TABLE, "stubby stats", builder.toString());
+        return String.format(templateHtmlTable, "stubby stats", builder.toString());
     }
 
     private String buildLoadedFileMetadata(final File file) throws IOException {

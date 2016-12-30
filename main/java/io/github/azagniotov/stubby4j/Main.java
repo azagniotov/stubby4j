@@ -21,12 +21,11 @@ package io.github.azagniotov.stubby4j;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
 import org.apache.commons.cli.ParseException;
 
 import java.io.File;
@@ -69,7 +68,7 @@ public final class Main {
                     String.format("Could not parse provided command line arguments, error: %s",
                             ex.toString());
 
-            throw new Stubby4JException(msg);
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -102,7 +101,7 @@ public final class Main {
                                 + "To see all command line options run again with option '--%s'",
                         CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
 
-        throw new Stubby4JException(msg);
+        throw new IllegalArgumentException(msg);
     }
 
     private static void startStubby4jUsingCommandLineArgs() {
@@ -133,7 +132,7 @@ public final class Main {
             final String msg =
                     String.format("Could not init stubby4j, error: %s", ex.toString());
 
-            throw new Stubby4JException(msg, ex);
+            throw new IllegalStateException(msg, ex);
         }
     }
 }

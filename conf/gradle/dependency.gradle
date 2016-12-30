@@ -1,15 +1,15 @@
 // vim: ft=groovy
 dependencies {
-   compile "org.eclipse.jetty:jetty-server:9.4.0.v20161208"
-   compile "org.eclipse.jetty:jetty-servlets:9.4.0.v20161208"
-   compile "commons-cli:commons-cli:1.2"
-   compile "org.yaml:snakeyaml:1.17"
-   compile "org.skyscreamer:jsonassert:1.3.0"
-   compile "xmlunit:xmlunit:1.6"
-   compile "io.github.azagniotov:collection-type-safe-converter:1.0.1"
+    compile "org.eclipse.jetty:jetty-server:9.4.0.v20161208"
+    compile "org.eclipse.jetty:jetty-servlets:9.4.0.v20161208"
+    compile "commons-cli:commons-cli:1.2"
+    compile "org.yaml:snakeyaml:1.17"
+    compile "org.skyscreamer:jsonassert:1.3.0"
+    compile "xmlunit:xmlunit:1.6"
+    compile "io.github.azagniotov:collection-type-safe-converter:1.0.1"
 
-   testCompile "junit:junit:4.12"
-   testCompile "org.mockito:mockito-core:2.4.1"
-   testCompile "com.google.truth:truth:0.31"
-   testCompile "com.google.http-client:google-http-client:1.22.0"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:2.4.1"
+    testCompile "com.google.truth:truth:0.31"
+    testCompile "com.google.http-client:google-http-client:1.22.0"
 }

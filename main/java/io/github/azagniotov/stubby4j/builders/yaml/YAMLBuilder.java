@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.builders.yaml;
 
+import io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.util.HashSet;
@@ -52,10 +52,9 @@ public final class YAMLBuilder {
     private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST, QUERY);
     private final static String RESPONSE_HEADERS_KEY = String.format("%s-%s", RESPONSE, HEADERS);
     private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
-
-
+    private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
+    private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
     final Set<String> storedStubbedMethods = new LinkedHashSet<>();
-
     final Set<String> unusedNodes = new HashSet<String>() {{
         add(REQUEST_HEADERS_KEY);
         add(REQUEST_QUERY_KEY);
@@ -63,9 +62,6 @@ public final class YAMLBuilder {
         add(RESPONSE_QUERY_KEY);
         add(RESPONSE_QUERY_KEY);
     }};
-
-    private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
-    private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
 
     public YAMLBuilder() {
 

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.JarUtils.readManifestImplementationVersion;
 
 public final class CommandLineInterpreter {
 
@@ -60,7 +61,6 @@ public final class CommandLineInterpreter {
 
     private static final CommandLineParser POSIX_PARSER = new PosixParser();
     private static final Options OPTIONS = new Options();
-    private CommandLine line;
 
     static {
         OPTIONS.addOption("l", OPTION_ADDRESS, true, "Hostname at which to bind stubby.");
@@ -86,6 +86,7 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption(watch);
     }
 
+    private CommandLine line;
 
     public void parseCommandLine(final String[] args) throws ParseException {
         line = POSIX_PARSER.parse(OPTIONS, args);
@@ -151,9 +152,10 @@ public final class CommandLineInterpreter {
     @CoberturaIgnore
     public void printVersion() {
         final HelpFormatter formatter = new HelpFormatter();
-        PrintWriter pw = new PrintWriter(System.out);
-        formatter.printWrapped(pw, HelpFormatter.DEFAULT_WIDTH, JarUtils.readManifestImplementationVersion());
-        pw.flush();
+        try (final PrintWriter printWriter = new PrintWriter(System.out)) {
+            formatter.printWrapped(printWriter, HelpFormatter.DEFAULT_WIDTH, readManifestImplementationVersion());
+            printWriter.flush();
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedList;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.okResponse;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.okResponse;
 
 
 public class StubHttpLifecycle {
@@ -29,10 +29,6 @@ public class StubHttpLifecycle {
         response = okResponse();
     }
 
-    public void setRequest(final StubRequest request) {
-        this.request = request;
-    }
-
     public void setResponse(final Object response) {
         if (response instanceof StubResponse || response instanceof Collection) {
             this.response = response;
@@ -43,6 +39,10 @@ public class StubHttpLifecycle {
 
     public StubRequest getRequest() {
         return request;
+    }
+
+    public void setRequest(final StubRequest request) {
+        this.request = request;
     }
 
     public StubResponse getResponse(final boolean incrementSequencedResponseId) {
@@ -103,6 +103,10 @@ public class StubHttpLifecycle {
         return getResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
     }
 
+    public void setResourceId(final int resourceId) {
+        getResponses().forEach(response -> response.addResourceIDHeader(resourceId));
+    }
+
     /**
      * @see StubRequest#getUrl()
      */
@@ -144,10 +148,6 @@ public class StubHttpLifecycle {
 
     public void setResponseAsYAML(final String responseAsYAML) {
         this.responseAsYAML = responseAsYAML;
-    }
-
-    public void setResourceId(final int resourceId) {
-        getResponses().forEach(response -> response.addResourceIDHeader(resourceId));
     }
 
     public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {

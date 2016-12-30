@@ -155,7 +155,7 @@ public class StringUtilsTest {
 
     @Test
     public void shouldReturnErrorWhenTryingToConvertNullInputStreamToString() throws Exception {
-        assertThat(StringUtils.inputStreamToString(null)).isEqualTo("Could not convert okResponse or null input stream to string");
+        assertThat(StringUtils.inputStreamToString(null)).isEqualTo("Could not convert null input stream to string");
     }
 
     @Test

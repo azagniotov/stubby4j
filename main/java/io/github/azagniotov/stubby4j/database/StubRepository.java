@@ -1,23 +1,4 @@
-/*
-A Java-based HTTP stub server
-
-Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-package io.github.azagniotov.stubby4j.database;
+package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -28,9 +9,6 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import io.github.azagniotov.stubby4j.yaml.YamlProperties;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -48,9 +26,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.notFoundResponse;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.redirectResponse;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubResponse.unauthorizedResponse;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.redirectResponse;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
 
 public class StubRepository {
 
@@ -128,7 +106,7 @@ public class StubRepository {
      * which invokes the {@link StubRequest#equals(Object)}.
      *
      * @param incomingStub {@link StubHttpLifecycle}
-     * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an okResponse {@link Optional} if there was no match.
+     * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
      * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)

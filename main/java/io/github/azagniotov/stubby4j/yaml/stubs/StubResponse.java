@@ -1,23 +1,4 @@
-/*
-A Java-based HTTP stub server
-
-Copyright (C) 2012 Alexander Zagniotov, Isa Goksu and Eric Mrak
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
@@ -30,10 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/14/12, 1:09 AM
- */
+
 public class StubResponse {
 
     public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
@@ -56,6 +34,31 @@ public class StubResponse {
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
         this.latency = latency;
         this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
+    }
+
+    public static StubResponse okResponse() {
+        return new StubResponse(Code.OK, null, null, null, null);
+    }
+
+    public static StubResponse notFoundResponse() {
+        return new StubResponse(Code.NOT_FOUND, null, null, null, null);
+    }
+
+    public static StubResponse unauthorizedResponse() {
+        return new StubResponse(Code.UNAUTHORIZED, null, null, null, null);
+    }
+
+    public static StubResponse redirectResponse(final Optional<StubResponse> stubResponseOptional) {
+        if (!stubResponseOptional.isPresent()) {
+            return new StubResponse(Code.MOVED_TEMPORARILY, null, null, null, null);
+        }
+        final StubResponse foundStubResponse = stubResponseOptional.get();
+        return new StubResponse(
+                foundStubResponse.getHttpStatusCode(),
+                foundStubResponse.getBody(),
+                foundStubResponse.getRawFile(),
+                foundStubResponse.getLatency(),
+                foundStubResponse.getHeaders());
     }
 
     public Code getHttpStatusCode() {
@@ -139,30 +142,5 @@ public class StubResponse {
 
     void addResourceIDHeader(final int resourceIndex) {
         getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(resourceIndex));
-    }
-
-    public static StubResponse okResponse() {
-        return new StubResponse(Code.OK, null, null, null, null);
-    }
-
-    public static StubResponse notFoundResponse() {
-        return new StubResponse(Code.NOT_FOUND, null, null, null, null);
-    }
-
-    public static StubResponse unauthorizedResponse() {
-        return new StubResponse(Code.UNAUTHORIZED, null, null, null, null);
-    }
-
-    public static StubResponse redirectResponse(final Optional<StubResponse> stubResponseOptional) {
-        if (!stubResponseOptional.isPresent()) {
-            return new StubResponse(Code.MOVED_TEMPORARILY, null, null, null, null);
-        }
-        final StubResponse foundStubResponse = stubResponseOptional.get();
-        return new StubResponse(
-                foundStubResponse.getHttpStatusCode(),
-                foundStubResponse.getBody(),
-                foundStubResponse.getRawFile(),
-                foundStubResponse.getLatency(),
-                foundStubResponse.getHeaders());
     }
 }

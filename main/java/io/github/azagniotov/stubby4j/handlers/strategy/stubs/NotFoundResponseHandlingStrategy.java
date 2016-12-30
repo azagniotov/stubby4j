@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
 
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 

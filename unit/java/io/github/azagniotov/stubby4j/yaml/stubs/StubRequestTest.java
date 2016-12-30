@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
@@ -18,10 +18,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.mockito.Mockito.when;
 
 /**

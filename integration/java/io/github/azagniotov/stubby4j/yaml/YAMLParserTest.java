@@ -3,10 +3,10 @@ package io.github.azagniotov.stubby4j.yaml;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Rule;
@@ -19,18 +19,17 @@ import java.io.PrintStream;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 
 
 public class YAMLParserTest {
 
+    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
 
     @Test
     public void shouldUnmarshall_WhenEmptyYAMLGiven() throws Exception {

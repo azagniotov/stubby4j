@@ -43,15 +43,15 @@ public class AdminPortalTest {
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
     }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
+        STUBBY_CLIENT.stopJetty();
+    }
+
     @Before
     public void beforeEach() throws Exception {
         final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
         assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        STUBBY_CLIENT.stopJetty();
     }
 
     @Test
@@ -188,7 +188,7 @@ public class AdminPortalTest {
         final String statusMessage = httpResponse.getStatusMessage().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(statusMessage).isEqualTo("PUT request on URI /1 was okResponse");
+        assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
     }
 
     @Test
@@ -479,7 +479,7 @@ public class AdminPortalTest {
         final String statusMessage = httpResponse.getStatusMessage().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(statusMessage).isEqualTo("POST request on URI / was okResponse");
+        assertThat(statusMessage).isEqualTo("POST request on URI / was empty");
     }
 
     @Test

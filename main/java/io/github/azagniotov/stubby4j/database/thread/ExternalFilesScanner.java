@@ -1,7 +1,8 @@
-package io.github.azagniotov.stubby4j.database.thread;
+package io.github.azagniotov.stubby4j.filesystem;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.database.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 
@@ -9,10 +10,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 8:01 AM
- */
+@CoberturaIgnore
 public final class ExternalFilesScanner implements Runnable {
 
     private final long sleepTime;

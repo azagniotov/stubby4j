@@ -42,6 +42,7 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public final class FileUtils {
 
+    public static final String BR = System.lineSeparator();
     private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
             new HashSet<>(
                     Arrays.asList(
@@ -60,12 +61,10 @@ public final class FileUtils {
                     )
             )
     );
-
     private static final String LINE_SEPARATOR_UNIX = "\n";
     private static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
     private static final String LINE_SEPARATOR_WINDOWS = "\r\n";
     private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
-    public static final String BR = System.lineSeparator();
 
     private FileUtils() {
 
@@ -95,10 +94,13 @@ public final class FileUtils {
     public static File fileFromString(final String content) throws IOException {
         final File temp = File.createTempFile("tmp", ".txt");
         temp.deleteOnExit();
-        try (final BufferedWriter out = new BufferedWriter(new FileWriter(temp))) {
-            out.write(content);
-            return temp;
+
+        try (final FileWriter fileWriter = new FileWriter(temp);
+             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(content);
         }
+
+        return temp;
     }
 
     public static boolean isTemplateFile(final File file) throws IOException {

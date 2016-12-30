@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
 
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
 
 import javax.servlet.http.HttpServletResponse;
 

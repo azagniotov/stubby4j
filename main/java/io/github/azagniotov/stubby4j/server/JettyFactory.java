@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.server;
 
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.database.StubRepository;
-import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxEndpointStatsHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxResourceContentHandler;
@@ -30,6 +28,7 @@ import io.github.azagniotov.stubby4j.handlers.JsonErrorHandler;
 import io.github.azagniotov.stubby4j.handlers.StatusPageHandler;
 import io.github.azagniotov.stubby4j.handlers.StubDataRefreshActionHandler;
 import io.github.azagniotov.stubby4j.handlers.StubsPortalHandler;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpScheme;
@@ -69,10 +68,9 @@ public final class JettyFactory {
     public static final int DEFAULT_ADMIN_PORT = 8889;
     public static final int DEFAULT_STUBS_PORT = 8882;
     public static final int DEFAULT_SSL_PORT = 7443;
+    public static final String DEFAULT_HOST = "localhost";
     private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
-    public static final String DEFAULT_HOST = "localhost";
-
     private static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
     private static final String STUBS_CONNECTOR_NAME = "StubsConnector";
     private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
@@ -312,7 +310,7 @@ public final class JettyFactory {
         try {
             new FakeX509TrustManager().allowAllSSL();
         } catch (final Exception ex) {
-            throw new Stubby4JException(ex.toString(), ex);
+            throw new RuntimeException(ex.toString(), ex);
         }
     }
 

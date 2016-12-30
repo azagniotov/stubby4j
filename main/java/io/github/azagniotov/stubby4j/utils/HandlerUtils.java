@@ -21,7 +21,6 @@ package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.common.Common;
-import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import org.eclipse.jetty.http.HttpHeader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,11 +49,11 @@ public final class HandlerUtils {
         response.flushBuffer();
     }
 
-    public static String getHtmlResourceByName(final String templateSuffix) {
+    public static String getHtmlResourceByName(final String templateSuffix) throws IOException {
         final String htmlTemplatePath = String.format("/ui/html/%s.html", templateSuffix);
         final InputStream inputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
         if (ObjectUtils.isNull(inputStream)) {
-            throw new Stubby4JException(String.format("Could not find resource %s", htmlTemplatePath));
+            throw new IOException(String.format("Could not find resource %s", htmlTemplatePath));
         }
         return StringUtils.inputStreamToString(inputStream);
     }
@@ -84,7 +83,7 @@ public final class HandlerUtils {
         return String.format("<a target='_blank' href='%s'>%s</a>", href, fullUrl);
     }
 
-    public static String populateHtmlTemplate(final String templateName, final Object... params) {
+    public static String populateHtmlTemplate(final String templateName, final Object... params) throws IOException {
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format(getHtmlResourceByName(templateName), params));
         return builder.toString();

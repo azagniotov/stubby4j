@@ -6,7 +6,7 @@ import io.github.azagniotov.stubby4j.handlers.strategy.stubs.RedirectResponseHan
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubResponseHandlingStrategy;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import org.junit.Test;
 
 import java.util.Optional;

@@ -1,5 +1,6 @@
-package io.github.azagniotov.stubby4j.yaml.parser;
+package io.github.azagniotov.stubby4j.yaml;
 
+import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -20,6 +21,7 @@ public enum SnakeYaml {
         return snakeYaml;
     }
 
+    @CoberturaIgnore
     private final class YamlParserResolver extends Resolver {
         YamlParserResolver() {
             super();

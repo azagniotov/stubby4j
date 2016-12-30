@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.database;
+package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
@@ -7,9 +7,6 @@ import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,9 +27,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

@@ -1,16 +1,12 @@
 package io.github.azagniotov.stubby4j.utils;
 
-import io.github.azagniotov.stubby4j.exception.Stubby4JException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static com.google.common.truth.Truth.assertThat;
+import java.io.IOException;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/27/12, 10:26 AM
- */
+import static com.google.common.truth.Truth.assertThat;
 
 public class HandlerUtilsTest {
 
@@ -32,7 +28,7 @@ public class HandlerUtilsTest {
     @Test
     public void shouldNotPopulateNonExistentHtmlTemplate() throws Exception {
 
-        expectedException.expect(Stubby4JException.class);
+        expectedException.expect(IOException.class);
 
         HandlerUtils.populateHtmlTemplate("non-existent-template", "alex");
     }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.azagniotov.stubby4j.yaml.stubs;
+package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
@@ -52,15 +52,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 
 
 public class StubRequest {
@@ -92,6 +92,33 @@ public class StubRequest {
         this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
         this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<>() : query;
         this.regexGroups = new TreeMap<>();
+    }
+
+    public static StubRequest newStubRequest() {
+        return new StubRequest(null, null, null, null, null, null);
+    }
+
+    static StubRequest newStubRequest(final String url, final String post) {
+        return new StubRequest(url, post, null, null, null, null);
+    }
+
+    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
+        final StubRequest assertionRequest = StubRequest.newStubRequest(request.getPathInfo(),
+                HandlerUtils.extractPostRequestBody(request, "stubs"));
+        assertionRequest.addMethod(request.getMethod());
+
+        final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
+        final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
+                ? Collections.list(request.getHeaderNames()) : new LinkedList<>();
+        for (final String headerName : headerNames) {
+            final String headerValue = request.getHeader(headerName);
+            assertionRequest.getHeaders().put(toLower(headerName), headerValue);
+        }
+
+        assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
+        ConsoleUtils.logAssertingRequest(assertionRequest);
+
+        return assertionRequest;
     }
 
     public final ArrayList<String> getMethod() {
@@ -209,33 +236,6 @@ public class StubRequest {
 
     public String getRawAuthorizationHttpHeader() {
         return getHeaders().get(HTTP_HEADER_AUTHORIZATION);
-    }
-
-    public static StubRequest newStubRequest() {
-        return new StubRequest(null, null, null, null, null, null);
-    }
-
-    static StubRequest newStubRequest(final String url, final String post) {
-        return new StubRequest(url, post, null, null, null, null);
-    }
-
-    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
-        final StubRequest assertionRequest = StubRequest.newStubRequest(request.getPathInfo(),
-                HandlerUtils.extractPostRequestBody(request, "stubs"));
-        assertionRequest.addMethod(request.getMethod());
-
-        final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-        final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
-                ? Collections.list(request.getHeaderNames()) : new LinkedList<>();
-        for (final String headerName : headerNames) {
-            final String headerValue = request.getHeader(headerName);
-            assertionRequest.getHeaders().put(toLower(headerName), headerValue);
-        }
-
-        assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
-        ConsoleUtils.logAssertingRequest(assertionRequest);
-
-        return assertionRequest;
     }
 
     @Override

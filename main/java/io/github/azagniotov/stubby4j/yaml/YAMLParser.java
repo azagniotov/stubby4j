@@ -24,12 +24,11 @@ import io.github.azagniotov.stubby4j.builders.stubs.StubReflectiveBuilder;
 import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.yaml.stubs.StubResponse;
 import org.yaml.snakeyaml.Yaml;
-import io.github.azagniotov.stubby4j.yaml.parser.SnakeYaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,15 +43,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.yaml.stubs.StubAuthorizationTypes.CUSTOM;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.database.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -31,9 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+
 public class AjaxEndpointStatsHandler extends AbstractHandler {
 
-    private static final String POPUP_STATS_HTML_TEMPLATE = HandlerUtils.getHtmlResourceByName("_popup_stats");
     private final StubRepository stubRepository;
 
     public AjaxEndpointStatsHandler(final StubRepository stubRepository) {
@@ -57,7 +58,8 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
                 response.getWriter().println(!stubRepository.getResourceStats().isEmpty());
             } else {
                 ConsoleUtils.logIncomingRequest(request);
-                final String htmlPopup = String.format(POPUP_STATS_HTML_TEMPLATE, stubRepository.getResourceStatsAsCsv());
+                final String popupStatsHtmlTemplate = getHtmlResourceByName("_popup_stats");
+                final String htmlPopup = String.format(popupStatsHtmlTemplate, stubRepository.getResourceStatsAsCsv());
                 response.getWriter().println(htmlPopup);
                 ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
             }
