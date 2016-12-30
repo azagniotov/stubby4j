@@ -11,6 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
+
 
 public class StubResponse {
 
@@ -112,7 +115,7 @@ public class StubResponse {
 
     public boolean isFilePathContainsTemplateTokens() {
         try {
-            return FileUtils.isFilePathContainTemplateTokens(file);
+            return isFilePathContainTemplateTokens(file);
         } catch (Exception e) {
             return false;
         }
@@ -130,7 +133,7 @@ public class StubResponse {
     @CoberturaIgnore
     private byte[] getFileBytes() {
         try {
-            return FileUtils.fileToBytes(file);
+            return fileToBytes(file);
         } catch (Exception e) {
             return new byte[]{};
         }

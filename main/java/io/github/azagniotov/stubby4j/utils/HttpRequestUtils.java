@@ -82,7 +82,7 @@ public final class HttpRequestUtils {
      * @return A string with debug information on Request's header
      */
     @CoberturaIgnore
-    static String dump(HttpServletRequest request) {
+    static String dump(final HttpServletRequest request) {
         final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(INDENT_UNIT + "PROTOCOL: ").append(request.getProtocol()).append(BR);

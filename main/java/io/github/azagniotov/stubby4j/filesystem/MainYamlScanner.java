@@ -10,7 +10,6 @@ import java.util.Date;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
-@CoberturaIgnore
 public final class MainYamlScanner implements Runnable {
 
     private final long sleepTime;

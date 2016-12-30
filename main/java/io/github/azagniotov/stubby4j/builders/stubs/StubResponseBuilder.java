@@ -15,7 +15,7 @@ import static java.lang.Integer.parseInt;
 import static org.eclipse.jetty.http.HttpStatus.getCode;
 
 
-public final class StubResponseBuilder implements StubReflectiveBuilder<StubResponse> {
+public final class StubResponseBuilder implements ReflectiveStubBuilder<StubResponse> {
 
     private Map<String, Object> fieldNameAndValues;
     private String status;

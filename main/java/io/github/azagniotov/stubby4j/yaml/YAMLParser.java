@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
-import io.github.azagniotov.stubby4j.builders.stubs.StubReflectiveBuilder;
+import io.github.azagniotov.stubby4j.builders.stubs.ReflectiveStubBuilder;
 import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -128,7 +128,7 @@ public class YAMLParser {
     }
 
 
-    private <T, B extends StubReflectiveBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
+    private <T, B extends ReflectiveStubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
 
         for (final Map.Entry<String, Object> propertyPair : httpTypeProperties.entrySet()) {
 

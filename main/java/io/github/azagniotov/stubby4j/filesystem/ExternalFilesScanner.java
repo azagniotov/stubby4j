@@ -10,7 +10,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 
-@CoberturaIgnore
 public final class ExternalFilesScanner implements Runnable {
 
     private final long sleepTime;

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public final class StubRequestBuilder implements StubReflectiveBuilder<StubRequest> {
+public final class StubRequestBuilder implements ReflectiveStubBuilder<StubRequest> {
 
     private Map<String, Object> fieldNameAndValues;
     private String url;

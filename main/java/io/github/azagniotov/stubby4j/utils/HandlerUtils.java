@@ -31,6 +31,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * @author Alexander Zagniotov
@@ -84,9 +88,7 @@ public final class HandlerUtils {
     }
 
     public static String populateHtmlTemplate(final String templateName, final Object... params) throws IOException {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(String.format(getHtmlResourceByName(templateName), params));
-        return builder.toString();
+        return String.format(getHtmlResourceByName(templateName), params);
     }
 
     public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
@@ -106,10 +108,10 @@ public final class HandlerUtils {
     }
 
     public static String calculateStubbyUpTime(final long timestamp) {
-        final long days = TimeUnit.MILLISECONDS.toDays(timestamp);
-        final long hours = TimeUnit.MILLISECONDS.toHours(timestamp) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(timestamp));
-        final long mins = TimeUnit.MILLISECONDS.toMinutes(timestamp) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timestamp));
-        final long secs = TimeUnit.MILLISECONDS.toSeconds(timestamp) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timestamp));
+        final long days = MILLISECONDS.toDays(timestamp);
+        final long hours = MILLISECONDS.toHours(timestamp) - DAYS.toHours(MILLISECONDS.toDays(timestamp));
+        final long mins = MILLISECONDS.toMinutes(timestamp) - HOURS.toMinutes(MILLISECONDS.toHours(timestamp));
+        final long secs = MILLISECONDS.toSeconds(timestamp) - MINUTES.toSeconds(MILLISECONDS.toMinutes(timestamp));
 
         return String.format("%d day%s, %d hour%s, %d min%s, %d sec%s",
                 days, pluralize(days), hours, pluralize(hours), mins, pluralize(mins), secs, pluralize(secs));

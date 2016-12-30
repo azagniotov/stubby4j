@@ -266,6 +266,7 @@ public class StubRepository {
         }
     }
 
+    @CoberturaIgnore
     public void retrieveLoadedStubs() {
         try {
             stubs.addAll(stubLoadComputation.get());
