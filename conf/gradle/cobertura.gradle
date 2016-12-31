@@ -37,8 +37,7 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
             )
             fileset(
                     dir: project(':main').sourceSets.main.output.classesDir,
-                    includes: "io/github/azagniotov/stubby4j/builders/**/*.class, " +
-                            "io/github/azagniotov/stubby4j/client/**/*.class, " +
+                    includes: "io/github/azagniotov/stubby4j/client/**/*.class, " +
                             "io/github/azagniotov/stubby4j/cli/CommandLineInterpreter.class, " +
                             "io/github/azagniotov/stubby4j/utils/*.class, " +
                             "io/github/azagniotov/stubby4j/yaml/**/*.class, " +

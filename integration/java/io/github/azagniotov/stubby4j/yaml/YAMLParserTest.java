@@ -71,6 +71,29 @@ public class YAMLParserTest {
     }
 
     @Test
+    public void shouldThrow_WhenResponseListYAMLContainsUnknownProperty() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("An unknown property configured: bodyy");
+
+        final String yaml =
+                "-  request:\n" +
+                "      method: [PUT]\n" +
+                "      url: /invoice\n" +
+                "\n" +
+                "   response:\n" +
+                "      - status: 200\n" +
+                "        body: OK\n" +
+                "\n" +
+                "      - status: 200\n" +
+                "        bodyy: OK\n" +
+                "\n" +
+                "      - status: 200\n" +
+                "        body: OK";
+
+        unmarshall(yaml);
+    }
+
+    @Test
     public void shouldUnmarshall_WhenYAMLValid_WithNoProperties() throws Exception {
 
         final String yaml = YAML_BUILDER
