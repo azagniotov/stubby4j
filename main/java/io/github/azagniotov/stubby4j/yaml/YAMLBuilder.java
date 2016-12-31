@@ -164,7 +164,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BASIC.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BASIC.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -174,7 +174,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BEARER.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BEARER.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -184,7 +184,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;

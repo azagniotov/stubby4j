@@ -42,9 +42,11 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
                             "io/github/azagniotov/stubby4j/utils/*.class, " +
                             "io/github/azagniotov/stubby4j/yaml/**/*.class, " +
                             "io/github/azagniotov/stubby4j/stubs/**/*.class, " +
+                            "io/github/azagniotov/stubby4j/stubs/**/*\$Builder.class, " +
+                            "io/github/azagniotov/stubby4j/stubs/**/*\$Builder.class, " +
                             "io/github/azagniotov/stubby4j/handlers/AjaxHandler.class, " +
                             "io/github/azagniotov/stubby4j/handlers/strategy/**/*.class",
-                    excludes: "**/*\$*.class"
+                    excludes: "**/*\$1.class, **/*\$2.class"
             )
         }
     }

@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -20,6 +22,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BAS
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static org.mockito.Mockito.when;
 
 
@@ -34,6 +37,52 @@ public class StubRequestBuilderTest {
     @Before
     public void setUp() throws Exception {
         builder = new StubRequest.Builder();
+    }
+
+    @Test
+    public void shouldStage_WhenConfigurablePropertyAndFieldValuePresent() throws Exception {
+        final String expectedFieldValue = "Hello!";
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.of(BODY);
+        final Optional<Object> fieldValueOptional = Optional.of(expectedFieldValue);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(expectedFieldValue);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyMissingButFieldValuePresent() throws Exception {
+        final String expectedFieldValue = "Hello!";
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.empty();
+        final Optional<Object> fieldValueOptional = Optional.of(expectedFieldValue);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyPresentButFieldValueMissing() throws Exception {
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.of(BODY);
+        final Optional<Object> fieldValueOptional = Optional.ofNullable(null);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyMissingAndFieldValueMissing() throws Exception {
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.ofNullable(null);
+        final Optional<Object> fieldValueOptional = Optional.ofNullable(null);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
     }
 
     @Test
@@ -432,7 +481,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(BASIC.asYamlProp(), "123").build();
+                        .withHeader(BASIC.asYAMLProp(), "123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -442,7 +491,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(BEARER.asYamlProp(), "123").build();
+                        .withHeader(BEARER.asYAMLProp(), "123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -452,7 +501,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(CUSTOM.asYamlProp(), "Custom 123").build();
+                        .withHeader(CUSTOM.asYAMLProp(), "Custom 123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -471,7 +520,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(BASIC.asYamlProp(), "123").build();
+                        .withHeader(BASIC.asYAMLProp(), "123").build();
 
         assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(BASIC);
     }
@@ -481,7 +530,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(BEARER.asYamlProp(), "123").build();
+                        .withHeader(BEARER.asYAMLProp(), "123").build();
 
         assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(BEARER);
     }
@@ -491,7 +540,7 @@ public class StubRequestBuilderTest {
         final StubRequest stubRequest =
                 builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeader(CUSTOM.asYamlProp(), "Custom 123").build();
+                        .withHeader(CUSTOM.asYAMLProp(), "Custom 123").build();
 
         assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(CUSTOM);
     }
@@ -1511,7 +1560,7 @@ public class StubRequestBuilderTest {
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(post).build();
-        stubRequest.computeRegexPatterns();
+        stubRequest.compileRegexPatternsAndCache();
 
         assertThat(RegexParser.PATTERN_CACHE.size()).isEqualTo(2);
         assertThat(RegexParser.PATTERN_CACHE.get(url.hashCode())).isInstanceOf(Pattern.class);

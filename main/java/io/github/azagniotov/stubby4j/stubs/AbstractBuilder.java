@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.as;
-import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 
 public abstract class AbstractBuilder<T extends ReflectableStub> {
 
@@ -22,9 +21,9 @@ public abstract class AbstractBuilder<T extends ReflectableStub> {
         return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
     }
 
-    public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Object fieldValue) {
-        if (fieldNameOptional.isPresent() && isNotNull(fieldValue)) {
-            fieldNameAndValues.put(fieldNameOptional.get(), fieldValue);
+    public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Optional<Object> fieldValueOptional) {
+        if (fieldNameOptional.isPresent() && fieldValueOptional.isPresent()) {
+            fieldNameAndValues.put(fieldNameOptional.get(), fieldValueOptional.get());
         }
     }
 

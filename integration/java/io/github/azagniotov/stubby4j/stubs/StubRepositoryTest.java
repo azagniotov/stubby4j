@@ -241,7 +241,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(BASIC.asYamlProp(), expectedHeaderValue)
+                .withHeaders(BASIC.asYAMLProp(), expectedHeaderValue)
                 .newStubbedResponse()
                 .withStatus(expectedStatus)
                 .withLiteralBody(expectedBody).build();
@@ -271,7 +271,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(BEARER.asYamlProp(), expectedHeaderValue)
+                .withHeaders(BEARER.asYAMLProp(), expectedHeaderValue)
                 .newStubbedResponse()
                 .withStatus(expectedStatus)
                 .withLiteralBody(expectedBody).build();
@@ -301,7 +301,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(CUSTOM.asYamlProp(), expectedHeaderValue)
+                .withHeaders(CUSTOM.asYAMLProp(), expectedHeaderValue)
                 .newStubbedResponse()
                 .withStatus(expectedStatus)
                 .withLiteralBody(expectedBody).build();
@@ -331,7 +331,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(BASIC.asYamlProp(), expectedHeaderValue)
+                .withHeaders(BASIC.asYAMLProp(), expectedHeaderValue)
                 .newStubbedResponse()
                 .withStatus(expectedStatus)
                 .withLiteralBody(expectedBody).build();
@@ -358,7 +358,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(BASIC.asYamlProp(), "'bob:secret'")
+                .withHeaders(BASIC.asYAMLProp(), "'bob:secret'")
                 .newStubbedResponse()
                 .withStatus("200")
                 .withLiteralBody("This is a response for 555").build();
@@ -369,7 +369,7 @@ public class StubRepositoryTest {
                 requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeader(BASIC.asYamlProp(), "Basic BadCredentials").build();
+                        .withHeader(BASIC.asYAMLProp(), "Basic BadCredentials").build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -385,7 +385,7 @@ public class StubRepositoryTest {
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withHeaders(BASIC.asYamlProp(), "'bob:secret'")
+                .withHeaders(BASIC.asYAMLProp(), "'bob:secret'")
                 .newStubbedResponse()
                 .withStatus("200")
                 .withLiteralBody("This is a response for 555").build();
@@ -396,7 +396,7 @@ public class StubRepositoryTest {
                 requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeader(BASIC.asYamlProp(), null).build();
+                        .withHeader(BASIC.asYAMLProp(), null).build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 

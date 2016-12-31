@@ -96,7 +96,7 @@ class StubMatcher {
         final Map<String, String> stubbedHeadersCopy = new HashMap<>(stubbedHeaders);
         for (final StubbableAuthorizationType authorizationType : StubbableAuthorizationType.values()) {
             // auth header is dealt with in StubRepository after request is matched
-            stubbedHeadersCopy.remove(authorizationType.asYamlProp());
+            stubbedHeadersCopy.remove(authorizationType.asYAMLProp());
         }
         return mapsMatch(stubbedHeadersCopy, assertingHeaders, HEADERS.toString());
     }

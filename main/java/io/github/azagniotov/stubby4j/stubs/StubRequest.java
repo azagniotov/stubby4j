@@ -158,16 +158,16 @@ public class StubRequest implements ReflectableStub {
     }
 
     boolean isSecured() {
-        return getHeaders().containsKey(BASIC.asYamlProp()) ||
-                getHeaders().containsKey(BEARER.asYamlProp()) ||
-                getHeaders().containsKey(CUSTOM.asYamlProp());
+        return getHeaders().containsKey(BASIC.asYAMLProp()) ||
+                getHeaders().containsKey(BEARER.asYAMLProp()) ||
+                getHeaders().containsKey(CUSTOM.asYAMLProp());
     }
 
     @VisibleForTesting
     StubbableAuthorizationType getStubbedAuthorizationType() {
-        if (getHeaders().containsKey(BASIC.asYamlProp())) {
+        if (getHeaders().containsKey(BASIC.asYAMLProp())) {
             return BASIC;
-        } else if (getHeaders().containsKey(BEARER.asYamlProp())) {
+        } else if (getHeaders().containsKey(BEARER.asYAMLProp())) {
             return BEARER;
         } else {
             return CUSTOM;
@@ -175,7 +175,7 @@ public class StubRequest implements ReflectableStub {
     }
 
     String getStubbedHeaderAuthorization(final StubbableAuthorizationType stubbableAuthorizationType) {
-        return getHeaders().get(stubbableAuthorizationType.asYamlProp());
+        return getHeaders().get(stubbableAuthorizationType.asYAMLProp());
     }
 
     public String getRawHeaderAuthorization() {
@@ -187,7 +187,7 @@ public class StubRequest implements ReflectableStub {
         return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
     }
 
-    public void computeRegexPatterns() {
+    public void compileRegexPatternsAndCache() {
         if (isSet(this.url)) {
             RegexParser.INSTANCE.compilePatternAndCache(this.url);
         }
@@ -352,13 +352,13 @@ public class StubRequest implements ReflectableStub {
         }
 
         public Builder withYAMLHeaderAuthorizationBasic(final String value) {
-            this.headers.put(StubbableAuthorizationType.BASIC.asYamlProp(), value);
+            this.headers.put(StubbableAuthorizationType.BASIC.asYAMLProp(), value);
 
             return this;
         }
 
         public Builder withYAMLHeaderAuthorizationBearer(final String value) {
-            this.headers.put(StubbableAuthorizationType.BEARER.asYamlProp(), value);
+            this.headers.put(StubbableAuthorizationType.BEARER.asYAMLProp(), value);
 
             return this;
         }

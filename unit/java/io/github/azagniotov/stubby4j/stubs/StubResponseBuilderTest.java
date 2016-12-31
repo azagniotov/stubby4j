@@ -2,14 +2,17 @@ package io.github.azagniotov.stubby4j.stubs;
 
 
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileFromString;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 
 public class StubResponseBuilderTest {
 
@@ -18,6 +21,52 @@ public class StubResponseBuilderTest {
     @Before
     public void setUp() throws Exception {
         builder = new StubResponse.Builder();
+    }
+
+    @Test
+    public void shouldStage_WhenConfigurablePropertyAndFieldValuePresent() throws Exception {
+        final String expectedFieldValue = "Hello!";
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.of(BODY);
+        final Optional<Object> fieldValueOptional = Optional.of(expectedFieldValue);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(expectedFieldValue);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyMissingButFieldValuePresent() throws Exception {
+        final String expectedFieldValue = "Hello!";
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.empty();
+        final Optional<Object> fieldValueOptional = Optional.of(expectedFieldValue);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyPresentButFieldValueMissing() throws Exception {
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.of(BODY);
+        final Optional<Object> fieldValueOptional = Optional.ofNullable(null);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
+    }
+
+    @Test
+    public void shouldNotStage_WhenConfigurablePropertyMissingAndFieldValueMissing() throws Exception {
+        final String orElse = "Boo!";
+        final Optional<ConfigurableYAMLProperty> propertyOptional = Optional.ofNullable(null);
+        final Optional<Object> fieldValueOptional = Optional.ofNullable(null);
+
+        builder.stage(propertyOptional, fieldValueOptional);
+
+        assertThat(builder.getStaged(String.class, BODY, orElse)).isEqualTo(orElse);
     }
 
     @Test

@@ -16,7 +16,7 @@ public enum StubbableAuthorizationType {
         this.property = String.format("authorization-%s", StringUtils.toLower(this.name));
     }
 
-    public String asYamlProp() {
+    public String asYAMLProp() {
         return property;
     }
 

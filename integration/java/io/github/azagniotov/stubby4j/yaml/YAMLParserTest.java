@@ -498,7 +498,7 @@ public class YAMLParserTest {
 
         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(authorization));
 
-        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYamlProp(), encodedAuthorizationHeader);
+        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYAMLProp(), encodedAuthorizationHeader);
     }
 
     @Test
@@ -517,7 +517,7 @@ public class YAMLParserTest {
 
         final String encodedAuthorizationHeader = String.format("%s %s", "Basic", StringUtils.encodeBase64(""));
 
-        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYamlProp(), encodedAuthorizationHeader);
+        assertThat(actualRequest.getHeaders()).containsEntry(BASIC.asYAMLProp(), encodedAuthorizationHeader);
     }
 
     @Test
@@ -538,7 +538,7 @@ public class YAMLParserTest {
 
         final String authorizationHeader = String.format("%s %s", "Bearer", authorization);
 
-        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYamlProp(), authorizationHeader);
+        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYAMLProp(), authorizationHeader);
     }
 
     @Test
@@ -557,7 +557,7 @@ public class YAMLParserTest {
 
         final String authorizationHeader = String.format("%s %s", "Bearer", "");
 
-        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYamlProp(), authorizationHeader);
+        assertThat(actualRequest.getHeaders()).containsEntry(BEARER.asYAMLProp(), authorizationHeader);
     }
 
     @Test
@@ -576,7 +576,7 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYamlProp(), authorizationHeader);
+        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYAMLProp(), authorizationHeader);
     }
 
     @Test
@@ -593,7 +593,7 @@ public class YAMLParserTest {
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
-        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYamlProp(), "");
+        assertThat(actualRequest.getHeaders()).containsEntry(CUSTOM.asYAMLProp(), "");
     }
 
     @Test

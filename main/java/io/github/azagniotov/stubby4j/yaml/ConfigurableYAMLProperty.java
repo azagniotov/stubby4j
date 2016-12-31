@@ -35,7 +35,7 @@ public enum ConfigurableYAMLProperty {
         return !CACHE.containsKey(toLower(stubbedProperty));
     }
 
-    public static Optional<ConfigurableYAMLProperty> getConfigurableProperty(final String stubbedProperty) {
+    public static Optional<ConfigurableYAMLProperty> ofNullableProperty(final String stubbedProperty) {
         return Optional.ofNullable(CACHE.get(toLower(stubbedProperty)));
     }
 
