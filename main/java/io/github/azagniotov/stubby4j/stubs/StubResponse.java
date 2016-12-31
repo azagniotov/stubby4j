@@ -5,20 +5,16 @@ import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpStatus.Code;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.github.azagniotov.generics.TypeSafeConverter.as;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
-import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
@@ -164,9 +160,8 @@ public class StubResponse implements ReflectableStub {
         return getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
     }
 
-    public static final class Builder implements ReflectableStubBuilder<StubResponse> {
+    public static final class Builder extends AbstractBuilder<StubResponse> {
 
-        private Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
         private String status;
         private String body;
         private File file;
@@ -174,12 +169,12 @@ public class StubResponse implements ReflectableStub {
         private Map<String, String> headers;
 
         public Builder() {
+            super();
             this.status = null;
             this.body = null;
             this.file = null;
             this.latency = null;
             this.headers = new LinkedHashMap<>();
-            this.fieldNameAndValues = new HashMap<>();
         }
 
         public Builder emptyWithBody(final String body) {
@@ -208,24 +203,12 @@ public class StubResponse implements ReflectableStub {
         }
 
         @Override
-        public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Object fieldValue) {
-            if (fieldNameOptional.isPresent() && isNotNull(fieldValue)) {
-                this.fieldNameAndValues.put(fieldNameOptional.get(), fieldValue);
-            }
-        }
-
-        @Override
-        public <E> E get(final Class<E> clazzor, final ConfigurableYAMLProperty property, E orElse) {
-            return this.fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
-        }
-
-        @Override
         public StubResponse build() {
-            this.status = get(String.class, STATUS, status);
-            this.body = get(String.class, BODY, body);
-            this.file = get(File.class, FILE, file);
-            this.latency = get(String.class, LATENCY, latency);
-            this.headers = asCheckedLinkedHashMap(get(Map.class, HEADERS, headers), String.class, String.class);
+            this.status = getStaged(String.class, STATUS, status);
+            this.body = getStaged(String.class, BODY, body);
+            this.file = getStaged(File.class, FILE, file);
+            this.latency = getStaged(String.class, LATENCY, latency);
+            this.headers = asCheckedLinkedHashMap(getStaged(Map.class, HEADERS, headers), String.class, String.class);
 
             final StubResponse stubResponse = new StubResponse(getHttpStatusCode(), body, file, latency, headers);
 
@@ -234,7 +217,7 @@ public class StubResponse implements ReflectableStub {
             this.file = null;
             this.latency = null;
             this.headers = new LinkedHashMap<>();
-            this.fieldNameAndValues = new HashMap<>();
+            this.fieldNameAndValues.clear();
 
             return stubResponse;
         }

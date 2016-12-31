@@ -7,7 +7,6 @@ import io.github.azagniotov.stubby4j.utils.CollectionUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,16 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static io.github.azagniotov.generics.TypeSafeConverter.as;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
@@ -250,9 +246,8 @@ public class StubRequest implements ReflectableStub {
         return sb.toString();
     }
 
-    public static final class Builder implements ReflectableStubBuilder<StubRequest> {
+    public static final class Builder extends AbstractBuilder<StubRequest> {
 
-        private Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
         private String url;
         private List<String> method;
         private String post;
@@ -261,13 +256,13 @@ public class StubRequest implements ReflectableStub {
         private Map<String, String> query;
 
         public Builder() {
+            super();
             this.url = null;
             this.method = new ArrayList<>();
             this.post = null;
             this.file = null;
             this.headers = new LinkedHashMap<>();
             this.query = new LinkedHashMap<>();
-            this.fieldNameAndValues = new HashMap<>();
         }
 
         public Builder withMethod(final String value) {
@@ -411,25 +406,13 @@ public class StubRequest implements ReflectableStub {
         }
 
         @Override
-        public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Object fieldValue) {
-            if (fieldNameOptional.isPresent() && isNotNull(fieldValue)) {
-                fieldNameAndValues.put(fieldNameOptional.get(), fieldValue);
-            }
-        }
-
-        @Override
-        public <E> E get(final Class<E> clazzor, final ConfigurableYAMLProperty property, E orElse) {
-            return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
-        }
-
-        @Override
         public StubRequest build() {
-            this.url = get(String.class, URL, url);
-            this.post = get(String.class, POST, post);
-            this.file = get(File.class, FILE, file);
-            this.method = asCheckedArrayList(get(List.class, METHOD, method), String.class);
-            this.headers = asCheckedLinkedHashMap(get(Map.class, HEADERS, headers), String.class, String.class);
-            this.query = asCheckedLinkedHashMap(get(Map.class, QUERY, query), String.class, String.class);
+            this.url = getStaged(String.class, URL, url);
+            this.post = getStaged(String.class, POST, post);
+            this.file = getStaged(File.class, FILE, file);
+            this.method = asCheckedArrayList(getStaged(List.class, METHOD, method), String.class);
+            this.headers = asCheckedLinkedHashMap(getStaged(Map.class, HEADERS, headers), String.class, String.class);
+            this.query = asCheckedLinkedHashMap(getStaged(Map.class, QUERY, query), String.class, String.class);
 
             final StubRequest stubRequest = new StubRequest(url, post, file, method, headers, query);
 
@@ -439,7 +422,7 @@ public class StubRequest implements ReflectableStub {
             this.file = null;
             this.headers = new LinkedHashMap<>();
             this.query = new LinkedHashMap<>();
-            this.fieldNameAndValues = new HashMap<>();
+            this.fieldNameAndValues.clear();
 
             return stubRequest;
         }

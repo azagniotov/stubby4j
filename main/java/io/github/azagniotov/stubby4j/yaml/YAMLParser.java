@@ -22,7 +22,7 @@ package io.github.azagniotov.stubby4j.yaml;
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
-import io.github.azagniotov.stubby4j.stubs.ReflectableStubBuilder;
+import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
@@ -132,7 +132,7 @@ public class YAMLParser {
     }
 
 
-    private <T extends ReflectableStub, B extends ReflectableStubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws IOException {
+    private <T extends ReflectableStub, B extends AbstractBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws IOException {
 
         for (final Map.Entry<String, Object> propertyPair : httpTypeProperties.entrySet()) {
 
