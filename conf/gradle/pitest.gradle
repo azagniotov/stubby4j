@@ -14,7 +14,7 @@ pitest {
                       'io.github.azagniotov.stubby4j.filesystem.*',
                       'io.github.azagniotov.stubby4j.http.*',
                       'io.github.azagniotov.stubby4j.utils.ConsoleUtils']
-   threads = 1
+   threads = 2
    outputFormats = ['HTML']
    failWhenNoMutations = false
    timestampedReports = false

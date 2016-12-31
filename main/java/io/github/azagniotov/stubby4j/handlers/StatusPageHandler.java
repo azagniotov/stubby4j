@@ -30,7 +30,7 @@ import io.github.azagniotov.stubby4j.utils.JarUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlProperties;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
@@ -45,19 +45,24 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 public final class StatusPageHandler extends AbstractHandler {
 
     private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
     private static final MemoryMXBean MEMORY_MX_BEAN = ManagementFactory.getMemoryMXBean();
-    private static final List<String> FIELDS_FOR_AJAX_LINKS = Collections.unmodifiableList(Arrays.asList(YamlProperties.FILE, YamlProperties.BODY, YamlProperties.POST));
+    private static final List<ConfigurableYAMLProperty> FIELDS_FOR_AJAX_LINKS = unmodifiableList(asList(FILE, BODY, POST));
 
     private static final String TEMPLATE_LOADED_FILE_METADATA_PAIR = "<span style='color: #8B0000'>%s</span>=<span style='color: green'>%s</span>";
     private static final String TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK = "<strong><a class='ajax-resource' href='/ajax/resource/%s/%s/%s'>[view]</a></strong>";
@@ -118,11 +123,11 @@ public final class StatusPageHandler extends AbstractHandler {
 
     private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle, final String templateHtmlTable) throws Exception {
         final String resourceId = stubHttpLifecycle.getResourceId();
-        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "requestAsYAML");
-        final StringBuilder requestTableBuilder = buildStubHtmlTableBody(resourceId, YamlProperties.REQUEST, ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
+        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, ConfigurableYAMLProperty.HTTPLIFECYCLE, "requestAsYAML");
+        final StringBuilder requestTableBuilder = buildStubHtmlTableBody(resourceId, REQUEST.toString(), ReflectionUtils.getProperties(stubHttpLifecycle.getRequest()));
         requestTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
-        return String.format(templateHtmlTable, YamlProperties.REQUEST, requestTableBuilder.toString());
+        return String.format(templateHtmlTable, REQUEST, requestTableBuilder.toString());
     }
 
     private String buildStubResponseHtmlTable(final StubHttpLifecycle stubHttpLifecycle, final String templateHtmlTable) throws Exception {
@@ -134,11 +139,11 @@ public final class StatusPageHandler extends AbstractHandler {
             final boolean isResponsesSequenced = allResponses.size() != 1;
             final int nextSequencedResponseId = stubHttpLifecycle.getNextSequencedResponseId();
             final String nextResponseLabel = (isResponsesSequenced && nextSequencedResponseId == sequenceId ? NEXT_IN_THE_QUEUE : "");
-            final String responseTableTitle = (isResponsesSequenced ? String.format("%s/%s%s", YamlProperties.RESPONSE, sequenceId, nextResponseLabel) : YamlProperties.RESPONSE);
+            final String responseTableTitle = (isResponsesSequenced ? String.format("%s/%s%s", RESPONSE, sequenceId, nextResponseLabel) : RESPONSE.toString());
             final StubResponse stubResponse = allResponses.get(sequenceId);
             final Map<String, String> stubResponseProperties = ReflectionUtils.getProperties(stubResponse);
             final StringBuilder sequencedResponseBuilder = buildStubHtmlTableBody(resourceId, responseTableTitle, stubResponseProperties);
-            final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, YamlProperties.HTTPLIFECYCLE, "responseAsYAML");
+            final String ajaxLinkToResponseAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, ConfigurableYAMLProperty.HTTPLIFECYCLE, "responseAsYAML");
             sequencedResponseBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToResponseAsYaml));
 
             responseTableBuilder.append(String.format(templateHtmlTable, responseTableTitle, sequencedResponseBuilder.toString()));
@@ -248,7 +253,7 @@ public final class StatusPageHandler extends AbstractHandler {
         }
 
         final String escapedValue = StringUtils.escapeHtmlEntities(value);
-        if (fieldName.equals(YamlProperties.URL)) {
+        if (fieldName.equals(ConfigurableYAMLProperty.URL)) {
             final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
             final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 

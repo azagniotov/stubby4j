@@ -1,8 +1,8 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -10,37 +10,37 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 3:44 PM
- */
-@RunWith(MockitoJUnitRunner.class)
-public class StubRequestTest {
 
-    private static final StubRequestBuilder BUILDER = new StubRequestBuilder();
+@RunWith(MockitoJUnitRunner.class)
+public class StubRequestBuilderTest {
 
     @Mock
     private HttpServletRequest mockHttpServletRequest;
 
+    private StubRequest.Builder builder;
+
+    @Before
+    public void setUp() throws Exception {
+        builder = new StubRequest.Builder();
+    }
+
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenNullUrlStubbed_AndNullUrlSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl(null).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(null).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(null).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(null).withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -48,8 +48,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenEmptyUrlStubbed_AndEmptyUrlSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -57,8 +57,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenNullUrlStubbed_ButUrlSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl(null).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(null).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -66,8 +66,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenUrlStubbed_ButNullUrlSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(null).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(null).withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -77,8 +77,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/123";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -88,8 +88,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/123";
 
-        final StubRequest expectedRequest = BUILDER.withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(url).withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -97,8 +97,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenRootUrlsEquals() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -106,8 +106,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedRootUrlStartsWithRegex_ButSubmittedUrlRoot() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("^/$").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("^/$").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -116,8 +116,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlHasOptionalTrailingSlash_ButNoSlashSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/?").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123/?").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -125,8 +125,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlHasOptionalTrailingSlash_ButSlashSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/?").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123/?").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -134,8 +134,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenStubbedUrlHasRequiredTrailingSlash_ButNoSlashSubmitted() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123/").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123/").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -143,8 +143,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexExact_AndUrlsEqual() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123$").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("^/invoice/123$").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -152,8 +152,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexBeginsWith() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123.*").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("^/invoice/123.*").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/12345").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -161,8 +161,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenSubmittedUrlLonger() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/12345").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/12345").withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -170,8 +170,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenStubbedUrlRegexBeginsWith_AndSubmittedUrlWrong() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("^/invoice/123").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/1").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("^/invoice/123").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/1").withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -179,8 +179,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenSubmittedUrlShorter() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/1").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/1").withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -188,8 +188,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenUrlsEquals() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -197,8 +197,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexEndsWith_AndSubmittedUrlHasExtraBeggining() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123$").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/some/beggining/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(".*/invoice/123$").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/some/beggining/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -206,8 +206,8 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexAnythingAround_AndUrlsEqual() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl(".*/invoice/123.*").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(".*/invoice/123.*").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -215,175 +215,10 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStubbedUrlRegexGroups_AndUrlsEqual() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("(.*)(/invoice/123)(.*)").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/invoice/123").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("(.*)(/invoice/123)(.*)").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/invoice/123").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-
-    @Test
-    public void arraysIntersect_ShouldReturnTrue_WhenDataStoreArrayEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<>(), new ArrayList<String>() {{
-            add("apple");
-        }});
-
-        assertThat(isArraysIntersect).isTrue();
-    }
-
-    @Test
-    public void arraysIntersect_ShouldReturnFalse_WhenAssertingArrayEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.listsIntersect(new ArrayList<String>() {{
-            add("apple");
-        }}, new ArrayList<>());
-
-        assertThat(isArraysIntersect).isFalse();
-    }
-
-    @Test
-    public void arraysIntersect_ShouldReturnTrue_WhenTwoArraysHaveTheSameElements() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.listsIntersect(
-                new ArrayList<String>() {{
-                    add("apple");
-                }}, new ArrayList<String>() {{
-                    add("apple");
-                }}
-        );
-
-        assertThat(isArraysIntersect).isTrue();
-    }
-
-    @Test
-    public void arraysIntersect_ShouldReturnFalse_WhenTwoArraysDontHaveTheSameElements() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final boolean isArraysIntersect = stubRequest.listsIntersect(
-                new ArrayList<String>() {{
-                    add("apple");
-                }}, new ArrayList<String>() {{
-                    add("orange");
-                }}
-        );
-
-        assertThat(isArraysIntersect).isFalse();
-    }
-
-    @Test
-    public void stringsMatch_ShouldReturnTrue_WhenDataStoreValueNull() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final String dataStoreVlaue = null;
-        final String assertingValue = "blah";
-        final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
-
-        assertThat(isStringsMatch).isTrue();
-    }
-
-    @Test
-    public void stringsMatch_ShouldReturnTrue_WhenDataStoreValueEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final String dataStoreVlaue = "";
-        final String assertingValue = "blah";
-        final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
-
-        assertThat(isStringsMatch).isTrue();
-    }
-
-    @Test
-    public void stringsMatch_ShouldReturnFalse_WhenAssertingValueNull() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final String dataStoreVlaue = "stubbedValue";
-        final String assertingValue = null;
-        final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
-
-        assertThat(isStringsMatch).isFalse();
-    }
-
-    @Test
-    public void stringsMatch_ShouldReturnFalse_WhenAssertingValueEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final String dataStoreVlaue = "stubbedValue";
-        final String assertingValue = "";
-        final boolean isStringsMatch = stubRequest.stringsMatch(dataStoreVlaue, assertingValue, "arbitrary template token name");
-
-        assertThat(isStringsMatch).isFalse();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmptyAndAssertingMapEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<>();
-        final Map<String, String> assertingMap = new HashMap<>();
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isTrue();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnTrue_WhenDataStoreMapEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<>();
-        final Map<String, String> assertingMap = new HashMap<String, String>() {{
-            put("key", "value");
-        }};
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isTrue();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnFalse_WhenDataStoreMapNotEmptyAndAssertingMapEmpty() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
-            put("key", "value");
-        }};
-        final Map<String, String> assertingMap = new HashMap<>();
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isFalse();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreKey() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
-            put("requiredKey", "requiredValue");
-        }};
-        final Map<String, String> assertingMap = new HashMap<String, String>() {{
-            put("someKey", "someValue");
-        }};
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isFalse();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnFalse_WhenAssertingMapDoesNotContainDataStoreValue() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
-            put("requiredKey", "requiredValue");
-        }};
-        final Map<String, String> assertingMap = new HashMap<String, String>() {{
-            put("requiredKey", "someValue");
-        }};
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isFalse();
-    }
-
-    @Test
-    public void mapsMatch_ShouldReturnTrue_WhenAssertingMapMatchesDataStoreMap() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        final Map<String, String> dataStoreMap = new HashMap<String, String>() {{
-            put("requiredKey", "requiredValue");
-        }};
-        final Map<String, String> assertingMap = new HashMap<String, String>() {{
-            put("requiredKey", "requiredValue");
-        }};
-        final boolean isMapsMatch = stubRequest.mapsMatch(dataStoreMap, assertingMap, "arbitrary template token name");
-
-        assertThat(isMapsMatch).isTrue();
     }
 
     @Test
@@ -398,14 +233,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl("/invoice/788")
+                builder.withUrl("/invoice/788")
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramTwo, paramTwoValue)
@@ -420,8 +255,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/123";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(url).withMethod("get").build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(url).withMethod("get").build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -432,8 +267,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/123";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(url).build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(url).build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -443,8 +278,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/123";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).build();
-        final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).build();
+        final StubRequest assertingRequest = builder.withUrl(url).withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -452,10 +287,10 @@ public class StubRequestTest {
     @Test
     public void shouldAddMethod_WhenGivenMethodArgumentSet() throws Exception {
 
-        final StubRequest expectedRequest = StubRequest.newStubRequest();
-        expectedRequest.addMethod("GET");
-        expectedRequest.addMethod("POST");
-        expectedRequest.addMethod("HEAD");
+        final StubRequest expectedRequest = builder
+                .withMethod("GET")
+                .withMethod("POST")
+                .withMethod("HEAD").build();
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(3);
         assertThat(expectedRequest.getMethod()).containsExactly("GET", "POST", "HEAD");
@@ -464,10 +299,10 @@ public class StubRequestTest {
     @Test
     public void shouldAddMethod_WhenGivenMethodArgumentEmpty() throws Exception {
 
-        final StubRequest expectedRequest = StubRequest.newStubRequest();
-        expectedRequest.addMethod("GET");
-        expectedRequest.addMethod("");
-        expectedRequest.addMethod("HEAD");
+        final StubRequest expectedRequest = builder
+                .withMethod("GET")
+                .withMethod("")
+                .withMethod("HEAD").build();
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
         assertThat(expectedRequest.getMethod()).containsExactly("GET", "HEAD");
@@ -476,10 +311,10 @@ public class StubRequestTest {
     @Test
     public void shouldAddMethod_WhenGivenMethodArgumentNull() throws Exception {
 
-        final StubRequest expectedRequest = StubRequest.newStubRequest();
-        expectedRequest.addMethod("GET");
-        expectedRequest.addMethod(null);
-        expectedRequest.addMethod("HEAD");
+        final StubRequest expectedRequest = builder
+                .withMethod("GET")
+                .withMethod(null)
+                .withMethod("HEAD").build();
 
         assertThat(expectedRequest.getMethod().size()).isEqualTo(2);
         assertThat(expectedRequest.getMethod()).containsExactly("GET", "HEAD");
@@ -492,7 +327,7 @@ public class StubRequestTest {
 
         final String postBody = "Hello";
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withPost(postBody)
                         .withMethodGet().build();
 
@@ -506,7 +341,7 @@ public class StubRequestTest {
 
         final String postBody = "Hello";
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withPost(postBody)
                         .withFile(File.createTempFile("tmp", "tmp"))
                         .withMethodGet().build();
@@ -521,7 +356,7 @@ public class StubRequestTest {
 
         final String fileContent = "Hello World!";
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withFile(FileUtils.fileFromString(fileContent))
                         .withMethodGet().build();
 
@@ -534,8 +369,8 @@ public class StubRequestTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl(url).withMethodPost().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl(url).withMethodPost().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -546,12 +381,12 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost("some post").build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost("different post").build();
 
@@ -564,12 +399,12 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost("some stubbed post").build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
@@ -581,11 +416,11 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost().build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost("some post").build();
 
@@ -595,9 +430,9 @@ public class StubRequestTest {
     @Test
     public void isSecured_WhenAuthorizationBasicStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(BASIC.asYamlProp(), "123").build();
+                        .withHeader(BASIC.asYamlProp(), "123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -605,9 +440,9 @@ public class StubRequestTest {
     @Test
     public void isSecured_WhenAuthorizationBearerStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(BEARER.asYamlProp(), "123").build();
+                        .withHeader(BEARER.asYamlProp(), "123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -615,9 +450,9 @@ public class StubRequestTest {
     @Test
     public void isSecured_WhenAuthorizationCustomStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
+                        .withHeader(CUSTOM.asYamlProp(), "Custom 123").build();
 
         assertThat(stubRequest.isSecured()).isTrue();
     }
@@ -625,7 +460,7 @@ public class StubRequestTest {
     @Test
     public void isNotSecured_WhenNoAuthorizationStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet().build();
 
         assertThat(stubRequest.isSecured()).isFalse();
@@ -634,31 +469,31 @@ public class StubRequestTest {
     @Test
     public void shouldGetAuthorizationTypeBasic_WhenBasicAuthorizationStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(BASIC.asYamlProp(), "123").build();
+                        .withHeader(BASIC.asYamlProp(), "123").build();
 
-        assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BASIC);
+        assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(BASIC);
     }
 
     @Test
     public void shouldGetAuthorizationTypeBearer_WhenBearerAuthorizationStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(BEARER.asYamlProp(), "123").build();
+                        .withHeader(BEARER.asYamlProp(), "123").build();
 
-        assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(BEARER);
+        assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(BEARER);
     }
 
     @Test
     public void shouldGetAuthorizationTypeCustom_WhenCustomAuthorizationStubbed() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
-                        .withHeaders(CUSTOM.asYamlProp(), "Custom 123").build();
+                        .withHeader(CUSTOM.asYamlProp(), "Custom 123").build();
 
-        assertThat(stubRequest.getStubbedAuthorizationTypeHeader()).isEqualTo(CUSTOM);
+        assertThat(stubRequest.getStubbedAuthorizationType()).isEqualTo(CUSTOM);
     }
 
     @Test
@@ -668,14 +503,14 @@ public class StubRequestTest {
         final String contentLength = "30";
         final String contentLanguage = "en-US";
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
@@ -691,14 +526,14 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength("30")
                         .withHeaderContentLanguage("en-US").build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
@@ -711,11 +546,11 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet().build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength("30")
@@ -733,18 +568,18 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
-                        .withHeaders("Content-Length", contentLength)
-                        .withHeaders("Content-Language", contentLanguage).build();
+                        .withHeader("Content-Length", contentLength)
+                        .withHeader("Content-Language", contentLanguage).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -758,14 +593,14 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
-                        .withHeaders("Content-Length", contentLength)
-                        .withHeaders("Content-Language", contentLanguage).build();
+                        .withHeader("Content-Length", contentLength)
+                        .withHeader("Content-Language", contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
@@ -784,14 +619,14 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withHeaderContentType("application/xml")
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationJsonContentType()
                         .withHeaderContentLength(contentLength)
@@ -808,14 +643,14 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
@@ -832,14 +667,14 @@ public class StubRequestTest {
         final String url = "/invoice/123";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withApplicationXmlContentType()
                         .withHeaderContentLength(contentLength)
@@ -863,12 +698,12 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead().build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -889,14 +724,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead().build();
 
@@ -916,14 +751,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -945,14 +780,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -975,7 +810,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -983,7 +818,7 @@ public class StubRequestTest {
                         .withQuery("paramThree", "three").build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1004,14 +839,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1032,14 +867,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramTwo, paramTwoValue)
                         .withQuery(paramOne, paramOneValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1060,14 +895,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1086,7 +921,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1095,7 +930,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1109,7 +944,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1118,7 +953,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1132,7 +967,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1142,7 +977,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1157,7 +992,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
@@ -1166,7 +1001,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1181,7 +1016,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
@@ -1190,7 +1025,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1205,7 +1040,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withQuery(paramOne, paramOneValue).build();
 
@@ -1214,7 +1049,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1233,7 +1068,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1243,7 +1078,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1262,7 +1097,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1272,7 +1107,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1286,7 +1121,7 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue).build();
@@ -1296,7 +1131,7 @@ public class StubRequestTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -1318,7 +1153,7 @@ public class StubRequestTest {
         final String postBody = "this is a post body";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -1330,7 +1165,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
@@ -1358,14 +1193,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1387,14 +1222,14 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withQuery(paramOne, paramOneValue)
@@ -1416,18 +1251,18 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
-                        .withHeaders(headerOne, headerOneValue)
-                        .withHeaders(headerTwo, headerTwoRegex).build();
+                        .withHeader(headerOne, headerOneValue)
+                        .withHeader(headerTwo, headerTwoRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
-                        .withHeaders(headerOne, headerOneValue)
-                        .withHeaders(headerTwo, headerTwoAssertingValue).build();
+                        .withHeader(headerOne, headerOneValue)
+                        .withHeader(headerTwo, headerTwoAssertingValue).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1445,18 +1280,18 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
-                        .withHeaders(headerOne, headerOneValue)
-                        .withHeaders(headerTwo, headerTwoRegex).build();
+                        .withHeader(headerOne, headerOneValue)
+                        .withHeader(headerTwo, headerTwoRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
-                        .withHeaders(headerOne, headerOneValue)
-                        .withHeaders(headerTwo, headerTwoAssertingValue).build();
+                        .withHeader(headerOne, headerOneValue)
+                        .withHeader(headerTwo, headerTwoAssertingValue).build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -1479,13 +1314,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
@@ -1511,13 +1346,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
@@ -1543,13 +1378,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
@@ -1575,13 +1410,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
@@ -1597,12 +1432,12 @@ public class StubRequestTest {
         final String url = "/post";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost(postAssertingValue).build();
 
@@ -1617,13 +1452,13 @@ public class StubRequestTest {
         final String url = "/post";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
@@ -1645,13 +1480,13 @@ public class StubRequestTest {
         final String url = "/post";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(postAssertingValue).build();
@@ -1672,7 +1507,7 @@ public class StubRequestTest {
         final String post = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
 
         final StubRequest stubRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withApplicationJsonContentType()
                         .withPost(post).build();
@@ -1703,13 +1538,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
@@ -1726,13 +1561,13 @@ public class StubRequestTest {
         final String url = "/invoice/789";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodHead()
                         .withPost(postValue).build();
@@ -1756,7 +1591,7 @@ public class StubRequestTest {
         final String postBody = "this is a post body";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -1768,7 +1603,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest assertingRequest =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodPost()
                         .withPost(postBody)
                         .withQuery(paramOne, paramOneValue)
@@ -1787,8 +1622,8 @@ public class StubRequestTest {
 
         final String url = ".*account.*";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/some/products/account/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1798,8 +1633,8 @@ public class StubRequestTest {
 
         final String url = "^.*account.*";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/some/products/account/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/some/products/account/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1809,8 +1644,8 @@ public class StubRequestTest {
 
         final String url = "^/products/[0-9]+/?$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/products/12345/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1820,8 +1655,8 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}/[0-9]+/?$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/abc/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/abc/12345/").withMethodGet().build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1831,14 +1666,14 @@ public class StubRequestTest {
 
         final String url = "^/(cats|dogs)/?(.*)";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER.withUrl("/cats/blah/again/").withMethodGet().build());
-            add(BUILDER.withUrl("/cats/blah/").withMethodGet().build());
-            add(BUILDER.withUrl("/dogs/blah/").withMethodGet().build());
-            add(BUILDER.withUrl("/dogs/").withMethodGet().build());
-            add(BUILDER.withUrl("/dogs").withMethodGet().build());
+            add(builder.withUrl("/cats/blah/again/").withMethodGet().build());
+            add(builder.withUrl("/cats/blah/").withMethodGet().build());
+            add(builder.withUrl("/dogs/blah/").withMethodGet().build());
+            add(builder.withUrl("/dogs/").withMethodGet().build());
+            add(builder.withUrl("/dogs").withMethodGet().build());
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
@@ -1851,13 +1686,13 @@ public class StubRequestTest {
 
         final String url = "^/(account|profile)/user/session/[a-zA-Z0-9]{32}/?";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
-            add(BUILDER.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
-            add(BUILDER.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
-            add(BUILDER.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
+            add(builder.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
+            add(builder.withUrl("/account/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
+            add(builder.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e").withMethodGet().build());
+            add(builder.withUrl("/profile/user/session/d41d8cd98f00b204e9800998ecf8427e/").withMethodGet().build());
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
@@ -1871,8 +1706,8 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}/[0-9]+/?$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/abcm/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/abcm/12345/").withMethodGet().build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
@@ -1883,12 +1718,12 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
-            add(BUILDER.withUrl("/abc-efg/12/KM/23423").withMethodGet().build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty").withMethodGet().build());
+            add(builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+            add(builder.withUrl("/abc-efg/12/KM/23423").withMethodGet().build());
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerty").withMethodGet().build());
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
@@ -1901,15 +1736,15 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER.withUrl("/abca-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
-            add(BUILDER.withUrl("/abcefg/12/KM/23423").withMethodGet().build());
-            add(BUILDER.withUrl("/aaa-aaa/00/Af/qwerty").withMethodGet().build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerTy").withMethodGet().build());
-            add(BUILDER.withUrl("/aaa-aaa/009/AA/qwerty").withMethodGet().build());
-            add(BUILDER.withUrl("/AAA-AAA/00/AA/qwerty").withMethodGet().build());
+            add(builder.withUrl("/abca-efg/12/KM/jhgjkhg234234l2").withMethodGet().build());
+            add(builder.withUrl("/abcefg/12/KM/23423").withMethodGet().build());
+            add(builder.withUrl("/aaa-aaa/00/Af/qwerty").withMethodGet().build());
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerTy").withMethodGet().build());
+            add(builder.withUrl("/aaa-aaa/009/AA/qwerty").withMethodGet().build());
+            add(builder.withUrl("/AAA-AAA/00/AA/qwerty").withMethodGet().build());
         }};
 
         for (final StubRequest assertingRequest : assertingRequests) {
@@ -1922,8 +1757,8 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -1936,8 +1771,8 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -1951,8 +1786,8 @@ public class StubRequestTest {
 
         final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -1966,8 +1801,8 @@ public class StubRequestTest {
 
         final String url = "^([a-z]{3})$";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("abc").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("abc").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -1982,9 +1817,9 @@ public class StubRequestTest {
         final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").build();
+                builder.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").build();
         final StubRequest assertingRequest =
-                BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withMethodGet().build();
+                builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -2000,9 +1835,9 @@ public class StubRequestTest {
         final String url = "^/([a-z]{3}-[a-z]{3})/[0-9]{2}/[A-Z]{2}/([a-z0-9]+)$";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").withQuery("paramTwo", "([A-Z]{5})").build();
+                builder.withUrl(url).withMethodGet().withQuery("paramOne", "(\\d{1,})").withQuery("paramTwo", "([A-Z]{5})").build();
         final StubRequest assertingRequest =
-                BUILDER.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withQuery("paramTwo", "ABCDE").withMethodGet().build();
+                builder.withUrl("/abc-efg/12/KM/jhgjkhg234234l2").withQuery("paramOne", "12345").withQuery("paramTwo", "ABCDE").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -2018,9 +1853,9 @@ public class StubRequestTest {
         final String url = "^/([a-z]{3}-([a-z]{3}))/([a-z0-9]+)$";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url).withMethodGet().build();
+                builder.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest =
-                BUILDER.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
+                builder.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -2036,9 +1871,9 @@ public class StubRequestTest {
         final String url = "^/(([a-z]{3})-([a-z]{3}))/([a-z0-9]+)$";
 
         final StubRequest expectedRequest =
-                BUILDER.withUrl(url).withMethodGet().build();
+                builder.withUrl(url).withMethodGet().build();
         final StubRequest assertingRequest =
-                BUILDER.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
+                builder.withUrl("/abc-efg/jhgjkhg234234l2").withMethodGet().build();
 
         final boolean equals = assertingRequest.equals(expectedRequest);
         assertThat(equals).isTrue();
@@ -2053,19 +1888,19 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER
+            add(builder
                     .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            add(builder.withUrl("/abc-efg/12/KM/23423")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerty")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
@@ -2081,19 +1916,19 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{8}&paramTwo=[a-zA-Z]{8}";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER
+            add(builder
                     .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
                     .withMethodGet()
                     .withQuery("paramOne", "wqePwrew")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            add(builder.withUrl("/abc-efg/12/KM/23423")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerty")
                     .withMethodGet()
                     .withQuery("paramOne", "aaaaaaaa")
                     .withQuery("paramTwo", "QwErTyUi").build());
@@ -2107,22 +1942,22 @@ public class StubRequestTest {
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenStaticUrlHasRegexifiedQueryString() throws Exception {
 
-        final StubRequest expectedRequest = BUILDER.withUrl("/atom/feed")
+        final StubRequest expectedRequest = builder.withUrl("/atom/feed")
                 .withMethodGet()
                 .withQuery("min-results", "\\d+")
                 .withQuery("max-results", "\\d+").build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER
+            add(builder
                     .withUrl("/atom/feed")
                     .withMethodGet()
                     .withQuery("min-results", "0")
                     .withQuery("max-results", "0").build());
-            add(BUILDER.withUrl("/atom/feed")
+            add(builder.withUrl("/atom/feed")
                     .withMethodGet()
                     .withQuery("min-results", "1")
                     .withQuery("max-results", "5").build());
-            add(BUILDER.withUrl("/atom/feed")
+            add(builder.withUrl("/atom/feed")
                     .withMethodGet()
                     .withQuery("min-results", "4654645756756")
                     .withQuery("max-results", "5675675686786786785675464564564").build());
@@ -2138,19 +1973,19 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=valueOne&paramTwo=valueTwo";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER
+            add(builder
                     .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            add(builder.withUrl("/abc-efg/12/KM/23423")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerty")
                     .withMethodGet()
                     .withQuery("paramOne", "valueOne")
                     .withQuery("paramTwo", "valueTwo").build());
@@ -2166,19 +2001,19 @@ public class StubRequestTest {
 
         final String url = "^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{8}&paramTwo=[a-zA-Z]{8}";
 
-        final StubRequest expectedRequest = BUILDER.withUrl(url).withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl(url).withMethodGet().build();
 
         final List<StubRequest> assertingRequests = new LinkedList<StubRequest>() {{
-            add(BUILDER
+            add(builder
                     .withUrl("/abc-efg/12/KM/jhgjkhg234234l2")
                     .withMethodGet()
                     .withQuery("paramSix", "wqePwrew")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/abc-efg/12/KM/23423")
+            add(builder.withUrl("/abc-efg/12/KM/23423")
                     .withMethodGet()
                     .withQuery("paramOne", "12345678")
                     .withQuery("paramTwo", "valueTwo").build());
-            add(BUILDER.withUrl("/aaa-aaa/00/AA/qwerty")
+            add(builder.withUrl("/aaa-aaa/00/AA/qwerty")
                     .withMethodGet()
                     .withQuery("paramOne", "aaa7aaaa")
                     .withQuery("paramTwo", "QwErTyUi").build());
@@ -2191,14 +2026,14 @@ public class StubRequestTest {
 
     @Test
     public void shouldfindStubRequestNotEqual_WhenComparedToNull() throws Exception {
-        final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/products/12345/").withMethodGet().build();
 
         assertThat(expectedRequest).isNotEqualTo(null);
     }
 
     @Test
     public void shouldfindStubRequestNotEqual_WhenComparedToDifferentInstanceClass() throws Exception {
-        final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/products/12345/").withMethodGet().build();
         final Object assertingObject = StubResponse.okResponse();
 
         final boolean assertionResult = expectedRequest.equals(assertingObject);
@@ -2207,8 +2042,8 @@ public class StubRequestTest {
 
     @Test
     public void shouldfindStubRequestEqual_WhenComparedToSameInstanceClass() throws Exception {
-        final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-        final Object assertingObject = StubRequest.newStubRequest();
+        final StubRequest expectedRequest = builder.withUrl("/products/12345/").withMethodGet().build();
+        final Object assertingObject = builder.build();
 
         final boolean assertionResult = assertingObject.equals(expectedRequest);
         assertThat(assertionResult).isFalse();
@@ -2216,8 +2051,8 @@ public class StubRequestTest {
 
     @Test
     public void shouldfindStubRequestEqual_WhenComparedToDifferentObjectWithSameProperties() throws Exception {
-        final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
-        final StubRequest assertingRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest assertingRequest = builder.withUrl("/products/12345/").withMethodGet().build();
 
         final boolean assertionResultOne = assertingRequest.equals(expectedRequest);
         final boolean assertionResultTwo = expectedRequest.equals(assertingRequest);
@@ -2228,7 +2063,7 @@ public class StubRequestTest {
 
     @Test
     public void shouldfindStubRequestEqual_WhenComparedToSameIdentity() throws Exception {
-        final StubRequest expectedRequest = BUILDER.withUrl("/products/12345/").withMethodGet().build();
+        final StubRequest expectedRequest = builder.withUrl("/products/12345/").withMethodGet().build();
 
         assertThat(expectedRequest).isEqualTo(expectedRequest);
     }
@@ -2250,7 +2085,7 @@ public class StubRequestTest {
         final String postBody = "this is a post body";
 
         final StubRequest requestOne =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2263,7 +2098,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest requestTwo =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2294,7 +2129,7 @@ public class StubRequestTest {
         final String postBody = "this is a post body";
 
         final StubRequest requestOne =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2306,7 +2141,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest requestTwo =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2336,7 +2171,7 @@ public class StubRequestTest {
         final String postBody = "this is a post body";
 
         final StubRequest requestOne =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2348,7 +2183,7 @@ public class StubRequestTest {
                         .withHeaderContentLanguage(contentLanguage).build();
 
         final StubRequest requestTwo =
-                BUILDER.withUrl(url)
+                builder.withUrl(url)
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
@@ -2366,11 +2201,11 @@ public class StubRequestTest {
     public void shouldFindTwoHashCodesEqual_WhenTwoRequestHaveMethodAndUrlNull() throws Exception {
 
         final StubRequest requestOne =
-                BUILDER.withUrl(null)
+                builder.withUrl(null)
                         .withMethod(null).build();
 
         final StubRequest requestTwo =
-                BUILDER.withUrl(null)
+                builder.withUrl(null)
                         .withMethod(null).build();
 
         assertThat(requestOne.hashCode()).isEqualTo(requestTwo.hashCode());
@@ -2380,11 +2215,11 @@ public class StubRequestTest {
     public void shouldFindTwoHashCodesEqual_WhenTwoRequestHaveUrlNull() throws Exception {
 
         final StubRequest requestOne =
-                BUILDER.withUrl(null)
+                builder.withUrl(null)
                         .withMethodGet().build();
 
         final StubRequest requestTwo =
-                BUILDER.withUrl(null)
+                builder.withUrl(null)
                         .withMethodGet().build();
 
         assertThat(requestOne.hashCode()).isEqualTo(requestTwo.hashCode());
@@ -2394,16 +2229,16 @@ public class StubRequestTest {
     public void shouldMatchExpectedToStringOutput_WhenActualRequestHasTheSameOutput() throws Exception {
 
         final StubRequest actualRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
                         .withPost("this is a post body")
                         .withQuery("paramOne", "paramOneValue")
                         .withQuery("paramTwo", "paramTwoValue")
-                        .withHeaders("headerThree", "headerThreeValue")
-                        .withHeaders("headerTwo", "headerTwoValue")
-                        .withHeaders("headerOne", "headerOneValue").build();
+                        .withHeader("headerThree", "headerThreeValue")
+                        .withHeader("headerTwo", "headerTwoValue")
+                        .withHeader("headerOne", "headerOneValue").build();
 
 
         final String expectedToStringOutput = "StubRequest{" +
@@ -2420,16 +2255,16 @@ public class StubRequestTest {
     public void shouldMatchExpectedToStringOutput_WhenActualRequestHasNullBody() throws Exception {
 
         final StubRequest actualRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
                         .withPost(null)
                         .withQuery("paramOne", "paramOneValue")
                         .withQuery("paramTwo", "paramTwoValue")
-                        .withHeaders("headerThree", "headerThreeValue")
-                        .withHeaders("headerTwo", "headerTwoValue")
-                        .withHeaders("headerOne", "headerOneValue").build();
+                        .withHeader("headerThree", "headerThreeValue")
+                        .withHeader("headerTwo", "headerTwoValue")
+                        .withHeader("headerOne", "headerOneValue").build();
 
         final String expectedToStringOutput = "StubRequest{" +
                 "url=/invoice/123, " +
@@ -2444,16 +2279,16 @@ public class StubRequestTest {
     public void shouldMatchExpectedToStringOutput_WhenActualRequestHasNullHeaderValue() throws Exception {
 
         final StubRequest actualRequest =
-                BUILDER.withUrl("/invoice/123")
+                builder.withUrl("/invoice/123")
                         .withMethodGet()
                         .withMethodPost()
                         .withMethodPut()
                         .withPost(null)
                         .withQuery("paramOne", "paramOneValue")
                         .withQuery("paramTwo", "paramTwoValue")
-                        .withHeaders("headerThree", "headerThreeValue")
-                        .withHeaders("headerTwo", "headerTwoValue")
-                        .withHeaders("headerOne", null).build();
+                        .withHeader("headerThree", "headerThreeValue")
+                        .withHeader("headerTwo", "headerTwoValue")
+                        .withHeader("headerOne", null).build();
 
         final String expectedToStringOutput = "StubRequest{" +
                 "url=/invoice/123, " +
@@ -2468,14 +2303,14 @@ public class StubRequestTest {
     public void shouldMatchExpectedToStringOutput_WhenActualRequestHasAllNullFields() throws Exception {
 
         final StubRequest actualRequest =
-                BUILDER.withUrl(null)
+                builder.withUrl(null)
                         .withMethod(null)
                         .withPost(null).build();
 
 
         final String expectedToStringOutput = "StubRequest{" +
                 "url=null, " +
-                "method=[null], " +
+                "method=[], " +
                 "query={}, " +
                 "headers={}}";
 
@@ -2485,7 +2320,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostNullAndMethodGet() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("GET")
                         .withPost(null).build();
 
@@ -2495,7 +2330,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostStubbedAndMethodGet() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("GET")
                         .withPost("stubbed").build();
 
@@ -2505,7 +2340,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostNullAndMethodPut() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("PUT")
                         .withPost(null).build();
 
@@ -2515,7 +2350,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPut() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("PUT")
                         .withPost("").build();
 
@@ -2525,7 +2360,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostStubbed_WhenPostStubbedAndMethodPut() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("PUT")
                         .withPost("stubbed").build();
 
@@ -2535,7 +2370,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostNullAndMethodPost() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("POST")
                         .withPost(null).build();
 
@@ -2545,7 +2380,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostNotStubbed_WhenPostEmptyAndMethodPost() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("POST")
                         .withPost("").build();
 
@@ -2555,7 +2390,7 @@ public class StubRequestTest {
     @Test
     public void shouldFindPostStubbed_WhenPostStubbedAndMethodPost() throws Exception {
         final StubRequest stubRequest =
-                BUILDER.withUrl("fssefewf")
+                builder.withUrl("fssefewf")
                         .withMethod("POST")
                         .withPost("stubbed").build();
 

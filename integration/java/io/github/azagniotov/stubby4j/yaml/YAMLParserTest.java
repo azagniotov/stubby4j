@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
@@ -19,9 +18,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 
@@ -32,12 +31,43 @@ public class YAMLParserTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void shouldUnmarshall_WhenEmptyYAMLGiven() throws Exception {
-
+    public void shouldThrow_WhenEmptyYAMLGiven() throws Exception {
         expectedException.expect(IOException.class);
         expectedException.expectMessage("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
 
         unmarshall("");
+    }
+
+    @Test
+    public void shouldThrow_WhenRequestYAMLContainsUnknownProperty() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("An unknown property configured: methodd");
+
+        final String yaml =
+                "-  request:\n" +
+                "      methodd: [PUT]\n" +
+                "      url: /invoice\n" +
+                "\n" +
+                "   response:\n" +
+                "      status: 200";
+
+        unmarshall(yaml);
+    }
+
+    @Test
+    public void shouldThrow_WhenResponseYAMLContainsUnknownProperty() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("An unknown property configured: statuss");
+
+        final String yaml =
+                "-  request:\n" +
+                        "      method: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      statuss: 200";
+
+        unmarshall(yaml);
     }
 
     @Test
@@ -333,8 +363,8 @@ public class YAMLParserTest {
     @Test
     public void shouldFailUnmarshallYaml_WithJsonAsLiteralPost() throws Exception {
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("StubRequestBuilder.post to java.util.LinkedHashMap");
+        expectedException.expect(ClassCastException.class);
+        expectedException.expectMessage("Expected: java.lang.String, instead got: java.util.LinkedHashMap");
 
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()
@@ -368,7 +398,7 @@ public class YAMLParserTest {
     @Test
     public void shouldFailUnmarshallYaml_WithJsonAsLiteralBody() throws Exception {
 
-        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expect(ClassCastException.class);
 
         final String yaml = YAML_BUILDER.newStubbedRequest()
                 .withMethodGet()

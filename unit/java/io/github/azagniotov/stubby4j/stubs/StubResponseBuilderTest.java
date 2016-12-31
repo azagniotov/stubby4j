@@ -1,8 +1,9 @@
 package io.github.azagniotov.stubby4j.stubs;
 
-import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
+
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus.Code;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -10,15 +11,29 @@ import java.io.File;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileFromString;
 
+public class StubResponseBuilderTest {
 
-public class StubResponseTest {
+    private StubResponse.Builder builder;
 
-    private static final StubResponseBuilder RESPONSE_BUILDER = new StubResponseBuilder();
+    @Before
+    public void setUp() throws Exception {
+        builder = new StubResponse.Builder();
+    }
+
+    @Test
+    public void shouldReturnDefaultHttpStatusCode_WhenStatusFieldNull() throws Exception {
+        assertThat(Code.OK).isEqualTo(builder.getHttpStatusCode());
+    }
+
+    @Test
+    public void shouldReturnRespectiveHttpStatusCode_WhenStatusFieldSet() throws Exception {
+        assertThat(Code.CREATED).isEqualTo(builder.withHttpStatusCode(Code.CREATED).getHttpStatusCode());
+    }
 
     @Test
     public void shouldReturnBody_WhenFileIsNull() throws Exception {
 
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("this is some body")
                 .build();
@@ -30,7 +45,7 @@ public class StubResponseTest {
     @Test
     public void shouldReturnBody_WhenFileIsEmpty() throws Exception {
 
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("this is some body")
                 .withFile(File.createTempFile("tmp", "tmp"))
@@ -43,7 +58,7 @@ public class StubResponseTest {
     @Test
     public void shouldReturnEmptyBody_WhenFileAndBodyAreNull() throws Exception {
 
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .build();
 
@@ -54,7 +69,7 @@ public class StubResponseTest {
     @Test
     public void shouldReturnEmptyBody_WhenBodyIsEmpty() throws Exception {
 
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("")
                 .build();
@@ -66,7 +81,7 @@ public class StubResponseTest {
     @Test
     public void shouldReturnEmptyBody_WhenBodyIsEmpty_AndFileIsEmpty() throws Exception {
 
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("")
                 .build();
@@ -79,7 +94,7 @@ public class StubResponseTest {
     public void shouldReturnFile_WhenFileNotEmpty_AndRegardlessOfBody() throws Exception {
 
         final String expectedResponseBody = "content";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("something")
                 .withFile(fileFromString(expectedResponseBody))
@@ -93,7 +108,7 @@ public class StubResponseTest {
     public void shouldRequireRecording_WhenBodyStartsWithHttp() throws Exception {
 
         final String expectedResponseBody = "http://someurl.com";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(expectedResponseBody)
                 .build();
@@ -105,7 +120,7 @@ public class StubResponseTest {
     public void shouldRequireRecording_WhenBodyStartsWithHttpUpperCase() throws Exception {
 
         final String expectedResponseBody = "HTtP://someurl.com";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(expectedResponseBody)
                 .build();
@@ -117,7 +132,7 @@ public class StubResponseTest {
     public void shouldNotRequireRecording_WhenBodyStartsWithHtt() throws Exception {
 
         final String expectedResponseBody = "htt://someurl.com";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(expectedResponseBody)
                 .build();
@@ -129,7 +144,7 @@ public class StubResponseTest {
     public void shouldNotRequireRecording_WhenBodyDoesnotStartWithHttp() throws Exception {
 
         final String expectedResponseBody = "some body content";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(expectedResponseBody)
                 .build();
@@ -141,7 +156,7 @@ public class StubResponseTest {
     public void shouldFindBodyTokenized_WhenBodyContainsTemplateTokens() throws Exception {
 
         final String body = "some body with a <% token %>";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(body)
                 .build();
@@ -153,7 +168,7 @@ public class StubResponseTest {
     public void shouldFindBodyNotTokenized_WhenRawFileIsTemplateFile() throws Exception {
 
         final String body = "some body";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(body)
                 .withFile(fileFromString("file content with a <% token %>"))
@@ -166,7 +181,7 @@ public class StubResponseTest {
     public void shouldFindBodyNotTokenized_WhenRawFileNotTemplateFile() throws Exception {
 
         final String body = "some body";
-        final StubResponse stubResponse = RESPONSE_BUILDER
+        final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(body)
                 .withFile(fileFromString("file content"))

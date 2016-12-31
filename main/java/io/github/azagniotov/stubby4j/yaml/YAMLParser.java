@@ -20,10 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
-import io.github.azagniotov.stubby4j.builders.stubs.ReflectiveStubBuilder;
-import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+import io.github.azagniotov.stubby4j.stubs.ReflectableStubBuilder;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
@@ -43,15 +42,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase64;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.getConfigurableProperty;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {
@@ -62,16 +67,16 @@ public class YAMLParser {
     private String dataConfigHomeDirectory;
 
     @CoberturaIgnore
-    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String configContent) throws Exception {
+    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configContent));
     }
 
     @CoberturaIgnore
-    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File configFile) throws Exception {
+    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configFile));
     }
 
-    private List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws Exception {
+    private List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
         this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
         final Object loadedConfig = SNAKE_YAML.load(configAsStream);
@@ -90,50 +95,54 @@ public class YAMLParser {
         return stubs;
     }
 
-    private StubHttpLifecycle unmarshallHttpMessageConfigToStub(final Map<String, Object> httpMessageConfig) throws Exception {
+    private StubHttpLifecycle unmarshallHttpMessageConfigToStub(final Map<String, Object> httpMessageConfig) throws IOException {
 
-        final StubHttpLifecycle stub = new StubHttpLifecycle();
+        final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
         for (final Map.Entry<String, Object> httpType : httpMessageConfig.entrySet()) {
 
             if (httpType.getValue() instanceof Map) {
-                unmarshallMapProperties(stub, httpType);
+                unmarshallMapProperties(stubBuilder, httpType);
             } else if (httpType.getValue() instanceof List) {
-                unmarshallStubResponseList(stub, httpType);
+                unmarshallStubResponseList(stubBuilder, httpType);
             }
         }
 
-        stub.setCompleteYAML(marshallHttpMessage(httpMessageConfig));
-        stub.setRequestAsYAML(marshallHttpType(httpMessageConfig, YamlProperties.REQUEST));
-        stub.setResponseAsYAML(marshallHttpType(httpMessageConfig, YamlProperties.RESPONSE));
-        stub.setResourceId(unmarshalledStubCounter.getAndIncrement());
-
-        return stub;
+        return stubBuilder.withCompleteYAML(marshallHttpMessage(httpMessageConfig))
+                .withRequestAsYAML(marshallHttpType(httpMessageConfig, REQUEST))
+                .withResponseAsYAML(marshallHttpType(httpMessageConfig, RESPONSE))
+                .withResourceId(unmarshalledStubCounter.getAndIncrement())
+                .build();
     }
 
-    private void unmarshallMapProperties(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
+    private void unmarshallMapProperties(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) throws IOException {
         final Map<String, Object> httpTypeProperties = asCheckedLinkedHashMap(httpTypeConfig.getValue(), String.class, Object.class);
 
-        if (httpTypeConfig.getKey().equals(YamlProperties.REQUEST)) {
-            final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequestBuilder());
+        if (httpTypeConfig.getKey().equals(REQUEST.toString())) {
+            final StubRequest requestStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubRequest.Builder());
 
             requestStub.computeRegexPatterns();
 
-            stub.setRequest(requestStub);
+            stubBuilder.withRequest(requestStub);
             ConsoleUtils.logUnmarshalledStubRequest(requestStub.getMethod(), requestStub.getUrl());
 
         } else {
-            final StubResponse responseStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubResponseBuilder());
-            stub.setResponse(responseStub);
+            final StubResponse responseStub = buildStubFromHttpTypeProperties(httpTypeProperties, new StubResponse.Builder());
+            stubBuilder.withResponse(responseStub);
         }
     }
 
 
-    private <T, B extends ReflectiveStubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws Exception {
+    private <T extends ReflectableStub, B extends ReflectableStubBuilder<T>> T buildStubFromHttpTypeProperties(final Map<String, Object> httpTypeProperties, final B stubTypeBuilder) throws IOException {
 
         for (final Map.Entry<String, Object> propertyPair : httpTypeProperties.entrySet()) {
 
             final Object rawFieldName = propertyPair.getValue();
             final String stageableFieldName = propertyPair.getKey();
+
+            if (isUnknownProperty(stageableFieldName)) {
+                throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
+            }
+
             final Object stageableFieldValue;
 
             if (rawFieldName instanceof List) {
@@ -143,40 +152,43 @@ public class YAMLParser {
                 final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldName, String.class, String.class);
                 stageableFieldValue = configureAuthorizationHeader(rawHeaders);
 
-            } else if (stageableFieldName.toLowerCase().equals(YamlProperties.METHOD)) {
+            } else if (stageableFieldName.toLowerCase().equals(METHOD.toString())) {
 
                 final ArrayList<String> methods = new ArrayList<>(1);
                 methods.add(objectToString(rawFieldName));
                 stageableFieldValue = methods;
 
-            } else if (isConfigPropertyNamedFile(stageableFieldName)) {
+            } else if (isFileProperty(stageableFieldName)) {
                 stageableFieldValue = loadFileContentFromFileUrl(rawFieldName);
             } else {
                 stageableFieldValue = objectToString(rawFieldName);
             }
-            stubTypeBuilder.stage(stageableFieldName, stageableFieldValue);
+            stubTypeBuilder.stage(getConfigurableProperty(stageableFieldName), stageableFieldValue);
         }
 
         return stubTypeBuilder.build();
     }
 
-    private void unmarshallStubResponseList(final StubHttpLifecycle stub, final Map.Entry<String, Object> httpTypeConfig) throws Exception {
+    private void unmarshallStubResponseList(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) throws IOException {
         final List<Map> responseProperties = asCheckedArrayList(httpTypeConfig.getValue(), Map.class);
-        stub.setResponse(buildStubResponseList(responseProperties, new StubResponseBuilder()));
+        stubBuilder.withResponse(buildStubResponseList(responseProperties, new StubResponse.Builder()));
     }
 
-    private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponseBuilder stubResponseBuilder) throws Exception {
+    private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponse.Builder stubResponseBuilder) throws IOException {
         final List<StubResponse> stubResponses = new LinkedList<>();
 
         for (final Map rawPropertyPairs : responseProperties) {
             final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
             for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
+                if (isUnknownProperty(stageableFieldName)) {
+                    throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
+                }
                 Object stageableFieldValue = propertyPair.getValue();
-                if (isConfigPropertyNamedFile(stageableFieldName)) {
+                if (isFileProperty(stageableFieldName)) {
                     stageableFieldValue = loadFileContentFromFileUrl(stageableFieldValue);
                 }
-                stubResponseBuilder.stage(stageableFieldName, stageableFieldValue);
+                stubResponseBuilder.stage(getConfigurableProperty(stageableFieldName), stageableFieldValue);
             }
 
             stubResponses.add(stubResponseBuilder.build());
@@ -185,8 +197,8 @@ public class YAMLParser {
         return stubResponses;
     }
 
-    private boolean isConfigPropertyNamedFile(final String pairKey) {
-        return pairKey.toLowerCase().equals(YamlProperties.FILE);
+    private boolean isFileProperty(final String stubbedProperty) {
+        return stubbedProperty.toLowerCase().equals(FILE.toString());
     }
 
     private Object loadFileContentFromFileUrl(final Object configPropertyNamedFile) throws IOException {
@@ -212,9 +224,9 @@ public class YAMLParser {
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
-    private String marshallHttpType(final Map<String, Object> httpMessageConfig, final String httpTypeName) {
+    private String marshallHttpType(final Map<String, Object> httpMessageConfig, final ConfigurableYAMLProperty httpTypeName) {
         final Map<String, Object> httpType = new HashMap<String, Object>() {{
-            put(httpTypeName, httpMessageConfig.get(httpTypeName));
+            put(httpTypeName.toString(), httpMessageConfig.get(httpTypeName.toString()));
         }};
 
         return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);

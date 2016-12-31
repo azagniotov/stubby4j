@@ -223,7 +223,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
-        final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertionStubRequest = new StubRequest.Builder().withHttpServletRequest(mockHttpServletRequest).build();
 
         when(mockStubRepository.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
@@ -244,7 +244,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
-        final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertionStubRequest = new StubRequest.Builder().withHttpServletRequest(mockHttpServletRequest).build();
 
         when(mockStubRepository.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);

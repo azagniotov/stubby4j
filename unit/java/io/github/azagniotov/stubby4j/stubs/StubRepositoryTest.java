@@ -1,7 +1,5 @@
 package io.github.azagniotov.stubby4j.stubs;
 
-import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.builders.stubs.StubResponseBuilder;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
@@ -38,9 +36,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StubRepositoryTest {
 
-    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
-    private static final StubResponseBuilder RESPONSE_BUILDER = new StubResponseBuilder();
-
     private static final File CONFIG_FILE = new File("parentPath", "childPath");
 
     private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
@@ -67,10 +62,17 @@ public class StubRepositoryTest {
     @Captor
     private ArgumentCaptor<List<StubHttpLifecycle>> stubsCaptor;
 
+    private StubRequest.Builder requestBuilder;
+    private StubResponse.Builder responseBuilder;
+    private StubHttpLifecycle.Builder httpCycleBuilder;
+
     private StubRepository stubRepository;
 
     @Before
     public void beforeEach() throws Exception {
+        requestBuilder = new StubRequest.Builder();
+        responseBuilder = new StubResponse.Builder();
+        httpCycleBuilder = new StubHttpLifecycle.Builder();
         stubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
 
         final Field stubbyHttpTransportField = stubRepository.getClass().getDeclaredField("stubbyHttpTransport");
@@ -79,7 +81,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldExpungeOriginalHttpCycleList_WhenNewHttpCyclesGiven() throws Exception {
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
 
         assertThat(resetResult).isTrue();
@@ -88,7 +90,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldMatchHttplifecycle_WhenValidIndexGiven() throws Exception {
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
@@ -99,7 +101,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldNotMatchHttplifecycle_WhenInvalidIndexGiven() throws Exception {
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
@@ -110,7 +112,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldDeleteOriginalHttpCycleList_WhenValidIndexGiven() throws Exception {
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
@@ -125,7 +127,7 @@ public class StubRepositoryTest {
 
         expectedException.expect(IndexOutOfBoundsException.class);
 
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         final boolean resetResult = stubRepository.resetStubsCache(stubs);
         assertThat(resetResult).isTrue();
         assertThat(stubRepository.getStubs().size()).isGreaterThan(0);
@@ -136,7 +138,7 @@ public class StubRepositoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldVerifyExpectedHttpLifeCycles_WhenRefreshingStubbedData() throws Exception {
-        final List<StubHttpLifecycle> expectedStubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> expectedStubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
 
         when(mockYAMLParser.parse(anyString(), any(File.class))).thenReturn(expectedStubs);
 
@@ -152,7 +154,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldGetMarshalledYamlByIndex_WhenValidHttpCycleListIndexGiven() throws Exception {
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         stubRepository.resetStubsCache(stubs);
 
         final String actualMarshalledYaml = stubRepository.getStubYAMLByIndex(0);
@@ -164,7 +166,7 @@ public class StubRepositoryTest {
     public void shouldFailToGetMarshalledYamlByIndex_WhenInvalidHttpCycleListIndexGiven() throws Exception {
         expectedException.expect(IndexOutOfBoundsException.class);
 
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles("/resource/item/1");
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
         stubRepository.resetStubsCache(stubs);
 
         stubRepository.getStubYAMLByIndex(10);
@@ -173,14 +175,14 @@ public class StubRepositoryTest {
     @Test
     public void shouldUpdateStubHttpLifecycleByIndex_WhenValidHttpCycleListIndexGiven() throws Exception {
         final String expectedOriginalUrl = "/resource/item/1";
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse(expectedOriginalUrl);
         stubRepository.resetStubsCache(stubs);
         final StubRequest stubbedRequest = stubRepository.getStubs().get(0).getRequest();
 
         assertThat(stubbedRequest.getUrl()).isEqualTo(expectedOriginalUrl);
 
         final String expectedNewUrl = "/resource/completely/new";
-        final List<StubHttpLifecycle> newHttpLifecycles = buildHttpLifeCycles(expectedNewUrl);
+        final List<StubHttpLifecycle> newHttpLifecycles = buildHttpLifeCyclesWithDefaultResponse(expectedNewUrl);
         final StubHttpLifecycle newStubHttpLifecycle = newHttpLifecycles.get(0);
         stubRepository.updateStubByIndex(0, newStubHttpLifecycle);
         final StubRequest stubbedNewRequest = stubRepository.getStubs().get(0).getRequest();
@@ -193,25 +195,24 @@ public class StubRepositoryTest {
         expectedException.expect(IndexOutOfBoundsException.class);
 
         final String expectedOriginalUrl = "/resource/item/1";
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse(expectedOriginalUrl);
         stubRepository.resetStubsCache(stubs);
         final StubRequest stubbedRequest = stubRepository.getStubs().get(0).getRequest();
 
         assertThat(stubbedRequest.getUrl()).isEqualTo(expectedOriginalUrl);
 
         final String expectedNewUrl = "/resource/completely/new";
-        final List<StubHttpLifecycle> newHttpLifecycles = buildHttpLifeCycles(expectedNewUrl);
+        final List<StubHttpLifecycle> newHttpLifecycles = buildHttpLifeCyclesWithDefaultResponse(expectedNewUrl);
         final StubHttpLifecycle newStubHttpLifecycle = newHttpLifecycles.get(0);
         stubRepository.updateStubByIndex(10, newStubHttpLifecycle);
     }
 
     @Test
     public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
-        final String expectedOriginalUrl = "/resource/item/1";
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
-
         final String sourceToRecord = "http://google.com";
-        stubs.get(0).setResponse(RESPONSE_BUILDER.emptyWithBody(sourceToRecord).build());
+        final String expectedOriginalUrl = "/resource/item/1";
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithCustomResponse(expectedOriginalUrl, responseBuilder.emptyWithBody(sourceToRecord).build());
+
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse stubbedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -235,11 +236,10 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldNotUpdateStubResponseBody_WhenResponseIsNotRecordable() throws Exception {
-        final String expectedOriginalUrl = "/resource/item/1";
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
-
         final String recordingSource = "htt://google.com";  //makes it non recordable
-        stubs.get(0).setResponse(RESPONSE_BUILDER.emptyWithBody(recordingSource).build());
+        final String expectedOriginalUrl = "/resource/item/1";
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithCustomResponse(expectedOriginalUrl, responseBuilder.emptyWithBody(recordingSource).build());
+
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse expectedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -252,28 +252,27 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldRecordingUsingIncomingRequestQueryStringAndStubbedRecordableUrl() throws Exception {
+        final String sourceToRecord = "http://127.0.0.1:8888";
         final StubRequest stubbedRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl("/search")
                         .withMethodGet()
-                        .withHeaders("content-type", Common.HEADER_APPLICATION_JSON)
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
                         .withQuery("queryOne", "([a-zA-Z]+)")
                         .withQuery("queryTwo", "([1-9]+)")
                         .build();
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(stubbedRequest);
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithCustomResponse(stubbedRequest, responseBuilder.emptyWithBody(sourceToRecord).build());
 
-        final String sourceToRecord = "http://127.0.0.1:8888";
-        stubs.get(0).setResponse(RESPONSE_BUILDER.emptyWithBody(sourceToRecord).build());
         stubRepository.resetStubsCache(stubs);
 
         final String actualResponseText = "OK, this is recorded response text!";
         when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
 
         final StubRequest incomingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl("/search")
                         .withMethodGet()
-                        .withHeaders("content-type", Common.HEADER_APPLICATION_JSON)
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
                         .withQuery("queryTwo", "12345")
                         .withQuery("queryOne", "arbitraryValue")
                         .build();
@@ -287,11 +286,10 @@ public class StubRepositoryTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldNotUpdateStubResponseBody_WhenResponseIsRecordableButExceptionThrown() throws Exception {
-        final String expectedOriginalUrl = "/resource/item/1";
-        final List<StubHttpLifecycle> stubs = buildHttpLifeCycles(expectedOriginalUrl);
-
         final String recordingSource = "http://google.com";
-        stubs.get(0).setResponse(RESPONSE_BUILDER.emptyWithBody(recordingSource).build());
+        final String expectedOriginalUrl = "/resource/item/1";
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithCustomResponse(expectedOriginalUrl, responseBuilder.emptyWithBody(recordingSource).build());
+
         stubRepository.resetStubsCache(stubs);
 
         final StubResponse expectedResponse = stubRepository.getStubs().get(0).getResponse(true);
@@ -305,25 +303,29 @@ public class StubRepositoryTest {
         assertThat(actualResponse.getBody()).isEqualTo(recordingSource);
     }
 
-    private List<StubHttpLifecycle> buildHttpLifeCycles(final String url) throws Exception {
-        final StubRequest originalRequest =
-                REQUEST_BUILDER
-                        .withUrl(url)
-                        .withMethodGet()
-                        .withHeaders("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
-        return buildHttpLifeCycles(originalRequest);
+    private List<StubHttpLifecycle> buildHttpLifeCyclesWithDefaultResponse(final String url) throws Exception {
+        return buildHttpLifeCyclesWithCustomResponse(url, StubResponse.okResponse());
     }
 
-    private List<StubHttpLifecycle> buildHttpLifeCycles(final StubRequest stubRequest) {
-        final StubHttpLifecycle stub = new StubHttpLifecycle();
-        stub.setRequest(stubRequest);
-        stub.setResponse(StubResponse.okResponse());
-        final String expectedMarshalledYaml = "This is marshalled yaml snippet";
-        stub.setCompleteYAML(expectedMarshalledYaml);
+    private List<StubHttpLifecycle> buildHttpLifeCyclesWithCustomResponse(final String url, final StubResponse stubResponse) throws Exception {
+        final StubRequest stubRequest =
+                requestBuilder
+                        .withUrl(url)
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .build();
+
+        return buildHttpLifeCyclesWithCustomResponse(stubRequest, stubResponse);
+    }
+
+    private List<StubHttpLifecycle> buildHttpLifeCyclesWithCustomResponse(final StubRequest stubRequest, final StubResponse stubResponse) throws Exception {
+        final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
+        stubBuilder.withRequest(stubRequest)
+                .withResponse(stubResponse)
+                .withCompleteYAML("This is marshalled yaml snippet");
 
         return new LinkedList<StubHttpLifecycle>() {{
-            add(stub);
+            add(stubBuilder.build());
         }};
     }
 }

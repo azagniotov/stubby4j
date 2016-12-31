@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -41,10 +43,10 @@ public final class ReflectionUtils {
 
     }
 
-    public static Map<String, String> getProperties(final Object object) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
+    public static <T extends ReflectableStub> Map<String, String> getProperties(final T reflectable) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
         final Map<String, String> properties = new HashMap<>();
 
-        for (final Field field : object.getClass().getDeclaredFields()) {
+        for (final Field field : reflectable.getClass().getDeclaredFields()) {
 
             AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
                 public Boolean run() {
@@ -59,7 +61,7 @@ public final class ReflectionUtils {
                 continue;
             }
 
-            final Object fieldObject = ReflectionUtils.getPropertyValue(object, field.getName());
+            final Object fieldObject = ReflectionUtils.getPropertyValue(reflectable, field.getName());
             final String value = StringUtils.objectToString(fieldObject);
 
             if (!value.equals(StringUtils.NOT_PROVIDED) && !value.equals("{}")) {
@@ -70,15 +72,15 @@ public final class ReflectionUtils {
         return properties;
     }
 
-    public static void injectObjectFields(final Object target, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
+    public static <T extends ReflectableStub> void injectObjectFields(final T reflectable, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
         final Map<String, Object> fieldAndValue = new HashMap<>();
         fieldAndValue.put(fieldName.toLowerCase(), value);
-        injectObjectFields(target, fieldAndValue);
+        injectObjectFields(reflectable, fieldAndValue);
     }
 
-    public static void injectObjectFields(final Object object, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
+    public static <T extends ReflectableStub> void injectObjectFields(final T reflectable, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
 
-        for (final Field field : object.getClass().getDeclaredFields()) {
+        for (final Field field : reflectable.getClass().getDeclaredFields()) {
             final String fieldName = field.getName().toLowerCase();
             if (fieldsAndValues.containsKey(fieldName)) {
                 AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
@@ -90,7 +92,7 @@ public final class ReflectionUtils {
                     }
                 });
 
-                field.set(object, fieldsAndValues.get(fieldName));
+                field.set(reflectable, fieldsAndValues.get(fieldName));
             }
         }
     }

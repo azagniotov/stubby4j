@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.utils;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -9,17 +10,19 @@ import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 7/2/12, 10:33 AM
- */
 
 public class ReflectionUtilsTest {
 
+    private StubRequest.Builder builder;
+
+    @Before
+    public void setUp() throws Exception {
+        builder = new StubRequest.Builder();
+    }
+
     @Test
     public void shouldGetObjectPropertiesAndValues() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
-        stubRequest.addMethod(HttpMethods.POST);
+        final StubRequest stubRequest = builder.withMethod(HttpMethods.POST).build();
         final Map<String, String> properties = ReflectionUtils.getProperties(stubRequest);
 
         assertThat("[POST]").isEqualTo(properties.get("method"));
@@ -30,10 +33,10 @@ public class ReflectionUtilsTest {
 
     @Test
     public void shouldSetValueOnObjectProperty_WhenCorrectPropertyNameGiven() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
+        final StubRequest stubRequest = builder.build();
         assertThat(stubRequest.getUrl()).isNull();
 
-        final Map<String, Object> values = new HashMap<String, Object>();
+        final Map<String, Object> values = new HashMap<>();
         values.put("url", "google.com");
         ReflectionUtils.injectObjectFields(stubRequest, values);
 
@@ -42,10 +45,10 @@ public class ReflectionUtilsTest {
 
     @Test
     public void shouldNotSetValueOnObjectProperty_WhenIncorrectPropertyNameGiven() throws Exception {
-        final StubRequest stubRequest = StubRequest.newStubRequest();
+        final StubRequest stubRequest = builder.build();
         assertThat(stubRequest.getUrl()).isNull();
 
-        final Map<String, Object> values = new HashMap<String, Object>();
+        final Map<String, Object> values = new HashMap<>();
         values.put("nonExistentProperty", "google.com");
         ReflectionUtils.injectObjectFields(stubRequest, values);
 
@@ -54,8 +57,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void shouldReturnNullWhenClassHasNoDeclaredMethods() throws Exception {
-
-        final Object result = ReflectionUtils.getPropertyValue(new MethodelessInterface() {
+        final Object result = ReflectionUtils.getPropertyValue(new MethodLessInterface() {
         }, "somePropertyName");
 
         assertThat(result).isNull();
@@ -63,9 +65,8 @@ public class ReflectionUtilsTest {
 
     @Test
     public void shouldReturnPropertyValueWhenClassHasDeclaredMethods() throws Exception {
-
         final String expectedMethodValue = "alex";
-        final Object result = ReflectionUtils.getPropertyValue(new MethodfullInterface() {
+        final Object result = ReflectionUtils.getPropertyValue(new MethodFulInterface() {
             @Override
             public String getName() {
                 return expectedMethodValue;
@@ -75,15 +76,11 @@ public class ReflectionUtilsTest {
         assertThat(result).isEqualTo(expectedMethodValue);
     }
 
-    private static interface MethodelessInterface {
+    private interface MethodLessInterface {
 
     }
 
-    ;
-
-    private static interface MethodfullInterface {
+    private interface MethodFulInterface {
         String getName();
     }
-
-    ;
 }

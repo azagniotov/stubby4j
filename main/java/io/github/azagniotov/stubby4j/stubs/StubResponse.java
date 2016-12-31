@@ -1,21 +1,34 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpStatus.Code;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.github.azagniotov.generics.TypeSafeConverter.as;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.LATENCY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STATUS;
+import static java.lang.Integer.parseInt;
+import static org.eclipse.jetty.http.HttpStatus.getCode;
 
 
-public class StubResponse {
+public class StubResponse implements ReflectableStub {
 
     public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
@@ -26,11 +39,11 @@ public class StubResponse {
     private final String latency;
     private final Map<String, String> headers;
 
-    public StubResponse(final Code httpStatusCode,
-                        final String body,
-                        final File file,
-                        final String latency,
-                        final Map<String, String> headers) {
+    private StubResponse(final Code httpStatusCode,
+                         final String body,
+                         final File file,
+                         final String latency,
+                         final Map<String, String> headers) {
         this.httpStatusCode = httpStatusCode;
         this.body = body;
         this.file = file;
@@ -145,5 +158,90 @@ public class StubResponse {
 
     void addResourceIDHeader(final int resourceIndex) {
         getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(resourceIndex));
+    }
+
+    String getResourceIDHeader() {
+        return getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+    }
+
+    public static final class Builder implements ReflectableStubBuilder<StubResponse> {
+
+        private Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
+        private String status;
+        private String body;
+        private File file;
+        private String latency;
+        private Map<String, String> headers;
+
+        public Builder() {
+            this.status = null;
+            this.body = null;
+            this.file = null;
+            this.latency = null;
+            this.headers = new LinkedHashMap<>();
+            this.fieldNameAndValues = new HashMap<>();
+        }
+
+        public Builder emptyWithBody(final String body) {
+            this.status = String.valueOf(Code.OK.getCode());
+            this.body = body;
+
+            return this;
+        }
+
+        public Builder withHttpStatusCode(final Code httpStatusCode) {
+            this.status = String.valueOf(httpStatusCode.getCode());
+
+            return this;
+        }
+
+        public Builder withBody(final String body) {
+            this.body = body;
+
+            return this;
+        }
+
+        public Builder withFile(final File file) {
+            this.file = file;
+
+            return this;
+        }
+
+        @Override
+        public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Object fieldValue) {
+            if (fieldNameOptional.isPresent() && isNotNull(fieldValue)) {
+                this.fieldNameAndValues.put(fieldNameOptional.get(), fieldValue);
+            }
+        }
+
+        @Override
+        public <E> E get(final Class<E> clazzor, final ConfigurableYAMLProperty property, E orElse) {
+            return this.fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
+        }
+
+        @Override
+        public StubResponse build() {
+            this.status = get(String.class, STATUS, status);
+            this.body = get(String.class, BODY, body);
+            this.file = get(File.class, FILE, file);
+            this.latency = get(String.class, LATENCY, latency);
+            this.headers = asCheckedLinkedHashMap(get(Map.class, HEADERS, headers), String.class, String.class);
+
+            final StubResponse stubResponse = new StubResponse(getHttpStatusCode(), body, file, latency, headers);
+
+            this.status = null;
+            this.body = null;
+            this.file = null;
+            this.latency = null;
+            this.headers = new LinkedHashMap<>();
+            this.fieldNameAndValues = new HashMap<>();
+
+            return stubResponse;
+        }
+
+        @VisibleForTesting
+        Code getHttpStatusCode() {
+            return ObjectUtils.isNull(this.status) ? Code.OK : getCode(parseInt(this.status));
+        }
     }
 }

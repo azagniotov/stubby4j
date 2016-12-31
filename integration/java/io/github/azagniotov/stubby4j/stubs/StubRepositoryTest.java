@@ -1,11 +1,9 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
-import io.github.azagniotov.stubby4j.builders.stubs.StubRequestBuilder;
-import io.github.azagniotov.stubby4j.builders.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.yaml.YAMLBuilder;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
@@ -27,9 +25,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
+import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,7 +41,6 @@ import static org.mockito.Mockito.when;
 public class StubRepositoryTest {
 
     private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
-    private static final StubRequestBuilder REQUEST_BUILDER = new StubRequestBuilder();
 
     private static final File CONFIG_FILE = new File(".");
     private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
@@ -50,10 +49,12 @@ public class StubRepositoryTest {
     @Mock
     private HttpServletRequest mockHttpServletRequest;
 
+    private StubRequest.Builder requestBuilder = new StubRequest.Builder();
     private StubRepository stubRepository;
 
     @Before
     public void beforeEach() throws Exception {
+        requestBuilder = new StubRequest.Builder();
         stubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
     }
 
@@ -79,7 +80,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -117,7 +118,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -156,7 +157,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -189,7 +190,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -218,7 +219,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -248,10 +249,10 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
+                        .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -278,10 +279,10 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer Ym9iOnNlY3JldA==").build();
+                        .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer Ym9iOnNlY3JldA==").build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -308,10 +309,10 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeaders(StubRequest.HTTP_HEADER_AUTHORIZATION, "CustomAuthorizationName Ym9iOnNlY3JldA==").build();
+                        .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "CustomAuthorizationName Ym9iOnNlY3JldA==").build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -338,7 +339,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet().build();
 
@@ -365,10 +366,10 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeaders(BASIC.asYamlProp(), "Basic BadCredentials").build();
+                        .withHeader(BASIC.asYamlProp(), "Basic BadCredentials").build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -392,10 +393,10 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
-                        .withHeaders(BASIC.asYamlProp(), null).build();
+                        .withHeader(BASIC.asYamlProp(), null).build();
 
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
@@ -416,7 +417,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl("/invoice/300")
                         .withMethodGet().build();
 
@@ -445,7 +446,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodPost()
                         .withPost(postData).build();
@@ -472,7 +473,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodPost().build();
 
@@ -497,7 +498,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodPost().build();
 
@@ -524,7 +525,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodPost()
                         .withPost(postData).build();
@@ -557,7 +558,7 @@ public class StubRepositoryTest {
         loadYamlToDataStore(yaml);
 
         final StubRequest assertingRequest =
-                REQUEST_BUILDER
+                requestBuilder
                         .withUrl(url)
                         .withMethodGet()
                         .withQuery("type_name", "user")
@@ -600,7 +601,7 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = requestBuilder.withHttpServletRequest(mockHttpServletRequest).build();
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
@@ -632,7 +633,7 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22NOMATCH%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = StubRequest.createFromHttpServletRequest(mockHttpServletRequest);
+        final StubRequest assertingRequest = requestBuilder.withHttpServletRequest(mockHttpServletRequest).build();
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
@@ -750,7 +751,7 @@ public class StubRepositoryTest {
         final URL yamlUrl = StubRepositoryTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream));
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
@@ -769,24 +770,28 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void shouldVerifyGetRawFileInvokation_WhenInvokingGetExternalFiles() throws Exception {
+    public void shouldVerifyGetRawFileInvocation_WhenInvokingGetExternalFiles() throws Exception {
         final URL yamlUrl = StubRepositoryTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
-        final InputStream stubsDatanputStream = yamlUrl.openStream();
+        final InputStream stubsConfigStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
 
-        stubHttpLifecycles.get(0).setResponse(new LinkedList<StubResponse>() {{
+        // Turn existing StubResponse objects into Mockito.spy
+        final LinkedList<StubResponse> stubResponsesOne = new LinkedList<StubResponse>() {{
             add(spy(stubHttpLifecycles.get(0).getResponses().get(0)));
             add(spy(stubHttpLifecycles.get(0).getResponses().get(1)));
-        }});
+        }};
+        injectObjectFields(stubHttpLifecycles.get(0), "response", stubResponsesOne);
 
-        stubHttpLifecycles.get(1).setResponse(new LinkedList<StubResponse>() {{
+        // Turn existing StubResponse objects into Mockito.spy
+        final LinkedList<StubResponse> stubResponsesTwo = new LinkedList<StubResponse>() {{
             add(spy(stubHttpLifecycles.get(1).getResponses().get(0)));
             add(spy(stubHttpLifecycles.get(1).getResponses().get(1)));
-        }});
+        }};
+        injectObjectFields(stubHttpLifecycles.get(1), "response", stubResponsesTwo);
 
         stubRepository.resetStubsCache(stubHttpLifecycles);
         stubRepository.getExternalFiles();
@@ -1009,6 +1014,6 @@ public class StubRepositoryTest {
         final URL yamlUrl = StubRepositoryTest.class.getResource(resourcePath);
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        stubRepository.resetStubsCache(new YAMLParser().parse(parentDirectory, StringUtils.inputStreamToString(stubsDatanputStream)));
+        stubRepository.resetStubsCache(new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
     }
 }

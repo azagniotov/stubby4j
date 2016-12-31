@@ -15,34 +15,31 @@ import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedLis
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.okResponse;
 
 
-public class StubHttpLifecycle {
+public class StubHttpLifecycle implements ReflectableStub {
 
     private final AtomicInteger responseSequencedIdCounter = new AtomicInteger(0);
 
-    private String completeYAML;
-    private StubRequest request;
-    private Object response;
-    private String requestAsYAML;
-    private String responseAsYAML;
+    private final String completeYAML;
+    private final StubRequest request;
+    private final Object response;
+    private final String requestAsYAML;
+    private final String responseAsYAML;
 
-    public StubHttpLifecycle() {
-        response = okResponse();
-    }
-
-    public void setResponse(final Object response) {
-        if (response instanceof StubResponse || response instanceof Collection) {
-            this.response = response;
-        } else {
-            throw new IllegalArgumentException("Trying to set response of the wrong type");
-        }
+    private StubHttpLifecycle(
+            final StubRequest request,
+            final Object response,
+            final String requestAsYAML,
+            final String responseAsYAML,
+            final String completeYAML) {
+        this.request = request;
+        this.response = response;
+        this.requestAsYAML = requestAsYAML;
+        this.responseAsYAML = responseAsYAML;
+        this.completeYAML = completeYAML;
     }
 
     public StubRequest getRequest() {
         return request;
-    }
-
-    public void setRequest(final StubRequest request) {
-        this.request = request;
     }
 
     public StubResponse getResponse(final boolean incrementSequencedResponseId) {
@@ -80,30 +77,30 @@ public class StubHttpLifecycle {
         return asCheckedLinkedList(this.response, StubResponse.class);
     }
 
-    public boolean isAuthorizationRequired() {
+    boolean isAuthorizationRequired() {
         return request.isSecured();
     }
 
     @VisibleForTesting
-    String getRawAuthorizationHttpHeader() {
-        return request.getRawAuthorizationHttpHeader();
+    String getRawHeaderAuthorization() {
+        return request.getRawHeaderAuthorization();
     }
 
     @VisibleForTesting
-    String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
-        return request.getStubbedAuthorizationHeaderValue(stubbedAuthorizationHeaderType);
+    String getStubbedHeaderAuthorization(final StubbableAuthorizationType stubbedAuthorizationHeaderType) {
+        return request.getStubbedHeaderAuthorization(stubbedAuthorizationHeaderType);
     }
 
-    public boolean isIncomingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
-        final String stubbedAuthorizationHeaderValue = getStubbedAuthorizationHeaderValue(request.getStubbedAuthorizationTypeHeader());
-        return !stubbedAuthorizationHeaderValue.equals(assertingLifecycle.getRawAuthorizationHttpHeader());
+    boolean isIncomingRequestUnauthorized(final StubHttpLifecycle assertingLifecycle) {
+        final String stubbedHeaderAuthorization = getStubbedHeaderAuthorization(request.getStubbedAuthorizationType());
+        return !stubbedHeaderAuthorization.equals(assertingLifecycle.getRawHeaderAuthorization());
     }
 
     public String getResourceId() {
-        return getResponses().get(0).getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        return getResponses().get(0).getResourceIDHeader();
     }
 
-    public void setResourceId(final int resourceId) {
+    void setResourceId(final int resourceId) {
         getResponses().forEach(response -> response.addResourceIDHeader(resourceId));
     }
 
@@ -122,10 +119,6 @@ public class StubHttpLifecycle {
         return completeYAML;
     }
 
-    public void setCompleteYAML(final String completeYAML) {
-        this.completeYAML = completeYAML;
-    }
-
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
@@ -134,20 +127,12 @@ public class StubHttpLifecycle {
         return requestAsYAML;
     }
 
-    public void setRequestAsYAML(final String requestAsYAML) {
-        this.requestAsYAML = requestAsYAML;
-    }
-
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
      */
     public String getResponseAsYAML() {
         return responseAsYAML;
-    }
-
-    public void setResponseAsYAML(final String responseAsYAML) {
-        this.responseAsYAML = responseAsYAML;
     }
 
     public String getAjaxResponseContent(final StubTypes stubType, final String propertyName) throws Exception {
@@ -187,5 +172,84 @@ public class StubHttpLifecycle {
         final StubHttpLifecycle that = (StubHttpLifecycle) o;
         // The 'this' is actually the incoming asserting StubRequest, the 'that' is the stubbed one
         return this.request.equals(that.request);
+    }
+
+    public static class Builder {
+        private StubRequest request;
+        private Object response;
+        private String completeYAML;
+        private String requestAsYAML;
+        private String responseAsYAML;
+
+        public Builder() {
+            this.request = null;
+            this.response = okResponse();
+            this.completeYAML = null;
+            this.requestAsYAML = null;
+            this.responseAsYAML = null;
+        }
+
+        public Builder withRequest(final StubRequest request) {
+            this.request = request;
+
+            return this;
+        }
+
+        public Builder withResponse(final Object response) {
+            if (response instanceof StubResponse || response instanceof Collection) {
+                this.response = response;
+            } else {
+                throw new IllegalArgumentException("Trying to set response of the wrong type");
+            }
+
+            return this;
+        }
+
+        public Builder withRequestAsYAML(final String requestAsYAML) {
+            this.requestAsYAML = requestAsYAML;
+
+            return this;
+        }
+
+        public Builder withResponseAsYAML(final String responseAsYAML) {
+            this.responseAsYAML = responseAsYAML;
+
+            return this;
+        }
+
+        public Builder withCompleteYAML(final String completeYAML) {
+            this.completeYAML = completeYAML;
+
+            return this;
+        }
+
+        public Builder withResourceId(final int resourceId) {
+            getResponses().forEach(response -> response.addResourceIDHeader(resourceId));
+
+            return this;
+        }
+
+        public StubHttpLifecycle build() {
+            final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle(request, response, requestAsYAML, responseAsYAML, completeYAML);
+
+            this.request = null;
+            this.response = okResponse();
+            this.completeYAML = null;
+            this.requestAsYAML = null;
+            this.responseAsYAML = null;
+
+            return stubHttpLifecycle;
+        }
+
+        private List<StubResponse> getResponses() {
+
+            if (response instanceof StubResponse) {
+                return new LinkedList<StubResponse>() {{
+                    add((StubResponse) response);
+                }};
+            }
+
+            return asCheckedLinkedList(this.response, StubResponse.class);
+        }
     }
 }

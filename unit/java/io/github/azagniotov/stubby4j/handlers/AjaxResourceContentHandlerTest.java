@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AjaxResourceContentHandlerTest {
 
-    private static final Optional<StubHttpLifecycle> STUB_HTTP_LIFECYCLE_OPTIONAL = Optional.of(new StubHttpLifecycle());
+    private static final Optional<StubHttpLifecycle> STUB_HTTP_LIFECYCLE_OPTIONAL = Optional.of(new StubHttpLifecycle.Builder().build());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

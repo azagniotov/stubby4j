@@ -1,6 +1,6 @@
-package io.github.azagniotov.stubby4j.builders.yaml;
+package io.github.azagniotov.stubby4j.yaml;
 
-import io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes;
+import io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.eclipse.jetty.http.HttpMethod;
 
@@ -164,7 +164,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BASIC.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BASIC.asYamlProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -174,7 +174,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.BEARER.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BEARER.asYamlProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -184,7 +184,7 @@ public final class YAMLBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubAuthorizationTypes.CUSTOM.asYamlProp());
+            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYamlProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;

@@ -2,7 +2,7 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 
-public enum StubAuthorizationTypes {
+public enum StubbableAuthorizationType {
 
     BASIC("Basic"),
     BEARER("Bearer"),
@@ -11,7 +11,7 @@ public enum StubAuthorizationTypes {
     private final String name;
     private final String property;
 
-    StubAuthorizationTypes(final String name) {
+    StubbableAuthorizationType(final String name) {
         this.name = name;
         this.property = String.format("authorization-%s", StringUtils.toLower(this.name));
     }

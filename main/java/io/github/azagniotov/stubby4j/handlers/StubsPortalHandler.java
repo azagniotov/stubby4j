@@ -55,16 +55,17 @@ public class StubsPortalHandler extends AbstractHandler {
         }
         baseRequest.setHandled(true);
 
-        final StubRequest assertionStubRequest = StubRequest.createFromHttpServletRequest(request);
-        final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertionStubRequest);
-        final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
-
         try {
+            final StubRequest assertionStubRequest = new StubRequest.Builder().withHttpServletRequest(request).build();
+            ConsoleUtils.logAssertingRequest(assertionStubRequest);
+
+            final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertionStubRequest);
+            final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
+
             strategyStubResponse.handle(response, assertionStubRequest);
+            ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
         }
-
-        ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
     }
 }

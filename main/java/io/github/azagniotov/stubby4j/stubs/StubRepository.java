@@ -6,9 +6,7 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
-import io.github.azagniotov.stubby4j.yaml.YamlProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -29,6 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.redirectResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
+import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 
 public class StubRepository {
 
@@ -49,10 +49,7 @@ public class StubRepository {
     }
 
     public StubResponse findStubResponseFor(final StubRequest incomingRequest) {
-        final StubHttpLifecycle incomingLifecycle = new StubHttpLifecycle();
-        incomingLifecycle.setRequest(incomingRequest);
-
-        return findMatch(incomingLifecycle);
+        return findMatch(new StubHttpLifecycle.Builder().withRequest(incomingRequest).build());
     }
 
     private StubResponse findMatch(final StubHttpLifecycle incomingRequest) {
@@ -81,7 +78,7 @@ public class StubRepository {
             final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
             try {
                 final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
-                ReflectionUtils.injectObjectFields(matchedStubResponse, YamlProperties.BODY, stubbyResponse.getContent());
+                injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
             } catch (Exception e) {
                 ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
             }
@@ -107,9 +104,10 @@ public class StubRepository {
      *
      * @param incomingStub {@link StubHttpLifecycle}
      * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
-     * @see StubRequest#createFromHttpServletRequest(HttpServletRequest)
+     * @see StubRequest.Builder#withHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)
+     * @see StubMatcher#matches(StubRequest, StubRequest)
      */
     private synchronized Optional<StubHttpLifecycle> matchStub(final StubHttpLifecycle incomingStub) {
 

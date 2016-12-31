@@ -2,53 +2,55 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.CollectionUtils;
-import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlProperties;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONCompare;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.xml.sax.SAXException;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
+import org.eclipse.jetty.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubAuthorizationTypes.CUSTOM;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
+import static io.github.azagniotov.generics.TypeSafeConverter.as;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
+import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.extractPostRequestBody;
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.QUERY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
+import static java.lang.String.valueOf;
+import static java.util.Collections.list;
+import static java.util.stream.Collectors.toCollection;
 
 
-public class StubRequest {
+public class StubRequest implements ReflectableStub {
 
-    public static final String HTTP_HEADER_AUTHORIZATION = "authorization";
-
-    private final RegexParser regexParser = RegexParser.INSTANCE;
+    static final String HTTP_HEADER_AUTHORIZATION = "authorization";
 
     private final String url;
     private final String post;
@@ -59,63 +61,28 @@ public class StubRequest {
     private final Map<String, String> query;
     private final Map<String, String> regexGroups;
 
-    public StubRequest(final String url,
-                       final String post,
-                       final File file,
-                       final List<String> method,
-                       final Map<String, String> headers,
-                       final Map<String, String> query) {
+    private StubRequest(final String url,
+                        final String post,
+                        final File file,
+                        final List<String> method,
+                        final Map<String, String> headers,
+                        final Map<String, String> query) {
         this.url = url;
         this.post = post;
         this.file = file;
         this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
-        this.method = ObjectUtils.isNull(method) ? new ArrayList<>() : method;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
-        this.query = ObjectUtils.isNull(query) ? new LinkedHashMap<>() : query;
+        this.method = method;
+        this.headers = headers;
+        this.query = query;
         this.regexGroups = new TreeMap<>();
     }
 
-    public static StubRequest newStubRequest() {
-        return new StubRequest(null, null, null, null, null, null);
-    }
-
-    static StubRequest newStubRequest(final String url, final String post) {
-        return new StubRequest(url, post, null, null, null, null);
-    }
-
-    public static StubRequest createFromHttpServletRequest(final HttpServletRequest request) throws IOException {
-        final StubRequest assertionRequest = StubRequest.newStubRequest(request.getPathInfo(),
-                HandlerUtils.extractPostRequestBody(request, "stubs"));
-        assertionRequest.addMethod(request.getMethod());
-
-        final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-        final List<String> headerNames = ObjectUtils.isNotNull(headerNamesEnumeration)
-                ? Collections.list(request.getHeaderNames()) : new LinkedList<>();
-        for (final String headerName : headerNames) {
-            final String headerValue = request.getHeader(headerName);
-            assertionRequest.getHeaders().put(toLower(headerName), headerValue);
-        }
-
-        assertionRequest.getQuery().putAll(CollectionUtils.constructParamMap(request.getQueryString()));
-        ConsoleUtils.logAssertingRequest(assertionRequest);
-
-        return assertionRequest;
-    }
-
     public final ArrayList<String> getMethod() {
-        final ArrayList<String> uppercase = new ArrayList<>(method.size());
-
-        for (final String string : method) {
-            uppercase.add(toUpper(string));
-        }
-
-        return uppercase;
+        return method.stream().map(StringUtils::toUpper).collect(toCollection(ArrayList::new));
     }
 
-    public void addMethod(final String newMethod) {
-        if (isSet(newMethod)) {
-            method.add(newMethod);
-        }
+    public String getUri() {
+        return url;
     }
 
     /**
@@ -201,7 +168,7 @@ public class StubRequest {
     }
 
     @VisibleForTesting
-    StubAuthorizationTypes getStubbedAuthorizationTypeHeader() {
+    StubbableAuthorizationType getStubbedAuthorizationType() {
         if (getHeaders().containsKey(BASIC.asYamlProp())) {
             return BASIC;
         } else if (getHeaders().containsKey(BEARER.asYamlProp())) {
@@ -211,12 +178,29 @@ public class StubRequest {
         }
     }
 
-    String getStubbedAuthorizationHeaderValue(final StubAuthorizationTypes stubbedAuthorizationHeaderType) {
-        return getHeaders().get(stubbedAuthorizationHeaderType.asYamlProp());
+    String getStubbedHeaderAuthorization(final StubbableAuthorizationType stubbableAuthorizationType) {
+        return getHeaders().get(stubbableAuthorizationType.asYamlProp());
     }
 
-    public String getRawAuthorizationHttpHeader() {
+    public String getRawHeaderAuthorization() {
         return getHeaders().get(HTTP_HEADER_AUTHORIZATION);
+    }
+
+    @VisibleForTesting
+    boolean isPostStubbed() {
+        return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
+    }
+
+    public void computeRegexPatterns() {
+        if (isSet(this.url)) {
+            RegexParser.INSTANCE.compilePatternAndCache(this.url);
+        }
+        if (isPostStubbed()) {
+            RegexParser.INSTANCE.compilePatternAndCache(getPostBody());
+        }
+
+        this.getQuery().values().forEach(RegexParser.INSTANCE::compilePatternAndCache);
+        this.getHeaders().values().forEach(RegexParser.INSTANCE::compilePatternAndCache);
     }
 
     @Override
@@ -227,182 +211,21 @@ public class StubRequest {
         } else if (that instanceof StubRequest) {
             final StubRequest stubbedRequest = (StubRequest) that;
 
-            if (!urlsMatch(stubbedRequest.url, this.url)) {
-                ANSITerminal.error(String.format("Failed to match on URL [%s] WITH [%s]", stubbedRequest.url, this.url));
-                return false;
-            }
-            ANSITerminal.info(String.format("Matched on URL [%s] WITH [%s]", stubbedRequest.url, this.url));
-
-            if (!listsIntersect(stubbedRequest.getMethod(), this.getMethod())) {
-                ANSITerminal.error(String.format("Failed to match on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), this.getMethod()));
-                return false;
-            }
-            ANSITerminal.info(String.format("Matched on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), this.getMethod()));
-
-            if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), this.getPostBody())) {
-                ANSITerminal.error(String.format("Failed to match on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), this.getPostBody()));
-                return false;
-            }
-            ANSITerminal.info(String.format("Matched on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), this.getPostBody()));
-
-            if (!headersMatch(stubbedRequest.getHeaders(), this.getHeaders())) {
-                ANSITerminal.error(String.format("Failed to match on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), this.getHeaders()));
-                return false;
-            }
-            ANSITerminal.info(String.format("Matched on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), this.getHeaders()));
-
-            if (!queriesMatch(stubbedRequest.getQuery(), this.getQuery())) {
-                ANSITerminal.error(String.format("Failed to match on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), this.getQuery()));
-                return false;
-            }
-            ANSITerminal.info(String.format("Matched on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), this.getQuery()));
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @VisibleForTesting
-    boolean isPostStubbed() {
-        return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
-    }
-
-    private boolean urlsMatch(final String stubbedUrl, final String assertingUrl) {
-        return stringsMatch(stubbedUrl, assertingUrl, YamlProperties.URL);
-    }
-
-    private boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final String assertingPostBody) {
-        if (isPostStubbed) {
-            final String assertingContentType = this.getHeaders().get("content-type");
-            if (isNotSet(assertingPostBody)) {
-                return false;
-            } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
-                return jsonMatch(stubbedPostBody, assertingPostBody);
-            } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
-                return xmlMatch(stubbedPostBody, assertingPostBody);
-            } else {
-                return stringsMatch(stubbedPostBody, assertingPostBody, YamlProperties.POST);
-            }
-        }
-
-        return true;
-    }
-
-    private boolean queriesMatch(final Map<String, String> stubbedQuery, final Map<String, String> assertingQuery) {
-        return mapsMatch(stubbedQuery, assertingQuery, YamlProperties.QUERY);
-    }
-
-    private boolean headersMatch(final Map<String, String> stubbedHeaders, final Map<String, String> assertingHeaders) {
-        final Map<String, String> stubbedHeadersCopy = new HashMap<>(stubbedHeaders);
-        for (final StubAuthorizationTypes authorizationType : StubAuthorizationTypes.values()) {
-            // auth header is dealt with in StubRepository after request is matched
-            stubbedHeadersCopy.remove(authorizationType.asYamlProp());
-        }
-        return mapsMatch(stubbedHeadersCopy, assertingHeaders, YamlProperties.HEADERS);
-    }
-
-    @VisibleForTesting
-    boolean mapsMatch(final Map<String, String> stubbedMappings, final Map<String, String> assertingMappings, final String mapName) {
-        if (stubbedMappings.isEmpty()) {
-            return true;
-        } else if (assertingMappings.isEmpty()) {
-            return false;
-        }
-
-        final Map<String, String> stubbedMappingsCopy = new HashMap<>(stubbedMappings);
-        final Map<String, String> assertingMappingsCopy = new HashMap<>(assertingMappings);
-
-        for (final Map.Entry<String, String> stubbedMappingEntry : stubbedMappingsCopy.entrySet()) {
-            final boolean containsRequiredParam = assertingMappingsCopy.containsKey(stubbedMappingEntry.getKey());
-            if (!containsRequiredParam) {
-                return false;
-            } else {
-                final String assertingValue = assertingMappingsCopy.get(stubbedMappingEntry.getKey());
-                final String templateTokenName = String.format("%s.%s", mapName, stubbedMappingEntry.getKey());
-
-                if (!stringsMatch(stubbedMappingEntry.getValue(), assertingValue, templateTokenName)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    @VisibleForTesting
-    boolean stringsMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
-        if (isNotSet(stubbedValue)) {
-            return true;
-        } else if (isNotSet(assertingValue)) {
-            return false;
-        }
-        return regexMatch(stubbedValue, assertingValue, templateTokenName) || stubbedValue.equals(assertingValue);
-    }
-
-    private boolean regexMatch(final String stubbedValue, final String assertingValue, final String templateTokenName) {
-        return regexParser.match(stubbedValue, assertingValue, templateTokenName, regexGroups);
-    }
-
-    @VisibleForTesting
-    boolean listsIntersect(final List<String> stubbedArray, final List<String> assertingArray) {
-        if (stubbedArray.isEmpty()) {
-            return true;
-        } else if (!assertingArray.isEmpty()) {
-            for (final String entry : assertingArray) {
-                if (stubbedArray.contains(entry)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean jsonMatch(final String stubbedJson, final String assertingJson) {
-        try {
-            boolean passed = JSONCompare.compareJSON(stubbedJson, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
-            if (passed) {
+            if (new StubMatcher(regexGroups).matches(stubbedRequest, this)) {
                 return true;
-            } else {
-                final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-                return stringsMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
             }
-        } catch (final JSONException e) {
-            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-            return stringsMatch(escapedStubbedPostBody, assertingJson, YamlProperties.POST);
-        }
-    }
-
-    private boolean xmlMatch(final String stubbedXml, final String assertingXml) {
-        try {
-            final Diff diff = new Diff(stubbedXml, assertingXml);
-            diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-
-            return (diff.similar() || diff.identical());
-        } catch (SAXException | IOException e) {
-            return stringsMatch(stubbedXml, assertingXml, YamlProperties.POST);
-        }
-    }
-
-    public void computeRegexPatterns() {
-        if (StringUtils.isSet(this.url)) {
-            regexParser.compilePatternAndCache(this.url);
-        }
-        if (isPostStubbed()) {
-            regexParser.compilePatternAndCache(getPostBody());
         }
 
-        this.getQuery().values().forEach(regexParser::compilePatternAndCache);
-        this.getHeaders().values().forEach(regexParser::compilePatternAndCache);
+        return false;
     }
 
     @Override
     @CoberturaIgnore
     public int hashCode() {
-        int result = (ObjectUtils.isNotNull(url) ? url.hashCode() : 0);
+        int result = (isNotNull(url) ? url.hashCode() : 0);
         result = 31 * result + method.hashCode();
-        result = 31 * result + (ObjectUtils.isNotNull(post) ? post.hashCode() : 0);
-        result = 31 * result + (ObjectUtils.isNotNull(fileBytes) && fileBytes.length != 0 ? Arrays.hashCode(fileBytes) : 0);
+        result = 31 * result + (isNotNull(post) ? post.hashCode() : 0);
+        result = 31 * result + (isNotNull(fileBytes) && fileBytes.length != 0 ? Arrays.hashCode(fileBytes) : 0);
         result = 31 * result + headers.hashCode();
         result = 31 * result + query.hashCode();
 
@@ -425,5 +248,200 @@ public class StubRequest {
         sb.append('}');
 
         return sb.toString();
+    }
+
+    public static final class Builder implements ReflectableStubBuilder<StubRequest> {
+
+        private Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
+        private String url;
+        private List<String> method;
+        private String post;
+        private File file;
+        private Map<String, String> headers;
+        private Map<String, String> query;
+
+        public Builder() {
+            this.url = null;
+            this.method = new ArrayList<>();
+            this.post = null;
+            this.file = null;
+            this.headers = new LinkedHashMap<>();
+            this.query = new LinkedHashMap<>();
+            this.fieldNameAndValues = new HashMap<>();
+        }
+
+        public Builder withMethod(final String value) {
+            if (isSet(value)) {
+                method.add(value);
+            }
+
+            return this;
+        }
+
+        public Builder withMethodGet() {
+            this.method.add(HttpMethod.GET.asString());
+
+            return this;
+        }
+
+        public Builder withMethodPut() {
+            this.method.add(HttpMethod.PUT.asString());
+
+            return this;
+        }
+
+        public Builder withMethodPost() {
+            this.method.add(HttpMethod.POST.asString());
+
+            return this;
+        }
+
+        public Builder withMethodHead() {
+            this.method.add(HttpMethod.HEAD.asString());
+
+            return this;
+        }
+
+        public Builder withUrl(final String value) {
+            this.url = value;
+
+            return this;
+        }
+
+        public Builder withHeader(final String key, final String value) {
+            this.headers.put(valueOf(key), valueOf(value));
+
+            return this;
+        }
+
+        public Builder withHeaderContentType(final String value) {
+            this.headers.put("content-type", value);
+
+            return this;
+        }
+
+        public Builder withApplicationJsonContentType() {
+            this.headers.put("content-type", Common.HEADER_APPLICATION_JSON);
+
+            return this;
+        }
+
+        public Builder withApplicationXmlContentType() {
+            this.headers.put("content-type", Common.HEADER_APPLICATION_XML);
+
+            return this;
+        }
+
+        public Builder withHeaderContentLength(final String value) {
+            this.headers.put("content-length", value);
+
+            return this;
+        }
+
+        public Builder withHeaderContentLanguage(final String value) {
+            this.headers.put("content-language", value);
+
+            return this;
+        }
+
+        public Builder withHeaderContentEncoding(final String value) {
+            this.headers.put("content-encoding", value);
+
+            return this;
+        }
+
+        public Builder withHeaderPragma(final String value) {
+            this.headers.put("pragma", value);
+
+            return this;
+        }
+
+        public Builder withYAMLHeaderAuthorizationBasic(final String value) {
+            this.headers.put(StubbableAuthorizationType.BASIC.asYamlProp(), value);
+
+            return this;
+        }
+
+        public Builder withYAMLHeaderAuthorizationBearer(final String value) {
+            this.headers.put(StubbableAuthorizationType.BEARER.asYamlProp(), value);
+
+            return this;
+        }
+
+        public Builder withPost(final String post) {
+            this.post = post;
+
+            return this;
+        }
+
+        public Builder withFile(final File file) {
+            this.file = file;
+
+            return this;
+        }
+
+        public Builder withQuery(final String key, final String value) {
+            this.query.put(key, value);
+
+            return this;
+        }
+
+        public Builder withQuery(final Map<String, String> query) {
+            this.query.putAll(query);
+
+            return this;
+        }
+
+        public Builder withHttpServletRequest(final HttpServletRequest request) throws IOException {
+            this.withUrl(request.getPathInfo())
+                    .withPost(extractPostRequestBody(request, "stubs"))
+                    .withMethod(request.getMethod());
+
+            final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
+            final List<String> headerNames = isNotNull(headerNamesEnumeration) ? list(request.getHeaderNames()) : new LinkedList<>();
+            for (final String headerName : headerNames) {
+                final String headerValue = request.getHeader(headerName);
+
+                this.withHeader(toLower(headerName), headerValue);
+            }
+
+            this.withQuery(constructParamMap(request.getQueryString()));
+
+            return this;
+        }
+
+        @Override
+        public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Object fieldValue) {
+            if (fieldNameOptional.isPresent() && isNotNull(fieldValue)) {
+                fieldNameAndValues.put(fieldNameOptional.get(), fieldValue);
+            }
+        }
+
+        @Override
+        public <E> E get(final Class<E> clazzor, final ConfigurableYAMLProperty property, E orElse) {
+            return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
+        }
+
+        @Override
+        public StubRequest build() {
+            this.url = get(String.class, URL, url);
+            this.post = get(String.class, POST, post);
+            this.file = get(File.class, FILE, file);
+            this.method = asCheckedArrayList(get(List.class, METHOD, method), String.class);
+            this.headers = asCheckedLinkedHashMap(get(Map.class, HEADERS, headers), String.class, String.class);
+            this.query = asCheckedLinkedHashMap(get(Map.class, QUERY, query), String.class, String.class);
+
+            final StubRequest stubRequest = new StubRequest(url, post, file, method, headers, query);
+
+            this.url = null;
+            this.method = new ArrayList<>();
+            this.post = null;
+            this.file = null;
+            this.headers = new LinkedHashMap<>();
+            this.query = new LinkedHashMap<>();
+            this.fieldNameAndValues = new HashMap<>();
+
+            return stubRequest;
+        }
     }
 }
