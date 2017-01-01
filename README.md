@@ -1097,7 +1097,8 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 ### Change log
 
 ##### 4.0.6-SNAPSHOT
-* A lot of internal maintenance such as code clean up & refactoring. Improving test coverage.
+* A lot of internal maintenance such as: code clean up, refactoring & improved test coverage
+* Supporting additional 3xx redirect HTTP codes when rendering redirect response: 303, 307 & 308
 
 ##### 4.0.5
 * Pull request #63 - Dynamic token replacement is also applied to stubbed response headers
