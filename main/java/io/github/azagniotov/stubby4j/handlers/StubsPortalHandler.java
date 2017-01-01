@@ -56,7 +56,7 @@ public class StubsPortalHandler extends AbstractHandler {
         baseRequest.setHandled(true);
 
         try {
-            final StubRequest assertionStubRequest = new StubRequest.Builder().withHttpServletRequest(request).build();
+            final StubRequest assertionStubRequest = new StubRequest.Builder().fromHttpServletRequest(request).build();
             ConsoleUtils.logAssertingRequest(assertionStubRequest);
 
             final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertionStubRequest);

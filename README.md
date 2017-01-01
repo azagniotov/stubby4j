@@ -1097,6 +1097,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 ### Change log
 
 ##### 4.0.6-SNAPSHOT
+* A lot of internal maintenance such as code clean up & refactoring. Improving test coverage.
 
 ##### 4.0.5
 * Pull request #63 - Dynamic token replacement is also applied to stubbed response headers

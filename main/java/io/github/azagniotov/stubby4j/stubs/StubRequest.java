@@ -387,7 +387,7 @@ public class StubRequest implements ReflectableStub {
             return this;
         }
 
-        public Builder withHttpServletRequest(final HttpServletRequest request) throws IOException {
+        public Builder fromHttpServletRequest(final HttpServletRequest request) throws IOException {
             this.withUrl(request.getPathInfo())
                     .withPost(extractPostRequestBody(request, "stubs"))
                     .withMethod(request.getMethod());

@@ -601,7 +601,7 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = requestBuilder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = requestBuilder.fromHttpServletRequest(mockHttpServletRequest).build();
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
@@ -633,7 +633,7 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22NOMATCH%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = requestBuilder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = requestBuilder.fromHttpServletRequest(mockHttpServletRequest).build();
         final StubResponse foundStubResponse = stubRepository.findStubResponseFor(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());

@@ -17,8 +17,8 @@ public abstract class AbstractBuilder<T extends ReflectableStub> {
         this.fieldNameAndValues = new HashMap<>();
     }
 
-    <E> E getStaged(final Class<E> clazzor, final ConfigurableYAMLProperty property, E orElse) {
-        return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : orElse;
+    <E> E getStaged(final Class<E> clazzor, final ConfigurableYAMLProperty property, E defaultValue) {
+        return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : defaultValue;
     }
 
     public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Optional<Object> fieldValueOptional) {

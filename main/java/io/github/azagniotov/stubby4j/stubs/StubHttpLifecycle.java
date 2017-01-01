@@ -7,6 +7,7 @@ import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,13 +68,9 @@ public class StubHttpLifecycle implements ReflectableStub {
     }
 
     public List<StubResponse> getResponses() {
-
         if (response instanceof StubResponse) {
-            return new LinkedList<StubResponse>() {{
-                add((StubResponse) response);
-            }};
+            return new LinkedList<>(Collections.singletonList((StubResponse) response));
         }
-
         return asCheckedLinkedList(this.response, StubResponse.class);
     }
 
@@ -242,13 +239,9 @@ public class StubHttpLifecycle implements ReflectableStub {
         }
 
         private List<StubResponse> getResponses() {
-
             if (response instanceof StubResponse) {
-                return new LinkedList<StubResponse>() {{
-                    add((StubResponse) response);
-                }};
+                return new LinkedList<>(Collections.singletonList((StubResponse) response));
             }
-
             return asCheckedLinkedList(this.response, StubResponse.class);
         }
     }

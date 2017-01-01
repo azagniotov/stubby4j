@@ -104,7 +104,7 @@ public class StubRepository {
      *
      * @param incomingStub {@link StubHttpLifecycle}
      * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
-     * @see StubRequest.Builder#withHttpServletRequest(HttpServletRequest)
+     * @see StubRequest.Builder#fromHttpServletRequest(HttpServletRequest)
      * @see StubHttpLifecycle#equals(Object)
      * @see StubRequest#equals(Object)
      * @see StubMatcher#matches(StubRequest, StubRequest)

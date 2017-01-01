@@ -979,7 +979,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1002,7 +1002,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1026,7 +1026,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1050,7 +1050,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1074,7 +1074,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1098,7 +1098,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1127,7 +1127,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1156,7 +1156,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
@@ -1180,7 +1180,7 @@ public class StubRequestBuilderTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
         when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
 
-        final StubRequest assertingRequest = builder.withHttpServletRequest(mockHttpServletRequest).build();
+        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
 
         assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
