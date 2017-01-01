@@ -99,25 +99,29 @@ public class YAMLParser {
         return stubs;
     }
 
-    private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpMessageConfig) {
+    private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
         final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
 
-        for (final Map.Entry<String, Object> httpType : httpMessageConfig.entrySet()) {
-            if (httpType.getValue() instanceof Map) {
-                final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(httpType.getValue(), String.class, Object.class);
-                if (httpType.getKey().equals(REQUEST.toString())) {
+        for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
+            final Object stubTypeValue = stubType.getValue();
+
+            if (stubTypeValue instanceof Map) {
+                final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+
+                if (isRequestProperty(stubType.getKey())) {
                     parseStubbedRequestConfig(stubBuilder, stubbedProperties);
                 } else {
                     parseStubbedResponseConfig(stubBuilder, stubbedProperties);
                 }
-            } else if (httpType.getValue() instanceof List) {
-                parseStubbedResponseListConfig(stubBuilder, httpType);
+
+            } else if (stubTypeValue instanceof List) {
+                parseStubbedResponseListConfig(stubBuilder, stubType);
             }
         }
 
-        return stubBuilder.withCompleteYAML(toYAMLString(httpMessageConfig))
-                .withRequestAsYAML(toYAMLString(httpMessageConfig, REQUEST))
-                .withResponseAsYAML(toYAMLString(httpMessageConfig, RESPONSE))
+        return stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
+                .withRequestAsYAML(toYAMLString(httpLifecycleConfig, REQUEST))
+                .withResponseAsYAML(toYAMLString(httpLifecycleConfig, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
                 .build();
     }
@@ -140,7 +144,7 @@ public class YAMLParser {
         for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
 
             final String stageableFieldName = propertyPair.getKey();
-            validatedStubbedPropertyAsAllowed(stageableFieldName);
+            checkStubbedProperty(stageableFieldName);
 
             final Object rawFieldName = propertyPair.getValue();
             if (rawFieldName instanceof List) {
@@ -186,7 +190,7 @@ public class YAMLParser {
             final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
             for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
-                validatedStubbedPropertyAsAllowed(stageableFieldName);
+                checkStubbedProperty(stageableFieldName);
 
                 if (isFileProperty(stageableFieldName)) {
                     final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
@@ -200,6 +204,10 @@ public class YAMLParser {
         }
 
         return stubResponses;
+    }
+
+    private boolean isRequestProperty(final String stubbedProperty) {
+        return stubbedProperty.toLowerCase().equals(REQUEST.toString());
     }
 
     private boolean isMethodProperty(final String stubbedProperty) {
@@ -225,17 +233,17 @@ public class YAMLParser {
         return Optional.empty();
     }
 
-    private String toYAMLString(final Map<String, Object> httpMessageConfig) {
+    private String toCompleteYAMLString(final Map<String, Object> httpLifecycleConfig) {
         final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
-            add(httpMessageConfig);
+            add(httpLifecycleConfig);
         }};
 
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
-    private String toYAMLString(final Map<String, Object> httpMessageConfig, final ConfigurableYAMLProperty httpTypeName) {
+    private String toYAMLString(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
         final Map<String, Object> httpType = new HashMap<String, Object>() {{
-            put(httpTypeName.toString(), httpMessageConfig.get(httpTypeName.toString()));
+            put(stubName.toString(), httpLifecycleConfig.get(stubName.toString()));
         }};
 
         return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);
@@ -267,7 +275,7 @@ public class YAMLParser {
         return headers;
     }
 
-    private void validatedStubbedPropertyAsAllowed(String stageableFieldName) {
+    private void checkStubbedProperty(String stageableFieldName) {
         if (isUnknownProperty(stageableFieldName)) {
             throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
         }

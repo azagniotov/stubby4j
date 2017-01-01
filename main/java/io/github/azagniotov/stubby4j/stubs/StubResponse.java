@@ -3,7 +3,6 @@ package io.github.azagniotov.stubby4j.stubs;
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus.Code;
 
@@ -15,6 +14,7 @@ import java.util.Optional;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
+import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
@@ -43,26 +43,26 @@ public class StubResponse implements ReflectableStub {
         this.httpStatusCode = httpStatusCode;
         this.body = body;
         this.file = file;
-        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
+        this.fileBytes = isNull(file) ? new byte[]{} : getFileBytes();
         this.latency = latency;
-        this.headers = ObjectUtils.isNull(headers) ? new LinkedHashMap<>() : headers;
+        this.headers = isNull(headers) ? new LinkedHashMap<>() : headers;
     }
 
     public static StubResponse okResponse() {
-        return new StubResponse(Code.OK, null, null, null, null);
+        return new StubResponse.Builder().build();
     }
 
     public static StubResponse notFoundResponse() {
-        return new StubResponse(Code.NOT_FOUND, null, null, null, null);
+        return new StubResponse.Builder().withHttpStatusCode(Code.NOT_FOUND).build();
     }
 
     public static StubResponse unauthorizedResponse() {
-        return new StubResponse(Code.UNAUTHORIZED, null, null, null, null);
+        return new StubResponse.Builder().withHttpStatusCode(Code.UNAUTHORIZED).build();
     }
 
     public static StubResponse redirectResponse(final Optional<StubResponse> stubResponseOptional) {
         if (!stubResponseOptional.isPresent()) {
-            return new StubResponse(Code.MOVED_TEMPORARILY, null, null, null, null);
+            return new StubResponse.Builder().withHttpStatusCode(Code.MOVED_PERMANENTLY).build();
         }
         final StubResponse foundStubResponse = stubResponseOptional.get();
         return new StubResponse(
@@ -224,7 +224,7 @@ public class StubResponse implements ReflectableStub {
 
         @VisibleForTesting
         Code getHttpStatusCode() {
-            return ObjectUtils.isNull(this.status) ? Code.OK : getCode(parseInt(this.status));
+            return isNull(this.status) ? Code.OK : getCode(parseInt(this.status));
         }
     }
 }
