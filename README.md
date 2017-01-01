@@ -1076,18 +1076,25 @@ For instance, the following will match any `POST` request to the root url:
 
 The request could have any headers and any post body it wants. It will match the above.
 
-Pseudocode:
+Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java)):
 
 ```
-for each <endpoint> of stored endpoints {
+    if (<incoming request>.url found in <previous matched cache>) {
+        get <cached stubbed endpoint> from <previous matched cache> by <incoming request>.url
+        if (<cached stubbed endpoint> == <incoming request>) {
+            return <cached stubbed endpoint>
+        }
+    }
+    for each <stubbed endpoint> of stored endpoints {
+        for each <property> of <stubbed endpoint> {
+            if (<stubbed endpoint>.<property> != <incoming request>.<property>) {
+                next stubbed endpoint
+            }
+        }
+        store in <previous matched cache> the found <stubbed endpoint> by url
 
-   for each <property> of <endpoint> {
-      if <endpoint>.<property> != <incoming request>.<property>
-         next endpoint
-   }
-
-   return <endpoint>
-}
+        return <stubbed endpoint>
+    }
 ```
 
 ### Programmatic API
@@ -1098,7 +1105,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ##### 4.0.6-SNAPSHOT
 * A lot of internal maintenance such as: code clean up, refactoring & improved test coverage
-* Supporting additional 3xx redirect HTTP codes when rendering redirect response: 303, 307 & 308
+* Supporting additional 3xx redirect HTTP codes when rendering redirect response: `303`, `307` & `308`
 
 ##### 4.0.5
 * Pull request #63 - Dynamic token replacement is also applied to stubbed response headers
