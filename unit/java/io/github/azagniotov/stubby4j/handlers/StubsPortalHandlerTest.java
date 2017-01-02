@@ -72,8 +72,9 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -90,30 +91,11 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
         final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
-        when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
-            @Override
-            public int read() throws IOException {
-                return inputStream.read();
-            }
-
-            @Override
-            public boolean isFinished() {
-                return false;
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setReadListener(final ReadListener readListener) {
-
-            }
-        });
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -129,8 +111,9 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -146,31 +129,12 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final InputStream inputStream = new ByteArrayInputStream("".getBytes());
-        Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
-            @Override
-            public int read() throws IOException {
-                return inputStream.read();
-            }
-
-            @Override
-            public boolean isFinished() {
-                return false;
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setReadListener(final ReadListener readListener) {
-
-            }
-        });
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -187,9 +151,10 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -204,8 +169,9 @@ public class StubsPortalHandlerTest {
 
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
         stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
@@ -223,9 +189,10 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
-        final StubRequest assertionStubRequest = new StubRequest.Builder().fromHttpServletRequest(mockHttpServletRequest).build();
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
+        final StubRequest assertionStubRequest = mockStubRepository.toStubRequest(mockHttpServletRequest);
 
-        when(mockStubRepository.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(assertionStubRequest)).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
@@ -244,9 +211,10 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
 
-        final StubRequest assertionStubRequest = new StubRequest.Builder().fromHttpServletRequest(mockHttpServletRequest).build();
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
+        final StubRequest assertionStubRequest = mockStubRepository.toStubRequest(mockHttpServletRequest);
 
-        when(mockStubRepository.findStubResponseFor(assertionStubRequest)).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(assertionStubRequest)).thenReturn(mockStubResponse);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
@@ -266,10 +234,63 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
         when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
 
         final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
-        Mockito.when(mockHttpServletRequest.getInputStream()).thenReturn(new ServletInputStream() {
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+    }
+
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getLatency()).thenReturn("50");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+    }
+
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
+        final String method = HttpMethod.GET.asString();
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(method);
+        when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
+        when(mockStubRepository.search(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+        verify(mockPrintWriter, never()).println(SOME_RESULTS_MESSAGE);
+    }
+
+    private ServletInputStream getServletInputStream(final InputStream inputStream) {
+        return new ServletInputStream() {
             @Override
             public int read() throws IOException {
                 return inputStream.read();
@@ -289,69 +310,24 @@ public class StubsPortalHandlerTest {
             public void setReadListener(final ReadListener readListener) {
 
             }
-        });
-
-        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
-        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        };
     }
 
+    private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
 
-    @Test
-    public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
+        @Override
+        public void write(final int i) throws IOException {
 
-        final String requestPathInfo = "/path/1";
+        }
 
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubResponse.getLatency()).thenReturn("50");
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
-        Mockito.when(mockHttpServletResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+        @Override
+        public boolean isReady() {
+            return false;
+        }
 
-            @Override
-            public void write(final int i) throws IOException {
+        @Override
+        public void setWriteListener(final WriteListener writeListener) {
 
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setWriteListener(final WriteListener writeListener) {
-
-            }
-        });
-
-        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
-        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-
-        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
-    }
-
-
-    @Test
-    public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
-        final String method = HttpMethod.GET.asString();
-        final String requestPathInfo = "/path/1";
-
-        when(mockHttpServletRequest.getMethod()).thenReturn(method);
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-        when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubRepository.findStubResponseFor(Mockito.any(StubRequest.class))).thenReturn(mockStubResponse);
-
-        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
-        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-
-        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-        verify(mockPrintWriter, never()).println(SOME_RESULTS_MESSAGE);
-    }
+        }
+    };
 }

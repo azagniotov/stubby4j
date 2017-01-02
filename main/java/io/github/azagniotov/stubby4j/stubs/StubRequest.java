@@ -9,14 +9,10 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethod;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,8 +23,6 @@ import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHas
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
-import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
-import static io.github.azagniotov.stubby4j.utils.HandlerUtils.extractPostRequestBody;
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
@@ -40,7 +34,6 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.QUERY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
 import static java.lang.String.valueOf;
-import static java.util.Collections.list;
 import static java.util.stream.Collectors.toCollection;
 
 
@@ -383,24 +376,6 @@ public class StubRequest implements ReflectableStub {
 
         public Builder withQuery(final Map<String, String> query) {
             this.query.putAll(query);
-
-            return this;
-        }
-
-        public Builder fromHttpServletRequest(final HttpServletRequest request) throws IOException {
-            this.withUrl(request.getPathInfo())
-                    .withPost(extractPostRequestBody(request, "stubs"))
-                    .withMethod(request.getMethod());
-
-            final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-            final List<String> headerNames = isNotNull(headerNamesEnumeration) ? list(request.getHeaderNames()) : new LinkedList<>();
-            for (final String headerName : headerNames) {
-                final String headerValue = request.getHeader(headerName);
-
-                this.withHeader(toLower(headerName), headerValue);
-            }
-
-            this.withQuery(constructParamMap(request.getQueryString()));
 
             return this;
         }

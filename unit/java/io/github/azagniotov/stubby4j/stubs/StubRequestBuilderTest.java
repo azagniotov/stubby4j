@@ -1,15 +1,12 @@
 package io.github.azagniotov.stubby4j.stubs;
 
-import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,14 +20,10 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEA
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
-import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class StubRequestBuilderTest {
-
-    @Mock
-    private HttpServletRequest mockHttpServletRequest;
 
     private StubRequest.Builder builder;
 
@@ -958,231 +951,6 @@ public class StubRequestBuilderTest {
                         .withQuery(paramTwo, paramTwoValue).build();
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "[\"alex\",\"tracy\"]";
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "[\"alex\",\"tracy\"]";
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "['alex','tracy']";
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValuesHaveEncodedSinglePlus() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "stalin lenin truman";
-        final String encodedRawQuery = paramOneValue.replaceAll("\\s+", "%2B");
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValuesHaveMultipleRawPluses() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "stalin lenin truman";
-        final String encodedRawQuery = paramOneValue.replaceAll("\\s+", "+++");
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValuesHaveEncodedMultiplePluses() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "stalin lenin truman";
-        final String encodedRawQuery = paramOneValue.replaceAll("\\s+", "%2B%2B%2B");
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedSpacesWithinUrlEncodedSingleQuotes() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "['stalin and truman','are best friends']";
-        final String encodedRawQuery = paramOneValue
-                .replaceAll("\\s+", "%20%20")
-                .replaceAll(Pattern.quote("["), "%5B")
-                .replaceAll("\\]", "%5D")
-                .replaceAll("'", "%27");
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedPlusWithinUrlEncodedSingleQuotes() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "['stalin and truman','are best friends']";
-        final String encodedRawQuery = paramOneValue
-                .replaceAll("\\s+", "%2B%2B%2B")
-                .replaceAll(Pattern.quote("["), "%5B")
-                .replaceAll("\\]", "%5D")
-                .replaceAll("'", "%27");
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=" + encodedRawQuery);
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing() throws Exception {
-
-        final String paramOne = "names";
-        final String paramOneValue = "[\"alex\", \"tracy\"]";
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
-
-        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
-        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
-
-        final StubRequest assertingRequest = builder.fromHttpServletRequest(mockHttpServletRequest).build();
-
-        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
     }
 
     @Test
