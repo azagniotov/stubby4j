@@ -1076,7 +1076,7 @@ For instance, the following will match any `POST` request to the root url:
 
 The request could have any headers and any post body it wants. It will match the above.
 
-Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L112)):
+Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L137)):
 
 ```
     if (<incoming request>.url found in <previous matched cache>) {
