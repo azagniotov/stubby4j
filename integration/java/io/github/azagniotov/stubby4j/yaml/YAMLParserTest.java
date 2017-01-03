@@ -45,11 +45,11 @@ public class YAMLParserTest {
 
         final String yaml =
                 "-  request:\n" +
-                "      methodd: [PUT]\n" +
-                "      url: /invoice\n" +
-                "\n" +
-                "   response:\n" +
-                "      status: 200";
+                        "      methodd: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      status: 200";
 
         unmarshall(yaml);
     }
@@ -77,18 +77,18 @@ public class YAMLParserTest {
 
         final String yaml =
                 "-  request:\n" +
-                "      method: [PUT]\n" +
-                "      url: /invoice\n" +
-                "\n" +
-                "   response:\n" +
-                "      - status: 200\n" +
-                "        body: OK\n" +
-                "\n" +
-                "      - status: 200\n" +
-                "        bodyy: OK\n" +
-                "\n" +
-                "      - status: 200\n" +
-                "        body: OK";
+                        "      method: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      - status: 200\n" +
+                        "        body: OK\n" +
+                        "\n" +
+                        "      - status: 200\n" +
+                        "        bodyy: OK\n" +
+                        "\n" +
+                        "      - status: 200\n" +
+                        "        body: OK";
 
         unmarshall(yaml);
     }

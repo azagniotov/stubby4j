@@ -1,6 +1,5 @@
 package io.github.azagniotov.stubby4j.filesystem;
 
-import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.FileUtils;

@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
 import static java.util.concurrent.TimeUnit.DAYS;

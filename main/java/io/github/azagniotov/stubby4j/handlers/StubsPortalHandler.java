@@ -20,10 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubResponseHandlingStrategy;
-import io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
-import io.github.azagniotov.stubby4j.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.StubSearchResult;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -34,6 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory.getStrategy;
 
 public class StubsPortalHandler extends AbstractHandler {
 
@@ -56,14 +56,11 @@ public class StubsPortalHandler extends AbstractHandler {
         baseRequest.setHandled(true);
 
         try {
-            final StubRequest assertionStubRequest = stubRepository.toStubRequest(request);
-            ConsoleUtils.logAssertingRequest(assertionStubRequest);
+            final StubSearchResult stubSearchResult = stubRepository.search(request);
+            final StubResponseHandlingStrategy strategyStubResponse = getStrategy(stubSearchResult.getMatch());
 
-            final StubResponse foundStubResponse = stubRepository.search(assertionStubRequest);
-            final StubResponseHandlingStrategy strategyStubResponse = StubsResponseHandlingStrategyFactory.getStrategy(foundStubResponse);
-
-            strategyStubResponse.handle(response, assertionStubRequest);
-            ConsoleUtils.logOutgoingResponse(assertionStubRequest.getUrl(), response);
+            strategyStubResponse.handle(response, stubSearchResult.getInvariant());
+            ConsoleUtils.logOutgoingResponse(stubSearchResult.getInvariant().getUrl(), response);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
         }

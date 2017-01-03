@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
+import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
@@ -29,6 +30,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.redirectResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logAssertingRequest;
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.extractPostRequestBody;
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
@@ -54,6 +56,15 @@ public class StubRepository {
         this.matchedStubsCache = new ConcurrentHashMap<>();
     }
 
+    public StubSearchResult search(final HttpServletRequest incomingRequest) throws IOException {
+        final StubRequest assertionStubRequest = this.toStubRequest(incomingRequest);
+        logAssertingRequest(assertionStubRequest);
+
+        final StubResponse match = findMatch(new StubHttpLifecycle.Builder().withRequest(assertionStubRequest).build());
+
+        return new StubSearchResult(assertionStubRequest, match);
+    }
+
     public StubRequest toStubRequest(final HttpServletRequest request) throws IOException {
         final StubRequest.Builder builder = new StubRequest.Builder();
         builder.withUrl(request.getPathInfo())
@@ -68,13 +79,7 @@ public class StubRepository {
             builder.withHeader(toLower(headerName), headerValue);
         }
 
-        builder.withQuery(constructParamMap(request.getQueryString()));
-
-        return builder.build();
-    }
-
-    public StubResponse search(final StubRequest incomingRequest) {
-        return findMatch(new StubHttpLifecycle.Builder().withRequest(incomingRequest).build());
+        return builder.withQuery(constructParamMap(request.getQueryString())).build();
     }
 
     private StubResponse findMatch(final StubHttpLifecycle incomingRequest) {

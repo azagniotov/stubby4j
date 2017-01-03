@@ -10,10 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
@@ -30,6 +32,8 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEA
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,13 +53,14 @@ public class StubRepositoryTest {
     @Mock
     private HttpServletRequest mockHttpServletRequest;
 
-    private StubRequest.Builder requestBuilder = new StubRequest.Builder();
-    private StubRepository stubRepository;
+    @Spy
+    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
+
+    private StubRequest.Builder requestBuilder;
 
     @Before
     public void beforeEach() throws Exception {
         requestBuilder = new StubRequest.Builder();
-        stubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
     }
 
     @Test
@@ -84,11 +89,17 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
+    }
+
+    private StubResponse setUpStubSearchBehavior(final StubRequest assertingRequest) throws IOException {
+        doReturn(assertingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        return stubSearchResult.getMatch();
     }
 
     @Test
@@ -122,8 +133,9 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse irrelevantFirstSequenceResponse = stubRepository.search(assertingRequest);
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+
+        final StubResponse irrelevantFirstSequenceResponse = setUpStubSearchBehavior(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.INTERNAL_SERVER_ERROR).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
@@ -161,9 +173,9 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse irrelevantFirstSequenceResponse = stubRepository.search(assertingRequest);
-        final StubResponse irrelevantLastSequenceResponse = stubRepository.search(assertingRequest);
-        final StubResponse firstSequenceResponseRestarted = stubRepository.search(assertingRequest);
+        final StubResponse irrelevantFirstSequenceResponse = setUpStubSearchBehavior(assertingRequest);
+        final StubResponse irrelevantLastSequenceResponse = setUpStubSearchBehavior(assertingRequest);
+        final StubResponse firstSequenceResponseRestarted = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(firstSequenceResponseRestarted.getHttpStatusCode());
         assertThat(firstSequenceResponseRestarted.getBody()).isEqualTo(sequenceResponseBody);
@@ -194,7 +206,7 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.MOVED_PERMANENTLY).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -223,7 +235,7 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -254,7 +266,7 @@ public class StubRepositoryTest {
                         .withMethodGet()
                         .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "Basic Ym9iOnNlY3JldA==").build();  //bob:secret
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -284,7 +296,7 @@ public class StubRepositoryTest {
                         .withMethodGet()
                         .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "Bearer Ym9iOnNlY3JldA==").build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -314,7 +326,7 @@ public class StubRepositoryTest {
                         .withMethodGet()
                         .withHeader(StubRequest.HTTP_HEADER_AUTHORIZATION, "CustomAuthorizationName Ym9iOnNlY3JldA==").build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -343,7 +355,7 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodGet().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -371,7 +383,7 @@ public class StubRepositoryTest {
                         .withMethodGet()
                         .withHeader(BASIC.asYAMLProp(), "Basic BadCredentials").build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -398,7 +410,7 @@ public class StubRepositoryTest {
                         .withMethodGet()
                         .withHeader(BASIC.asYAMLProp(), null).build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -421,7 +433,7 @@ public class StubRepositoryTest {
                         .withUrl("/invoice/300")
                         .withMethodGet().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -451,7 +463,7 @@ public class StubRepositoryTest {
                         .withMethodPost()
                         .withPost(postData).build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.SERVICE_UNAVAILABLE).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -477,7 +489,7 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodPost().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -502,7 +514,7 @@ public class StubRepositoryTest {
                         .withUrl(url)
                         .withMethodPost().build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -530,7 +542,7 @@ public class StubRepositoryTest {
                         .withMethodPost()
                         .withPost(postData).build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -567,7 +579,7 @@ public class StubRepositoryTest {
                         .withQuery("attributes", "[\"id\",\"uuid\",\"created\",\"lastUpdated\",\"displayName\",\"email\",\"givenName\",\"familyName\"]")
                         .build();
 
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -601,8 +613,8 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = stubRepository.toStubRequest(mockHttpServletRequest);
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
@@ -633,8 +645,8 @@ public class StubRepositoryTest {
                         "type_name=user&client_id=id&client_secret=secret&attributes=[%22NOMATCH%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]"
                 );
 
-        final StubRequest assertingRequest = stubRepository.toStubRequest(mockHttpServletRequest);
-        final StubResponse foundStubResponse = stubRepository.search(assertingRequest);
+        final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
         assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
@@ -646,7 +658,7 @@ public class StubRepositoryTest {
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
         resetStubHttpLifecyclesFromYamlResource("/yaml/two.external.files.yaml");
-        final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
+        final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(2);
         assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
@@ -668,7 +680,7 @@ public class StubRepositoryTest {
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
         resetStubHttpLifecyclesFromYamlResource("/yaml/one.external.files.yaml");
-        final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
+        final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
         assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
@@ -689,7 +701,7 @@ public class StubRepositoryTest {
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
         resetStubHttpLifecyclesFromYamlResource("/yaml/same.external.files.yaml");
-        final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
+        final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
         assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
@@ -710,7 +722,7 @@ public class StubRepositoryTest {
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
         resetStubHttpLifecyclesFromYamlResource("/yaml/request.null.external.files.yaml");
-        final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
+        final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
         assertThat(externalFiles.containsValue(expectedResponseFile.lastModified())).isTrue();
@@ -731,7 +743,7 @@ public class StubRepositoryTest {
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
         resetStubHttpLifecyclesFromYamlResource("/yaml/response.null.external.files.yaml");
-        final Map<File, Long> externalFiles = stubRepository.getExternalFiles();
+        final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
         assertThat(externalFiles.containsValue(expectedRequestFile.lastModified())).isTrue();
@@ -762,8 +774,8 @@ public class StubRepositoryTest {
         spyStubHttpLifecycles.add(spyCycleOne);
         spyStubHttpLifecycles.add(spyCycleTwo);
 
-        stubRepository.resetStubsCache(spyStubHttpLifecycles);   // 1st time call to getResponses
-        stubRepository.getExternalFiles();                               // 2nd time call to getResponses
+        spyStubRepository.resetStubsCache(spyStubHttpLifecycles);   // 1st time call to getResponses
+        spyStubRepository.getExternalFiles();                               // 2nd time call to getResponses
 
         verify(spyCycleOne, times(2)).getResponses();
         verify(spyCycleTwo, times(2)).getResponses();
@@ -793,8 +805,8 @@ public class StubRepositoryTest {
         }};
         injectObjectFields(stubHttpLifecycles.get(1), "response", stubResponsesTwo);
 
-        stubRepository.resetStubsCache(stubHttpLifecycles);
-        stubRepository.getExternalFiles();
+        spyStubRepository.resetStubsCache(stubHttpLifecycles);
+        spyStubRepository.getExternalFiles();
 
         verify(stubHttpLifecycles.get(0).getResponses().get(0), times(1)).getRawFile();
         verify(stubHttpLifecycles.get(0).getResponses().get(1), times(1)).getRawFile();
@@ -836,7 +848,7 @@ public class StubRepositoryTest {
 
         loadYamlToDataStore(String.format("%s%s%s%s%s", cycleOne, FileUtils.BR, cycleTwo, FileUtils.BR, cycleThree));
 
-        List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = stubRepository.getStubs();
+        List<StubHttpLifecycle> beforeDeletionLoadedHttpCycles = spyStubRepository.getStubs();
         assertThat(beforeDeletionLoadedHttpCycles.size()).isEqualTo(3);
 
         for (int resourceId = 0; resourceId < beforeDeletionLoadedHttpCycles.size(); resourceId++) {
@@ -850,9 +862,9 @@ public class StubRepositoryTest {
             }
         }
 
-        stubRepository.deleteStubByIndex(1);
+        spyStubRepository.deleteStubByIndex(1);
 
-        List<StubHttpLifecycle> afterDeletionLoadedHttpCycles = stubRepository.getStubs();
+        List<StubHttpLifecycle> afterDeletionLoadedHttpCycles = spyStubRepository.getStubs();
         assertThat(afterDeletionLoadedHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < afterDeletionLoadedHttpCycles.size(); resourceId++) {
@@ -880,7 +892,7 @@ public class StubRepositoryTest {
 
         loadYamlToDataStore(cycleOne);
 
-        List<StubHttpLifecycle> beforeResetHttpCycles = stubRepository.getStubs();
+        List<StubHttpLifecycle> beforeResetHttpCycles = spyStubRepository.getStubs();
         assertThat(beforeResetHttpCycles.size()).isEqualTo(1);
 
         for (int resourceId = 0; resourceId < beforeResetHttpCycles.size(); resourceId++) {
@@ -916,9 +928,9 @@ public class StubRepositoryTest {
                 .build();
 
         final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
-        stubRepository.resetStubsCache(stubHttpLifecycles);
+        spyStubRepository.resetStubsCache(stubHttpLifecycles);
 
-        List<StubHttpLifecycle> afterResetHttpCycles = stubRepository.getStubs();
+        List<StubHttpLifecycle> afterResetHttpCycles = spyStubRepository.getStubs();
         assertThat(afterResetHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < afterResetHttpCycles.size(); resourceId++) {
@@ -959,7 +971,7 @@ public class StubRepositoryTest {
 
         loadYamlToDataStore(String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
 
-        List<StubHttpLifecycle> beforeUpdateHttpCycles = stubRepository.getStubs();
+        List<StubHttpLifecycle> beforeUpdateHttpCycles = spyStubRepository.getStubs();
         assertThat(beforeUpdateHttpCycles.size()).isEqualTo(2);
 
         for (int resourceId = 0; resourceId < beforeUpdateHttpCycles.size(); resourceId++) {
@@ -985,8 +997,8 @@ public class StubRepositoryTest {
         final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", cycleOne);
         final StubHttpLifecycle updatingStubHttpLifecycle = stubHttpLifecycles.get(0);
 
-        stubRepository.updateStubByIndex(0, updatingStubHttpLifecycle);
-        final List<StubHttpLifecycle> afterUpdateHttpCycles = stubRepository.getStubs();
+        spyStubRepository.updateStubByIndex(0, updatingStubHttpLifecycle);
+        final List<StubHttpLifecycle> afterUpdateHttpCycles = spyStubRepository.getStubs();
 
         assertThat(afterUpdateHttpCycles.size()).isEqualTo(2);
         final String firstCycleUrl = afterUpdateHttpCycles.get(0).getUrl();
@@ -1007,13 +1019,13 @@ public class StubRepositoryTest {
     private void loadYamlToDataStore(final String yaml) throws Exception {
         final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", yaml);
 
-        stubRepository.resetStubsCache(stubHttpLifecycles);
+        spyStubRepository.resetStubsCache(stubHttpLifecycles);
     }
 
     private void resetStubHttpLifecyclesFromYamlResource(final String resourcePath) throws Exception {
         final URL yamlUrl = StubRepositoryTest.class.getResource(resourcePath);
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        stubRepository.resetStubsCache(new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
+        spyStubRepository.resetStubsCache(new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
     }
 }
