@@ -1383,7 +1383,7 @@ MIT. See LICENSE for details
 [stackoverflow-badge]: https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat
 [stackoverflow-link]: http://stackoverflow.com/questions/tagged/stubby4j
 
-[chat-badge]: https://img.shields.io/gitter/room/stubby4j/stubby4j.svg?style=flat
+[chat-badge]: https://badges.gitter.im/Join%20Chat.svg
 [chat-link]: https://gitter.im/stubby4j/Lobby
 
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
