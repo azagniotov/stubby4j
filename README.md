@@ -15,7 +15,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v4.0.5
+## User manual for stubby4j v5.0.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -147,12 +147,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.5")
+compile("io.github.azagniotov:stubby4j:5.0.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.5:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.0.0:no-jetty")
 ```
 
 ##### Maven
@@ -160,7 +160,7 @@ compile("io.github.azagniotov:stubby4j:4.0.5:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.5</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -169,7 +169,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>4.0.5</version>
+    <version>5.0.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -178,17 +178,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-4.0.6-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/4.0.6-SNAPSHOT/`
+* Install `stubby4j-5.0.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.0.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.6-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:5.0.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:4.0.6-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.0.1-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1076,7 +1076,7 @@ For instance, the following will match any `POST` request to the root url:
 
 The request could have any headers and any post body it wants. It will match the above.
 
-Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L137)):
+Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L142)):
 
 ```
     if (<incoming request>.url found in <previous matched cache>) {
@@ -1103,8 +1103,10 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 4.0.6-SNAPSHOT
-* A lot of internal maintenance such as: code clean up, refactoring & improved test coverage
+##### 5.0.1-SNAPSHOT
+
+##### 5.0.0
+* 2017 release: a lot of internal maintenance such as code clean up, refactoring & improved test coverage
 * Supporting additional 3xx redirect HTTP codes when rendering redirect response: `303`, `307` & `308`
 
 ##### 4.0.5
