@@ -89,7 +89,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 ### Why would a developer use stubby4j?
-####You want to:
+#### You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
 * Third party web service your application suppose to contract with is not ready yet
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
