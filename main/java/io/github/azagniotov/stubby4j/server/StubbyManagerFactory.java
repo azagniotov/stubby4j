@@ -55,7 +55,7 @@ public class StubbyManagerFactory {
         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
             final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
             final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
-            watchDataStore(stubRepository, watchScanTime);
+            //watchDataStore(stubRepository, watchScanTime);
         }
 
         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
