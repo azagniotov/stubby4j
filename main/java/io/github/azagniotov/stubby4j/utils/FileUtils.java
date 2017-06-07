@@ -162,8 +162,10 @@ public final class FileUtils {
     }
 
     private static String characterFileToString(final File file) throws IOException {
-        final String loadedContent = StringUtils.inputStreamToString(constructInputStream(file));
-        return enforceSystemLineSeparator(loadedContent);
+        try (InputStream inputStream = constructInputStream(file)) {
+            final String loadedContent = StringUtils.inputStreamToString(inputStream);
+            return enforceSystemLineSeparator(loadedContent);
+        }
     }
 
     private static byte[] characterFileToUtf8Bytes(final File file) throws IOException {
