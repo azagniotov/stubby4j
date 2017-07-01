@@ -391,21 +391,6 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRoot() throws Exception {
-
-        final String requestUrl = String.format("%s/", ADMIN_URL);
-        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
-
-        final HttpResponse httpResponse = httpPutRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-        final String responseMessage = httpResponse.parseAsString().trim();
-
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
-        assertThat(statusMessage).isEqualTo("Method Not Allowed");
-        assertThat(responseMessage).isEqualTo("Method DELETE is not allowed on URI /");
-    }
-
-    @Test
     public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidIndexURI() throws Exception {
 
         final int invalidIndex = 88888888;
@@ -450,6 +435,38 @@ public class AdminPortalTest {
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
         assertThat(getResponseContent).doesNotContain("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+    }
+
+    @Test
+    public void should_DeleteAllStubbedRequests_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/2");
+        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        HttpResponse httpGetResponse = httpGetRequest.execute();
+        String getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
+
+
+        final String deleteAllRequestUrl = String.format("%s", ADMIN_URL);
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, deleteAllRequestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
+        assertThat(deleteResponseContent).isEqualTo("Stub requests deleted successfully");
+
+        httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, deleteAllRequestUrl);
+        httpGetResponse = httpGetRequest.execute();
+        getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).isEmpty();
     }
 
 

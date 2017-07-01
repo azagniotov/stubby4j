@@ -14,8 +14,9 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
     public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws IOException {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
-            response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-            response.getWriter().println("Method DELETE is not allowed on URI " + request.getRequestURI());
+            stubRepository.deleteAllStubs();
+            response.setStatus(HttpStatus.OK_200);
+            response.getWriter().println("Stub requests deleted successfully");
             return;
         }
 
