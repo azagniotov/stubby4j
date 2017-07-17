@@ -64,7 +64,7 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
             final String resolvedPath = replaceTokensInString(stubbedResponse.getRawFileAbsolutePath(), regexGroups);
             final File resolvedFile = new File(resolvedPath);
             if (resolvedFile.exists()) {
-                writeOutputStream(response, fileToBytes(resolvedFile));
+                writeOutputStream(response, getBytesUtf8(replaceTokens(fileToBytes(resolvedFile), regexGroups)));
             } else {
                 response.setStatus(HttpStatus.NOT_FOUND_404);
             }
