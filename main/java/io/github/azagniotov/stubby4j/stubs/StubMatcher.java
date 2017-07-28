@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
@@ -27,6 +28,8 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
 class StubMatcher {
 
     private final Map<String, String> regexGroups;
+    private static final Pattern JSON_HEADER = Pattern.compile("^application/(?:json|.+\\+json)(?:;.*)?$");
+    private static final Pattern XML_HEADER = Pattern.compile("^application/(?:xml|.+\\+xml)(?:;.*)?$");
 
     StubMatcher(final Map<String, String> regexGroups) {
         this.regexGroups = regexGroups;
@@ -70,19 +73,25 @@ class StubMatcher {
         return stringsMatch(stubbedUrl, assertingUrl, URL.toString());
     }
 
-    private boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final StubRequest assertingRequest) {
-        final String assertingPostBody = assertingRequest.getPostBody();
+    @VisibleForTesting
+    boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final StubRequest assertingRequest) {
         if (isPostStubbed) {
-            final String assertingContentType = assertingRequest.getHeaders().get("content-type");
+            final String assertingPostBody = assertingRequest.getPostBody();
             if (isNotSet(assertingPostBody)) {
                 return false;
-            } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_JSON)) {
-                return jsonMatch(stubbedPostBody, assertingPostBody);
-            } else if (isSet(assertingContentType) && assertingContentType.contains(Common.HEADER_APPLICATION_XML)) {
-                return xmlMatch(stubbedPostBody, assertingPostBody);
-            } else {
-                return stringsMatch(stubbedPostBody, assertingPostBody, POST.toString());
             }
+
+            final String assertingContentType = assertingRequest.getHeaders().get("content-type");
+
+            if (isSet(assertingContentType)) {
+                if (JSON_HEADER.matcher(assertingContentType).matches()) {
+                    return jsonMatch(stubbedPostBody, assertingPostBody);
+                } else if (XML_HEADER.matcher(assertingContentType).matches()) {
+                    return xmlMatch(stubbedPostBody, assertingPostBody);
+                }
+            }
+
+            return stringsMatch(stubbedPostBody, assertingPostBody, POST.toString());
         }
 
         return true;
