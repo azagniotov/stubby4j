@@ -224,7 +224,7 @@ public class StubMatcherTest {
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomJson() {
         StubRequest request = new StubRequest.Builder()
                 .withPost("{\"a\":\"b\",\"c\":\"d\"}")
-                .withHeaderContentType("application/vnd.com+json")
+                .withHeaderContentType("something/vnd.com+json")
                 .build();
 
         final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"c\":\"d\",\"a\":\"b\"}", request);
@@ -236,7 +236,7 @@ public class StubMatcherTest {
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomJsonCharset() {
         StubRequest request = new StubRequest.Builder()
                 .withPost("{\"a\":\"b\",\"c\":\"d\"}")
-                .withHeaderContentType("application/vnd.com+json;charset=stuff")
+                .withHeaderContentType("something/vnd.com+json;charset=stuff")
                 .build();
 
         final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"c\":\"d\",\"a\":\"b\"}", request);
@@ -272,7 +272,7 @@ public class StubMatcherTest {
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomXml() {
         StubRequest request = new StubRequest.Builder()
                 .withPost("<xml><a>a</a><b>b</b></xml>")
-                .withHeaderContentType("application/vnd.com+xml")
+                .withHeaderContentType("something/vnd.com+xml")
                 .build();
 
         final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml><b>b</b><a>a</a></xml>", request);
@@ -284,7 +284,7 @@ public class StubMatcherTest {
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomXmlCharset() {
         StubRequest request = new StubRequest.Builder()
                 .withPost("<xml><a>a</a><b>b</b></xml>")
-                .withHeaderContentType("application/vnd.com+xml;charset=something")
+                .withHeaderContentType("something/vnd.com+xml;charset=something")
                 .build();
 
         final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml><b>b</b><a>a</a></xml>", request);
