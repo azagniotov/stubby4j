@@ -1112,7 +1112,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ##### 5.0.1
 * Pull request #71 - Add endpoint to Delete all stubs (https://github.com/nningego)
-* Pull request #73 - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
+* Pull request #74 - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
 * Pull request #76 - Allow custom XML and JSON content types (https://github.com/goughy000)
 * Upgraded from Jetty `9.4.0.v20161208` to `9.4.6.v20170531`
 
