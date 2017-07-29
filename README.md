@@ -15,7 +15,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v5.0.0
+## User manual for stubby4j v5.0.1
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -127,8 +127,8 @@ Run `gradle cobertura` command to:
 ### Third-party dependencies
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.4.0.v20161208.jar
-* jetty-servlets-9.4.0.v20161208.jar
+* jetty-server-9.4.6.v20170531.jar
+* jetty-servlets-9.4.6.v20170531.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.17.jar
 * jsonassert-1.3.0.jar
@@ -147,12 +147,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:5.0.0")
+compile("io.github.azagniotov:stubby4j:5.0.1")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.0.0:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.0.1:no-jetty")
 ```
 
 ##### Maven
@@ -160,7 +160,7 @@ compile("io.github.azagniotov:stubby4j:5.0.0:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -169,7 +169,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -1056,6 +1056,10 @@ Perform `PUT` requests in the same format as using `POST`, only this time supply
 
 Send a `DELETE` request to `localhost:8889/<id>`
 
+##### Deleting ALL endpoints at once
+
+Send a `DELETE` request to `localhost:8889`
+
 
 ### The stubs portal
 
@@ -1103,7 +1107,14 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 5.0.1-SNAPSHOT
+##### 5.0.2-SNAPSHOT
+
+
+##### 5.0.1
+* Pull request #71 - Add endpoint to Delete all stubs (https://github.com/nningego)
+* Pull request #73 - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
+* Pull request #76 - Allow custom XML and JSON content types (https://github.com/goughy000)
+* Upgraded from Jetty `9.4.0.v20161208` to `9.4.6.v20170531`
 
 ##### 5.0.0
 * 2017 release: a lot of internal maintenance such as code clean up, refactoring & improved test coverage
