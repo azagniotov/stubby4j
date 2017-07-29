@@ -313,4 +313,28 @@ public class StubMatcherTest {
 
         assertThat(isBodiesMatch).isFalse();
     }
+
+    @Test
+    public void postBodiesMatch_ShouldReturnTrue_WhenStringMatchWeirdContentType() {
+        StubRequest request = new StubRequest.Builder()
+                .withPost("wibble")
+                .withHeaderContentType("whut")
+                .build();
+
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wibble", request);
+
+        assertThat(isBodiesMatch).isTrue();
+    }
+
+    @Test
+    public void postBodiesMatch_ShouldReturnFalse_WhenStringMatchWeirdContentType() {
+        StubRequest request = new StubRequest.Builder()
+                .withPost("wobble")
+                .withHeaderContentType("whut")
+                .build();
+
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wibble", request);
+
+        assertThat(isBodiesMatch).isFalse();
+    }
 }
