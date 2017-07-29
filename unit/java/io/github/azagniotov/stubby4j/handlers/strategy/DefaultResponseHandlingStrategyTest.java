@@ -4,13 +4,16 @@ import io.github.azagniotov.stubby4j.handlers.strategy.stubs.DefaultResponseHand
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ServletOutputStream;
@@ -24,6 +27,7 @@ import java.util.UUID;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,6 +55,9 @@ public class DefaultResponseHandlingStrategyTest {
         }
     };
     private static final byte[] EMPTY_BYTES = {};
+
+    @Spy
+    private ServletOutputStream mockOutputStream;
 
     @Mock
     private StubResponse mockStubResponse;
@@ -128,6 +135,32 @@ public class DefaultResponseHandlingStrategyTest {
 
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
         verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    @Test
+    public void shouldReturnReplacedValueInFileWhenFileBodyHasDynamicTokens() throws Exception {
+
+        final String nonce = UUID.randomUUID().toString();
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(mockOutputStream);
+        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
+            put("post.1", nonce);
+        }});
+
+        when(mockStubResponse.isFilePathContainsTemplateTokens()).thenReturn(true);
+        when(mockStubResponse.getRawFileAbsolutePath()).thenReturn("./resources/json-test-file.json");
+
+        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+
+        ArgumentCaptor<byte[]> responseCaptor = ArgumentCaptor.forClass(byte[].class);
+
+        verify(mockHttpServletResponse, times(1)).getOutputStream();
+        verify(mockOutputStream, times(1)).write(responseCaptor.capture());
+
+        String response = new String(responseCaptor.getValue(), StringUtils.charsetUTF8());
+
+        assertTrue("Response's tokens have been parsed", response.contains(nonce));
+
     }
 
     private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
