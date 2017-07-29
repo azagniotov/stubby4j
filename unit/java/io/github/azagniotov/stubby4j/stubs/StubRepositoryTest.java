@@ -128,6 +128,23 @@ public class StubRepositoryTest {
     }
 
     @Test
+    public void shouldDeleteOriginalHttpCycleList_WhenStubsExist() throws Exception {
+        final List<StubHttpLifecycle> stubs = buildHttpLifeCyclesWithDefaultResponse("/resource/item/1");
+        final boolean resetResult = spyStubRepository.resetStubsCache(stubs);
+        assertThat(resetResult).isTrue();
+        assertThat(spyStubRepository.getStubs().size()).isGreaterThan(0);
+
+        spyStubRepository.deleteAllStubs();
+        assertThat(spyStubRepository.getStubs()).isEmpty();
+    }
+
+    @Test
+    public void shouldDeleteOriginalHttpCycleList_WhenStubsDontExist() throws Exception {
+        spyStubRepository.deleteAllStubs();
+        assertThat(spyStubRepository.getStubs()).isEmpty();
+    }
+
+    @Test
     public void shouldDeleteOriginalHttpCycleList_WhenInvalidIndexGiven() throws Exception {
 
         expectedException.expect(IndexOutOfBoundsException.class);

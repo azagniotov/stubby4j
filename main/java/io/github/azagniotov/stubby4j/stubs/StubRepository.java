@@ -288,6 +288,10 @@ public class StubRepository {
         return removedStub;
     }
 
+    public synchronized void deleteAllStubs() {
+        stubs.clear();
+    }
+
     private void updateResourceIDHeaders() {
         for (int index = 0; index < stubs.size(); index++) {
             stubs.get(index).setResourceId(index);
