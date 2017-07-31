@@ -174,6 +174,7 @@ public class StubRepository {
         return Optional.empty();
     }
 
+    @CoberturaIgnore
     private static void logMatch(long elapsed, StubHttpLifecycle matched) {
         StringBuilder message = new StringBuilder()
                 .append("Found a match after ")
