@@ -117,10 +117,10 @@ public final class ConsoleUtils {
     public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
         final StubRequest request = lifecycle.getRequest();
 
-        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ");
-        loadedMsgBuilder.append(request.getMethod());
-        loadedMsgBuilder.append(" ");
-        loadedMsgBuilder.append(request.getUrl());
+        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ")
+                .append(request.getMethod())
+                .append(" ")
+                .append(request.getUrl());
         if (isSet(lifecycle.getDescription())) {
             loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
         }
