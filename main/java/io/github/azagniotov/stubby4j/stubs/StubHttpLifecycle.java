@@ -25,18 +25,21 @@ public class StubHttpLifecycle implements ReflectableStub {
     private final Object response;
     private final String requestAsYAML;
     private final String responseAsYAML;
+    private final String description;
 
     private StubHttpLifecycle(
             final StubRequest request,
             final Object response,
             final String requestAsYAML,
             final String responseAsYAML,
-            final String completeYAML) {
+            final String completeYAML,
+            final String description) {
         this.request = request;
         this.response = response;
         this.requestAsYAML = requestAsYAML;
         this.responseAsYAML = responseAsYAML;
         this.completeYAML = completeYAML;
+        this.description = description;
     }
 
     public StubRequest getRequest() {
@@ -108,6 +111,10 @@ public class StubHttpLifecycle implements ReflectableStub {
         return request.getUrl();
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
@@ -177,6 +184,7 @@ public class StubHttpLifecycle implements ReflectableStub {
         private String completeYAML;
         private String requestAsYAML;
         private String responseAsYAML;
+        private String description;
 
         public Builder() {
             this.request = null;
@@ -184,6 +192,7 @@ public class StubHttpLifecycle implements ReflectableStub {
             this.completeYAML = null;
             this.requestAsYAML = null;
             this.responseAsYAML = null;
+            this.description = null;
         }
 
         public Builder withRequest(final StubRequest request) {
@@ -226,14 +235,21 @@ public class StubHttpLifecycle implements ReflectableStub {
             return this;
         }
 
+        public Builder withDescription(final String description) {
+            this.description = description;
+
+            return this;
+        }
+
         public StubHttpLifecycle build() {
-            final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle(request, response, requestAsYAML, responseAsYAML, completeYAML);
+            final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle(request, response, requestAsYAML, responseAsYAML, completeYAML, description);
 
             this.request = null;
             this.response = okResponse();
             this.completeYAML = null;
             this.requestAsYAML = null;
             this.responseAsYAML = null;
+            this.description = null;
 
             return stubHttpLifecycle;
         }

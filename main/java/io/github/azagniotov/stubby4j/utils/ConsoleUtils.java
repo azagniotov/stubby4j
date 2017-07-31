@@ -21,6 +21,7 @@ package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -29,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 
 /**
  * @author Alexander Zagniotov
@@ -111,10 +114,18 @@ public final class ConsoleUtils {
     }
 
     @CoberturaIgnore
-    public static void logUnmarshalledStubRequest(final List<String> methods, final String url) {
-        final String loadedMsg = String.format("Loaded: %s %s", methods, url);
+    public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
+        final StubRequest request = lifecycle.getRequest();
 
-        ANSITerminal.loaded(loadedMsg);
+        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ");
+        loadedMsgBuilder.append(request.getMethod());
+        loadedMsgBuilder.append(" ");
+        loadedMsgBuilder.append(request.getUrl());
+        if (isSet(lifecycle.getDescription())) {
+            loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
+        }
+
+        ANSITerminal.loaded(loadedMsgBuilder.toString());
     }
 
     @CoberturaIgnore

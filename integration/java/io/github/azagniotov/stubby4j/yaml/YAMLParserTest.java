@@ -210,6 +210,23 @@ public class YAMLParserTest {
     }
 
     @Test
+    public void shouldUnmarshall_WhenYAMLValid_WithDescription() throws Exception {
+
+        final String url = "^/[a-z]{3}/[0-9]+/?$";
+        final String yaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl(url)
+                .withDescription("wobble")
+                .newStubbedResponse()
+                .withStatus("301").build();
+
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+
+        assertThat(actualHttpLifecycle.getDescription()).isEqualTo("wobble");
+    }
+
+    @Test
     public void shouldUnmarshall_WhenYAMLValid_WithMultipleHTTPMethods() throws Exception {
 
         final String yaml = YAML_BUILDER.newStubbedRequest()

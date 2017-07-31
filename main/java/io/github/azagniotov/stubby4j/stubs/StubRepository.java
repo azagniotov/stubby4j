@@ -34,6 +34,7 @@ import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logAssertingReque
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.extractPostRequestBody;
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static java.util.Collections.list;
@@ -141,12 +142,15 @@ public class StubRepository {
      */
     private synchronized Optional<StubHttpLifecycle> matchStub(final StubHttpLifecycle incomingStub) {
 
+        final long initialStart = System.currentTimeMillis();
         final String incomingRequestUrl = incomingStub.getUrl();
         if (matchedStubsCache.containsKey(incomingRequestUrl)) {
             ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
             final StubHttpLifecycle cachedPotentialMatch = matchedStubsCache.get(incomingRequestUrl);
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedPotentialMatch)) {
+                final long elapsed = System.currentTimeMillis() - initialStart;
+                logMatch(elapsed, cachedPotentialMatch);
                 ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
 
                 return Optional.of(cachedPotentialMatch);
@@ -155,11 +159,12 @@ public class StubRepository {
             matchedStubsCache.remove(incomingRequestUrl);
         }
 
-        final long initialStart = System.currentTimeMillis();
+
         for (final StubHttpLifecycle stubbed : stubs) {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
-                ANSITerminal.status(String.format("Found a match after %s milliseconds, caching the found match for URL [%s]", elapsed, incomingRequestUrl));
+                logMatch(elapsed, stubbed);
+                ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
                 matchedStubsCache.put(incomingRequestUrl, stubbed);
 
                 return Optional.of(stubbed);
@@ -167,6 +172,21 @@ public class StubRepository {
         }
 
         return Optional.empty();
+    }
+
+    private static void logMatch(long elapsed, StubHttpLifecycle matched) {
+        StringBuilder message = new StringBuilder()
+                .append("Found a match after ")
+                .append(elapsed)
+                .append(" milliseconds URL [")
+                .append(matched.getUrl())
+                .append("]");
+        if (isSet(matched.getDescription())) {
+            message.append(" Description [")
+                    .append(matched.getDescription())
+                    .append("]");
+        }
+        ANSITerminal.status(message.toString());
     }
 
     public synchronized Optional<StubHttpLifecycle> matchStubByIndex(final int index) {
