@@ -36,6 +36,15 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Record and Play](#record-and-play)
 * [The admin portal](#the-admin-portal)
+   * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
+   * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
+   * [JSON support](#json-support)
+   * [Getting the current list of stubbed endpoints](#getting-the-current-list-of-stubbed-endpoints)
+   * [The status page](#the-status-page)
+   * [Refreshing stubbed data via an endpoint](#refreshing-stubbed-data-via-an-endpoint)
+   * [Updating existing endpoints](#updating-existing-endpoints)
+   * [Deleting endpoints](#deleting-endpoints)
+   * [Deleting ALL endpoints at once](#deleting-all-endpoints-at-once)
 * [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
 * [Change log](#change-log)
@@ -1005,11 +1014,10 @@ Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (u
       status: 304
 ```
 
-
-#### JSON support
+##### JSON support
 JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j for YAML & JSON parsing) implements YAML 1.1 at the moment. It means that not all the JSON documents can be parsed. Just give it a go.
 
-##### JSON (file or POST/PUT)
+###### JSON (file or POST/PUT)
 
 ```json
 [
@@ -1088,7 +1096,7 @@ You can also view the currently configured endpoints by going to `localhost:8889
 If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart stubby),
 you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
 
-##### Changing existing endpoints
+##### Updating existing endpoints
 
 Perform `PUT` requests in the same format as using `POST`, only this time supply the id in the path. For instance, to update the response with id 4 you would `PUT` to `localhost:8889/4`.
 
