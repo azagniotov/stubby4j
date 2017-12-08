@@ -891,7 +891,7 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 
 ##### Supplying endpoints to stubby
 
-Submit `POST` requests to `localhost:8889` or load a data-file (using -d / --data flags) with the following structure for each endpoint:
+Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (using non-optional `-d` / `--data` flags) with the following structure for each endpoint:
 
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
