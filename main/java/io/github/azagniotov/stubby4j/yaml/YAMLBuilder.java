@@ -22,6 +22,8 @@ public final class YAMLBuilder {
     private final static String REQUEST = String.format("-%s%s", TWO_SPACE, "request:");
     private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
 
+    private final static String DESCRIPTION = String.format("%s%s", THREE_SPACE, "description: ");
+
     private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
     private final static String SEQUENCE_RESPONSE_HEADERS = String.format("%s%s", NINE_SPACE, "headers: ");
 
@@ -225,6 +227,12 @@ public final class YAMLBuilder {
 
             final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+            return this;
+        }
+
+        public Request withDescription(final String value) {
+            REQUEST_STRING_BUILDER.append(NL).append(DESCRIPTION).append(value).append(NL);
 
             return this;
         }

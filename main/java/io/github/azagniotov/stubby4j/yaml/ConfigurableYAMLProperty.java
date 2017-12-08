@@ -20,7 +20,8 @@ public enum ConfigurableYAMLProperty {
     REQUEST,
     RESPONSE,
     STATUS,
-    URL;
+    URL,
+    DESCRIPTION;
 
     private static final Map<String, ConfigurableYAMLProperty> CACHE;
 

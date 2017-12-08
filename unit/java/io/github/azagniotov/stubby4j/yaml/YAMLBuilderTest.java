@@ -5,9 +5,7 @@ import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
-import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
-import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.*;
 
 
 public class YAMLBuilderTest {
@@ -18,6 +16,8 @@ public class YAMLBuilderTest {
                 "-  request:" + FileUtils.BR +
                         "      method: [PUT]" + FileUtils.BR +
                         "      url: /invoice" + FileUtils.BR +
+                        "" + FileUtils.BR +
+                        "   description: Hello!" + FileUtils.BR +
                         "" + FileUtils.BR +
                         "   response:" + FileUtils.BR +
                         "      -  status: 200" + FileUtils.BR +
@@ -41,6 +41,7 @@ public class YAMLBuilderTest {
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
+                .withDescription("Hello!")
                 .newStubbedResponse()
                 .withSequenceResponseStatus("200")
                 .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)

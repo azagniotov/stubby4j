@@ -46,7 +46,7 @@ import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHas
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
-import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledStubRequest;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledStub;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
@@ -57,6 +57,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.ofNullableProperty;
 import static java.util.Optional.of;
@@ -114,24 +115,28 @@ public class YAMLParser {
                     parseStubbedResponseConfig(stubBuilder, stubbedProperties);
                 }
 
+            } else if (isDescriptionProperty(stubType.getKey())) {
+                stubBuilder.withDescription((String) stubType.getValue());
             } else if (stubTypeValue instanceof List) {
                 parseStubbedResponseListConfig(stubBuilder, stubType);
             }
         }
 
-        return stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
+        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
                 .withRequestAsYAML(toYAMLString(httpLifecycleConfig, REQUEST))
                 .withResponseAsYAML(toYAMLString(httpLifecycleConfig, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
                 .build();
+
+        logUnmarshalledStub(loadedStub);
+
+        return loadedStub;
     }
 
     private void parseStubbedRequestConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
         final StubRequest requestStub = buildReflectableStub(requestProperties, new StubRequest.Builder());
         requestStub.compileRegexPatternsAndCache();
         stubBuilder.withRequest(requestStub);
-
-        logUnmarshalledStubRequest(requestStub.getMethod(), requestStub.getUrl());
     }
 
     private void parseStubbedResponseConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
@@ -208,6 +213,10 @@ public class YAMLParser {
 
     private boolean isRequestProperty(final String stubbedProperty) {
         return stubbedProperty.toLowerCase().equals(REQUEST.toString());
+    }
+
+    private boolean isDescriptionProperty(final String stubbedProperty) {
+        return stubbedProperty.toLowerCase().equals(DESCRIPTION.toString());
     }
 
     private boolean isMethodProperty(final String stubbedProperty) {

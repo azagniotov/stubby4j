@@ -72,6 +72,13 @@ public class StubHttpLifecycleBuilderTest {
     }
 
     @Test
+    public void shouldReturnDescription_WhenDescription() {
+        final StubHttpLifecycle stubHttpLifecycle = httpCycleBuilder.withDescription("wibble").build();
+
+        assertThat(stubHttpLifecycle.getDescription()).isEqualTo("wibble");
+    }
+
+    @Test
     public void shouldThrow_WhenResponseObjectIsNotStubResponseType() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Trying to set response of the wrong type");

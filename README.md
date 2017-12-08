@@ -231,7 +231,8 @@ This section explains the usage, intent and behavior of each property on the `re
 
 Here is a fully-populated, unrealistic endpoint:
 ```yaml
--  request:
+-  description: Optional description shown in logs
+   request:
       url: ^/your/awesome/endpoint$
       method: POST
       query:
