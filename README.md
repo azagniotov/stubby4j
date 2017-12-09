@@ -942,6 +942,7 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 
 Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (using non-optional `-d` / `--data` flags) with the following structure for each endpoint:
 
+* `description`: optional description shown in logs
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
    * `url`: the URI regex string. GET parameters should also be included inline here
@@ -959,7 +960,8 @@ Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (u
 
 ##### YAML (file only or POST/PUT)
 ```yaml
--  request:
+-  description: "this is a feature describing something"
+   request:
       url: ^/path/to/something$
       method: POST
       headers:
@@ -1021,7 +1023,8 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
 
 ```json
 [
-  {
+  { 
+    "description": "this is a feature describing something",
     "request": {
       "url": "^/path/to/something$",
       "post": "this is some post data in textual format",
