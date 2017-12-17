@@ -20,13 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.server;
 
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import org.eclipse.jetty.server.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public final class StubbyManager {
+    private static final Logger logger = LoggerFactory.getLogger(StubbyManager.class);
 
     private final Server server;
     private final JettyFactory jettyFactory;
@@ -45,7 +47,7 @@ public final class StubbyManager {
 
         server.start();
         while (!isJettyUp()) {
-            ANSITerminal.warn("Waiting for Jetty to finish starting up..");
+            logger.warn("Waiting for Jetty to finish starting up..");
             Thread.sleep(250);
         }
         stubRepository.retrieveLoadedStubs();
@@ -59,10 +61,10 @@ public final class StubbyManager {
         server.stop();
 
         while (!isJettyDown()) {
-            ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
+            logger.warn("Waiting for Jetty to finish shutting down..");
             Thread.sleep(250);
         }
-        ANSITerminal.status("Jetty successfully shutdown");
+        logger.info("Jetty successfully shutdown.");
     }
 
     public synchronized void joinJetty() throws Exception {

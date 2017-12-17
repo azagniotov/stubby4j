@@ -20,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
@@ -38,7 +38,7 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
  * @since 10/26/12, 1:00 PM
  */
 public final class ConsoleUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleUtils.class);
     private static boolean debug = false;
 
     private ConsoleUtils() {
@@ -55,14 +55,14 @@ public final class ConsoleUtils {
                 request.getRequestURI(),
                 error
         );
-        ANSITerminal.error(logMessage);
+        logger.error(logMessage);
     }
 
     @CoberturaIgnore
     private static void logRawIncomingRequest(final HttpServletRequest request) {
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
-        ANSITerminal.info(HttpRequestUtils.dump(request));
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + FileUtils.BR);
+        logger.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+        logger.debug(HttpRequestUtils.dump(request));
+        logger.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
     }
 
     @CoberturaIgnore
@@ -73,20 +73,16 @@ public final class ConsoleUtils {
                 request.getMethod(),
                 request.getRequestURI()
         );
-        ANSITerminal.incoming(logMessage);
-
         if (debug) {
-            ConsoleUtils.logRawIncomingRequest(request);
+            logger.debug(logMessage);
         }
     }
 
     @CoberturaIgnore
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
-        if (debug) {
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
-            ANSITerminal.info(assertingStubRequest.toString());
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + FileUtils.BR);
-        }
+        logger.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+        logger.debug("{}", assertingStubRequest);
+        logger.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
     }
 
     @CoberturaIgnore
@@ -101,15 +97,15 @@ public final class ConsoleUtils {
         );
 
         if (status >= HttpStatus.BAD_REQUEST_400) {
-            ANSITerminal.error(logMessage);
+            logger.error(logMessage);
         } else if (status >= HttpStatus.MULTIPLE_CHOICES_300) {
-            ANSITerminal.warn(logMessage);
+            logger.warn(logMessage);
         } else if (status >= HttpStatus.OK_200) {
-            ANSITerminal.ok(logMessage);
+            logger.info(logMessage);
         } else if (status >= HttpStatus.CONTINUE_100) {
-            ANSITerminal.info(logMessage);
+            logger.info(logMessage);
         } else {
-            ANSITerminal.log(logMessage);
+            logger.debug(logMessage);
         }
     }
 
@@ -125,7 +121,7 @@ public final class ConsoleUtils {
             loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
         }
 
-        ANSITerminal.loaded(loadedMsgBuilder.toString());
+        logger.debug("{}", loadedMsgBuilder);
     }
 
     @CoberturaIgnore
