@@ -1,12 +1,12 @@
 package io.github.azagniotov.stubby4j.http;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import static org.eclipse.jetty.http.HttpHeader.CONTENT_TYPE;
  * @since 11/4/12, 11:03 AM
  */
 public class StubbyHttpTransport {
+    private static final Logger logger = LoggerFactory.getLogger(StubbyHttpTransport.class);
 
     private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
         add(HttpMethod.GET.asString());
@@ -50,10 +51,7 @@ public class StubbyHttpTransport {
 
     public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
-        if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, recordingSource);
-            ANSITerminal.incoming(logMessage);
-        }
+        logger.debug("Recording HTTP response using {} [{}].", method, recordingSource);
         return getResponse(method,
                 recordingSource,
                 request.getPostBody(),

@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j.server;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.cli.EmptyLogger;
 import io.github.azagniotov.stubby4j.filesystem.ExternalFilesScanner;
@@ -56,10 +55,6 @@ public class StubbyManagerFactory {
             final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
             final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
             watchDataStore(stubRepository, watchScanTime);
-        }
-
-        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
-            ANSITerminal.muteConsole(true);
         }
 
         return new StubbyManager(server, jettyFactory, stubRepository);

@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
@@ -27,6 +26,8 @@ import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.concurrent.Future;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class Main {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
     private static CommandLineInterpreter commandLineInterpreter;
@@ -111,7 +113,6 @@ public final class Main {
             final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
             final String configFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
-            ANSITerminal.muteConsole(commandLineInterpreter.isMute());
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
             final File configFile = new File(configFilename);
@@ -122,11 +123,11 @@ public final class Main {
             stubbyManager.startJetty();
             final long totalEnd = System.currentTimeMillis();
 
-            ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds", (totalEnd - initialStart)) + BR);
+            logger.debug("stubby4j successfully started after {} milliseconds.", totalEnd - initialStart);
 
-            stubbyManager.statuses().forEach(ANSITerminal::status);
+            stubbyManager.statuses().forEach(logger::debug);
 
-            ANSITerminal.info(BR + "Quit: ctrl-c" + BR);
+            logger.info("Quit: ctrl-c");
 
         } catch (final Exception ex) {
             final String msg =

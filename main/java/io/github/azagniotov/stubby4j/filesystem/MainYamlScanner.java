@@ -1,15 +1,14 @@
 package io.github.azagniotov.stubby4j.filesystem;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
-
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class MainYamlScanner implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(MainYamlScanner.class);
 
     private final long sleepTime;
     private final StubRepository stubRepository;
@@ -17,7 +16,7 @@ public final class MainYamlScanner implements Runnable {
     public MainYamlScanner(final StubRepository stubRepository, final long sleepTime) {
         this.sleepTime = sleepTime;
         this.stubRepository = stubRepository;
-        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubRepository.getYAMLConfigCanonicalPath()));
+        logger.debug("Main YAML scan enabled, watching {}.", stubRepository.getYAMLConfigCanonicalPath());
     }
 
     @Override
@@ -36,24 +35,21 @@ public final class MainYamlScanner implements Runnable {
                     continue;
                 }
 
-                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubRepository.getYAMLConfigCanonicalPath(), BR));
+                logger.info("Main YAML scan detected change in  {}.", stubRepository.getYAMLConfigCanonicalPath());
 
                 try {
                     mainYamlLastModified = currentFileModified;
                     stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
-                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s on [" + new Date().toString().trim() + "]%s",
-                            BR,
-                            dataYaml.getAbsolutePath(),
-                            BR));
+                    logger.info("Successfully performed live refresh of main YAML from: {}.",
+                            dataYaml.getAbsolutePath());
                 } catch (final Exception ex) {
-                    ANSITerminal.error("Could not refresh YAML file: " + ex.toString());
-                    ANSITerminal.warn(String.format("YAML refresh aborted, in-memory stubs remain untouched"));
+                    logger.error("Could not refresh YAML file.", ex);
+                    logger.warn("YAML refresh aborted, in-memory  stubs remain untouched.");
                 }
             }
 
         } catch (final Exception ex) {
-            ex.printStackTrace();
-            ANSITerminal.error("Could not perform live YAML scan: " + ex.toString());
+            logger.error("Could not perform live YAML scan.", ex);
         }
     }
 }

@@ -2,13 +2,13 @@ package io.github.azagniotov.stubby4j.stubs;
 
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.common.Common;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -27,6 +27,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.QUERY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
 
 class StubMatcher {
+    private static final Logger logger = LoggerFactory.getLogger(StubMatcher.class);
 
     private final Map<String, String> regexGroups;
     private static final Pattern SUB_TYPE_PATTERN = Pattern.compile("/(?:.*\\+)?(\\w*);?");
@@ -37,34 +38,34 @@ class StubMatcher {
 
     boolean matches(final StubRequest stubbedRequest, final StubRequest assertingRequest) {
         if (!urlsMatch(stubbedRequest.getUri(), assertingRequest.getUri())) {
-            ANSITerminal.error(String.format("Failed to match on URL [%s] WITH [%s]", stubbedRequest.getUri(), assertingRequest.getUri()));
+            logger.error("Failed to match on URL [{}] WITH [{}].", stubbedRequest.getUri(), assertingRequest.getUri());
             return false;
         }
-        ANSITerminal.info(String.format("Matched on URL [%s] WITH [%s]", stubbedRequest.getUri(), assertingRequest.getUri()));
+        logger.info("Matched on URL [%s] WITH [%s].", stubbedRequest.getUri(), assertingRequest.getUri());
 
         if (!listsIntersect(stubbedRequest.getMethod(), assertingRequest.getMethod())) {
-            ANSITerminal.error(String.format("Failed to match on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
+            logger.error("Failed to match on METHOD [{}] WITH [{}].", stubbedRequest.getMethod(), assertingRequest.getMethod());
             return false;
         }
-        ANSITerminal.info(String.format("Matched on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
+        logger.info("Matched on METHOD [{}] WITH [{}]", stubbedRequest.getMethod(), assertingRequest.getMethod());
 
         if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), assertingRequest)) {
-            ANSITerminal.error(String.format("Failed to match on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), assertingRequest.getPostBody()));
+            logger.error("Failed to match on POST BODY [{}] WITH [{}].", stubbedRequest.getPostBody(), assertingRequest.getPostBody());
             return false;
         }
-        ANSITerminal.info(String.format("Matched on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), assertingRequest.getPostBody()));
+        logger.info("Matched on POST BODY [{}] WITH [{}].", stubbedRequest.getPostBody(), assertingRequest.getPostBody());
 
         if (!headersMatch(stubbedRequest.getHeaders(), assertingRequest.getHeaders())) {
-            ANSITerminal.error(String.format("Failed to match on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), assertingRequest.getHeaders()));
+            logger.error("Failed to match on HEADERS [{}] WITH [{}].", stubbedRequest.getHeaders(), assertingRequest.getHeaders());
             return false;
         }
-        ANSITerminal.info(String.format("Matched on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), assertingRequest.getHeaders()));
+        logger.info("Matched on HEADERS [{}] WITH [{}].", stubbedRequest.getHeaders(), assertingRequest.getHeaders());
 
         if (!queriesMatch(stubbedRequest.getQuery(), assertingRequest.getQuery())) {
-            ANSITerminal.error(String.format("Failed to match on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), assertingRequest.getQuery()));
+            logger.error("Failed to match on QUERY [{}] WITH [{}].", stubbedRequest.getQuery(), assertingRequest.getQuery());
             return false;
         }
-        ANSITerminal.info(String.format("Matched on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), assertingRequest.getQuery()));
+        logger.info("Matched on QUERY [{}] WITH [{}].", stubbedRequest.getQuery(), assertingRequest.getQuery());
 
         return true;
     }

@@ -12,9 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -301,36 +299,6 @@ public class YAMLParserTest {
     }
 
     @Test
-    public void shouldCaptureConsoleErrorOutput_WhenYAMLValid_WithFileFailedToLoadAndPostSet() throws Exception {
-
-        final String stubbedRequestFile = "../../very.big.soap.request.xml";
-
-        final String expectedPost = "{\"message\", \"Hello, this is HTTP request post\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
-                .withMethodGet()
-                .withUrl("/some/uri")
-                .withFile(stubbedRequestFile)
-                .withFoldedPost(expectedPost)
-                .newStubbedResponse()
-                .withLiteralBody("OK")
-                .withStatus("201").build();
-
-        final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
-        final boolean NO_AUTO_FLUSH = false;
-        System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
-
-        unmarshall(yaml);
-
-        System.setOut(System.out);
-
-        final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
-
-        assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.request.xml");
-        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
-    }
-
-
-    @Test
     public void shouldUnmarshall_WhenYAMLValid_WithFileFailedToLoadAndBodySet() throws Exception {
 
         final String stubbedResponseFile = "../../very.big.soap.response.xml";
@@ -351,34 +319,6 @@ public class YAMLParserTest {
 
         assertThat(actualResponse.getFile()).isEqualTo(new byte[]{});
         assertThat(StringUtils.newStringUtf8(actualResponse.getResponseBodyAsBytes())).isEqualTo(expectedBody);
-    }
-
-    @Test
-    public void shouldCaptureConsoleErrorOutput_WhenYAMLValid_WithFileFailedToLoadAndBodySet() throws Exception {
-
-        final String stubbedResponseFile = "../../very.big.soap.response.xml";
-
-        final String expectedBody = "{\"message\", \"Hello, this is HTTP response body\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
-                .withMethodGet()
-                .withUrl("/some/uri")
-                .newStubbedResponse()
-                .withFoldedBody(expectedBody)
-                .withFile(stubbedResponseFile)
-                .withStatus("201").build();
-
-        final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
-        final boolean NO_AUTO_FLUSH = false;
-        System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
-
-        unmarshall(yaml);
-
-        System.setOut(System.out);
-
-        final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
-
-        assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.response.xml");
-        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
     }
 
     @Test

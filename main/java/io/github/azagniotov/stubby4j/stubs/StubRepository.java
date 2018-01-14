@@ -1,13 +1,13 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
-import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -40,6 +40,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static java.util.Collections.list;
 
 public class StubRepository {
+    private static final Logger logger = LoggerFactory.getLogger(StubRepository.class);
 
     private final File configFile;
     private final List<StubHttpLifecycle> stubs;
@@ -111,7 +112,7 @@ public class StubRepository {
                 final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
                 injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
             } catch (Exception e) {
-                ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
+                logger.error("Could not record from {}.", e);
             }
         }
         return matchedStubResponse;
@@ -145,17 +146,17 @@ public class StubRepository {
         final long initialStart = System.currentTimeMillis();
         final String incomingRequestUrl = incomingStub.getUrl();
         if (matchedStubsCache.containsKey(incomingRequestUrl)) {
-            ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
+            logger.debug("Local cache contains potential match for the URL [{}].", incomingRequestUrl);
             final StubHttpLifecycle cachedPotentialMatch = matchedStubsCache.get(incomingRequestUrl);
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedPotentialMatch)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
                 logMatch(elapsed, cachedPotentialMatch);
-                ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
+                logger.debug("Potential match for the URL [{}] was deemed as a full match.", incomingRequestUrl);
 
                 return Optional.of(cachedPotentialMatch);
             }
-            ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
+            logger.warn("Cached match for the URL [{}] failed to match fully, invalidating match cache.", incomingRequestUrl);
             matchedStubsCache.remove(incomingRequestUrl);
         }
 
@@ -164,7 +165,7 @@ public class StubRepository {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
                 logMatch(elapsed, stubbed);
-                ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
+                logger.debug("Caching the found match for URL [{}].", incomingRequestUrl);
                 matchedStubsCache.put(incomingRequestUrl, stubbed);
 
                 return Optional.of(stubbed);
@@ -187,7 +188,7 @@ public class StubRepository {
                     .append(matched.getDescription())
                     .append("]");
         }
-        ANSITerminal.status(message.toString());
+        logger.debug("{}", message);
     }
 
     public synchronized Optional<StubHttpLifecycle> matchStubByIndex(final int index) {
