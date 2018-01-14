@@ -526,10 +526,16 @@ A demonstration using regular expressions:
 
 ##### file
 
-* holds a path to a local file (absolute or relative to the YAML specified in `-d` or `--data`)
-* if supplied, replaces `post` with the contents from the provided file
+* holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to stub a big POST payload, so instead of dumping a lot of text under the `post` property, you could specify a local file with the payload using the `file` property:
+```yaml
+-  request:
+      method: POST
+      headers:
+         content-type: application/json
+      file: ../json/post.payload.json
+```
+* please note, if both `file` & `post` properties are supplied, the `file` replaces `post` with the contents from the provided file
 * if the local file could not be loaded for whatever reason (ie.: not found), stubby falls back to `post` for matching.
-* allows you to split up stubby data across multiple files instead of making one huge bloated main YAML
 * please keep in mind: ```SnakeYAML``` library (used by stubby4j) parser ruins multi-line strings by not preserving system line breaks. If `file` property is stubbed, the file content is loaded as-is, in other words - it does not go through SnakeYAML parser. Therefore it's better to load big POST content for request using `file` property. Keep in mind, stubby4j stub server is dumb and does not use smart matching mechanism (i.e.: don't match line separators or don't match any white space characters) - whatever you stubbed, must be POSTed exactly for successful match. Alternatively you can consider using regular expression in `post`
 
 ```yaml
@@ -758,7 +764,15 @@ Assuming a match has been made against the given `request` object, data from `re
 
 ##### file
 
-* similar to `request.file`, but the contents of the file are used as the response `body`
+* similar to `request.file`, holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to render a large response body upon successful stub matching, so instead of dumping a lot of text under the `body` property, you could specify a local file with the response content using the `file` property (btw, the `file` can also refer to binary files):
+```yaml
+response:
+      status: 200
+      headers:
+         content-type: application/json
+      file: ../json/response.json
+```
+please note, if both `file` & `body` properties are supplied, the `file` replaces `body` with the contents from the provided file
 * if the file could not be loaded, stubby falls back to the value stubbed in `body`
 * if `body` was not stubbed, an empty string is returned by default
 * it can be ascii of binary file (PDF, images, etc.). Please keep in mind, that file is preloaded upon stubby4j startup and its content is kept as a byte array in memory. In other words, response files are not read from the disk on demand, but preloaded.
