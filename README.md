@@ -144,6 +144,7 @@ Run `gradle cobertura` command to:
 * jsonassert-1.3.0.jar
 * xmlunit-1.6.jar
 * json-20090211.jar
+* slf4j-api:1.7.25.jar
 
 
 ### Adding stubby4j to your project
@@ -151,7 +152,7 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 * `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
 * `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
-* `stubby4j-x.x.x-no-jetty.jar` - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty
+* `stubby4j-x.x.x-no-jetty.jar` - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty binaries
 * `stubby4j-x.x.x-sources.jar`
 * `stubby4j-x.x.x-javadoc.jar`
 
@@ -188,17 +189,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-5.0.3-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.0.3-SNAPSHOT/`
+* Install `stubby4j-5.1.0-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.1.0-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:5.0.3-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:5.1.0-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.0.3-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.1.0-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1158,7 +1159,8 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 5.0.3-SNAPSHOT
+##### 5.1.0-SNAPSHOT
+* Pull request #83 - ANSITerminal was replaced with SLF4J. It is up to the stuby4j consumer to choose their own logging implementation (https://github.com/asarkar)
 
 ##### 5.0.2
 * Pull request #77 - New field `description` for stubs/features (https://github.com/goughy000)
