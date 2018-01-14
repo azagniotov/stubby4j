@@ -527,6 +527,7 @@ A demonstration using regular expressions:
 ##### file
 
 * holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to stub a big POST payload, so instead of dumping a lot of text under the `post` property, you could specify a local file with the payload using the `file` property:
+
 ```yaml
 -  request:
       method: POST
@@ -534,6 +535,7 @@ A demonstration using regular expressions:
          content-type: application/json
       file: ../json/post.payload.json
 ```
+
 * please note, if both `file` & `post` properties are supplied, the `file` takes precedence & replaces `post` with the contents from the provided file. 
 * if `--watch` command-line argument was supplied during startup, then any modifications to the supplied local file in `file` (e.g. `file: ../json/post.payload.json`) will cause the whole configuration to be reloaded.
 * if the local file could not be loaded for whatever reason (ie.: not found), stubby falls back to `post` for matching.
@@ -766,6 +768,7 @@ Assuming a match has been made against the given `request` object, data from `re
 ##### file
 
 * similar to `request.file`, holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to render a large response body upon successful stub matching, so instead of dumping a lot of text under the `body` property, you could specify a local file with the response content using the `file` property (btw, the `file` can also refer to binary files):
+
 ```yaml
 response:
       status: 200
@@ -773,7 +776,8 @@ response:
          content-type: application/json
       file: ../json/response.json
 ```
-please note, if both `file` & `body` properties are supplied, the `file` takes precedence & replaces `body` with the contents from the provided file
+
+* please note, if both `file` & `body` properties are supplied, the `file` takes precedence & replaces `body` with the contents from the provided file
 * if `--watch` command-line argument was supplied during startup, then any modifications to the supplied local file in `file` (e.g. `file: ../json/response.json`) will cause the whole configuration to be reloaded.
 * if the file could not be loaded, stubby falls back to the value stubbed in `body`
 * if `body` was not stubbed, an empty string is returned by default
