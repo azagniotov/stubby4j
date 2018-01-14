@@ -129,6 +129,15 @@ public final class Main {
 
             logger.info("Quit: ctrl-c");
 
+            try {
+               Class.forName("org.slf4j.impl.StaticLoggerBinder");
+            } catch (ClassNotFoundException e) {
+               System.out.println("\n**********************************************************************************************************************************************");
+               System.out.println("*** WARN: stubby4j uses SLF4J. Please provide an SLF4J implementation (i.e. logback, log4j2, etc) in order to enable logging capabilities");
+               System.out.println("**********************************************************************************************************************************************");
+               System.out.println("\nstubby4j successfully started after " + (totalEnd - initialStart) + " milliseconds.\n");
+            }
+
         } catch (final Exception ex) {
             final String msg =
                     String.format("Could not init stubby4j, error: %s", ex.toString());
