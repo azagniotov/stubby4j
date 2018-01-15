@@ -7,8 +7,11 @@ target/*
 build/*
 main/build/*
 unit/build/*
+unit/out/*
+main/out/*
 integration/build/*
 functional/build/*
+functional/out/*
 main/.idea/*
 unit/.idea/*
 integration/.idea/*

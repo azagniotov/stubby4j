@@ -1,0 +1,15 @@
+request:
+  method: PUT
+  url: /invoice/123
+  headers:
+    content-type: application/json
+  post: >
+    {"name": "milk", "description": "full", "department": "savoury"}
+
+response:
+  headers:
+    content-type: application/json
+    pragma: no-cache
+  status: 200
+  body: >
+    {"id": "123", "status": "updated"}
