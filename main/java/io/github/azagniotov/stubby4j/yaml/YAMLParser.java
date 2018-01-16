@@ -80,6 +80,9 @@ public class YAMLParser {
 
     @CoberturaIgnore
     public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
+        if (configFile.isDirectory()) {
+            return parse(dataConfigHomeDirectory, constructInputStream(YAMLMerger.merge(configFile)));
+        }
         return parse(dataConfigHomeDirectory, constructInputStream(configFile));
     }
 

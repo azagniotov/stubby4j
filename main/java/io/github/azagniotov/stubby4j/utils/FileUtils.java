@@ -28,16 +28,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * @author Alexander Zagniotov
- * @since 11/8/12, 8:30 AM
+ * @author Abhijit Sarkar
  */
 @SuppressWarnings("serial")
 public final class FileUtils {
@@ -176,5 +178,16 @@ public final class FileUtils {
 
     private static boolean isCharacterFile(final File file) throws IOException {
         return ASCII_TYPES.contains(StringUtils.extractFilenameExtension(file.getName()));
+    }
+
+    public static <T> T quietIO(Callable<T> action) {
+        try {
+            return action.call();
+        } catch (Exception e) {
+            if (e instanceof IOException) {
+                throw new UncheckedIOException((IOException) e);
+            }
+            throw new RuntimeException(e);
+        }
     }
 }
