@@ -1004,6 +1004,8 @@ public class StubsPortalTest {
     @Test
     public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
 
+        ANSITerminal.muteConsole(false);
+
         final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
         final boolean NO_AUTO_FLUSH = false;
         final PrintStream oldPrintStream = System.out;
@@ -1023,6 +1025,8 @@ public class StubsPortalTest {
 
             String firstCallResponseContent = actualResponse.parseAsString().trim();
             assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+            // Make sure we only hitting recordable source once
+            assertThat(actualConsoleOutput).contains("Recording HTTP response using");
 
             if (idx == LIMIT) {
                 System.setOut(oldPrintStream);

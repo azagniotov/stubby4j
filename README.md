@@ -15,7 +15,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v5.1.0
+## User manual for stubby4j v5.1.1
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -137,8 +137,8 @@ Run `gradle cobertura` command to:
 ### Third-party dependencies
 
 * __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.4.6.v20170531.jar
-* jetty-servlets-9.4.6.v20170531.jar
+* jetty-server-9.4.8.v20171121.jar
+* jetty-servlets-9.4.8.v20171121.jar
 * commons-cli-1.2.jar
 * snakeyaml-1.17.jar
 * jsonassert-1.3.0.jar
@@ -158,12 +158,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.0")
+compile("io.github.azagniotov:stubby4j:5.1.1")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.0:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.1.1:no-jetty")
 ```
 
 ##### Maven
@@ -171,7 +171,7 @@ compile("io.github.azagniotov:stubby4j:5.1.0:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -180,7 +180,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -189,17 +189,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-5.1.1-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.1.1-SNAPSHOT/`
+* Install `stubby4j-5.1.2-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.1.2-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.1-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:5.1.2-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.1-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.1.2-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1179,7 +1179,11 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 5.1.1-SNAPSHOT
+##### 5.1.2-SNAPSHOT
+
+##### 5.1.1
+* Added ANSITerminal back. it is operational alongside the SLF4J for the cases when stubby is running as a standalone jar
+* Upgraded from Jetty `9.4.6.v20170531` to `9.4.8.v20171121`
 
 ##### 5.1.0
 * Pull request #83 - ANSITerminal was replaced with SLF4J. It is up to the stuby4j consumer to choose their own logging implementation (https://github.com/asarkar)

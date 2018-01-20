@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package io.github.azagniotov.stubby4j;
 
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
@@ -39,7 +40,8 @@ import java.util.concurrent.Future;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public final class Main {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
     private static CommandLineInterpreter commandLineInterpreter;
@@ -113,6 +115,7 @@ public final class Main {
             final Map<String, String> commandLineArgs = commandLineInterpreter.getCommandlineParams();
             final String configFilename = commandLineArgs.get(CommandLineInterpreter.OPTION_CONFIG);
 
+            ANSITerminal.muteConsole(commandLineInterpreter.isMute());
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
             final File configFile = new File(configFilename);
@@ -123,20 +126,14 @@ public final class Main {
             stubbyManager.startJetty();
             final long totalEnd = System.currentTimeMillis();
 
-            logger.debug("stubby4j successfully started after {} milliseconds.", totalEnd - initialStart);
+            ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds", (totalEnd - initialStart)) + BR);
+            LOGGER.debug("stubby4j successfully started after {} milliseconds.", totalEnd - initialStart);
 
-            stubbyManager.statuses().forEach(logger::debug);
+            stubbyManager.statuses().forEach(ANSITerminal::status);
+            stubbyManager.statuses().forEach(LOGGER::debug);
 
-            logger.info("Quit: ctrl-c");
-
-            try {
-               Class.forName("org.slf4j.impl.StaticLoggerBinder");
-            } catch (ClassNotFoundException e) {
-               System.out.println("\n**********************************************************************************************************************************************");
-               System.out.println("*** WARN: stubby4j uses SLF4J. Please provide an SLF4J implementation (i.e. logback, log4j2, etc) in order to enable logging capabilities");
-               System.out.println("**********************************************************************************************************************************************");
-               System.out.println("\nstubby4j successfully started after " + (totalEnd - initialStart) + " milliseconds.\n");
-            }
+            ANSITerminal.info(BR + "Quit: ctrl-c" + BR);
+            LOGGER.info("Quit: ctrl-c");
 
         } catch (final Exception ex) {
             final String msg =

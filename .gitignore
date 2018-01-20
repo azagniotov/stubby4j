@@ -24,6 +24,7 @@ main/.classpath
 unit/.classpath
 build/*
 out/*
+**/out/*
 .idea/*
 .DS_Store
 Thumbs.db

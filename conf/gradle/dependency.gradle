@@ -1,7 +1,7 @@
 // vim: ft=groovy
 dependencies {
-    compile "org.eclipse.jetty:jetty-server:9.4.6.v20170531"
-    compile "org.eclipse.jetty:jetty-servlets:9.4.6.v20170531"
+    compile "org.eclipse.jetty:jetty-server:9.4.8.v20171121"
+    compile "org.eclipse.jetty:jetty-servlets:9.4.8.v20171121"
     compile "commons-cli:commons-cli:1.2"
     compile "org.yaml:snakeyaml:1.17"
     compile "org.skyscreamer:jsonassert:1.3.0"

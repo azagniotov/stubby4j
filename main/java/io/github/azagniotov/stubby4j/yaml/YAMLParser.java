@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
@@ -66,7 +67,7 @@ import static java.util.Optional.ofNullable;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YAMLParser {
-    Logger logger = LoggerFactory.getLogger(YAMLParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(YAMLParser.class);
 
     static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
@@ -238,7 +239,8 @@ public class YAMLParser {
 
             return ofNullable(uriToFile(dataConfigHomeDirectory, filePath));
         } catch (final IOException ex) {
-            logger.error(FAILED_TO_LOAD_FILE_ERR, ex);
+            ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
+            LOGGER.error(FAILED_TO_LOAD_FILE_ERR, ex);
         }
 
         return Optional.empty();
