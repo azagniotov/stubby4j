@@ -35,6 +35,9 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
    * [Response](#response)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Record and Play](#record-and-play)
+* [Performance optimization index](#performance-optimization-index)
+   * [Regex pattern precompilation](#regex-pattern-precompilation)
+   * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
    * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
    * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
@@ -185,7 +188,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 </dependency>
 ```
 
-### Installing stubby4j to local .m2 repository
+#### Installing stubby4j to local .m2 repository
 
 Run `gradle install` command to:
 
@@ -954,6 +957,26 @@ In the above example, stubby will record HTTP response received after submitting
 * Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
+
+### Performance optimization index
+
+stubby4j uses a number of techniques to optimize evaluation of stubs
+
+#### Regex pattern precompilation
+
+During parsing of stubs config, the `request.url`, `request.query`, `request.headers` & `request.post` (or `request.file`)
+values are checked for presence of regex. If one of the aforementioned properties is a stubbed regex, then a regex pattern
+will be compiled & cached in memory. This way, the pattern(s) are compiled during config parsing, not stub evaluation.
+
+#### Local caching of returning matched requests
+
+On every incoming request, a local cache holding previously matched stubs is checked to see if there is a match for the
+incoming request URI. If the incoming URI found in the cache, then the cached matched stub & the incoming request are
+compared to each other to determine a complete equality based on the stubbed `request` properties.
+
+If a complete equality against the cached stub was not achieved, the incoming request is compared to all other stubs
+loaded in memory. If a full match was found, then that match will be cached using the incoming request URI as a key.
+                  
 
 ### The admin portal
 

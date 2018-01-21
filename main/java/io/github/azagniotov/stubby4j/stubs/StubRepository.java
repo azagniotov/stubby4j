@@ -68,6 +68,12 @@ public class StubRepository {
         return new StubSearchResult(assertionStubRequest, match);
     }
 
+    /**
+     * That's where the raw {@link HttpServletRequest request} is converted to a {@link StubHttpLifecycle},
+     * which will be matched to the in-memory stubs
+     *
+     * @param request raw {@link HttpServletRequest request}
+     */
     public StubRequest toStubRequest(final HttpServletRequest request) throws IOException {
         final StubRequest.Builder builder = new StubRequest.Builder();
         builder.withUrl(request.getPathInfo())
