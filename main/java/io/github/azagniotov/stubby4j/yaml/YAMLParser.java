@@ -109,25 +109,25 @@ public class YAMLParser {
         for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
             final Object stubTypeValue = stubType.getValue();
 
-            if (stubTypeValue instanceof Map) {
+            if (DESCRIPTION.isA(stubType.getKey())) {
+                stubBuilder.withDescription((String) stubType.getValue());
+            } else if (stubTypeValue instanceof Map) {
                 final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
-                if (isRequestProperty(stubType.getKey())) {
+                if (REQUEST.isA(stubType.getKey())) {
                     parseStubbedRequestConfig(stubBuilder, stubbedProperties);
                 } else {
                     parseStubbedResponseConfig(stubBuilder, stubbedProperties);
                 }
 
-            } else if (isDescriptionProperty(stubType.getKey())) {
-                stubBuilder.withDescription((String) stubType.getValue());
             } else if (stubTypeValue instanceof List) {
                 parseStubbedResponseListConfig(stubBuilder, stubType);
             }
         }
 
         StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
-                .withRequestAsYAML(toYAMLString(httpLifecycleConfig, REQUEST))
-                .withResponseAsYAML(toYAMLString(httpLifecycleConfig, RESPONSE))
+                .withRequestAsYAML(toYaml(httpLifecycleConfig, REQUEST))
+                .withResponseAsYAML(toYaml(httpLifecycleConfig, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
                 .build();
 
@@ -167,13 +167,13 @@ public class YAMLParser {
                 continue;
             }
 
-            if (isMethodProperty(stageableFieldName)) {
+            if (METHOD.isA(stageableFieldName)) {
                 final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldName)));
                 stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(methods));
                 continue;
             }
 
-            if (isFileProperty(stageableFieldName)) {
+            if (FILE.isA(stageableFieldName)) {
                 final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldName);
                 stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
                 continue;
@@ -200,7 +200,7 @@ public class YAMLParser {
                 final String stageableFieldName = propertyPair.getKey();
                 checkStubbedProperty(stageableFieldName);
 
-                if (isFileProperty(stageableFieldName)) {
+                if (FILE.isA(stageableFieldName)) {
                     final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
                     stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
                 } else {
@@ -212,22 +212,6 @@ public class YAMLParser {
         }
 
         return stubResponses;
-    }
-
-    private boolean isRequestProperty(final String stubbedProperty) {
-        return stubbedProperty.toLowerCase().equals(REQUEST.toString());
-    }
-
-    private boolean isDescriptionProperty(final String stubbedProperty) {
-        return stubbedProperty.toLowerCase().equals(DESCRIPTION.toString());
-    }
-
-    private boolean isMethodProperty(final String stubbedProperty) {
-        return stubbedProperty.toLowerCase().equals(METHOD.toString());
-    }
-
-    private boolean isFileProperty(final String stubbedProperty) {
-        return stubbedProperty.toLowerCase().equals(FILE.toString());
     }
 
     private Optional<Object> loadFileContentFromFileUrl(final Object configPropertyNamedFile) {
@@ -254,7 +238,7 @@ public class YAMLParser {
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
-    private String toYAMLString(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
+    private String toYaml(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
         final Map<String, Object> httpType = new HashMap<String, Object>() {{
             put(stubName.toString(), httpLifecycleConfig.get(stubName.toString()));
         }};

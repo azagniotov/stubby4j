@@ -17,7 +17,7 @@ enum RegexParser {
     INSTANCE;
 
     @VisibleForTesting
-    static final Map<Integer, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
+    static final Map<Integer, Pattern> STUBBED_VALUE_TO_REGEX_PATTERN = new ConcurrentHashMap<>();
 
     // A very primitive way to test if string is *maybe* a regex pattern, instead of compiling a Pattern
     @VisibleForTesting
@@ -40,7 +40,7 @@ enum RegexParser {
     private void compilePatternAndCache(final String value, final int flags) {
         try {
             if (SPECIAL_REGEX_CHARS.matcher(value).matches()) {
-                PATTERN_CACHE.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, flags));
+                STUBBED_VALUE_TO_REGEX_PATTERN.computeIfAbsent(value.hashCode(), hashCode -> Pattern.compile(value, flags));
             }
         } catch (final PatternSyntaxException e) {
             // We could not compile, probably because of some characters that are special for Pattern
@@ -58,7 +58,7 @@ enum RegexParser {
 
     private boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups, final int flags) {
         try {
-            final Pattern pattern = PATTERN_CACHE.computeIfAbsent(
+            final Pattern pattern = STUBBED_VALUE_TO_REGEX_PATTERN.computeIfAbsent(
                     patternCandidate.hashCode(), hashCode -> Pattern.compile(patternCandidate, flags));
 
             final Matcher matcher = pattern.matcher(subject);

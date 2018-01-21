@@ -23,21 +23,25 @@ public enum ConfigurableYAMLProperty {
     URL,
     DESCRIPTION;
 
-    private static final Map<String, ConfigurableYAMLProperty> CACHE;
+    private static final Map<String, ConfigurableYAMLProperty> PROPERTY_NAME_TO_ENUM_MEMBER;
 
     static {
-        CACHE = new HashMap<>();
+        PROPERTY_NAME_TO_ENUM_MEMBER = new HashMap<>();
         for (final ConfigurableYAMLProperty enumMember : EnumSet.allOf(ConfigurableYAMLProperty.class)) {
-            CACHE.put(enumMember.toString(), enumMember);
+            PROPERTY_NAME_TO_ENUM_MEMBER.put(enumMember.toString(), enumMember);
         }
     }
 
     public static boolean isUnknownProperty(final String stubbedProperty) {
-        return !CACHE.containsKey(toLower(stubbedProperty));
+        return !PROPERTY_NAME_TO_ENUM_MEMBER.containsKey(toLower(stubbedProperty));
     }
 
     public static Optional<ConfigurableYAMLProperty> ofNullableProperty(final String stubbedProperty) {
-        return Optional.ofNullable(CACHE.get(toLower(stubbedProperty)));
+        return Optional.ofNullable(PROPERTY_NAME_TO_ENUM_MEMBER.get(toLower(stubbedProperty)));
+    }
+
+    public boolean isA(final String stubbedProperty) {
+        return this.toString().equals(stubbedProperty.toLowerCase());
     }
 
     @Override

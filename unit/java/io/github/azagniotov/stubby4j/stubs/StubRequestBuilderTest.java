@@ -1318,7 +1318,7 @@ public class StubRequestBuilderTest {
     @Test
     public void shouldComputeRegexPatterns() throws Exception {
 
-        RegexParser.PATTERN_CACHE.clear();
+        RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.clear();
 
         final String url = "^/resources/asn/.*$";
         final String post = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
@@ -1330,9 +1330,9 @@ public class StubRequestBuilderTest {
                         .withPost(post).build();
         stubRequest.compileRegexPatternsAndCache();
 
-        assertThat(RegexParser.PATTERN_CACHE.size()).isEqualTo(2);
-        assertThat(RegexParser.PATTERN_CACHE.get(url.hashCode())).isInstanceOf(Pattern.class);
-        assertThat(RegexParser.PATTERN_CACHE.get(post.hashCode())).isInstanceOf(Pattern.class);
+        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.size()).isEqualTo(2);
+        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.get(url.hashCode())).isInstanceOf(Pattern.class);
+        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.get(post.hashCode())).isInstanceOf(Pattern.class);
     }
 
     @Test
