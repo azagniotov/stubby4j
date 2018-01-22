@@ -1,3 +1,11 @@
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+
+final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
+        .ofPattern("yyyy-MM-dd HH:mm:ssZ")
+        .withZone(ZoneOffset.systemDefault())
+
 project.ext.dependenciesWithJetty = configurations.compile.resolve().findAll { file ->
     return /*!file.name.contains("servlet-api") && */ !file.name.contains("-sources")
 }
@@ -15,7 +23,7 @@ project.ext.projectManifest = manifest {
             'Implementation-Version': "${version}",
             'Implementation-Vendor': 'Alexander Zagniotov',
             'Built-By': 'Alexander Zagniotov',
-            'Built-Date': new Date().toString(),
+            'Built-Date': DATE_TIME_FORMATTER.format(Instant.now()),
             'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
             'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
 }
@@ -29,7 +37,7 @@ project.ext.projectManifestNoJetty = manifest {
             'Implementation-Version': "${version}",
             'Implementation-Vendor': 'Alexander Zagniotov',
             'Built-By': 'Alexander Zagniotov',
-            'Built-Date': new Date().toString(),
+            'Built-Date': DATE_TIME_FORMATTER.format(Instant.now()),
             'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
             'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
 }

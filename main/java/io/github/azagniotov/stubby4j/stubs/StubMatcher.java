@@ -3,16 +3,18 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.ComparisonControllers;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.ElementSelectors;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +22,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.escapeSpecialRegexCharacters;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.QUERY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
+import static org.xmlunit.builder.Input.fromByteArray;
 
 class StubMatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubMatcher.class);
+    private static final DefaultNodeMatcher NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES = new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes);
 
     private final Map<String, String> regexGroups;
     private static final Pattern SUB_TYPE_PATTERN = Pattern.compile("/(?:.*\\+)?(\\w*);?");
@@ -200,11 +205,22 @@ class StubMatcher {
 
     private boolean xmlMatch(final String stubbedXml, final String assertingXml) {
         try {
-            final Diff diff = new Diff(stubbedXml, assertingXml);
-            diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
 
-            return (diff.similar() || diff.identical());
-        } catch (SAXException | IOException e) {
+            final Input.Builder control = fromByteArray(getBytesUtf8(stubbedXml));
+            final Input.Builder assertion = fromByteArray(getBytesUtf8(assertingXml));
+
+            final Diff diff = DiffBuilder
+                    .compare(control)
+                    .checkForSimilar()
+                    .normalizeWhitespace()
+                    .ignoreComments()
+                    .withNodeMatcher(NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES)
+                    .withTest(assertion)
+                    .withComparisonController(ComparisonControllers.StopWhenSimilar)
+                    .build();
+
+            return !diff.hasDifferences();
+        } catch (Exception e) {
             return stringsMatch(stubbedXml, assertingXml, POST.toString());
         }
     }

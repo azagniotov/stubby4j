@@ -9,7 +9,7 @@ $(function () {
       bindLinks();
       var checkForStatsTimeout = setTimeout(function () {
          checkForStats();
-      }, 1000);
+      }, 3000);
 
       function checkForStats() {
          var statsPresent = false;
@@ -27,7 +27,7 @@ $(function () {
                } else {
                   checkForStatsTimeout = setTimeout(function () {
                      checkForStats();
-                  }, 1000);
+                  }, 3000);
                }
             },
             function error(status, statusText, responseText) {

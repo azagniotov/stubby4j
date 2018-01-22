@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
@@ -30,6 +30,11 @@ public class StubRequestBuilderTest {
     @Before
     public void setUp() throws Exception {
         builder = new StubRequest.Builder();
+    }
+
+    @After
+    public void cleanup() throws Exception {
+        RegexParser.REGEX_PATTERN_CACHE.clear();
     }
 
     @Test
@@ -371,7 +376,7 @@ public class StubRequestBuilderTest {
         final StubRequest expectedRequest =
                 builder.withUrl(url)
                         .withPost(postBody)
-                        .withMethodGet().build();
+                        .withMethodPost().build();
 
         assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
     }
@@ -386,7 +391,7 @@ public class StubRequestBuilderTest {
                 builder.withUrl(url)
                         .withPost(postBody)
                         .withFile(File.createTempFile("tmp", "tmp"))
-                        .withMethodGet().build();
+                        .withMethodPost().build();
 
         assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
     }
@@ -400,7 +405,7 @@ public class StubRequestBuilderTest {
         final StubRequest expectedRequest =
                 builder.withUrl(url)
                         .withFile(FileUtils.fileFromString(fileContent))
-                        .withMethodGet().build();
+                        .withMethodPost().build();
 
         assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
     }
@@ -1132,13 +1137,13 @@ public class StubRequestBuilderTest {
 
         final StubRequest expectedRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
@@ -1146,7 +1151,39 @@ public class StubRequestBuilderTest {
     }
 
     @Test
-    public void stubbedRequestNotEqualsAssertingRequest_WhenPostRegexDoesNotMatchLineChar() throws Exception {
+    public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithLinefeedChar() throws Exception {
+
+        final String postRegex = ".*";
+
+        final String postAssertingValue =
+                "Here's the story of a lovely lady,\n" +
+                        "Who was bringing up three very lovely girls.\n" +
+                        "All of them had hair of gold, like their mother,\n" +
+                        "The youngest one in curls.\n" +
+                        "Here's the story, of a man named Brady,\n" +
+                        "Who was busy with three boys of his own.\n" +
+                        "They were four men, living all together,\n" +
+                        "Yet they were all alone.";
+
+        final String url = "/invoice/789";
+
+        final StubRequest expectedRequest =
+                builder.withUrl(url)
+                        .withMethodPost()
+                        .withMethodHead()
+                        .withPost(postRegex).build();
+
+        final StubRequest assertingRequest =
+                builder.withUrl(url)
+                        .withMethodPost()
+                        .withMethodHead()
+                        .withPost(postAssertingValue).build();
+
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
+    }
+
+    @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithSystemLineChar() throws Exception {
 
         final String postRegex = ".*";
 
@@ -1174,45 +1211,13 @@ public class StubRequestBuilderTest {
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
-        assertThat(assertingRequest).isNotEqualTo(expectedRequest);
-    }
-
-    @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithLineChar() throws Exception {
-
-        final String postRegex = "^[\\.,'a-zA-Z\\s+]*$";
-
-        final String postAssertingValue =
-                "Here's the story of a lovely lady," + BR +
-                        "Who was bringing up three very lovely girls." + BR +
-                        "All of them had hair of gold, like their mother," + BR +
-                        "The youngest one in curls." + BR +
-                        "Here's the story, of a man named Brady," + BR +
-                        "Who was busy with three boys of his own." + BR +
-                        "They were four men, living all together," + BR +
-                        "Yet they were all alone.";
-
-        final String url = "/invoice/789";
-
-        final StubRequest expectedRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withPost(postRegex).build();
-
-        final StubRequest assertingRequest =
-                builder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withPost(postAssertingValue).build();
-
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
 
     @Test
     public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithCarriageReturnChar() throws Exception {
 
-        final String postRegex = "^[\\.,'a-zA-Z\\s+]*$";
+        final String postRegex = ".*";
 
         final String postAssertingValue =
                 "Here's the story of a lovely lady,\r" +
@@ -1228,13 +1233,45 @@ public class StubRequestBuilderTest {
 
         final StubRequest expectedRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
+                        .withMethodHead()
+                        .withPost(postAssertingValue).build();
+
+        assertThat(assertingRequest).isEqualTo(expectedRequest);
+    }
+
+    @Test
+    public void stubbedRequestEqualsAssertingRequest_WhenPostRegexMatchingPostWithCarriageReturnLinefeedChars() throws Exception {
+
+        final String postRegex = ".*";
+
+        final String postAssertingValue =
+                "Here's the story of a lovely lady,\r\n" +
+                        "Who was bringing up three very lovely girls.\r\n" +
+                        "All of them had hair of gold, like their mother,\r\n" +
+                        "The youngest one in curls.\r\n" +
+                        "Here's the story, of a man named Brady,\r\n" +
+                        "Who was busy with three boys of his own.\r\n" +
+                        "They were four men, living all together,\r\n" +
+                        "Yet they were all alone.";
+
+        final String url = "/invoice/789";
+
+        final StubRequest expectedRequest =
+                builder.withUrl(url)
+                        .withMethodPost()
+                        .withMethodHead()
+                        .withPost(postRegex).build();
+
+        final StubRequest assertingRequest =
+                builder.withUrl(url)
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
@@ -1318,8 +1355,6 @@ public class StubRequestBuilderTest {
     @Test
     public void shouldComputeRegexPatterns() throws Exception {
 
-        RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.clear();
-
         final String url = "^/resources/asn/.*$";
         final String post = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"(.*)\"}}]}";
 
@@ -1330,9 +1365,7 @@ public class StubRequestBuilderTest {
                         .withPost(post).build();
         stubRequest.compileRegexPatternsAndCache();
 
-        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.size()).isEqualTo(2);
-        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.get(url.hashCode())).isInstanceOf(Pattern.class);
-        assertThat(RegexParser.STUBBED_VALUE_TO_REGEX_PATTERN.get(post.hashCode())).isInstanceOf(Pattern.class);
+        assertThat(RegexParser.REGEX_PATTERN_CACHE.size().get()).isEqualTo(3);
     }
 
     @Test
@@ -1356,13 +1389,13 @@ public class StubRequestBuilderTest {
 
         final StubRequest expectedRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postAssertingValue).build();
 
@@ -1379,13 +1412,13 @@ public class StubRequestBuilderTest {
 
         final StubRequest expectedRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postRegex).build();
 
         final StubRequest assertingRequest =
                 builder.withUrl(url)
-                        .withMethodGet()
+                        .withMethodPost()
                         .withMethodHead()
                         .withPost(postValue).build();
 

@@ -125,6 +125,15 @@ public final class StringUtils {
         return target.contains(TEMPLATE_TOKEN_LEFT);
     }
 
+    public static boolean isNumeric(final String target) {
+        for (char c : target.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static String escapeHtmlEntities(final String toBeEscaped) {
         return toBeEscaped.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }

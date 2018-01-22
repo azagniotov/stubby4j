@@ -24,16 +24,15 @@ import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.cli.EmptyLogger;
 import io.github.azagniotov.stubby4j.filesystem.ExternalFilesScanner;
 import io.github.azagniotov.stubby4j.filesystem.MainYamlScanner;
-import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public class StubbyManagerFactory {
 
@@ -43,7 +42,7 @@ public class StubbyManagerFactory {
 
     public synchronized StubbyManager construct(final File configFile,
                                                 final Map<String, String> commandLineArgs,
-                                                final Future<List<StubHttpLifecycle>> stubLoadComputation) throws Exception {
+                                                final CompletableFuture<YamlParseResultSet> stubLoadComputation) throws Exception {
 
         // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
         Log.setLog(new EmptyLogger());

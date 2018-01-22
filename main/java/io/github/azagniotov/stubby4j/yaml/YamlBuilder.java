@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Please refer to the accompanied unit tests for usage examples.
  */
-public final class YAMLBuilder {
+public final class YamlBuilder {
 
     private static final String TWO_SPACE = String.format("%1$2s", "");
     private static final String THREE_SPACE = String.format("%1$3s", "");
@@ -19,10 +19,15 @@ public final class YAMLBuilder {
     private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
     private static final String TWELVE_SPACE = String.format("%s%s", NINE_SPACE, THREE_SPACE);
 
-    private final static String REQUEST = String.format("-%s%s", TWO_SPACE, "request:");
-    private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
-
+    private final static String DESCRIPTION_AS_TOP = String.format("-%s%s", TWO_SPACE, "description: ");
     private final static String DESCRIPTION = String.format("%s%s", THREE_SPACE, "description: ");
+
+    private final static String UUID_AS_TOP = String.format("-%s%s", TWO_SPACE, "uuid: ");
+    private final static String UUID = String.format("%s%s", THREE_SPACE, "uuid: ");
+
+    private final static String REQUEST_AS_TOP = String.format("-%s%s", TWO_SPACE, "request:");
+    private final static String REQUEST = String.format("%s%s", THREE_SPACE, "request:");
+    private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
 
     private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
     private final static String SEQUENCE_RESPONSE_HEADERS = String.format("%s%s", NINE_SPACE, "headers: ");
@@ -50,12 +55,15 @@ public final class YAMLBuilder {
 
     private final static String NL = FileUtils.BR;
 
-    private final static String REQUEST_HEADERS_KEY = String.format("%s-%s", REQUEST, HEADERS);
-    private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST, QUERY);
+    private final static String REQUEST_HEADERS_KEY = String.format("%s-%s", REQUEST_AS_TOP, HEADERS);
+    private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST_AS_TOP, QUERY);
     private final static String RESPONSE_HEADERS_KEY = String.format("%s-%s", RESPONSE, HEADERS);
     private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
+
+    private static final StringBuilder FEATURE_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
+
     final Set<String> storedStubbedMethods = new LinkedHashSet<>();
     final Set<String> unusedNodes = new HashSet<String>() {{
         add(REQUEST_HEADERS_KEY);
@@ -65,19 +73,61 @@ public final class YAMLBuilder {
         add(RESPONSE_QUERY_KEY);
     }};
 
-    public YAMLBuilder() {
+    public YamlBuilder() {
 
     }
 
+    public Feature newStubbedFeature() {
+        return new Feature();
+    }
+
+    public final class Feature {
+
+        private boolean topLevelSet;
+
+        private Feature() {
+            FEATURE_STRING_BUILDER.setLength(0);
+            topLevelSet = false;
+        }
+
+        public Feature withDescription(final String description) {
+            if (!topLevelSet) {
+                FEATURE_STRING_BUILDER.append(DESCRIPTION_AS_TOP).append(description).append(NL);
+                topLevelSet = true;
+            } else {
+                FEATURE_STRING_BUILDER.append(DESCRIPTION).append(description).append(NL);
+            }
+            return this;
+        }
+
+        public Feature withUUID(final String uuid) {
+            if (!topLevelSet) {
+                FEATURE_STRING_BUILDER.append(UUID_AS_TOP).append(uuid).append(NL);
+                topLevelSet = true;
+            } else {
+                FEATURE_STRING_BUILDER.append(UUID).append(uuid).append(NL);
+            }
+            return this;
+        }
+
+        public Request newStubbedRequest() {
+            return new Request(false);
+        }
+    }
+
     public Request newStubbedRequest() {
-        return new Request();
+        return new Request(true);
     }
 
     public final class Request {
 
-        public Request() {
+        private Request(final boolean isTopLevel) {
             REQUEST_STRING_BUILDER.setLength(0);
-            REQUEST_STRING_BUILDER.append(REQUEST).append(NL);
+            if (isTopLevel) {
+                REQUEST_STRING_BUILDER.append(REQUEST_AS_TOP).append(NL);
+            } else {
+                REQUEST_STRING_BUILDER.append(REQUEST).append(NL);
+            }
         }
 
         public Request withMethodGet() {
@@ -231,12 +281,6 @@ public final class YAMLBuilder {
             return this;
         }
 
-        public Request withDescription(final String value) {
-            REQUEST_STRING_BUILDER.append(NL).append(DESCRIPTION).append(value).append(NL);
-
-            return this;
-        }
-
         public Response newStubbedResponse() {
             return new Response();
         }
@@ -248,7 +292,7 @@ public final class YAMLBuilder {
 
     public final class Response {
 
-        public Response() {
+        private Response() {
             RESPONSE_STRING_BUILDER.setLength(0);
             RESPONSE_STRING_BUILDER.append(RESPONSE).append(NL);
         }
@@ -403,9 +447,10 @@ public final class YAMLBuilder {
 
         public String build() {
 
-            final String rawRequestString = REQUEST_STRING_BUILDER.toString();
+            final String rawFeatureString = FEATURE_STRING_BUILDER.toString().trim();
+            final String rawRequestString = REQUEST_STRING_BUILDER.toString(); // do not trim()!
             final String cleansedRequestString = rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
-            final String yaml = String.format("%s%s%s", cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
+            final String yaml = String.format("%s%s%s%s%s", rawFeatureString, NL, cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
 
             unusedNodes.clear();
             unusedNodes.add(REQUEST_HEADERS_KEY);
@@ -413,6 +458,10 @@ public final class YAMLBuilder {
             unusedNodes.add(RESPONSE_HEADERS_KEY);
             unusedNodes.add(RESPONSE_QUERY_KEY);
             storedStubbedMethods.clear();
+
+            FEATURE_STRING_BUILDER.setLength(0);
+            REQUEST_STRING_BUILDER.setLength(0);
+            RESPONSE_STRING_BUILDER.setLength(0);
 
             return yaml;
         }

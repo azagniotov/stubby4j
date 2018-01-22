@@ -1,0 +1,20 @@
+-  description: Stub one
+   uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+   request:
+      url: ^/one$
+      method: GET
+
+   response:
+      status: 200
+      latency: 100
+      body: 'One!'
+
+-  description: Stub two
+   uuid: 888975hn-f7a7-8888-97a5-53292484aaf6
+   request:
+      url: ^/two
+      method: GET
+
+   response:
+      status: 200
+      body: 'Two!'

@@ -1,12 +1,15 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
@@ -43,20 +46,28 @@ import static java.util.Collections.list;
 public class StubRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubRepository.class);
 
-    private final File configFile;
-    private final List<StubHttpLifecycle> stubs;
-    private final Future<List<StubHttpLifecycle>> stubLoadComputation;
-    private final StubbyHttpTransport stubbyHttpTransport;
-    private final ConcurrentHashMap<String, AtomicLong> resourceStats;
-    private final ConcurrentHashMap<String, StubHttpLifecycle> matchedStubsCache;
+    // 7200 secs => 2 hours
+    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 7200L;
 
-    public StubRepository(final File configFile, final Future<List<StubHttpLifecycle>> stubLoadComputation) {
+    private final File configFile;
+
+    private final List<StubHttpLifecycle> stubs;
+    private final Cache<String, StubHttpLifecycle> stubMatchesCache;
+
+    private final ConcurrentHashMap<String, AtomicLong> resourceStats;
+    private final ConcurrentHashMap<String, StubHttpLifecycle> uuidToStub;
+
+    private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
+    private final StubbyHttpTransport stubbyHttpTransport;
+
+    public StubRepository(final File configFile, final CompletableFuture<YamlParseResultSet> stubLoadComputation) {
         this.stubs = new ArrayList<>();
+        this.uuidToStub = new ConcurrentHashMap<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = new StubbyHttpTransport();
         this.resourceStats = new ConcurrentHashMap<>();
-        this.matchedStubsCache = new ConcurrentHashMap<>();
+        this.stubMatchesCache = Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS);
     }
 
     public StubSearchResult search(final HttpServletRequest incomingRequest) throws IOException {
@@ -153,27 +164,36 @@ public class StubRepository {
 
         final long initialStart = System.currentTimeMillis();
         final String incomingRequestUrl = incomingStub.getUrl();
-        if (matchedStubsCache.containsKey(incomingRequestUrl)) {
+
+        final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestUrl);
+
+        return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
+
             ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
             LOGGER.debug("Local cache contains potential match for the URL [{}].", incomingRequestUrl);
-            final StubHttpLifecycle cachedPotentialMatch = matchedStubsCache.get(incomingRequestUrl);
 
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
-            if (incomingStub.equals(cachedPotentialMatch)) {
+            if (incomingStub.equals(cachedMatchCandidate)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
-                logMatch(elapsed, cachedPotentialMatch);
+                logMatch(elapsed, cachedMatchCandidate);
                 ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
                 LOGGER.debug("Potential match for the URL [{}] was deemed as a full match.", incomingRequestUrl);
 
-                return Optional.of(cachedPotentialMatch);
+                return Optional.of(cachedMatchCandidate);
             }
+
             ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
             LOGGER.warn("Cached match for the URL [{}] failed to match fully, invalidating match cache.", incomingRequestUrl);
 
-            matchedStubsCache.remove(incomingRequestUrl);
-        }
+            stubMatchesCache.clearByKey(incomingRequestUrl);
 
+            // Since we did not find match with cached match candidate, then:
+            return matchAll(incomingStub, initialStart, incomingRequestUrl);
 
+        }).orElseGet(() -> matchAll(incomingStub, initialStart, incomingRequestUrl));
+    }
+
+    private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart, final String incomingRequestUrl) {
         for (final StubHttpLifecycle stubbed : stubs) {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
@@ -181,7 +201,7 @@ public class StubRepository {
 
                 ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
                 LOGGER.debug("Caching the found match for URL [{}].", incomingRequestUrl);
-                matchedStubsCache.put(incomingRequestUrl, stubbed);
+                stubMatchesCache.putIfAbsent(incomingRequestUrl, stubbed);
 
                 return Optional.of(stubbed);
             }
@@ -215,29 +235,40 @@ public class StubRepository {
         return Optional.of(stubs.get(index));
     }
 
-    synchronized boolean resetStubsCache(final List<StubHttpLifecycle> newStubs) {
-        this.matchedStubsCache.clear();
+    synchronized boolean resetStubsCache(final YamlParseResultSet yamlParseResultSet) {
+        this.stubMatchesCache.clear();
         this.stubs.clear();
-        final boolean added = this.stubs.addAll(newStubs);
+        this.uuidToStub.clear();
+
+        final boolean added = this.stubs.addAll(yamlParseResultSet.getStubs());
         if (added) {
-            this.matchedStubsCache.clear();
+            this.stubMatchesCache.clear();
             updateResourceIDHeaders();
+            this.uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
         }
         return added;
     }
 
-    public synchronized void refreshStubsFromYAMLConfig(final YAMLParser yamlParser) throws Exception {
+    public synchronized void refreshStubsFromYamlConfig(final YamlParser yamlParser) throws Exception {
         resetStubsCache(yamlParser.parse(this.configFile.getParent(), configFile));
     }
 
-    public synchronized void refreshStubsByPost(final YAMLParser yamlParser, final String postPayload) throws Exception {
+    public synchronized void refreshStubsByPost(final YamlParser yamlParser, final String postPayload) throws Exception {
         resetStubsCache(yamlParser.parse(this.configFile.getParent(), postPayload));
     }
 
-    public synchronized String refreshStubByIndex(final YAMLParser yamlParser, final String putPayload, final int index) throws Exception {
-        final List<StubHttpLifecycle> parsedStubs = yamlParser.parse(this.configFile.getParent(), putPayload);
-        final StubHttpLifecycle newStub = parsedStubs.get(0);
+    public synchronized String refreshStubByIndex(final YamlParser yamlParser, final String putPayload, final int index) throws Exception {
+        final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
+        final StubHttpLifecycle newStub = yamlParseResultSet.getStubs().get(0);
         updateStubByIndex(index, newStub);
+
+        return newStub.getUrl();
+    }
+
+    public synchronized String refreshStubByUuid(final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
+        final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
+        final StubHttpLifecycle newStub = yamlParseResultSet.getStubs().get(0);
+        updateStubByUuid(uuid, newStub);
 
         return newStub.getUrl();
     }
@@ -262,7 +293,7 @@ public class StubRepository {
         return stubs.get(0).getUrl();
     }
 
-    public File getYAMLConfig() {
+    public File getYamlConfig() {
         return configFile;
     }
 
@@ -289,7 +320,7 @@ public class StubRepository {
     }
 
     @CoberturaIgnore
-    public String getYAMLConfigCanonicalPath() {
+    public String getYamlConfigCanonicalPath() {
         try {
             return this.configFile.getCanonicalPath();
         } catch (IOException e) {
@@ -297,38 +328,74 @@ public class StubRepository {
         }
     }
 
-    public synchronized String getStubYAML() {
+    public synchronized String getStubYaml() {
         final StringBuilder builder = new StringBuilder();
         for (final StubHttpLifecycle stub : stubs) {
-            builder.append(stub.getCompleteYAML()).append(FileUtils.BR).append(FileUtils.BR);
+            builder.append(stub.getCompleteYaml()).append(FileUtils.BR).append(FileUtils.BR);
         }
 
         return builder.toString();
     }
 
-    public synchronized String getStubYAMLByIndex(final int index) {
-        return stubs.get(index).getCompleteYAML();
+    public synchronized String getStubYamlByIndex(final int index) {
+        return stubs.get(index).getCompleteYaml();
     }
 
-    synchronized void updateStubByIndex(final int index, final StubHttpLifecycle newStub) {
-        deleteStubByIndex(index);
-        stubs.add(index, newStub);
-        updateResourceIDHeaders();
+    public synchronized String getStubYamlByUuid(final String uuid) {
+        return uuidToStub.get(uuid).getCompleteYaml();
     }
 
     public synchronized boolean canMatchStubByIndex(final int index) {
         return stubs.size() - 1 >= index;
     }
 
+    public synchronized boolean canMatchStubByUuid(final String uuid) {
+        return uuidToStub.containsKey(uuid);
+    }
+
+    synchronized void updateStubByIndex(final int index, final StubHttpLifecycle newStub) {
+        final StubHttpLifecycle deletedStub = deleteStubByIndex(index);
+        stubs.add(index, newStub);
+        updateResourceIDHeaders();
+
+        if (StringUtils.isSet(deletedStub.getUUID())) {
+            uuidToStub.remove(deletedStub.getUUID());
+        }
+
+        if (StringUtils.isSet(newStub.getUUID())) {
+            uuidToStub.put(newStub.getUUID(), newStub);
+        }
+    }
+
+    synchronized void updateStubByUuid(final String uuid, final StubHttpLifecycle newStub) {
+        final StubHttpLifecycle obsolete = uuidToStub.get(uuid);
+        final int resourceId = Integer.parseInt(obsolete.getResourceId());
+
+        updateStubByIndex(resourceId, newStub);
+    }
+
     public synchronized StubHttpLifecycle deleteStubByIndex(final int index) {
         final StubHttpLifecycle removedStub = stubs.remove(index);
         updateResourceIDHeaders();
 
+        if (StringUtils.isSet(removedStub.getUUID())) {
+            uuidToStub.remove(removedStub.getUUID());
+        }
+
         return removedStub;
     }
 
+    public synchronized StubHttpLifecycle deleteStubByUuid(final String uuid) {
+        final StubHttpLifecycle toBeRemoved = uuidToStub.get(uuid);
+        final int resourceId = Integer.parseInt(toBeRemoved.getResourceId());
+
+        return deleteStubByIndex(resourceId);
+    }
+
     public synchronized void deleteAllStubs() {
-        stubs.clear();
+        this.stubMatchesCache.clear();
+        this.stubs.clear();
+        this.uuidToStub.clear();
     }
 
     private void updateResourceIDHeaders() {
@@ -340,7 +407,9 @@ public class StubRepository {
     @CoberturaIgnore
     public void retrieveLoadedStubs() {
         try {
-            stubs.addAll(stubLoadComputation.get());
+            final YamlParseResultSet yamlParseResultSet = stubLoadComputation.get();
+            stubs.addAll(yamlParseResultSet.getStubs());
+            uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

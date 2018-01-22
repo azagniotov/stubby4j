@@ -26,6 +26,7 @@ import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -60,14 +61,15 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.ofNullableProperty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
-public class YAMLParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YAMLParser.class);
+public class YamlParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YamlParser.class);
 
     static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
@@ -75,16 +77,16 @@ public class YAMLParser {
     private String dataConfigHomeDirectory;
 
     @CoberturaIgnore
-    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
+    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configContent));
     }
 
     @CoberturaIgnore
-    public List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
+    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configFile));
     }
 
-    private List<StubHttpLifecycle> parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
+    private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
         this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
         final Object loadedConfig = SNAKE_YAML.load(configAsStream);
@@ -93,14 +95,24 @@ public class YAMLParser {
         }
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
+        final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
+
         final List<Map> httpLifecycleConfigs = asCheckedArrayList(loadedConfig, Map.class);
 
         for (final Map rawHttpLifecycleConfig : httpLifecycleConfigs) {
             final Map<String, Object> httpLifecycleProperties = asCheckedLinkedHashMap(rawHttpLifecycleConfig, String.class, Object.class);
-            stubs.add(parseStubbedHttpLifecycleConfig(httpLifecycleProperties));
+            final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(httpLifecycleProperties);
+
+            if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
+                if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
+                    throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
+                }
+                uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+            }
+            stubs.add(stubHttpLifecycle);
         }
 
-        return stubs;
+        return new YamlParseResultSet(stubs, uuidToStubs);
     }
 
     private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
@@ -108,13 +120,16 @@ public class YAMLParser {
 
         for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
             final Object stubTypeValue = stubType.getValue();
+            final String stubTypeKey = stubType.getKey();
 
-            if (DESCRIPTION.isA(stubType.getKey())) {
+            if (DESCRIPTION.isA(stubTypeKey)) {
                 stubBuilder.withDescription((String) stubType.getValue());
+            } else if (UUID.isA(stubTypeKey)) {
+                stubBuilder.withUUID((String) stubType.getValue());
             } else if (stubTypeValue instanceof Map) {
                 final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
-                if (REQUEST.isA(stubType.getKey())) {
+                if (REQUEST.isA(stubTypeKey)) {
                     parseStubbedRequestConfig(stubBuilder, stubbedProperties);
                 } else {
                     parseStubbedResponseConfig(stubBuilder, stubbedProperties);

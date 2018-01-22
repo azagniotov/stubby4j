@@ -10,7 +10,7 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -62,7 +62,7 @@ public class StubsAdminPortalsTest {
     @Test
     public void should_UpdateStubsDataAndGetNewResource_WhenSuccessfulValidPostMade_ToAdminPortalRoot() throws Exception {
 
-        final String yamlToUpdate = new YAMLBuilder()
+        final String yamlToUpdate = new YamlBuilder()
                 .newStubbedRequest()
                 .withUrl("^/new/resource/.*$")
                 .withMethodGet()

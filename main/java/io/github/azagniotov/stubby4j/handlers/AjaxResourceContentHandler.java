@@ -97,7 +97,7 @@ public class AjaxResourceContentHandler extends AbstractHandler {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(stubType, targetFieldName);
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
-            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), targetFieldName, ajaxResponse);
+            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -109,7 +109,7 @@ public class AjaxResourceContentHandler extends AbstractHandler {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(targetFieldName, sequencedResponseId);
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
-            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), targetFieldName, ajaxResponse);
+            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

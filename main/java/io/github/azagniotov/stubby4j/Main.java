@@ -23,19 +23,21 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
-import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
@@ -43,7 +45,7 @@ public final class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(1);
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static CommandLineInterpreter commandLineInterpreter;
 
     private Main() {
@@ -119,14 +121,20 @@ public final class Main {
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
             final File configFile = new File(configFilename);
-            final Future<List<StubHttpLifecycle>> stubLoadComputation =
-                    EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+            final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return new YamlParser().parse(configFile.getParent(), configFile);
+                } catch (IOException ioEx) {
+                    throw new UncheckedIOException(ioEx);
+                }
+            }, EXECUTOR_SERVICE);
 
             final StubbyManager stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineArgs, stubLoadComputation);
             stubbyManager.startJetty();
             final long totalEnd = System.currentTimeMillis();
 
-            ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds", (totalEnd - initialStart)) + BR);
+            ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds at %s", (totalEnd - initialStart), DateTimeUtils.systemDefault()) + BR);
             LOGGER.debug("stubby4j successfully started after {} milliseconds.", totalEnd - initialStart);
 
             stubbyManager.statuses().forEach(ANSITerminal::status);

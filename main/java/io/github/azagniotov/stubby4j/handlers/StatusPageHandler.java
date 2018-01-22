@@ -25,6 +25,7 @@ import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.JarUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
@@ -45,7 +46,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -188,7 +188,7 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(interpolateHtmlTableRowTemplate("UPTIME", HandlerUtils.calculateStubbyUpTime(RUNTIME_MX_BEAN.getUptime())));
         builder.append(interpolateHtmlTableRowTemplate("INPUT ARGS", CommandLineInterpreter.PROVIDED_OPTIONS));
         builder.append(interpolateHtmlTableRowTemplate("STUBBED ENDPOINTS", stubRepository.getStubs().size()));
-        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubRepository.getYAMLConfig())));
+        builder.append(interpolateHtmlTableRowTemplate("LOADED YAML", buildLoadedFileMetadata(stubRepository.getYamlConfig())));
 
         if (!stubRepository.getExternalFiles().isEmpty()) {
             final StringBuilder externalFilesMetadata = new StringBuilder();
@@ -219,7 +219,7 @@ public final class StatusPageHandler extends AbstractHandler {
         builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "parentDir", determineParentDir(file))).append("<br />");
         builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "name", file.getName())).append("<br />");
         builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb")).append("<br />");
-        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "lastModified", new Date(file.lastModified()))).append("<br />");
+        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "lastModified", DateTimeUtils.systemDefault(file.lastModified()))).append("<br />");
 
         return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + builder.toString() + "</div>";
     }

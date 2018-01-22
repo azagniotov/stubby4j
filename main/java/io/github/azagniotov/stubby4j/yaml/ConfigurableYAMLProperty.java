@@ -21,7 +21,8 @@ public enum ConfigurableYAMLProperty {
     RESPONSE,
     STATUS,
     URL,
-    DESCRIPTION;
+    DESCRIPTION,
+    UUID;
 
     private static final Map<String, ConfigurableYAMLProperty> PROPERTY_NAME_TO_ENUM_MEMBER;
 

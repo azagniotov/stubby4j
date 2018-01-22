@@ -12,10 +12,10 @@
 
 A highly flexible and configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol. It is an actual HTTP server (stubby4j uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract & behavior testing. Please refer to [Key features](#key-features) for more information
 
-##### Why the word "stubby"?
+#### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v5.2.0
+## User manual for stubby4j v6.0.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -28,7 +28,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
    * [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
-   * [Stub/Feature Description](#stubfeature-description)
+   * [Stub/Feature](#stubfeature)
    * [Request](#request)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
       * [Authorization Header](#authorization-header)
@@ -36,7 +36,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Record and Play](#record-and-play)
 * [Performance optimization index](#performance-optimization-index)
-   * [Regex pattern precompilation](#regex-pattern-precompilation)
+   * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
    * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
@@ -60,14 +60,14 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
 
-##### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
+#### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
 * version >= 4.0.0:  Oracle JRE v1.8.0_60
 * version >= 3.0.0:  Oracle JRE v1.7.0_76
 * version = 2.0.22: Oracle JRE v1.7.0_04
 * version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
 
-##### Setup
+#### Setup
 
 * Download the [latest stubby4j version][maven-link] (the JAR archive).
 * Create the following local YAML file: 
@@ -139,15 +139,14 @@ Run `gradle cobertura` command to:
 
 ## Third-party dependencies
 
-* __javax.servlet-api-3.1.0.jar__
-* jetty-server-9.4.8.v20171121.jar
-* jetty-servlets-9.4.8.v20171121.jar
-* commons-cli-1.2.jar
-* snakeyaml-1.17.jar
-* jsonassert-1.3.0.jar
-* xmlunit-1.6.jar
-* json-20090211.jar
-* slf4j-api:1.7.25.jar
+* __javax.servlet-api:3.1.0__
+* jetty-server:9.4.9.v20180320
+* jetty-servlets:9.4.9.v20180320
+* commons-cli:1.2
+* snakeyaml:1.20
+* jsonassert:1.3.0
+* xmlunit-legacy:2.5.1
+* slf4j-api:1.7.25
 
 
 ## Adding stubby4j to your project
@@ -159,22 +158,22 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 * `stubby4j-x.x.x-sources.jar`
 * `stubby4j-x.x.x-javadoc.jar`
 
-##### Gradle
+#### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:5.2.0")
+compile("io.github.azagniotov:stubby4j:6.0.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.2.0:no-jetty")
+compile("io.github.azagniotov:stubby4j:6.0.0:no-jetty")
 ```
 
-##### Maven
+#### Maven
 ```xml
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.2.0</version>
+    <version>6.0.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -183,7 +182,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.2.0</version>
+    <version>6.0.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -192,17 +191,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-5.2.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* Install `stubby4j-6.0.1-SNAPSHOT*.jar` to local `~/.m2/repository`
 * All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.2.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:5.2.1-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:6.0.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.2.1-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:6.0.1-SNAPSHOT:no-jetty")
 ```
 
 
@@ -246,6 +245,7 @@ This section explains the usage, intent and behavior of each property on the `re
 Here is a fully-populated, unrealistic endpoint:
 ```yaml
 -  description: Optional description shown in logs
+   uuid: fdkfsd8f8ds7f
    request:
       url: ^/your/awesome/endpoint$
       method: POST
@@ -274,9 +274,9 @@ Here is a fully-populated, unrealistic endpoint:
       file: responseData.xml
 ```
 
-## Stub/Feature Description
+## Stub/Feature
 
-##### description (optional)
+#### description (optional)
 
 * Description field which can be used to show optional descriptions in the logs
 * Useful when you have a number of stubs loaded for the same endpoint and it starts to get confusing as to which is being matched
@@ -312,11 +312,30 @@ Here is a fully-populated, unrealistic endpoint:
       body: 'Three!'
 ```
 
+#### uuid (optional)
+
+* Useful when you want to specify unique identifier so it would be easier to update/delete it at runtime
+
+```yaml
+-  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+   request:
+      method: GET
+      url: /with/configured/uuid/property
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"status" : "OK"}
+```
+
+
 ## Request
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
 
-##### url (required)
+#### url (required)
 
 * is a full-fledged __regular expression__
 * This is the only required property of an endpoint.
@@ -354,7 +373,7 @@ A demonstration using regular expressions:
       url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 ```
 
-##### method
+#### method
 
 * defaults to `GET`.
 * case-insensitive.
@@ -387,7 +406,7 @@ A demonstration using regular expressions:
          -  HEAD
 ```
 
-##### query
+#### query
 
 * can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores query parameters on incoming request and will match only request URL
@@ -468,7 +487,7 @@ A demonstration using regular expressions:
          term: "['stalin and truman']"
 ```
 
-##### post
+#### post
 
 * Represents the body POST of incoming request, ie.: form data
 * can be a full-fledged __regular expression__
@@ -527,7 +546,7 @@ A demonstration using regular expressions:
          {"internalKey": "<%post.1%>"}
 ```
 
-##### file
+#### file
 
 * holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to stub a big POST payload, so instead of dumping a lot of text under the `post` property, you could specify a local file with the payload using the `file` property:
 
@@ -558,7 +577,7 @@ postedData.json
 
 * if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is matched in incoming request, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
 
-##### headers
+#### headers
 
 * can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores headers on incoming request and will match only request URL
@@ -709,7 +728,7 @@ Assuming a match has been made against the given `request` object, data from `re
          body: Still going strong!
 ```
 
-##### status
+#### status
 
 * the HTTP status code of the response.
 * integer or integer-like string.
@@ -723,7 +742,7 @@ Assuming a match has been made against the given `request` object, data from `re
       status: 420
 ```
 
-##### body
+#### body
 
 * contents of the response body
 * defaults to an empty content body
@@ -772,7 +791,7 @@ Assuming a match has been made against the given `request` object, data from `re
       body: https://api.twitter.com/1.1/direct_messages.json?since_id=240136858829479935&count=1
 ```
 
-##### file
+#### file
 
 * similar to `request.file`, holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to render a large response body upon successful stub matching, so instead of dumping a lot of text under the `body` property, you could specify a local file with the response content using the `file` property (btw, the `file` can also refer to binary files):
 
@@ -798,7 +817,7 @@ response:
       file: extremelyLongJsonFile.json
 ```
 
-##### headers
+#### headers
 
 * similar to `request.headers` except that these are sent back to the client.
 * by default, header `x-stubby-resource-id` containing resource ID is returned with each stubbed response. The ID is useful if the returned resource needs to be updated at run time by ID via Admin portal
@@ -819,7 +838,7 @@ response:
          }]
 ```
 
-##### latency
+#### latency
 
 * time to wait, in milliseconds, before sending back the response
 * good for testing timeouts, or slow connections
@@ -841,7 +860,7 @@ stubby supports dynamic token replacement on the following properties:
 - `response` `header` name values (including `location` header value)
 - `response` `file` names & payloads.
 
-##### Example
+#### Example
 ```yaml
 -  request:
       method: [GET]
@@ -876,35 +895,35 @@ stubby supports dynamic token replacement on the following properties:
       status: 200
       body: Returned invoice number# <% url.1 %> in category '<% url.2 %>' on the date '<% query.date.1 %>', using header custom-header <% headers.custom-header.0 %>
 ```
-##### Example explained
+#### Example explained
 
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`, `query` regex has one defined capturing group `([a-zA-Z]+)`. In other words, a manually defined capturing group has parenthesis around it.
 
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template (keep on reading!).
 
-##### Token structure
+#### Token structure
 The tokens in `response` `body` follow the format of `<%` `PROPERTY_NAME` `.` `CAPTURING_GROUP_ID` `%>`. If it is a token that should correspond to `headers` or `query` regex match, then the token structure would be as follows: `<%` `HEADERS_OR_QUERY` `.` `KEY_NAME` `.` `CAPTURING_GROUP_ID` `%>`. Whitespace is __allowed__ between the `<%` & `%>` and what's inside.
 
-##### Numbering the tokens based on capturing groups without sub-groups
+#### Numbering the tokens based on capturing groups without sub-groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. So the leftmost capturing group would be `1` and the next one to the right of it would be `2`, etc.
 
 In other words `<% url.1 %>` and `<% url.2 %>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `<% query.date.1 %>` token corresponds to one capturing group `([a-zA-Z]+)` from the `query` `date` property regex.
 
-##### Numbering the tokens based on capturing groups with sub-groups
+#### Numbering the tokens based on capturing groups with sub-groups
 In regex world, capturing groups can contain capturing sub-groups, as an example consider proposed `url` regex: `^/resource/` `(` `([a-z]{3})` `-` `([0-9]{3})` `)` `$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups within: `([a-z]{3})` & `([0-9]{3})`.
 
 When giving tokens their ID based on the count of capturing groups, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. If a group has sub-group within, you count the sub-group(s) first (also from left to right) before counting the next one to the right of the parent group.
 
 In other words tokens `<% url.1 %>`, `<% url.2 %>` and `<% url.3 %>` correspond to the three capturing groups from the `url` regex (starting from left to right): `([a-z]{3}-[0-9]{3})`, `([a-z]{3})` and `([0-9]{3})`.
 
-##### Tokens with ID zero
+#### Tokens with ID zero
 Tokens with ID zero can obtain __full__ match value from the regex they reference. In other words, tokens with ID zero do not care whether regex has capturing groups defined or not. For example, token `<% url.0 %>` will be replaced with the `url` __full__ regex match from `^/account/(\d{5})/category/([a-zA-Z]+)`. So if you want to access the `url` __full__ regex match, respectively you would use token `<% url.0 %>` in your template.
 
 Another example, would be the earlier case where `headers` `custom-header` property regex does not have capturing groups defined within. Which is fine, since the `<% headers.custom-header.0 %>` token corresponds to the __full__ regex match in the `header` `custom-header` property regex: `[0-9]+`.
 
 It is also worth to mention, that the __full__ regex match value replacing token `<% query.date.0 %>`, would be equal to the regex capturing group value replacing `<% query.date.1 %>`. This is due to how the `query` `date` property regex is defined - the one and only capturing group in the `query` `date` regex, is also the __full__ regex itself.
 
-##### Where to specify the template
+#### Where to specify the template
 You can specify template with tokens in both `body` as a string or using `file` by specifying template as external local file. When template is specified as `file`, the contents of local file from `file` will be replaced.
 
 Alternatively, you can also template the path to the file itself:
@@ -937,10 +956,10 @@ When the request is recieved and the regex matches, the path to the file will ge
 ```
 Another example demonstrating the usage of tokens from the matched regex groups
 
-##### When token interpolation happens
+#### When token interpolation happens
 After successful HTTP request verification, if your `body` or contents of local file from `file` contain tokens - the tokens will be replaced just before rendering HTTP response.
 
-##### Troubleshooting
+#### Troubleshooting
 * Make sure that the regex you used in your stubby4j configuration actually does what it suppose to do. Validate that it works before using it in stubby4j
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
@@ -952,7 +971,7 @@ After successful HTTP request verification, if your `body` or contents of local 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
 from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
 
-##### Example
+#### Example
 ```yaml
 -  request:
       method: [GET]
@@ -967,7 +986,7 @@ from the provided URL (before rendering the stubbed response) and replay the rec
          content-type: application/json
       body: http://maps.googleapis.com
 ```
-##### Example explained
+#### Example explained
 
 Upon successful HTTP request verification, properties of stubbed `request` (`method`, `url`, `headers`, `post` and `query`) are used to construct
 an HTTP request to the destination URL specified in `body` of the stubbed `response`.
@@ -975,7 +994,7 @@ an HTTP request to the destination URL specified in `body` of the stubbed `respo
 In the above example, stubby will record HTTP response received after submitting an HTTP GET request to the url below:
 `http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA`
 
-##### Please note
+#### Please note
 * Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
@@ -1004,11 +1023,18 @@ loaded in memory. If a full match was found, then that match will be cached usin
 
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
 
-##### Supplying endpoints to stubby
+
+#### The status page
+
+You can view the currently configured endpoints by going to `localhost:8889/status`
+
+
+#### Supplying endpoints to stubby
 
 Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (using non-optional `-d` / `--data` flags) with the following structure for each endpoint:
 
 * `description`: optional description shown in logs
+* `uuid`: optional unique identifier
 * `request`: describes the client's call to the server
    * `method`: GET/POST/PUT/DELETE/etc.
    * `url`: the URI regex string. GET parameters should also be included inline here
@@ -1023,8 +1049,46 @@ Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (u
    * `body`: the textual body of the server's response to the client
    * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
+#### Getting the current list of stubbed endpoints
 
-##### YAML (file only or POST/PUT)
+Performing a `GET` request on `localhost:8889` will return a YAML list of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
+Performing a `GET` request on `localhost:8889/<id>` will return the YAML object representing the response with the supplied id.
+
+#### Refreshing stubbed data via an endpoint
+
+If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart stubby),
+you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
+
+#### Updating existing endpoints
+
+Stubs can be updated by either `(a)` stub ID or `(b)` unique identifier (See [Stub/Feature UUID](#uuid-optional)).
+
+The specific stub ID (`resource-id-<id>`) can be found when viewing stubs at `localhost:8889/status`. 
+
+Updating stubs by stub ID can get rather brittle when dealing with big YAML configs or working with shared stubs. Therefore it is better to configure `uuid` property 
+per stub in order to make stub management easier & isolated. 
+
+* Send a `PUT` request with a stub payload to `localhost:8889/<id>`. It will reply with `400 Bad Request` if id does not exist. Success `201 Created`
+* Send a `PUT` request with a stub payload to `localhost:8889/configured-uuid`. It will reply with `400 Bad Request` if uuid does not exist. Success `201 Created` 
+
+#### Deleting endpoints
+
+Stubs can be deleted by either `(a)` stub ID or `(b)` unique identifier (See [Stub/Feature UUID](#uuid-optional)).
+
+The specific stub ID (`resource-id-<id>`) can be found when viewing stubs at `localhost:8889/status`. 
+
+Deleting stubs by stub ID can get rather brittle when dealing with big YAML configs or working with shared stubs. Therefore it is better to configure `uuid` property 
+per stub in order to make stub management easier & isolated. 
+
+* Send a `DELETE` request to `localhost:8889/<id>`. It will reply with `400 Bad Request` if id does not exist. Success `200 OK`
+* Send a `DELETE` request to `localhost:8889/configured-uuid`. It will reply with `400 Bad Request` if uuid does not exist. Success `200 OK`
+
+#### Deleting ALL endpoints at once
+
+Send a `DELETE` request to `localhost:8889`
+
+
+#### YAML (file only or POST/PUT)
 ```yaml
 -  description: "this is a feature describing something"
    request:
@@ -1082,10 +1146,11 @@ Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (u
       status: 304
 ```
 
-##### JSON support
+#### JSON support
+
 JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j for YAML & JSON parsing) implements YAML 1.1 at the moment. It means that not all the JSON documents can be parsed. Just give it a go.
 
-###### JSON (file or POST/PUT)
+#### JSON (file or POST/PUT)
 
 ```json
 [
@@ -1150,39 +1215,12 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
 
 If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax. When creating or updating one stubbed request, the response will contain `Location` in the header with the newly created resources' location
 
-##### Getting the current list of stubbed endpoints
-
-Performing a `GET` request on `localhost:8889` will return a YAML list of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
-
-Performing a `GET` request on `localhost:8889/<id>` will return the YAML object representing the response with the supplied id.
-
-##### The status page
-
-You can also view the currently configured endpoints by going to `localhost:8889/status`
-
-##### Refreshing stubbed data via an endpoint
-
-If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart stubby),
-you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
-
-##### Updating existing endpoints
-
-Perform `PUT` requests in the same format as using `POST`, only this time supply the id in the path. For instance, to update the response with id 4 you would `PUT` to `localhost:8889/4`.
-
-##### Deleting endpoints
-
-Send a `DELETE` request to `localhost:8889/<id>`
-
-##### Deleting ALL endpoints at once
-
-Send a `DELETE` request to `localhost:8889`
-
 
 ## The stubs portal
 
 Requests sent to any url at `localhost:8882` (or wherever you told stubby to run) will search through the available endpoints and, if a match is found, respond with that endpoint's `response` data
 
-##### How endpoints are matched
+#### How endpoints are matched
 
 For a given endpoint, stubby only cares about matching the properties of the request that have been defined in the YAML. The exception to this rule is `method`; if it is omitted it is defaulted to `GET`.
 
@@ -1224,259 +1262,13 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ## Change log
 
-##### 5.2.1-SNAPSHOT
+See CHANGELOG for details
 
-##### 5.2.0
-* Pull request #91 - Added ability to use tokenized "Location" header in 3xx responses (https://github.com/dimadl)
-* Issue #92 - Added ability to honor stubbed 404 responses (https://github.com/MannanM)
-
-##### 5.1.1
-* Added ANSITerminal back. it is operational alongside the SLF4J for the cases when stubby is running as a standalone jar
-* Upgraded from Jetty `9.4.6.v20170531` to `9.4.8.v20171121`
-
-##### 5.1.0
-* Pull request #83 - ANSITerminal was replaced with SLF4J. It is up to the stuby4j consumer to choose their own logging implementation (https://github.com/asarkar)
-
-##### 5.0.2
-* Pull request #77 - New field `description` for stubs/features (https://github.com/goughy000)
-
-##### 5.0.1
-* Pull request #71 - Add endpoint to Delete all stubs (https://github.com/nningego)
-* Pull request #74 - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
-* Pull request #76 - Allow custom XML and JSON content types (https://github.com/goughy000)
-* Upgraded from Jetty `9.4.0.v20161208` to `9.4.6.v20170531`
-
-##### 5.0.0
-* 2017 release: a lot of internal maintenance such as code clean up, refactoring & improved test coverage
-* Supporting additional 3xx redirect HTTP codes when rendering redirect response: `303`, `307` & `308`
-
-##### 4.0.5
-* Pull request #63 - Dynamic token replacement is also applied to stubbed response headers
-* Upgraded from Jetty `9.3.13.v20161014` to `9.4.0.v20161208`
-* Added dependency on https://github.com/azagniotov/collection-type-safe-converter
-* 'Builder' sub-project got merged into the 'Main' sub-project
-
-##### 4.0.4
-* Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`
-* Shaved off stubby's start-up time due to parsing YAML config asynchronously
-* Issue #61 - During record & play, the stubbed query params were sent with recording request instead of the actual request query params
-
-##### 4.0.3
-* Optimized the stub matching algorithm by caching the previous matches [StubRepository#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubRepository.java)
-* Suppressed Jetty's default [ErrorHandler](http://download.eclipse.org/jetty/9.3.12.v20160915/apidocs/org/eclipse/jetty/server/handler/ErrorHandler.html) with a custom [JsonErrorHandler](main/java/io/github/azagniotov/stubby4j/handlers/JsonErrorHandler.java) to send errors in JSON format
-* Got rid off repackaged classes from Apache Commons in favor of Java 8 APIs
-* Using Java NIO for file operations
-
-##### 4.0.2
-* Log to terminal why a request fails to match https://github.com/soundcloud/stubby4j/commit/5901710efd31653a05804ebec62f67184c212832
-* Square brackets were not escaped as literals for regular expression in Json POST [BUG]
-* Pre-compiling & caching stubbed regex patterns upon parsing YAML stub configuration
-
-##### 4.0.1
-* Issue #54 - Support for regular expression in Json POST
-
-##### 4.0.0
-* Built using Java v1.8 (`1.8.0_60`)
-* Updated Gradle `build.gradle` to compile using Java v1.8
-* Upgraded from Jetty `9.2.10.v20150310` to `9.3.12.v20160915`
-* Updated Docker config
-* Renamed project root package from `by.stub` to `io.github.azagniotov.stubby4j`
-* Renamed Maven Central group ID from `by.stub` to `io.github.azagniotov`
-* Issue #55 - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
-* Issue #56 - Requests with query parameters values containing white spaces
-* Pull request #57 - `StubbyClient` starts Jetty with `-m` to mute the console logger, but it wasn't actually muted 
-
-##### 3.3.0
-* Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)
-* Serving response files from a local path constructed with regex tokens from the stubbed request (Radek Ostrowski, https://github.com/radek1st)
-
-##### 3.2.3
-* Dumping more debug information to the console if `--debug` option is on, also for successfully matched requests
-* Added support for `PUT` and `DELETE` methods in `StubbyClient` class
-
-##### 3.1.3
-* If POST'ed data type is `application/json`, the comparison of stubbed to posted data will be done using JSON entities with non-strict checking (content ordering wont matter, as long as it is the same)
-* If POST'ed data type is `application/xml`, the comparison of stubbed to posted data will be done using XML entities with non-strict checking (element & attribute ordering wont matter, as long as content is the same)
-
-##### 3.0.3
-* Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
-* Fixed issue #43 (Live refresh in response sequence only for first response)
-
-##### 3.0.2
-* Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`
-* Renamed existing `header` property `authorization` to `authorization-basic`
-* Some changes around the programmatic APIs in `StubbyClient` class due to the above changes
-* Respective changes in the current README due to the above changes
-
-##### 3.0.1
-* Upgraded Jetty to v9.2.10.v20150310
-* Added `--debug` option that dumps incoming raw HTTP request to the console
-* Added `--disable_admin_portal` option that does not configure Admin portal for stubby
-* Added `--disable_ssl` option that does not enable SSL for stubby
-* Added a new API to start stubby programmatically without specifying a YAML file `StubbyClient.startJettyYamless(...)`
-* Added a new `FaviconHandler` to handle requests for `favicon.ico` under the context root
-
-##### 3.0.0
-* Built using Java v1.7.0_76
-* Updated Jetty to v9.2.9.v20150224 (requires at least JRE v1.7.0_76: [Issue with Java v1.7.0_04](http://dev.eclipse.org/mhonarc/lists/jetty-users/msg05635.html))
-
-##### 2.0.22
-* Built using Java v1.7.0_04
-* Cleaned up project Gradle configuration 
-* Updated Gradle configuration to be compatible with Gradle v2.2.1 & Gradle Nexus plugin v2.3
-* Updated all (except Jetty) dependencies to their latest versions (as of May 10th, 2015)
-
-##### 2.0.21
-* Added console outputs for record & play functionality
-
-##### 2.0.20
-* Replacing all hardcoded `\n` with dynamically generated system line break characters
-
-##### 2.0.19
-* Record&Play is now more intelligent: when stubbed `request` is matched, its stubbed properties (`method`, `url`, `headers`, `post` and `query`) are used to construct HTTP request to the recordable destination URL provided in stubbed `response` body [ENHANCEMENT]
-* Added a workaround a limitation in SnakeYAML v1.13 used by stubby (it has limited JSON support, not all the JSON documents can be parsed) where it cannot parse escaped forward slashes in JSON [BUG]
-* Refreshing Admin status page was changing sequenced response counter ID [BUG]
-* Replaced hardcoded Unix new line character '\n' in YamlBuilderTest that caused the tests to fail on Windows [BUG]
-* Admin status page now shows what is the next sequenced response in the sequence queue [ENHANCEMENT]
-* Supporting HTTP requests with empty query params: `/uri?some_param=` or `/uri?some_param` [ENHANCEMENT]
-
-##### 2.0.18
-* When `--data` file was just a relative filename without parent directory, NPE was thrown when Admin portal status page was loaded [BUG]
-* Configured jetty GZIP handler for static resources and Stubs & Admin portals [ENHANCEMENT]
-* Added resource hit stats section to Admin portal status page [ENHANCEMENT]
-
-##### 2.0.17
-* Added a verification check in StubbyManager to make sure that Jetty has been started or shut down [ENHANCEMENT]
-* Upgraded SnakeYAML dependency library to v1.13 [ENHANCEMENT]
-* Admin status page: displaying YAML snippet for a given `request` or `response` separately instead of pairing them up [ENHANCEMENT]
-* Admin status page: displaying metadata of loaded external files (if any) [ENHANCEMENT]
-* Admin status page: displaying Ajax response in a JS popup, instead of injecting the Ajax response into HTML table [ENHANCEMENT]
-* A bunch of cosmetic changes on Admin status page [COSMETICS]
-
-##### 2.0.16
-* Displaying stubby JAR: version, its classpath location, built date, up-time, its input args and Java input args on status page [ENHANCEMENT]
-* Displaying stubby heap/non-heap memory usage on status page [ENHANCEMENT]
-* Added an option on admin status page to display YAML snippet for a given request & response pair [ENHANCEMENT]
-* Making sure that 'x-stubby-resource-id' header is always the first item in the stubbed headers on status page [ENHANCEMENT]
-* Changed colors of status page [COSMETICS]
-
-##### 2.0.15
-* When creating template token names for `query` or `headers` regex matches, the name format to be followed should be `headers.key_name.ID` or `query.key_name.ID` [ENHANCEMENT]
-
-##### 2.0.14
-* Whitespace was not allowed between the `<% ` & ` %>` and what's inside when specifying template tokens for dynamic token replacement in stubbed response [BUG]
-* Regex matches were stored against incorrect token names for `query` and `headers` regexes [BUG]
-* Renamed command line arg `--ssl` to `--tls` to reduce the confusion when having another command line arg that starts with letter `s`, like `--stubs` [ENHANCEMENT]
-* Added command line arg `--version` that prints current stubby4j version to the console [ENHANCEMENT]
-
-##### 2.0.13
-* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification [FEATURE]
-
-##### 2.0.12
-* Removed flag `--watch_sleep_time`. The `--watch` flag can now accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms [ENHANCEMENT]
-* Added additional API to start Jetty via StubbyClient by specifying an address to bind [ENHANCEMENT]
-
-##### 2.0.11
-* `--watch` flag sleep time is now configurable via `--watch_sleep_time` and defaults to `100ms` if `--watch_sleep_time` is not provided [ENHANCEMENT]
-* Added a `GET` endpoint on Admin portal `localhost:8889/refresh` for refreshing stubbed data [ENHANCEMENT]
-
-##### 2.0.10
-* Record & Replay. The HTTP traffic is recorded on the first call to stubbed `uri` and subsequent calls will play back the recorded HTTP response, without actually connecting to the external server [FEATURE]
-
-##### 2.0.9
-* Ensuring that Admin portal status page loads fast by not rendering stubbed response content which slows down page load. User can invoke Ajax request to fetch the desired response content as needed [ENHANCEMENT]
-* Pre-setting header `x-stubby-resource-id` during YAML parse time, instead of on demand. This way resource IDs are viewable on Admin status page [ENHANCEMENT]
-* Making sure that header `x-stubby-resource-id` is recalculated accordingly after stubbed data in memory has changed (due to reset, or deletion etc.) [BUG]
-* Added date stamp to live reload success message [COSMETICS]
-
-##### 2.0.8
-* Making sure that every stubbed response returned to the client contains its resource ID in the header `x-stubby-resource-id`. The latter is useful if the returned resource needs to be updated at run time by ID via Admin portal [FEATURE]
-
-##### 2.0.7
-* Force regex matching only everywhere (url, query, post, headers, etc.) to avoid confusion and unexpected behaviour, with default fallback to simple full-string match (Michael England) [ENHANCEMENT]
-
-##### 2.0.6
-* Live YAML scan now also check for modifications to external files referenced from main YAML [ENHANCEMENT]
-* YAML parsing logic revisited [COSMETICS]
-* Code cleanup [COSMETICS]
-
-##### 2.0.5
-* Added ability to specify sequence of responses on the same URI using `file` (Prakash Kandavel) [ENHANCEMENT]
-* Minor code clean up [COSMETICS]
-* Documentation update [COSMETICS]
-
-##### 2.0.4
-* Making sure that operations starting up stubby and managing stubbed data are atomic  [ENHANCEMENT]
-
-##### 2.0.3
-* Typo in test was giving wrong indication that when `file` not set, stubbed response fallsback to `body` [BUG]
-* Eliminated implicit test to test dependencies in AdminPortalTest that was causing issues when running the tests under JDK 1.7 [BUG]
-* Added convenience method in StubbyClient `updateStubbedData` [ENHANCEMENT]
-
-##### 2.0.2
-* Stubbed request HTTP header names were not lower-cased at the time of match [BUG]
-* Doing GET on Admin portal `/` will display all loaded stub data in a YAML format in the browser [FEATURE]
-* Doing GET on Admin portal `/<id>` will display loaded stub data matched by provided index in a YAML format in the browser [FEATURE]
-* Doing DELETE on Admin portal `/<id>` will delete stubbed request from the list of loaded stub requests using the index provided [FEATURE]
-* Doing PUT on Admin portal `/<id>` will update stubbed request in the list of loaded stub requests using the index provided [FEATURE]
-* When YAML is parsed, if `file` could not be loaded, the IOException is not thrown anymore. Instead a warning recorded in the terminal [ENHANCEMENT]
-* When could not match submitted HTTP request to stubbed requests, the not found message is much more descriptive [ENHANCEMENT]
-* URI for registering new stub data programmatically via POST on Admin portal was changed from `/stubdata/new` to `/` [COSMETICS]
-* URI for getting loaded stub data status was changed from `/ping` to `/status` on Admin portal [COSMETICS]
-* Updated to SnakeYAML v1.12 [COSMETICS]
-* Updated default response message when response content could not be loaded from `file` [ENHANCEMENT]
-* Documentation refinement [COSMETICS]
-
-##### 2.0.1
-* Every ```url``` is treated as a regular expression now [ENHANCEMENT]
-* ANSI logging in the terminal was working only for HTTP requests with status 200 [BUG]
-* Documentation refinement [COSMETICS]
-
-##### 2.0.0
-* Mainly backend code improvements: A lot of refactoring for better code readability, expanding test coverage [COSMETICS]
-
-##### 1.0.63
-* Added ability to specify sequence of stub responses for the same URI, that are sent to the client in the loop [FEATURE]
-* Configuration scan was not enabled, even if the ```--watch``` command line argument was passed [BUG]
-
-##### 1.0.62
-* Added ability to specify regex in stabbed URL for dynamic matching [FEATURE]
-* A lot of minor fixes, refactorings and code cleaned up [COSMETICS]
-* Documentation revisited and rewritten into a much clearer format [ENHANCEMENT]
-
-##### 1.0.61
-* Just some changes around unit, integration and functional tests. Code cleanup [COSMETICS]
-
-##### 1.0.60
-* stubby's admin page was generating broken hyper links if URL had single quotes [BUG]
-* stubby is able to match URL when query string param was an array with elements within single quotes, ie: ```attributes=['id','uuid']``` [ENHANCEMENT]
-
-##### 1.0.59
-* stubby's admin page was not able to display the contents of stubbed response/request ```body```, ```post``` or ```file``` [BUG]
-* stubby was not able to match URL when query string param was an array with quoted elements, ie: ```attributes=["id","uuid","created","lastUpdated","displayName","email"]``` [BUG]
-
-##### 1.0.58
-* Making sure that stubby can serve binary files as well as ascii files, when response is loaded using the ```file``` property [ENHANCEMENT]
-
-##### 1.0.57
-* Migrated the project from Maven to Gradle (thanks to [Logan McGrath](https://github.com/lmcgrath) for his feedback and assistance). The project has now a multi-module setup [ENHANCEMENT]
-
-##### 1.0.56
-* If `request.post` was left out of the configuration, stubby would ONLY match requests without a post body to it [BUG]
-* Fixing `See Also` section of readme [COSMETICS]
-
-##### 1.0.55
-* Updated YAML example documentation [COSMETICS]
-* Bug fix where command line options `mute`, `debug` and `watch` were overlooked [BUG]
-
-##### 1.0.54
-* Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
-
-### Roadmap
+## Roadmap
 * Add support for OAuth in Record & Replay feature
 * Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state (maybe?)
 
-### Authors
+## Authors
 A number of people have contributed directly to stubby4j by writing
 documentation or developing software.
 
@@ -1484,7 +1276,7 @@ documentation or developing software.
 2. Eric Mrak <enmrak@gmail.com>
 
 
-### Kudos
+## Kudos
 A number of people have contributed to stubby4j by reporting problems, suggesting improvements or submitting changes. Special thanks fly out to the following **Ninjas** for their help, support and feedback
 
 * Isa Goksu
@@ -1497,15 +1289,15 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 * Logan McGrath
 
 
-### See also
+## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
 * **[stubby4node](https://github.com/mrak/stubby4node):** A node.js implementation of stubby
 
 
-### Copyright
+## Copyright
 Yes. See COPYRIGHT for details
 
-### License
+## License
 MIT. See LICENSE for details
 
 

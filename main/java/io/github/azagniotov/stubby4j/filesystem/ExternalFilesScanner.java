@@ -2,12 +2,12 @@ package io.github.azagniotov.stubby4j.filesystem;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
@@ -21,9 +21,9 @@ public final class ExternalFilesScanner implements Runnable {
     public ExternalFilesScanner(final StubRepository stubRepository, final long sleepTime) {
         this.sleepTime = sleepTime;
         this.stubRepository = stubRepository;
-        ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubRepository.getYAMLConfigCanonicalPath()));
+        ANSITerminal.status(String.format("External file scan enabled, watching external files referenced from %s", stubRepository.getYamlConfigCanonicalPath()));
         LOGGER.debug("External file scan enabled, watching external files referenced from {}.",
-                stubRepository.getYAMLConfigCanonicalPath());
+                stubRepository.getYamlConfigCanonicalPath());
     }
 
     @Override
@@ -59,12 +59,12 @@ public final class ExternalFilesScanner implements Runnable {
                 LOGGER.info("External file scan detected change in {}.", offendingFilename);
 
                 try {
-                    stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
+                    stubRepository.refreshStubsFromYamlConfig(new YamlParser());
 
-                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + new Date().toString().trim() + "]%s",
-                            BR, stubRepository.getYAMLConfig(), BR));
+                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with external files from: %s on [" + DateTimeUtils.systemDefault() + "]%s",
+                            BR, stubRepository.getYamlConfig(), BR));
                     LOGGER.info("Successfully performed live refresh of main YAML with external files from: {}.",
-                            stubRepository.getYAMLConfig());
+                            stubRepository.getYamlConfig());
                 } catch (final Exception ex) {
                     ANSITerminal.error("Could not refresh YAML configuration, previously loaded stubs remain untouched." + ex.toString());
                     LOGGER.error("Could not refresh YAML configuration, previously loaded stubs remain untouched.", ex);

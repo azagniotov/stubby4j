@@ -8,13 +8,17 @@ import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -22,13 +26,20 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BAS
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 
 
-public class YAMLParserTest {
+public class YamlParserTest {
 
-    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
+    private YamlBuilder yamlBuilder;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Before
+    public void setUp() throws Exception {
+        yamlBuilder = new YamlBuilder();
+    }
 
     @Test
     public void shouldThrow_WhenEmptyYAMLGiven() throws Exception {
@@ -36,6 +47,18 @@ public class YAMLParserTest {
         expectedException.expectMessage("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
 
         unmarshall("");
+    }
+
+    @Test
+    public void shouldThrow_WhenDuplicatedUuidSpecified() throws Exception {
+        expectedException.expect(IOException.class);
+        expectedException.expectMessage("Stubbed YAML contains duplicates of UUID 9136d8b7-f7a7-478d-97a5-53292484aaf6");
+
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/duplicated.uuid.stub.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
     }
 
     @Test
@@ -96,14 +119,14 @@ public class YAMLParserTest {
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithNoProperties() throws Exception {
 
-        final String yaml = YAML_BUILDER
+        final String yaml = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
                 .newStubbedResponse()
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
         assertThat(actualHttpLifecycle.getResponses()).hasSize(1);
@@ -113,7 +136,7 @@ public class YAMLParserTest {
     public void shouldUnmarshall_WhenYAMLValid_WithNoSequenceResponses() throws Exception {
 
         final String expectedStatus = "301";
-        final String yaml = YAML_BUILDER
+        final String yaml = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -121,7 +144,7 @@ public class YAMLParserTest {
                 .withStatus(expectedStatus)
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -136,7 +159,7 @@ public class YAMLParserTest {
         final String sequenceResponseStatus = "200";
         final String sequenceResponseBody = "OK";
 
-        final String yaml = YAML_BUILDER
+        final String yaml = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -146,7 +169,7 @@ public class YAMLParserTest {
                 .withSequenceResponseLiteralBody(sequenceResponseBody)
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -165,7 +188,7 @@ public class YAMLParserTest {
         final String sequenceResponseStatus = "500";
         final String sequenceResponseBody = "OMFG";
 
-        final String yaml = YAML_BUILDER
+        final String yaml = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -179,7 +202,7 @@ public class YAMLParserTest {
                 .withSequenceResponseFoldedBody(sequenceResponseBody)
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
         final StubResponse irrelevantSequenceResponse = actualHttpLifecycle.getResponse(true);
@@ -196,13 +219,13 @@ public class YAMLParserTest {
     public void shouldUnmarshall_WhenYAMLValid_WithUrlAsRegex() throws Exception {
 
         final String url = "^/[a-z]{3}/[0-9]+/?$";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -213,29 +236,104 @@ public class YAMLParserTest {
     public void shouldUnmarshall_WhenYAMLValid_WithDescription() throws Exception {
 
         final String url = "^/[a-z]{3}/[0-9]+/?$";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder
+                .newStubbedFeature()
+                .withDescription("wobble")
+                .newStubbedRequest()
                 .withMethodGet()
                 .withUrl(url)
-                .withDescription("wobble")
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
 
         assertThat(actualHttpLifecycle.getDescription()).isEqualTo("wobble");
+        assertThat(actualHttpLifecycle.getUUID()).isNull();
+    }
+
+    @Test
+    public void shouldUnmarshall_WhenYAMLValid_WithUUID() throws Exception {
+
+        final String url = "^/[a-z]{3}/[0-9]+/?$";
+        final String yaml = yamlBuilder
+                .newStubbedFeature()
+                .withUUID("9136d8b7-f7a7-478d-97a5-53292484aaf6")
+                .withDescription("wobble")
+                .newStubbedRequest()
+                .withMethodGet()
+                .withUrl(url)
+                .newStubbedResponse()
+                .withStatus("301").build();
+
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
+        final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+
+        assertThat(actualHttpLifecycle.getUUID()).isEqualTo("9136d8b7-f7a7-478d-97a5-53292484aaf6");
+    }
+
+    @Test
+    public void shouldUnmarshall_toCompleteYaml_WithUUIDAndDescription() throws Exception {
+
+        final String url = "^/[a-z]{3}/[0-9]+/?$";
+        final String yaml = yamlBuilder
+                .newStubbedFeature()
+                .withUUID("9136d8b7-f7a7-478d-97a5-53292484aaf6")
+                .withDescription("wobble")
+                .newStubbedRequest()
+                .withMethodGet()
+                .withUrl(url)
+                .newStubbedResponse()
+                .withStatus("301").build();
+
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
+        final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
+
+        assertThat(actualHttpLifecycle.getCompleteYaml()).isEqualTo(
+                "- uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6\n" +
+                         "  description: wobble\n" +
+                         "  request:\n" +
+                         "    method:\n" +
+                         "    - GET\n" +
+                         "    url: ^/[a-z]{3}/[0-9]+/?$\n" +
+                         "  response:\n" +
+                         "    status: 301\n");
+    }
+
+    @Test
+    public void shouldUnmarshall_toCompleteYamlFromFile_WithUUIDAndDescription() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/feature.stub.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        final StubHttpLifecycle actualHttpLifecycle = yamlParseResultSet.getStubs().get(0);
+
+        assertThat(actualHttpLifecycle.getCompleteYaml()).isEqualTo(
+                "- description: Stub one\n" +
+                        "  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6\n" +
+                        "  request:\n" +
+                        "    url: ^/one$\n" +
+                        "    method: GET\n" +
+                        "  response:\n" +
+                        "    status: 200\n" +
+                        "    latency: 100\n" +
+                        "    body: One!\n");
+
+        assertThat(actualHttpLifecycle.getDescription()).isEqualTo("Stub one");
+        assertThat(actualHttpLifecycle.getUUID()).isEqualTo("9136d8b7-f7a7-478d-97a5-53292484aaf6");
     }
 
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithMultipleHTTPMethods() throws Exception {
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withMethodHead()
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -245,12 +343,12 @@ public class YAMLParserTest {
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithDefaultHTTPResponseStatus() throws Exception {
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .newStubbedResponse()
                 .withLiteralBody("hello").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -262,14 +360,14 @@ public class YAMLParserTest {
 
         final String stubbedRequestPost = "{\"message\", \"Hello, this is a request post\"}";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withFoldedPost(stubbedRequestPost)
                 .newStubbedResponse()
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -282,7 +380,7 @@ public class YAMLParserTest {
         final String stubbedRequestFile = "../../very.big.soap.request.xml";
 
         final String expectedPost = "{\"message\", \"Hello, this is HTTP request post\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withFile(stubbedRequestFile)
@@ -291,7 +389,7 @@ public class YAMLParserTest {
                 .withLiteralBody("OK")
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
 
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
@@ -306,7 +404,7 @@ public class YAMLParserTest {
         final String stubbedRequestFile = "../../very.big.soap.request.xml";
 
         final String expectedPost = "{\"message\", \"Hello, this is HTTP request post\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withFile(stubbedRequestFile)
@@ -326,7 +424,7 @@ public class YAMLParserTest {
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
         assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.request.xml");
-        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
+        assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
     }
 
 
@@ -336,7 +434,7 @@ public class YAMLParserTest {
         final String stubbedResponseFile = "../../very.big.soap.response.xml";
 
         final String expectedBody = "{\"message\", \"Hello, this is HTTP response body\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
@@ -344,7 +442,7 @@ public class YAMLParserTest {
                 .withFile(stubbedResponseFile)
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
 
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
@@ -359,7 +457,7 @@ public class YAMLParserTest {
         final String stubbedResponseFile = "../../very.big.soap.response.xml";
 
         final String expectedBody = "{\"message\", \"Hello, this is HTTP response body\"}";
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
@@ -378,7 +476,7 @@ public class YAMLParserTest {
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 
         assertThat(actualConsoleOutput).contains("Could not load file from path: ../../very.big.soap.response.xml");
-        assertThat(actualConsoleOutput).contains(YAMLParser.FAILED_TO_LOAD_FILE_ERR);
+        assertThat(actualConsoleOutput).contains(YamlParser.FAILED_TO_LOAD_FILE_ERR);
     }
 
     @Test
@@ -386,14 +484,14 @@ public class YAMLParserTest {
 
         final String stubbedRequestPost = "Hello, this is a request post";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withLiteralPost(stubbedRequestPost)
                 .newStubbedResponse()
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -406,7 +504,7 @@ public class YAMLParserTest {
         expectedException.expect(ClassCastException.class);
         expectedException.expectMessage("Expected: java.lang.String, instead got: java.util.LinkedHashMap");
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withLiteralPost("{\"message\", \"Hello, this is a request body\"}")
@@ -422,13 +520,13 @@ public class YAMLParserTest {
 
         final String stubbedResponseBody = "{\"message\", \"Hello, this is a response body\"}";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
                 .withFoldedBody(stubbedResponseBody).build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -440,7 +538,7 @@ public class YAMLParserTest {
 
         expectedException.expect(ClassCastException.class);
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
@@ -454,13 +552,13 @@ public class YAMLParserTest {
 
         final String stubbedResponseBody = "This is a sentence";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
                 .withLiteralBody(stubbedResponseBody).build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -479,7 +577,7 @@ public class YAMLParserTest {
         final String expectedParamTwoValue = "two";
         final String fullQueryTwo = String.format("%s=%s", expectedParamTwo, expectedParamTwoValue);
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withQuery(expectedParamOne, expectedParamOneValue)
@@ -487,7 +585,7 @@ public class YAMLParserTest {
                 .newStubbedResponse()
                 .withStatus("500").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -502,14 +600,14 @@ public class YAMLParserTest {
 
         final String authorization = "bob:secret";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationBasic(authorization)
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -521,14 +619,14 @@ public class YAMLParserTest {
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderBasic() throws Exception {
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationBasic("")
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -542,14 +640,14 @@ public class YAMLParserTest {
 
         final String authorization = "Ym9iOnNlY3JldA==";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationBearer(authorization)
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -561,14 +659,14 @@ public class YAMLParserTest {
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderBearer() throws Exception {
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationBearer("")
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -582,14 +680,14 @@ public class YAMLParserTest {
 
         final String authorizationHeader = "CustomAuthorizationName AuthorizationValue";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationCustom(authorizationHeader)
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -599,14 +697,14 @@ public class YAMLParserTest {
     @Test
     public void shouldUnmarshall_WhenYAMLValid_WithEmptyAuthorizationHeaderCustom() throws Exception {
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withHeaderAuthorizationCustom("")
                 .newStubbedResponse()
                 .withStatus("301").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -619,14 +717,14 @@ public class YAMLParserTest {
         final String location = "/invoice/123";
         final String contentType = "application-json";
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .newStubbedResponse()
                 .withHeaderContentType(contentType)
                 .withHeaderLocation(location).build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -642,14 +740,14 @@ public class YAMLParserTest {
         final String expectedParamOneValue = "[\"apple\",\"orange\",\"banana\"]";
         final String fullQueryOne = String.format("%s=%s", expectedParamOne, expectedParamOneValue);
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withQuery(expectedParamOne, String.format("'%s'", expectedParamOneValue))
                 .newStubbedResponse()
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -664,14 +762,14 @@ public class YAMLParserTest {
         final String expectedParamOneValue = "['apple','orange','banana']";
         final String fullQueryOne = String.format("%s=%s", expectedParamOne, expectedParamOneValue);
 
-        final String yaml = YAML_BUILDER.newStubbedRequest()
+        final String yaml = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri")
                 .withQuery(expectedParamOne, String.format("\"%s\"", expectedParamOneValue))
                 .newStubbedResponse()
                 .withStatus("201").build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(0);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
 
@@ -682,7 +780,7 @@ public class YAMLParserTest {
     @Test
     public void shouldContainExpectedResourceIdHeaderUponSuccessfulYamlMarshall_WhenMultipleResponses() throws Exception {
 
-        final String cycleOne = YAML_BUILDER
+        final String cycleOne = yamlBuilder
                 .newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri/1")
@@ -691,7 +789,7 @@ public class YAMLParserTest {
                 .withStatus("200")
                 .build();
 
-        final String cycleTwo = YAML_BUILDER.newStubbedRequest()
+        final String cycleTwo = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri/2")
                 .withQuery("paramName2", "paramValue2")
@@ -699,7 +797,7 @@ public class YAMLParserTest {
                 .withStatus("201")
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s\n%s", cycleOne, cycleTwo));
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s\n%s", cycleOne, cycleTwo)).getStubs();
         assertThat(loadedHttpCycles.size()).isEqualTo(2);
 
         for (int idx = 0; idx < loadedHttpCycles.size(); idx++) {
@@ -714,7 +812,7 @@ public class YAMLParserTest {
     @Test
     public void shouldContainTheSameResourceIdHeader_ForEachSequencedResponse() throws Exception {
 
-        final String yaml = YAML_BUILDER
+        final String yaml = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -727,7 +825,7 @@ public class YAMLParserTest {
                 .withSequenceResponseLiteralBody("BodyContentTwo")
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml);
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(yaml).getStubs();
         assertThat(loadedHttpCycles.size()).isEqualTo(1);
 
         final StubHttpLifecycle cycle = loadedHttpCycles.get(0);
@@ -743,7 +841,7 @@ public class YAMLParserTest {
     @Test
     public void shouldContainExpectedResourceIdHeaderUponSuccessfulYamlMarshall_WhenMultipleAndSqequencedResponses() throws Exception {
 
-        final String cycleOne = YAML_BUILDER
+        final String cycleOne = yamlBuilder
                 .newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri/1")
@@ -752,7 +850,7 @@ public class YAMLParserTest {
                 .withStatus("200")
                 .build();
 
-        final String cycleTwo = YAML_BUILDER
+        final String cycleTwo = yamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -765,7 +863,7 @@ public class YAMLParserTest {
                 .withSequenceResponseLiteralBody("BodyContentTwo")
                 .build();
 
-        final String cycleThree = YAML_BUILDER.newStubbedRequest()
+        final String cycleThree = yamlBuilder.newStubbedRequest()
                 .withMethodGet()
                 .withUrl("/some/uri/2")
                 .withQuery("paramName2", "paramValue2")
@@ -773,7 +871,7 @@ public class YAMLParserTest {
                 .withStatus("201")
                 .build();
 
-        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s%s%s%s%s", cycleOne, BR, cycleTwo, BR, cycleThree));
+        final List<StubHttpLifecycle> loadedHttpCycles = unmarshall(String.format("%s%s%s%s%s", cycleOne, BR, cycleTwo, BR, cycleThree)).getStubs();
         assertThat(loadedHttpCycles.size()).isEqualTo(3);
 
         for (int resourceId = 0; resourceId < loadedHttpCycles.size(); resourceId++) {
@@ -788,8 +886,7 @@ public class YAMLParserTest {
         }
     }
 
-
-    private List<StubHttpLifecycle> unmarshall(final String yaml) throws Exception {
-        return new YAMLParser().parse(".", yaml);
+    private YamlParseResultSet unmarshall(final String yaml) throws Exception {
+        return new YamlParser().parse(".", yaml);
     }
 }

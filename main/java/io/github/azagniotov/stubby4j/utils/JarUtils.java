@@ -41,6 +41,6 @@ public final class JarUtils {
             //Do nothing
         }
 
-        return "Thu, 01 Jan 1970 00:00:00 GMT";
+        return DateTimeUtils.systemDefault();
     }
 }

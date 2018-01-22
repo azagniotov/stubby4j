@@ -3,9 +3,9 @@ codecov:
   bot: null
 
 coverage:
-  precision: 2
-  round: down
-  range: "70...100"
+  precision: 0
+  round: up
+  range: "60...100"
 
   notify:
     slack:

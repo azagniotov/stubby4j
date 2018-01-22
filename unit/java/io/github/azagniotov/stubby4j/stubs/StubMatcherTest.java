@@ -269,6 +269,146 @@ public class StubMatcherTest {
     }
 
     @Test
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentXmlWithAttributes() {
+
+        final String stubbedXml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<person xmlns=\"http://www.your.example.com/xml/person\">\n" +
+                        "     <VocabularyElement id=\"urn:epc:idpat:sgtin:0652642.107340\">\n" +
+                        "         <attribute id=\"urn:epcglobal:product:drugName\">Piramidon</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:manufacturer\">Generic Pharma Co.</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:dosageForm\">CAPSULE</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:strength\">125 mg</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:containerSize\">100</attribute>\n" +
+                        "    </VocabularyElement>" +
+                        "    <name>Rob</name>\n" +
+                        "    <age>37</age>\n" +
+                        "    <!--\n" +
+                        "      Hello,\n" +
+                        "         I am a multi-line XML comment\n" +
+                        "         <staticText>\n" +
+                        "            <reportElement x=\"180\" y=\"0\" width=\"200\" height=\"20\"/>\n" +
+                        "            <text><![CDATA[Hello World!]]></text>\n" +
+                        "          </staticText>\n" +
+                        "      -->" +
+                        "    <homecity xmlns=\"http://www.my.example.com/xml/cities\">\n" +
+                        "        <long>0.00</long>\n" +
+                        "        <lat>123.000</lat>\n" +
+                        "        <name>London</name>\n" +
+                        "    </homecity>\n" +
+                        "    <one name=\"elementOne\" id=\"urn:company:namespace:type:id:one\">ValueOne</one>" +
+                        "    <two id=\"urn:company:namespace:type:id:two\" name=\"elementTwo\">ValueTwo</two>" +
+                        "    <three name=\"elementThree\" id=\"urn:company:namespace:type:id:three\" >" +
+                        "        This       is a text   which span across a very     very Very       long line!" +
+                        "    </three>" +
+                        "</person>";
+
+        final String postedXml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<person xmlns=\"http://www.your.example.com/xml/person\">\n" +
+                        "    <age>37</age>\n" +
+                        "    <name>Rob</name>\n" +
+                        "    <one id=\"urn:company:namespace:type:id:one\" name=\"elementOne\" >ValueOne</one>" +
+                        "    <two id=\"urn:company:namespace:type:id:two\" name=\"elementTwo\">ValueTwo</two>" +
+                        "    <three id=\"urn:company:namespace:type:id:three\" name=\"elementThree\">" +
+                        "        This is a     text   which        span across a very very Very long line!" +
+                        "    </three>" +
+                        "    <homecity xmlns=\"http://www.my.example.com/xml/cities\">\n" +
+                        "        <name>London</name>\n" +
+                        "        <lat>123.000</lat>\n" +
+                        "        <long>0.00</long>\n" +
+                        "    </homecity>\n" +
+                        "    <VocabularyElement id=\"urn:epc:idpat:sgtin:0652642.107340\">\n" +
+                        "         <attribute id=\"urn:epcglobal:product:drugName\">Piramidon</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:manufacturer\">Generic Pharma Co.</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:dosageForm\">CAPSULE</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:strength\">125 mg</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:containerSize\">100</attribute>\n" +
+                        "    </VocabularyElement>" +
+                        "</person>";
+
+        StubRequest request = new StubRequest.Builder()
+                .withPost(postedXml)
+                .withHeaderContentType("application/xml")
+                .build();
+
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+
+        assertThat(isBodiesMatch).isTrue();
+    }
+
+    @Test
+    public void postBodiesDoNotMatch_ShouldReturnFalse_WhenDifferentXmlWithAttributes() {
+
+        final String stubbedXml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<person xmlns=\"http://www.your.example.com/xml/person\">\n" +
+                        "     <VocabularyElement id=\"urn:epc:idpat:sgtin:0652642.107340\">\n" +
+                        "         <attribute id=\"urn:epcglobal:product:drugName\">Piramidon</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:manufacturer\">Generic Pharma Co.</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:dosageForm\">CAPSULE</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:strength\">125 mg</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:containerSize\">100</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:anotherProperty\">888</attribute>\n" +
+                        "    </VocabularyElement>" +
+                        "    <name>Rob</name>\n" +
+                        "    <age>37</age>\n" +
+                        "    <!--\n" +
+                        "      Hello,\n" +
+                        "         I am a multi-line XML comment\n" +
+                        "         <staticText>\n" +
+                        "            <reportElement x=\"180\" y=\"0\" width=\"200\" height=\"20\"/>\n" +
+                        "            <text><![CDATA[Hello World!]]></text>\n" +
+                        "          </staticText>\n" +
+                        "      -->" +
+                        "    <homecity xmlns=\"http://www.my.example.com/xml/cities\">\n" +
+                        "        <long>0.00</long>\n" +
+                        "        <lat>123.000</lat>\n" +
+                        "        <name>London</name>\n" +
+                        "    </homecity>\n" +
+                        "    <one name=\"elementOne\" id=\"urn:company:namespace:type:id:one\">ValueOne</one>" +
+                        "    <two id=\"urn:company:namespace:type:id:two\" name=\"elementTwo\">ValueTwo</two>" +
+                        "    <three name=\"elementThree\" id=\"urn:company:namespace:type:id:three\" >" +
+                        "        This       is a text   which span across a very     very Very       long line!" +
+                        "    </three>" +
+                        "</person>";
+
+        final String postedXml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<person xmlns=\"http://www.your.example.com/xml/person\">\n" +
+                        "    <age>37</age>\n" +
+                        "    <name>Rob</name>\n" +
+                        "    <lastName>Schneider</lastName>\n" +
+                        "    <one id=\"urn:company:namespace:type:id:one\" name=\"elementOne\" >ValueOne</one>" +
+                        "    <two id=\"urn:company:namespace:type:id:two\" name=\"elementTwo\">ValueTwo</two>" +
+                        "    <three id=\"urn:company:namespace:type:id:three\" name=\"elementThree\">" +
+                        "        This is a     text   which        span across a very very Very long line!" +
+                        "    </three>" +
+                        "    <homecity xmlns=\"http://www.my.example.com/xml/cities\">\n" +
+                        "        <name>London</name>\n" +
+                        "        <lat>123.000</lat>\n" +
+                        "        <long>0.00</long>\n" +
+                        "    </homecity>\n" +
+                        "    <VocabularyElement id=\"urn:epc:idpat:sgtin:0652642.107340\">\n" +
+                        "         <attribute id=\"urn:epcglobal:product:drugName\">Piramidon</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:manufacturer\">Generic Pharma Co.</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:dosageForm\">CAPSULE</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:strength\">125 mg</attribute>\n" +
+                        "         <attribute id=\"urn:epcglobal:product:containerSize\">100</attribute>\n" +
+                        "    </VocabularyElement>" +
+                        "</person>";
+
+        StubRequest request = new StubRequest.Builder()
+                .withPost(postedXml)
+                .withHeaderContentType("application/xml")
+                .build();
+
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+
+        assertThat(isBodiesMatch).isFalse();
+    }
+
+    @Test
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomXml() {
         StubRequest request = new StubRequest.Builder()
                 .withPost("<xml><a>a</a><b>b</b></xml>")

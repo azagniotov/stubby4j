@@ -22,8 +22,9 @@ package io.github.azagniotov.stubby4j.handlers;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
@@ -35,7 +36,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 @SuppressWarnings("serial")
 public final class StubDataRefreshActionHandler extends AbstractHandler {
@@ -60,12 +60,12 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
 
         try {
-            stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
-            final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + new Date().toString().trim() + "]",
-                    stubRepository.getYAMLConfig());
+            stubRepository.refreshStubsFromYamlConfig(new YamlParser());
+            final String successMessage = String.format("Successfully performed live refresh of main YAML from: %s on [" + DateTimeUtils.systemDefault() + "]",
+                    stubRepository.getYamlConfig());
             response.getWriter().println(successMessage);
             ANSITerminal.ok(successMessage);
-            LOGGER.info("Successfully performed live refresh of main YAML from {}.", stubRepository.getYAMLConfig());
+            LOGGER.info("Successfully performed live refresh of main YAML from {}.", stubRepository.getYamlConfig());
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
         }

@@ -38,7 +38,7 @@ task coberturaInstrument(dependsOn: ['classes', 'coberturaPrepare']) {
             )
             fileset(
                     dir: project(':main').sourceSets.main.output.classesDir,
-                    excludes: "${root}/yaml/YAMLBuilder*.class, **/*\$1.class, **/*\$2.class",
+                    excludes: "${root}/caching/**/*.class, ${root}/client/StubbyClient*.class, ${root}/yaml/YamlBuilder*.class, ${root}/yaml/YamlParseResultSet.class, **/*\$1.class, **/*\$2.class",
                     includes: "${root}/client/**/*.class, " +
                             "${root}/cli/CommandLineInterpreter.class, " +
                             "${root}/utils/*.class, " +
