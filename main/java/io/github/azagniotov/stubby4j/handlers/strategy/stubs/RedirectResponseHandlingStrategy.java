@@ -26,7 +26,11 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpHeader;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isTokenized;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokensInString;
 
 public class RedirectResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
@@ -39,14 +43,21 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
     @Override
     public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
         HandlerUtils.setResponseMainHeaders(response);
+        final Map<String, String> regexGroups = assertionStubRequest.getRegexGroups();
 
         if (StringUtils.isSet(foundStubResponse.getLatency())) {
             final long latency = Long.parseLong(foundStubResponse.getLatency());
             TimeUnit.MILLISECONDS.sleep(latency);
         }
 
+        String headerLocation = foundStubResponse.getHeaders().get("location");
+
+        if (isTokenized(headerLocation)) {
+            headerLocation = replaceTokensInString(headerLocation, regexGroups);
+        }
+
+        response.setHeader(HttpHeader.LOCATION.asString(), headerLocation);
         response.setStatus(foundStubResponse.getHttpStatusCode().getCode());
-        response.setHeader(HttpHeader.LOCATION.asString(), foundStubResponse.getHeaders().get("location"));
         response.setHeader(HttpHeader.CONNECTION.asString(), "close");
     }
 }
