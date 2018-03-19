@@ -581,7 +581,11 @@ The following endpoint only accepts requests with `application/json` post values
 ### Regex stubbing for dynamic matching
 
 stubby supports regex stubbing for dynamic matching on the following properties:
-`url`, `query` param values, `header` name values, `post` payloads & `file` names & payloads.
+- `request` `url`
+- `request` `query` param values
+- `request` `header` name values
+- `request` `post` payloads
+- `request` `file` names & payloads.
 
 Under the hood, stubby first attempts to compile the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.MULTILINE` flag. If the pattern compilation fails and `PatternSyntaxException` exception is thrown, stubby compiles the stubbed pattern into an instance of `java.util.regex.Pattern` class using the `Pattern.LITERAL | Pattern.MULTILINE` flags.
 
@@ -830,7 +834,12 @@ response:
 
 ### Dynamic token replacement in stubbed response
 
-During HTTP request verification, you can leverage regex capturing groups as token values for dynamic token replacement in stubbed response.
+During HTTP request verification, you can leverage regex capturing groups (refer to `Regex stubbing for dynamic matching` section) as token values for dynamic token replacement in stubbed response.
+
+stubby supports dynamic token replacement on the following properties:
+- `response` `body`
+- `response` `header` name values (including `location` header value)
+- `response` `file` names & payloads.
 
 ##### Example
 ```yaml
@@ -861,7 +870,7 @@ The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturi
 Although, the `headers` regex does not have capturing groups defined explicitly (no regex sections within parenthesis), its matched value is still accessible in a template (keep on reading!).
 
 ##### Token structure
-The tokens in `response` `body` follow the format of `<%``PROPERTY_NAME``.``CAPTURING_GROUP_ID``%>`. If it is a token that should correspond to `headers` or `query` regex match, then the token structure would be as follows: `<%``HEADERS_OR_QUERY``.``KEY_NAME``.``CAPTURING_GROUP_ID``%>`. Whitespace is __allowed__ between the `<% ` & ` %>` and what's inside.
+The tokens in `response` `body` follow the format of `<%` `PROPERTY_NAME` `.` `CAPTURING_GROUP_ID` `%>`. If it is a token that should correspond to `headers` or `query` regex match, then the token structure would be as follows: `<%` `HEADERS_OR_QUERY` `.` `KEY_NAME` `.` `CAPTURING_GROUP_ID` `%>`. Whitespace is __allowed__ between the `<%` & `%>` and what's inside.
 
 ##### Numbering the tokens based on capturing groups without sub-groups
 When giving tokens their ID based on the count of manually defined capturing groups within regex, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. So the leftmost capturing group would be `1` and the next one to the right of it would be `2`, etc.
@@ -869,7 +878,7 @@ When giving tokens their ID based on the count of manually defined capturing gro
 In other words `<% url.1 %>` and `<% url.2 %>` tokens correspond to two capturing groups from the `url` regex `(\d{5})` and `([a-zA-Z]+)`, while `<% query.date.1 %>` token corresponds to one capturing group `([a-zA-Z]+)` from the `query` `date` property regex.
 
 ##### Numbering the tokens based on capturing groups with sub-groups
-In regex world, capturing groups can contain capturing sub-groups, as an example consider proposed `url` regex: `^/resource/``(``([a-z]{3})``-``([0-9]{3})``)``$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups within: `([a-z]{3})` & `([0-9]{3})`.
+In regex world, capturing groups can contain capturing sub-groups, as an example consider proposed `url` regex: `^/resource/` `(` `([a-z]{3})` `-` `([0-9]{3})` `)` `$`. In the latter example, the regex has three groups - a parent group `([a-z]{3}-[0-9]{3})` and two sub-groups within: `([a-z]{3})` & `([0-9]{3})`.
 
 When giving tokens their ID based on the count of capturing groups, you should start from `1`, not zero (zero reserved for token that holds __full__ regex match) from left to right. If a group has sub-group within, you count the sub-group(s) first (also from left to right) before counting the next one to the right of the parent group.
 
