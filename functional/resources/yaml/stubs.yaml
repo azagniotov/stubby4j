@@ -721,3 +721,11 @@
       headers:
          location: https://<% query.redirect_uri.1 %>/auth
       status: 302
+
+-  request:
+      method: [GET]
+      url: /returns-not-found-response-with-body
+
+   response:
+      status: 404
+      body: This response with body was actually not found

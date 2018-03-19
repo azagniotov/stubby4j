@@ -927,6 +927,17 @@ public class StubsPortalTest {
     }
 
     @Test
+    public void should_MakeSuccessfulRequest_When404NotFoundResponseStubbedWithBody() throws Exception {
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/returns-not-found-response-with-body");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        final HttpResponse response = request.execute();
+
+        String responseContent = response.parseAsString().trim();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(responseContent).isEqualTo("This response with body was actually not found");
+    }
+
+    @Test
     public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInQueryStringParam() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.param?type_name&client_secret=secret");

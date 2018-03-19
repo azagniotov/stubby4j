@@ -44,9 +44,6 @@ public class StubsPortalHandlerTest {
     private StubResponse mockStubResponse;
 
     @Mock
-    private StubRequest mockAssertionRequest;
-
-    @Mock
     private StubSearchResult mockStubSearchResult;
 
     @Mock
@@ -77,6 +74,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[] {});
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
@@ -93,6 +91,8 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[] {});
+
         final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
         when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
 

@@ -33,8 +33,10 @@ public final class StubsResponseHandlingStrategyFactory {
         final HttpStatus.Code httpStatusCode = foundStubResponse.getHttpStatusCode();
         switch (httpStatusCode) {
             case NOT_FOUND:
-                return new NotFoundResponseHandlingStrategy();
-
+                if (foundStubResponse.getResponseBodyAsBytes().length == 0) {
+                    return new NotFoundResponseHandlingStrategy();
+                }
+                break;
             case UNAUTHORIZED:
                 return new UnauthorizedResponseHandlingStrategy();
 
@@ -58,10 +60,8 @@ public final class StubsResponseHandlingStrategyFactory {
                  */
             case PERMANET_REDIRECT:
                 return new RedirectResponseHandlingStrategy(foundStubResponse);
-
-            default:
-                return new DefaultResponseHandlingStrategy(foundStubResponse);
-
         }
+
+        return new DefaultResponseHandlingStrategy(foundStubResponse);
     }
 }

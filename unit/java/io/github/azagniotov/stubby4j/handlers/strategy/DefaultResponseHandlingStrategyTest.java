@@ -11,6 +11,7 @@ import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -20,7 +21,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -64,9 +64,6 @@ public class DefaultResponseHandlingStrategyTest {
 
     @Mock
     private StubRequest mockAssertionRequest;
-
-    @Mock
-    private PrintWriter mockPrintWriter;
 
     @Mock
     private HttpServletResponse mockHttpServletResponse;
