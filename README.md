@@ -56,7 +56,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Kudos](#kudos)
 * [See also](#see-also)
 
-### Quick start example
+## Quick start example
 
 This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
 
@@ -90,7 +90,7 @@ That's it!
 
 For more information and more complex examples, please dive into the rest of documentation, especially [Endpoint configuration HOWTO](#endpoint-configuration-howto)
 
-### Key features
+## Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
@@ -101,7 +101,7 @@ For more information and more complex examples, please dive into the rest of doc
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
-### Why would a developer use stubby4j?
+## Why would a developer use stubby4j?
 #### You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
 * Third party web service your application suppose to contract with is not ready yet
@@ -117,14 +117,14 @@ For more information and more complex examples, please dive into the rest of doc
 * Concentrate on the task at hand
 
 
-### Why would a QA use stubby4j?
+## Why would a QA use stubby4j?
 * Specifiable mock responses to simulate page conditions without real data.
 * Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 
-### Building
+## Building
 stubby4j is a multi-module Gradle project
 
 Run `gradle` command to:
@@ -137,7 +137,7 @@ Run `gradle cobertura` command to:
 * Generate Cobertura report under the `<PROJECT_ROOT>/main/build/reports/cobertura/`
 
 
-### Third-party dependencies
+## Third-party dependencies
 
 * __javax.servlet-api-3.1.0.jar__
 * jetty-server-9.4.8.v20171121.jar
@@ -150,7 +150,7 @@ Run `gradle cobertura` command to:
 * slf4j-api:1.7.25.jar
 
 
-### Adding stubby4j to your project
+## Adding stubby4j to your project
 The following are the stubby4j artifacts that are hosted on [Maven Central][maven-link]:
 
 * `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
@@ -188,7 +188,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 </dependency>
 ```
 
-#### Installing stubby4j to local .m2 repository
+### Installing stubby4j to local .m2 repository
 
 Run `gradle install` command to:
 
@@ -206,7 +206,7 @@ compile("io.github.azagniotov:stubby4j:5.2.1-SNAPSHOT:no-jetty")
 ```
 
 
-### Command-line switches
+## Command-line switches
 ```
 usage:
        java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds]
@@ -239,7 +239,7 @@ usage:
                               configuration is reloaded
 ```
 
-### Endpoint configuration HOWTO
+## Endpoint configuration HOWTO
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
@@ -274,7 +274,7 @@ Here is a fully-populated, unrealistic endpoint:
       file: responseData.xml
 ```
 
-### Stub/Feature Description
+## Stub/Feature Description
 
 ##### description (optional)
 
@@ -312,7 +312,7 @@ Here is a fully-populated, unrealistic endpoint:
       body: 'Three!'
 ```
 
-### Request
+## Request
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
 
@@ -637,7 +637,7 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 ```
 
 
-### Response
+## Response
 
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
@@ -947,7 +947,7 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
 
-### Record and play
+## Record and play
 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
 from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
@@ -980,11 +980,11 @@ In the above example, stubby will record HTTP response received after submitting
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
 
-### Performance optimization index
+## Performance optimization index
 
 stubby4j uses a number of techniques to optimize evaluation of stubs
 
-#### Regex pattern precompilation
+#### Regex pattern pre-compilation
 
 During parsing of stubs config, the `request.url`, `request.query`, `request.headers` & `request.post` (or `request.file`)
 values are checked for presence of regex. If one of the aforementioned properties is a stubbed regex, then a regex pattern
@@ -1000,7 +1000,7 @@ If a complete equality against the cached stub was not achieved, the incoming re
 loaded in memory. If a full match was found, then that match will be cached using the incoming request URI as a key.
                   
 
-### The admin portal
+## The admin portal
 
 The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
 
@@ -1178,7 +1178,7 @@ Send a `DELETE` request to `localhost:8889/<id>`
 Send a `DELETE` request to `localhost:8889`
 
 
-### The stubs portal
+## The stubs portal
 
 Requests sent to any url at `localhost:8882` (or wherever you told stubby to run) will search through the available endpoints and, if a match is found, respond with that endpoint's `response` data
 
@@ -1218,11 +1218,11 @@ Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/s
     }
 ```
 
-### Programmatic API
+## Programmatic API
 
 You can start-up and manage stubby4j with the help of [StubbyClient](main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java)
 
-### Change log
+## Change log
 
 ##### 5.2.1-SNAPSHOT
 
