@@ -834,7 +834,7 @@ response:
 
 ### Dynamic token replacement in stubbed response
 
-During HTTP request verification, you can leverage regex capturing groups (refer to `Regex stubbing for dynamic matching` section) as token values for dynamic token replacement in stubbed response.
+During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
 
 stubby supports dynamic token replacement on the following properties:
 - `response` `body`
