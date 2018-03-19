@@ -15,7 +15,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 ##### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v5.1.1
+## User manual for stubby4j v5.2.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -161,12 +161,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 ##### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.1")
+compile("io.github.azagniotov:stubby4j:5.2.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.1:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.2.0:no-jetty")
 ```
 
 ##### Maven
@@ -174,7 +174,7 @@ compile("io.github.azagniotov:stubby4j:5.1.1:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.1.1</version>
+    <version>5.2.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -183,7 +183,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>5.1.1</version>
+    <version>5.2.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -192,17 +192,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `gradle install` command to:
 
-* Install `stubby4j-5.1.2-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.1.2-SNAPSHOT/`
+* Install `stubby4j-5.2.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.2.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.2-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:5.2.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:5.1.2-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:5.2.1-SNAPSHOT:no-jetty")
 ```
 
 
@@ -850,7 +850,20 @@ stubby supports dynamic token replacement on the following properties:
    response:
       status: 200
       file: ../html/<% url.1 %>.html
-      
+
+
+-  request:
+      method: [GET]
+      url: ^/v\d/identity/authorize
+      query:
+         redirect_uri: "https://(.*)/app.*"
+
+   response:
+      headers:
+         location: https://<% query.redirect_uri.1 %>/auth
+      status: 302
+  
+            
 -  request:
       method: [GET]
       url: ^/account/(\d{5})/category/([a-zA-Z]+)
@@ -1211,7 +1224,11 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ### Change log
 
-##### 5.1.2-SNAPSHOT
+##### 5.2.1-SNAPSHOT
+
+##### 5.2.0
+* Pull request #91 - Added ability to use tokenized "Location" header in 3xx responses (https://github.com/dimadl)
+* Issue #92 - Added ability to honor stubbed 404 responses (https://github.com/MannanM)
 
 ##### 5.1.1
 * Added ANSITerminal back. it is operational alongside the SLF4J for the cases when stubby is running as a standalone jar
