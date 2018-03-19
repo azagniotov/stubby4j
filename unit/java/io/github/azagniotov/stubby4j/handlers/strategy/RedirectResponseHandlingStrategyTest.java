@@ -7,6 +7,7 @@ import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -15,6 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,6 +41,13 @@ public class RedirectResponseHandlingStrategyTest {
 
     @InjectMocks
     private RedirectResponseHandlingStrategy redirectResponseHandlingStrategy;
+
+    @Before
+    public void setUp(){
+        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
+            put("location", "http://location.com");
+        }});
+    }
 
     @Test
     public void shouldVerifyBehaviourWhenHandlingTemporaryRedirectResponseWithoutLatency() throws Exception {
@@ -74,6 +84,29 @@ public class RedirectResponseHandlingStrategyTest {
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), mockStubResponse.getHeaders().get("location"));
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
         verifyMainHeaders(mockHttpServletResponse);
+    }
+
+    @Test
+    public void shouldReturnReplacedValueInLocationHeaderWhenRequestBodyHasDynamicToken() throws Exception {
+        String redirectUrlDomain = "test.com";
+        String tokenizedLocationHeaderValue = "https://<% query.redirect_uri.1 %>/auth";
+        String expectedLocationValue = "https://test.com/auth";
+
+        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
+            put("query.redirect_uri.1", redirectUrlDomain);
+        }});
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_TEMPORARILY);
+        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
+            put("location", tokenizedLocationHeaderValue);
+        }});
+
+        redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+
+        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_TEMPORARILY_302);
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), expectedLocationValue);
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
+        verifyMainHeaders(mockHttpServletResponse);
+
     }
 
     private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
