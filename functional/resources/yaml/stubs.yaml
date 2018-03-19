@@ -710,3 +710,14 @@
       status: 200
       body: >
          {"id" : "12", "description" : "deleted authorized using bearer"}
+
+-  request:
+      method: [GET]
+      url: ^/v\d/identity/authorize
+      query:
+         redirect_uri: "https://(.*)/app.*"
+
+   response:
+      headers:
+         location: https://<% query.redirect_uri.1 %>/auth
+      status: 302

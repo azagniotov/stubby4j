@@ -50,13 +50,13 @@ public class RedirectResponseHandlingStrategy implements StubResponseHandlingStr
             TimeUnit.MILLISECONDS.sleep(latency);
         }
 
-        String headerLocation = foundStubResponse.getHeaders().get("location");
-
+        final String headerLocation = foundStubResponse.getHeaders().get("location");
         if (isTokenized(headerLocation)) {
-            headerLocation = replaceTokensInString(headerLocation, regexGroups);
+            response.setHeader(HttpHeader.LOCATION.asString(), replaceTokensInString(headerLocation, regexGroups));
+        } else {
+            response.setHeader(HttpHeader.LOCATION.asString(), headerLocation);
         }
 
-        response.setHeader(HttpHeader.LOCATION.asString(), headerLocation);
         response.setStatus(foundStubResponse.getHttpStatusCode().getCode());
         response.setHeader(HttpHeader.CONNECTION.asString(), "close");
     }

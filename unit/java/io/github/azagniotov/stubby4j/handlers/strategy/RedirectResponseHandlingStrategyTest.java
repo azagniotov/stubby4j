@@ -87,10 +87,9 @@ public class RedirectResponseHandlingStrategyTest {
     }
 
     @Test
-    public void shouldReturnReplacedValueInLocationHeaderWhenRequestBodyHasDynamicToken() throws Exception {
+    public void shouldReturnReplacedValueInLocationHeaderWhenQueryParamHasDynamicToken() throws Exception {
         String redirectUrlDomain = "test.com";
         String tokenizedLocationHeaderValue = "https://<% query.redirect_uri.1 %>/auth";
-        String expectedLocationValue = "https://test.com/auth";
 
         when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
             put("query.redirect_uri.1", redirectUrlDomain);
@@ -103,7 +102,7 @@ public class RedirectResponseHandlingStrategyTest {
         redirectResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
         verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.MOVED_TEMPORARILY_302);
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), expectedLocationValue);
+        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), "https://test.com/auth");
         verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONNECTION.asString(), "close");
         verifyMainHeaders(mockHttpServletResponse);
 

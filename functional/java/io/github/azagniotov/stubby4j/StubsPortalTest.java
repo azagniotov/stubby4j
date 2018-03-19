@@ -16,12 +16,15 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +44,9 @@ public class StubsPortalTest {
     private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static String stubsData;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -906,6 +912,18 @@ public class StubsPortalTest {
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(responseContent).isEqualTo("Returned content with URL /groups/with/sub/groups/abc-123, parent group abc-123 and two sub-groups abc & 123");
+    }
+
+    @Test
+    public void shouldReturnReplacedValueInLocationHeaderWhenQueryParamHasDynamicToken() throws Exception {
+
+        expectedException.expect(UnknownHostException.class);
+        expectedException.expectMessage("alex.com");
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://alex.com/app/very/cool");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        request.execute();
     }
 
     @Test
