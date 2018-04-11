@@ -3,8 +3,9 @@ package io.github.azagniotov.stubby4j.stubs;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLBuilder;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
@@ -44,17 +45,17 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StubRepositoryTest {
 
-    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
+    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
 
     private static final File CONFIG_FILE = new File(".");
-    private static final Future<List<StubHttpLifecycle>> COMPLETED_FUTURE =
-            CompletableFuture.completedFuture(new LinkedList<StubHttpLifecycle>());
+    private static final CompletableFuture<YamlParseResultSet> YAML_PARSE_RESULT_SET_FUTURE =
+            CompletableFuture.completedFuture(new YamlParseResultSet(new LinkedList<>(), new HashMap<>()));
 
     @Mock
     private HttpServletRequest mockHttpServletRequest;
 
     @Spy
-    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE, COMPLETED_FUTURE);
+    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE, YAML_PARSE_RESULT_SET_FUTURE);
 
     private StubRequest.Builder requestBuilder;
 
@@ -763,7 +764,7 @@ public class StubRepositoryTest {
         final URL yamlUrl = StubRepositoryTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)).getStubs();
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
@@ -774,7 +775,7 @@ public class StubRepositoryTest {
         spyStubHttpLifecycles.add(spyCycleOne);
         spyStubHttpLifecycles.add(spyCycleTwo);
 
-        spyStubRepository.resetStubsCache(spyStubHttpLifecycles);   // 1st time call to getResponses
+        spyStubRepository.resetStubsCache(new YamlParseResultSet(spyStubHttpLifecycles, new HashMap<>()));   // 1st time call to getResponses
         spyStubRepository.getExternalFiles();                               // 2nd time call to getResponses
 
         verify(spyCycleOne, times(2)).getResponses();
@@ -786,7 +787,7 @@ public class StubRepositoryTest {
         final URL yamlUrl = StubRepositoryTest.class.getResource("/yaml/two.cycles.with.multiple.responses.yaml");
         final InputStream stubsConfigStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream)).getStubs();
         assertThat(stubHttpLifecycles.size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(0).getResponses().size()).isEqualTo(2);
         assertThat(stubHttpLifecycles.get(1).getResponses().size()).isEqualTo(2);
@@ -805,13 +806,13 @@ public class StubRepositoryTest {
         }};
         injectObjectFields(stubHttpLifecycles.get(1), "response", stubResponsesTwo);
 
-        spyStubRepository.resetStubsCache(stubHttpLifecycles);
+        spyStubRepository.resetStubsCache(new YamlParseResultSet(stubHttpLifecycles, new HashMap<>()));
         spyStubRepository.getExternalFiles();
 
-        verify(stubHttpLifecycles.get(0).getResponses().get(0), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(0).getResponses().get(1), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(1).getResponses().get(0), times(1)).getRawFile();
-        verify(stubHttpLifecycles.get(1).getResponses().get(1), times(1)).getRawFile();
+        verify(stubHttpLifecycles.get(0).getResponses().get(0)).getRawFile();
+        verify(stubHttpLifecycles.get(0).getResponses().get(1)).getRawFile();
+        verify(stubHttpLifecycles.get(1).getResponses().get(0)).getRawFile();
+        verify(stubHttpLifecycles.get(1).getResponses().get(1)).getRawFile();
     }
 
     @Test
@@ -927,8 +928,8 @@ public class StubRepositoryTest {
                 .withStatus("201")
                 .build();
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
-        spyStubRepository.resetStubsCache(stubHttpLifecycles);
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(".", String.format("%s%s%s", cycleTwo, FileUtils.BR, cycleThree));
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
 
         List<StubHttpLifecycle> afterResetHttpCycles = spyStubRepository.getStubs();
         assertThat(afterResetHttpCycles.size()).isEqualTo(2);
@@ -994,7 +995,7 @@ public class StubRepositoryTest {
                 .withStatus("200")
                 .build();
 
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", cycleOne);
+        final List<StubHttpLifecycle> stubHttpLifecycles = new YamlParser().parse(".", cycleOne).getStubs();
         final StubHttpLifecycle updatingStubHttpLifecycle = stubHttpLifecycles.get(0);
 
         spyStubRepository.updateStubByIndex(0, updatingStubHttpLifecycle);
@@ -1017,15 +1018,13 @@ public class StubRepositoryTest {
     }
 
     private void loadYamlToDataStore(final String yaml) throws Exception {
-        final List<StubHttpLifecycle> stubHttpLifecycles = new YAMLParser().parse(".", yaml);
-
-        spyStubRepository.resetStubsCache(stubHttpLifecycles);
+        spyStubRepository.resetStubsCache(new YamlParser().parse(".", yaml));
     }
 
     private void resetStubHttpLifecyclesFromYamlResource(final String resourcePath) throws Exception {
         final URL yamlUrl = StubRepositoryTest.class.getResource(resourcePath);
         final InputStream stubsDatanputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        spyStubRepository.resetStubsCache(new YAMLParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
+        spyStubRepository.resetStubsCache(new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
     }
 }

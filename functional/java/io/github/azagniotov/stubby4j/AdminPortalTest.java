@@ -7,7 +7,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLBuilder;
+import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -159,7 +159,23 @@ public class AdminPortalTest {
 
         final String expectedMessage = String.format("Stub request index#%s does not exist, cannot display", invalidIndex);
 
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat(statusMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void should_ReturnExpectedError_WhenSuccessfulGetMade_ToAdminPortalRootWithNonExistentUuid() throws Exception {
+
+        final String nonExistentUuid = "kshdfsdy894kwbkf";
+        final String requestUrl = String.format("%s/%s", ADMIN_URL, nonExistentUuid);
+        final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse httpResponse = httpGetRequest.execute();
+        final String statusMessage = httpResponse.getStatusMessage().trim();
+
+        final String expectedMessage = String.format("Stub request uuid#%s does not exist, cannot display", nonExistentUuid);
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
         assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
@@ -187,8 +203,23 @@ public class AdminPortalTest {
         final HttpResponse httpResponse = httpPuttRequest.execute();
         final String statusMessage = httpResponse.getStatusMessage().trim();
 
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
         assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
+    }
+
+    @Test
+    public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidUuid() throws Exception {
+
+        final String uuid = "9136d8b7-f7a7-478d-97a5-53292484aaf6";
+
+        final String requestUrl = String.format("%s/" + uuid, ADMIN_URL);
+        final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
+
+        final HttpResponse httpResponse = httpPuttRequest.execute();
+        final String statusMessage = httpResponse.getStatusMessage().trim();
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat(statusMessage).isEqualTo("PUT request on URI /" + uuid + " was empty");
     }
 
     @Test
@@ -203,7 +234,23 @@ public class AdminPortalTest {
 
         final String expectedMessage = String.format("Stub request index#%s does not exist, cannot update", invalidIndex);
 
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat(statusMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithNonExistentUuid() throws Exception {
+
+        final String nonExistentUuid = "fdsfsdfsd07f9sd7";
+        final String requestUrl = String.format("%s/%s", ADMIN_URL, nonExistentUuid);
+        final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
+
+        final HttpResponse httpResponse = httpPuttRequest.execute();
+        final String statusMessage = httpResponse.getStatusMessage().trim();
+
+        final String expectedMessage = String.format("Stub request uuid#%s does not exist, cannot update", nonExistentUuid);
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
         assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
@@ -221,7 +268,7 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
 
-        final String yamlToUpdate = new YAMLBuilder()
+        final String yamlToUpdate = new YamlBuilder()
                 .newStubbedRequest()
                 .withUrl("^/resources/something/new")
                 .withMethodGet()
@@ -255,6 +302,105 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("content-type: application/xml");
 
         assertThat(getResponseContent).doesNotContain("url: ^/resources/asn/");
+        assertThat(getResponseContent).doesNotContain("content-type: application/json");
+    }
+
+    @Test
+    public void should_UpdateStubbedRequest_WhenSuccessfulPutMade_ToAdminPortalRootWithValidUuid() throws Exception {
+
+        final String toUpdateByUuid = "9136d8b7-f7a7-478d-97a5-53292484aaf6";
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/" + toUpdateByUuid);
+        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        HttpResponse httpGetResponse = httpGetRequest.execute();
+        String getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: /with/configured/uuid/property");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
+
+        final String yamlToUpdate = new YamlBuilder()
+                .newStubbedFeature()
+                .withUUID(toUpdateByUuid)
+                .newStubbedRequest()
+                .withUrl("/with/UPDATED/uuid/property")
+                .withMethodGet()
+                .withQuery("someKey", "someValue")
+                .newStubbedResponse()
+                .withHeaderContentType("application/xml")
+                .withLiteralBody("OK")
+                .withStatus("201")
+                .build();
+
+        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, yamlToUpdate);
+
+        final HttpResponse httpPutResponse = httpPutRequest.execute();
+        final String putResponseContent = httpPutResponse.parseAsString().trim();
+        final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(putResponseLocationHeader).isEqualTo("/with/UPDATED/uuid/property?someKey=someValue");
+        assertThat(putResponseContent).isEqualTo("Stub request uuid#" + toUpdateByUuid + " updated successfully");
+
+        httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        httpGetResponse = httpGetRequest.execute();
+        getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: /with/UPDATED/uuid/property");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
+
+        assertThat(getResponseContent).doesNotContain("url: /with/configured/uuid/property");
+        assertThat(getResponseContent).doesNotContain("content-type: application/json");
+    }
+
+    @Test
+    public void should_UpdateStubbedRequest_WithJsonRequest_ToAdminPortalRootWithValidUuid() throws Exception {
+
+        final String toUpdateByUuid = "9136d8b7-f7a7-478d-97a5-53292484aaf6";
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/" + toUpdateByUuid);
+        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        HttpResponse httpGetResponse = httpGetRequest.execute();
+        String getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("url: /with/configured/uuid/property");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/json");
+
+        final URL url = AdminPortalTest.class.getResource("/json/update.request.by.uuid.json");
+        final InputStream jsonInputStream = url.openStream();
+        final String jsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
+
+        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, jsonToUpdate);
+
+        final HttpResponse httpPutResponse = httpPutRequest.execute();
+        final String putResponseContent = httpPutResponse.parseAsString().trim();
+        final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(putResponseLocationHeader).isEqualTo("/with/UPDATED/uuid/property?someKey=someValue");
+        assertThat(putResponseContent).isEqualTo("Stub request uuid#" + toUpdateByUuid + " updated successfully");
+
+        httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        httpGetResponse = httpGetRequest.execute();
+        getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).contains("request");
+        assertThat(getResponseContent).contains("query");
+        assertThat(getResponseContent).contains("url: /with/UPDATED/uuid/property");
+        assertThat(getResponseContent).contains("response");
+        assertThat(getResponseContent).contains("content-type: application/xml");
+
+        assertThat(getResponseContent).doesNotContain("url: /with/configured/uuid/property");
         assertThat(getResponseContent).doesNotContain("content-type: application/json");
     }
 
@@ -402,7 +548,7 @@ public class AdminPortalTest {
 
         final String expectedMessage = String.format("Stub request index#%s does not exist, cannot delete", invalidIndex);
 
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
         assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
@@ -435,6 +581,34 @@ public class AdminPortalTest {
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
         assertThat(getResponseContent).doesNotContain("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+    }
+
+    @Test
+    public void should_DeleteStubbedRequest_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/9136d8b7-f7a7-478d-97a5-53292484aaf6");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
+        assertThat(deleteResponseContent).isEqualTo("Stub request uuid#9136d8b7-f7a7-478d-97a5-53292484aaf6 deleted successfully");
+    }
+
+    @Test
+    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/this-uuid-does-not-exist");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        final String statusMessage = httpDeleteResponse.getStatusMessage().trim();
+
+        final String expectedMessage = "Stub request uuid#this-uuid-does-not-exist does not exist, cannot delete";
+
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -519,7 +693,7 @@ public class AdminPortalTest {
     @Test
     public void should_UpdateStubsData_WhenSuccessfulValidPostMade_ToAdminPortalRoot() throws Exception {
 
-        final String yamlToUpdate = new YAMLBuilder()
+        final String yamlToUpdate = new YamlBuilder()
                 .newStubbedRequest()
                 .withUrl("^/resources/something/new")
                 .withMethodGet()

@@ -25,20 +25,21 @@ import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
-import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpScheme;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public final class StubbyClient {
 
@@ -131,8 +132,14 @@ public final class StubbyClient {
         commandLineInterpreter.parseCommandLine(args);
 
         final File configFile = new File(yamlConfigurationFilename);
-        final Future<List<StubHttpLifecycle>> stubLoadComputation =
-                EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
+            try {
+                return new YamlParser().parse(configFile.getParent(), configFile);
+            } catch (IOException ioEx) {
+                throw new UncheckedIOException(ioEx);
+            }
+        }, EXECUTOR_SERVICE);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
@@ -155,8 +162,14 @@ public final class StubbyClient {
         final URL url = StubbyClient.class.getResource("/yaml/empty-stub.yaml");
 
         final File configFile = new File(url.getFile());
-        final Future<List<StubHttpLifecycle>> stubLoadComputation =
-                EXECUTOR_SERVICE.submit(() -> new YAMLParser().parse(configFile.getParent(), configFile));
+
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
+            try {
+                return new YamlParser().parse(configFile.getParent(), configFile);
+            } catch (IOException ioEx) {
+                throw new UncheckedIOException(ioEx);
+            }
+        }, EXECUTOR_SERVICE);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();

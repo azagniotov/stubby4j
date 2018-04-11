@@ -711,6 +711,7 @@
       body: >
          {"id" : "12", "description" : "deleted authorized using bearer"}
 
+
 -  request:
       method: [GET]
       url: ^/v\d/identity/authorize
@@ -722,6 +723,7 @@
          location: https://<% query.redirect_uri.1 %>/auth
       status: 302
 
+
 -  request:
       method: [GET]
       url: /returns-not-found-response-with-body
@@ -729,3 +731,17 @@
    response:
       status: 404
       body: This response with body was actually not found
+
+
+-  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+   request:
+      method: GET
+      url: /with/configured/uuid/property
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+      body: >
+         {"status" : "OK"}
+

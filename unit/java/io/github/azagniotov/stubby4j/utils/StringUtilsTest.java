@@ -27,9 +27,16 @@ public class StringUtilsTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
+    public void isNumeric() throws Exception {
+        assertThat(StringUtils.isNumeric("9136d8b7-f7a7-478d-97a5-53292484aaf6")).isFalse();
+        assertThat(StringUtils.isNumeric("8-88")).isFalse();
+        assertThat(StringUtils.isNumeric("888")).isTrue();
+    }
+
+    @Test
     public void shouldConvertObjectToString_WhenObjectIsNotNull() throws Exception {
 
-        final String result = StringUtils.objectToString(new Integer(888));
+        final String result = StringUtils.objectToString(888);
 
         assertThat(result).isEqualTo("888");
     }

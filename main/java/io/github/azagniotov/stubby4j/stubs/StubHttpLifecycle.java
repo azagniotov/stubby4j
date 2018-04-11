@@ -26,6 +26,7 @@ public class StubHttpLifecycle implements ReflectableStub {
     private final String requestAsYAML;
     private final String responseAsYAML;
     private final String description;
+    private final String uuid;
 
     private StubHttpLifecycle(
             final StubRequest request,
@@ -33,13 +34,15 @@ public class StubHttpLifecycle implements ReflectableStub {
             final String requestAsYAML,
             final String responseAsYAML,
             final String completeYAML,
-            final String description) {
+            final String description,
+            final String uuid) {
         this.request = request;
         this.response = response;
         this.requestAsYAML = requestAsYAML;
         this.responseAsYAML = responseAsYAML;
         this.completeYAML = completeYAML;
         this.description = description;
+        this.uuid = uuid;
     }
 
     public StubRequest getRequest() {
@@ -115,11 +118,15 @@ public class StubHttpLifecycle implements ReflectableStub {
         return description;
     }
 
+    public String getUUID() {
+        return uuid;
+    }
+
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
      */
-    public String getCompleteYAML() {
+    public String getCompleteYaml() {
         return completeYAML;
     }
 
@@ -185,6 +192,7 @@ public class StubHttpLifecycle implements ReflectableStub {
         private String requestAsYAML;
         private String responseAsYAML;
         private String description;
+        private String uuid;
 
         public Builder() {
             this.request = null;
@@ -193,6 +201,7 @@ public class StubHttpLifecycle implements ReflectableStub {
             this.requestAsYAML = null;
             this.responseAsYAML = null;
             this.description = null;
+            this.uuid = null;
         }
 
         public Builder withRequest(final StubRequest request) {
@@ -241,8 +250,22 @@ public class StubHttpLifecycle implements ReflectableStub {
             return this;
         }
 
+        public Builder withUUID(final String uuid) {
+            this.uuid = uuid;
+
+            return this;
+        }
+
         public StubHttpLifecycle build() {
-            final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle(request, response, requestAsYAML, responseAsYAML, completeYAML, description);
+            final StubHttpLifecycle stubHttpLifecycle =
+                    new StubHttpLifecycle(
+                            request,
+                            response,
+                            requestAsYAML,
+                            responseAsYAML,
+                            completeYAML,
+                            description,
+                            uuid);
 
             this.request = null;
             this.response = okResponse();
@@ -250,6 +273,7 @@ public class StubHttpLifecycle implements ReflectableStub {
             this.requestAsYAML = null;
             this.responseAsYAML = null;
             this.description = null;
+            this.uuid = null;
 
             return stubHttpLifecycle;
         }

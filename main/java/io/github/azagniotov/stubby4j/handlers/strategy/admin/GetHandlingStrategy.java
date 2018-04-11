@@ -19,21 +19,35 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
     public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws IOException {
 
         final StringBuilder yamlAppender = new StringBuilder();
+
         final int contextPathLength = AdminPortalHandler.ADMIN_ROOT.length();
-        final String pathInfoNoHeadingSlash = request.getRequestURI().substring(contextPathLength);
+        final String lastUriPathSegment = request.getRequestURI().substring(contextPathLength);
 
-        if (StringUtils.isSet(pathInfoNoHeadingSlash)) {
-            final int targetHttpStubCycleIndex = Integer.parseInt(pathInfoNoHeadingSlash);
+        if (StringUtils.isSet(lastUriPathSegment)) {
 
-            if (!stubRepository.canMatchStubByIndex(targetHttpStubCycleIndex)) {
-                final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
-                HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
-                return;
+            // We are trying to get a stub by ID, e.g.: GET localhost:8889/8
+            if (StringUtils.isNumeric(lastUriPathSegment)) {
+
+                final int targetHttpStubCycleIndex = Integer.parseInt(lastUriPathSegment);
+                if (!stubRepository.canMatchStubByIndex(targetHttpStubCycleIndex)) {
+                    final String errorMessage = String.format("Stub request index#%s does not exist, cannot display", targetHttpStubCycleIndex);
+                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
+                    return;
+                }
+
+                yamlAppender.append(stubRepository.getStubYamlByIndex(targetHttpStubCycleIndex));
+            } else {
+                // We attempt to get a stub by uuid as a fallback, e.g.: GET localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
+                if (!stubRepository.canMatchStubByUuid(lastUriPathSegment)) {
+                    final String errorMessage = String.format("Stub request uuid#%s does not exist, cannot display", lastUriPathSegment);
+                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
+                    return;
+                }
+
+                yamlAppender.append(stubRepository.getStubYamlByUuid(lastUriPathSegment));
             }
-
-            yamlAppender.append(stubRepository.getStubYAMLByIndex(targetHttpStubCycleIndex));
         } else {
-            yamlAppender.append(stubRepository.getStubYAML());
+            yamlAppender.append(stubRepository.getStubYaml());
         }
 
         response.setContentType("text/plain;charset=UTF-8");

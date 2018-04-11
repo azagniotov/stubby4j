@@ -78,7 +78,7 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -98,7 +98,7 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.NOT_FOUND_404);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -114,7 +114,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
     }
 
     @Test
@@ -161,8 +161,8 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, NO_AUTHORIZATION_HEADER);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -177,8 +177,8 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -193,8 +193,8 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse, times(1)).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -212,7 +212,7 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
     }
 
     @Test
@@ -230,7 +230,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
     }
 
     @Test
@@ -244,7 +244,7 @@ public class StubsPortalHandlerTest {
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
         verify(mockPrintWriter, never()).println(SOME_RESULTS_MESSAGE);
     }

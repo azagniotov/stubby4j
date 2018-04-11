@@ -2,12 +2,12 @@ package io.github.azagniotov.stubby4j.filesystem;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
-import io.github.azagniotov.stubby4j.yaml.YAMLParser;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
@@ -20,15 +20,15 @@ public final class MainYamlScanner implements Runnable {
     public MainYamlScanner(final StubRepository stubRepository, final long sleepTime) {
         this.sleepTime = sleepTime;
         this.stubRepository = stubRepository;
-        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubRepository.getYAMLConfigCanonicalPath()));
-        LOGGER.debug("Main YAML scan enabled, watching {}.", stubRepository.getYAMLConfigCanonicalPath());
+        ANSITerminal.status(String.format("Main YAML scan enabled, watching %s", stubRepository.getYamlConfigCanonicalPath()));
+        LOGGER.debug("Main YAML scan enabled, watching {}.", stubRepository.getYamlConfigCanonicalPath());
     }
 
     @Override
     public void run() {
 
         try {
-            final File dataYaml = stubRepository.getYAMLConfig();
+            final File dataYaml = stubRepository.getYamlConfig();
             long mainYamlLastModified = dataYaml.lastModified();
 
             while (!Thread.currentThread().isInterrupted()) {
@@ -40,14 +40,14 @@ public final class MainYamlScanner implements Runnable {
                     continue;
                 }
 
-                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubRepository.getYAMLConfigCanonicalPath(), BR));
-                LOGGER.info("Main YAML scan detected change in  {}.", stubRepository.getYAMLConfigCanonicalPath());
+                ANSITerminal.info(String.format("%sMain YAML scan detected change in %s%s", BR, stubRepository.getYamlConfigCanonicalPath(), BR));
+                LOGGER.info("Main YAML scan detected change in  {}.", stubRepository.getYamlConfigCanonicalPath());
 
                 try {
                     mainYamlLastModified = currentFileModified;
-                    stubRepository.refreshStubsFromYAMLConfig(new YAMLParser());
+                    stubRepository.refreshStubsFromYamlConfig(new YamlParser());
 
-                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s on [" + new Date().toString().trim() + "]%s",
+                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML file from: %s on [" + DateTimeUtils.systemDefault() + "]%s",
                             BR, dataYaml.getAbsolutePath(), BR));
                     LOGGER.info("Successfully performed live refresh of main YAML from: {}.",
                             dataYaml.getAbsolutePath());

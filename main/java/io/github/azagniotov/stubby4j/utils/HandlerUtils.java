@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
 import static java.util.concurrent.TimeUnit.DAYS;
@@ -73,7 +72,7 @@ public final class HandlerUtils {
     public static void setResponseMainHeaders(final HttpServletResponse response) {
         response.setCharacterEncoding(StringUtils.UTF_8);
         response.setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-        response.setHeader(HttpHeader.DATE.asString(), new Date().toString());
+        response.setHeader(HttpHeader.DATE.asString(), DateTimeUtils.systemDefault());
         response.setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
         response.setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate"); // HTTP 1.1.
         response.setHeader(HttpHeader.PRAGMA.asString(), "no-cache"); // HTTP 1.0.

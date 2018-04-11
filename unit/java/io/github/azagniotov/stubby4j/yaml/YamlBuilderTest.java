@@ -5,19 +5,20 @@ import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.*;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
+import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 
 
-public class YAMLBuilderTest {
+public class YamlBuilderTest {
 
     @Test
     public void shouldBuildStubbedResponseWithSequenceResponses() throws Exception {
         final String expectedYaml =
-                "-  request:" + FileUtils.BR +
+                        "-  description: Hello!" + FileUtils.BR +
+                        "   request:" + FileUtils.BR +
                         "      method: [PUT]" + FileUtils.BR +
                         "      url: /invoice" + FileUtils.BR +
-                        "" + FileUtils.BR +
-                        "   description: Hello!" + FileUtils.BR +
                         "" + FileUtils.BR +
                         "   response:" + FileUtils.BR +
                         "      -  status: 200" + FileUtils.BR +
@@ -36,12 +37,13 @@ public class YAMLBuilderTest {
                         "         body: OMFG!!!" + FileUtils.BR +
                         "         file: ../../response.json";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder
+        final YamlBuilder yamlBuilder = new YamlBuilder();
+        final String actualYaml = yamlBuilder
+                .newStubbedFeature()
+                .withDescription("Hello!")
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
-                .withDescription("Hello!")
                 .newStubbedResponse()
                 .withSequenceResponseStatus("200")
                 .withSequenceResponseHeaders("content-type", Common.HEADER_APPLICATION_JSON)
@@ -86,8 +88,8 @@ public class YAMLBuilderTest {
                         "            content-type: application/json" + FileUtils.BR +
                         "         file: ../path/to/error.file";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder
                 .newStubbedRequest()
                 .withMethodPut()
                 .withUrl("/invoice")
@@ -121,8 +123,8 @@ public class YAMLBuilderTest {
                         "      status: 200" + FileUtils.BR +
                         "      body: OK";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder.
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder.
                 newStubbedRequest().
                 withMethodHead().
                 withMethodGet().
@@ -153,8 +155,8 @@ public class YAMLBuilderTest {
                         "      status: 200" + FileUtils.BR +
                         "      file: ../json/systemtest-body-response-as-file.json";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder.
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder.
                 newStubbedRequest().
                 withQuery("status", "active").
                 withQuery("type", "full").
@@ -191,8 +193,8 @@ public class YAMLBuilderTest {
                         "      body: >" + FileUtils.BR +
                         "         {\"id\": \"123\", \"status\": \"updated\"}";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder.
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder.
                 newStubbedRequest().
                 withMethodPut().
                 withUrl("/invoice/123").
@@ -231,8 +233,8 @@ public class YAMLBuilderTest {
                         "         pragma: no-cache" + FileUtils.BR +
                         "         location: /invoice/exit";
 
-        final YAMLBuilder YAMLBuilder = new YAMLBuilder();
-        final String actualYaml = YAMLBuilder.
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder.
                 newStubbedRequest().
                 withHeaderContentType(Common.HEADER_APPLICATION_JSON).
                 withHeaderContentLanguage("US-en").

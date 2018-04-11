@@ -79,7 +79,7 @@ public class DefaultResponseHandlingStrategyTest {
 
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
         verifyMainHeaders(mockHttpServletResponse);
     }
 
@@ -92,7 +92,7 @@ public class DefaultResponseHandlingStrategyTest {
 
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse, times(1)).setStatus(HttpStatus.OK_200);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
         verifyMainHeaders(mockHttpServletResponse);
     }
 
@@ -130,7 +130,7 @@ public class DefaultResponseHandlingStrategyTest {
 
         defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
+        verify(mockHttpServletResponse).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
         verifyMainHeaders(mockHttpServletResponse);
     }
 
@@ -151,8 +151,8 @@ public class DefaultResponseHandlingStrategyTest {
 
         ArgumentCaptor<byte[]> responseCaptor = ArgumentCaptor.forClass(byte[].class);
 
-        verify(mockHttpServletResponse, times(1)).getOutputStream();
-        verify(mockOutputStream, times(1)).write(responseCaptor.capture());
+        verify(mockHttpServletResponse).getOutputStream();
+        verify(mockOutputStream).write(responseCaptor.capture());
 
         String response = new String(responseCaptor.getValue(), StringUtils.charsetUTF8());
 
@@ -161,10 +161,10 @@ public class DefaultResponseHandlingStrategyTest {
     }
 
     private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
-        verify(mockHttpServletResponse, times(1)).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
-        verify(mockHttpServletResponse, times(1)).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
+        verify(mockHttpServletResponse).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+        verify(mockHttpServletResponse).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+        verify(mockHttpServletResponse).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
+        verify(mockHttpServletResponse).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+        verify(mockHttpServletResponse).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
     }
 }

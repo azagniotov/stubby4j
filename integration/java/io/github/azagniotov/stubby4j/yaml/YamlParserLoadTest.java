@@ -5,14 +5,12 @@ import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import org.junit.Test;
 
-import java.util.List;
-
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
-public class YAMLParserLoadTest {
+public class YamlParserLoadTest {
 
-    private static final YAMLBuilder YAML_BUILDER = new YAMLBuilder();
+    private static final YamlBuilder YAML_BUILDER = new YamlBuilder();
 
 
     @Test
@@ -52,10 +50,10 @@ public class YAMLParserLoadTest {
         final String rawYaml = BUILDER.toString();
         BUILDER.setLength(0);
 
-        final List<StubHttpLifecycle> loadedHttpCycles = loadYamlToDataStore(rawYaml);
-        assertThat(loadedHttpCycles.size()).isEqualTo(NUMBER_OF_HTTPCYCLES);
+        final YamlParseResultSet yamlParseResultSet = loadYamlToDataStore(rawYaml);
+        assertThat(yamlParseResultSet.getStubs().size()).isEqualTo(NUMBER_OF_HTTPCYCLES);
 
-        final StubHttpLifecycle actualHttpLifecycle = loadedHttpCycles.get(498);
+        final StubHttpLifecycle actualHttpLifecycle = yamlParseResultSet.getStubs().get(498);
         final StubRequest actualRequest = actualHttpLifecycle.getRequest();
         final StubResponse actualResponse = actualHttpLifecycle.getResponse(true);
 
@@ -66,8 +64,8 @@ public class YAMLParserLoadTest {
         assertThat(actualResponse.getHeaders()).containsEntry(expectedHeaderKey, expectedHeaderValue);
     }
 
-    private List<StubHttpLifecycle> loadYamlToDataStore(final String yaml) throws Exception {
-        return new YAMLParser().parse(".", yaml);
+    private YamlParseResultSet loadYamlToDataStore(final String yaml) throws Exception {
+        return new YamlParser().parse(".", yaml);
     }
 
 }
