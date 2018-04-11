@@ -145,7 +145,8 @@ Run `gradle cobertura` command to:
 * commons-cli:1.2
 * snakeyaml:1.20
 * jsonassert:1.3.0
-* xmlunit-legacy:2.5.1
+* xmlunit-core:2.5.1
+* ehcache:3.5.2
 * slf4j-api:1.7.25
 
 
