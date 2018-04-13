@@ -1,4 +1,8 @@
-#### 6.0.1-SNAPSHOT
+#### 6.0.2-SNAPSHOT
+
+#### 6.0.1
+
+* Pull request #93 - Added support for stubbed `PATCH` requests (https://github.com/singh-virendra)
 
 #### 6.0.0
 

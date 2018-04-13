@@ -91,8 +91,8 @@ public final class FileUtils {
     }
 
     @CoberturaIgnore
-    public static File fileFromString(final String content) throws IOException {
-        final File temp = File.createTempFile("tmp", ".txt");
+    public static File tempFileFromString(final String content) throws IOException {
+        final File temp = File.createTempFile("tmp" + System.currentTimeMillis(), ".txt");
         temp.deleteOnExit();
 
         try (final FileWriter fileWriter = new FileWriter(temp);

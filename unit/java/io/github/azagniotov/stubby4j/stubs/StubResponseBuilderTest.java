@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.utils.FileUtils.fileFromString;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.tempFileFromString;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 
 public class StubResponseBuilderTest {
@@ -146,7 +146,7 @@ public class StubResponseBuilderTest {
         final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody("something")
-                .withFile(fileFromString(expectedResponseBody))
+                .withFile(tempFileFromString(expectedResponseBody))
                 .build();
 
         final String actualResponseBody = StringUtils.newStringUtf8(stubResponse.getResponseBodyAsBytes());
@@ -220,7 +220,7 @@ public class StubResponseBuilderTest {
         final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(body)
-                .withFile(fileFromString("file content with a <% token %>"))
+                .withFile(tempFileFromString("file content with a <% token %>"))
                 .build();
 
         assertThat(stubResponse.isBodyContainsTemplateTokens()).isTrue();
@@ -233,7 +233,7 @@ public class StubResponseBuilderTest {
         final StubResponse stubResponse = builder
                 .withHttpStatusCode(Code.OK)
                 .withBody(body)
-                .withFile(fileFromString("file content"))
+                .withFile(tempFileFromString("file content"))
                 .build();
 
         assertThat(stubResponse.isBodyContainsTemplateTokens()).isFalse();

@@ -176,15 +176,18 @@ public class StubRequest implements ReflectableStub {
     }
 
     @VisibleForTesting
-    boolean isPostStubbed() {
-        return isSet(this.getPostBody()) && (getMethod().contains("POST") || getMethod().contains("PUT"));
+    boolean isRequestBodyStubbed() {
+        return isSet(this.getPostBody()) &&
+                (getMethod().contains("POST") ||
+                        getMethod().contains("PUT") ||
+                        getMethod().contains("PATCH"));
     }
 
     public void compileRegexPatternsAndCache() {
         if (isSet(this.url)) {
             RegexParser.INSTANCE.compilePatternAndCache(this.url);
         }
-        if (isPostStubbed()) {
+        if (isRequestBodyStubbed()) {
             RegexParser.INSTANCE.compilePatternAndCache(getPostBody());
         }
 
