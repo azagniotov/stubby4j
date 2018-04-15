@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -390,7 +389,7 @@ public class StubRequestBuilderTest {
         final StubRequest expectedRequest =
                 builder.withUrl(url)
                         .withPost(postBody)
-                        .withFile(File.createTempFile("tmp", "tmp"))
+                        .withFile(FileUtils.tempFileFromString(""))
                         .withMethodPost().build();
 
         assertThat(expectedRequest.getPostBody()).isEqualTo(postBody);
@@ -404,7 +403,7 @@ public class StubRequestBuilderTest {
         final String fileContent = "Hello World!";
         final StubRequest expectedRequest =
                 builder.withUrl(url)
-                        .withFile(FileUtils.fileFromString(fileContent))
+                        .withFile(FileUtils.tempFileFromString(fileContent))
                         .withMethodPost().build();
 
         assertThat(expectedRequest.getPostBody()).isEqualTo(fileContent);
@@ -1940,7 +1939,7 @@ public class StubRequestBuilderTest {
                         .withMethodPost()
                         .withMethodPut()
                         .withPost(postBody)
-                        .withFile(FileUtils.fileFromString("bytes"))
+                        .withFile(FileUtils.tempFileFromString("bytes"))
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
                         .withApplicationXmlContentType()
@@ -1953,7 +1952,7 @@ public class StubRequestBuilderTest {
                         .withMethodPost()
                         .withMethodPut()
                         .withPost(postBody)
-                        .withFile(FileUtils.fileFromString("bytes"))
+                        .withFile(FileUtils.tempFileFromString("bytes"))
                         .withQuery(paramOne, paramOneValue)
                         .withQuery(paramTwo, paramTwoValue)
                         .withApplicationXmlContentType()
@@ -2174,7 +2173,7 @@ public class StubRequestBuilderTest {
                         .withMethod("GET")
                         .withPost(null).build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
@@ -2184,7 +2183,7 @@ public class StubRequestBuilderTest {
                         .withMethod("GET")
                         .withPost("stubbed").build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
@@ -2194,7 +2193,7 @@ public class StubRequestBuilderTest {
                         .withMethod("PUT")
                         .withPost(null).build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
@@ -2204,17 +2203,46 @@ public class StubRequestBuilderTest {
                         .withMethod("PUT")
                         .withPost("").build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
-    public void shouldFindPostStubbed_WhenPostStubbedAndMethodPut() throws Exception {
+    public void shouldFindRequestBodyStubbed_WhenPostStubbedAndMethodPut() throws Exception {
         final StubRequest stubRequest =
                 builder.withUrl("fssefewf")
                         .withMethod("PUT")
                         .withPost("stubbed").build();
 
-        assertThat(stubRequest.isPostStubbed()).isTrue();
+        assertThat(stubRequest.isRequestBodyStubbed()).isTrue();
+    }
+
+    @Test
+    public void shouldFindRequestBodyStubbed_WhenPostStubbedAndMethodPatch() throws Exception {
+        final StubRequest stubRequest =
+                builder.withUrl("fssefewf")
+                        .withMethod("PATCH")
+                        .withPost("stubbed").build();
+
+        assertThat(stubRequest.isRequestBodyStubbed()).isTrue();
+    }
+
+    @Test
+    public void shouldFindRequestBodyStubbed_WhenFileStubbedAndMethodPatch() throws Exception {
+        final StubRequest stubRequest =
+                builder.withUrl("fssefewf")
+                        .withMethod("PATCH")
+                        .withFile(FileUtils.tempFileFromString("hello")).build();
+
+        assertThat(stubRequest.isRequestBodyStubbed()).isTrue();
+    }
+
+    @Test
+    public void shouldFindRequestBodyNotStubbed_WhenJustMethodPatch() throws Exception {
+        final StubRequest stubRequest =
+                builder.withUrl("fssefewf")
+                        .withMethod("PATCH").build();
+
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
@@ -2224,7 +2252,7 @@ public class StubRequestBuilderTest {
                         .withMethod("POST")
                         .withPost(null).build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
@@ -2234,16 +2262,16 @@ public class StubRequestBuilderTest {
                         .withMethod("POST")
                         .withPost("").build();
 
-        assertThat(stubRequest.isPostStubbed()).isFalse();
+        assertThat(stubRequest.isRequestBodyStubbed()).isFalse();
     }
 
     @Test
-    public void shouldFindPostStubbed_WhenPostStubbedAndMethodPost() throws Exception {
+    public void shouldFindRequestBodyStubbed_WhenPostStubbedAndMethodPost() throws Exception {
         final StubRequest stubRequest =
                 builder.withUrl("fssefewf")
                         .withMethod("POST")
                         .withPost("stubbed").build();
 
-        assertThat(stubRequest.isPostStubbed()).isTrue();
+        assertThat(stubRequest.isRequestBodyStubbed()).isTrue();
     }
 }

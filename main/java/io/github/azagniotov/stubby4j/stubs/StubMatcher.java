@@ -59,7 +59,7 @@ class StubMatcher {
         ANSITerminal.info(String.format("Matched on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
         LOGGER.info("Matched on METHOD [{}] WITH [{}]", stubbedRequest.getMethod(), assertingRequest.getMethod());
 
-        if (!postBodiesMatch(stubbedRequest.isPostStubbed(), stubbedRequest.getPostBody(), assertingRequest)) {
+        if (!postBodiesMatch(stubbedRequest.isRequestBodyStubbed(), stubbedRequest.getPostBody(), assertingRequest)) {
             ANSITerminal.error(String.format("Failed to match on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), assertingRequest.getPostBody()));
             LOGGER.error("Failed to match on POST BODY [{}] WITH [{}].", stubbedRequest.getPostBody(), assertingRequest.getPostBody());
             return false;
