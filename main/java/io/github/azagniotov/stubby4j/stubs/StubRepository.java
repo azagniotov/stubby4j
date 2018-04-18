@@ -171,7 +171,7 @@ public class StubRepository {
         return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
 
             ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s], method [%s] and body [%s]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody()));
-            LOGGER.debug("Local cache contains potential match for the URL [{}], method [{}] and body [{}]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody()));
+            LOGGER.debug("Local cache contains potential match for the URL [{}], method [{}] and body [{}]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody());
 
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedMatchCandidate)) {
