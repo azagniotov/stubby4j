@@ -163,14 +163,15 @@ public class StubRepository {
     private synchronized Optional<StubHttpLifecycle> matchStub(final StubHttpLifecycle incomingStub) {
 
         final long initialStart = System.currentTimeMillis();
+        final StubRequest stubRequest = incomingStub.getRequest();
         final String incomingRequestUrl = incomingStub.getUrl();
 
-        final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestUrl);
+        final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestUrl + stubRequest.getMethod() + stubRequest.getPostBody());
 
         return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
 
-            ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
-            LOGGER.debug("Local cache contains potential match for the URL [{}].", incomingRequestUrl);
+            ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s], method [%s] and body [%s]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody()));
+            LOGGER.debug("Local cache contains potential match for the URL [{}], method [{}] and body [{}]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody());
 
             // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
             if (incomingStub.equals(cachedMatchCandidate)) {
@@ -194,14 +195,15 @@ public class StubRepository {
     }
 
     private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart, final String incomingRequestUrl) {
+        final StubRequest stubRequest = incomingStub.getRequest();
         for (final StubHttpLifecycle stubbed : stubs) {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
                 logMatch(elapsed, stubbed);
 
-                ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
-                LOGGER.debug("Caching the found match for URL [{}].", incomingRequestUrl);
-                stubMatchesCache.putIfAbsent(incomingRequestUrl, stubbed);
+                ANSITerminal.status(String.format("Caching the object for URL [%s], method [%s] and body [%s]", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody()));
+                LOGGER.debug("Caching the object for URL [{}], method [{}] and body[{}].", incomingRequestUrl, stubRequest.getMethod(), stubRequest.getPostBody());
+                stubMatchesCache.putIfAbsent(incomingRequestUrl + stubRequest.getMethod() + stubRequest.getPostBody(), stubbed);
 
                 return Optional.of(stubbed);
             }
