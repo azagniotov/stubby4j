@@ -358,6 +358,8 @@ public class StubRepository {
         stubs.add(index, newStub);
         updateResourceIDHeaders();
 
+        this.stubMatchesCache.clearByKey(deletedStub.getUrl());
+
         if (StringUtils.isSet(deletedStub.getUUID())) {
             uuidToStub.remove(deletedStub.getUUID());
         }
