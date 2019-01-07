@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,8 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 public final class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    private static final String DEFAULT_CONFIG_FILE = "/yaml/default-config.yml";
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static CommandLineInterpreter commandLineInterpreter;
@@ -62,7 +65,6 @@ public final class Main {
             return;
         }
 
-        verifyYamlDataProvided();
         startStubby4jUsingCommandLineArgs();
     }
 
@@ -98,18 +100,6 @@ public final class Main {
         return true;
     }
 
-    private static void verifyYamlDataProvided() {
-        if (commandLineInterpreter.isYamlProvided()) {
-            return;
-        }
-        final String msg =
-                String.format("YAML data was not provided using command line option '--%s'. %s"
-                                + "To see all command line options run again with option '--%s'",
-                        CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
-
-        throw new IllegalArgumentException(msg);
-    }
-
     private static void startStubby4jUsingCommandLineArgs() {
         try {
 
@@ -120,7 +110,15 @@ public final class Main {
             ANSITerminal.muteConsole(commandLineInterpreter.isMute());
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
-            final File configFile = new File(configFilename);
+            final File configFile;
+            if (!commandLineInterpreter.isYamlProvided()) {
+                ANSITerminal.status(BR + "No YAML config provided");
+                LOGGER.debug("No YAML config provided");
+                final URL url = Main.class.getResource(DEFAULT_CONFIG_FILE);
+                configFile = new File(url.getPath());
+            } else {
+                configFile = new File(configFilename);
+            }
 
             final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
                 try {
