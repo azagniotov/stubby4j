@@ -1,4 +1,8 @@
-#### 6.0.2-SNAPSHOT
+#### 6.0.3-SNAPSHOT
+
+#### 6.0.2
+
+* Pull request #105 - Update org.yaml:snakeyaml:1.23, which resolves issue #100 (https://github.com/moleksyuk)
 
 #### 6.0.1
 

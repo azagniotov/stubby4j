@@ -15,7 +15,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v6.0.1
+## User manual for stubby4j v6.0.2
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -143,7 +143,7 @@ Run `gradle cobertura` command to:
 * jetty-server:9.4.9.v20180320
 * jetty-servlets:9.4.9.v20180320
 * commons-cli:1.2
-* snakeyaml:1.20
+* snakeyaml:1.23
 * jsonassert:1.3.0
 * xmlunit-core:2.5.1
 * ehcache:3.5.2
@@ -161,12 +161,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.1")
+compile("io.github.azagniotov:stubby4j:6.0.2")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.1:no-jetty")
+compile("io.github.azagniotov:stubby4j:6.0.2:no-jetty")
 ```
 
 #### Maven
@@ -174,7 +174,7 @@ compile("io.github.azagniotov:stubby4j:6.0.1:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>6.0.1</version>
+    <version>6.0.2</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -183,7 +183,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>6.0.1</version>
+    <version>6.0.2</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
