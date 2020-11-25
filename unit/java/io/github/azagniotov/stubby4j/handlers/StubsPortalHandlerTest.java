@@ -27,9 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
-import static io.github.azagniotov.stubby4j.handlers.strategy.stubs.UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -162,7 +160,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -178,7 +176,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
@@ -194,7 +192,7 @@ public class StubsPortalHandlerTest {
         setUpStubSearchMockExpectations(requestPathInfo);
 
         verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401, UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
         verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
     }
 
