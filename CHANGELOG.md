@@ -1,4 +1,8 @@
-#### 6.0.6-SNAPSHOT
+#### 7.0.1-SNAPSHOT
+
+#### 7.0.0
+
+* Pull request #118 - Upgraded jetty to `9.4.31.v20200723` (https://github.com/azagniotov)
 
 #### 6.0.5
 
