@@ -1,4 +1,8 @@
-#### 6.0.4-SNAPSHOT
+#### 6.0.5-SNAPSHOT
+
+#### 6.0.4
+
+* Pull request #112 - Bumped up Jetty two minor versions up to `9.4.11.v20180605` (https://github.com/azagniotov)
 
 #### 6.0.3
 
