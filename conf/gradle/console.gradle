@@ -1,6 +1,6 @@
 tasks.withType(Test) {
     Task testTask ->
-    ignoreFailures = true
+    ignoreFailures = false
     testLogging {
        events /*"passed", */"skipped", "failed"
        exceptionFormat "full"

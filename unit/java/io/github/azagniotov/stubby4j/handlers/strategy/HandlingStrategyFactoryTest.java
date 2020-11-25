@@ -113,7 +113,7 @@ public class HandlingStrategyFactoryTest {
     public void shouldIdentifyResponseStrategyForRedirectResponseWithStubResponseCode308() throws Exception {
         Optional<StubResponse> stubResponseOptional = Optional.of(
                 new StubResponse.Builder()
-                        .withHttpStatusCode(Code.PERMANET_REDIRECT)
+                        .withHttpStatusCode(Code.PERMANENT_REDIRECT)
                         .build());
         final StubResponse stubResponse = StubResponse.redirectResponse(stubResponseOptional);
 
