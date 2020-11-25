@@ -1303,7 +1303,7 @@ MIT. See LICENSE for details
 
 <!-- references -->
 
-[circleci-badge]: https://img.shields.io/circleci/build/github/azagniotov/stubby4j/master.svg
+[circleci-badge]: https://circleci.com/gh/azagniotov/stubby4j.svg?style=shield
 [circleci-link]: https://circleci.com/gh/azagniotov/stubby4j
 
 [codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg
