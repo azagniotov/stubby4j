@@ -1,4 +1,8 @@
-#### 6.0.3-SNAPSHOT
+#### 6.0.4-SNAPSHOT
+
+#### 6.0.3
+
+* Pull request #107 - Update SnakeYAML dependency from 1.23 to 1.26 (https://github.com/josephearl)
 
 #### 6.0.2
 
