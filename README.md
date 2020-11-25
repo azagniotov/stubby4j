@@ -1,5 +1,4 @@
-[![Travis build master branch][travis-badge]][travis-link]
-[![VersionEye Dependency status][versioneye-badge]][versioneye-link]
+[![CircleCI build master branch][circleci-badge]][circleci-link]
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
@@ -1304,11 +1303,8 @@ MIT. See LICENSE for details
 
 <!-- references -->
 
-[travis-badge]: https://img.shields.io/travis/azagniotov/stubby4j/master.svg
-[travis-link]: http://travis-ci.org/azagniotov/stubby4j
-
-[versioneye-badge]: https://img.shields.io/versioneye/d/ruby/rails.svg
-[versioneye-link]: https://www.versioneye.com/user/projects/5812971fd33a710043fba01f
+[circleci-badge]: https://img.shields.io/circleci/build/github/azagniotov/stubby4j/master.svg
+[circleci-link]: https://circleci.com/gh/azagniotov/stubby4j
 
 [codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/azagniotov/stubby4j
