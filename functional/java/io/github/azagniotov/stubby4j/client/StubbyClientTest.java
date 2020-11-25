@@ -212,7 +212,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64("bob:wrong-secret")));
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(String.format(UnauthorizedResponseHandlingStrategy.WRONG_AUTHORIZATION_HEADER_TEMPLATE, "Basic Ym9iOndyb25nLXNlY3JldA==")).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -224,7 +223,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, "blahblahblah=="));
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(String.format(UnauthorizedResponseHandlingStrategy.WRONG_AUTHORIZATION_HEADER_TEMPLATE, "Bearer blahblahblah==")).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -236,7 +234,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.CUSTOM, "CustomAuthorizationName blahblahblah=="));
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(String.format(UnauthorizedResponseHandlingStrategy.WRONG_AUTHORIZATION_HEADER_TEMPLATE, "CustomAuthorizationName blahblahblah==")).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -248,7 +245,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -260,7 +256,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -272,7 +267,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
-        assertThat(UnauthorizedResponseHandlingStrategy.NO_AUTHORIZATION_HEADER).isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -284,9 +278,7 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for GET request at URI /item/888");
     }
-
 
     @Test
     public void doPost_ShouldMakeSuccessfulPost() throws Exception {
@@ -344,10 +336,7 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
-        assertThat(stubbyResponse.getContent()).contains("post body");
     }
-
 
     @Test
     public void doPost_ShouldMakeSuccessfulPost_WhenGivenNullUri() throws Exception {
@@ -358,8 +347,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /");
-        assertThat(stubbyResponse.getContent()).contains("post body");
     }
 
     @Test
@@ -371,8 +358,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "unexpected or wrong post body");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1");
-        assertThat(stubbyResponse.getContent()).contains("unexpected or wrong post body");
     }
 
     @Test
@@ -384,7 +369,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(stubbyResponse.getContent()).contains("(404) Nothing found for POST request at URI /item/1");
     }
 
     @Test
@@ -463,7 +447,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat("POST request on URI / was empty").isEqualTo(stubbyResponse.getContent());
     }
 
     @Test
@@ -475,7 +458,6 @@ public class StubbyClientTest {
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);
 
         assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(stubbyResponse.getContent()).isEqualTo("POST request on URI / was empty");
     }
 
     @Test
