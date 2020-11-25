@@ -1,8 +1,12 @@
-#### 6.0.5-SNAPSHOT
+#### 6.0.6-SNAPSHOT
+
+#### 6.0.5
+
+* Pull request #116 - Upgraded jetty to `9.4.20.v20190813` (https://github.com/azagniotov)
 
 #### 6.0.4
 
-* Pull request #112 - Bumped up Jetty two minor versions up to `9.4.11.v20180605` (https://github.com/azagniotov)
+* Pull request #112 - Upgraded jetty to `9.4.11.v20180605` (https://github.com/azagniotov)
 
 #### 6.0.3
 
