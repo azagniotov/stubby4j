@@ -143,7 +143,7 @@ Run `gradle cobertura` command to:
 * jetty-server:9.4.9.v20180320
 * jetty-servlets:9.4.9.v20180320
 * commons-cli:1.2
-* snakeyaml:1.23
+* snakeyaml:1.26
 * jsonassert:1.3.0
 * xmlunit-core:2.5.1
 * ehcache:3.5.2

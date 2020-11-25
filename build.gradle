@@ -10,7 +10,7 @@ description = 'Gradle configuration for stubby4j'
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
+        maven { url "https://repo.maven.apache.org/maven2" }
         jcenter()
     }
     dependencies {
