@@ -138,15 +138,7 @@ Run `gradle cobertura` command to:
 
 ## Third-party dependencies
 
-* __javax.servlet-api:3.1.0__
-* jetty-server:9.4.9.v20180320
-* jetty-servlets:9.4.9.v20180320
-* commons-cli:1.2
-* snakeyaml:1.26
-* jsonassert:1.3.0
-* xmlunit-core:2.5.1
-* ehcache:3.5.2
-* slf4j-api:1.7.25
+* Check the `conf/gradle/dependency.gradle`
 
 
 ## Adding stubby4j to your project
