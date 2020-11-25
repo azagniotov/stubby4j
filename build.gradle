@@ -31,7 +31,7 @@ subprojects {
         repositories {
             mavenLocal()
             maven { url "https://repo.maven.apache.org/maven2" }
-            jcenter()
+            jcenter { url "https://jcenter.bintray.com" }
         }
         sourceCompatibility = 1.8
         targetCompatibility = 1.8

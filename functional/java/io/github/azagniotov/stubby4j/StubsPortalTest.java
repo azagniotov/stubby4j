@@ -918,9 +918,9 @@ public class StubsPortalTest {
     public void shouldReturnReplacedValueInLocationHeaderWhenQueryParamHasDynamicToken() throws Exception {
 
         expectedException.expect(UnknownHostException.class);
-        expectedException.expectMessage("alex.com");
+        expectedException.expectMessage("hostDoesNotExist123.com");
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://alex.com/app/very/cool");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://hostDoesNotExist123.com/app/very/cool");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         request.execute();
