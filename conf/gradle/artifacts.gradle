@@ -71,7 +71,7 @@ task skinnyJar(type: Jar) {
     from sourceSets.main.output
 
     doLast {
-        println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDir
+        println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDirs.asPath
     }
 }
 
