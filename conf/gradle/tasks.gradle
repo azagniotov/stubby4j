@@ -41,6 +41,4 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
-}
+test.outputs.upToDateWhen {false}
