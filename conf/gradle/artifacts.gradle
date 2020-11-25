@@ -96,7 +96,7 @@ task noJettyJar(type: Jar) {
     }
 }
 
-task javadocJar(type: Jar, overwrite: true) {
+task javadocJar(type: Jar) {
     description = 'Creates a Javadoc JAR of stubby4j'
     baseName = "${stubbyProjectName}"
     version = "${version}"
@@ -106,7 +106,7 @@ task javadocJar(type: Jar, overwrite: true) {
     from project(":main").tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
 }
 
-task sourceJar(type: Jar, overwrite: true) {
+task sourceJar(type: Jar) {
     description = 'Creates a Source JAR of stubby4j'
     baseName = "${stubbyProjectName}"
     version = "${version}"
