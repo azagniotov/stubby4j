@@ -61,7 +61,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 #### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
-* version >= 4.0.0:  Oracle JRE v1.8.0_60
+* version >= 4.0.0:  Oracle JRE v1.8 or OpenJDK 1.8
 * version >= 3.0.0:  Oracle JRE v1.7.0_76
 * version = 2.0.22: Oracle JRE v1.7.0_04
 * version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
@@ -124,7 +124,7 @@ For more information and more complex examples, please dive into the rest of doc
 
 
 ## Building
-stubby4j is a multi-module Gradle project
+stubby4j is a multi-module Gradle v6.2.2 project
 
 Run `./gradlew` command to:
 * Clean
