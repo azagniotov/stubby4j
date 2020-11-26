@@ -1,4 +1,7 @@
-apply plugin: 'maven'
+// https://docs.gradle.org/6.4.1/userguide/upgrading_version_5.html#legacy_publication_system_is_deprecated_and_replaced_with_the_publish_plugins
+// The uploadArchives task and the maven plugin are deprecated.
+// https://docs.gradle.org/6.2.2/userguide/publishing_maven.html#publishing_maven
+apply plugin: 'maven-publish'
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 //apply from: "$rootDir/conf/gradle/pmd.gradle"
 //apply from: "$rootDir/conf/gradle/jdepend.gradle"
@@ -20,7 +23,7 @@ sourceSets {
 task installLocally(type: Upload, dependsOn: [assemble, install]) {
     repositories.mavenInstaller {
         configuration = configurations.archives
-        pom.version = "$version"
+        pom.version = "$stubbyProjectVersion"
         pom.artifactId = "$stubbyProjectName"
         pom.groupId = "$stubbyProjectGroup"
         pom.packaging = "jar"
