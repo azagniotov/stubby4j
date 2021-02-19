@@ -3,6 +3,7 @@ package io.github.azagniotov.stubby4j.stubs;
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
 import io.github.azagniotov.stubby4j.utils.CollectionUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
@@ -178,9 +179,9 @@ public class StubRequest implements ReflectableStub {
     @VisibleForTesting
     boolean isRequestBodyStubbed() {
         return isSet(this.getPostBody()) &&
-                (getMethod().contains("POST") ||
-                        getMethod().contains("PUT") ||
-                        getMethod().contains("PATCH"));
+                (getMethod().contains(HttpMethod.POST.asString()) ||
+                        getMethod().contains(HttpMethod.PUT.asString()) ||
+                        getMethod().contains(HttpMethodExtended.PATCH.asString()));
     }
 
     public void compileRegexPatternsAndCache() {

@@ -8,6 +8,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -1037,5 +1038,44 @@ public class StubsPortalTest {
                 System.out.println(actualConsoleOutput);
             }
         }
+    }
+
+    @Test
+    public void should_RespondWithNotFound_WhenPatchRequestWithBodyMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-failure-request.json");
+        assertThat(jsonContentUrl).isNotNull();
+        final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
+
+        final HttpResponse response = request.execute();
+        final HttpHeaders headers = response.getHeaders();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+    }
+
+    @Test
+    public void should_RespondWithNotFound_WhenPatchRequestWithoutBodyMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl);
+        final HttpResponse response = request.execute();
+        final HttpHeaders headers = response.getHeaders();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+
+        final String responseContent = response.parseAsString().trim();
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-success-response.json");
+        assertThat(jsonContentUrl).isNotNull();
+        final String expectedResponseContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        assertThat(responseContent).isEqualTo(expectedResponseContent);
     }
 }

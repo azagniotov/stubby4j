@@ -49,7 +49,7 @@ class StubMatcher {
             return false;
         }
         ANSITerminal.info(String.format("Matched on URL [%s] WITH [%s]", stubbedRequest.getUri(), assertingRequest.getUri()));
-        LOGGER.info("Matched on URL [%s] WITH [%s].", stubbedRequest.getUri(), assertingRequest.getUri());
+        LOGGER.info(String.format("Matched on URL [%s] WITH [%s].", stubbedRequest.getUri(), assertingRequest.getUri()));
 
         if (!listsIntersect(stubbedRequest.getMethod(), assertingRequest.getMethod())) {
             ANSITerminal.error(String.format("Failed to match on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
@@ -190,7 +190,7 @@ class StubMatcher {
 
     private boolean jsonMatch(final String stubbedJson, final String assertingJson) {
         try {
-            boolean passed = JSONCompare.compareJSON(stubbedJson, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
+            final boolean passed = JSONCompare.compareJSON(stubbedJson, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
             if (passed) {
                 return true;
             } else {

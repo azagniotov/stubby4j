@@ -13,5 +13,7 @@ dependencies {
     testImplementation "junit:junit:4.12"
     testImplementation "org.mockito:mockito-core:2.4.1"
     testImplementation "com.google.truth:truth:0.31"
-    testImplementation "com.google.http-client:google-http-client:1.22.0"
+
+    // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+    testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
 }
