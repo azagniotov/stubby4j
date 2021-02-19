@@ -1,4 +1,8 @@
-#### 7.0.2-SNAPSHOT
+#### 7.0.3-SNAPSHOT
+
+#### 7.0.2
+
+* Pull request #126 - Enabled support for multiple `PATCH` method requests (https://github.com/azagniotov)
 
 #### 7.0.1
 
