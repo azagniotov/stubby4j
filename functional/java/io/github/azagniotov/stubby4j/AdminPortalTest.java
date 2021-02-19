@@ -36,9 +36,9 @@ public class AdminPortalTest {
         ANSITerminal.muteConsole(true);
 
         final URL url = AdminPortalTest.class.getResource("/yaml/stubs.yaml");
-        final InputStream stubsDatanputStream = url.openStream();
-        stubsData = StringUtils.inputStreamToString(stubsDatanputStream);
-        stubsDatanputStream.close();
+        final InputStream stubsDataInputStream = url.openStream();
+        stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
+        stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
     }
@@ -155,12 +155,7 @@ public class AdminPortalTest {
         final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse httpResponse = httpGetRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
-        final String expectedMessage = String.format("Stub request index#%s does not exist, cannot display", invalidIndex);
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -171,12 +166,7 @@ public class AdminPortalTest {
         final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse httpResponse = httpGetRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
-        final String expectedMessage = String.format("Stub request uuid#%s does not exist, cannot display", nonExistentUuid);
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -201,10 +191,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo("PUT request on URI /1 was empty");
     }
 
     @Test
@@ -216,10 +203,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo("PUT request on URI /" + uuid + " was empty");
     }
 
     @Test
@@ -230,12 +214,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
-        final String expectedMessage = String.format("Stub request index#%s does not exist, cannot update", invalidIndex);
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -246,12 +225,8 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
-        final String expectedMessage = String.format("Stub request uuid#%s does not exist, cannot update", nonExistentUuid);
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -544,12 +519,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
-        final String expectedMessage = String.format("Stub request index#%s does not exist, cannot delete", invalidIndex);
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -603,12 +573,7 @@ public class AdminPortalTest {
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
 
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
-        final String statusMessage = httpDeleteResponse.getStatusMessage().trim();
-
-        final String expectedMessage = "Stub request uuid#this-uuid-does-not-exist does not exist, cannot delete";
-
         assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
     }
 
     @Test
@@ -667,10 +632,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
-        assertThat(statusMessage).isEqualTo("POST request on URI / was empty");
     }
 
     @Test
@@ -680,14 +642,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, "unparseable rubbish post content");
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        final String statusMessage = httpResponse.getStatusMessage().trim();
-        final String responseMessage = httpResponse.parseAsString().trim();
-
-        final String expectedMessage = "Problem handling request in Admin handler: java.io.IOException: Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML";
-
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        assertThat(statusMessage).isEqualTo(expectedMessage);
-        assertThat(responseMessage).contains(expectedMessage);
     }
 
     @Test

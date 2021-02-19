@@ -6,11 +6,11 @@ final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
         .ofPattern("yyyy-MM-dd HH:mm:ssZ")
         .withZone(ZoneOffset.systemDefault())
 
-project.ext.dependenciesWithJetty = configurations.compile.resolve().findAll { file ->
+project.ext.dependenciesWithJetty = configurations.compileClasspath.resolve().findAll { file ->
     return /*!file.name.contains("servlet-api") && */ !file.name.contains("-sources")
 }
 
-project.ext.jettylessDependencies = configurations.compile.resolve().findAll { file ->
+project.ext.jettylessDependencies = configurations.compileClasspath.resolve().findAll { file ->
     return !file.name.contains("jetty") && !file.name.contains("-sources")
 }
 
@@ -20,7 +20,7 @@ project.ext.projectManifest = manifest {
             'Package': 'io.github.azagniotov.stubby4j',
             'Class-Path': manifestClasspath,
             'Implementation-Title': "${stubbyProjectName}",
-            'Implementation-Version': "${version}",
+            'Implementation-Version': "${stubbyProjectVersion}",
             'Implementation-Vendor': 'Alexander Zagniotov',
             'Built-By': 'Alexander Zagniotov',
             'Built-Date': DATE_TIME_FORMATTER.format(Instant.now()),
@@ -34,7 +34,7 @@ project.ext.projectManifestNoJetty = manifest {
             'Package': 'io.github.azagniotov.stubby4j',
             'Class-Path': manifestClasspath,
             'Implementation-Title': "${stubbyProjectName}",
-            'Implementation-Version': "${version}",
+            'Implementation-Version': "${stubbyProjectVersion}",
             'Implementation-Vendor': 'Alexander Zagniotov',
             'Built-By': 'Alexander Zagniotov',
             'Built-Date': DATE_TIME_FORMATTER.format(Instant.now()),
@@ -43,9 +43,10 @@ project.ext.projectManifestNoJetty = manifest {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     description = 'Creates a shaded/uberjar/fatjar of stubby4j'
-    archiveName = "${stubbyProjectName}-${version}.jar"
-    destinationDir = file(project(':').libsDir.path)
+    archiveFileName = "${stubbyProjectName}-${stubbyProjectVersion}.jar"
+    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifest
     from sourceSets.main.output
     from(project.ext.dependenciesWithJetty.collect { zipTree(it) }) {
@@ -62,26 +63,27 @@ jar {
 
 task skinnyJar(type: Jar) {
     description = 'Creates a skinny/no-dependencies of stubby4j'
-    baseName = "${stubbyProjectName}"
-    version = "${version}"
-    classifier = "no-dependencies"
-    extension = "jar"
-    destinationDir = file(project(':').libsDir.path)
+    archiveBaseName = "${stubbyProjectName}"
+    archiveVersion = "${stubbyProjectVersion}"
+    archiveClassifier = "no-dependencies"
+    archiveExtension = "jar"
+    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifest
     from sourceSets.main.output
 
     doLast {
-        println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDir
+        println ":" + name + " Packaged classes for skinny JARs from: " + sourceSets.main.output.classesDirs.asPath
     }
 }
 
 task noJettyJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     description = 'Creates a shaded/uberjar/fatjar of stubby4j WITHOUT Jetty classes'
-    baseName = "${stubbyProjectName}"
-    version = "${version}"
-    classifier = "no-jetty"
-    extension = "jar"
-    destinationDir = file(project(':').libsDir.path)
+    archiveBaseName = "${stubbyProjectName}"
+    archiveVersion = "${stubbyProjectVersion}"
+    archiveClassifier = "no-jetty"
+    archiveExtension = "jar"
+    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifestNoJetty
     from sourceSets.main.output
     from(project.ext.jettylessDependencies.collect { zipTree(it) }) {
@@ -96,23 +98,23 @@ task noJettyJar(type: Jar) {
     }
 }
 
-task javadocJar(type: Jar, overwrite: true) {
+task javadocJar(type: Jar) {
     description = 'Creates a Javadoc JAR of stubby4j'
-    baseName = "${stubbyProjectName}"
-    version = "${version}"
-    classifier = "javadoc"
-    extension = "jar"
-    destinationDir = file(project(':').libsDir.path)
+    archiveBaseName = "${stubbyProjectName}"
+    archiveVersion = "${stubbyProjectVersion}"
+    archiveClassifier = "javadoc"
+    archiveExtension = "jar"
+    destinationDirectory = file(project(':').libsDirectory)
     from project(":main").tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
 }
 
-task sourceJar(type: Jar, overwrite: true) {
+task sourceJar(type: Jar) {
     description = 'Creates a Source JAR of stubby4j'
-    baseName = "${stubbyProjectName}"
-    version = "${version}"
-    classifier = "sources"
-    extension = "jar"
-    destinationDir = file(project(':').libsDir.path)
+    archiveBaseName = "${stubbyProjectName}"
+    archiveVersion = "${stubbyProjectVersion}"
+    archiveClassifier = "sources"
+    archiveExtension = "jar"
+    destinationDirectory = file(project(':').libsDirectory)
     from sourceSets.main.allSource
 }
 

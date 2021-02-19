@@ -10,7 +10,7 @@ description = 'Gradle configuration for stubby4j'
 buildscript {
     repositories {
         mavenLocal()
-        mavenCentral()
+        maven { url "https://repo.maven.apache.org/maven2" }
         jcenter()
     }
     dependencies {
@@ -30,8 +30,8 @@ subprojects {
     subproject ->
         repositories {
             mavenLocal()
-            mavenCentral()
-            jcenter()
+            maven { url "https://repo.maven.apache.org/maven2" }
+            jcenter { url "https://jcenter.bintray.com" }
         }
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
@@ -47,3 +47,4 @@ subprojects {
 
 apply from: "$rootDir/conf/gradle/ides.gradle"
 apply from: "$rootDir/conf/gradle/tasks.gradle"
+

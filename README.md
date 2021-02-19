@@ -1,5 +1,4 @@
-[![Travis build master branch][travis-badge]][travis-link]
-[![VersionEye Dependency status][versioneye-badge]][versioneye-link]
+[![CircleCI build master branch][circleci-badge]][circleci-link]
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
@@ -15,7 +14,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v6.0.1
+## User manual for stubby4j v7.0.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -62,7 +61,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 #### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
-* version >= 4.0.0:  Oracle JRE v1.8.0_60
+* version >= 4.0.0:  Oracle JRE v1.8 or OpenJDK 1.8
 * version >= 3.0.0:  Oracle JRE v1.7.0_76
 * version = 2.0.22: Oracle JRE v1.7.0_04
 * version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
@@ -125,29 +124,21 @@ For more information and more complex examples, please dive into the rest of doc
 
 
 ## Building
-stubby4j is a multi-module Gradle project
+stubby4j is a multi-module Gradle v6.2.2 project
 
-Run `gradle` command to:
+Run `./gradlew` command to:
 * Clean
 * Run unit, integration and functional tests without Cobertura
 * Build (the generated JAR artifacts will be located under `<PROJECT_ROOT>/build/libs/`)
 
-Run `gradle cobertura` command to:
+Run `./gradlew cobertura` command to:
 * Clean
 * Generate Cobertura report under the `<PROJECT_ROOT>/main/build/reports/cobertura/`
 
 
 ## Third-party dependencies
 
-* __javax.servlet-api:3.1.0__
-* jetty-server:9.4.9.v20180320
-* jetty-servlets:9.4.9.v20180320
-* commons-cli:1.2
-* snakeyaml:1.20
-* jsonassert:1.3.0
-* xmlunit-core:2.5.1
-* ehcache:3.5.2
-* slf4j-api:1.7.25
+* See the [conf/gradle/dependency.gradle](conf/gradle/dependency.gradle)
 
 
 ## Adding stubby4j to your project
@@ -161,12 +152,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.1")
+compile("io.github.azagniotov:stubby4j:7.0.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.1:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.0.0:no-jetty")
 ```
 
 #### Maven
@@ -174,7 +165,7 @@ compile("io.github.azagniotov:stubby4j:6.0.1:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>6.0.1</version>
+    <version>7.0.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -183,26 +174,26 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>6.0.1</version>
+    <version>7.0.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
 
 ### Installing stubby4j to local .m2 repository
 
-Run `gradle install` command to:
+Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-6.0.2-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/5.2.1-SNAPSHOT/`
+* Install `stubby4j-7.0.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.0.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.2-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.0.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:6.0.2-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.0.1-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1263,7 +1254,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ## Change log
 
-See CHANGELOG for details
+See [CHANGELOG.md](CHANGELOG.md) for details
 
 ## Roadmap
 * Add support for OAuth in Record & Replay feature
@@ -1304,11 +1295,8 @@ MIT. See LICENSE for details
 
 <!-- references -->
 
-[travis-badge]: https://img.shields.io/travis/azagniotov/stubby4j/master.svg
-[travis-link]: http://travis-ci.org/azagniotov/stubby4j
-
-[versioneye-badge]: https://img.shields.io/versioneye/d/ruby/rails.svg
-[versioneye-link]: https://www.versioneye.com/user/projects/5812971fd33a710043fba01f
+[circleci-badge]: https://circleci.com/gh/azagniotov/stubby4j.svg?style=shield
+[circleci-link]: https://circleci.com/gh/azagniotov/stubby4j
 
 [codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/azagniotov/stubby4j

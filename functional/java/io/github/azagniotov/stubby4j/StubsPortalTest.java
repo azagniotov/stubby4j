@@ -165,10 +165,7 @@ public class StubsPortalTest {
             String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
             HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
             HttpResponse response = request.execute();
-            String responseContent = response.parseAsString().trim();
 
-            final String errorMessage = String.format("(404) Nothing found for GET request at URI %s", assertingRequest);
-            assertThat(responseContent).contains(errorMessage);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
         }
     }
@@ -420,10 +417,8 @@ public class StubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active");
         final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
-        final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
     }
 
     @Test
@@ -448,11 +443,8 @@ public class StubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active");
         final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
-        final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
-
     }
 
     @Test
@@ -508,10 +500,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
     }
 
     @Test
@@ -527,10 +516,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
     }
 
     @Test
@@ -588,10 +574,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
     }
 
     @Test
@@ -607,10 +590,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
     }
 
     @Test
@@ -918,9 +898,9 @@ public class StubsPortalTest {
     public void shouldReturnReplacedValueInLocationHeaderWhenQueryParamHasDynamicToken() throws Exception {
 
         expectedException.expect(UnknownHostException.class);
-        expectedException.expectMessage("alex.com");
+        expectedException.expectMessage("hostDoesNotExist123.com");
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://alex.com/app/very/cool");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://hostDoesNotExist123.com/app/very/cool");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         request.execute();
@@ -1022,12 +1002,7 @@ public class StubsPortalTest {
 
         final HttpHeaders headers = response.getHeaders();
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
-
-        String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).contains("(404) Nothing found for GET request at URI /recordable/feed/2");
-        assertThat(responseContent).contains("language=russian");
-        assertThat(responseContent).contains("greeting=nihao");
     }
 
     @Test

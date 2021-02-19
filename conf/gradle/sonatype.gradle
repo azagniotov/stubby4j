@@ -9,11 +9,11 @@ extraArchive {
 uploadArchives {
 
    doFirst {
-      def doSign = !"${version}".contains('SNAPSHOT')
+      def doSign = !"${stubbyProjectVersion}".contains('SNAPSHOT')
       if (!doSign) {
          def error = "\n"
          error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
-         error += ":::     ATTENTION: Latest development version is ${version}     :::\n"
+         error += ":::     ATTENTION: Latest development version is ${stubbyProjectVersion}     :::\n"
          error += ":::         Remove the '-SNAPSHOT' before signing artifacts         :::\n"
          error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
          error += "\n"
@@ -23,7 +23,7 @@ uploadArchives {
 
    repositories {
       mavenDeployer {
-         pom.version = "$version"
+         pom.version = "$stubbyProjectVersion"
          pom.artifactId = "$stubbyProjectName"
          pom.groupId = "$stubbyProjectGroup"
          modifyPom {
