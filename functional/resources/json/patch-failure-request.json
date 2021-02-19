@@ -1,0 +1,14 @@
+{
+  "identifier": {
+    "identifierTyp": "IDENTIFIER",
+    "identifierVal": "1234567890"
+  },
+  "permissions": {
+    "PERMISSION.PERMISSION1": {
+      "value": "ABC"
+    }
+  },
+  "extra": {
+    "extraId": "54"
+  }
+}
