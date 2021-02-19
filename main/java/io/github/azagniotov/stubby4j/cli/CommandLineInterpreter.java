@@ -66,7 +66,7 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("s", OPTION_CLIENTPORT, true, "Port for stub portal. Defaults to 8882.");
         OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
         OPTIONS.addOption("t", OPTION_TLSPORT, true, "Port for TLS connection. Defaults to 7443.");
-        OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Valid YAML 1.1 expected.");
+        OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Data file to pre-load endpoints. Optional valid YAML 1.1 is expected. If YAML is not provided, you will be expected to configure stubs via the stubby4j HTTP POST API.");
         OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom TLS. By default TLS is enabled using internal keystore.");
         OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
         OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
