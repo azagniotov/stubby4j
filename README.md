@@ -204,8 +204,10 @@ usage:
        [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t
        <arg>] [-v] [-w]
  -a,--admin <arg>             Port for admin portal. Defaults to 8889.
- -d,--data <arg>              Data file to pre-load endpoints. Valid YAML
-                              1.1 expected.
+ -d,--data <arg>              Data file to pre-load endpoints. Optional
+                              valid YAML 1.1 is expected. If YAML is not
+                              provided, you will be expected to configure
+                              stubs via the stubby4j HTTP POST API.
  -da,--disable_admin_portal   Does not start Admin portal
  -ds,--disable_ssl            Does not enable SSL connections
  -h,--help                    This help text.

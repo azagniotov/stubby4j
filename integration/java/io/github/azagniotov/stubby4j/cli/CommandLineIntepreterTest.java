@@ -35,8 +35,11 @@ public class CommandLineIntepreterTest {
                 "       [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t" + BR +
                 "       <arg>] [-v] [-w]" + BR +
                 " -a,--admin <arg>             Port for admin portal. Defaults to 8889." + BR +
-                " -d,--data <arg>              Data file to pre-load endpoints. Valid YAML" + BR +
-                "                              1.1 expected." + BR +
+                " -d,--data <arg>              Data file to pre-load endpoints. Data file" + BR +
+                "                              to pre-load endpoints. Optional valid YAML" + BR +
+                "                              1.1 is expected. If YAML is not provided," + BR +
+                "                              you will be expected to configure stubs via" + BR +
+                "                              the stubby4j HTTP POST API." + BR +
                 " -da,--disable_admin_portal   Does not start Admin portal" + BR +
                 " -ds,--disable_ssl            Does not enable SSL connections" + BR +
                 " -h,--help                    This help text." + BR +
