@@ -1,4 +1,8 @@
-#### 7.0.1-SNAPSHOT
+#### 7.0.2-SNAPSHOT
+
+#### 7.0.1
+
+* Pull request #104 and #123 - Support YAML-less start (https://github.com/LenarBad)
 
 #### 7.0.0
 
