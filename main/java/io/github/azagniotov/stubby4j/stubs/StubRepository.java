@@ -358,6 +358,13 @@ public class StubRepository {
         stubs.add(index, newStub);
         updateResourceIDHeaders();
 
+        // If deleted stub url is a regex, i.e.: ^/resources/asn/.*$, then we need
+        // to clear from the cache all the keys (i.e.: URLs) that match that regex,
+        // since we cache stubs by the incoming HTTP request url
+        if (!this.stubMatchesCache.clearByKey(deletedStub.getUrl())) {
+            this.stubMatchesCache.clearByRegexKey(deletedStub.getUrl());
+        }
+
         if (StringUtils.isSet(deletedStub.getUUID())) {
             uuidToStub.remove(deletedStub.getUUID());
         }
