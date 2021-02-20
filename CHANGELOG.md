@@ -1,4 +1,32 @@
-#### 6.0.2-SNAPSHOT
+#### 7.0.3-SNAPSHOT
+
+#### 7.0.2
+
+* Pull request #126 - Enabled support for multiple `PATCH` method requests (https://github.com/azagniotov)
+
+#### 7.0.1
+
+* Pull request #104 and #123 - Support YAML-less start (https://github.com/LenarBad)
+
+#### 7.0.0
+
+* Pull request #118 - Upgraded jetty to `9.4.31.v20200723` (https://github.com/azagniotov)
+
+#### 6.0.5
+
+* Pull request #116 - Upgraded jetty to `9.4.20.v20190813` (https://github.com/azagniotov)
+
+#### 6.0.4
+
+* Pull request #112 - Upgraded jetty to `9.4.11.v20180605` (https://github.com/azagniotov)
+
+#### 6.0.3
+
+* Pull request #107 - Update SnakeYAML dependency from 1.23 to 1.26 (https://github.com/josephearl)
+
+#### 6.0.2
+
+* Pull request #105 - Update org.yaml:snakeyaml:1.23, which resolves issue #100 (https://github.com/moleksyuk)
 
 #### 6.0.1
 

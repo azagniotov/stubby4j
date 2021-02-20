@@ -745,3 +745,25 @@
       body: >
          {"status" : "OK"}
 
+
+-  request:
+      method: PATCH
+      url: /simulator/content/v1/url/one
+      file: ../json/patch-failure-request.json
+
+   response:
+      headers:
+         content-type: application/json
+      status: 200
+
+
+-  request:
+      method: PATCH
+      url: /simulator/content/v1/url/one
+
+   response:
+      status: 200
+      headers:
+         content-type: application/json
+      file: ../json/patch-success-response.json
+

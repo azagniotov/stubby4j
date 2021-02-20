@@ -58,7 +58,7 @@ public final class StubsResponseHandlingStrategyFactory {
                   behaviors of 302 and 301, but do not allow the HTTP method to change. So, for example, submitting a
                   form to a permanently redirected resource may continue smoothly.
                  */
-            case PERMANET_REDIRECT:
+            case PERMANENT_REDIRECT:
                 return new RedirectResponseHandlingStrategy(foundStubResponse);
         }
 

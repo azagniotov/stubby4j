@@ -8,6 +8,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -165,10 +166,7 @@ public class StubsPortalTest {
             String requestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
             HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
             HttpResponse response = request.execute();
-            String responseContent = response.parseAsString().trim();
 
-            final String errorMessage = String.format("(404) Nothing found for GET request at URI %s", assertingRequest);
-            assertThat(responseContent).contains(errorMessage);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
         }
     }
@@ -420,10 +418,8 @@ public class StubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active");
         final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
-        final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
     }
 
     @Test
@@ -448,11 +444,8 @@ public class StubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active");
         final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
-        final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for GET request at URI /invoice?status=active");
-
     }
 
     @Test
@@ -508,10 +501,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
     }
 
     @Test
@@ -527,10 +517,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for PUT request at URI /invoice/123");
     }
 
     @Test
@@ -588,10 +575,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
     }
 
     @Test
@@ -607,10 +591,7 @@ public class StubsPortalTest {
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
-        final String responseContentAsString = response.parseAsString().trim();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
-        assertThat(responseContentAsString).contains("(404) Nothing found for POST request at URI /invoice/new");
     }
 
     @Test
@@ -918,9 +899,9 @@ public class StubsPortalTest {
     public void shouldReturnReplacedValueInLocationHeaderWhenQueryParamHasDynamicToken() throws Exception {
 
         expectedException.expect(UnknownHostException.class);
-        expectedException.expectMessage("alex.com");
+        expectedException.expectMessage("hostDoesNotExist123.com");
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://alex.com/app/very/cool");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://hostDoesNotExist123.com/app/very/cool");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         request.execute();
@@ -1022,12 +1003,7 @@ public class StubsPortalTest {
 
         final HttpHeaders headers = response.getHeaders();
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
-
-        String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).contains("(404) Nothing found for GET request at URI /recordable/feed/2");
-        assertThat(responseContent).contains("language=russian");
-        assertThat(responseContent).contains("greeting=nihao");
     }
 
     @Test
@@ -1062,5 +1038,44 @@ public class StubsPortalTest {
                 System.out.println(actualConsoleOutput);
             }
         }
+    }
+
+    @Test
+    public void should_RespondWithNotFound_WhenPatchRequestWithBodyMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-failure-request.json");
+        assertThat(jsonContentUrl).isNotNull();
+        final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
+
+        final HttpResponse response = request.execute();
+        final HttpHeaders headers = response.getHeaders();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+    }
+
+    @Test
+    public void should_RespondWithNotFound_WhenPatchRequestWithoutBodyMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl);
+        final HttpResponse response = request.execute();
+        final HttpHeaders headers = response.getHeaders();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+
+        final String responseContent = response.parseAsString().trim();
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-success-response.json");
+        assertThat(jsonContentUrl).isNotNull();
+        final String expectedResponseContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        assertThat(responseContent).isEqualTo(expectedResponseContent);
     }
 }

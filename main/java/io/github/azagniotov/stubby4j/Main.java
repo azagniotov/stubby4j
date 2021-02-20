@@ -32,8 +32,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +52,8 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 public final class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    private static final String DEFAULT_CONFIG_FILE = "/yaml/empty-stub.yaml";
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(5);
     private static CommandLineInterpreter commandLineInterpreter;
@@ -62,7 +72,6 @@ public final class Main {
             return;
         }
 
-        verifyYamlDataProvided();
         startStubby4jUsingCommandLineArgs();
     }
 
@@ -98,18 +107,6 @@ public final class Main {
         return true;
     }
 
-    private static void verifyYamlDataProvided() {
-        if (commandLineInterpreter.isYamlProvided()) {
-            return;
-        }
-        final String msg =
-                String.format("YAML data was not provided using command line option '--%s'. %s"
-                                + "To see all command line options run again with option '--%s'",
-                        CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
-
-        throw new IllegalArgumentException(msg);
-    }
-
     private static void startStubby4jUsingCommandLineArgs() {
         try {
 
@@ -120,8 +117,7 @@ public final class Main {
             ANSITerminal.muteConsole(commandLineInterpreter.isMute());
             ConsoleUtils.enableDebug(commandLineInterpreter.isDebug());
 
-            final File configFile = new File(configFilename);
-
+            final File configFile = buildYamlConfigFile(configFilename);
             final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
                 try {
                     return new YamlParser().parse(configFile.getParent(), configFile);
@@ -148,6 +144,30 @@ public final class Main {
                     String.format("Could not init stubby4j, error: %s", ex.toString());
 
             throw new IllegalStateException(msg, ex);
+        }
+    }
+
+    private static File buildYamlConfigFile(final String configFilename) throws IOException {
+
+        if (!commandLineInterpreter.isYamlProvided()) {
+            final String msg =
+               String.format("[WARNING] YAML data was not provided using command line option '--%s'." +
+                     " Is this intentional??? %s"
+                     + "To see all command line options run again with option '--%s'",
+                  CommandLineInterpreter.OPTION_CONFIG, BR, CommandLineInterpreter.OPTION_HELP);
+
+            ANSITerminal.warn(BR + msg + BR);
+            LOGGER.debug("No YAML config provided upon startup. Is this intentional???");
+
+            final File tempTargetFile = Files.createFile(Paths.get("./empty.yaml")).toFile();
+            try (final InputStream inputStream = Main.class.getResourceAsStream(DEFAULT_CONFIG_FILE)) {
+                Files.copy(inputStream, tempTargetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            tempTargetFile.deleteOnExit();
+            return tempTargetFile;
+        } else {
+            return new File(configFilename);
         }
     }
 }

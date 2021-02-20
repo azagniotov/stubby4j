@@ -3,7 +3,7 @@ apply from: "$rootDir/conf/gradle/pitest.gradle"
 apply from: "$rootDir/conf/gradle/console.gradle"
 
 dependencies {
-   compile project(':main')
+   implementation project(':main')
 }
 
 sourceSets {

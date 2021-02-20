@@ -20,8 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package io.github.azagniotov.stubby4j.utils;
 
 import io.github.azagniotov.stubby4j.annotations.CoberturaIgnore;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.common.Common;
 import org.eclipse.jetty.http.HttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,14 +44,22 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 @SuppressWarnings("serial")
 public final class HandlerUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HandlerUtils.class);
+
     private HandlerUtils() {
 
     }
 
     public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
         response.setStatus(httpStatus);
-        response.sendError(httpStatus, message);
+        // Setting custom error message will no longer work in Jetty versions > 9.4.20, see:
+        // https://github.com/eclipse/jetty.project/issues/4154
+        // response.sendError(httpStatus, message);
+        response.sendError(httpStatus);
         response.flushBuffer();
+
+        ANSITerminal.error(message);
+        LOGGER.error(message);
     }
 
     public static String getHtmlResourceByName(final String templateSuffix) throws IOException {
