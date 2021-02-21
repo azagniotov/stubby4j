@@ -12,35 +12,35 @@ import java.util.jar.Manifest;
  */
 public final class JarUtils {
 
-    private JarUtils() {
+   private JarUtils() {
 
-    }
+   }
 
-    @CoberturaIgnore
-    public static String readManifestImplementationVersion() {
-        final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
-        try {
-            final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
-            final Manifest manifest = new Manifest(url.openStream());
-            return manifest.getMainAttributes().getValue("Implementation-Version");
-        } catch (Exception e) {
-            //Do nothing
-        }
+   @CoberturaIgnore
+   public static String readManifestImplementationVersion() {
+      final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
+      try {
+         final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
+         final Manifest manifest = new Manifest(url.openStream());
+         return manifest.getMainAttributes().getValue("Implementation-Version");
+      } catch (Exception e) {
+         //Do nothing
+      }
 
-        return "x.x.xx";
-    }
+      return "x.x.xx";
+   }
 
-    @CoberturaIgnore
-    public static String readManifestBuiltDate() {
-        final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
-        try {
-            final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
-            final Manifest manifest = new Manifest(url.openStream());
-            return manifest.getMainAttributes().getValue("Built-Date");
-        } catch (Exception e) {
-            //Do nothing
-        }
+   @CoberturaIgnore
+   public static String readManifestBuiltDate() {
+      final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
+      try {
+         final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
+         final Manifest manifest = new Manifest(url.openStream());
+         return manifest.getMainAttributes().getValue("Built-Date");
+      } catch (Exception e) {
+         //Do nothing
+      }
 
-        return DateTimeUtils.systemDefault();
-    }
+      return DateTimeUtils.systemDefault();
+   }
 }

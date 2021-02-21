@@ -34,30 +34,30 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokensInStr
 
 public class RedirectResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
-    private final StubResponse foundStubResponse;
+   private final StubResponse foundStubResponse;
 
-    RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
-        this.foundStubResponse = foundStubResponse;
-    }
+   RedirectResponseHandlingStrategy(final StubResponse foundStubResponse) {
+      this.foundStubResponse = foundStubResponse;
+   }
 
-    @Override
-    public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
-        HandlerUtils.setResponseMainHeaders(response);
-        final Map<String, String> regexGroups = assertionStubRequest.getRegexGroups();
+   @Override
+   public void handle(final HttpServletResponse response, final StubRequest assertionStubRequest) throws Exception {
+      HandlerUtils.setResponseMainHeaders(response);
+      final Map<String, String> regexGroups = assertionStubRequest.getRegexGroups();
 
-        if (StringUtils.isSet(foundStubResponse.getLatency())) {
-            final long latency = Long.parseLong(foundStubResponse.getLatency());
-            TimeUnit.MILLISECONDS.sleep(latency);
-        }
+      if (StringUtils.isSet(foundStubResponse.getLatency())) {
+         final long latency = Long.parseLong(foundStubResponse.getLatency());
+         TimeUnit.MILLISECONDS.sleep(latency);
+      }
 
-        final String headerLocation = foundStubResponse.getHeaders().get("location");
-        if (isTokenized(headerLocation)) {
-            response.setHeader(HttpHeader.LOCATION.asString(), replaceTokensInString(headerLocation, regexGroups));
-        } else {
-            response.setHeader(HttpHeader.LOCATION.asString(), headerLocation);
-        }
+      final String headerLocation = foundStubResponse.getHeaders().get("location");
+      if (isTokenized(headerLocation)) {
+         response.setHeader(HttpHeader.LOCATION.asString(), replaceTokensInString(headerLocation, regexGroups));
+      } else {
+         response.setHeader(HttpHeader.LOCATION.asString(), headerLocation);
+      }
 
-        response.setStatus(foundStubResponse.getHttpStatusCode().getCode());
-        response.setHeader(HttpHeader.CONNECTION.asString(), "close");
-    }
+      response.setStatus(foundStubResponse.getHttpStatusCode().getCode());
+      response.setHeader(HttpHeader.CONNECTION.asString(), "close");
+   }
 }

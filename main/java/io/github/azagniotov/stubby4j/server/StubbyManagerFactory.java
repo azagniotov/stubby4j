@@ -36,40 +36,40 @@ import java.util.concurrent.CompletableFuture;
 
 public class StubbyManagerFactory {
 
-    public StubbyManagerFactory() {
+   public StubbyManagerFactory() {
 
-    }
+   }
 
-    public synchronized StubbyManager construct(final File configFile,
-                                                final Map<String, String> commandLineArgs,
-                                                final CompletableFuture<YamlParseResultSet> stubLoadComputation) throws Exception {
+   public synchronized StubbyManager construct(final File configFile,
+                                               final Map<String, String> commandLineArgs,
+                                               final CompletableFuture<YamlParseResultSet> stubLoadComputation) throws Exception {
 
-        // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
-        Log.setLog(new EmptyLogger());
+      // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
+      Log.setLog(new EmptyLogger());
 
-        final StubRepository stubRepository = new StubRepository(configFile, stubLoadComputation);
-        final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);
-        final Server server = jettyFactory.construct();
+      final StubRepository stubRepository = new StubRepository(configFile, stubLoadComputation);
+      final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);
+      final Server server = jettyFactory.construct();
 
-        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
-            final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
-            final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
-            watchDataStore(stubRepository, watchScanTime);
-        }
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_WATCH)) {
+         final String watchValue = commandLineArgs.get(CommandLineInterpreter.OPTION_WATCH);
+         final long watchScanTime = ObjectUtils.isNotNull(watchValue) ? Long.parseLong(watchValue) : 100;
+         watchDataStore(stubRepository, watchScanTime);
+      }
 
-        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
-            ANSITerminal.muteConsole(true);
-        }
+      if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE)) {
+         ANSITerminal.muteConsole(true);
+      }
 
-        return new StubbyManager(server, jettyFactory, stubRepository);
-    }
+      return new StubbyManager(server, jettyFactory, stubRepository);
+   }
 
-    private void watchDataStore(final StubRepository stubRepository, final long sleepTime) {
+   private void watchDataStore(final StubRepository stubRepository, final long sleepTime) {
 
-        final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubRepository, sleepTime);
-        new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
+      final MainYamlScanner mainYamlScanner = new MainYamlScanner(stubRepository, sleepTime);
+      new Thread(mainYamlScanner, MainYamlScanner.class.getCanonicalName()).start();
 
-        final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubRepository, sleepTime);
-        new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
-    }
+      final ExternalFilesScanner externalFilesScanner = new ExternalFilesScanner(stubRepository, sleepTime);
+      new Thread(externalFilesScanner, ExternalFilesScanner.class.getCanonicalName()).start();
+   }
 }

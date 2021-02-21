@@ -69,228 +69,228 @@ import static java.util.Optional.ofNullable;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public class YamlParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YamlParser.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(YamlParser.class);
 
-    static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
-    private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
-    private final AtomicInteger parsedStubCounter = new AtomicInteger();
-    private String dataConfigHomeDirectory;
+   static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
+   private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
+   private final AtomicInteger parsedStubCounter = new AtomicInteger();
+   private String dataConfigHomeDirectory;
 
-    @CoberturaIgnore
-    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
-        return parse(dataConfigHomeDirectory, constructInputStream(configContent));
-    }
+   @CoberturaIgnore
+   public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
+      return parse(dataConfigHomeDirectory, constructInputStream(configContent));
+   }
 
-    @CoberturaIgnore
-    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
-        return parse(dataConfigHomeDirectory, constructInputStream(configFile));
-    }
+   @CoberturaIgnore
+   public YamlParseResultSet parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
+      return parse(dataConfigHomeDirectory, constructInputStream(configFile));
+   }
 
-    private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
-        this.dataConfigHomeDirectory = dataConfigHomeDirectory;
+   private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
+      this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
-        final Object loadedConfig = SNAKE_YAML.load(configAsStream);
-        if (!(loadedConfig instanceof List)) {
-            throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
-        }
+      final Object loadedConfig = SNAKE_YAML.load(configAsStream);
+      if (!(loadedConfig instanceof List)) {
+         throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+      }
 
-        final List<StubHttpLifecycle> stubs = new LinkedList<>();
-        final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
+      final List<StubHttpLifecycle> stubs = new LinkedList<>();
+      final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
 
-        final List<Map> httpLifecycleConfigs = asCheckedArrayList(loadedConfig, Map.class);
+      final List<Map> httpLifecycleConfigs = asCheckedArrayList(loadedConfig, Map.class);
 
-        for (final Map rawHttpLifecycleConfig : httpLifecycleConfigs) {
-            final Map<String, Object> httpLifecycleProperties = asCheckedLinkedHashMap(rawHttpLifecycleConfig, String.class, Object.class);
-            final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(httpLifecycleProperties);
+      for (final Map rawHttpLifecycleConfig : httpLifecycleConfigs) {
+         final Map<String, Object> httpLifecycleProperties = asCheckedLinkedHashMap(rawHttpLifecycleConfig, String.class, Object.class);
+         final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(httpLifecycleProperties);
 
-            if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
-                if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
-                    throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
-                }
-                uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+         if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
+            if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
+               throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
             }
-            stubs.add(stubHttpLifecycle);
-        }
+            uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+         }
+         stubs.add(stubHttpLifecycle);
+      }
 
-        return new YamlParseResultSet(stubs, uuidToStubs);
-    }
+      return new YamlParseResultSet(stubs, uuidToStubs);
+   }
 
-    private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
-        final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
+   private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
+      final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
 
-        for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
-            final Object stubTypeValue = stubType.getValue();
-            final String stubTypeKey = stubType.getKey();
+      for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
+         final Object stubTypeValue = stubType.getValue();
+         final String stubTypeKey = stubType.getKey();
 
-            if (DESCRIPTION.isA(stubTypeKey)) {
-                stubBuilder.withDescription((String) stubType.getValue());
-            } else if (UUID.isA(stubTypeKey)) {
-                stubBuilder.withUUID((String) stubType.getValue());
-            } else if (stubTypeValue instanceof Map) {
-                final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+         if (DESCRIPTION.isA(stubTypeKey)) {
+            stubBuilder.withDescription((String) stubType.getValue());
+         } else if (UUID.isA(stubTypeKey)) {
+            stubBuilder.withUUID((String) stubType.getValue());
+         } else if (stubTypeValue instanceof Map) {
+            final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
-                if (REQUEST.isA(stubTypeKey)) {
-                    parseStubbedRequestConfig(stubBuilder, stubbedProperties);
-                } else {
-                    parseStubbedResponseConfig(stubBuilder, stubbedProperties);
-                }
-
-            } else if (stubTypeValue instanceof List) {
-                parseStubbedResponseListConfig(stubBuilder, stubType);
+            if (REQUEST.isA(stubTypeKey)) {
+               parseStubbedRequestConfig(stubBuilder, stubbedProperties);
+            } else {
+               parseStubbedResponseConfig(stubBuilder, stubbedProperties);
             }
-        }
 
-        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
-                .withRequestAsYAML(toYaml(httpLifecycleConfig, REQUEST))
-                .withResponseAsYAML(toYaml(httpLifecycleConfig, RESPONSE))
-                .withResourceId(parsedStubCounter.getAndIncrement())
-                .build();
+         } else if (stubTypeValue instanceof List) {
+            parseStubbedResponseListConfig(stubBuilder, stubType);
+         }
+      }
 
-        logUnmarshalledStub(loadedStub);
+      StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
+         .withRequestAsYAML(toYaml(httpLifecycleConfig, REQUEST))
+         .withResponseAsYAML(toYaml(httpLifecycleConfig, RESPONSE))
+         .withResourceId(parsedStubCounter.getAndIncrement())
+         .build();
 
-        return loadedStub;
-    }
+      logUnmarshalledStub(loadedStub);
 
-    private void parseStubbedRequestConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
-        final StubRequest requestStub = buildReflectableStub(requestProperties, new StubRequest.Builder());
-        requestStub.compileRegexPatternsAndCache();
-        stubBuilder.withRequest(requestStub);
-    }
+      return loadedStub;
+   }
 
-    private void parseStubbedResponseConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
-        final StubResponse responseStub = buildReflectableStub(responseProperties, new StubResponse.Builder());
-        stubBuilder.withResponse(responseStub);
-    }
+   private void parseStubbedRequestConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
+      final StubRequest requestStub = buildReflectableStub(requestProperties, new StubRequest.Builder());
+      requestStub.compileRegexPatternsAndCache();
+      stubBuilder.withRequest(requestStub);
+   }
 
-    private <T extends ReflectableStub, B extends AbstractBuilder<T>> T buildReflectableStub(final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
+   private void parseStubbedResponseConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
+      final StubResponse responseStub = buildReflectableStub(responseProperties, new StubResponse.Builder());
+      stubBuilder.withResponse(responseStub);
+   }
 
-        for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
+   private <T extends ReflectableStub, B extends AbstractBuilder<T>> T buildReflectableStub(final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
 
+      for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
+
+         final String stageableFieldName = propertyPair.getKey();
+         checkStubbedProperty(stageableFieldName);
+
+         final Object rawFieldName = propertyPair.getValue();
+         if (rawFieldName instanceof List) {
+            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(rawFieldName));
+            continue;
+         }
+
+         if (rawFieldName instanceof Map) {
+            final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldName, String.class, String.class);
+            final Map<String, String> headers = configureAuthorizationHeader(rawHeaders);
+            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(headers));
+            continue;
+         }
+
+         if (METHOD.isA(stageableFieldName)) {
+            final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldName)));
+            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(methods));
+            continue;
+         }
+
+         if (FILE.isA(stageableFieldName)) {
+            final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldName);
+            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
+            continue;
+         }
+
+         stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(objectToString(rawFieldName)));
+      }
+
+      return stubTypeBuilder.build();
+   }
+
+   private void parseStubbedResponseListConfig(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) {
+      final List<Map> responseProperties = asCheckedArrayList(httpTypeConfig.getValue(), Map.class);
+
+      stubBuilder.withResponse(buildStubResponseList(responseProperties, new StubResponse.Builder()));
+   }
+
+   private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponse.Builder stubResponseBuilder) {
+      final List<StubResponse> stubResponses = new LinkedList<>();
+
+      for (final Map rawPropertyPairs : responseProperties) {
+         final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
+         for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
             final String stageableFieldName = propertyPair.getKey();
             checkStubbedProperty(stageableFieldName);
 
-            final Object rawFieldName = propertyPair.getValue();
-            if (rawFieldName instanceof List) {
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(rawFieldName));
-                continue;
-            }
-
-            if (rawFieldName instanceof Map) {
-                final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldName, String.class, String.class);
-                final Map<String, String> headers = configureAuthorizationHeader(rawHeaders);
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(headers));
-                continue;
-            }
-
-            if (METHOD.isA(stageableFieldName)) {
-                final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldName)));
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(methods));
-                continue;
-            }
-
             if (FILE.isA(stageableFieldName)) {
-                final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldName);
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
-                continue;
+               final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
+               stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
+            } else {
+               stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(propertyPair.getValue()));
             }
+         }
 
-            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(objectToString(rawFieldName)));
-        }
+         stubResponses.add(stubResponseBuilder.build());
+      }
 
-        return stubTypeBuilder.build();
-    }
+      return stubResponses;
+   }
 
-    private void parseStubbedResponseListConfig(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) {
-        final List<Map> responseProperties = asCheckedArrayList(httpTypeConfig.getValue(), Map.class);
+   private Optional<Object> loadFileContentFromFileUrl(final Object configPropertyNamedFile) {
+      final String filePath = objectToString(configPropertyNamedFile);
+      try {
+         if (isFilePathContainTemplateTokens(new File(filePath))) {
+            return of(new File(dataConfigHomeDirectory, filePath));
+         }
 
-        stubBuilder.withResponse(buildStubResponseList(responseProperties, new StubResponse.Builder()));
-    }
+         return ofNullable(uriToFile(dataConfigHomeDirectory, filePath));
+      } catch (final IOException ex) {
+         ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
+         LOGGER.error(FAILED_TO_LOAD_FILE_ERR, ex);
+      }
 
-    private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponse.Builder stubResponseBuilder) {
-        final List<StubResponse> stubResponses = new LinkedList<>();
+      return Optional.empty();
+   }
 
-        for (final Map rawPropertyPairs : responseProperties) {
-            final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
-            for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
-                final String stageableFieldName = propertyPair.getKey();
-                checkStubbedProperty(stageableFieldName);
+   private String toCompleteYAMLString(final Map<String, Object> httpLifecycleConfig) {
+      final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
+         add(httpLifecycleConfig);
+      }};
 
-                if (FILE.isA(stageableFieldName)) {
-                    final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
-                    stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
-                } else {
-                    stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(propertyPair.getValue()));
-                }
-            }
+      return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
+   }
 
-            stubResponses.add(stubResponseBuilder.build());
-        }
+   private String toYaml(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
+      final Map<String, Object> httpType = new HashMap<String, Object>() {{
+         put(stubName.toString(), httpLifecycleConfig.get(stubName.toString()));
+      }};
 
-        return stubResponses;
-    }
+      return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);
+   }
 
-    private Optional<Object> loadFileContentFromFileUrl(final Object configPropertyNamedFile) {
-        final String filePath = objectToString(configPropertyNamedFile);
-        try {
-            if (isFilePathContainTemplateTokens(new File(filePath))) {
-                return of(new File(dataConfigHomeDirectory, filePath));
-            }
+   private Map<String, String> configureAuthorizationHeader(final Map<String, String> rawHeaders) {
 
-            return ofNullable(uriToFile(dataConfigHomeDirectory, filePath));
-        } catch (final IOException ex) {
-            ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
-            LOGGER.error(FAILED_TO_LOAD_FILE_ERR, ex);
-        }
+      final Map<String, String> headers = new LinkedHashMap<>();
 
-        return Optional.empty();
-    }
+      for (final Map.Entry<String, String> entry : rawHeaders.entrySet()) {
+         headers.put(entry.getKey(), entry.getValue());
 
-    private String toCompleteYAMLString(final Map<String, Object> httpLifecycleConfig) {
-        final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
-            add(httpLifecycleConfig);
-        }};
+         if (headers.containsKey(BASIC.asYAMLProp())) {
+            final String headerValue = headers.get(BASIC.asYAMLProp());
+            final String authorizationHeader = trimIfSet(headerValue);
+            final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
+            headers.put(BASIC.asYAMLProp(), encodedAuthorizationHeader);
 
-        return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
-    }
+         } else if (headers.containsKey(BEARER.asYAMLProp())) {
+            final String headerValue = headers.get(BEARER.asYAMLProp());
+            headers.put(BEARER.asYAMLProp(), String.format("%s %s", BEARER.asString(), trimIfSet(headerValue)));
 
-    private String toYaml(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
-        final Map<String, Object> httpType = new HashMap<String, Object>() {{
-            put(stubName.toString(), httpLifecycleConfig.get(stubName.toString()));
-        }};
+         } else if (headers.containsKey(CUSTOM.asYAMLProp())) {
+            final String headerValue = headers.get(CUSTOM.asYAMLProp());
+            headers.put(CUSTOM.asYAMLProp(), trimIfSet(headerValue));
+         }
+      }
 
-        return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);
-    }
+      return headers;
+   }
 
-    private Map<String, String> configureAuthorizationHeader(final Map<String, String> rawHeaders) {
-
-        final Map<String, String> headers = new LinkedHashMap<>();
-
-        for (final Map.Entry<String, String> entry : rawHeaders.entrySet()) {
-            headers.put(entry.getKey(), entry.getValue());
-
-            if (headers.containsKey(BASIC.asYAMLProp())) {
-                final String headerValue = headers.get(BASIC.asYAMLProp());
-                final String authorizationHeader = trimIfSet(headerValue);
-                final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
-                headers.put(BASIC.asYAMLProp(), encodedAuthorizationHeader);
-
-            } else if (headers.containsKey(BEARER.asYAMLProp())) {
-                final String headerValue = headers.get(BEARER.asYAMLProp());
-                headers.put(BEARER.asYAMLProp(), String.format("%s %s", BEARER.asString(), trimIfSet(headerValue)));
-
-            } else if (headers.containsKey(CUSTOM.asYAMLProp())) {
-                final String headerValue = headers.get(CUSTOM.asYAMLProp());
-                headers.put(CUSTOM.asYAMLProp(), trimIfSet(headerValue));
-            }
-        }
-
-        return headers;
-    }
-
-    private void checkStubbedProperty(String stageableFieldName) {
-        if (isUnknownProperty(stageableFieldName)) {
-            throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
-        }
-    }
+   private void checkStubbedProperty(String stageableFieldName) {
+      if (isUnknownProperty(stageableFieldName)) {
+         throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
+      }
+   }
 }
 
