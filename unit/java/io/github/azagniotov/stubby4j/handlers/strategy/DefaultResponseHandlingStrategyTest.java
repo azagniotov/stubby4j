@@ -11,7 +11,6 @@ import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -28,7 +27,6 @@ import java.util.UUID;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,135 +34,135 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultResponseHandlingStrategyTest {
 
-    private static final String SOME_RESULTS_MESSAGE = "we have results";
-    private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
+   private static final String SOME_RESULTS_MESSAGE = "we have results";
+   private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
 
-        @Override
-        public void write(final int i) throws IOException {
+      @Override
+      public void write(final int i) throws IOException {
 
-        }
+      }
 
-        @Override
-        public boolean isReady() {
-            return false;
-        }
+      @Override
+      public boolean isReady() {
+         return false;
+      }
 
-        @Override
-        public void setWriteListener(final WriteListener writeListener) {
+      @Override
+      public void setWriteListener(final WriteListener writeListener) {
 
-        }
-    };
-    private static final byte[] EMPTY_BYTES = {};
+      }
+   };
+   private static final byte[] EMPTY_BYTES = {};
 
-    @Spy
-    private ServletOutputStream mockOutputStream;
+   @Spy
+   private ServletOutputStream mockOutputStream;
 
-    @Mock
-    private StubResponse mockStubResponse;
+   @Mock
+   private StubResponse mockStubResponse;
 
-    @Mock
-    private StubRequest mockAssertionRequest;
+   @Mock
+   private StubRequest mockAssertionRequest;
 
-    @Mock
-    private HttpServletResponse mockHttpServletResponse;
+   @Mock
+   private HttpServletResponse mockHttpServletResponse;
 
-    @InjectMocks
-    private DefaultResponseHandlingStrategy defaultResponseHandlingStrategy;
+   @InjectMocks
+   private DefaultResponseHandlingStrategy defaultResponseHandlingStrategy;
 
-    @Test
-    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
-        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+   @Test
+   public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithoutLatency() throws Exception {
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
+      when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
-        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+      defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-        verifyMainHeaders(mockHttpServletResponse);
-    }
+      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+      verifyMainHeaders(mockHttpServletResponse);
+   }
 
-    @Test
-    public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
-        when(mockStubResponse.getLatency()).thenReturn("100");
-        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+   @Test
+   public void shouldVerifyBehaviourWhenHandlingDefaultResponseWithLatency() throws Exception {
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
+      when(mockStubResponse.getLatency()).thenReturn("100");
+      when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
-        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+      defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-        verifyMainHeaders(mockHttpServletResponse);
-    }
+      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+      verifyMainHeaders(mockHttpServletResponse);
+   }
 
-    @Test
-    public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
-        when(mockStubResponse.getLatency()).thenReturn("100");
-        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+   @Test
+   public void shouldCheckLatencyDelayWhenHandlingDefaultResponseWithLatency() throws Exception {
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
+      when(mockStubResponse.getLatency()).thenReturn("100");
+      when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
-        long before = System.currentTimeMillis();
-        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
-        long after = System.currentTimeMillis();
+      long before = System.currentTimeMillis();
+      defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+      long after = System.currentTimeMillis();
 
-        assertThat(after - before).isAtLeast(100L);
+      assertThat(after - before).isAtLeast(100L);
 
-        verifyMainHeaders(mockHttpServletResponse);
-    }
+      verifyMainHeaders(mockHttpServletResponse);
+   }
 
-    @Test
-    public void shouldReturnReplacedValueInResponseHeaderWhenRequestBodyHasDynamicToken() throws Exception {
-        final String nonce = UUID.randomUUID().toString();
-        final String headerValuePrefix = "redirect-uri=https://google.com&nonce=";
+   @Test
+   public void shouldReturnReplacedValueInResponseHeaderWhenRequestBodyHasDynamicToken() throws Exception {
+      final String nonce = UUID.randomUUID().toString();
+      final String headerValuePrefix = "redirect-uri=https://google.com&nonce=";
 
-        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
-        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
-            put("post.1", nonce);
-        }});
+      when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+      when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
+         put("post.1", nonce);
+      }});
 
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_TEMPORARILY);
-        when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
-            put("Location", headerValuePrefix + "<%post.1%>");
-        }});
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.MOVED_TEMPORARILY);
+      when(mockStubResponse.getHeaders()).thenReturn(new HashMap<String, String>() {{
+         put("Location", headerValuePrefix + "<%post.1%>");
+      }});
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(getBytesUtf8(SOME_RESULTS_MESSAGE));
 
-        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+      defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        verify(mockHttpServletResponse).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
-        verifyMainHeaders(mockHttpServletResponse);
-    }
+      verify(mockHttpServletResponse).setHeader(HttpHeader.LOCATION.asString(), headerValuePrefix + nonce);
+      verifyMainHeaders(mockHttpServletResponse);
+   }
 
-    @Test
-    public void shouldReturnReplacedValueInFileWhenFileBodyHasDynamicTokens() throws Exception {
+   @Test
+   public void shouldReturnReplacedValueInFileWhenFileBodyHasDynamicTokens() throws Exception {
 
-        final String nonce = UUID.randomUUID().toString();
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockHttpServletResponse.getOutputStream()).thenReturn(mockOutputStream);
-        when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
-            put("post.1", nonce);
-        }});
+      final String nonce = UUID.randomUUID().toString();
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+      when(mockHttpServletResponse.getOutputStream()).thenReturn(mockOutputStream);
+      when(mockAssertionRequest.getRegexGroups()).thenReturn(new TreeMap<String, String>() {{
+         put("post.1", nonce);
+      }});
 
-        when(mockStubResponse.isFilePathContainsTemplateTokens()).thenReturn(true);
-        when(mockStubResponse.getRawFileAbsolutePath()).thenReturn("./resources/json-test-file.json");
+      when(mockStubResponse.isFilePathContainsTemplateTokens()).thenReturn(true);
+      when(mockStubResponse.getRawFileAbsolutePath()).thenReturn("./resources/json-test-file.json");
 
-        defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
+      defaultResponseHandlingStrategy.handle(mockHttpServletResponse, mockAssertionRequest);
 
-        ArgumentCaptor<byte[]> responseCaptor = ArgumentCaptor.forClass(byte[].class);
+      ArgumentCaptor<byte[]> responseCaptor = ArgumentCaptor.forClass(byte[].class);
 
-        verify(mockHttpServletResponse).getOutputStream();
-        verify(mockOutputStream).write(responseCaptor.capture());
+      verify(mockHttpServletResponse).getOutputStream();
+      verify(mockOutputStream).write(responseCaptor.capture());
 
-        String response = new String(responseCaptor.getValue(), StringUtils.charsetUTF8());
+      String response = new String(responseCaptor.getValue(), StringUtils.charsetUTF8());
 
-        assertTrue("Response's tokens have been parsed", response.contains(nonce));
+      assertTrue("Response's tokens have been parsed", response.contains(nonce));
 
-    }
+   }
 
-    private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
-        verify(mockHttpServletResponse).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
-        verify(mockHttpServletResponse).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
-        verify(mockHttpServletResponse).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
-        verify(mockHttpServletResponse).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
-        verify(mockHttpServletResponse).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
-    }
+   private void verifyMainHeaders(final HttpServletResponse mockHttpServletResponse) throws Exception {
+      verify(mockHttpServletResponse).setHeader(HttpHeader.SERVER.asString(), HandlerUtils.constructHeaderServerName());
+      verify(mockHttpServletResponse).setHeader(HttpHeader.CONTENT_TYPE.asString(), "text/html;charset=UTF-8");
+      verify(mockHttpServletResponse).setHeader(HttpHeader.CACHE_CONTROL.asString(), "no-cache, no-stage, must-revalidate");
+      verify(mockHttpServletResponse).setHeader(HttpHeader.PRAGMA.asString(), "no-cache");
+      verify(mockHttpServletResponse).setDateHeader(HttpHeader.EXPIRES.asString(), 0);
+   }
 }

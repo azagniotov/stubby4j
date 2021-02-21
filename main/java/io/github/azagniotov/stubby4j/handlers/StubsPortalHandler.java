@@ -37,32 +37,32 @@ import static io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsRespons
 
 public class StubsPortalHandler extends AbstractHandler {
 
-    private final StubRepository stubRepository;
+   private final StubRepository stubRepository;
 
-    public StubsPortalHandler(final StubRepository stubRepository) {
-        this.stubRepository = stubRepository;
-    }
+   public StubsPortalHandler(final StubRepository stubRepository) {
+      this.stubRepository = stubRepository;
+   }
 
-    @Override
-    public void handle(final String target,
-                       final Request baseRequest,
-                       final HttpServletRequest request,
-                       final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
-            return;
-        }
-        baseRequest.setHandled(true);
+   @Override
+   public void handle(final String target,
+                      final Request baseRequest,
+                      final HttpServletRequest request,
+                      final HttpServletResponse response) throws IOException, ServletException {
+      ConsoleUtils.logIncomingRequest(request);
+      if (response.isCommitted() || baseRequest.isHandled()) {
+         ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
+         return;
+      }
+      baseRequest.setHandled(true);
 
-        try {
-            final StubSearchResult stubSearchResult = stubRepository.search(request);
-            final StubResponseHandlingStrategy strategyStubResponse = getStrategy(stubSearchResult.getMatch());
+      try {
+         final StubSearchResult stubSearchResult = stubRepository.search(request);
+         final StubResponseHandlingStrategy strategyStubResponse = getStrategy(stubSearchResult.getMatch());
 
-            strategyStubResponse.handle(response, stubSearchResult.getInvariant());
-            ConsoleUtils.logOutgoingResponse(stubSearchResult.getInvariant().getUrl(), response);
-        } catch (final Exception ex) {
-            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-        }
-    }
+         strategyStubResponse.handle(response, stubSearchResult.getInvariant());
+         ConsoleUtils.logOutgoingResponse(stubSearchResult.getInvariant().getUrl(), response);
+      } catch (final Exception ex) {
+         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+      }
+   }
 }

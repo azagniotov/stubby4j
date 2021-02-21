@@ -17,28 +17,28 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StubsResponseHandlingStrategyFactoryTest {
 
-    private static final byte[] EMPTY_BYTES = {};
+   private static final byte[] EMPTY_BYTES = {};
 
-    @Mock
-    private StubResponse mockStubResponse;
+   @Mock
+   private StubResponse mockStubResponse;
 
-    @Test
-    public void shouldReturnNotFoundResponseHandlingStrategyWhen404ResponseHasNoBody() throws Exception {
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(HttpStatus.Code.NOT_FOUND);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
+   @Test
+   public void shouldReturnNotFoundResponseHandlingStrategyWhen404ResponseHasNoBody() throws Exception {
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(HttpStatus.Code.NOT_FOUND);
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(EMPTY_BYTES);
 
-        StubResponseHandlingStrategy handlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(mockStubResponse);
+      StubResponseHandlingStrategy handlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(mockStubResponse);
 
-        assertThat(handlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
-    }
+      assertThat(handlingStrategy).isInstanceOf(NotFoundResponseHandlingStrategy.class);
+   }
 
-    @Test
-    public void shouldReturnDefaultResponseHandlingStrategyWhen404ResponseHasNoBody() throws Exception {
-        when(mockStubResponse.getHttpStatusCode()).thenReturn(HttpStatus.Code.NOT_FOUND);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn("something".getBytes());
+   @Test
+   public void shouldReturnDefaultResponseHandlingStrategyWhen404ResponseHasNoBody() throws Exception {
+      when(mockStubResponse.getHttpStatusCode()).thenReturn(HttpStatus.Code.NOT_FOUND);
+      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn("something".getBytes());
 
-        StubResponseHandlingStrategy handlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(mockStubResponse);
+      StubResponseHandlingStrategy handlingStrategy = StubsResponseHandlingStrategyFactory.getStrategy(mockStubResponse);
 
-        assertThat(handlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
-    }
+      assertThat(handlingStrategy).isInstanceOf(DefaultResponseHandlingStrategy.class);
+   }
 }

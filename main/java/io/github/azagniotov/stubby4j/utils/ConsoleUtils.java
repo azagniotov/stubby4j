@@ -41,126 +41,126 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
  */
 public final class ConsoleUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
 
-    private static boolean debug = false;
+   private static boolean debug = false;
 
-    private ConsoleUtils() {
+   private ConsoleUtils() {
 
-    }
+   }
 
-    @CoberturaIgnore
-    public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
+   @CoberturaIgnore
+   public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
 
-        final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-                getTime(),
-                request.getMethod(),
-                source,
-                request.getRequestURI(),
-                error
-        );
-        ANSITerminal.error(logMessage);
-        LOGGER.error(logMessage);
-    }
+      final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
+         getTime(),
+         request.getMethod(),
+         source,
+         request.getRequestURI(),
+         error
+      );
+      ANSITerminal.error(logMessage);
+      LOGGER.error(logMessage);
+   }
 
-    @CoberturaIgnore
-    private static void logRawIncomingRequest(final HttpServletRequest request) {
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
-        ANSITerminal.info(HttpRequestUtils.dump(request));
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + BR);
-        LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
-        LOGGER.debug(HttpRequestUtils.dump(request));
-        LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
-    }
+   @CoberturaIgnore
+   private static void logRawIncomingRequest(final HttpServletRequest request) {
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+      ANSITerminal.info(HttpRequestUtils.dump(request));
+      ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + BR);
+      LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+      LOGGER.debug(HttpRequestUtils.dump(request));
+      LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+   }
 
-    @CoberturaIgnore
-    public static void logIncomingRequest(final HttpServletRequest request) {
+   @CoberturaIgnore
+   public static void logIncomingRequest(final HttpServletRequest request) {
 
-        final String logMessage = String.format("[%s] -> %s [%s]",
-                getTime(),
-                request.getMethod(),
-                request.getRequestURI()
-        );
-        ANSITerminal.incoming(logMessage);
+      final String logMessage = String.format("[%s] -> %s [%s]",
+         getTime(),
+         request.getMethod(),
+         request.getRequestURI()
+      );
+      ANSITerminal.incoming(logMessage);
 
-        if (debug) {
-            ConsoleUtils.logRawIncomingRequest(request);
-        }
-    }
+      if (debug) {
+         ConsoleUtils.logRawIncomingRequest(request);
+      }
+   }
 
-    @CoberturaIgnore
-    public static void logAssertingRequest(final StubRequest assertingStubRequest) {
-        if (debug) {
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
-            ANSITerminal.info(assertingStubRequest.toString());
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + BR);
-            LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
-            LOGGER.debug("{}", assertingStubRequest);
-            LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
-        }
-    }
+   @CoberturaIgnore
+   public static void logAssertingRequest(final StubRequest assertingStubRequest) {
+      if (debug) {
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+         ANSITerminal.info(assertingStubRequest.toString());
+         ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + BR);
+         LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+         LOGGER.debug("{}", assertingStubRequest);
+         LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+      }
+   }
 
-    @CoberturaIgnore
-    public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
-        final int status = response.getStatus();
+   @CoberturaIgnore
+   public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
+      final int status = response.getStatus();
 
-        final String logMessage = String.format("[%s] <- %s [%s] %s",
-                getTime(),
-                status,
-                url,
-                HttpStatus.getMessage(status)
-        );
+      final String logMessage = String.format("[%s] <- %s [%s] %s",
+         getTime(),
+         status,
+         url,
+         HttpStatus.getMessage(status)
+      );
 
-        if (HttpStatus.isServerError(status) || HttpStatus.isClientError(status)) {
-            ANSITerminal.error(logMessage);
-            LOGGER.error(logMessage);
-        } else if (HttpStatus.isRedirection(status)) {
-            ANSITerminal.warn(logMessage);
-            LOGGER.warn(logMessage);
-        } else if (HttpStatus.isSuccess(status)) {
-            ANSITerminal.ok(logMessage);
-            LOGGER.info(logMessage);
-        } else if (HttpStatus.isInformational(status)) {
-            ANSITerminal.info(logMessage);
-            LOGGER.info(logMessage);
-        } else {
-            ANSITerminal.log(logMessage);
-            LOGGER.debug(logMessage);
-        }
-    }
+      if (HttpStatus.isServerError(status) || HttpStatus.isClientError(status)) {
+         ANSITerminal.error(logMessage);
+         LOGGER.error(logMessage);
+      } else if (HttpStatus.isRedirection(status)) {
+         ANSITerminal.warn(logMessage);
+         LOGGER.warn(logMessage);
+      } else if (HttpStatus.isSuccess(status)) {
+         ANSITerminal.ok(logMessage);
+         LOGGER.info(logMessage);
+      } else if (HttpStatus.isInformational(status)) {
+         ANSITerminal.info(logMessage);
+         LOGGER.info(logMessage);
+      } else {
+         ANSITerminal.log(logMessage);
+         LOGGER.debug(logMessage);
+      }
+   }
 
-    @CoberturaIgnore
-    public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
-        final StubRequest request = lifecycle.getRequest();
+   @CoberturaIgnore
+   public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
+      final StubRequest request = lifecycle.getRequest();
 
-        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ")
-                .append(request.getMethod())
-                .append(" ")
-                .append(request.getUrl());
-        if (isSet(lifecycle.getDescription())) {
-            loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
-        }
+      final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ")
+         .append(request.getMethod())
+         .append(" ")
+         .append(request.getUrl());
+      if (isSet(lifecycle.getDescription())) {
+         loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
+      }
 
-        ANSITerminal.loaded(loadedMsgBuilder.toString());
-    }
+      ANSITerminal.loaded(loadedMsgBuilder.toString());
+   }
 
-    @CoberturaIgnore
-    public static String getTime() {
-        final Calendar now = Calendar.getInstance(Locale.US);
-        return String.format("%02d:%02d:%02d",
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
-                now.get(Calendar.SECOND)
-        );
-    }
+   @CoberturaIgnore
+   public static String getTime() {
+      final Calendar now = Calendar.getInstance(Locale.US);
+      return String.format("%02d:%02d:%02d",
+         now.get(Calendar.HOUR_OF_DAY),
+         now.get(Calendar.MINUTE),
+         now.get(Calendar.SECOND)
+      );
+   }
 
-    /**
-     * Enables verbose console output
-     *
-     * @param isDebug if true, the incoming raw HTTP request will be dumped to console
-     */
-    @CoberturaIgnore
-    public static void enableDebug(final boolean isDebug) {
-        debug = isDebug;
-    }
+   /**
+    * Enables verbose console output
+    *
+    * @param isDebug if true, the incoming raw HTTP request will be dumped to console
+    */
+   @CoberturaIgnore
+   public static void enableDebug(final boolean isDebug) {
+      debug = isDebug;
+   }
 }
