@@ -70,6 +70,24 @@ public class StubRepository {
       this.stubMatchesCache = Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS);
    }
 
+   @CoberturaIgnore
+   private static void logMatch(long elapsed, StubHttpLifecycle matched) {
+      StringBuilder message = new StringBuilder()
+         .append("Found a match after ")
+         .append(elapsed)
+         .append(" milliseconds URL [")
+         .append(matched.getUrl())
+         .append("]");
+      if (isSet(matched.getDescription())) {
+         message.append(" Description [")
+            .append(matched.getDescription())
+            .append("]");
+      }
+
+      ANSITerminal.status(message.toString());
+      LOGGER.debug("{}", message);
+   }
+
    public StubSearchResult search(final HttpServletRequest incomingRequest) throws IOException {
       final StubRequest assertionStubRequest = this.toStubRequest(incomingRequest);
       logAssertingRequest(assertionStubRequest);
@@ -210,24 +228,6 @@ public class StubRepository {
       return Optional.empty();
    }
 
-   @CoberturaIgnore
-   private static void logMatch(long elapsed, StubHttpLifecycle matched) {
-      StringBuilder message = new StringBuilder()
-         .append("Found a match after ")
-         .append(elapsed)
-         .append(" milliseconds URL [")
-         .append(matched.getUrl())
-         .append("]");
-      if (isSet(matched.getDescription())) {
-         message.append(" Description [")
-            .append(matched.getDescription())
-            .append("]");
-      }
-
-      ANSITerminal.status(message.toString());
-      LOGGER.debug("{}", message);
-   }
-
    public synchronized Optional<StubHttpLifecycle> matchStubByIndex(final int index) {
       if (!canMatchStubByIndex(index)) {
          return Optional.empty();
@@ -357,6 +357,13 @@ public class StubRepository {
       final StubHttpLifecycle deletedStub = deleteStubByIndex(index);
       stubs.add(index, newStub);
       updateResourceIDHeaders();
+
+      // If deleted stub url is a regex, i.e.: ^/resources/asn/.*$, then we need
+      // to clear from the cache all the keys (i.e.: URLs) that match that regex,
+      // since we cache stubs by the incoming HTTP request url
+      if (!this.stubMatchesCache.clearByKey(deletedStub.getUrl())) {
+         this.stubMatchesCache.clearByRegexKey(deletedStub.getUrl());
+      }
 
       if (StringUtils.isSet(deletedStub.getUUID())) {
          uuidToStub.remove(deletedStub.getUUID());
