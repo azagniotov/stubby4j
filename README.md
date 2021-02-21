@@ -14,7 +14,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.0.2
+## User manual for stubby4j v7.0.3
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -152,12 +152,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.2")
+compile("io.github.azagniotov:stubby4j:7.0.3")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.2:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.0.3:no-jetty")
 ```
 
 #### Maven
@@ -165,7 +165,7 @@ compile("io.github.azagniotov:stubby4j:7.0.2:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.0.2</version>
+    <version>7.0.3</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -174,7 +174,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.0.2</version>
+    <version>7.0.3</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -183,17 +183,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-7.0.3-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.0.3-SNAPSHOT/`
+* Install `stubby4j-7.0.4-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.0.4-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.3-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.0.4-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.3-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.0.4-SNAPSHOT:no-jetty")
 ```
 
 
@@ -378,6 +378,7 @@ A demonstration using regular expressions:
     * PUT
     * POST
     * DELETE
+    * PATCH
     * etc.
 
 ```yaml
@@ -1030,7 +1031,7 @@ Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (u
 * `description`: optional description shown in logs
 * `uuid`: optional unique identifier
 * `request`: describes the client's call to the server
-   * `method`: GET/POST/PUT/DELETE/etc.
+   * `method`: GET/POST/PUT/PATCH/DELETE/etc.
    * `url`: the URI regex string. GET parameters should also be included inline here
    * `query`: a key/value map of query string parameters included with the request. Query param value can be regex.
    * `headers`: a key/value map of headers the server should respond to. Header value can be regex.

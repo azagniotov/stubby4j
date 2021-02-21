@@ -1,4 +1,8 @@
-#### 7.0.3-SNAPSHOT
+#### 7.0.4-SNAPSHOT
+
+#### 7.0.3
+
+* Pull request #131 - Removing deleted stub from the cache upon response update (https://github.com/azagniotov)
 
 #### 7.0.2
 
