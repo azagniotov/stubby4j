@@ -18,8 +18,7 @@ WORKDIR $GRADLE_USER_HOME
 RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch --tags && \
-      LATEST_RELEASE_TAG="$(git tag --sort=committerdate | tail -1)" && \
-      git checkout "$LATEST_RELEASE_TAG" && \
+      git checkout v7.0.3 && \
       gradle clean jar
 
 ########################################################################################
