@@ -21,6 +21,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
 * [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
+* [Running in Docker](#running-in-docker)
 * [Building](#building)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
@@ -122,6 +123,8 @@ For more information and more complex examples, please dive into the rest of doc
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
+## Running in Docker
+stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j. Alternatively you can build your own image locally using the project See the [Dockerfile](Dockerfile)
 
 ## Building
 stubby4j is a multi-module Gradle v6.2.2 project
