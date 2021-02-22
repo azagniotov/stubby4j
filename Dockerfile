@@ -10,7 +10,7 @@
 # Stage 1 : build the app
 ########################################################################################
 FROM gradle:6.7.1-jdk8-openj9 AS BUILD_JAR_STAGE
-MAINTAINER azagniotov@gmail.com
+
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
 
@@ -26,8 +26,8 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
 # Stage 2 : create the Docker final image
 ########################################################################################
 FROM adoptopenjdk/openjdk8-openj9:alpine
-ENV stubby4j=stubby4j
-ENV STUBBY4J_USER_HOME=/home/$stubby4j
+
+MAINTAINER Alexander Zagniotov <azagniotov@gmail.com>
 
 # Why --location=0.0.0.0 ??? Read: https://stackoverflow.com/a/59182290
 ENV LOCATION=0.0.0.0
@@ -37,16 +37,25 @@ ENV STUBS_PORT=8882
 ENV STUBS_TLS_PORT=7443
 ENV ADMIN_PORT=8889
 
-# Users & permissions
-RUN addgroup -S $stubby4j && adduser -S $stubby4j -G $stubby4j
-USER $stubby4j:$stubby4j
-COPY --from=BUILD_JAR_STAGE /home/gradle/$stubby4j/build/libs/$stubby4j*SNAPSHOT.jar "${STUBBY4J_USER_HOME}/${stubby4j}.jar"
+ENV STUBBY4J_USER_HOME=/home/stubby4j
 
-WORKDIR $STUBBY4J_USER_HOME
+# Users & permissions, docs: https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
+RUN addgroup --system --gid 1007 stubby4j && \
+      adduser --system --uid 1007 stubby4j --shell /bin/bash --home "$STUBBY4J_USER_HOME" && \
+      chown --recursive stubby4j:stubby4j "$STUBBY4J_USER_HOME"
+
+# Mark as volume
+VOLUME "$STUBBY4J_USER_HOME"
+WORKDIR "$STUBBY4J_USER_HOME"
+
+COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
+RUN chown stubby4j:stubby4j stubby4j.jar && ls -al
+
+USER stubby4j:stubby4j
+
 # Expose three ports and run the JAR
 EXPOSE $ADMIN_PORT $STUBS_PORT $STUBS_TLS_PORT
-
-ENTRYPOINT java -jar "${stubby4j}.jar" \
+ENTRYPOINT java -jar stubby4j.jar \
       --location ${LOCATION} \
       --admin ${ADMIN_PORT} \
       --stubs ${STUBS_PORT} \
