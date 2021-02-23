@@ -4,7 +4,6 @@
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
-[![Chat on gitter about stubby4j][chat-badge]][chat-link]
 [![License][license-badge]][license-link]
 
 
