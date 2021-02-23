@@ -19,6 +19,8 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
@@ -284,5 +286,139 @@ public class StubsAdminPortalsTest {
             "  status: 201" + BR +
             "  body: |" + BR +
             "    {\"id\": \"456\", \"status\": \"created\"}");
+   }
+
+   @Test
+   public void should_UpdateStubbedResponseBody_WhenRequestUrlStringRemainsUnchanged() throws Exception {
+
+      // Warm up the cache in StubRepository by making a request to '/this/stub/should/always/be/second/in/this/file'
+      final String originalStubbedUrl = "/this/stub/should/always/be/second/in/this/file";
+      final String stubsRequestUrl = String.format("%s%s", STUBS_URL, originalStubbedUrl);
+      final HttpRequest firstHttpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
+      final HttpResponse firstHttpGetResponse = firstHttpGetRequest.execute();
+      final String firstResponseContent = firstHttpGetResponse.parseAsString().trim();
+
+      // Sanity check 1st request to Stubs to verify what the original stubbed response body contains for the above URL
+      assertThat(HttpStatus.OK_200).isEqualTo(firstHttpGetResponse.getStatusCode());
+      assertThat(firstResponseContent).contains("OK");
+
+      // Getting the original stub content by making a GET request to Admin portal using the stub index
+      final String requestUrl = String.format("%s%s", ADMIN_URL, "/1"); // 2nd stub in stubs.yaml
+      final HttpRequest adminHttpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+      final HttpResponse adminHttpGetResponse = adminHttpGetRequest.execute();
+      final String adminResponseContent = adminHttpGetResponse.parseAsString().trim();
+
+      // Sanity check to verify what the original stubbed response body contains for the stub Admin portal gave us
+      assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
+      assertThat(adminResponseContent).contains("request");
+      assertThat(adminResponseContent).contains("url: " + originalStubbedUrl);
+      assertThat(adminResponseContent).contains("response");
+      assertThat(adminResponseContent).contains("OK");
+      assertThat(adminResponseContent).contains("content-type: application/json");
+
+      // Building a YAML to update the response body for the above URL
+      final String yamlToUpdate = new YamlBuilder()
+              .newStubbedRequest()
+              .withUrl(originalStubbedUrl)
+              .withMethodGet()
+              .withMethodPost()
+              .withMethodPut()
+              .newStubbedResponse()
+              .withHeaderContentType("application/json")
+              .withLiteralBody("OK Updated!")
+              .withStatus("200")
+              .build();
+
+      // Making a stub update request
+      final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, yamlToUpdate);
+      final HttpResponse adminHttpPutResponse = httpPutRequest.execute();
+      final String adminPutResponseContent = adminHttpPutResponse.parseAsString().trim();
+      final String adminPutResponseLocationHeader = adminHttpPutResponse.getHeaders().getLocation();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
+      assertThat(adminPutResponseLocationHeader).isEqualTo(originalStubbedUrl);
+      assertThat(adminPutResponseContent).isEqualTo("Stub request index#1 updated successfully");
+
+      // Sanity check 2nd request to Stubs to verify the updated stubbed response body for the above URL
+      final HttpRequest secondHttpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
+      final HttpResponse secondHttpGetResponse = secondHttpGetRequest.execute();
+      final String secondResponseContent = secondHttpGetResponse.parseAsString().trim();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(secondHttpGetResponse.getStatusCode());
+      assertThat(secondResponseContent).contains("OK Updated!");
+   }
+
+   @Test
+   public void should_UpdateStubbedResponseBody_WhenRequestUrlRegexRemainsUnchanged() throws Exception {
+
+      // Warm up the cache in StubRepository by making a request to a stub with URL regex: '^/resources/asn/.*$'
+      final String originalStubbedUrl = "^/resources/asn/.*$";
+      final List<String> assertingRequests = new LinkedList<String>() {{
+         add("/resources/asn/1");
+         add("/resources/asn/2");
+         add("/resources/asn/3");
+         add("/resources/asn/eew97we9");
+      }};
+
+      // Sanity check 1st requests to Stubs to verify what the stubbed response body contains for the above URLs
+      for (final String assertingRequest : assertingRequests) {
+
+         final String firstRequestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
+         final HttpRequest firstRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, firstRequestUrl);
+         final HttpResponse firstResponse = firstRequest.execute();
+         final String firstResponseContent = firstResponse.parseAsString().trim();
+
+         assertThat(firstResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+         assertThat("{\"status\": \"ASN found!\"}").isEqualTo(firstResponseContent);
+      }
+
+      // Getting the original stub content by making a GET request to Admin portal using the stub index
+      final String stubAdminRequestUrl = String.format("%s%s", ADMIN_URL, "/0"); // 1st stub in stubs.yaml
+      final HttpRequest adminHttpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubAdminRequestUrl);
+      final HttpResponse adminHttpGetResponse = adminHttpGetRequest.execute();
+      final String adminResponseContent = adminHttpGetResponse.parseAsString().trim();
+
+      // Sanity check to verify what the original stubbed response body contains for the stub Admin portal gave us
+      assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
+      assertThat(adminResponseContent).contains("request");
+      assertThat(adminResponseContent).contains("url: " + originalStubbedUrl);
+      assertThat(adminResponseContent).contains("response");
+      assertThat(adminResponseContent).contains("{\"status\": \"ASN found!\"}");
+      assertThat(adminResponseContent).contains("content-type: application/json");
+
+      // Building a YAML to update the response body for the above URL
+      final String yamlToUpdate = new YamlBuilder()
+              .newStubbedRequest()
+              .withUrl(originalStubbedUrl)
+              .withMethodGet()
+              .withMethodPost()
+              .withMethodPut()
+              .newStubbedResponse()
+              .withHeaderContentType("application/json")
+              .withFoldedBody("{\"status\": \"ASN found AND UPDATED!\"}")
+              .withStatus("200")
+              .build();
+
+      // Making a stub update request
+      final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, stubAdminRequestUrl, yamlToUpdate);
+      final HttpResponse adminHttpPutResponse = httpPutRequest.execute();
+      final String adminPutResponseContent = adminHttpPutResponse.parseAsString().trim();
+      final String adminPutResponseLocationHeader = adminHttpPutResponse.getHeaders().getLocation();
+
+      assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
+      assertThat(adminPutResponseLocationHeader).isEqualTo(originalStubbedUrl);
+      assertThat(adminPutResponseContent).isEqualTo("Stub request index#0 updated successfully");
+
+      // Sanity check 2nd requests to Stubs to verify the updated stubbed response body for the above URLs
+      for (final String assertingRequest : assertingRequests) {
+
+         final String secondRequestUrl = String.format("%s%s", STUBS_URL, assertingRequest);
+         final HttpRequest secondRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, secondRequestUrl);
+         final HttpResponse secondResponse = secondRequest.execute();
+         final String secondResponseContent = secondResponse.parseAsString().trim();
+
+         assertThat(secondResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+         assertThat("{\"status\": \"ASN found AND UPDATED!\"}").isEqualTo(secondResponseContent);
+      }
    }
 }
