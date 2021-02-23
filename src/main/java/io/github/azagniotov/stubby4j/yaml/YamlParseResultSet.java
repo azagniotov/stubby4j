@@ -9,19 +9,19 @@ import java.util.Map;
 
 public class YamlParseResultSet {
 
-   private final List<StubHttpLifecycle> stubs;
-   private final Map<String, StubHttpLifecycle> uuidToStubs;
+    private final List<StubHttpLifecycle> stubs;
+    private final Map<String, StubHttpLifecycle> uuidToStubs;
 
-   public YamlParseResultSet(final List<StubHttpLifecycle> stubs, final Map<String, StubHttpLifecycle> uuidToStubs) {
-      this.stubs = stubs;
-      this.uuidToStubs = uuidToStubs;
-   }
+    public YamlParseResultSet(final List<StubHttpLifecycle> stubs, final Map<String, StubHttpLifecycle> uuidToStubs) {
+        this.stubs = stubs;
+        this.uuidToStubs = uuidToStubs;
+    }
 
-   public List<StubHttpLifecycle> getStubs() {
-      return new LinkedList<>(stubs);
-   }
+    public List<StubHttpLifecycle> getStubs() {
+        return new LinkedList<>(stubs);
+    }
 
-   public Map<String, StubHttpLifecycle> getUuidToStubs() {
-      return new HashMap<>(uuidToStubs);
-   }
+    public Map<String, StubHttpLifecycle> getUuidToStubs() {
+        return new HashMap<>(uuidToStubs);
+    }
 }

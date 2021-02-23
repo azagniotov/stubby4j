@@ -35,268 +35,260 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StubsPortalHandlerTest {
 
-   private static final String SOME_RESULTS_MESSAGE = "we have results";
+    private static final String SOME_RESULTS_MESSAGE = "we have results";
+    private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
 
-   @Mock
-   private StubResponse mockStubResponse;
+        @Override
+        public void write(final int i) throws IOException {
 
-   @Mock
-   private StubSearchResult mockStubSearchResult;
+        }
 
-   @Mock
-   private PrintWriter mockPrintWriter;
-
-   @Mock
-   private HttpServletResponse mockHttpServletResponse;
-
-   @Mock
-   private StubRepository mockStubRepository;
-
-   @Mock
-   private HttpServletRequest mockHttpServletRequest;
-
-   @Mock
-   private Request mockRequest;
-
-   @BeforeClass
-   public static void beforeClass() throws Exception {
-      ANSITerminal.muteConsole(true);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithNoResults() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
-      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandlePostRequestWithNoResults() throws Exception {
-
-      final String postData = "postData";
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
-      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
-
-      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
-      when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandlePostRequestWithMissingPostData() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandlePostRequestWithEmptyPostData() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-
-      final InputStream inputStream = new ByteArrayInputStream("".getBytes());
-      when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
-      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithSomeResults() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithNoAuthorizationHeaderSet() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithEmptyBasicAuthorizationHeaderSet() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithEmptyBearerAuthorizationHeaderSet() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandlePostRequestWithMatch() throws Exception {
-      final String postData = "postData";
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
-      final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
-      when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
-
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
-      when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
-      when(mockStubResponse.getLatency()).thenReturn("50");
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-      when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
-      when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-      verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
-   }
-
-   @Test
-   public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
-      final String method = HttpMethod.GET.asString();
-      final String requestPathInfo = "/path/1";
-
-      when(mockHttpServletRequest.getMethod()).thenReturn(method);
-      when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
-      when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-
-      setUpStubSearchMockExpectations(requestPathInfo);
-
-      verify(mockHttpServletResponse).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-      verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
-      verify(mockPrintWriter, never()).println(SOME_RESULTS_MESSAGE);
-   }
-
-   private void setUpStubSearchMockExpectations(final String requestPathInfo) throws Exception {
-      when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
-      final StubRequest assertionStubRequest = mockStubRepository.toStubRequest(mockHttpServletRequest);
-
-      when(mockStubRepository.search(mockHttpServletRequest)).thenReturn(mockStubSearchResult);
-      when(mockStubSearchResult.getInvariant()).thenReturn(assertionStubRequest);
-      when(mockStubSearchResult.getMatch()).thenReturn(mockStubResponse);
-
-      final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
-      stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
-   }
-
-   private ServletInputStream getServletInputStream(final InputStream inputStream) {
-      return new ServletInputStream() {
-         @Override
-         public int read() throws IOException {
-            return inputStream.read();
-         }
-
-         @Override
-         public boolean isFinished() {
+        @Override
+        public boolean isReady() {
             return false;
-         }
+        }
 
-         @Override
-         public boolean isReady() {
-            return false;
-         }
+        @Override
+        public void setWriteListener(final WriteListener writeListener) {
 
-         @Override
-         public void setReadListener(final ReadListener readListener) {
+        }
+    };
+    @Mock
+    private StubResponse mockStubResponse;
+    @Mock
+    private StubSearchResult mockStubSearchResult;
+    @Mock
+    private PrintWriter mockPrintWriter;
+    @Mock
+    private HttpServletResponse mockHttpServletResponse;
+    @Mock
+    private StubRepository mockStubRepository;
+    @Mock
+    private HttpServletRequest mockHttpServletRequest;
+    @Mock
+    private Request mockRequest;
 
-         }
-      };
-   }
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        ANSITerminal.muteConsole(true);
+    }
 
-   private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithNoResults() throws Exception {
 
-      @Override
-      public void write(final int i) throws IOException {
+        final String requestPathInfo = "/path/1";
 
-      }
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
 
-      @Override
-      public boolean isReady() {
-         return false;
-      }
+        setUpStubSearchMockExpectations(requestPathInfo);
 
-      @Override
-      public void setWriteListener(final WriteListener writeListener) {
+        verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+    }
 
-      }
-   };
+    @Test
+    public void verifyBehaviourDuringHandlePostRequestWithNoResults() throws Exception {
+
+        final String postData = "postData";
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+
+        final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.NOT_FOUND_404);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandlePostRequestWithMissingPostData() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandlePostRequestWithEmptyPostData() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+
+        final InputStream inputStream = new ByteArrayInputStream("".getBytes());
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.BAD_REQUEST_400);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithSomeResults() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithNoAuthorizationHeaderSet() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithEmptyBasicAuthorizationHeaderSet() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithEmptyBearerAuthorizationHeaderSet() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.UNAUTHORIZED);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse).sendError(HttpStatus.UNAUTHORIZED_401);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandlePostRequestWithMatch() throws Exception {
+        final String postData = "postData";
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(null);
+        final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
+        when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithLatency() throws Exception {
+
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
+        when(mockStubResponse.getLatency()).thenReturn("50");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        verify(mockHttpServletResponse).setStatus(HttpStatus.OK_200);
+    }
+
+    @Test
+    public void verifyBehaviourDuringHandleGetRequestWithInvalidLatency() throws Exception {
+        final String method = HttpMethod.GET.asString();
+        final String requestPathInfo = "/path/1";
+
+        when(mockHttpServletRequest.getMethod()).thenReturn(method);
+        when(mockStubResponse.getLatency()).thenReturn("43rl4knt3l");
+        when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
+
+        setUpStubSearchMockExpectations(requestPathInfo);
+
+        verify(mockHttpServletResponse).setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        verify(mockHttpServletResponse, never()).setStatus(HttpStatus.OK_200);
+        verify(mockPrintWriter, never()).println(SOME_RESULTS_MESSAGE);
+    }
+
+    private void setUpStubSearchMockExpectations(final String requestPathInfo) throws Exception {
+        when(mockStubRepository.toStubRequest(mockHttpServletRequest)).thenCallRealMethod();
+        final StubRequest assertionStubRequest = mockStubRepository.toStubRequest(mockHttpServletRequest);
+
+        when(mockStubRepository.search(mockHttpServletRequest)).thenReturn(mockStubSearchResult);
+        when(mockStubSearchResult.getInvariant()).thenReturn(assertionStubRequest);
+        when(mockStubSearchResult.getMatch()).thenReturn(mockStubResponse);
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+    }
+
+    private ServletInputStream getServletInputStream(final InputStream inputStream) {
+        return new ServletInputStream() {
+            @Override
+            public int read() throws IOException {
+                return inputStream.read();
+            }
+
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setReadListener(final ReadListener readListener) {
+
+            }
+        };
+    }
 }

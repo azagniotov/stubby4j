@@ -25,46 +25,46 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class CacheTest {
 
-   @Test
-   public void shouldClearCacheByKey() throws Exception {
+    @Test
+    public void shouldClearCacheByKey() throws Exception {
 
-      final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
 
-      final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
-      final String targetKey = "/some/url";
+        final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
+        final String targetKey = "/some/url";
 
-      cache.putIfAbsent(targetKey, stubHttpLifeCycle);
-      assertThat(cache.size().get()).isEqualTo(1);
+        cache.putIfAbsent(targetKey, stubHttpLifeCycle);
+        assertThat(cache.size().get()).isEqualTo(1);
 
-      assertThat(cache.get(targetKey)).isEqualTo(Optional.of(stubHttpLifeCycle));
+        assertThat(cache.get(targetKey)).isEqualTo(Optional.of(stubHttpLifeCycle));
 
-      assertThat(cache.clearByKey(targetKey)).isTrue();
-      assertThat(cache.size().get()).isEqualTo(0);
-      assertThat(cache.get(targetKey)).isEqualTo(Optional.empty());
-   }
+        assertThat(cache.clearByKey(targetKey)).isTrue();
+        assertThat(cache.size().get()).isEqualTo(0);
+        assertThat(cache.get(targetKey)).isEqualTo(Optional.empty());
+    }
 
-   @Test
-   public void shouldClearCacheByRegexKey() throws Exception {
+    @Test
+    public void shouldClearCacheByRegexKey() throws Exception {
 
-      final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
 
-      final String keyRegex = "^/resources/asn/.*$";
+        final String keyRegex = "^/resources/asn/.*$";
 
-      final StubHttpLifecycle stubHttpLifeCycleOne = new StubHttpLifecycle.Builder().build();
-      final StubHttpLifecycle stubHttpLifeCycleTwo = new StubHttpLifecycle.Builder().build();
-      final StubHttpLifecycle stubHttpLifeCycleThree = new StubHttpLifecycle.Builder().build();
+        final StubHttpLifecycle stubHttpLifeCycleOne = new StubHttpLifecycle.Builder().build();
+        final StubHttpLifecycle stubHttpLifeCycleTwo = new StubHttpLifecycle.Builder().build();
+        final StubHttpLifecycle stubHttpLifeCycleThree = new StubHttpLifecycle.Builder().build();
 
-      cache.putIfAbsent("/resources/asn/1", stubHttpLifeCycleOne);
-      cache.putIfAbsent("/resources/asn/2", stubHttpLifeCycleTwo);
-      cache.putIfAbsent("/resources/asn/3", stubHttpLifeCycleThree);
+        cache.putIfAbsent("/resources/asn/1", stubHttpLifeCycleOne);
+        cache.putIfAbsent("/resources/asn/2", stubHttpLifeCycleTwo);
+        cache.putIfAbsent("/resources/asn/3", stubHttpLifeCycleThree);
 
-      assertThat(cache.size().get()).isEqualTo(3);
+        assertThat(cache.size().get()).isEqualTo(3);
 
-      cache.clearByRegexKey(keyRegex);
+        cache.clearByRegexKey(keyRegex);
 
-      assertThat(cache.size().get()).isEqualTo(0);
-      assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.empty());
-      assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.empty());
-      assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.empty());
-   }
+        assertThat(cache.size().get()).isEqualTo(0);
+        assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.empty());
+        assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.empty());
+        assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.empty());
+    }
 }

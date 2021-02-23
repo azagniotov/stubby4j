@@ -13,65 +13,65 @@ import java.util.regex.Pattern;
 
 public interface Cache<K, V> {
 
-   static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds) {
-      return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
-   }
+    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds) {
+        return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+    }
 
-   static Cache<Integer, Pattern> regexPatternCache(final long cacheEntryLifetimeSeconds) {
-      return new RegexPatternCache(cacheEntryLifetimeSeconds);
-   }
+    static Cache<Integer, Pattern> regexPatternCache(final long cacheEntryLifetimeSeconds) {
+        return new RegexPatternCache(cacheEntryLifetimeSeconds);
+    }
 
-   default Optional<V> get(final K key) {
-      return Optional.<V>ofNullable(cache().get(key));
-   }
+    default Optional<V> get(final K key) {
+        return Optional.<V>ofNullable(cache().get(key));
+    }
 
-   default void putIfAbsent(final K key, final V value) {
-      if (!cache().containsKey(key)) {
-         cache().put(key, value);
-         size().incrementAndGet();
-      }
-   }
+    default void putIfAbsent(final K key, final V value) {
+        if (!cache().containsKey(key)) {
+            cache().put(key, value);
+            size().incrementAndGet();
+        }
+    }
 
-   default boolean clearByKey(final K key) {
-      if (cache().containsKey(key)) {
-         cache().remove(key);
-         size().decrementAndGet();
+    default boolean clearByKey(final K key) {
+        if (cache().containsKey(key)) {
+            cache().remove(key);
+            size().decrementAndGet();
 
-         return true;
-      }
+            return true;
+        }
 
-      return false;
-   }
+        return false;
+    }
 
-   default void clearByRegexKey(final String regex) {
-      // TODO: If this will cause performance hit, use local map as cache for compiled Patterns
-      final Pattern keyPattern = Pattern.compile(regex);
+    default void clearByRegexKey(final String regex) {
+        // TODO: If this will cause performance hit, use local map as cache for compiled Patterns
+        final Pattern keyPattern = Pattern.compile(regex);
 
-      final Set<K> removalCandidates = new HashSet<>();
-      for (final org.ehcache.Cache.Entry<K, V> entry : cache()) {
-         final String key = (String) entry.getKey();
+        final Set<K> removalCandidates = new HashSet<>();
+        for (final org.ehcache.Cache.Entry<K, V> entry : cache()) {
+            final String key = (String) entry.getKey();
 
-         final Matcher matcher = keyPattern.matcher(key);
-         if (matcher.find()) {
-            removalCandidates.add(entry.getKey());
-         }
-      }
+            final Matcher matcher = keyPattern.matcher(key);
+            if (matcher.find()) {
+                removalCandidates.add(entry.getKey());
+            }
+        }
 
-      for (final K toRemove : removalCandidates) {
-         clearByKey(toRemove);
-      }
-   }
+        for (final K toRemove : removalCandidates) {
+            clearByKey(toRemove);
+        }
+    }
 
-   default void clear() {
-      cache().clear();
-      size().set(0);
-   }
+    default void clear() {
+        cache().clear();
+        size().set(0);
+    }
 
-   default void close() {
-      cache().close();
-   }
+    default void close() {
+        cache().close();
+    }
 
-   UserManagedCache<K, V> cache();
+    UserManagedCache<K, V> cache();
 
-   AtomicInteger size();
+    AtomicInteger size();
 }

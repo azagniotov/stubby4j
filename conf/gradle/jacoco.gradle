@@ -13,6 +13,7 @@ def getMainExcludes() {
                 !file.name.contains('StatusPageHandler') &&
                 !file.name.contains('FaviconHandler') &&
                 !file.name.contains('AjaxEndpointStatsHandler') &&
+                !file.name.contains('JsonErrorHandler') &&
                 !file.name.contains('StubDataRefreshActionHandler') &&
                 !file.name.contains('StubbyClient') &&
                 !file.name.contains('$1') &&

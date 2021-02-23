@@ -35,36 +35,36 @@ import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceBy
 
 public class AjaxEndpointStatsHandler extends AbstractHandler {
 
-   private final StubRepository stubRepository;
+    private final StubRepository stubRepository;
 
-   public AjaxEndpointStatsHandler(final StubRepository stubRepository) {
-      this.stubRepository = stubRepository;
-   }
+    public AjaxEndpointStatsHandler(final StubRepository stubRepository) {
+        this.stubRepository = stubRepository;
+    }
 
-   @Override
-   public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-      if (response.isCommitted() || baseRequest.isHandled()) {
-         ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
-         return;
-      }
-      baseRequest.setHandled(true);
+    @Override
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        if (response.isCommitted() || baseRequest.isHandled()) {
+            ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
+            return;
+        }
+        baseRequest.setHandled(true);
 
-      HandlerUtils.setResponseMainHeaders(response);
-      response.setContentType("text/plain;charset=UTF-8");
-      response.setStatus(HttpStatus.OK_200);
+        HandlerUtils.setResponseMainHeaders(response);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.setStatus(HttpStatus.OK_200);
 
-      try {
-         if (request.getRequestURI().contains("stats/check")) {
-            response.getWriter().println(!stubRepository.getResourceStats().isEmpty());
-         } else {
-            ConsoleUtils.logIncomingRequest(request);
-            final String popupStatsHtmlTemplate = getHtmlResourceByName("_popup_stats");
-            final String htmlPopup = String.format(popupStatsHtmlTemplate, stubRepository.getResourceStatsAsCsv());
-            response.getWriter().println(htmlPopup);
-            ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
-         }
-      } catch (final Exception ex) {
-         HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
-      }
-   }
+        try {
+            if (request.getRequestURI().contains("stats/check")) {
+                response.getWriter().println(!stubRepository.getResourceStats().isEmpty());
+            } else {
+                ConsoleUtils.logIncomingRequest(request);
+                final String popupStatsHtmlTemplate = getHtmlResourceByName("_popup_stats");
+                final String htmlPopup = String.format(popupStatsHtmlTemplate, stubRepository.getResourceStatsAsCsv());
+                response.getWriter().println(htmlPopup);
+                ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+            }
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
+    }
 }

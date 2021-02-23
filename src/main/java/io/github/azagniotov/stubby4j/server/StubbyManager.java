@@ -29,70 +29,70 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public final class StubbyManager {
-   private static final Logger LOGGER = LoggerFactory.getLogger(StubbyManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StubbyManager.class);
 
-   private final Server server;
-   private final JettyFactory jettyFactory;
-   private final StubRepository stubRepository;
+    private final Server server;
+    private final JettyFactory jettyFactory;
+    private final StubRepository stubRepository;
 
-   StubbyManager(final Server server, final JettyFactory jettyFactory, final StubRepository stubRepository) {
-      this.server = server;
-      this.jettyFactory = jettyFactory;
-      this.stubRepository = stubRepository;
-   }
+    StubbyManager(final Server server, final JettyFactory jettyFactory, final StubRepository stubRepository) {
+        this.server = server;
+        this.jettyFactory = jettyFactory;
+        this.stubRepository = stubRepository;
+    }
 
-   public synchronized void startJetty() throws Exception {
-      if (isJettyStarting() || isJettyUp()) {
-         return;
-      }
+    public synchronized void startJetty() throws Exception {
+        if (isJettyStarting() || isJettyUp()) {
+            return;
+        }
 
-      server.start();
-      while (!isJettyUp()) {
-         ANSITerminal.warn("Waiting for Jetty to finish starting up..");
-         LOGGER.warn("Waiting for Jetty to finish starting up..");
-         Thread.sleep(250);
-      }
-      stubRepository.retrieveLoadedStubs();
-   }
+        server.start();
+        while (!isJettyUp()) {
+            ANSITerminal.warn("Waiting for Jetty to finish starting up..");
+            LOGGER.warn("Waiting for Jetty to finish starting up..");
+            Thread.sleep(250);
+        }
+        stubRepository.retrieveLoadedStubs();
+    }
 
-   public synchronized void stopJetty() throws Exception {
-      if (isJettyStopping() || isJettyDown()) {
-         return;
-      }
+    public synchronized void stopJetty() throws Exception {
+        if (isJettyStopping() || isJettyDown()) {
+            return;
+        }
 
-      server.stop();
+        server.stop();
 
-      while (!isJettyDown()) {
-         ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
-         LOGGER.warn("Waiting for Jetty to finish shutting down..");
-         Thread.sleep(250);
-      }
+        while (!isJettyDown()) {
+            ANSITerminal.warn("Waiting for Jetty to finish shutting down..");
+            LOGGER.warn("Waiting for Jetty to finish shutting down..");
+            Thread.sleep(250);
+        }
 
-      ANSITerminal.status("Jetty successfully shutdown");
-      LOGGER.info("Jetty successfully shutdown.");
-   }
+        ANSITerminal.status("Jetty successfully shutdown");
+        LOGGER.info("Jetty successfully shutdown.");
+    }
 
-   public synchronized void joinJetty() throws Exception {
-      server.join();
-   }
+    public synchronized void joinJetty() throws Exception {
+        server.join();
+    }
 
-   public List<String> statuses() {
-      return jettyFactory.statuses();
-   }
+    public List<String> statuses() {
+        return jettyFactory.statuses();
+    }
 
-   private boolean isJettyStarting() throws Exception {
-      return server.isStarting();
-   }
+    private boolean isJettyStarting() throws Exception {
+        return server.isStarting();
+    }
 
-   private boolean isJettyUp() throws Exception {
-      return (server.isStarted() && server.isRunning());
-   }
+    private boolean isJettyUp() throws Exception {
+        return (server.isStarted() && server.isRunning());
+    }
 
-   private boolean isJettyStopping() throws Exception {
-      return server.isStopping();
-   }
+    private boolean isJettyStopping() throws Exception {
+        return server.isStopping();
+    }
 
-   private boolean isJettyDown() throws Exception {
-      return (server.isStopped() && !server.isRunning());
-   }
+    private boolean isJettyDown() throws Exception {
+        return (server.isStopped() && !server.isRunning());
+    }
 }
