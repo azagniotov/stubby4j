@@ -5,6 +5,7 @@ jacoco {
 def getMainExcludes() {
     return fileTree(dir: "build/classes/java/main").filter({ file ->
         !file.name.contains('Main') &&
+                !file.name.contains('JettyFactory') &&
                 !file.name.contains('HttpRequestUtils') &&
                 !file.name.contains('ConsoleUtils') &&
                 !file.name.contains('MainYamlScanner') &&
@@ -31,7 +32,7 @@ jacocoTestReport {
         csv.enabled false
 
         xml.enabled true
-        xml.destination = file("${buildDir}/reports/jacoco/xml/jacocoTestReport.xml")
+        xml.destination = file("${buildDir}/reports/jacoco/xml/jacocoCoverage.xml")
 
         html.enabled true
         html.destination = file("${buildDir}/reports/jacoco/html")
