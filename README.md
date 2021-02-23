@@ -128,11 +128,11 @@ For more information and more complex examples, please dive into the rest of doc
 stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j. Alternatively you can build your own image locally using the project See the [Dockerfile](Dockerfile)
 
 ## Building
-stubby4j is a multi-module Gradle v6.2.2 project
+stubby4j is a multi source-set Gradle `v6.2.2` project
 
 Run `./gradlew` command to:
 * Clean
-* Run unit, integration and functional tests without JaCoCo
+* Run `unit`, `integration` and `functional` tests without `JaCoCo` code coverage
 * Build (the generated JAR artifacts will be located under `<PROJECT_ROOT>/build/libs/`)
 
 Run `./gradlew clean jacocoTestReport` command to:

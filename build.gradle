@@ -7,6 +7,7 @@ plugins {
    id "jacoco"
 }
 
+defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
 
 java {
