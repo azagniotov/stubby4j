@@ -1,0 +1,42 @@
+jacoco {
+    toolVersion = "0.8.6"
+}
+
+def getMainExcludes() {
+    return fileTree(dir: "build/classes/java/main").filter({ file ->
+        !file.name.contains('Main') &&
+                !file.name.contains('HttpRequestUtils') &&
+                !file.name.contains('ConsoleUtils') &&
+                !file.name.contains('MainYamlScanner') &&
+                !file.name.contains('ExternalFilesScanner') &&
+                !file.name.contains('StatusPageHandler') &&
+                !file.name.contains('FaviconHandler') &&
+                !file.name.contains('AjaxEndpointStatsHandler') &&
+                !file.name.contains('StubDataRefreshActionHandler') &&
+                !file.name.contains('StubbyClient') &&
+                !file.name.contains('$1') &&
+                !file.name.contains('$2')
+    })
+}
+
+jacocoTestCoverageVerification {
+    classDirectories.setFrom(getMainExcludes())
+}
+
+jacocoTestReport {
+    // tests are required to run before generating the report
+    dependsOn test, integrationTest, functionalTest
+    executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
+    reports {
+        csv.enabled false
+
+        xml.enabled true
+        xml.destination = file("${buildDir}/reports/jacoco/xml/jacocoTestReport.xml")
+
+        html.enabled true
+        html.destination = file("${buildDir}/reports/jacoco/html")
+    }
+
+    classDirectories.setFrom(getMainExcludes())
+}
+

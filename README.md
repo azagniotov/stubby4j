@@ -142,7 +142,7 @@ Run `./gradlew cobertura` command to:
 
 ## Third-party dependencies
 
-* See the [conf/gradle/dependency.gradle](conf/gradle/dependency.gradle)
+* See the [build.gradle](build.gradle)
 
 
 ## Adding stubby4j to your project

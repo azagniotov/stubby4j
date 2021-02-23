@@ -124,6 +124,8 @@ public class StubResponse implements ReflectableStub {
 
    public boolean isFilePathContainsTemplateTokens() {
       try {
+         // This checks if the 'file' key that was stubbed(!) is tokenized, i.e.:
+         // file: ../html/<% url.1 %>.html
          return isFilePathContainTemplateTokens(file);
       } catch (Exception e) {
          return false;
