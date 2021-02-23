@@ -37,8 +37,8 @@ import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML
 public class StubsPortalTest {
 
    private static final int STUBS_PORT = 5892;
-   private static final int STUBS_SSL_PORT = 5893;
-   private static final int ADMIN_PORT = 5899;
+   private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
+   private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
 
    private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
    private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);

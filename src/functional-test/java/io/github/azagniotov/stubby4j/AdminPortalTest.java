@@ -21,9 +21,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class AdminPortalTest {
 
-   private static final int STUBS_PORT = 5992;
-   private static final int STUBS_SSL_PORT = 5993;
-   private static final int ADMIN_PORT = 5999;
+   private static final int STUBS_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
+   private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
+   private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
 
    private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
 
