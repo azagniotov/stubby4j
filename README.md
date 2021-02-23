@@ -132,12 +132,12 @@ stubby4j is a multi-module Gradle v6.2.2 project
 
 Run `./gradlew` command to:
 * Clean
-* Run unit, integration and functional tests without Cobertura
+* Run unit, integration and functional tests without JaCoCo
 * Build (the generated JAR artifacts will be located under `<PROJECT_ROOT>/build/libs/`)
 
-Run `./gradlew cobertura` command to:
+Run `./gradlew clean jacocoTestReport` command to:
 * Clean
-* Generate Cobertura report under the `<PROJECT_ROOT>/main/build/reports/cobertura/`
+* Generate JaCoCo report under the `<PROJECT_ROOT>/build/reports/jacoco/html/index.html`
 
 
 ## Third-party dependencies
