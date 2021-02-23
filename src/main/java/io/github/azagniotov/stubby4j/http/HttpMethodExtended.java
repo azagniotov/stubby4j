@@ -18,13 +18,13 @@ package io.github.azagniotov.stubby4j.http;
 
 public enum HttpMethodExtended {
 
-   PATCH;
+    PATCH;
 
-   HttpMethodExtended() {
+    HttpMethodExtended() {
 
-   }
+    }
 
-   public String asString() {
-      return toString();
-   }
+    public String asString() {
+        return toString();
+    }
 }

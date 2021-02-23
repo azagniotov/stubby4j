@@ -20,46 +20,46 @@ import java.util.concurrent.TimeUnit;
  */
 public final class HttpUtils {
 
-   private static final HttpRequestFactory WEB_CLIENT;
+    private static final HttpRequestFactory WEB_CLIENT;
 
-   static {
-      /**
-       * @see ApacheHttpTransport#newDefaultHttpClient()
-       */
-      final HttpClient apacheHttpClient = HttpClientBuilder.create()
-         .useSystemProperties()
-         //.setSSLSocketFactory(SSLConnectionSocketFactory.getSocketFactory())
-         .setSSLHostnameVerifier((hostname, session) -> true)
-         .setMaxConnTotal(200)
-         .setMaxConnPerRoute(20)
-         .setConnectionTimeToLive(-1, TimeUnit.MILLISECONDS)
-         .setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
-         .disableRedirectHandling()
-         .disableAutomaticRetries()
-         .build();
+    static {
+        /**
+         * @see ApacheHttpTransport#newDefaultHttpClient()
+         */
+        final HttpClient apacheHttpClient = HttpClientBuilder.create()
+                .useSystemProperties()
+                //.setSSLSocketFactory(SSLConnectionSocketFactory.getSocketFactory())
+                .setSSLHostnameVerifier((hostname, session) -> true)
+                .setMaxConnTotal(200)
+                .setMaxConnPerRoute(20)
+                .setConnectionTimeToLive(-1, TimeUnit.MILLISECONDS)
+                .setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+                .disableRedirectHandling()
+                .disableAutomaticRetries()
+                .build();
 
-      WEB_CLIENT = new ApacheHttpTransport(apacheHttpClient, false).createRequestFactory(request -> {
-         request.setThrowExceptionOnExecuteError(false);
-         request.setReadTimeout(45000);
-         request.setConnectTimeout(45000);
-      });
-   }
+        WEB_CLIENT = new ApacheHttpTransport(apacheHttpClient, false).createRequestFactory(request -> {
+            request.setThrowExceptionOnExecuteError(false);
+            request.setReadTimeout(45000);
+            request.setConnectTimeout(45000);
+        });
+    }
 
-   private HttpUtils() {
+    private HttpUtils() {
 
-   }
+    }
 
-   public static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
+    public static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
 
-      return WEB_CLIENT.buildRequest(method,
-         new GenericUrl(targetUrl),
-         null);
-   }
+        return WEB_CLIENT.buildRequest(method,
+                new GenericUrl(targetUrl),
+                null);
+    }
 
-   public static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
+    public static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
 
-      return WEB_CLIENT.buildRequest(method,
-         new GenericUrl(targetUrl),
-         new ByteArrayContent(null, StringUtils.getBytesUtf8(content)));
-   }
+        return WEB_CLIENT.buildRequest(method,
+                new GenericUrl(targetUrl),
+                new ByteArrayContent(null, StringUtils.getBytesUtf8(content)));
+    }
 }
