@@ -39,7 +39,7 @@ jobs:
 
       - run:
           name: Run all test suits
-          command: ./gradlew clean test integrationTest functionTest
+          command: ./gradlew clean test integrationTest functionalTest
           when: always
 
       - run:
