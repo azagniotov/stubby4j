@@ -1,4 +1,6 @@
 [![CircleCI build master branch][circleci-badge]][circleci-link]
+[![DockerHub][docker-hub-badge]][docker-hub-link]
+[![GitHubStars][stars-badge]][stars-link]
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
@@ -1318,6 +1320,12 @@ MIT. See LICENSE for details
 
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-link]: http://badges.mit-license.org
+
+[docker-hub-badge]: https://img.shields.io/docker/pulls/azagniotov/stubby4j.svg?style=flat
+[docker-hub-link]: https://hub.docker.com/r/azagniotov/stubby4j
+
+[stars-badge]: https://img.shields.io/github/stars/azagniotov/stubby4j.svg?color=success
+[stars-link]: https://github.com/azagniotov/stubby4j
 
 [logo-badge]: https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg
 [logo-link]: https://github.com/azagniotov/stubby4j
