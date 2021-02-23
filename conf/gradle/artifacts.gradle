@@ -46,7 +46,6 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     description = 'Creates a shaded/uberjar/fatjar of stubby4j'
     archiveFileName = "${stubbyProjectName}-${stubbyProjectVersion}.jar"
-    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifest
     from sourceSets.main.output
     from(project.ext.dependenciesWithJetty.collect { zipTree(it) }) {
@@ -67,7 +66,6 @@ task skinnyJar(type: Jar) {
     archiveVersion = "${stubbyProjectVersion}"
     archiveClassifier = "no-dependencies"
     archiveExtension = "jar"
-    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifest
     from sourceSets.main.output
 
@@ -83,7 +81,6 @@ task noJettyJar(type: Jar) {
     archiveVersion = "${stubbyProjectVersion}"
     archiveClassifier = "no-jetty"
     archiveExtension = "jar"
-    destinationDirectory = file(project(':').libsDirectory)
     manifest = project.ext.projectManifestNoJetty
     from sourceSets.main.output
     from(project.ext.jettylessDependencies.collect { zipTree(it) }) {
@@ -98,30 +95,28 @@ task noJettyJar(type: Jar) {
     }
 }
 
-task javadocJar(type: Jar) {
+task stubbyJavadocJar(type: Jar) {
     description = 'Creates a Javadoc JAR of stubby4j'
     archiveBaseName = "${stubbyProjectName}"
     archiveVersion = "${stubbyProjectVersion}"
     archiveClassifier = "javadoc"
     archiveExtension = "jar"
-    destinationDirectory = file(project(':').libsDirectory)
-    from project(":main").tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
+    from tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
 }
 
-task sourceJar(type: Jar) {
+task stubbySourceJar(type: Jar) {
     description = 'Creates a Source JAR of stubby4j'
     archiveBaseName = "${stubbyProjectName}"
     archiveVersion = "${stubbyProjectVersion}"
     archiveClassifier = "sources"
     archiveExtension = "jar"
-    destinationDirectory = file(project(':').libsDirectory)
     from sourceSets.main.allSource
 }
 
 artifacts {
     archives noJettyJar
     archives skinnyJar
-    archives javadocJar
-    archives sourceJar
+    archives stubbyJavadocJar
+    archives stubbySourceJar
 }
 

@@ -39,16 +39,16 @@ jobs:
 
       - run:
           name: Run all test suits
-          command: ./gradlew test
+          command: ./gradlew clean test integrationTest functionTest
           when: always
 
       - run:
-          name: Run Cobertura plugin code coverage
-          command: ./gradlew cobertura coveralls
+          name: Run JaCoCo plugin code coverage
+          command: ./gradlew clean jacocoTestReport
           when: on_success
 
       - run:
-          name: Upload code coverage data to Coveralls
+          name: Upload code coverage data to Codecov
           command: bash <(curl -s https://codecov.io/bash)
           when: on_success
 
