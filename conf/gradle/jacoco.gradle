@@ -6,6 +6,8 @@ def getMainExcludes() {
     return fileTree(dir: "build/classes/java/main").filter({ file ->
         !file.name.contains('Main') &&
                 !file.name.contains('JettyFactory') &&
+                !file.name.contains('StubbyManager') &&
+                !file.name.contains('FakeX509TrustManager') &&
                 !file.name.contains('HttpRequestUtils') &&
                 !file.name.contains('ConsoleUtils') &&
                 !file.name.contains('MainYamlScanner') &&
