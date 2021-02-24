@@ -60,7 +60,7 @@ jar {
     }
 }
 
-task skinnyJar(type: Jar) {
+task stubbySkinnyJar(type: Jar) {
     description = 'Creates a skinny/no-dependencies of stubby4j'
     archiveBaseName = "${stubbyProjectName}"
     archiveVersion = "${stubbyProjectVersion}"
@@ -74,7 +74,7 @@ task skinnyJar(type: Jar) {
     }
 }
 
-task noJettyJar(type: Jar) {
+task stubbyNoJettyJar(type: Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     description = 'Creates a shaded/uberjar/fatjar of stubby4j WITHOUT Jetty classes'
     archiveBaseName = "${stubbyProjectName}"
@@ -114,8 +114,8 @@ task stubbySourceJar(type: Jar) {
 }
 
 artifacts {
-    archives noJettyJar
-    archives skinnyJar
+    archives stubbyNoJettyJar
+    archives stubbySkinnyJar
     archives stubbyJavadocJar
     archives stubbySourceJar
 }

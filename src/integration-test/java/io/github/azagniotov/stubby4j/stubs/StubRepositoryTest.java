@@ -92,7 +92,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
@@ -138,7 +138,7 @@ public class StubRepositoryTest {
         final StubResponse irrelevantFirstSequenceResponse = setUpStubSearchBehavior(assertingRequest);
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.INTERNAL_SERVER_ERROR).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.INTERNAL_SERVER_ERROR).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
@@ -178,7 +178,7 @@ public class StubRepositoryTest {
         final StubResponse irrelevantLastSequenceResponse = setUpStubSearchBehavior(assertingRequest);
         final StubResponse firstSequenceResponseRestarted = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(firstSequenceResponseRestarted.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(firstSequenceResponseRestarted.getHttpStatusCode());
         assertThat(firstSequenceResponseRestarted.getBody()).isEqualTo(sequenceResponseBody);
         assertThat(firstSequenceResponseRestarted.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
     }
@@ -209,7 +209,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.MOVED_PERMANENTLY).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.MOVED_PERMANENTLY).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
         assertThat(foundStubResponse.getHeaders()).containsEntry(expectedHeaderKey, expectedHeaderValue);
     }
@@ -238,7 +238,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -269,7 +269,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -299,7 +299,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -329,7 +329,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -358,7 +358,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.UNAUTHORIZED).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -386,7 +386,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.UNAUTHORIZED).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -413,7 +413,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.UNAUTHORIZED).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.UNAUTHORIZED).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -436,7 +436,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.NOT_FOUND).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -466,7 +466,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.SERVICE_UNAVAILABLE).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.SERVICE_UNAVAILABLE).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -492,7 +492,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.NOT_FOUND).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -517,7 +517,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.NOT_FOUND).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -545,7 +545,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.NOT_FOUND).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 
@@ -582,7 +582,7 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -617,7 +617,7 @@ public class StubRepositoryTest {
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.OK).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
     }
 
@@ -649,7 +649,7 @@ public class StubRepositoryTest {
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.NOT_FOUND).isSameAs(foundStubResponse.getHttpStatusCode());
+        assertThat(Code.NOT_FOUND).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo("");
     }
 

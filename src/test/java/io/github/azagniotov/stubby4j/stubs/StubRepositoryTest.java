@@ -19,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -506,7 +507,7 @@ public class StubRepositoryTest {
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
         final StubRequest matchedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(matchedRequest), anyString())).thenThrow(Exception.class);
+        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(matchedRequest), anyString())).thenThrow(IOException.class);
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));

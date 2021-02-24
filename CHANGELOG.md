@@ -1,4 +1,8 @@
-#### 7.0.4-SNAPSHOT
+#### 7.1.1-SNAPSHOT
+
+#### 7.1.0
+
+* Pull request #144 - Updated dependencies and upgraded jetty to `9.4.36.v20210114` (https://github.com/azagniotov)
 
 #### 7.0.3
 
