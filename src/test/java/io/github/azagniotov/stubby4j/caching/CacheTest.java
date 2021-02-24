@@ -17,6 +17,7 @@
 package io.github.azagniotov.stubby4j.caching;
 
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -66,5 +67,36 @@ public class CacheTest {
         assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.empty());
         assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.empty());
         assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void shouldNotClearCacheByRegexKeyWhenRegexDoesNotMatch() throws Exception {
+
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
+
+        final String keyRegex = "^/resources/non-matching-regex-key/.*$";
+
+        final StubHttpLifecycle stubHttpLifeCycleOne = new StubHttpLifecycle.Builder()
+                .withRequest(new StubRequest.Builder().build())
+                .build();
+        final StubHttpLifecycle stubHttpLifeCycleTwo = new StubHttpLifecycle.Builder()
+                .withRequest(new StubRequest.Builder().build())
+                .build();
+        final StubHttpLifecycle stubHttpLifeCycleThree = new StubHttpLifecycle.Builder()
+                .withRequest(new StubRequest.Builder().build())
+                .build();
+
+        cache.putIfAbsent("/resources/asn/1", stubHttpLifeCycleOne);
+        cache.putIfAbsent("/resources/asn/2", stubHttpLifeCycleTwo);
+        cache.putIfAbsent("/resources/asn/3", stubHttpLifeCycleThree);
+
+        assertThat(cache.size().get()).isEqualTo(3);
+
+        cache.clearByRegexKey(keyRegex);
+
+        assertThat(cache.size().get()).isEqualTo(3);
+        assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.of(stubHttpLifeCycleOne));
+        assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.of(stubHttpLifeCycleTwo));
+        assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.of(stubHttpLifeCycleThree));
     }
 }
