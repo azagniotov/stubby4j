@@ -1078,4 +1078,27 @@ public class StubsPortalTest {
 
         assertThat(responseContent).isEqualTo(expectedResponseContent);
     }
+
+    @Test
+    public void shouldMatchDistinctRequestBodiesForTheSameUrlWhenPutRequestMade() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/individuals/SAME/address");
+
+        final String contentOne = "{\"type\": \"MOBILE\"}";
+        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, contentOne);
+
+        final HttpResponse responseOne = requestOne.execute();
+
+        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+        assertThat("{\"type\": \"BAD_REQUEST\"}").isEqualTo(responseOne.parseAsString().trim());
+
+
+        final String contentTwo = "{\"type\": \"HOME\"}";
+        final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, contentTwo);
+
+        final HttpResponse responseTwo = requestTwo.execute();
+
+        assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("OK").isEqualTo(responseTwo.parseAsString().trim());
+    }
 }

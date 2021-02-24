@@ -2,7 +2,7 @@
       method:
          -  GET
          -  POST
-         -  PUT 
+         -  PUT
       url: ^/resources/asn/.*$
 
    response:
@@ -766,4 +766,26 @@
       headers:
          content-type: application/json
       file: ../json/patch-success-response.json
+
+-  request:
+      url: /individuals/.*/address$
+      method: PUT
+      post: >
+        {"type": "MOBILE"}
+
+   response:
+      status: 400
+      body: >
+        {"type": "BAD_REQUEST"}
+
+
+-  request:
+      url: /individuals/.*/address$
+      method: PUT
+      post: >
+        {"type": "HOME"}
+
+   response:
+      body: OK
+      status: 200
 
