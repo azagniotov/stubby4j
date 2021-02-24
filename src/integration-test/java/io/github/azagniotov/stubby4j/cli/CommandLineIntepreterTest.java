@@ -31,9 +31,9 @@ public class CommandLineIntepreterTest {
         System.setOut(oldPrintStream);
 
         final String expectedConsoleOutput = "usage:" + BR +
-                "       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds]" + BR +
-                "       [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t" + BR +
-                "       <arg>] [-v] [-w]" + BR +
+                "java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds] [-h] [-k" + BR +
+                "       <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v]" + BR +
+                "       [-w <arg>]" + BR +
                 " -a,--admin <arg>             Port for admin portal. Defaults to 8889." + BR +
                 " -d,--data <arg>              Data file to pre-load endpoints. Data file" + BR +
                 "                              to pre-load endpoints. Optional valid YAML" + BR +
@@ -53,7 +53,7 @@ public class CommandLineIntepreterTest {
                 " -s,--stubs <arg>             Port for stub portal. Defaults to 8882." + BR +
                 " -t,--tls <arg>               Port for TLS connection. Defaults to 7443." + BR +
                 " -v,--version                 Prints out to console stubby version." + BR +
-                " -w,--watch                   Periodically scans for changes in last" + BR +
+                " -w,--watch <arg>             Periodically scans for changes in last" + BR +
                 "                              modification date of the main YAML and" + BR +
                 "                              referenced external files (if any). The flag" + BR +
                 "                              can accept an optional arg value which is" + BR +

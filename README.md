@@ -16,7 +16,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.0.3
+## User manual for stubby4j v7.1.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -157,12 +157,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.3")
+compile("io.github.azagniotov:stubby4j:7.1.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.3:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.0:no-jetty")
 ```
 
 #### Maven
@@ -170,7 +170,7 @@ compile("io.github.azagniotov:stubby4j:7.0.3:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.0.3</version>
+    <version>7.1.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -179,7 +179,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.0.3</version>
+    <version>7.1.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -188,31 +188,32 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-7.0.4-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.0.4-SNAPSHOT/`
+* Install `stubby4j-7.1.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.4-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.1.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.0.4-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.1-SNAPSHOT:no-jetty")
 ```
 
 
 ## Command-line switches
 ```
 usage:
-       java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds]
-       [-h] [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t
-       <arg>] [-v] [-w]
+java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds] [-h] [-k
+       <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v]
+       [-w <arg>]
  -a,--admin <arg>             Port for admin portal. Defaults to 8889.
- -d,--data <arg>              Data file to pre-load endpoints. Optional
-                              valid YAML 1.1 is expected. If YAML is not
-                              provided, you will be expected to configure
-                              stubs via the stubby4j HTTP POST API.
+ -d,--data <arg>              Data file to pre-load endpoints. Data file
+                              to pre-load endpoints. Optional valid YAML
+                              1.1 is expected. If YAML is not provided,
+                              you will be expected to configure stubs via
+                              the stubby4j HTTP POST API.
  -da,--disable_admin_portal   Does not start Admin portal
  -ds,--disable_ssl            Does not enable SSL connections
  -h,--help                    This help text.
@@ -226,7 +227,7 @@ usage:
  -s,--stubs <arg>             Port for stub portal. Defaults to 8882.
  -t,--tls <arg>               Port for TLS connection. Defaults to 7443.
  -v,--version                 Prints out to console stubby version.
- -w,--watch                   Periodically scans for changes in last
+ -w,--watch <arg>             Periodically scans for changes in last
                               modification date of the main YAML and
                               referenced external files (if any). The flag
                               can accept an optional arg value which is
