@@ -2,47 +2,47 @@
 
 #### 7.1.0
 
-* Pull request #144 - Updated dependencies and upgraded jetty to `9.4.36.v20210114` (https://github.com/azagniotov)
+* PR [#144](https://github.com/azagniotov/stubby4j/pull/144) - Updated dependencies and upgraded jetty to `9.4.36.v20210114` (https://github.com/azagniotov)
 
 #### 7.0.3
 
-* Pull request #131 - Removing deleted stub from the cache upon response update (https://github.com/azagniotov)
+* PR [#131](https://github.com/azagniotov/stubby4j/pull/131) - Removing deleted stub from the cache upon response update (https://github.com/azagniotov)
 
 #### 7.0.2
 
-* Pull request #126 - Enabled support for multiple `PATCH` method requests (https://github.com/azagniotov)
+* PR [#126](https://github.com/azagniotov/stubby4j/pull/126) - Enabled support for multiple `PATCH` method requests (https://github.com/azagniotov)
 
 #### 7.0.1
 
-* Pull request #104 and #123 - Support YAML-less start (https://github.com/LenarBad)
+* PR [#104](https://github.com/azagniotov/stubby4j/pull/104) and [#123](https://github.com/azagniotov/stubby4j/pull/123) - Support YAML-less start (https://github.com/LenarBad)
 
 #### 7.0.0
 
-* Pull request #118 - Upgraded jetty to `9.4.31.v20200723` (https://github.com/azagniotov)
+* PR [#118](https://github.com/azagniotov/stubby4j/pull/118) - Upgraded jetty to `9.4.31.v20200723` (https://github.com/azagniotov)
 
 #### 6.0.5
 
-* Pull request #116 - Upgraded jetty to `9.4.20.v20190813` (https://github.com/azagniotov)
+* PR [#116](https://github.com/azagniotov/stubby4j/pull/116) - Upgraded jetty to `9.4.20.v20190813` (https://github.com/azagniotov)
 
 #### 6.0.4
 
-* Pull request #112 - Upgraded jetty to `9.4.11.v20180605` (https://github.com/azagniotov)
+* PR [#112](https://github.com/azagniotov/stubby4j/pull/112) - Upgraded jetty to `9.4.11.v20180605` (https://github.com/azagniotov)
 
 #### 6.0.3
 
-* Pull request #107 - Update SnakeYAML dependency from 1.23 to 1.26 (https://github.com/josephearl)
+* PR [#107](https://github.com/azagniotov/stubby4j/pull/107) - Update SnakeYAML dependency from 1.23 to 1.26 (https://github.com/josephearl)
 
 #### 6.0.2
 
-* Pull request #105 - Update org.yaml:snakeyaml:1.23, which resolves issue #100 (https://github.com/moleksyuk)
+* PR [#105](https://github.com/azagniotov/stubby4j/pull/105) - Update org.yaml:snakeyaml:1.23, which resolves issue [#100](https://github.com/azagniotov/stubby4j/issues/100) (https://github.com/moleksyuk)
 
 #### 6.0.1
 
-* Pull request #93 - Added support for stubbed `PATCH` requests (https://github.com/singh-virendra)
+* PR [#93](https://github.com/azagniotov/stubby4j/pull/93) - Added support for stubbed `PATCH` requests (https://github.com/singh-virendra)
 
 #### 6.0.0
 
-* Pull request #87 - Added support for UUID property & ability to get/delete/update stub by UUID (https://github.com/azagniotov)
+* PR [#87](https://github.com/azagniotov/stubby4j/pull/87) - Added support for UUID property & ability to get/delete/update stub by UUID (https://github.com/azagniotov)
 * Displaying UUID value in popup dialogs in Admin console when `[view]` YAML source button is clicked
 * Revisited HTTP response codes of Admin portal APIs that manage stubs (delete, get & update APIs)
 * Upgraded from Jetty `9.4.8.v20171121` to `9.4.9.v20180320`
@@ -54,23 +54,23 @@
   - `Pattern.LITERAL` (as a fallback if any of the aforementioned compilations failed)
 
 #### 5.2.0
-* Pull request #91 - Added ability to use tokenized "Location" header in 3xx responses (https://github.com/dimadl)
-* Issue #92 - Added ability to honor stubbed 404 responses (https://github.com/MannanM)
+* PR [#91](https://github.com/azagniotov/stubby4j/pull/91) - Added ability to use tokenized "Location" header in 3xx responses (https://github.com/dimadl)
+* Issue [#92](https://github.com/azagniotov/stubby4j/issues/92) - Added ability to honor stubbed 404 responses (https://github.com/MannanM)
 
 #### 5.1.1
 * Added ANSITerminal back. it is operational alongside the SLF4J for the cases when stubby is running as a standalone jar
 * Upgraded from Jetty `9.4.6.v20170531` to `9.4.8.v20171121`
 
 #### 5.1.0
-* Pull request #83 - ANSITerminal was replaced with SLF4J. It is up to the stuby4j consumer to choose their own logging implementation (https://github.com/asarkar)
+* PR [#83](https://github.com/azagniotov/stubby4j/pull/83) - ANSITerminal was replaced with SLF4J. It is up to the stuby4j consumer to choose their own logging implementation (https://github.com/asarkar)
 
 #### 5.0.2
-* Pull request #77 - New field `description` for stubs/features (https://github.com/goughy000)
+* PR [#77](https://github.com/azagniotov/stubby4j/pull/77) - New field `description` for stubs/features (https://github.com/goughy000)
 
 #### 5.0.1
-* Pull request #71 - Add endpoint to Delete all stubs (https://github.com/nningego)
-* Pull request #74 - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
-* Pull request #76 - Allow custom XML and JSON content types (https://github.com/goughy000)
+* PR [#71](https://github.com/azagniotov/stubby4j/pull/71) - Add endpoint to Delete all stubs (https://github.com/nningego)
+* PR [#74](https://github.com/azagniotov/stubby4j/pull/74) - Adding parsing tokens capabilities to the file body (https://github.com/OtavioRMachado)
+* PR [#76](https://github.com/azagniotov/stubby4j/pull/76) - Allow custom XML and JSON content types (https://github.com/goughy000)
 * Upgraded from Jetty `9.4.0.v20161208` to `9.4.6.v20170531`
 
 #### 5.0.0
@@ -78,7 +78,7 @@
 * Supporting additional 3xx redirect HTTP codes when rendering redirect response: `303`, `307` & `308`
 
 #### 4.0.5
-* Pull request #63 - Dynamic token replacement is also applied to stubbed response headers
+* PR [#63](https://github.com/azagniotov/stubby4j/pull/63) - Dynamic token replacement is also applied to stubbed response headers
 * Upgraded from Jetty `9.3.13.v20161014` to `9.4.0.v20161208`
 * Added dependency on https://github.com/azagniotov/collection-type-safe-converter
 * 'Builder' sub-project got merged into the 'Main' sub-project
@@ -86,7 +86,7 @@
 #### 4.0.4
 * Upgraded from Jetty `9.3.12.v20160915` to `9.3.13.v20161014`
 * Shaved off stubby's start-up time due to parsing YAML config asynchronously
-* Issue #61 - During record & play, the stubbed query params were sent with recording request instead of the actual request query params
+* Issue [#61](https://github.com/azagniotov/stubby4j/issues/61) - During record & play, the stubbed query params were sent with recording request instead of the actual request query params
 
 #### 4.0.3
 * Optimized the stub matching algorithm by caching the previous matches [StubRepository#matchStub](https://github.com/azagniotov/stubby4j/blob/master/main/java/io/github/azagniotov/stubby4j/database/StubRepository.java)
@@ -100,7 +100,7 @@
 * Pre-compiling & caching stubbed regex patterns upon parsing YAML stub configuration
 
 #### 4.0.1
-* Issue #54 - Support for regular expression in Json POST
+* Issue [#54](https://github.com/azagniotov/stubby4j/issues/54) - Support for regular expression in Json POST
 
 #### 4.0.0
 * Built using Java v1.8 (`1.8.0_60`)
@@ -109,9 +109,9 @@
 * Updated Docker config
 * Renamed project root package from `by.stub` to `io.github.azagniotov.stubby4j`
 * Renamed Maven Central group ID from `by.stub` to `io.github.azagniotov`
-* Issue #55 - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
-* Issue #56 - Requests with query parameters values containing white spaces
-* Pull request #57 - `StubbyClient` starts Jetty with `-m` to mute the console logger, but it wasn't actually muted 
+* Issue [#55](https://github.com/azagniotov/stubby4j/issues/55) - When running in `--debug`, dumping `HttpServletRequest` parameters, would implicitly call `ServletRequest#getInputStream()`
+* Issue [#56](https://github.com/azagniotov/stubby4j/issues/56) - Requests with query parameters values containing white spaces
+* PR [#57](https://github.com/azagniotov/stubby4j/pull/57) - `StubbyClient` starts Jetty with `-m` to mute the console logger, but it wasn't actually muted 
 
 #### 3.3.0
 * Allow callers to wait for the StubbyClient to finish (Oliver Weiler, https://github.com/helpermethod)
@@ -127,7 +127,7 @@
 
 #### 3.0.3
 * Added support for custom authorization type header with the help of the new `header` property `authorization-custom`
-* Fixed issue #43 (Live refresh in response sequence only for first response)
+* Fixed issue [#43](https://github.com/azagniotov/stubby4j/issues/43) (Live refresh in response sequence only for first response)
 
 #### 3.0.2
 * Added support for Bearer Token authorization with the help of the new `header` property `authorization-bearer`
