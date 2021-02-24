@@ -335,6 +335,13 @@ Here is a fully-populated, unrealistic endpoint:
 
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
 
+### Summary
+In YAML config, the `request` configuration supports the following keys:
+
+`url`, `method`, `query`, `headers`, `post`, `file`
+
+### Details
+
 #### url (required)
 
 * is a full-fledged __regular expression__
@@ -661,7 +668,14 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
-* Can be a single response or a sequence of responses.
+### Summary
+In YAML config, the `response` configuration supports the following keys:
+
+`status`, `body`, `file`, `headers`, `latency`
+
+### Details
+
+* Response configuration an be a single `response` or a sequence of responses.
 * When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
 
 ```yaml
