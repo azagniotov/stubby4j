@@ -1,0 +1,13 @@
+-  request:
+     method:
+       -  GET
+       -  POST
+       -  PUT
+     url: ^/resources/asn/.*$
+
+   response:
+     status: 200
+     body: >
+       {"status": "ASN found!"}
+     headers:
+       content-type: application/json

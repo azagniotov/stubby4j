@@ -1,0 +1,21 @@
+-  request:
+     url: /individuals/.*/address$
+     method: PUT
+     post: >
+       {"type": "MOBILE"}
+
+   response:
+     status: 400
+     body: >
+       {"type": "BAD_REQUEST"}
+
+
+-  request:
+     url: /individuals/.*/address$
+     method: PUT
+     post: >
+       {"type": "HOME"}
+
+   response:
+     body: OK
+     status: 200

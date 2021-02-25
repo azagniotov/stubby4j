@@ -9,6 +9,7 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 
 public enum ConfigurableYAMLProperty {
 
+    INCLUDES,
     BODY,
     FILE,
     HEADERS,

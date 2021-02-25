@@ -49,6 +49,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BAS
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledStub;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.uriToFile;
@@ -74,6 +75,27 @@ public class YamlParser {
     private final AtomicInteger parsedStubCounter = new AtomicInteger();
     private String dataConfigHomeDirectory;
 
+    public Object loadRawYamlConfig(final InputStream configAsStream) {
+        return SNAKE_YAML.load(configAsStream);
+    }
+
+    public boolean isMainYamlHasIncludes(final Object loadedYamlConfig) {
+        return loadedYamlConfig instanceof Map &&
+                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.INCLUDES.toString());
+    }
+
+    public List<File> getYamlIncludes(final String dataConfigHomeDirectory, final Object loadedYamlConfig) throws IOException {
+        final Object includePathsObject = ((Map) loadedYamlConfig).get(ConfigurableYAMLProperty.INCLUDES.toString());
+        final List<String> includePaths = asCheckedArrayList(includePathsObject, String.class);
+
+        final List<File> yamlIncludes = new ArrayList<>();
+        for (final String includePath : includePaths) {
+            final File yamlInclude = uriToFile(dataConfigHomeDirectory, includePath);
+            yamlIncludes.add(yamlInclude);
+        }
+
+        return yamlIncludes;
+    }
 
     public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configContent));
@@ -87,10 +109,7 @@ public class YamlParser {
     private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
         this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
-        final Object loadedConfig = SNAKE_YAML.load(configAsStream);
-        if (!(loadedConfig instanceof List)) {
-            throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
-        }
+        final Object loadedConfig = loadYamlFromInputStream(configAsStream);
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
         final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
@@ -111,6 +130,36 @@ public class YamlParser {
         }
 
         return new YamlParseResultSet(stubs, uuidToStubs);
+    }
+
+    private Object loadYamlFromInputStream(final InputStream configAsStream) throws IOException {
+        Object loadedConfig = loadRawYamlConfig(configAsStream);
+
+        // This means that our main YAML config includes other files, i.e.:
+        //
+        // includes:
+        //  - service-1-stubs.yaml
+        //  - service-2-stubs.yaml
+        //  - service-3-stubs.yaml
+        //
+        if (isMainYamlHasIncludes(loadedConfig)) {
+            final List<File> yamlIncludes = getYamlIncludes(dataConfigHomeDirectory, loadedConfig);
+
+            final StringBuilder uberYamlBuilder = new StringBuilder();
+            for (final File yamlInclude : yamlIncludes) {
+                final InputStream pathInputStream = constructInputStream(yamlInclude);
+
+                uberYamlBuilder.append(StringUtils.inputStreamToString(pathInputStream));
+                uberYamlBuilder.append(BR).append(BR).append(BR);
+            }
+
+            loadedConfig = loadRawYamlConfig(constructInputStream(uberYamlBuilder.toString()));
+        }
+
+        if (!(loadedConfig instanceof List)) {
+            throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+        }
+        return loadedConfig;
     }
 
     private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
@@ -234,7 +283,7 @@ public class YamlParser {
                 return of(new File(dataConfigHomeDirectory, filePath));
             }
 
-            return ofNullable(uriToFile(dataConfigHomeDirectory, filePath));
+            return of(uriToFile(dataConfigHomeDirectory, filePath));
         } catch (final IOException ex) {
             ANSITerminal.error(ex.getMessage() + " " + FAILED_TO_LOAD_FILE_ERR);
             LOGGER.error(FAILED_TO_LOAD_FILE_ERR, ex);

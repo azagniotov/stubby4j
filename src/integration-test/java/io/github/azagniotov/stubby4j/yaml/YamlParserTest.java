@@ -324,6 +324,15 @@ public class YamlParserTest {
     }
 
     @Test
+    public void shouldUnmarshall_toCompleteYamlFromFile() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/feature.stub.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final Object rawYamlConfig = new YamlParser().loadRawYamlConfig(stubsConfigStream);
+
+        assertThat(rawYamlConfig).isInstanceOf(List.class);
+    }
+
+    @Test
     public void shouldUnmarshall_WhenYAMLValid_WithMultipleHTTPMethods() throws Exception {
 
         final String yaml = yamlBuilder.newStubbedRequest()
@@ -883,6 +892,57 @@ public class YamlParserTest {
                 assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
             }
         }
+    }
+
+    @Test
+    public void shouldUnmarshall_toCompleteYamlFromFile_WithIncludes() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/multi-include-main.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final StubHttpLifecycle actualHttpLifecycle = yamlParseResultSet.getStubs().get(0);
+        assertThat(actualHttpLifecycle.getCompleteYaml()).isEqualTo(
+                "- request:\n" +
+                        "    method:\n" +
+                        "    - GET\n" +
+                        "    - POST\n" +
+                        "    - PUT\n" +
+                        "    url: ^/resources/asn/.*$\n" +
+                        "  response:\n" +
+                        "    status: 200\n" +
+                        "    body: |\n" +
+                        "      {\"status\": \"ASN found!\"}\n" +
+                        "    headers:\n" +
+                        "      content-type: application/json\n");
+
+        final StubHttpLifecycle actualLastHttpLifecycle = yamlParseResultSet.getStubs().get(3);
+        assertThat(actualLastHttpLifecycle.getCompleteYaml()).isEqualTo(
+                "- request:\n" +
+                        "    url: /individuals/.*/address$\n" +
+                        "    method: PUT\n" +
+                        "    post: |\n" +
+                        "      {\"type\": \"HOME\"}\n" +
+                        "  response:\n" +
+                        "    body: OK\n" +
+                        "    status: 200\n");
+
+    }
+
+    @Test
+    public void shouldLoadYamlIncludesAsFileObjects() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/multi-include-main.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParser yamlParser = new YamlParser();
+        final List<File> yamlIncludes = yamlParser.getYamlIncludes(parentDirectory,
+                yamlParser.loadRawYamlConfig(stubsConfigStream));
+
+        assertThat(yamlIncludes.isEmpty()).isFalse();
+        assertThat(yamlIncludes.size()).isEqualTo(3);
+        assertThat(yamlIncludes.get(0).getAbsolutePath()).isEqualTo(parentDirectory + "/multi-included-service-1.yaml");
     }
 
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {
