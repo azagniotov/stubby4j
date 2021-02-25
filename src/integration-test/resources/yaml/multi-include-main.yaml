@@ -1,0 +1,4 @@
+includes:
+  - multi-included-service-1.yaml
+  - multi-included-service-2.yaml
+  - multi-included-service-3.yaml

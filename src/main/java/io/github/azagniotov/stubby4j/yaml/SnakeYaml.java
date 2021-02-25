@@ -21,7 +21,7 @@ public enum SnakeYaml {
     }
 
 
-    private final class YamlParserResolver extends Resolver {
+    private static final class YamlParserResolver extends Resolver {
         YamlParserResolver() {
             super();
         }

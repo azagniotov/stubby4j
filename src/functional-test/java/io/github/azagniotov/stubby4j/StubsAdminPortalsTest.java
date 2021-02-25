@@ -27,9 +27,9 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public class StubsAdminPortalsTest {
 
-    private static final int STUBS_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
-    private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
-    private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(49152, 65535);
+    private static final int STUBS_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
+    private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
+    private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
 
     private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);

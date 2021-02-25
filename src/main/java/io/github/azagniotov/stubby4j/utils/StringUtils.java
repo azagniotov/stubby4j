@@ -21,9 +21,9 @@ package io.github.azagniotov.stubby4j.utils;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
@@ -42,7 +42,7 @@ public final class StringUtils {
     static final String NOT_PROVIDED = "Not provided";
     static final String FAILED = "Failed to retrieveLoadedStubs response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
-    private static final CharsetEncoder US_ASCII_ENCODER = Charset.forName("US-ASCII").newEncoder();
+    private static final CharsetEncoder US_ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
 
     private static final String TEMPLATE_TOKEN_LEFT = "<%";
     private static final String TEMPLATE_TOKEN_RIGHT = "%>";
@@ -178,11 +178,7 @@ public final class StringUtils {
                 return StringUtils.FAILED;
             }
 
-            try {
-                return new String(objectBytes, StringUtils.UTF_8);
-            } catch (UnsupportedEncodingException e) {
-                return new String(objectBytes);
-            }
+            return new String(objectBytes, StandardCharsets.UTF_8);
         } else {
             final String valueAsStr = fieldObject.toString().trim();
 

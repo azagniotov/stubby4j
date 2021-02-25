@@ -1,0 +1,12 @@
+-  request:
+     method:
+       -  GET
+       -  POST
+       -  PUT
+     url: /this/stub/should/always/be/second/in/this/file
+
+   response:
+     status: 200
+     body: OK
+     headers:
+       content-type: application/json

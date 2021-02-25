@@ -7,7 +7,6 @@ import com.google.api.client.http.HttpResponse;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
-import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
@@ -21,9 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
@@ -34,9 +31,9 @@ import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
-public class StubsPortalTest {
+public class MultiIncludeStubsPortalTest {
 
-    private static final int STUBS_PORT = 5892;
+    private static final int STUBS_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
     private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
     private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
 
@@ -54,7 +51,7 @@ public class StubsPortalTest {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = MultiIncludeStubsPortalTest.class.getResource("/yaml/stubs-with-includes.yaml");
         final InputStream stubsDataInputStream = url.openStream();
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
@@ -336,7 +333,7 @@ public class StubsPortalTest {
     public void should_FindPostContentsEqual_WhenJsonContentOrderIrrelevant() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/json/tree");
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/graph.2.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/graph.2.json");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -368,7 +365,7 @@ public class StubsPortalTest {
     public void should_FindPostContentsEqual_WhenXmlContentOrderIrrelevant() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/xml/tree");
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/graph.2.xml");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/xml/graph.2.xml");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -398,7 +395,7 @@ public class StubsPortalTest {
     @Test
     public void should_ReturnAllProducts_WhenGetRequestMade() throws Exception {
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -425,7 +422,7 @@ public class StubsPortalTest {
     @Test
     public void should_ReturnAllProducts_WhenGetRequestMadeOverSsl() throws Exception {
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -764,7 +761,7 @@ public class StubsPortalTest {
     @Test
     public void should_MakeSuccessfulRequest_WhenStubbedValidJsonMatchesComplexValidJsonPost() throws Exception {
 
-        final URL dataPostUrl = StubsPortalTest.class.getResource("/json/jsonapi.post.rearranged.json");
+        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/jsonapi.post.rearranged.json");
         final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-object-comparison");
@@ -783,7 +780,7 @@ public class StubsPortalTest {
     @Test
     public void should_MakeSuccessfulRequest_WhenStubbedJsonRegexMatchesComplexValidJsonPost() throws Exception {
 
-        final URL dataPostUrl = StubsPortalTest.class.getResource("/json/jsonapi.post.json");
+        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/jsonapi.post.json");
         final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-regex");
@@ -952,100 +949,11 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedRecordedResponse_FromAnotherValidUrl() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-        final HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-        request.setHeaders(requestHeaders);
-
-        final HttpResponse response = request.execute();
-
-        final HttpHeaders headers = response.getHeaders();
-        assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
-
-        String responseContent = response.parseAsString().trim();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
-    }
-
-    @Test
-    public void should_ReturnExpectedRecordedResponseUsingActualQuery_FromAnotherValidUrl() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/3?language=chinese&greeting=12345");
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-        final HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-        request.setHeaders(requestHeaders);
-
-        final HttpResponse response = request.execute();
-
-        final HttpHeaders headers = response.getHeaders();
-        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
-
-        String responseContent = response.parseAsString().trim();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).contains("OK");
-        assertThat(responseContent).contains("actual query params when recording");
-    }
-
-    @Test
-    public void should_NotReturnExpectedRecordedResponse_FromValidUrl_WhenQueryValueNotCorrect() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/2?language=russian&greeting=nihao");
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-        final HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-        request.setHeaders(requestHeaders);
-
-        final HttpResponse response = request.execute();
-
-        final HttpHeaders headers = response.getHeaders();
-        assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-    }
-
-    @Test
-    public void should_ReturnExpectedRecordedResponse_OnSubsequentCallToValidUrl() throws Exception {
-
-        ANSITerminal.muteConsole(false);
-
-        final ByteArrayOutputStream consoleCaptor = new ByteArrayOutputStream();
-        final boolean NO_AUTO_FLUSH = false;
-        final PrintStream oldPrintStream = System.out;
-        System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
-
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/1?language=chinese&greeting=nihao");
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
-
-        final HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
-        request.setHeaders(requestHeaders);
-
-        final int LIMIT = 5;
-        for (int idx = 1; idx <= LIMIT; idx++) {
-            final HttpResponse actualResponse = request.execute();
-            final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
-
-            String firstCallResponseContent = actualResponse.parseAsString().trim();
-            assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
-            // Make sure we only hitting recordable source once
-            assertThat(actualConsoleOutput).contains("Recording HTTP response using");
-
-            if (idx == LIMIT) {
-                System.setOut(oldPrintStream);
-                System.out.println(actualConsoleOutput);
-            }
-        }
-    }
-
-    @Test
     public void should_RespondWithNotFound_WhenPatchRequestWithBodyMade() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-failure-request.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/patch-failure-request.json");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -1072,7 +980,7 @@ public class StubsPortalTest {
 
         final String responseContent = response.parseAsString().trim();
 
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-success-response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/patch-success-response.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedResponseContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
