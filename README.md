@@ -16,7 +16,7 @@ A highly flexible and configurable tool for testing interactions of SOA applicat
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Also, in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.1.0
+## User manual for stubby4j v7.1.1
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -37,6 +37,7 @@ It is a stub HTTP server after all, hence the "stubby". Also, in Australian slan
    * [Response](#response)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Record and Play](#record-and-play)
+   * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
@@ -157,12 +158,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.0")
+compile("io.github.azagniotov:stubby4j:7.1.1")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.0:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.1:no-jetty")
 ```
 
 #### Maven
@@ -170,7 +171,7 @@ compile("io.github.azagniotov:stubby4j:7.1.0:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.0</version>
+    <version>7.1.1</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -179,7 +180,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.0</version>
+    <version>7.1.1</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -188,17 +189,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-7.1.1-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.1-SNAPSHOT/`
+* Install `stubby4j-7.1.2-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.2-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.1-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.1.2-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.1-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.2-SNAPSHOT:no-jetty")
 ```
 
 
@@ -981,7 +982,7 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
 
-## Record and play
+### Record and play
 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
 from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
@@ -1014,6 +1015,82 @@ In the above example, stubby will record HTTP response received after submitting
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
 
+## Supplying stubbed endpoints to stubby
+
+There are two ways available:
+1. Submit `POST` requests to `localhost:8889` at runtime (check the [The admin portal](#the-admin-portal))
+2. Load a YAML config data-file (using `-d` / `--data` flags) with the following structure for each stubbed endpoint:
+
+* `description`: optional description shown in logs
+* `uuid`: optional unique identifier
+* `request`: describes the client's call to the server
+   * `method`: `GET`/`POST`/`PUT`/`PATCH`/`DELETE`/etc.
+   * `url`: the URI regex string. GET parameters should also be included inline here
+   * `query`: a key/value map of query string parameters included with the request. Query param value can be regex.
+   * `headers`: a key/value map of headers the server should respond to. Header value can be regex.
+   * `post`: a string matching the textual body of the response. Post value can be regex.
+   * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
+* `response`: describes the server's response (or array of responses, refer to the earlier examples) to the client
+   * `headers`: a key/value map of headers the server should use in it's response.
+   * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
+   * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
+   * `body`: the textual body of the server's response to the client
+   * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+
+### Splitting main YAML config
+
+There are situations where your main YAML config file will grow and become bloated due to large number of stubs,
+e.g.: your application talks to many downstream services. 
+
+stubby4j supports splitting the main YAML config file into multiple sub-config files, which allows for more logical &
+cleaner stub code organisation (kudos fly to https://github.com/harrysun2006). 
+
+#### Example
+
+Main `data.yaml`:
+
+```yaml
+includes:
+   - service-1-stubs.yaml
+   - service-2-stubs.yaml
+   - ...
+   - ...
+   - service-N-stubs.yaml
+```
+
+#### Example explained
+
+You define the stubbed endpoints for each service (or any other logical organisation of stubs that suits your needs) in
+their own `some-name-that-suits-you-N.yaml` sub-config files. 
+
+When stubby parses the main `data.yaml` provided using `-d` / `--data` flags, all included sub-configs will be loaded
+as if all the stubs were defined in one YAML.
+
+__Please note__
+You `cannot mix` in YAML config the above `includes` and defining stubs using `request`/`response` in the __same__ YAML file, e.g.: the following __won't work__:
+
+```yaml
+includes:
+   - service-1-stubs.yaml
+   - service-2-stubs.yaml
+   - service-3-stubs.yaml
+     
+-  request:
+      method:
+         -  GET
+         -  POST
+         -  PUT
+      url: ^/resources/asn/.*$
+
+   response:
+      status: 200
+      body: >
+         {"status": "ASN found!"}
+      headers:
+         content-type: application/json
+```  
+
+
 ## Performance optimization index
 
 stubby4j uses a number of techniques to optimize evaluation of stubs
@@ -1042,27 +1119,6 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 #### The status page
 
 You can view the currently configured endpoints by going to `localhost:8889/status`
-
-
-#### Supplying endpoints to stubby
-
-Submit `POST` requests to `localhost:8889` at runtime __OR__ load a data-file (using non-optional `-d` / `--data` flags) with the following structure for each endpoint:
-
-* `description`: optional description shown in logs
-* `uuid`: optional unique identifier
-* `request`: describes the client's call to the server
-   * `method`: GET/POST/PUT/PATCH/DELETE/etc.
-   * `url`: the URI regex string. GET parameters should also be included inline here
-   * `query`: a key/value map of query string parameters included with the request. Query param value can be regex.
-   * `headers`: a key/value map of headers the server should respond to. Header value can be regex.
-   * `post`: a string matching the textual body of the response. Post value can be regex.
-   * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
-* `response`: describes the server's response (or array of responses, refer to the examples) to the client
-   * `headers`: a key/value map of headers the server should use in it's response.
-   * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
-   * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
-   * `body`: the textual body of the server's response to the client
-   * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
 #### Getting the current list of stubbed endpoints
 

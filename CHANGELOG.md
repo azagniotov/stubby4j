@@ -1,4 +1,8 @@
-#### 7.1.1-SNAPSHOT
+#### 7.1.2-SNAPSHOT
+
+#### 7.1.1
+
+* PR [#152](https://github.com/azagniotov/stubby4j/pull/152) - YAML config can be loaded from sub includes, thus reduces the main YAML size (https://github.com/azagniotov)
 
 #### 7.1.0
 
