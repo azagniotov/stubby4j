@@ -16,7 +16,8 @@ public final class JarUtils {
 
 
     public static String readManifestImplementationVersion() {
-        final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
+        final URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+
         try {
             final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
             final Manifest manifest = new Manifest(url.openStream());
@@ -29,14 +30,20 @@ public final class JarUtils {
 
 
     public static String readManifestBuiltDate() {
-        final URLClassLoader classLoader = (URLClassLoader) JarUtils.class.getClassLoader();
+        final URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+
         try {
             final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
             final Manifest manifest = new Manifest(url.openStream());
 
-            return manifest.getMainAttributes().getValue("Built-Date");
+            final String builtDate = manifest.getMainAttributes().getValue("Built-Date");
+            if (builtDate != null) {
+                return builtDate;
+            }
         } catch (Exception e) {
             return DateTimeUtils.systemDefault();
         }
+
+        return DateTimeUtils.systemDefault();
     }
 }
