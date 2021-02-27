@@ -127,7 +127,15 @@ For more information and more complex examples, please dive into the rest of doc
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ## Running in Docker
-stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j. Alternatively you can build your own image locally using the project See the [Dockerfile](Dockerfile)
+stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
+
+Alternatively you can build your own image locally using the project [Dockerfile](Dockerfile):
+
+```shell script
+docker build --rm --no-cache -t stubby4j:latest .
+```
+
+Refer to https://hub.docker.com/r/azagniotov/stubby4j README regarding how to use the built image
 
 ## Building
 stubby4j is a multi source-set Gradle `v6.2.2` project
