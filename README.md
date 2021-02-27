@@ -1028,7 +1028,7 @@ In the above example, stubby will record HTTP response received after submitting
 
 ## Supplying stubbed endpoints to stubby
 
-There are two ways available:
+There are two ways available (listed in no particular order):
 1. Submit `POST` requests to `localhost:8889` at runtime (check the [The admin portal](#the-admin-portal))
 2. Load a YAML config data-file (using `-d` / `--data` flags) with the following structure for each stubbed endpoint:
 
@@ -1053,7 +1053,7 @@ There are two ways available:
 There are situations where your main YAML config file will grow and become bloated due to large number of stubs,
 e.g.: your application talks to many downstream services. 
 
-stubby4j supports splitting the main YAML config file into multiple sub-config files, which allows for more logical &
+stubby4j supports splitting the main YAML config file into multiple sub-config YAML files, which allows for more logical &
 cleaner stub code organisation (kudos fly to https://github.com/harrysun2006). 
 
 #### Example
@@ -1078,7 +1078,7 @@ When stubby parses the main `data.yaml` provided using `-d` / `--data` flags, al
 as if all the stubs were defined in one YAML.
 
 __Please note__
-You `cannot mix` in YAML config the above `includes` and defining stubs using `request`/`response` in the __same__ YAML file, e.g.: the following __won't work__:
+You `cannot mix` in the __same__ YAML config the `includes` with sub-configs & defining stubs using `request`/`response`, e.g.: stubby4j __will fail__ to load the following YAML:
 
 ```yaml
 includes:
