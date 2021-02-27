@@ -36,9 +36,10 @@ import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML
 
 public class StubsPortalTest {
 
+    // This port needs to be hardcoded due to `location` related redirection tests
     private static final int STUBS_PORT = 5892;
-    private static final int STUBS_SSL_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
-    private static final int ADMIN_PORT = SpringSocketUtils.findAvailableTcpPort(9152, 65535);
+    private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
+    private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
 
     private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
