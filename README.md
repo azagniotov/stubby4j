@@ -105,8 +105,10 @@ For more information and more complex examples, please dive into the rest of doc
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 ## Why would a developer use stubby4j?
+
 #### You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
+* Stub out external services in a Docker based micro-service architecture
 * Third party web service your application suppose to contract with is not ready yet
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP error codes
@@ -127,6 +129,7 @@ For more information and more complex examples, please dive into the rest of doc
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ## Running in Docker
+
 stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
 
 Alternatively you can build your own image locally using the project [Dockerfile](Dockerfile):
@@ -135,7 +138,11 @@ Alternatively you can build your own image locally using the project [Dockerfile
 docker build --rm --no-cache -t stubby4j:latest .
 ```
 
-Refer to https://hub.docker.com/r/azagniotov/stubby4j README regarding how to use the built image
+```shell script
+docker build --rm --no-cache -t stubby4j:latest .
+```
+
+Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How To Use This Image` section regarding how to use the built image
 
 ## Building
 stubby4j is a multi source-set Gradle `v6.2.2` project
@@ -158,7 +165,7 @@ Run `./gradlew clean jacocoTestReport` command to:
 ## Adding stubby4j to your project
 The following are the stubby4j artifacts that are hosted on [Maven Central][maven-link]:
 
-* `stubby4j-x.x.x.jar` - an `uber` JAR containing all the 3rd-party deps
+* `stubby4j-x.x.x.jar` - an `uber/fat` JAR containing all the 3rd-party deps
 * `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
 * `stubby4j-x.x.x-no-jetty.jar` - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty binaries
 * `stubby4j-x.x.x-sources.jar`
