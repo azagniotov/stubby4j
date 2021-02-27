@@ -35,69 +35,70 @@ public final class MainIncludedYamlScanner implements Runnable {
         try {
             final File mainDataYaml = stubRepository.getYamlConfig();
             final String mainYamlParentDirectory = mainDataYaml.getParent();
-            final InputStream mainConfigInputStream = FileUtils.constructInputStream(mainDataYaml);
-            final Object rawYamlConfig = yamlParser.loadRawYamlConfig(mainConfigInputStream);
+            try (final InputStream mainConfigInputStream = FileUtils.constructInputStream(mainDataYaml)) {
+                final Object rawYamlConfig = yamlParser.loadRawYamlConfig(mainConfigInputStream);
 
-            // This means that our main YAML config does not include other files, i.e.:
-            //
-            // includes:
-            //  - service-1-stubs.yaml
-            //  - service-2-stubs.yaml
-            //  - service-3-stubs.yaml
-            //
-            if (!yamlParser.isMainYamlHasIncludes(rawYamlConfig)) {
-                return;
-            }
+                // This means that our main YAML config does not include other files, i.e.:
+                //
+                // includes:
+                //  - service-1-stubs.yaml
+                //  - service-2-stubs.yaml
+                //  - service-3-stubs.yaml
+                //
+                if (!yamlParser.isMainYamlHasIncludes(rawYamlConfig)) {
+                    return;
+                }
 
-            ANSITerminal.status(String.format("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from %s", stubRepository.getYamlConfigCanonicalPath()));
-            LOGGER.debug("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from {}.",
-                    stubRepository.getYamlConfigCanonicalPath());
+                ANSITerminal.status(String.format("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from %s", stubRepository.getYamlConfigCanonicalPath()));
+                LOGGER.debug("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from {}.",
+                        stubRepository.getYamlConfigCanonicalPath());
 
-            final List<File> yamlIncludes = yamlParser.getYamlIncludes(mainYamlParentDirectory, rawYamlConfig);
-            final Map<File, Long> yamlIncludeFiles = new HashMap<>();
-            for (final File include : yamlIncludes) {
-                yamlIncludeFiles.put(include, include.lastModified());
-            }
+                final List<File> yamlIncludes = yamlParser.getYamlIncludes(mainYamlParentDirectory, rawYamlConfig);
+                final Map<File, Long> yamlIncludeFiles = new HashMap<>();
+                for (final File include : yamlIncludes) {
+                    yamlIncludeFiles.put(include, include.lastModified());
+                }
 
-            while (!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
 
-                Thread.sleep(sleepTime);
+                    Thread.sleep(sleepTime);
 
-                boolean isContinue = true;
-                String offendingFilename = "";
-                for (Map.Entry<File, Long> entry : yamlIncludeFiles.entrySet()) {
-                    final File file = entry.getKey();
-                    final long lastModified = entry.getValue();
-                    final long currentFileModified = file.lastModified();
+                    boolean isContinue = true;
+                    String offendingFilename = "";
+                    for (Map.Entry<File, Long> entry : yamlIncludeFiles.entrySet()) {
+                        final File file = entry.getKey();
+                        final long lastModified = entry.getValue();
+                        final long currentFileModified = file.lastModified();
 
-                    if (lastModified < currentFileModified) {
-                        yamlIncludeFiles.put(file, currentFileModified);
-                        isContinue = false;
-                        offendingFilename = file.getAbsolutePath();
-                        break;
+                        if (lastModified < currentFileModified) {
+                            yamlIncludeFiles.put(file, currentFileModified);
+                            isContinue = false;
+                            offendingFilename = file.getAbsolutePath();
+                            break;
+                        }
+                    }
+
+                    if (isContinue) {
+                        continue;
+                    }
+
+                    ANSITerminal.info(String.format("%sMain YAML included YAMLs scan detected change in %s%s", BR, offendingFilename, BR));
+                    LOGGER.info("Main YAML included YAMLs scan detected change in {}.", offendingFilename);
+
+                    try {
+                        stubRepository.refreshStubsFromYamlConfig(yamlParser);
+
+                        ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with included YAMLs from: %s on [" + DateTimeUtils.systemDefault() + "]%s",
+                                BR, stubRepository.getYamlConfig(), BR));
+                        LOGGER.info("Successfully performed live refresh of main YAML with included YAMLs from: {}.",
+                                stubRepository.getYamlConfig());
+                    } catch (final Exception ex) {
+                        ANSITerminal.error("Could not refresh YAML configuration, previously loaded stubs remain untouched." + ex.toString());
+                        LOGGER.error("Could not refresh YAML configuration, previously loaded stubs remain untouched.", ex);
                     }
                 }
 
-                if (isContinue) {
-                    continue;
-                }
-
-                ANSITerminal.info(String.format("%sMain YAML included YAMLs scan detected change in %s%s", BR, offendingFilename, BR));
-                LOGGER.info("Main YAML included YAMLs scan detected change in {}.", offendingFilename);
-
-                try {
-                    stubRepository.refreshStubsFromYamlConfig(yamlParser);
-
-                    ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with included YAMLs from: %s on [" + DateTimeUtils.systemDefault() + "]%s",
-                            BR, stubRepository.getYamlConfig(), BR));
-                    LOGGER.info("Successfully performed live refresh of main YAML with included YAMLs from: {}.",
-                            stubRepository.getYamlConfig());
-                } catch (final Exception ex) {
-                    ANSITerminal.error("Could not refresh YAML configuration, previously loaded stubs remain untouched." + ex.toString());
-                    LOGGER.error("Could not refresh YAML configuration, previously loaded stubs remain untouched.", ex);
-                }
             }
-
         } catch (final Exception ex) {
             ex.printStackTrace();
             LOGGER.error("Could not perform live main YAML scan with included YAMLs.", ex);

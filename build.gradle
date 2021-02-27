@@ -1,109 +1,109 @@
 plugins {
-   id "java-library"
-   id "idea"
-   id "eclipse"
-   id "org.unbroken-dome.test-sets" version "3.0.1"
-   id "com.bmuschko.nexus" version "2.3"
-   id "jacoco"
-   id "com.github.ben-manes.versions" version "0.36.0"
+    id "java-library"
+    id "idea"
+    id "eclipse"
+    id "org.unbroken-dome.test-sets" version "3.0.1"
+    id "com.bmuschko.nexus" version "2.3"
+    id "jacoco"
+    id "com.github.ben-manes.versions" version "0.36.0"
 }
 
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
 
 java {
-   sourceCompatibility = JavaVersion.VERSION_1_8
-   targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 compileJava {
-   options.encoding = 'UTF-8'
-   options.compilerArgs << '-parameters'
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
-   options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 javadoc {
-   if (JavaVersion.current().isJava8Compatible()) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-   }
+    if (JavaVersion.current().isJava8Compatible()) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 
-   if (JavaVersion.current().isJava9Compatible()) {
-      options.addBooleanOption('html5', true)
-   }
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 idea {
-   module {
-      downloadSources = true
-      downloadJavadoc = true
-   }
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 
-   project {
-      jdkName = "1.8"
-      languageLevel = "1.8"
-      vcs = "Git"
-      wildcards += [
-              '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
-              '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',
-              '?*.tld', '?*.ftl', '?*.yaml', '?*.json', '?*.jks'
-      ]
-   }
+    project {
+        jdkName = "1.8"
+        languageLevel = "1.8"
+        vcs = "Git"
+        wildcards += [
+                '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
+                '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',
+                '?*.tld', '?*.ftl', '?*.yaml', '?*.json', '?*.jks'
+        ]
+    }
 }
 
 eclipse {
-   classpath {
-      downloadSources = true
-   }
+    classpath {
+        downloadSources = true
+    }
 }
 
 repositories {
-   mavenLocal()
-   maven { url "https://repo.maven.apache.org/maven2" }
-   jcenter { url "https://jcenter.bintray.com" }
+    mavenLocal()
+    maven { url "https://repo.maven.apache.org/maven2" }
+    jcenter { url "https://jcenter.bintray.com" }
 }
 
 dependencies {
-   api "org.eclipse.jetty:jetty-server:${jettyVersion}"
-   api "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
-   api "org.ehcache:ehcache:3.9.1"
-   api "commons-cli:commons-cli:1.4"
-   api "org.yaml:snakeyaml:1.28"
-   api "org.skyscreamer:jsonassert:1.5.0"
-   api 'org.xmlunit:xmlunit-core:2.8.2'
-   api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
-   api "org.slf4j:slf4j-api:1.7.30"
+    api "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    api "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+    api "org.ehcache:ehcache:3.9.1"
+    api "commons-cli:commons-cli:1.4"
+    api "org.yaml:snakeyaml:1.28"
+    api "org.skyscreamer:jsonassert:1.5.0"
+    api 'org.xmlunit:xmlunit-core:2.8.2'
+    api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
+    api "org.slf4j:slf4j-api:1.7.30"
 
-   testImplementation "junit:junit:4.13.1"
-   testImplementation "org.mockito:mockito-core:3.3.3"
-   testImplementation "com.google.truth:truth:1.1.2"
+    testImplementation "junit:junit:4.13.1"
+    testImplementation "org.mockito:mockito-core:3.3.3"
+    testImplementation "com.google.truth:truth:1.1.2"
 
-   // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
-   testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+    // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+    testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
 }
 
 testSets {
-   integrationTest {
-      dirName = 'integration-test'
-   }
+    integrationTest {
+        dirName = 'integration-test'
+    }
 
-   functionalTest {
-      dirName = 'functional-test'
-   }
+    functionalTest {
+        dirName = 'functional-test'
+    }
 }
 
 tasks.withType(Test) {
-   Task testTask ->
-      ignoreFailures = false
-      testLogging {
-         events /*"passed", */ "skipped", "failed"
-         exceptionFormat "full"
-         showExceptions true
-         showCauses true
-         showStackTraces true
-      }
+    Task testTask ->
+        ignoreFailures = false
+        testLogging {
+            events /*"passed", */ "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
 }
 
 test.outputs.upToDateWhen { false }

@@ -147,10 +147,10 @@ public class YamlParser {
 
             final StringBuilder uberYamlBuilder = new StringBuilder();
             for (final File yamlInclude : yamlIncludes) {
-                final InputStream pathInputStream = constructInputStream(yamlInclude);
-
-                uberYamlBuilder.append(StringUtils.inputStreamToString(pathInputStream));
-                uberYamlBuilder.append(BR).append(BR).append(BR);
+                try (final InputStream pathInputStream = constructInputStream(yamlInclude)) {
+                    uberYamlBuilder.append(StringUtils.inputStreamToString(pathInputStream));
+                    uberYamlBuilder.append(BR).append(BR).append(BR);
+                }
             }
 
             loadedConfig = loadRawYamlConfig(constructInputStream(uberYamlBuilder.toString()));

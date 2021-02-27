@@ -1,791 +1,791 @@
--  request:
-      method:
-         -  GET
-         -  POST
-         -  PUT
-      url: ^/resources/asn/.*$
+- request:
+    method:
+      - GET
+      - POST
+      - PUT
+    url: ^/resources/asn/.*$
 
-   response:
-      status: 200
-      body: >
-         {"status": "ASN found!"}
+  response:
+    status: 200
+    body: >
+      {"status": "ASN found!"}
+    headers:
+      content-type: application/json
+
+
+- request:
+    method:
+      - GET
+      - POST
+      - PUT
+    url: /this/stub/should/always/be/second/in/this/file
+
+  response:
+    status: 200
+    body: OK
+    headers:
+      content-type: application/json
+
+
+- request:
+    method: [GET, POST, PUT]
+    url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}$
+
+  response:
+    status: 200
+    body: >
+      {"status": "The regex with query params works!"}
+    headers:
+      content-type: application/json
+
+- request:
+    method: GET
+    url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+
+  response:
+    status: 200
+    body: >
+      {"status": "The regex works!"}
+    headers:
+      content-type: application/json
+
+- request:
+    method: GET
+    url: /entity.find.again
+    query:
+      type_name: user
+      client_id: id
+      client_secret: secret
+      attributes: '[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]'
+
+  response:
+    status: 200
+    body: >
+      {"status": "hello world"}
+    headers:
+      content-type: application/json
+
+- request:
+    method: GET
+    url: /entity.find
+    query:
+      type_name: user
+      client_id: id
+      client_secret: secret
+      attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
+
+  response:
+    status: 200
+    body: >
+      {"status": "hello world"}
+    headers:
+      content-type: application/json
+
+
+- request:
+    method: GET
+    url: /entity.find.single.quote
+    query:
+      type_name: user
+      client_id: id
+      client_secret: secret
+      attributes: "['id','uuid','created','lastUpdated','displayName','email','givenName','familyName']"
+
+  response:
+    status: 200
+    body: >
+      {"status": "hello world with single quote"}
+    headers:
+      content-type: application/json
+
+- request:
+    method: GET
+    url: /entity.find.spaces.within
+    query:
+      key: "stalin and truman are best buddies"
+
+  response:
+    status: 200
+    body: >
+      {"status": "hello world with spaces within values"}
+    headers:
+      content-type: application/json
+
+
+- request:
+    method: GET
+    url: /entity.find.single.quote.spaces.within
+    query:
+      key: "['stalin and truman','are best friends']"
+
+  response:
+    status: 200
+    body: >
+      {"status": "hello world with single quote and spaces within"}
+    headers:
+      content-type: application/json
+
+
+- request:
+    method: GET
+    url: /pdf/hello-world
+
+  response:
+    headers:
+      content-type: application/pdf
+      content-disposition: attachment; filename=hello-world.pdf
+      pragma: no-cache
+    status: 200
+    file: ../binary/hello-world.pdf
+
+- request:
+    method: GET
+    url: /invoice
+    query:
+      status: active
+      type: full
+  response:
+    headers:
+      content-type: application/json
+      pragma: no-cache
+    status: 200
+    file: ../json/response.json
+
+
+- request:
+    method: PUT
+    url: /invoice/123
+    headers:
+      content-type: application/json
+    post: >
+      {"name": "milk", "description": "full", "department": "savoury"}
+
+  response:
+    headers:
+      content-type: application/json
+      pragma: no-cache
+    status: 200
+    body: >
+      {"id": "123", "status": "updated"}
+
+- request:
+    method: POST
+    url: /invoice/new
+    headers:
+      content-type: application/json
+    post: >
+      {"name": "chocolate", "description": "full", "department": "savoury"}
+
+  response:
+    headers:
+      content-type: application/json
+      pragma: no-cache
+    status: 201
+    body: >
+      {"id": "456", "status": "created"}
+
+
+- request:
+    method: POST
+    url: /post-body-as-json
+    headers:
+      content-type: application/json
+    post: >
+      {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+
+- request:
+    method: POST
+    url: /post-body-as-json-2
+    headers:
+      content-type: application/json
+    post: >
+      {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"internalKey": "<%post.1%>"}
+
+
+- request:
+    method: POST
+    url: /jsonapi-json-object-comparison
+    headers:
+      content-type: application/json
+    file: ../json/jsonapi.post.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"status": "OK"}
+
+
+- request:
+    method: POST
+    url: /jsonapi-json-regex
+    headers:
+      content-type: application/json
+    file: ../json/jsonapi.regex.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"people#id": "<% post.2 %>"}
+
+
+- request:
+    url: /invoice/new/no/post
+    method: POST
+  response:
+    status: 204
+
+- request:
+    method: POST
+    url: /item/path
+    query:
+      paramTwo: 12345
+      paramOne: valueOne
+
+  response:
+    status: 201
+    body: OK
+
+
+
+- request:
+    method: GET
+    url: /item/redirect
+
+  response:
+    latency: 1000
+    status: 301
+    headers:
+      location: /item/1
+    body:
+
+- request:
+    method: GET
+    url: /atomfeed/1
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode><invoiceDate>2012-06-27 14:51:26.416 PDT</invoiceDate><invoiceAmount>880.10</invoiceAmount><poNumber>1000054</poNumber><invoiceNumber>23423423</invoiceNumber><invoiceCurrencyCode>USD</invoiceCurrencyCode><vendorNumber>12345</vendorNumber><paymentDetails><paymentDetail><lineNumber>123</lineNumber><amount>20.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>ITEM</lineTypeLookupCode><taxCode /></paymentDetail><paymentDetail><lineNumber>124</lineNumber><amount>80.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>TEXT</lineTypeLookupCode><taxCode>VAT10</taxCode></paymentDetail></paymentDetails></payment>
+
+
+- request:
+    method: GET
+    url: /recordable/feed/1
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
+
+
+- request:
+    method: GET
+    url: /recordable/feed/2
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
+
+
+- request:
+    method: [GET]
+    url: /feed/1
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    body: http://localhost:5892/recordable
+
+
+- request:
+    method: [GET]
+    url: /feed/2
+    query:
+      greeting: nihao
+      language: russian
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    body: http://localhost:5892/recordable
+
+
+- request:
+    method: [GET]
+    url: /feed/3
+    query:
+      greeting: "([0-9]+)"
+      language: "([a-zA-Z]+)"
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: http://localhost:5892/recordableAgain
+
+
+- request:
+    method: GET
+    url: /recordableAgain/feed/3
+    query:
+      greeting: 12345
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: "{\"status\" : \"OK\", \"description\" : \"actual query params when recording\"}"
+
+
+- request:
+    method: [GET]
+    url: /maps/api/geocode/json
+    query:
+      address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
+      sensor: false
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: http://maps.googleapis.com
+
+
+- request:
+    method: GET
+    url: /item/1
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "1", "description" : "milk"}
+
+
+- request:
+    headers:
+      authorization-basic: bob:secret
+    method: GET
+    url: /item/auth
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "8", "description" : "authorized using basic"}
+
+
+- request:
+    headers:
+      authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
+    method: GET
+    url: /item/auth/bearer
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "12", "description" : "authorized using bearer"}
+
+
+- request:
+    headers:
+      authorization-custom: CustomAuthorizationName Ym9iOndyb25nLXNlY3JldA==
+    method: GET
+    url: /item/auth/custom
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "12", "description" : "authorized using custom"}
+
+
+- request:
+    method: POST
+    url: /item/1
+    post: post body
+
+  response:
+    headers:
+      content-type: text/plain
+    status: 200
+    body: Got post response
+
+
+- request:
+    method: [GET]
+    url: ^/feeds/payment[sz]$
+    query:
+      start-index: \d+
+      max-records: \d+
+
+  response:
+    headers:
+      content-type: text/plain
+    status: 200
+    body: Got response
+
+
+- request:
+    headers:
+      authorization-basic: bob:secret
+    method: POST
+    url: /item/submit
+    post: >
+      {"action" : "submit"}
+
+  response:
+    headers:
+      content-type: text/plain
+    status: 200
+    body: OK
+
+
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses
+
+  response:
+    - status: 201
       headers:
-         content-type: application/json
-
-
--  request:
-      method:
-         -  GET
-         -  POST
-         -  PUT
-      url: /this/stub/should/always/be/second/in/this/file
-
-   response:
-      status: 200
-      body: OK
-      headers:
-         content-type: application/json
-
-
--  request:
-      method: [GET, POST, PUT]
-      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}$
-
-   response:
-      status: 200
-      body: >
-         {"status": "The regex with query params works!"}
-      headers:
-         content-type: application/json
-
--  request:
-      method: GET
-      url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
-
-   response:
-      status: 200
-      body: >
-         {"status": "The regex works!"}
-      headers:
-         content-type: application/json
-
--  request:
-      method: GET
-      url: /entity.find.again
-      query:
-         type_name: user
-         client_id: id
-         client_secret: secret
-         attributes: '[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]'
-
-   response:
-      status: 200
-      body: >
-         {"status": "hello world"}
-      headers:
-         content-type: application/json
-
--  request:
-      method: GET
-      url: /entity.find
-      query:
-         type_name: user
-         client_id: id
-         client_secret: secret
-         attributes: '["id","uuid","created","lastUpdated","displayName","email","givenName","familyName"]'
-
-   response:
-      status: 200
-      body: >
-         {"status": "hello world"}
-      headers:
-         content-type: application/json
-
-
--  request:
-      method: GET
-      url: /entity.find.single.quote
-      query:
-         type_name: user
-         client_id: id
-         client_secret: secret
-         attributes: "['id','uuid','created','lastUpdated','displayName','email','givenName','familyName']"
-
-   response:
-      status: 200
-      body: >
-         {"status": "hello world with single quote"}
-      headers:
-         content-type: application/json
-
--  request:
-      method: GET
-      url: /entity.find.spaces.within
-      query:
-         key: "stalin and truman are best buddies"
-
-   response:
-      status: 200
-      body: >
-         {"status": "hello world with spaces within values"}
-      headers:
-         content-type: application/json
-
-
--  request:
-      method: GET
-      url: /entity.find.single.quote.spaces.within
-      query:
-         key: "['stalin and truman','are best friends']"
-
-   response:
-      status: 200
-      body: >
-         {"status": "hello world with single quote and spaces within"}
-      headers:
-         content-type: application/json
-
-
--  request:
-      method: GET
-      url: /pdf/hello-world
-
-   response:
-      headers:
-         content-type: application/pdf
-         content-disposition: attachment; filename=hello-world.pdf
-         pragma: no-cache
-      status: 200
-      file: ../binary/hello-world.pdf
-
--  request:
-      method: GET
-      url: /invoice
-      query:
-         status: active
-         type: full
-   response:
-      headers:
-         content-type: application/json
-         pragma: no-cache
-      status: 200
-      file: ../json/response.json
-
-
--  request:
-      method: PUT
-      url: /invoice/123
-      headers:
-         content-type: application/json
-      post: >
-         {"name": "milk", "description": "full", "department": "savoury"}
-
-   response:
-      headers:
-         content-type: application/json
-         pragma: no-cache
-      status: 200
-      body: >
-         {"id": "123", "status": "updated"}
-
--  request:
-      method: POST
-      url: /invoice/new
-      headers:
-         content-type: application/json
-      post: >
-         {"name": "chocolate", "description": "full", "department": "savoury"}
-
-   response:
-      headers:
-         content-type: application/json
-         pragma: no-cache
-      status: 201
-      body: >
-         {"id": "456", "status": "created"}
-
-
--  request:
-      method: POST
-      url: /post-body-as-json
-      headers:
-         content-type: application/json
-      post: >
-         {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
-
--  request:
-      method: POST
-      url: /post-body-as-json-2
-      headers:
-         content-type: application/json
-      post: >
-         {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"internalKey": "<%post.1%>"}
-
-
--  request:
-      method: POST
-      url: /jsonapi-json-object-comparison
-      headers:
-         content-type: application/json
-      file: ../json/jsonapi.post.json
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"status": "OK"}
-
-
--  request:
-      method: POST
-      url: /jsonapi-json-regex
-      headers:
-         content-type: application/json
-      file: ../json/jsonapi.regex.json
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"people#id": "<% post.2 %>"}
-
-
--  request:
-      url: /invoice/new/no/post
-      method: POST
-   response:
-      status: 204
-
--  request:
-      method: POST
-      url: /item/path
-      query:
-         paramTwo: 12345
-         paramOne: valueOne
-
-   response:
-      status: 201
-      body: OK
-
-
-
--  request:
-      method: GET
-      url: /item/redirect
-
-   response:
-      latency: 1000
-      status: 301
-      headers:
-         location: /item/1
-      body:
-
--  request:
-      method: GET
-      url: /atomfeed/1
-
-   response:
-      headers:
-         content-type: application/xml
-      status: 200
-      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode><invoiceDate>2012-06-27 14:51:26.416 PDT</invoiceDate><invoiceAmount>880.10</invoiceAmount><poNumber>1000054</poNumber><invoiceNumber>23423423</invoiceNumber><invoiceCurrencyCode>USD</invoiceCurrencyCode><vendorNumber>12345</vendorNumber><paymentDetails><paymentDetail><lineNumber>123</lineNumber><amount>20.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>ITEM</lineTypeLookupCode><taxCode /></paymentDetail><paymentDetail><lineNumber>124</lineNumber><amount>80.10</amount><invoiceDate>2012-06-27 14:51:26.417 PDT</invoiceDate><legalEntity>100</legalEntity><coaDivision>10</coaDivision><coaAccount>2451</coaAccount><coaDepartment>9101</coaDepartment><coaArea>90005</coaArea><coaMerch>0000</coaMerch><coaInterUnit>000</coaInterUnit><coaFutureUse>0000</coaFutureUse><lineTypeLookupCode>TEXT</lineTypeLookupCode><taxCode>VAT10</taxCode></paymentDetail></paymentDetails></payment>
-
-
--  request:
-      method: GET
-      url: /recordable/feed/1
-      query:
-         greeting: nihao
-         language: chinese
-      headers:
-         content-type: application/json
-
-   response:
-      headers:
-         content-type: application/xml
-      status: 200
-      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
-
-
--  request:
-      method: GET
-      url: /recordable/feed/2
-      query:
-         greeting: nihao
-         language: chinese
-      headers:
-         content-type: application/json
-
-   response:
-      headers:
-         content-type: application/xml
-      status: 200
-      body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
-
-
--  request:
-      method: [GET]
-      url: /feed/1
-      query:
-         greeting: nihao
-         language: chinese
-      headers:
-         content-type: application/json
-
-   response:
-      status: 200
-      headers:
-         content-type: application/xml
-      body: http://localhost:5892/recordable
-
-
--  request:
-      method: [GET]
-      url: /feed/2
-      query:
-         greeting: nihao
-         language: russian
-      headers:
-         content-type: application/json
-
-   response:
-      status: 200
-      headers:
-         content-type: application/xml
-      body: http://localhost:5892/recordable
-
-
--  request:
-      method: [GET]
-      url: /feed/3
-      query:
-         greeting: "([0-9]+)"
-         language: "([a-zA-Z]+)"
-      headers:
-         content-type: application/json
-
-   response:
-      status: 200
-      headers:
-         content-type: application/json
-      body: http://localhost:5892/recordableAgain
-
-
--  request:
-      method: GET
-      url: /recordableAgain/feed/3
-      query:
-         greeting: 12345
-         language: chinese
-      headers:
-         content-type: application/json
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: "{\"status\" : \"OK\", \"description\" : \"actual query params when recording\"}"
-
-
--  request:
-      method: [GET]
-      url: /maps/api/geocode/json
-      query:
-         address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
-         sensor: false
-
-   response:
-      status: 200
-      headers:
-         content-type: application/json
-      body: http://maps.googleapis.com
-
-
--  request:
-      method: GET
-      url: /item/1
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"id" : "1", "description" : "milk"}
-
-
--  request:
-      headers:
-         authorization-basic: bob:secret
-      method: GET
-      url: /item/auth
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"id" : "8", "description" : "authorized using basic"}
-
-
--  request:
-      headers:
-         authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
-      method: GET
-      url: /item/auth/bearer
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"id" : "12", "description" : "authorized using bearer"}
-
-
--  request:
-      headers:
-         authorization-custom: CustomAuthorizationName Ym9iOndyb25nLXNlY3JldA==
-      method: GET
-      url: /item/auth/custom
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"id" : "12", "description" : "authorized using custom"}
-
-
--  request:
-      method: POST
-      url: /item/1
-      post: post body
-
-   response:
-      headers:
-         content-type: text/plain
-      status: 200
-      body: Got post response
-
-
--  request:
-      method: [GET]
-      url: ^/feeds/payment[sz]$
-      query:
-         start-index: \d+
-         max-records: \d+
-
-   response:
-      headers:
-         content-type: text/plain
-      status: 200
-      body: Got response
-
-
--  request:
-      headers:
-         authorization-basic: bob:secret
-      method: POST
-      url: /item/submit
-      post: >
-         {"action" : "submit"}
-
-   response:
-      headers:
-         content-type: text/plain
-      status: 200
-      body: OK
-
-
--  request:
-      method: [GET]
-      url: /uri/with/sequenced/responses
-
-   response:
-      -  status: 201
-         headers:
-            content-type: application/json
-         body: OK
-
-      -  status: 201
-         headers:
-            content-type: application/json
-         body: Still going strong!
-
-      -  status: 500
-         headers:
-            content-type: application/json
-         body: OMFG!!!
-
-
--  request:
-      method: [GET]
-      url: /uri/with/sequenced/responses/infile
-
-   response:
-      -  status: 201
-         headers:
-            content-type: application/json
-         file: ../json/sequenced.response.ok.json
-
-      -  status: 201
-         headers:
-            content-type: application/json
-         file: ../json/sequenced.response.goingstrong.json
-
-      -  status: 500
-         headers:
-            content-type: application/json
-         file: ../json/sequenced.response.omfg.json
-
-
--  request:
-      method: [GET]
-      url: /uri/with/sequenced/responses/infile/withbadurls
-
-   response:
-      -  status: 201
-         headers:
-            content-type: application/json
-         file: ../json/this.file.does.not.exist.json
-
-      -  status: 201
-         headers:
-            content-type: application/json
-         file: ../json/sequenced.response.goingstrong.json
-
-      -  status: 500
-         headers:
-            content-type: application/json
-         file: ../json/this.file.does.not.exist.either.json
-
-
-
--  request:
-      method: [GET]
-      url: /uri/with/single/sequenced/response
-
-   response:
-      -  status: 201
-         headers:
-            content-type: application/json
-         body: Still going strong!
-
-
--  request:
-      method: [POST]
-      url: /uri/with/post/regex
-      post: "^[\\.,'a-zA-Z\\s+]*$"
-
-   response:
-      -  status: 200
-         headers:
-            content-type: application/json
-         body: OK
-
-
--  request:
-      method: [GET]
-      url: ^/resources/invoices/(\d{5})/category/([a-zA-Z]+)
-
-   response:
-      status: 200
-      body: Returned invoice number# <%url.1%> in category '<%url.2%>'
-
-
--  request:
-      method: [GET]
-      url: ^/resources/invoices/(\d{5})
-
-   response:
-      status: 200
-      body: Returned invoice number# <%url.1%> in category '<%url.2%>'
-
-
--  request:
-      method: [GET]
-      url: ^/account/(\d{5})/category/([a-zA-Z]+)
-      query:
-         date: "([a-zA-Z]+)"
-
-   response:
-      status: 200
-      file: ../json/template.json
-
-
--  request:
-      method: [GET]
-      url: ^/no/explicit/groups/\d{5}
-      query:
-         param: "[a-zA-Z]+"
-      headers:
-         custom-header: "[a-zA-Z]+"
-
-   response:
-      status: 200
-      body: Returned content with URL <% url.0 %>, query param <% query.param.0 %> and custom-header <% headers.custom-header.0 %>
-
-
--  request:
-      method: [GET]
-      url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
-
-   response:
-      status: 200
-      body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
-
-
--  request:
-      method: [GET]
-      url: ^/regex-fileserver/([a-z]+).html$
-
-   response:
-      status: 200
-      file: ../html/<% url.1 %>.html
-
-
--  request:
-      method: GET
-      url: /empty.param
-      query:
-         type_name:
-         client_secret: secret
-
-   response:
-      status: 200
-      body: EMPTY WORKS
-
-
--  request:
-      method: GET
-      url: /empty.single.param
-      query:
-         type_name:
-   response:
-      status: 200
-      body: EMPTY SINGLE WORKS
-
--  request:
-      method: POST
-      url: /complex/json/tree
-      headers:
-         content-type: application/json
-      file: ../json/graph.1.json
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
+        content-type: application/json
       body: OK
 
--  request:
-      method: POST
-      url: /complex/xml/tree
+    - status: 201
       headers:
-         content-type: application/xml
-      file: ../xml/graph.1.xml
+        content-type: application/json
+      body: Still going strong!
 
-   response:
+    - status: 500
       headers:
-         content-type: application/xml
-      status: 200
-      body: OK
+        content-type: application/json
+      body: OMFG!!!
 
--  request:
-      method: PUT
-      url: /complex/json/tree/put
-      file: ../json/graph.2.json
 
-   response:
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses/infile
+
+  response:
+    - status: 201
       headers:
-         content-type: application/xml
-      status: 201
+        content-type: application/json
+      file: ../json/sequenced.response.ok.json
+
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/sequenced.response.goingstrong.json
+
+    - status: 500
+      headers:
+        content-type: application/json
+      file: ../json/sequenced.response.omfg.json
+
+
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses/infile/withbadurls
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/this.file.does.not.exist.json
+
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/sequenced.response.goingstrong.json
+
+    - status: 500
+      headers:
+        content-type: application/json
+      file: ../json/this.file.does.not.exist.either.json
+
+
+
+- request:
+    method: [GET]
+    url: /uri/with/single/sequenced/response
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      body: Still going strong!
+
+
+- request:
+    method: [POST]
+    url: /uri/with/post/regex
+    post: "^[\\.,'a-zA-Z\\s+]*$"
+
+  response:
+    - status: 200
+      headers:
+        content-type: application/json
       body: OK
 
 
--  request:
-      headers:
-         authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
-      method: DELETE
-      url: /item/auth/bearer/1
+- request:
+    method: [GET]
+    url: ^/resources/invoices/(\d{5})/category/([a-zA-Z]+)
 
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"id" : "12", "description" : "deleted authorized using bearer"}
+  response:
+    status: 200
+    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
 
 
--  request:
-      method: [GET]
-      url: ^/v\d/identity/authorize
-      query:
-         redirect_uri: "https://(.*)/app.*"
+- request:
+    method: [GET]
+    url: ^/resources/invoices/(\d{5})
 
-   response:
-      headers:
-         location: https://<% query.redirect_uri.1 %>/auth
-      status: 302
+  response:
+    status: 200
+    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
 
 
--  request:
-      method: [GET]
-      url: /returns-not-found-response-with-body
+- request:
+    method: [GET]
+    url: ^/account/(\d{5})/category/([a-zA-Z]+)
+    query:
+      date: "([a-zA-Z]+)"
 
-   response:
-      status: 404
-      body: This response with body was actually not found
-
-
--  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
-   request:
-      method: GET
-      url: /with/configured/uuid/property
-
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-      body: >
-         {"status" : "OK"}
+  response:
+    status: 200
+    file: ../json/template.json
 
 
--  request:
-      method: PATCH
-      url: /simulator/content/v1/url/one
-      file: ../json/patch-failure-request.json
+- request:
+    method: [GET]
+    url: ^/no/explicit/groups/\d{5}
+    query:
+      param: "[a-zA-Z]+"
+    headers:
+      custom-header: "[a-zA-Z]+"
 
-   response:
-      headers:
-         content-type: application/json
-      status: 200
-
-
--  request:
-      method: PATCH
-      url: /simulator/content/v1/url/one
-
-   response:
-      status: 200
-      headers:
-         content-type: application/json
-      file: ../json/patch-success-response.json
-
--  request:
-      url: /individuals/.*/address$
-      method: PUT
-      post: >
-        {"type": "MOBILE"}
-
-   response:
-      status: 400
-      body: >
-        {"type": "BAD_REQUEST"}
+  response:
+    status: 200
+    body: Returned content with URL <% url.0 %>, query param <% query.param.0 %> and custom-header <% headers.custom-header.0 %>
 
 
--  request:
-      url: /individuals/.*/address$
-      method: PUT
-      post: >
-        {"type": "HOME"}
+- request:
+    method: [GET]
+    url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
 
-   response:
-      body: OK
-      status: 200
+  response:
+    status: 200
+    body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
+
+
+- request:
+    method: [GET]
+    url: ^/regex-fileserver/([a-z]+).html$
+
+  response:
+    status: 200
+    file: ../html/<% url.1 %>.html
+
+
+- request:
+    method: GET
+    url: /empty.param
+    query:
+      type_name:
+      client_secret: secret
+
+  response:
+    status: 200
+    body: EMPTY WORKS
+
+
+- request:
+    method: GET
+    url: /empty.single.param
+    query:
+      type_name:
+  response:
+    status: 200
+    body: EMPTY SINGLE WORKS
+
+- request:
+    method: POST
+    url: /complex/json/tree
+    headers:
+      content-type: application/json
+    file: ../json/graph.1.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: OK
+
+- request:
+    method: POST
+    url: /complex/xml/tree
+    headers:
+      content-type: application/xml
+    file: ../xml/graph.1.xml
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: OK
+
+- request:
+    method: PUT
+    url: /complex/json/tree/put
+    file: ../json/graph.2.json
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    body: OK
+
+
+- request:
+    headers:
+      authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
+    method: DELETE
+    url: /item/auth/bearer/1
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "12", "description" : "deleted authorized using bearer"}
+
+
+- request:
+    method: [GET]
+    url: ^/v\d/identity/authorize
+    query:
+      redirect_uri: "https://(.*)/app.*"
+
+  response:
+    headers:
+      location: https://<% query.redirect_uri.1 %>/auth
+    status: 302
+
+
+- request:
+    method: [GET]
+    url: /returns-not-found-response-with-body
+
+  response:
+    status: 404
+    body: This response with body was actually not found
+
+
+- uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+  request:
+    method: GET
+    url: /with/configured/uuid/property
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"status" : "OK"}
+
+
+- request:
+    method: PATCH
+    url: /simulator/content/v1/url/one
+    file: ../json/patch-failure-request.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+
+
+- request:
+    method: PATCH
+    url: /simulator/content/v1/url/one
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ../json/patch-success-response.json
+
+- request:
+    url: /individuals/.*/address$
+    method: PUT
+    post: >
+      {"type": "MOBILE"}
+
+  response:
+    status: 400
+    body: >
+      {"type": "BAD_REQUEST"}
+
+
+- request:
+    url: /individuals/.*/address$
+    method: PUT
+    post: >
+      {"type": "HOME"}
+
+  response:
+    body: OK
+    status: 200
 

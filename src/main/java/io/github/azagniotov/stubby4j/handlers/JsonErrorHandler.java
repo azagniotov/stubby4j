@@ -19,6 +19,8 @@ import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
 
 public class JsonErrorHandler extends ErrorHandler {
 
+    private static final int BYTE_ARRAY_CAPACITY = 4096;
+
     @Override
     public void handle(final String target,
                        final Request baseRequest,
@@ -34,15 +36,16 @@ public class JsonErrorHandler extends ErrorHandler {
         baseRequest.setHandled(true);
         response.setContentType(MimeTypes.Type.APPLICATION_JSON.asString());
 
-        final ByteArrayISO8859Writer byteArrayWriter = new ByteArrayISO8859Writer(4096);
-        final String reason = (response instanceof Response) ? ((Response) response).getReason() : null;
+        try (final ByteArrayISO8859Writer byteArrayWriter = new ByteArrayISO8859Writer(BYTE_ARRAY_CAPACITY)) {
+            final String reason = (response instanceof Response) ? ((Response) response).getReason() : null;
 
-        handleErrorPage(request, byteArrayWriter, response.getStatus(), reason);
+            handleErrorPage(request, byteArrayWriter, response.getStatus(), reason);
 
-        byteArrayWriter.flush();
-        response.setContentLength(byteArrayWriter.size());
-        byteArrayWriter.writeTo(response.getOutputStream());
-        byteArrayWriter.destroy();
+            byteArrayWriter.flush();
+            response.setContentLength(byteArrayWriter.size());
+            byteArrayWriter.writeTo(response.getOutputStream());
+            byteArrayWriter.destroy();
+        }
     }
 
     @Override
@@ -53,7 +56,7 @@ public class JsonErrorHandler extends ErrorHandler {
                                   final boolean showStacks) throws IOException {
 
         final String error = isNull(message) ? HttpStatus.getMessage(code) : message;
-        if (code == 404) {
+        if (code == HttpStatus.NOT_FOUND_404) {
             try {
                 final JSONObject jsonObject = new JSONObject(error);
                 jsonObject.putOpt("code", code);

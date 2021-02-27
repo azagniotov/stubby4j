@@ -41,6 +41,8 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 public final class ConsoleUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
+    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
 
     private static boolean debug = false;
 
@@ -64,12 +66,12 @@ public final class ConsoleUtils {
 
 
     private static void logRawIncomingRequest(final HttpServletRequest request) {
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+        ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
         ANSITerminal.info(HttpRequestUtils.dump(request));
-        ANSITerminal.warn(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** " + BR);
-        LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+        ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP + BR);
+        LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
         LOGGER.debug(HttpRequestUtils.dump(request));
-        LOGGER.debug(" ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ");
+        LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
     }
 
 
@@ -90,12 +92,12 @@ public final class ConsoleUtils {
 
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
         if (debug) {
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+            ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
             ANSITerminal.info(assertingStubRequest.toString());
-            ANSITerminal.warn(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** " + BR);
-            LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+            ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP + BR);
+            LOGGER.debug(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
             LOGGER.debug("{}", assertingStubRequest);
-            LOGGER.debug(" ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ");
+            LOGGER.debug(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
         }
     }
 

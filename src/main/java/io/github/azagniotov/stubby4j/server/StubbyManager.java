@@ -91,7 +91,7 @@ public final class StubbyManager {
     }
 
     public List<String> statuses() {
-        return jettyFactory.statuses();
+        return jettyFactory.getStatuses();
     }
 
     private boolean isJettyStarting() {

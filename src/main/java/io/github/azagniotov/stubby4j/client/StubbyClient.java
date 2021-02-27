@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -253,7 +254,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(), HttpMethod.GET.asString(), uri, host, port, authorization);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.GET.asString(), uri, host, port, authorization);
 
         return makeRequest(stubbyRequest);
     }
@@ -272,7 +273,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.GET.asString(), uri, host, stubsPort, authorization);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.GET.asString(), uri, host, stubsPort, authorization);
 
         return makeRequest(stubbyRequest);
     }
@@ -335,7 +336,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.POST.asString(), uri, host, stubsPort, authorization, payload);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.POST.asString(), uri, host, stubsPort, authorization, payload);
 
         return makeRequest(stubbyRequest);
     }
@@ -384,7 +385,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doPut(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
 
         return makeRequest(stubbyRequest);
     }
@@ -405,7 +406,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doPutOverSsl(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
 
         return makeRequest(stubbyRequest);
     }
@@ -424,7 +425,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doDelete(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(), HttpMethod.DELETE.asString(), uri, host, stubsPort, authorization);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.DELETE.asString(), uri, host, stubsPort, authorization);
 
         return makeRequest(stubbyRequest);
     }
@@ -444,7 +445,7 @@ public final class StubbyClient {
      */
 
     public StubbyResponse doDeleteOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception {
-        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(), HttpMethod.DELETE.asString(), uri, host, port, authorization);
+        final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.DELETE.asString(), uri, host, port, authorization);
 
         return makeRequest(stubbyRequest);
     }

@@ -1,4 +1,4 @@
 includes:
-   - service-1-stubs.yaml
-   - service-2-stubs.yaml
-   - service-3-stubs.yaml
+  - service-1-stubs.yaml
+  - service-2-stubs.yaml
+  - service-3-stubs.yaml

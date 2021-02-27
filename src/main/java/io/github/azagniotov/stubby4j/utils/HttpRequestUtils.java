@@ -23,6 +23,7 @@ public final class HttpRequestUtils {
     private static final String RIGHT_CURLY_BRACE = "}";
     private static final String COMMA = ",";
     private static final String EMPTY_BRACES = LEFT_CURLY_BRACE + RIGHT_CURLY_BRACE;
+    private static final int AT_LEAST_ONE_HEADER = 1;
 
     private HttpRequestUtils() {
 
@@ -38,11 +39,11 @@ public final class HttpRequestUtils {
         if (isNull(headerValues) || headerValues.size() == 0) {
             stringBuilder.append("None");
         } else {
-            if (headerValues.size() > 1) {
+            if (headerValues.size() > AT_LEAST_ONE_HEADER) {
                 stringBuilder.append(LEFT_BRACKET);
             }
             stringBuilder.append(StringUtils.join(headerValues.toArray(new String[headerValues.size()]), COMMA));
-            if (headerValues.size() > 1) {
+            if (headerValues.size() > AT_LEAST_ONE_HEADER) {
                 stringBuilder.append(RIGHT_BRACKET);
             }
         }

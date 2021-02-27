@@ -47,6 +47,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
@@ -69,6 +70,7 @@ public final class StatusPageHandler extends AbstractHandler {
     private static final String TEMPLATE_AJAX_TO_STATS_HYPERLINK = "<strong><a class='ajax-stats' href='/ajax/stats'>[view]</a></strong>";
     private static final String TEMPLATE_HTML_TABLE_ROW = "<tr><td width='250px' valign='top' align='left'>%s</td><td align='left'>%s</td></tr>";
     private static final String NEXT_IN_THE_QUEUE = " NEXT IN THE QUEUE";
+    private static final String HTML_BR = "<br />";
 
     private final StubRepository stubRepository;
     private final JettyContext jettyContext;
@@ -88,7 +90,7 @@ public final class StatusPageHandler extends AbstractHandler {
         baseRequest.setHandled(true);
         response.setContentType("text/html;charset=UTF-8");
         response.setStatus(HttpStatus.OK_200);
-        response.setHeader(HttpHeader.SERVER.asString().toLowerCase(), HandlerUtils.constructHeaderServerName());
+        response.setHeader(HttpHeader.SERVER.asString().toLowerCase(Locale.US), HandlerUtils.constructHeaderServerName());
 
         try {
             response.getWriter().println(buildStatusPageHtml());
@@ -114,7 +116,7 @@ public final class StatusPageHandler extends AbstractHandler {
             final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
             builder.append(buildStubRequestHtmlTable(stubHttpLifecycle, templateHtmlTable));
             builder.append(buildStubResponseHtmlTable(stubHttpLifecycle, templateHtmlTable));
-            builder.append("<br /><br />");
+            builder.append(HTML_BR).append(HTML_BR);
         }
 
         final long timestamp = System.currentTimeMillis();
@@ -216,10 +218,10 @@ public final class StatusPageHandler extends AbstractHandler {
 
     private String buildLoadedFileMetadata(final File file) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "parentDir", determineParentDir(file))).append("<br />");
-        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "name", file.getName())).append("<br />");
-        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb")).append("<br />");
-        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "lastModified", DateTimeUtils.systemDefault(file.lastModified()))).append("<br />");
+        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "parentDir", determineParentDir(file))).append(HTML_BR);
+        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "name", file.getName())).append(HTML_BR);
+        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "size", String.format("%1$,.2f", ((double) file.length() / 1024)) + "kb")).append(HTML_BR);
+        builder.append(String.format(TEMPLATE_LOADED_FILE_METADATA_PAIR, "lastModified", DateTimeUtils.systemDefault(file.lastModified()))).append(HTML_BR);
 
         return "<div style='margin-top: 5px; padding: 3px 7px 3px 7px; background-color: #fefefe'>" + builder.toString() + "</div>";
     }

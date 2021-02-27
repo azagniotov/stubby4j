@@ -21,6 +21,8 @@ package io.github.azagniotov.stubby4j.client;
 
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 
+import java.util.Locale;
+
 final class StubbyRequest {
 
     private static final String URL_TEMPLATE = "%s://%s:%s%s";
@@ -72,7 +74,7 @@ final class StubbyRequest {
     }
 
     String constructFullUrl() {
-        return String.format(URL_TEMPLATE, scheme.toLowerCase(), host, clientPort, StringUtils.isSet(uri) ? uri : "");
+        return String.format(URL_TEMPLATE, scheme.toLowerCase(Locale.US), host, clientPort, StringUtils.isSet(uri) ? uri : "");
     }
 
     int calculatePostLength() {

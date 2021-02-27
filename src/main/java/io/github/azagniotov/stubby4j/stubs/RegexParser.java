@@ -47,6 +47,7 @@ enum RegexParser {
     @VisibleForTesting
     static final Cache<Integer, Pattern> REGEX_PATTERN_CACHE = Cache.regexPatternCache(CACHE_ENTRY_LIFETIME_SECONDS);
     private static final boolean[] SPECIAL_CHARS;
+    private static final int CHAR_LENGTH_THRESHOLD = 3;
 
     static {
         SPECIAL_CHARS = new boolean[127];
@@ -68,7 +69,7 @@ enum RegexParser {
 
         char[] chars = pattern.toCharArray();
 
-        if (chars.length < 3) {
+        if (chars.length < CHAR_LENGTH_THRESHOLD) {
             return false;
         }
 

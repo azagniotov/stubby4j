@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
 import static java.util.concurrent.TimeUnit.DAYS;
@@ -63,11 +64,12 @@ public final class HandlerUtils {
 
     public static String getHtmlResourceByName(final String templateSuffix) throws IOException {
         final String htmlTemplatePath = String.format("/ui/html/%s.html", templateSuffix);
-        final InputStream inputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath);
-        if (ObjectUtils.isNull(inputStream)) {
-            throw new IOException(String.format("Could not find resource %s", htmlTemplatePath));
+        try (final InputStream inputStream = HandlerUtils.class.getResourceAsStream(htmlTemplatePath)) {
+            if (ObjectUtils.isNull(inputStream)) {
+                throw new IOException(String.format("Could not find resource %s", htmlTemplatePath));
+            }
+            return StringUtils.inputStreamToString(inputStream);
         }
-        return StringUtils.inputStreamToString(inputStream);
     }
 
 
@@ -90,7 +92,7 @@ public final class HandlerUtils {
     }
 
     public static String linkifyRequestUrl(final String scheme, final Object uri, final String host, final int port) {
-        final String fullUrl = String.format("%s://%s:%s%s", scheme.toLowerCase(), host, port, uri);
+        final String fullUrl = String.format("%s://%s:%s%s", scheme.toLowerCase(Locale.US), host, port, uri);
         final String href = StringUtils.encodeSingleQuotes(fullUrl);
         return String.format("<a target='_blank' href='%s'>%s</a>", href, fullUrl);
     }

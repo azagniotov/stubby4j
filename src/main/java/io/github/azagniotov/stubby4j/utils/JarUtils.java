@@ -20,12 +20,11 @@ public final class JarUtils {
         try {
             final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
             final Manifest manifest = new Manifest(url.openStream());
+
             return manifest.getMainAttributes().getValue("Implementation-Version");
         } catch (Exception e) {
-            //Do nothing
+            return "x.x.xx";
         }
-
-        return "x.x.xx";
     }
 
 
@@ -34,11 +33,10 @@ public final class JarUtils {
         try {
             final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
             final Manifest manifest = new Manifest(url.openStream());
+
             return manifest.getMainAttributes().getValue("Built-Date");
         } catch (Exception e) {
-            //Do nothing
+            return DateTimeUtils.systemDefault();
         }
-
-        return DateTimeUtils.systemDefault();
     }
 }

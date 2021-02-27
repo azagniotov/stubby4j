@@ -15,61 +15,63 @@ public final class YamlBuilder {
 
     private static final String TWO_SPACE = String.format("%1$2s", "");
     private static final String THREE_SPACE = String.format("%1$3s", "");
-    private static final String SIX_SPACE = String.format("%s%s", THREE_SPACE, THREE_SPACE);
-    private static final String NINE_SPACE = String.format("%s%s", SIX_SPACE, THREE_SPACE);
-    private static final String TWELVE_SPACE = String.format("%s%s", NINE_SPACE, THREE_SPACE);
+    private static final String TWO_TOKENS_TEMPLATE = "%s%s";
+    private static final String SIX_SPACE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, THREE_SPACE);
+    private static final String NINE_SPACE = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, THREE_SPACE);
+    private static final String TWELVE_SPACE = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, THREE_SPACE);
 
     private final static String DESCRIPTION_AS_TOP = String.format("-%s%s", TWO_SPACE, "description: ");
-    private final static String DESCRIPTION = String.format("%s%s", THREE_SPACE, "description: ");
+    private final static String DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "description: ");
 
     private final static String UUID_AS_TOP = String.format("-%s%s", TWO_SPACE, "uuid: ");
-    private final static String UUID = String.format("%s%s", THREE_SPACE, "uuid: ");
+    private final static String UUID = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "uuid: ");
 
     private final static String REQUEST_AS_TOP = String.format("-%s%s", TWO_SPACE, "request:");
-    private final static String REQUEST = String.format("%s%s", THREE_SPACE, "request:");
-    private final static String RESPONSE = String.format("%s%s", THREE_SPACE, "response:");
+    private final static String REQUEST = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "request:");
+    private final static String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
 
-    private final static String HEADERS = String.format("%s%s", SIX_SPACE, "headers:");
-    private final static String SEQUENCE_RESPONSE_HEADERS = String.format("%s%s", NINE_SPACE, "headers: ");
+    private final static String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
+    private final static String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
 
-    private final static String QUERY = String.format("%s%s", SIX_SPACE, "query:");
-    private final static String METHOD = String.format("%s%s", SIX_SPACE, "method: ");
+    private final static String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
+    private final static String METHOD = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "method: ");
     private final static String TEMP_METHOD_PLACEHOLDER_TOKEN = "METHOD_TOKEN";
 
-    private final static String STATUS = String.format("%s%s", SIX_SPACE, "status: ");
+    private final static String STATUS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "status: ");
     private final static String SEQUENCE_RESPONSE_STATUS = String.format("%s-%s%s", SIX_SPACE, TWO_SPACE, "status: ");
 
-    private final static String FILE = String.format("%s%s", SIX_SPACE, "file: ");
-    private final static String SEQUENCE_RESPONSE_FILE = String.format("%s%s", NINE_SPACE, "file: ");
+    private final static String FILE = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "file: ");
+    private final static String SEQUENCE_RESPONSE_FILE = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "file: ");
 
-    private final static String URL = String.format("%s%s", SIX_SPACE, "url: ");
+    private final static String URL = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "url: ");
 
-    private final static String ONELINEPOST = String.format("%s%s", SIX_SPACE, "post: ");
+    private final static String ONELINEPOST = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "post: ");
     private final static String MULTILINEPOST = String.format("%s%s%s", SIX_SPACE, "post: >", FileUtils.BR);
 
-    private final static String ONELINEBODY = String.format("%s%s", SIX_SPACE, "body: ");
-    private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format("%s%s", NINE_SPACE, "body: ");
+    private final static String ONELINEBODY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "body: ");
+    private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "body: ");
 
     private final static String MULTILINEBODY = String.format("%s%s%s", SIX_SPACE, "body: >", FileUtils.BR);
     private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s%s", NINE_SPACE, "body: >", FileUtils.BR);
 
     private final static String NL = FileUtils.BR;
 
-    private final static String REQUEST_HEADERS_KEY = String.format("%s-%s", REQUEST_AS_TOP, HEADERS);
-    private final static String REQUEST_QUERY_KEY = String.format("%s-%s", REQUEST_AS_TOP, QUERY);
-    private final static String RESPONSE_HEADERS_KEY = String.format("%s-%s", RESPONSE, HEADERS);
-    private final static String RESPONSE_QUERY_KEY = String.format("%s-%s", RESPONSE, QUERY);
+    private static final String TWO_DASHED_TOKENS_TEMPLATE = "%s-%s";
+    private final static String REQUEST_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, HEADERS);
+    private final static String REQUEST_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, QUERY);
+    private final static String RESPONSE_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, HEADERS);
+    private final static String RESPONSE_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, QUERY);
 
     private static final StringBuilder FEATURE_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
+    private static final String YAML_KEY_SPACE_TEMPLATE = "%s%s: ";
 
-    final Set<String> storedStubbedMethods = new LinkedHashSet<>();
-    final Set<String> unusedNodes = new HashSet<String>() {{
+    private final Set<String> storedStubbedMethods = new LinkedHashSet<>();
+    private final Set<String> unusedNodes = new HashSet<String>() {{
         add(REQUEST_HEADERS_KEY);
         add(REQUEST_QUERY_KEY);
         add(RESPONSE_HEADERS_KEY);
-        add(RESPONSE_QUERY_KEY);
         add(RESPONSE_QUERY_KEY);
     }};
 
@@ -166,7 +168,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, key);
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -176,7 +178,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-type");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-type");
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -186,7 +188,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-length");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-length");
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -196,7 +198,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-language");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-language");
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -206,7 +208,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-encoding");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-encoding");
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -216,7 +218,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BASIC.asYAMLProp());
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BASIC.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -226,7 +228,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.BEARER.asYAMLProp());
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BEARER.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -236,7 +238,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYAMLProp());
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -256,7 +258,7 @@ public final class YamlBuilder {
         }
 
         public Request withFoldedPost(final String post) {
-            final String tabbedPost = String.format("%s%s", NINE_SPACE, post);
+            final String tabbedPost = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, post);
             REQUEST_STRING_BUILDER.append(MULTILINEPOST).append(tabbedPost).append(NL);
 
             return this;
@@ -275,7 +277,7 @@ public final class YamlBuilder {
                 unusedNodes.remove(REQUEST_QUERY_KEY);
             }
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, key);
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -342,14 +344,14 @@ public final class YamlBuilder {
         }
 
         public Response withFoldedBody(final String body) {
-            final String tabbedBody = String.format("%s%s", NINE_SPACE, body);
+            final String tabbedBody = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, body);
             RESPONSE_STRING_BUILDER.append(MULTILINEBODY).append(tabbedBody).append(NL);
 
             return this;
         }
 
         public Response withSequenceResponseFoldedBody(final String body) {
-            final String tabbedBody = String.format("%s%s", TWELVE_SPACE, body);
+            final String tabbedBody = String.format(TWO_TOKENS_TEMPLATE, TWELVE_SPACE, body);
             RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_MULTILINEBODY).append(tabbedBody).append(NL);
 
             return this;
@@ -362,7 +364,7 @@ public final class YamlBuilder {
                 unusedNodes.remove(RESPONSE_HEADERS_KEY);
             }
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, key);
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, key);
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -372,7 +374,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-type");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-type");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -382,7 +384,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "pragma");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "pragma");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -392,7 +394,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-length");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-length");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -402,7 +404,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-language");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-language");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -412,7 +414,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "content-encoding");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "content-encoding");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -422,7 +424,7 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format("%s%s: ", NINE_SPACE, "location");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "location");
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -439,7 +441,7 @@ public final class YamlBuilder {
 
             RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_HEADERS).append(NL);
 
-            final String tabbedKey = String.format("%s%s: ", TWELVE_SPACE, key);
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, TWELVE_SPACE, key);
             RESPONSE_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;

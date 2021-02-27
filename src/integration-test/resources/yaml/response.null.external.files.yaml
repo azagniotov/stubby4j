@@ -1,14 +1,14 @@
--  request:
-      method: GET
-      url: /invoice
-      file: ../json/request.external.file.json
-      query:
-         status: active
-         type: full
+- request:
+    method: GET
+    url: /invoice
+    file: ../json/request.external.file.json
+    query:
+      status: active
+      type: full
 
-   response:
-      headers:
-         content-type: application/json
-         pragma: no-cache
-      status: 200
-      file: ../somewhere/over/the/rainbow/file.json
+  response:
+    headers:
+      content-type: application/json
+      pragma: no-cache
+    status: 200
+    file: ../somewhere/over/the/rainbow/file.json

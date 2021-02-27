@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
+
+    private static final int NUM_OF_STUBS_THRESHOLD = 1;
+
     @Override
     public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws Exception {
 
@@ -30,7 +33,7 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
 
         stubRepository.refreshStubsByPost(new YamlParser(), post);
 
-        if (stubRepository.getStubs().size() == 1) {
+        if (stubRepository.getStubs().size() == NUM_OF_STUBS_THRESHOLD) {
             response.addHeader(HttpHeader.LOCATION.asString(), stubRepository.getOnlyStubRequestUrl());
         }
 
