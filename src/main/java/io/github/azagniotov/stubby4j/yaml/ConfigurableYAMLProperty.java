@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.yaml;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public enum ConfigurableYAMLProperty {
     }
 
     public boolean isA(final String stubbedProperty) {
-        return this.toString().equals(stubbedProperty.toLowerCase());
+        return this.toString().equals(stubbedProperty.toLowerCase(Locale.US));
     }
 
     @Override

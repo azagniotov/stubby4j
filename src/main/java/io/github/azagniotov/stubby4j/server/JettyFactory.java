@@ -295,10 +295,11 @@ public final class JettyFactory {
 
         if (ObjectUtils.isNull(keystorePath)) {
             final URL keyURL = this.getClass().getResource("/ssl/localhost.jks");
-            final Resource keyStoreResource = Resource.newResource(keyURL);
-            sslFactory.setKeyStoreResource(keyStoreResource);
+            try (final Resource keyStoreResource = Resource.newResource(keyURL)) {
+                sslFactory.setKeyStoreResource(keyStoreResource);
 
-            return sslFactory;
+                return sslFactory;
+            }
         }
 
         sslFactory.setKeyStorePath(keystorePath);
@@ -346,7 +347,7 @@ public final class JettyFactory {
         return DEFAULT_ADMIN_PORT;
     }
 
-    public List<String> statuses() {
+    List<String> getStatuses() {
         return statuses;
     }
 }

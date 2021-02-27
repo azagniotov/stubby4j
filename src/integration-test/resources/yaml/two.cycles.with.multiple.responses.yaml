@@ -1,30 +1,30 @@
--  request:
-      method: GET
-      url: /cycle/1
+- request:
+    method: GET
+    url: /cycle/1
 
-   response:
-      -  headers:
-            content-type: application/json
-         status: 200
-         file: ../json/response.1.external.file.json
+  response:
+    - headers:
+        content-type: application/json
+      status: 200
+      file: ../json/response.1.external.file.json
 
-      -  headers:
-            content-type: application/json
-         status: 200
-         file: ../json/response.2.external.file.json
+    - headers:
+        content-type: application/json
+      status: 200
+      file: ../json/response.2.external.file.json
 
 
--  request:
-      method: GET
-      url: /cycle/2
+- request:
+    method: GET
+    url: /cycle/2
 
-   response:
-      -  headers:
-            content-type: application/json
-         status: 200
-         file: ../json/response.3.external.file.json
+  response:
+    - headers:
+        content-type: application/json
+      status: 200
+      file: ../json/response.3.external.file.json
 
-      -  headers:
-            content-type: application/json
-         status: 200
-         file: ../json/response.4.external.file.json
+    - headers:
+        content-type: application/json
+      status: 200
+      file: ../json/response.4.external.file.json

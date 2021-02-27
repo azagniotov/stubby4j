@@ -1,168 +1,168 @@
--  request:
-     method: [GET]
-     url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
+- request:
+    method: [GET]
+    url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
 
-   response:
-     status: 200
-     body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
-
-
--  request:
-     method: [GET]
-     url: ^/regex-fileserver/([a-z]+).html$
-
-   response:
-     status: 200
-     file: ../html/<% url.1 %>.html
+  response:
+    status: 200
+    body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
 
 
--  request:
-     method: GET
-     url: /empty.param
-     query:
-       type_name:
-       client_secret: secret
+- request:
+    method: [GET]
+    url: ^/regex-fileserver/([a-z]+).html$
 
-   response:
-     status: 200
-     body: EMPTY WORKS
+  response:
+    status: 200
+    file: ../html/<% url.1 %>.html
 
 
--  request:
-     method: GET
-     url: /empty.single.param
-     query:
-       type_name:
-   response:
-     status: 200
-     body: EMPTY SINGLE WORKS
+- request:
+    method: GET
+    url: /empty.param
+    query:
+      type_name:
+      client_secret: secret
 
--  request:
-     method: POST
-     url: /complex/json/tree
-     headers:
-       content-type: application/json
-     file: ../json/graph.1.json
-
-   response:
-     headers:
-       content-type: application/json
-     status: 200
-     body: OK
-
--  request:
-     method: POST
-     url: /complex/xml/tree
-     headers:
-       content-type: application/xml
-     file: ../xml/graph.1.xml
-
-   response:
-     headers:
-       content-type: application/xml
-     status: 200
-     body: OK
-
--  request:
-     method: PUT
-     url: /complex/json/tree/put
-     file: ../json/graph.2.json
-
-   response:
-     headers:
-       content-type: application/xml
-     status: 201
-     body: OK
+  response:
+    status: 200
+    body: EMPTY WORKS
 
 
--  request:
-     headers:
-       authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
-     method: DELETE
-     url: /item/auth/bearer/1
+- request:
+    method: GET
+    url: /empty.single.param
+    query:
+      type_name:
+  response:
+    status: 200
+    body: EMPTY SINGLE WORKS
 
-   response:
-     headers:
-       content-type: application/json
-     status: 200
-     body: >
-       {"id" : "12", "description" : "deleted authorized using bearer"}
+- request:
+    method: POST
+    url: /complex/json/tree
+    headers:
+      content-type: application/json
+    file: ../json/graph.1.json
 
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: OK
 
--  request:
-     method: [GET]
-     url: ^/v\d/identity/authorize
-     query:
-       redirect_uri: "https://(.*)/app.*"
+- request:
+    method: POST
+    url: /complex/xml/tree
+    headers:
+      content-type: application/xml
+    file: ../xml/graph.1.xml
 
-   response:
-     headers:
-       location: https://<% query.redirect_uri.1 %>/auth
-     status: 302
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: OK
 
+- request:
+    method: PUT
+    url: /complex/json/tree/put
+    file: ../json/graph.2.json
 
--  request:
-     method: [GET]
-     url: /returns-not-found-response-with-body
-
-   response:
-     status: 404
-     body: This response with body was actually not found
-
-
--  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
-   request:
-     method: GET
-     url: /with/configured/uuid/property
-
-   response:
-     headers:
-       content-type: application/json
-     status: 200
-     body: >
-       {"status" : "OK"}
-
-
--  request:
-     method: PATCH
-     url: /simulator/content/v1/url/one
-     file: ../json/patch-failure-request.json
-
-   response:
-     headers:
-       content-type: application/json
-     status: 200
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    body: OK
 
 
--  request:
-     method: PATCH
-     url: /simulator/content/v1/url/one
+- request:
+    headers:
+      authorization-bearer: Ym9iOndyb25nLXNlY3JldA==
+    method: DELETE
+    url: /item/auth/bearer/1
 
-   response:
-     status: 200
-     headers:
-       content-type: application/json
-     file: ../json/patch-success-response.json
-
--  request:
-     url: /individuals/.*/address$
-     method: PUT
-     post: >
-       {"type": "MOBILE"}
-
-   response:
-     status: 400
-     body: >
-       {"type": "BAD_REQUEST"}
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"id" : "12", "description" : "deleted authorized using bearer"}
 
 
--  request:
-     url: /individuals/.*/address$
-     method: PUT
-     post: >
-       {"type": "HOME"}
+- request:
+    method: [GET]
+    url: ^/v\d/identity/authorize
+    query:
+      redirect_uri: "https://(.*)/app.*"
 
-   response:
-     body: OK
-     status: 200
+  response:
+    headers:
+      location: https://<% query.redirect_uri.1 %>/auth
+    status: 302
+
+
+- request:
+    method: [GET]
+    url: /returns-not-found-response-with-body
+
+  response:
+    status: 404
+    body: This response with body was actually not found
+
+
+- uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+  request:
+    method: GET
+    url: /with/configured/uuid/property
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"status" : "OK"}
+
+
+- request:
+    method: PATCH
+    url: /simulator/content/v1/url/one
+    file: ../json/patch-failure-request.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+
+
+- request:
+    method: PATCH
+    url: /simulator/content/v1/url/one
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ../json/patch-success-response.json
+
+- request:
+    url: /individuals/.*/address$
+    method: PUT
+    post: >
+      {"type": "MOBILE"}
+
+  response:
+    status: 400
+    body: >
+      {"type": "BAD_REQUEST"}
+
+
+- request:
+    url: /individuals/.*/address$
+    method: PUT
+    post: >
+      {"type": "HOME"}
+
+  response:
+    body: OK
+    status: 200
 

@@ -1,15 +1,16 @@
-{"products": [
-   {
+{
+  "products": [
+    {
       "id": "123",
       "name": "milk",
       "description": "full",
       "status": "active"
-   },
-   {
+    },
+    {
       "id": "789",
       "name": "bread",
       "description": "wheat",
       "status": "active"
-   }
-]
+    }
+  ]
 }

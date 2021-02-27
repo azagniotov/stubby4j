@@ -1,20 +1,20 @@
 [
-   {
-      "request": {
-         "url": "^\/resources\/something\/new",
-         "query": {
-            "someKey": "someValue"
-         },
-         "method": [
-            "GET"
-         ]
+  {
+    "request": {
+      "url": "^\/resources\/something\/new",
+      "query": {
+        "someKey": "someValue"
       },
-      "response": {
-         "body": "OK",
-         "headers": {
-            "content-type": "application/xml"
-         },
-         "status": 201
-      }
-   }
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  }
 ]

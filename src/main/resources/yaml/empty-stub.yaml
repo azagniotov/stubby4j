@@ -1,5 +1,5 @@
--  request:
-      method:
-         -  GET
+- request:
+    method:
+      - GET
 
-   response:
+  response:

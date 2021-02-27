@@ -1,21 +1,21 @@
 [
-   {
-      "uuid": "9136d8b7-f7a7-478d-97a5-53292484aaf6",
-      "request": {
-         "url": "/with/UPDATED/uuid/property",
-         "query": {
-            "someKey": "someValue"
-         },
-         "method": [
-            "GET"
-         ]
+  {
+    "uuid": "9136d8b7-f7a7-478d-97a5-53292484aaf6",
+    "request": {
+      "url": "/with/UPDATED/uuid/property",
+      "query": {
+        "someKey": "someValue"
       },
-      "response": {
-         "body": "OK",
-         "headers": {
-            "content-type": "application/xml"
-         },
-         "status": 201
-      }
-   }
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  }
 ]

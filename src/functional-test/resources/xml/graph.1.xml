@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <epcismd:EPCISMasterDataDocument
-   xmlns:epcismd="urn:epcglobal:epcis-masterdata:xsd:1"
-   creationDate="2006-10-11T22:20:35.393Z" schemaVersion="1.0">
-   <EPCISBody>
-      <VocabularyList>
-         <Vocabulary type="urn:epcglobal:epcis:vtype:PedigreeProduct">
-            <VocabularyElementList>
-               <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107346.*">
-                  <attribute id="urn:epcglobal:product:drugName">Algocalmin</attribute>
-                  <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
-                  <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
-                  <attribute id="urn:epcglobal:product:strength">60 mg</attribute>
-                  <attribute id="urn:epcglobal:product:containerSize">100</attribute>
-               </VocabularyElement>
-               <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107347.*">
-                  <attribute id="urn:epcglobal:product:drugName">Algocalmin</attribute>
-                  <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
-                  <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
-                  <attribute id="urn:epcglobal:product:strength">60 mg</attribute>
-                  <attribute id="urn:epcglobal:product:containerSize">200</attribute>
-               </VocabularyElement>
-               <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107340.*">
-                  <attribute id="urn:epcglobal:product:drugName">Piramidon</attribute>
-                  <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
-                  <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
-                  <attribute id="urn:epcglobal:product:containerSize">100</attribute>
-                  <attribute id="urn:epcglobal:product:strength">125 mg</attribute>
-               </VocabularyElement>
-            </VocabularyElementList>
-         </Vocabulary>
-         <Vocabulary type="urn:rfidic:mdm:category">
-            <VocabularyElementList>
-               <VocabularyElement id="All Products" />
-            </VocabularyElementList>
-         </Vocabulary>
-      </VocabularyList>
-      <HierarchyList>
-         <Hierarchy id="urn:epcglobal:epcis:vtype:PedigreeProduct" entity="Product">
-            <HierarchyNode id="All Products" vocabulary="urn:rfidic:mdm:category">
-               <HierarchyNode id="urn:epc:idpat:sgtin:0652642.107346.*" vocabulary="urn:epcglobal:epcis:vtype:PedigreeProduct" />
-               <HierarchyNode id="urn:epc:idpat:sgtin:0652642.107347.*" vocabulary="urn:epcglobal:epcis:vtype:PedigreeProduct" />
-            </HierarchyNode>
-         </Hierarchy>
-      </HierarchyList>
-   </EPCISBody>
+        xmlns:epcismd="urn:epcglobal:epcis-masterdata:xsd:1"
+        creationDate="2006-10-11T22:20:35.393Z" schemaVersion="1.0">
+    <EPCISBody>
+        <VocabularyList>
+            <Vocabulary type="urn:epcglobal:epcis:vtype:PedigreeProduct">
+                <VocabularyElementList>
+                    <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107346.*">
+                        <attribute id="urn:epcglobal:product:drugName">Algocalmin</attribute>
+                        <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
+                        <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
+                        <attribute id="urn:epcglobal:product:strength">60 mg</attribute>
+                        <attribute id="urn:epcglobal:product:containerSize">100</attribute>
+                    </VocabularyElement>
+                    <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107347.*">
+                        <attribute id="urn:epcglobal:product:drugName">Algocalmin</attribute>
+                        <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
+                        <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
+                        <attribute id="urn:epcglobal:product:strength">60 mg</attribute>
+                        <attribute id="urn:epcglobal:product:containerSize">200</attribute>
+                    </VocabularyElement>
+                    <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107340.*">
+                        <attribute id="urn:epcglobal:product:drugName">Piramidon</attribute>
+                        <attribute id="urn:epcglobal:product:manufacturer">Generic Pharma Co.</attribute>
+                        <attribute id="urn:epcglobal:product:dosageForm">CAPSULE</attribute>
+                        <attribute id="urn:epcglobal:product:containerSize">100</attribute>
+                        <attribute id="urn:epcglobal:product:strength">125 mg</attribute>
+                    </VocabularyElement>
+                </VocabularyElementList>
+            </Vocabulary>
+            <Vocabulary type="urn:rfidic:mdm:category">
+                <VocabularyElementList>
+                    <VocabularyElement id="All Products"/>
+                </VocabularyElementList>
+            </Vocabulary>
+        </VocabularyList>
+        <HierarchyList>
+            <Hierarchy id="urn:epcglobal:epcis:vtype:PedigreeProduct" entity="Product">
+                <HierarchyNode id="All Products" vocabulary="urn:rfidic:mdm:category">
+                    <HierarchyNode id="urn:epc:idpat:sgtin:0652642.107346.*"
+                                   vocabulary="urn:epcglobal:epcis:vtype:PedigreeProduct"/>
+                    <HierarchyNode id="urn:epc:idpat:sgtin:0652642.107347.*"
+                                   vocabulary="urn:epcglobal:epcis:vtype:PedigreeProduct"/>
+                </HierarchyNode>
+            </Hierarchy>
+        </HierarchyList>
+    </EPCISBody>
 </epcismd:EPCISMasterDataDocument>

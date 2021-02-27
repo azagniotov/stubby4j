@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -74,14 +75,14 @@ public final class ReflectionUtils {
 
     public static <T extends ReflectableStub> void injectObjectFields(final T reflectable, final String fieldName, final Object value) throws InvocationTargetException, IllegalAccessException {
         final Map<String, Object> fieldAndValue = new HashMap<>();
-        fieldAndValue.put(fieldName.toLowerCase(), value);
+        fieldAndValue.put(fieldName.toLowerCase(Locale.US), value);
         injectObjectFields(reflectable, fieldAndValue);
     }
 
     public static <T extends ReflectableStub> void injectObjectFields(final T reflectable, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
 
         for (final Field field : reflectable.getClass().getDeclaredFields()) {
-            final String fieldName = field.getName().toLowerCase();
+            final String fieldName = field.getName().toLowerCase(Locale.US);
             if (fieldsAndValues.containsKey(fieldName)) {
                 AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
                     public Boolean run() {
