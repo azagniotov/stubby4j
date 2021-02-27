@@ -1078,6 +1078,7 @@ When stubby parses the main `data.yaml` provided using `-d` / `--data` flags, al
 as if all the stubs were defined in one YAML.
 
 __Please note__
+
 You `cannot mix` in the __same__ YAML config the `includes` with sub-configs & defining stubs using `request`/`response`, e.g.: stubby4j __will fail__ to load the following YAML:
 
 ```yaml
