@@ -138,10 +138,6 @@ Alternatively you can build your own image locally using the project [Dockerfile
 docker build --rm --no-cache -t stubby4j:latest .
 ```
 
-```shell script
-docker build --rm --no-cache -t stubby4j:latest .
-```
-
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How To Use This Image` section regarding how to use the built image
 
 ## Building
