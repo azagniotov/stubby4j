@@ -30,10 +30,7 @@ import static org.eclipse.jetty.http.HttpHeader.CONTENT_LANGUAGE;
 import static org.eclipse.jetty.http.HttpHeader.CONTENT_LENGTH;
 import static org.eclipse.jetty.http.HttpHeader.CONTENT_TYPE;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/4/12, 11:03 AM
- */
+
 public class StubbyHttpTransport {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubbyHttpTransport.class);
 

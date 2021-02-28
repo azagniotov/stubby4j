@@ -10,10 +10,6 @@ import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/24/12, 2:32 AM
- */
 
 public class CommandLineIntepreterTest {
 
