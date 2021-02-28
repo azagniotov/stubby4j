@@ -6,10 +6,6 @@ import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/21/13 2:17 PM
- */
 public class FileUtilsTest {
 
     @Rule

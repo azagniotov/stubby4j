@@ -4,10 +4,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.Manifest;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 6:33 PM
- */
+
 public final class JarUtils {
 
     private JarUtils() {

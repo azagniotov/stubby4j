@@ -11,10 +11,6 @@ import java.util.NoSuchElementException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 4/14/13, 11:14 AM
- */
 public class StringUtilsTest {
 
     private static final String SEPARATOR = ",";

@@ -9,10 +9,6 @@ import java.io.PrintStream;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
-/**
- * @author Alexander Zagniotov
- * @since 6/24/12, 2:32 AM
- */
 
 public class CommandLineIntepreterTest {
 

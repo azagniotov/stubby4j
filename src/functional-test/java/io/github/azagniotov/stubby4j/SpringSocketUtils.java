@@ -21,8 +21,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Simple utility methods for working with network sockets &mdash; for example,
@@ -44,13 +42,13 @@ public class SpringSocketUtils {
      * The default minimum value for port ranges used when finding an available
      * socket port.
      */
-    public static final int PORT_RANGE_MIN = 1024;
+    static final int PORT_RANGE_MIN = 2048;
 
     /**
      * The default maximum value for port ranges used when finding an available
      * socket port.
      */
-    public static final int PORT_RANGE_MAX = 65535;
+    static final int PORT_RANGE_MAX = 65535;
 
 
     private static final Random random = new Random(System.nanoTime());
@@ -75,30 +73,6 @@ public class SpringSocketUtils {
     public SpringSocketUtils() {
     }
 
-
-    /**
-     * Find an available TCP port randomly selected from the range
-     * [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
-     *
-     * @return an available TCP port number
-     * @throws IllegalStateException if no available port could be found
-     */
-    public static int findAvailableTcpPort() {
-        return findAvailableTcpPort(PORT_RANGE_MIN);
-    }
-
-    /**
-     * Find an available TCP port randomly selected from the range
-     * [{@code minPort}, {@value #PORT_RANGE_MAX}].
-     *
-     * @param minPort the minimum port number
-     * @return an available TCP port number
-     * @throws IllegalStateException if no available port could be found
-     */
-    public static int findAvailableTcpPort(int minPort) {
-        return findAvailableTcpPort(minPort, PORT_RANGE_MAX);
-    }
-
     /**
      * Find an available TCP port randomly selected from the range
      * [{@code minPort}, {@code maxPort}].
@@ -108,34 +82,8 @@ public class SpringSocketUtils {
      * @return an available TCP port number
      * @throws IllegalStateException if no available port could be found
      */
-    public static int findAvailableTcpPort(int minPort, int maxPort) {
+    static int findAvailableTcpPort(int minPort, int maxPort) {
         return SocketType.TCP.findAvailablePort(minPort, maxPort);
-    }
-
-    /**
-     * Find the requested number of available TCP ports, each randomly selected
-     * from the range [{@value #PORT_RANGE_MIN}, {@value #PORT_RANGE_MAX}].
-     *
-     * @param numRequested the number of available ports to find
-     * @return a sorted set of available TCP port numbers
-     * @throws IllegalStateException if the requested number of available ports could not be found
-     */
-    public static SortedSet<Integer> findAvailableTcpPorts(int numRequested) {
-        return findAvailableTcpPorts(numRequested, PORT_RANGE_MIN, PORT_RANGE_MAX);
-    }
-
-    /**
-     * Find the requested number of available TCP ports, each randomly selected
-     * from the range [{@code minPort}, {@code maxPort}].
-     *
-     * @param numRequested the number of available ports to find
-     * @param minPort      the minimum port number
-     * @param maxPort      the maximum port number
-     * @return a sorted set of available TCP port numbers
-     * @throws IllegalStateException if the requested number of available ports could not be found
-     */
-    public static SortedSet<Integer> findAvailableTcpPorts(int numRequested, int minPort, int maxPort) {
-        return SocketType.TCP.findAvailablePorts(numRequested, minPort, maxPort);
     }
 
     private enum SocketType {
@@ -198,33 +146,6 @@ public class SpringSocketUtils {
             while (!isPortAvailable(candidatePort));
 
             return candidatePort;
-        }
-
-        /**
-         * Find the requested number of available ports for this {@code SocketType},
-         * each randomly selected from the range [{@code minPort}, {@code maxPort}].
-         *
-         * @param numRequested the number of available ports to find
-         * @param minPort      the minimum port number
-         * @param maxPort      the maximum port number
-         * @return a sorted set of available port numbers for this socket type
-         * @throws IllegalStateException if the requested number of available ports could not be found
-         */
-        SortedSet<Integer> findAvailablePorts(int numRequested, int minPort, int maxPort) {
-
-            SortedSet<Integer> availablePorts = new TreeSet<>();
-            int attemptCount = 0;
-            while ((++attemptCount <= numRequested + 100) && availablePorts.size() < numRequested) {
-                availablePorts.add(findAvailablePort(minPort, maxPort));
-            }
-
-            if (availablePorts.size() != numRequested) {
-                throw new IllegalStateException(String.format(
-                        "Could not find %d available %s ports in the range [%d, %d]",
-                        numRequested, name(), minPort, maxPort));
-            }
-
-            return availablePorts;
         }
     }
 

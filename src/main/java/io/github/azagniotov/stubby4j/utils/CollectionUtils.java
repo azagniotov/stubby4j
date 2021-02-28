@@ -6,10 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 6:33 PM
- */
+
 public final class CollectionUtils {
 
     private CollectionUtils() {

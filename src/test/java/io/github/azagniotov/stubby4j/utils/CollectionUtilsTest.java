@@ -8,12 +8,8 @@ import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 
-/**
- * @author Alexander Zagniotov
- * @since 11/6/12, 7:00 PM
- */
-@SuppressWarnings("serial")
 
+@SuppressWarnings("serial")
 public class CollectionUtilsTest {
 
     @Test

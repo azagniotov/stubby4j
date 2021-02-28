@@ -1,12 +1,15 @@
 package io.github.azagniotov.stubby4j;
 
-public final class PortTestUtils {
+import static io.github.azagniotov.stubby4j.SpringSocketUtils.PORT_RANGE_MAX;
+import static io.github.azagniotov.stubby4j.SpringSocketUtils.PORT_RANGE_MIN;
+
+final class PortTestUtils {
 
     private PortTestUtils() {
 
     }
 
-    public static int findAvailableTcpPort() {
-        return SpringSocketUtils.findAvailableTcpPort(9152, 65535);
+    static int findAvailableTcpPort() {
+        return SpringSocketUtils.findAvailableTcpPort(PORT_RANGE_MIN, PORT_RANGE_MAX);
     }
 }
