@@ -1346,7 +1346,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](main/java/i
 
 ## Change log
 
-See [CHANGELOG.md](CHANGELOG.md) for details
+See [CHANGELOG,md](CHANGELOG.md) for details
 
 ## Roadmap
 * Add support for OAuth in Record & Replay feature
@@ -1379,10 +1379,10 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 
 
 ## Copyright
-Yes. See COPYRIGHT for details
+Yes. See [COPYRIGHT.md](COPYRIGHT.md) for details
 
 ## License
-MIT. See LICENSE for details
+MIT. See [LICENSE](LICENSE) for details
 
 
 <!-- references -->
