@@ -5,7 +5,6 @@
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
-[![License][license-badge]][license-link]
 
 
 [![stubb4j][logo-badge]][logo-link]
