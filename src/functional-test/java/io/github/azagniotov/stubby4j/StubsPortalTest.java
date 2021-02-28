@@ -992,7 +992,9 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_NotReturnExpectedRecordedResponse_FromValidUrl_WhenQueryValueNotCorrect() throws Exception {
+    public void should_NotReturnExpectedRecordedResponse_FromValidUrl_WhenQueryValueIncorrect() throws Exception {
+
+        // The '/recordable/feed/2' stub expects query param 'language' to have a value 'chinese'
         final String requestUrl = String.format("%s%s", STUBS_URL, "/feed/2?language=russian&greeting=nihao");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
@@ -1001,10 +1003,12 @@ public class StubsPortalTest {
         request.setHeaders(requestHeaders);
 
         final HttpResponse response = request.execute();
+        final String responseContent = response.parseAsString().trim();
 
         final HttpHeaders headers = response.getHeaders();
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(responseContent).isEqualTo("Not Found");
     }
 
     @Test

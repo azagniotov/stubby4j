@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
@@ -229,14 +230,14 @@ public final class StatusPageHandler extends AbstractHandler {
 
     private String buildHtmlTableSingleRow(final String resourceId, final String stubTypeName, final String fieldName, final String value) {
 
-        if (FIELDS_FOR_AJAX_LINKS.contains(fieldName)) {
+        if (!ConfigurableYAMLProperty.isUnknownProperty(fieldName) && FIELDS_FOR_AJAX_LINKS.contains(ConfigurableYAMLProperty.valueOf(toUpper(fieldName)))) {
             final String cleansedStubTypeName = stubTypeName.replaceAll(NEXT_IN_THE_QUEUE, "");   //Only when there are sequenced responses
             final String ajaxHyperlink = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, resourceId, cleansedStubTypeName, fieldName);
             return interpolateHtmlTableRowTemplate(StringUtils.toUpper(fieldName), ajaxHyperlink);
         }
 
         final String escapedValue = StringUtils.escapeHtmlEntities(value);
-        if (fieldName.equals(ConfigurableYAMLProperty.URL)) {
+        if (fieldName.equals(ConfigurableYAMLProperty.URL.toString())) {
             final String urlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTP.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsPort());
             final String tlsUrlAsHyperlink = HandlerUtils.linkifyRequestUrl(HttpScheme.HTTPS.asString(), escapedValue, jettyContext.getHost(), jettyContext.getStubsTlsPort());
 
