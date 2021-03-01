@@ -39,6 +39,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Record and Play](#record-and-play)
    * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
+      * [Splitting main YAML config](#splitting-main-yaml-config)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
