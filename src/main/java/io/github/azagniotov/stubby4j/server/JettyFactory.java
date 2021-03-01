@@ -171,7 +171,9 @@ public final class JettyFactory {
         if (!commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL)) {
             connectors.add(buildStubsSslConnector(server));
         }
-        return connectors.toArray(new Connector[connectors.size()]);
+
+        final Connector[] connectorArray = new Connector[connectors.size()];
+        return connectors.toArray(connectorArray);
     }
 
     private ServerConnector buildAdminConnector(final Server server) {
@@ -265,7 +267,7 @@ public final class JettyFactory {
 
     private SslContextFactory constructSslContextFactory(final String password, final String keystorePath) throws IOException {
 
-        final SslContextFactory sslFactory = new SslContextFactory();
+        final SslContextFactory sslFactory = new SslContextFactory.Server();
         sslFactory.setKeyStorePassword(password);
         sslFactory.setKeyManagerPassword(password);
 

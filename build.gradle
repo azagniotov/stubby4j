@@ -12,13 +12,14 @@ defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters'
+    options.compilerArgs << '-parameters' << '-Xlint:deprecation'
 }
 
 compileTestJava {
@@ -28,34 +29,6 @@ compileTestJava {
 javadoc {
     if (JavaVersion.current().isJava8Compatible()) {
         options.addStringOption('Xdoclint:none', '-quiet')
-    }
-
-    if (JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-
-    project {
-        jdkName = "1.8"
-        languageLevel = "1.8"
-        vcs = "Git"
-        wildcards += [
-                '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
-                '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',
-                '?*.tld', '?*.ftl', '?*.yaml', '?*.json', '?*.jks'
-        ]
-    }
-}
-
-eclipse {
-    classpath {
-        downloadSources = true
     }
 }
 
@@ -84,32 +57,8 @@ dependencies {
     testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
 }
 
-testSets {
-    integrationTest {
-        dirName = 'integration-test'
-    }
-
-    functionalTest {
-        dirName = 'functional-test'
-    }
-}
-
-tasks.withType(Test) {
-    Task testTask ->
-        ignoreFailures = false
-        testLogging {
-            events /*"passed", */ "skipped", "failed"
-            exceptionFormat "full"
-            showExceptions true
-            showCauses true
-            showStackTraces true
-        }
-}
-
-test.outputs.upToDateWhen { false }
-integrationTest.outputs.upToDateWhen { false }
-functionalTest.outputs.upToDateWhen { false }
-
+apply from: "$rootDir/conf/gradle/ide.gradle"
+apply from: "$rootDir/conf/gradle/multi-test-source-sets.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"

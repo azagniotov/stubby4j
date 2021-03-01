@@ -142,7 +142,7 @@ docker build --rm --no-cache -t stubby4j:latest .
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How To Use This Image` section regarding how to use the built image
 
 ## Building
-stubby4j is a multi source-set Gradle `v6.2.2` project
+stubby4j is a multi source-set Gradle `v6.7.1` project
 
 Run `./gradlew` command to:
 * Clean

@@ -3,12 +3,11 @@ package io.github.azagniotov.stubby4j.cli;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -33,12 +32,11 @@ public final class CommandLineInterpreter {
     public static final String OPTION_MUTE = "mute";
     public static final String OPTION_WATCH = "watch";
     public static final String OPTION_HELP = "help";
-    public static final String OPTION_VERSION = "version";
-    public static final String OPTION_DEBUG = "debug";
     public static final String OPTION_DISABLE_ADMIN = "disable_admin_portal";
     public static final String OPTION_DISABLE_SSL = "disable_ssl";
-
-    private static final CommandLineParser POSIX_PARSER = new PosixParser();
+    private static final String OPTION_VERSION = "version";
+    private static final String OPTION_DEBUG = "debug";
+    private static final CommandLineParser POSIX_PARSER = new DefaultParser();
     private static final Options OPTIONS = new Options();
 
     static {
@@ -57,11 +55,12 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable SSL connections");
         @SuppressWarnings("static-access")
         Option watch =
-                OptionBuilder
-                        .withDescription("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
-                        .withLongOpt(OPTION_WATCH)
-                        .hasOptionalArg()
-                        .create("w");
+                Option.builder("w")
+                        .desc("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
+                        .longOpt(OPTION_WATCH)
+                        .hasArg(true)
+                        .optionalArg(true)
+                        .build();
         OPTIONS.addOption(watch);
     }
 
