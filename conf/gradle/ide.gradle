@@ -1,0 +1,23 @@
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+
+    project {
+        jdkName = "1.8"
+        languageLevel = "1.8"
+        vcs = "Git"
+        wildcards += [
+                '?*.gradle', '?*.properties', '?*.xml', '?*.gif',
+                '?*.png', '?*.jpeg', '?*.jpg', '?*.html', '?*.dtd',
+                '?*.tld', '?*.ftl', '?*.yaml', '?*.json', '?*.jks'
+        ]
+    }
+}
+
+eclipse {
+    classpath {
+        downloadSources = true
+    }
+}

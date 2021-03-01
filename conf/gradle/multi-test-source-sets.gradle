@@ -1,0 +1,25 @@
+testSets {
+    integrationTest {
+        dirName = 'integration-test'
+    }
+
+    functionalTest {
+        dirName = 'functional-test'
+    }
+}
+
+tasks.withType(Test) {
+    Task testTask ->
+        ignoreFailures = false
+        testLogging {
+            events /*"passed", */ "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+}
+
+test.outputs.upToDateWhen { false }
+integrationTest.outputs.upToDateWhen { false }
+functionalTest.outputs.upToDateWhen { false }

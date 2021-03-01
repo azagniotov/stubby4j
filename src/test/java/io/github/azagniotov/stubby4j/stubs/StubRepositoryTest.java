@@ -90,6 +90,11 @@ public class StubRepositoryTest {
     }
 
     @Test
+    public void shouldGetResourceStatsAsCsv() throws Exception {
+        assertThat(spyStubRepository.getResourceStatsAsCsv()).isEqualTo("resourceId,hits\n");
+    }
+
+    @Test
     public void canMatchHttpCycleByUuid() throws Exception {
         final YamlParseResultSet yamlParseResultSet = parseYaml("/resource/item/1", STUB_UUID_ONE);
         spyStubRepository.resetStubsCache(yamlParseResultSet);

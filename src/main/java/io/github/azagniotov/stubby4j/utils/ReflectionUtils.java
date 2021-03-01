@@ -25,12 +25,14 @@ public final class ReflectionUtils {
 
     }
 
+    @SuppressWarnings("deprecation")
     public static <T extends ReflectableStub> Map<String, String> getProperties(final T reflectable) throws IllegalAccessException, InvocationTargetException, UnsupportedEncodingException {
         final Map<String, String> properties = new HashMap<>();
 
         for (final Field field : reflectable.getClass().getDeclaredFields()) {
 
             AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                @Override
                 public Boolean run() {
                     if (!field.isAccessible()) {
                         field.setAccessible(true);
@@ -60,12 +62,14 @@ public final class ReflectionUtils {
         injectObjectFields(reflectable, fieldAndValue);
     }
 
+    @SuppressWarnings("deprecation")
     public static <T extends ReflectableStub> void injectObjectFields(final T reflectable, final Map<String, Object> fieldsAndValues) throws InvocationTargetException, IllegalAccessException {
 
         for (final Field field : reflectable.getClass().getDeclaredFields()) {
             final String fieldName = field.getName().toLowerCase(Locale.US);
             if (fieldsAndValues.containsKey(fieldName)) {
                 AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                    @Override
                     public Boolean run() {
                         if (!field.isAccessible()) {
                             field.setAccessible(true);

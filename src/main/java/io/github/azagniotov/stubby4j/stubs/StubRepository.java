@@ -282,7 +282,6 @@ public class StubRepository {
         return new ConcurrentHashMap<>(resourceStats);
     }
 
-
     public String getResourceStatsAsCsv() {
         final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", FileUtils.BR).replaceAll("=", ",");
         return String.format("resourceId,hits%s%s", FileUtils.BR, csvNoHeader);
