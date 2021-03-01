@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.utils;
 
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.Manifest;
 
 
@@ -11,13 +11,9 @@ public final class JarUtils {
 
     }
 
-
     public static String readManifestImplementationVersion() {
-        final URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-
         try {
-            final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
-            final Manifest manifest = new Manifest(url.openStream());
+            final Manifest manifest = getManifest();
 
             return manifest.getMainAttributes().getValue("Implementation-Version");
         } catch (Exception e) {
@@ -27,11 +23,8 @@ public final class JarUtils {
 
 
     public static String readManifestBuiltDate() {
-        final URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-
         try {
-            final URL url = classLoader.findResource("META-INF/MANIFEST.MF");
-            final Manifest manifest = new Manifest(url.openStream());
+            final Manifest manifest = getManifest();
 
             final String builtDate = manifest.getMainAttributes().getValue("Built-Date");
             if (builtDate != null) {
@@ -42,5 +35,14 @@ public final class JarUtils {
         }
 
         return DateTimeUtils.systemDefault();
+    }
+
+    private static Manifest getManifest() throws IOException {
+
+        final InputStream inputStream = Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream("META-INF/MANIFEST.MF");
+
+        return new Manifest(inputStream);
     }
 }
