@@ -11,12 +11,6 @@ plugins {
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
-
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters' << '-Xlint:deprecation'
