@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
+@GeneratedCodeCoverageExclusion
 public class AjaxEndpointStatsHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final StubRepository stubRepository;
