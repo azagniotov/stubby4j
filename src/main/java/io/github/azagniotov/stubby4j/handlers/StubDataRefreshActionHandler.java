@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
+@GeneratedCodeCoverageExclusion
 public final class StubDataRefreshActionHandler extends AbstractHandler implements AbstractHandlerExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubDataRefreshActionHandler.class);
 

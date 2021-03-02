@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
@@ -17,6 +18,7 @@ import java.io.Writer;
 
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
 
+@GeneratedCodeCoverageExclusion
 public class JsonErrorHandler extends ErrorHandler {
 
     private static final int BYTE_ARRAY_CAPACITY = 4096;

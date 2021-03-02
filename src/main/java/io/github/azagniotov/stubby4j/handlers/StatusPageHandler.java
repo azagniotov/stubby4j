@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.JettyContext;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
@@ -41,6 +42,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPON
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
+@GeneratedCodeCoverageExclusion
 public final class StatusPageHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();

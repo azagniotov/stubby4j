@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
+@GeneratedCodeCoverageExclusion
 public class AjaxResourceContentHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");

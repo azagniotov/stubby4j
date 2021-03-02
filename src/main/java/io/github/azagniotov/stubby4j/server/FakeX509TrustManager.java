@@ -1,5 +1,7 @@
 package io.github.azagniotov.stubby4j.server;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -15,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@GeneratedCodeCoverageExclusion
 public final class FakeX509TrustManager implements X509TrustManager {
 
     private final Set<X509Certificate> acceptedIssuers = new HashSet<X509Certificate>();

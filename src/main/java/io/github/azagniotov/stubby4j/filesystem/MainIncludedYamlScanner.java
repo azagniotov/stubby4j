@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.filesystem;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
+@GeneratedCodeCoverageExclusion
 public final class MainIncludedYamlScanner implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainIncludedYamlScanner.class);
 
