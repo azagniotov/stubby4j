@@ -8,16 +8,17 @@ testSets {
     }
 }
 
-tasks.withType(Test) {
-    Task testTask ->
-        ignoreFailures = false
-        testLogging {
-            events /*"passed", */ "skipped", "failed"
-            exceptionFormat "full"
-            showExceptions true
-            showCauses true
-            showStackTraces true
-        }
+tasks.withType(Test).configureEach {
+    reports.html.enabled = false
+    reports.junitXml.enabled = false
+    ignoreFailures = false
+    testLogging {
+        events /*"passed", */ "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
 }
 
 test.outputs.upToDateWhen { false }
