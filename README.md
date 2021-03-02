@@ -134,7 +134,7 @@ For more information and more complex examples, please dive into the rest of doc
 
 stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
 
-Alternatively you can build your own image locally using the project [Dockerfile](Dockerfile):
+Alternatively you can build your own image locally using the project's Dockerfiles under [docker/jdk8/](docker/jdk8) or [docker/jdk11](docker/jdk11). Navigate to the desired directory and run:
 
 ```shell script
 docker build --rm --no-cache -t stubby4j:latest .
