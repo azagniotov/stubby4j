@@ -5,6 +5,8 @@
 
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -14,7 +16,8 @@ import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNull;
 
-public final class HttpRequestUtils {
+@GeneratedCodeCoverageExclusion
+final class HttpRequestUtils {
 
     private static final String INDENT_UNIT = "   ";
     private static final String LEFT_BRACKET = "[";

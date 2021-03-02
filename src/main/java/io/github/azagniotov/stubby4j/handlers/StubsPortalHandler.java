@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import static io.github.azagniotov.stubby4j.handlers.strategy.stubs.StubsResponseHandlingStrategyFactory.getStrategy;
 
-public class StubsPortalHandler extends AbstractHandler {
+public class StubsPortalHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final StubRepository stubRepository;
 
@@ -28,12 +28,11 @@ public class StubsPortalHandler extends AbstractHandler {
     public void handle(final String target,
                        final Request baseRequest,
                        final HttpServletRequest request,
-                       final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "stubs", "HTTP response was committed or base request was handled, aborting..");
+                       final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled("stubs", baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
 
         try {

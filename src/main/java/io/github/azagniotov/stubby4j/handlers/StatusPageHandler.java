@@ -19,7 +19,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -41,7 +40,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPON
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-public final class StatusPageHandler extends AbstractHandler {
+public final class StatusPageHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
     private static final MemoryMXBean MEMORY_MX_BEAN = ManagementFactory.getMemoryMXBean();
@@ -63,12 +62,11 @@ public final class StatusPageHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "status", "HTTP response was committed or base request was handled, aborting..");
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled("status", baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
         response.setContentType("text/html;charset=UTF-8");
         response.setStatus(HttpStatus.OK_200);

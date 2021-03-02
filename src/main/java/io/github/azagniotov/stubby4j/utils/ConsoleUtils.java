@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
@@ -42,7 +43,7 @@ public final class ConsoleUtils {
         LOGGER.error(logMessage);
     }
 
-
+    @GeneratedCodeCoverageExclusion
     private static void logRawIncomingRequest(final HttpServletRequest request) {
         ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
         ANSITerminal.info(HttpRequestUtils.dump(request));
@@ -67,7 +68,7 @@ public final class ConsoleUtils {
         }
     }
 
-
+    @GeneratedCodeCoverageExclusion
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
         if (debug) {
             ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
@@ -138,7 +139,7 @@ public final class ConsoleUtils {
      *
      * @param isDebug if true, the incoming raw HTTP request will be dumped to console
      */
-
+    @GeneratedCodeCoverageExclusion
     public static void enableDebug(final boolean isDebug) {
         debug = isDebug;
     }

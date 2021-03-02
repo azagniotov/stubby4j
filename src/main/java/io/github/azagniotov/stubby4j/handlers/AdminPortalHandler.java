@@ -9,12 +9,11 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AdminPortalHandler extends AbstractHandler {
+public class AdminPortalHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     public static final String NAME = "admin";
 
@@ -27,12 +26,11 @@ public class AdminPortalHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, NAME, "HTTP response was committed or base request was handled, aborting..");
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled(NAME, baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
 
         HandlerUtils.setResponseMainHeaders(response);

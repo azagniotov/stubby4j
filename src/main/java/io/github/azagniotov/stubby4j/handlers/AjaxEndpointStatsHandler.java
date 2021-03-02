@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
@@ -7,14 +8,13 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
-public class AjaxEndpointStatsHandler extends AbstractHandler {
+public class AjaxEndpointStatsHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final StubRepository stubRepository;
 
@@ -23,11 +23,12 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
+    @GeneratedCodeCoverageExclusion
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled("ajaxEndpoint", baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
 
         HandlerUtils.setResponseMainHeaders(response);

@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.stubs;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -69,7 +70,7 @@ public class StubRepository {
         this.stubMatchesCache = Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS);
     }
 
-
+    @GeneratedCodeCoverageExclusion
     private static void logMatch(long elapsed, StubHttpLifecycle matched) {
         StringBuilder message = new StringBuilder()
                 .append("Found a match after ")

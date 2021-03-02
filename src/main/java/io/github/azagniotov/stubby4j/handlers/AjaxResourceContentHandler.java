@@ -10,7 +10,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
-public class AjaxResourceContentHandler extends AbstractHandler {
+public class AjaxResourceContentHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
     private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
@@ -33,12 +32,11 @@ public class AjaxResourceContentHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "ajaxResource", "HTTP response was committed or base request was handled, aborting..");
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled("ajaxResource", baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
 
         HandlerUtils.setResponseMainHeaders(response);

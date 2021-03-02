@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -13,13 +14,12 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
-public final class StubDataRefreshActionHandler extends AbstractHandler {
+public final class StubDataRefreshActionHandler extends AbstractHandler implements AbstractHandlerExtension {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubDataRefreshActionHandler.class);
 
     private final StubRepository stubRepository;
@@ -29,12 +29,12 @@ public final class StubDataRefreshActionHandler extends AbstractHandler {
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "stubData", "HTTP response was committed or base request was handled, aborting..");
+    @GeneratedCodeCoverageExclusion
+    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        if (logAndCheckIsHandled("stubData", baseRequest, request, response)) {
             return;
         }
+
         baseRequest.setHandled(true);
         response.setContentType("text/plain;charset=UTF-8");
         response.setStatus(HttpStatus.OK_200);

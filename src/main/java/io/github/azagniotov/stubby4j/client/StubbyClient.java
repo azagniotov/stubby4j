@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.client;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
@@ -38,7 +39,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final String yamlConfigurationFilename) throws Exception {
         startJetty(JettyFactory.DEFAULT_STUBS_PORT, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
     }
@@ -50,7 +51,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final int stubsPort, final String yamlConfigurationFilename) throws Exception {
         startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
     }
@@ -63,7 +64,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final int stubsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
         startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
     }
@@ -77,7 +78,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String yamlConfigurationFilename) throws Exception {
         startJetty(stubsPort, tlsPort, adminPort, JettyFactory.DEFAULT_HOST, yamlConfigurationFilename);
     }
@@ -91,7 +92,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final int stubsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
         startJetty(stubsPort, JettyFactory.DEFAULT_SSL_PORT, adminPort, addressToBind, yamlConfigurationFilename);
     }
@@ -106,7 +107,7 @@ public final class StubbyClient {
      * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
         final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
@@ -114,13 +115,7 @@ public final class StubbyClient {
 
         final File configFile = new File(yamlConfigurationFilename);
 
-        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
-            try {
-                return new YamlParser().parse(configFile.getParent(), configFile);
-            } catch (IOException ioEx) {
-                throw new UncheckedIOException(ioEx);
-            }
-        }, EXECUTOR_SERVICE);
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(configFile);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
@@ -135,7 +130,7 @@ public final class StubbyClient {
      * @param addressToBind Address to bind Jetty
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void startJettyYamless(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind) throws Exception {
         final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
@@ -144,13 +139,7 @@ public final class StubbyClient {
 
         final File configFile = new File(url.getFile());
 
-        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
-            try {
-                return new YamlParser().parse(configFile.getParent(), configFile);
-            } catch (IOException ioEx) {
-                throw new UncheckedIOException(ioEx);
-            }
-        }, EXECUTOR_SERVICE);
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(configFile);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
@@ -161,7 +150,7 @@ public final class StubbyClient {
      *
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void stopJetty() throws Exception {
         if (ObjectUtils.isNotNull(stubbyManager)) {
             stubbyManager.stopJetty();
@@ -173,7 +162,7 @@ public final class StubbyClient {
      *
      * @throws Exception
      */
-
+    @GeneratedCodeCoverageExclusion
     public void joinJetty() throws Exception {
         if (ObjectUtils.isNotNull(stubbyManager)) {
             stubbyManager.joinJetty();
@@ -202,7 +191,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGetOverSsl(final String host, final String uri) throws Exception {
         return doGetOverSsl(host, uri, JettyFactory.DEFAULT_SSL_PORT, null);
     }
@@ -216,7 +204,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGetOverSsl(final String host, final String uri, final int port) throws Exception {
         return doGetOverSsl(host, uri, port, null);
     }
@@ -233,7 +220,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGetOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.GET.asString(), uri, host, port, authorization);
 
@@ -252,7 +238,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGet(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.GET.asString(), uri, host, stubsPort, authorization);
 
@@ -267,7 +252,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGetUsingDefaults(final String uri) throws Exception {
         return doGetUsingDefaults(uri, null);
     }
@@ -282,7 +266,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doGetUsingDefaults(final String uri, final Authorization authorization) throws Exception {
         return doGet(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, authorization);
     }
@@ -297,7 +280,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final String payload) throws Exception {
         return doPost(host, uri, stubsPort, null, payload);
     }
@@ -315,7 +297,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPost(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.POST.asString(), uri, host, stubsPort, authorization, payload);
 
@@ -330,7 +311,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPostUsingDefaults(final String uri, final String payload) throws Exception {
         return doPostUsingDefaults(uri, payload, null);
     }
@@ -346,7 +326,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPostUsingDefaults(final String uri, final String payload, final Authorization authorization) throws Exception {
         return doPost(JettyFactory.DEFAULT_HOST, uri, JettyFactory.DEFAULT_STUBS_PORT, authorization, payload);
     }
@@ -364,7 +343,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPut(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
 
@@ -385,7 +363,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doPutOverSsl(final String host, final String uri, final int stubsPort, final Authorization authorization, final String payload) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.PUT.asString(), uri, host, stubsPort, authorization, payload);
 
@@ -404,7 +381,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doDelete(final String host, final String uri, final int stubsPort, final Authorization authorization) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTP.asString().toLowerCase(Locale.US), HttpMethod.DELETE.asString(), uri, host, stubsPort, authorization);
 
@@ -424,7 +400,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse doDeleteOverSsl(final String host, final String uri, final int port, final Authorization authorization) throws Exception {
         final StubbyRequest stubbyRequest = new StubbyRequest(HttpScheme.HTTPS.asString().toLowerCase(Locale.US), HttpMethod.DELETE.asString(), uri, host, port, authorization);
 
@@ -437,7 +412,6 @@ public final class StubbyClient {
      * @param url       fully constructed URL which included HTTP scheme, host and port
      * @param stubsData data to post
      */
-
     public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception {
         final URL adminUrl = new URL(url);
 
@@ -456,7 +430,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse makeRequest(final String scheme,
                                       final String method,
                                       final String host,
@@ -479,7 +452,6 @@ public final class StubbyClient {
      * @return StubbyResponse with HTTP status code and message from the server
      * @throws Exception
      */
-
     public StubbyResponse makeRequest(final String scheme,
                                       final String method,
                                       final String host,
@@ -505,5 +477,17 @@ public final class StubbyClient {
                 stubbyRequest.getPost(),
                 headers,
                 stubbyRequest.calculatePostLength());
+    }
+
+    @GeneratedCodeCoverageExclusion
+    private CompletableFuture<YamlParseResultSet> parseYamlAsync(final File configFile) {
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return new YamlParser().parse(configFile.getParent(), configFile);
+            } catch (IOException ioEx) {
+                throw new UncheckedIOException(ioEx);
+            }
+        }, EXECUTOR_SERVICE);
     }
 }

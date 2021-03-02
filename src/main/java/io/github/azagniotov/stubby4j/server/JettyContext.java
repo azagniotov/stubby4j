@@ -8,7 +8,7 @@ public final class JettyContext {
     private final int stubsPort;
     private final int adminPort;
 
-    public JettyContext(final String host, final int stubsPort, final int stubsSslPort, final int adminPort) {
+    JettyContext(final String host, final int stubsPort, final int stubsSslPort, final int adminPort) {
         this.host = host;
         this.stubsSslPort = stubsSslPort;
         this.stubsPort = stubsPort;

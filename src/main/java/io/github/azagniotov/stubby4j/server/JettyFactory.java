@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.server;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxEndpointStatsHandler;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 
 @SuppressWarnings("serial")
+@GeneratedCodeCoverageExclusion
 public final class JettyFactory {
 
     public static final int DEFAULT_ADMIN_PORT = 8889;
