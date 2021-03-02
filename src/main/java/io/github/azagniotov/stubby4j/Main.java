@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
@@ -26,6 +27,7 @@ import java.util.concurrent.Executors;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
+@GeneratedCodeCoverageExclusion
 public final class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
