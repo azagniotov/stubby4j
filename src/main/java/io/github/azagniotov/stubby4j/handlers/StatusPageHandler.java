@@ -41,7 +41,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPON
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-public final class StatusPageHandler extends AbstractHandler {
+public final class StatusPageHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final RuntimeMXBean RUNTIME_MX_BEAN = ManagementFactory.getRuntimeMXBean();
     private static final MemoryMXBean MEMORY_MX_BEAN = ManagementFactory.getMemoryMXBean();
@@ -64,9 +64,7 @@ public final class StatusPageHandler extends AbstractHandler {
 
     @Override
     public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "status", "HTTP response was committed or base request was handled, aborting..");
+        if (logAndCheckIsHandled("status", baseRequest, request, response)) {
             return;
         }
         baseRequest.setHandled(true);

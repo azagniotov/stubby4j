@@ -1,6 +1,5 @@
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.Request;
@@ -16,7 +15,7 @@ import java.net.URL;
 
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 
-public class FaviconHandler extends AbstractHandler {
+public class FaviconHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final long faviconModified = (System.currentTimeMillis() / 1000) * 1000L;
     private byte[] faviconBytes;
@@ -37,9 +36,7 @@ public class FaviconHandler extends AbstractHandler {
                        final Request baseRequest,
                        final HttpServletRequest request,
                        final HttpServletResponse response) throws IOException, ServletException {
-        ConsoleUtils.logIncomingRequest(request);
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "favicon", "HTTP response was committed or base request was handled, aborting..");
+        if (logAndCheckIsHandled("favicon", baseRequest, request, response)) {
             return;
         }
         baseRequest.setHandled(true);

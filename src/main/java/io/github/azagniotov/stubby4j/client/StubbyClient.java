@@ -113,14 +113,7 @@ public final class StubbyClient {
         commandLineInterpreter.parseCommandLine(args);
 
         final File configFile = new File(yamlConfigurationFilename);
-
-        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
-            try {
-                return new YamlParser().parse(configFile.getParent(), configFile);
-            } catch (IOException ioEx) {
-                throw new UncheckedIOException(ioEx);
-            }
-        }, EXECUTOR_SERVICE);
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(configFile);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
@@ -143,14 +136,7 @@ public final class StubbyClient {
         final URL url = StubbyClient.class.getResource("/yaml/empty-stub.yaml");
 
         final File configFile = new File(url.getFile());
-
-        final CompletableFuture<YamlParseResultSet> stubLoadComputation = CompletableFuture.supplyAsync(() -> {
-            try {
-                return new YamlParser().parse(configFile.getParent(), configFile);
-            } catch (IOException ioEx) {
-                throw new UncheckedIOException(ioEx);
-            }
-        }, EXECUTOR_SERVICE);
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(configFile);
 
         stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
@@ -505,5 +491,15 @@ public final class StubbyClient {
                 stubbyRequest.getPost(),
                 headers,
                 stubbyRequest.calculatePostLength());
+    }
+
+    private CompletableFuture<YamlParseResultSet> parseYamlAsync(final File configFile) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return new YamlParser().parse(configFile.getParent(), configFile);
+            } catch (IOException ioEx) {
+                throw new UncheckedIOException(ioEx);
+            }
+        }, EXECUTOR_SERVICE);
     }
 }
