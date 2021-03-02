@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
-public class AjaxEndpointStatsHandler extends AbstractHandler {
+public class AjaxEndpointStatsHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final StubRepository stubRepository;
 
@@ -24,8 +24,7 @@ public class AjaxEndpointStatsHandler extends AbstractHandler {
 
     @Override
     public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        if (response.isCommitted() || baseRequest.isHandled()) {
-            ConsoleUtils.logIncomingRequestError(request, "ajaxEndpoint", "HTTP response was committed or base request was handled, aborting..");
+        if (logAndCheckIsHandled("ajaxEndpoint", baseRequest, request, response)) {
             return;
         }
         baseRequest.setHandled(true);
