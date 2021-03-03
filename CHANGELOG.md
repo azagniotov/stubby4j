@@ -1,4 +1,8 @@
-#### 7.1.2-SNAPSHOT
+#### 7.1.3-SNAPSHOT
+
+#### 7.1.2
+
+* PR [#172](https://github.com/azagniotov/stubby4j/pull/172) - Bug: stubbed RegEx patterns were escaped unnecessarily (https://github.com/azagniotov)
 
 #### 7.1.1
 
