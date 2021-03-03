@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.caching;
 
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -29,58 +28,20 @@ public class CacheTest {
     }
 
     @Test
-    public void shouldClearCacheByRegexKey() throws Exception {
+    public void shouldNotClearCacheByKey() throws Exception {
 
         final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
 
-        final String keyRegex = "^/resources/asn/.*$";
+        final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
+        final String targetHashCodeKey = "-124354548";
 
-        final StubHttpLifecycle stubHttpLifeCycleOne = new StubHttpLifecycle.Builder().build();
-        final StubHttpLifecycle stubHttpLifeCycleTwo = new StubHttpLifecycle.Builder().build();
-        final StubHttpLifecycle stubHttpLifeCycleThree = new StubHttpLifecycle.Builder().build();
+        cache.putIfAbsent(targetHashCodeKey, stubHttpLifeCycle);
+        assertThat(cache.size().get()).isEqualTo(1);
 
-        cache.putIfAbsent("/resources/asn/1", stubHttpLifeCycleOne);
-        cache.putIfAbsent("/resources/asn/2", stubHttpLifeCycleTwo);
-        cache.putIfAbsent("/resources/asn/3", stubHttpLifeCycleThree);
+        assertThat(cache.get(targetHashCodeKey)).isEqualTo(Optional.of(stubHttpLifeCycle));
 
-        assertThat(cache.size().get()).isEqualTo(3);
-
-        cache.clearByRegexKey(keyRegex);
-
-        assertThat(cache.size().get()).isEqualTo(0);
-        assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.empty());
-        assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.empty());
-        assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.empty());
-    }
-
-    @Test
-    public void shouldNotClearCacheByRegexKeyWhenRegexDoesNotMatch() throws Exception {
-
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
-
-        final String keyRegex = "^/resources/non-matching-regex-key/.*$";
-
-        final StubHttpLifecycle stubHttpLifeCycleOne = new StubHttpLifecycle.Builder()
-                .withRequest(new StubRequest.Builder().build())
-                .build();
-        final StubHttpLifecycle stubHttpLifeCycleTwo = new StubHttpLifecycle.Builder()
-                .withRequest(new StubRequest.Builder().build())
-                .build();
-        final StubHttpLifecycle stubHttpLifeCycleThree = new StubHttpLifecycle.Builder()
-                .withRequest(new StubRequest.Builder().build())
-                .build();
-
-        cache.putIfAbsent("/resources/asn/1", stubHttpLifeCycleOne);
-        cache.putIfAbsent("/resources/asn/2", stubHttpLifeCycleTwo);
-        cache.putIfAbsent("/resources/asn/3", stubHttpLifeCycleThree);
-
-        assertThat(cache.size().get()).isEqualTo(3);
-
-        cache.clearByRegexKey(keyRegex);
-
-        assertThat(cache.size().get()).isEqualTo(3);
-        assertThat(cache.get("/resources/asn/1")).isEqualTo(Optional.of(stubHttpLifeCycleOne));
-        assertThat(cache.get("/resources/asn/2")).isEqualTo(Optional.of(stubHttpLifeCycleTwo));
-        assertThat(cache.get("/resources/asn/3")).isEqualTo(Optional.of(stubHttpLifeCycleThree));
+        assertThat(cache.clearByKey("99999")).isFalse();
+        assertThat(cache.size().get()).isEqualTo(1);
+        assertThat(cache.get(targetHashCodeKey)).isEqualTo(Optional.of(stubHttpLifeCycle));
     }
 }

@@ -43,25 +43,6 @@ public interface Cache<K, V> {
         return false;
     }
 
-    default void clearByRegexKey(final String regex) {
-        // TODO: If this will cause performance hit, use local map as cache for compiled Patterns
-        final Pattern keyPattern = Pattern.compile(regex);
-
-        final Set<K> removalCandidates = new HashSet<>();
-        for (final org.ehcache.Cache.Entry<K, V> entry : cache()) {
-            final String key = (String) entry.getKey();
-
-            final Matcher matcher = keyPattern.matcher(key);
-            if (matcher.find()) {
-                removalCandidates.add(entry.getKey());
-            }
-        }
-
-        for (final K toRemove : removalCandidates) {
-            clearByKey(toRemove);
-        }
-    }
-
     default void clear() {
         cache().clear();
         size().set(0);

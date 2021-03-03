@@ -42,6 +42,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Splitting main YAML config](#splitting-main-yaml-config)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
+   * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
    * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
    * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
@@ -1113,6 +1114,15 @@ stubby4j uses a number of techniques to optimize evaluation of stubs
 During parsing of stubs config, the `request.url`, `request.query`, `request.headers` & `request.post` (or `request.file`)
 values are checked for presence of regex. If one of the aforementioned properties is a stubbed regex, then a regex pattern
 will be compiled & cached in memory. This way, the pattern(s) are compiled during config parsing, not stub evaluation.
+
+#### Local caching of returning matched requests
+
+On every incoming request, a local cache holding previously matched stubs is checked to see if there is a match for the
+incoming request hashCode. If the incoming request hashCode found in the cache, then the cached matched stub & the
+incoming request are compared to each other to determine a complete equality based on the stubbed `request` properties.
+
+If a complete equality against the cached stub was not achieved, the incoming request is compared to all other stubs
+loaded in memory. If a full match was found, then that match will be cached using the incoming request hashCode as a key.
 
 ## The admin portal
 

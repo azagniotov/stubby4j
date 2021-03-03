@@ -148,7 +148,7 @@ public class StubRepository {
                 injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
             } catch (Exception e) {
                 ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
-                LOGGER.error("Could not record from {}.", e);
+                LOGGER.error("Could not record from {}.", recordingSource, e);
             }
         }
         return matchedStubResponse;
@@ -159,16 +159,14 @@ public class StubRepository {
      * raw {@link HttpServletRequest request} is matched to the in-memory stubs.
      * <p>
      * First, the local cache holding previously matched stubs is checked to see if there is a match for the incoming
-     * {@link StubHttpLifecycle request} URI. If the incoming {@link StubHttpLifecycle} URI found in the cache, then the
-     * cached match and the incoming {@link StubHttpLifecycle} are compared to each other to determine a complete
-     * equality based on the {@link StubRequest#equals(Object)}.
+     * {@link StubHttpLifecycle#hashCode()}. If the incoming {@link StubHttpLifecycle} hashCode found in the cache,
+     * then the cached match and the incoming {@link StubHttpLifecycle} are compared to each other to determine a
+     * complete equality for sanity check based on the {@link StubRequest#equals(Object)}.
      * <p>
      * If a complete equality with the cached {@link StubHttpLifecycle match} was not achieved, the incoming
      * {@link StubHttpLifecycle request} is compared to every {@link StubHttpLifecycle element} in the list of loaded
-     * stubs.
+     * stubs using their natural order (i.e.: the order in which the stubs were defined in the YAML).
      * <p>
-     * The {@link List<StubHttpLifecycle>#indexOf(Object)} implicitly invokes {@link StubHttpLifecycle#equals(Object)},
-     * which invokes the {@link StubRequest#equals(Object)}.
      *
      * @param incomingStub {@link StubHttpLifecycle}
      * @return an {@link Optional} describing {@link StubHttpLifecycle} match, or an empty {@link Optional} if there was no match.
@@ -180,27 +178,32 @@ public class StubRepository {
     private synchronized Optional<StubHttpLifecycle> matchStub(final StubHttpLifecycle incomingStub) {
 
         final long initialStart = System.currentTimeMillis();
-        final String incomingRequestUrl = incomingStub.getUrl();
 
-        // TODO Caching related behavior is disabled by https://github.com/azagniotov/stubby4j/pull/176
-        //  due to https://github.com/azagniotov/stubby4j/issues/170 until a more viable way to use
-        //  the cache for matching optimization is identified
-        return matchAll(incomingStub, initialStart, incomingRequestUrl);
+        final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
+        final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestHashCode);
+
+        return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
+            ANSITerminal.loaded(String.format("Local cache contains a match for hashCode [%s]", incomingRequestHashCode));
+            LOGGER.debug("Local cache contains a match for hashCode [{}].", incomingRequestHashCode);
+
+            final long elapsed = System.currentTimeMillis() - initialStart;
+            logMatch(elapsed, cachedMatchCandidate);
+
+            return Optional.of(cachedMatchCandidate);
+
+        }).orElseGet(() -> matchAll(incomingStub, initialStart));
     }
 
-    private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart, final String incomingRequestUrl) {
+    private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart) {
         for (final StubHttpLifecycle stubbed : stubs) {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
                 logMatch(elapsed, stubbed);
 
-                ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
-                LOGGER.debug("Caching the found match for URL [{}].", incomingRequestUrl);
-
-                // TODO Caching related behavior is disabled by https://github.com/azagniotov/stubby4j/pull/176
-                //  due to https://github.com/azagniotov/stubby4j/issues/170 until a more viable way to use
-                //  the cache for matching optimization is identified
-                // stubMatchesCache.putIfAbsent(incomingRequestUrl, stubbed);
+                final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
+                ANSITerminal.status(String.format("Caching the found match for hashCode [%s]", incomingRequestHashCode));
+                LOGGER.debug("Caching the found match for hashCode [{}].", incomingRequestHashCode);
+                stubMatchesCache.putIfAbsent(incomingRequestHashCode, stubbed);
 
                 return Optional.of(stubbed);
             }
@@ -338,12 +341,7 @@ public class StubRepository {
         stubs.add(index, newStub);
         updateResourceIDHeaders();
 
-        // If deleted stub url is a regex, i.e.: ^/resources/asn/.*$, then we need
-        // to clear from the cache all the keys (i.e.: URLs) that match that regex,
-        // since we cache stubs by the incoming HTTP request url
-        if (!this.stubMatchesCache.clearByKey(deletedStub.getUrl())) {
-            this.stubMatchesCache.clearByRegexKey(deletedStub.getUrl());
-        }
+        this.stubMatchesCache.clear();
 
         if (StringUtils.isSet(deletedStub.getUUID())) {
             uuidToStub.remove(deletedStub.getUUID());
