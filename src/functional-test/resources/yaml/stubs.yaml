@@ -803,3 +803,45 @@
     headers:
       content-type: application/json
     status: 201
+
+
+- description: rule_1
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"rule_1","request_id":"rule_1_request_id"}
+
+  response:
+    body: rule_1
+    status: 201
+
+
+- description: rule_2
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"rule_2","request_id":"rule_2_request_id"}
+
+  response:
+    body: rule_2
+    status: 201
+
+
+- description: rule_3
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"(.*)","request_id":"(.*)"}
+
+  response:
+    body: rule_3
+    status: 201
