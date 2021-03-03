@@ -1108,7 +1108,7 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_SuccessfullyMatchPostRegex_WhenPostRequestMade() throws Exception {
+    public void stubby4jIssue171() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/171");
 
@@ -1130,7 +1130,7 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_NotMatchPostRegex_WhenPostRequestMade_WithWrongPayload() throws Exception {
+    public void stubby4jIssue171_WithWrongPayload() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/171");
 
@@ -1145,5 +1145,40 @@ public class StubsPortalTest {
 
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+    }
+
+    @Test
+    public void stubby4jIssue170() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/170");
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(HEADER_APPLICATION_JSON);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Making request#1 which matches rule_3 ONLY, this will cache stub for rule_3 by the above requestUrl
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        final String contentOne = "{\"rule\":\"rule_3\",\"request_id\":\"rule_3_request_id\"}";
+        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
+
+        requestOne.setHeaders(httpHeaders);
+        final HttpResponse responseOne = requestOne.execute();
+        final String responseOneContentAsString = responseOne.parseAsString().trim();
+
+        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("rule_3").isEqualTo(responseOneContentAsString);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Making request#2 which matches rule_1 AND rule_3. But, in this case,
+        // we are expecting rule_1 as a response, because the rule_1 is defined earlier than rule_3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        final String contentTwo = "{\"rule\":\"rule_1\",\"request_id\":\"rule_1_request_id\"}";
+        final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentTwo);
+
+        requestTwo.setHeaders(httpHeaders);
+        final HttpResponse responseTwo = requestTwo.execute();
+        final String responseTwoContentAsString = responseTwo.parseAsString().trim();
+
+        assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("rule_1").isEqualTo(responseTwoContentAsString);
     }
 }

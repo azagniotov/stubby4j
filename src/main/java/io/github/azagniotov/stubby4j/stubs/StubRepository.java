@@ -182,32 +182,10 @@ public class StubRepository {
         final long initialStart = System.currentTimeMillis();
         final String incomingRequestUrl = incomingStub.getUrl();
 
-        final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestUrl);
-
-        return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
-
-            ANSITerminal.loaded(String.format("Local cache contains potential match for the URL [%s]", incomingRequestUrl));
-            LOGGER.debug("Local cache contains potential match for the URL [{}].", incomingRequestUrl);
-
-            // The order(?) in which equality is determined is important here (what object is "equal to" the other one)
-            if (incomingStub.equals(cachedMatchCandidate)) {
-                final long elapsed = System.currentTimeMillis() - initialStart;
-                logMatch(elapsed, cachedMatchCandidate);
-                ANSITerminal.loaded(String.format("Potential match for the URL [%s] was deemed as a full match", incomingRequestUrl));
-                LOGGER.debug("Potential match for the URL [{}] was deemed as a full match.", incomingRequestUrl);
-
-                return Optional.of(cachedMatchCandidate);
-            }
-
-            ANSITerminal.warn(String.format("Cached match for the URL [%s] failed to match fully, invalidating match cache..", incomingRequestUrl));
-            LOGGER.warn("Cached match for the URL [{}] failed to match fully, invalidating match cache.", incomingRequestUrl);
-
-            stubMatchesCache.clearByKey(incomingRequestUrl);
-
-            // Since we did not find match with cached match candidate, then:
-            return matchAll(incomingStub, initialStart, incomingRequestUrl);
-
-        }).orElseGet(() -> matchAll(incomingStub, initialStart, incomingRequestUrl));
+        // TODO Caching related behavior is disabled by https://github.com/azagniotov/stubby4j/pull/176
+        //  due to https://github.com/azagniotov/stubby4j/issues/170 until a more viable way to use
+        //  the cache for matching optimization is identified
+        return matchAll(incomingStub, initialStart, incomingRequestUrl);
     }
 
     private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart, final String incomingRequestUrl) {
@@ -218,7 +196,11 @@ public class StubRepository {
 
                 ANSITerminal.status(String.format("Caching the found match for URL [%s]", incomingRequestUrl));
                 LOGGER.debug("Caching the found match for URL [{}].", incomingRequestUrl);
-                stubMatchesCache.putIfAbsent(incomingRequestUrl, stubbed);
+
+                // TODO Caching related behavior is disabled by https://github.com/azagniotov/stubby4j/pull/176
+                //  due to https://github.com/azagniotov/stubby4j/issues/170 until a more viable way to use
+                //  the cache for matching optimization is identified
+                // stubMatchesCache.putIfAbsent(incomingRequestUrl, stubbed);
 
                 return Optional.of(stubbed);
             }
