@@ -197,8 +197,8 @@ class StubMatcher {
                 return stringsMatch(escapedStubbedPostBody, assertingJson, POST.toString());
             }
         } catch (final JSONException e) {
-            final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-            return stringsMatch(escapedStubbedPostBody, assertingJson, POST.toString());
+            // In a "happy path", this exception happens when stubbed JSON is a RegEx pattern
+            return stringsMatch(stubbedJson, assertingJson, POST.toString());
         }
     }
 

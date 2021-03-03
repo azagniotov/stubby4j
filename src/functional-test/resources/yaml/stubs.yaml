@@ -789,3 +789,15 @@
     body: OK
     status: 200
 
+
+- request:
+    url: /harry/sun/2006
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      .*([^"Declaration"\:]).*"firstName":"(.*?)".*"capSubProductCode":"(\w+)".*"natureOfProduct":"(\w+)".*
+
+  response:
+    body: MATCHED!
+    status: 201
