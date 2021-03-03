@@ -5,6 +5,7 @@ import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.caching.Cache;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -133,11 +134,7 @@ enum RegexParser {
 
     private boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups, final int flags) {
         try {
-            final int patternHashCodeRegexFlagKey = patternCandidate.hashCode() + flags;
-            final Pattern computedPattern = Pattern.compile(patternCandidate, flags);
-
-            REGEX_PATTERN_CACHE.putIfAbsent(patternHashCodeRegexFlagKey, computedPattern);
-
+            final Pattern computedPattern = getCachedPatternOrCompileNew(patternCandidate, flags);
             final Matcher matcher = computedPattern.matcher(subject);
             final boolean isMatch = matcher.matches();
             if (isMatch) {
@@ -159,5 +156,17 @@ enum RegexParser {
             // characters that are special for regex, i.e.: JSON string literal
             return match(patternCandidate, subject, templateTokenName, regexGroups, Pattern.LITERAL);
         }
+    }
+
+    private Pattern getCachedPatternOrCompileNew(final String patternCandidate, int flags) {
+        final int patternHashCodeRegexFlagKey = patternCandidate.hashCode() + flags;
+        final Optional<Pattern> compiledPatternOptional = REGEX_PATTERN_CACHE.get(patternHashCodeRegexFlagKey);
+
+        return compiledPatternOptional.orElseGet(() -> {
+            final Pattern computedPattern = Pattern.compile(patternCandidate, flags);
+            REGEX_PATTERN_CACHE.putIfAbsent(patternHashCodeRegexFlagKey, computedPattern);
+
+            return computedPattern;
+        });
     }
 }
