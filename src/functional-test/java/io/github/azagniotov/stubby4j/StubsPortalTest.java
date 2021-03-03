@@ -1046,9 +1046,9 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_RespondWithNotFound_WhenPatchRequestWithBodyMade() throws Exception {
+    public void stubby4jIssue93_WithBody() throws Exception {
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/patch-failure-request.json");
         assertThat(jsonContentUrl).isNotNull();
@@ -1064,9 +1064,9 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_RespondWithNotFound_WhenPatchRequestWithoutBodyMade() throws Exception {
+    public void stubby4jIssue93_WithoutBody() throws Exception {
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
 
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl);
         final HttpResponse response = request.execute();
@@ -1085,7 +1085,7 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void shouldMatchDistinctRequestBodiesForTheSameUrlWhenPutRequestMade() throws Exception {
+    public void stubby4jIssue93_ExtraTest() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/individuals/SAME/address");
 

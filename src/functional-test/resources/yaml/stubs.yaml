@@ -748,7 +748,7 @@
 
 - request:
     method: PATCH
-    url: /simulator/content/v1/url/one
+    url: /azagniotov/stubby4j/issues/93
     file: ../json/patch-failure-request.json
 
   response:
@@ -759,13 +759,14 @@
 
 - request:
     method: PATCH
-    url: /simulator/content/v1/url/one
+    url: /azagniotov/stubby4j/issues/93
 
   response:
     status: 200
     headers:
       content-type: application/json
     file: ../json/patch-success-response.json
+
 
 - request:
     url: /individuals/.*/address$
