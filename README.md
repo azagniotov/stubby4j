@@ -17,7 +17,7 @@ Please refer to [Key features](#key-features) for more information
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.1.2
+## User manual for stubby4j v7.1.3
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -42,7 +42,6 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Splitting main YAML config](#splitting-main-yaml-config)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
-   * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
    * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
    * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
@@ -171,12 +170,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.2")
+compile("io.github.azagniotov:stubby4j:7.1.3")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.2:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.3:no-jetty")
 ```
 
 #### Maven
@@ -184,7 +183,7 @@ compile("io.github.azagniotov:stubby4j:7.1.2:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.2</version>
+    <version>7.1.3</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -193,7 +192,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.2</version>
+    <version>7.1.3</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -202,17 +201,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-7.1.3-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.3-SNAPSHOT/`
+* Install `stubby4j-7.1.4-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.4-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.3-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.1.4-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.3-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.1.4-SNAPSHOT:no-jetty")
 ```
 
 
@@ -1114,16 +1113,6 @@ stubby4j uses a number of techniques to optimize evaluation of stubs
 During parsing of stubs config, the `request.url`, `request.query`, `request.headers` & `request.post` (or `request.file`)
 values are checked for presence of regex. If one of the aforementioned properties is a stubbed regex, then a regex pattern
 will be compiled & cached in memory. This way, the pattern(s) are compiled during config parsing, not stub evaluation.
-
-#### Local caching of returning matched requests
-
-On every incoming request, a local cache holding previously matched stubs is checked to see if there is a match for the
-incoming request URI. If the incoming URI found in the cache, then the cached matched stub & the incoming request are
-compared to each other to determine a complete equality based on the stubbed `request` properties.
-
-If a complete equality against the cached stub was not achieved, the incoming request is compared to all other stubs
-loaded in memory. If a full match was found, then that match will be cached using the incoming request URI as a key.
-                  
 
 ## The admin portal
 

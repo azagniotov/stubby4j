@@ -1,4 +1,8 @@
-#### 7.1.3-SNAPSHOT
+#### 7.1.4-SNAPSHOT
+
+#### 7.1.3
+
+* PR [#176](https://github.com/azagniotov/stubby4j/pull/176) - Disabled internal `StubHttpLifecycleCache` due to issue [#170](https://github.com/azagniotov/stubby4j/issues/170) (https://github.com/azagniotov)
 
 #### 7.1.2
 

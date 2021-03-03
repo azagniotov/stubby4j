@@ -18,7 +18,7 @@ WORKDIR $GRADLE_USER_HOME
 RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch -f --tags && \
-      git checkout v7.1.2 && \
+      git checkout v7.1.3 && \
       gradle clean jar
 
 ########################################################################################
