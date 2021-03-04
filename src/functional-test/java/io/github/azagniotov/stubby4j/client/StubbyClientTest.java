@@ -489,7 +489,7 @@ public class StubbyClientTest {
         final String uri = "/complex/json/tree/put";
         final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
-        final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/graph.2.json");
+        final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/request/json_payload_4.json");
         assertThat(jsonContentUrl).isNotNull();
         final String payload = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -504,7 +504,7 @@ public class StubbyClientTest {
         final String host = "localhost";
         final String uri = "/complex/json/tree/put";
 
-        final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/graph.2.json");
+        final URL jsonContentUrl = StubbyClientTest.class.getResource("/json/request/json_payload_4.json");
         assertThat(jsonContentUrl).isNotNull();
         final String payload = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 

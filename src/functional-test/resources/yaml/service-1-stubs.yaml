@@ -149,7 +149,7 @@
       content-type: application/json
       pragma: no-cache
     status: 200
-    file: ../json/response.json
+    file: ../json/response/json_response_1.json
 
 
 - request:

@@ -149,7 +149,7 @@
       content-type: application/json
       pragma: no-cache
     status: 200
-    file: ../json/response.json
+    file: ../json/response/json_response_1.json
 
 
 - request:
@@ -221,7 +221,7 @@
     url: /jsonapi-json-object-comparison
     headers:
       content-type: application/json
-    file: ../json/jsonapi.post.json
+    file: ../json/request/json_payload_1.json
 
   response:
     headers:
@@ -236,7 +236,7 @@
     url: /jsonapi-json-regex
     headers:
       content-type: application/json
-    file: ../json/jsonapi.regex.json
+    file: ../json/request/json_payload_2.json
 
   response:
     headers:
@@ -521,17 +521,17 @@
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.ok.json
+      file: ../json/response/json_response_2.json
 
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.goingstrong.json
+      file: ../json/response/json_response_3.json
 
     - status: 500
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.omfg.json
+      file: ../json/response/json_response_4.json
 
 
 - request:
@@ -547,7 +547,7 @@
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.goingstrong.json
+      file: ../json/response/json_response_3.json
 
     - status: 500
       headers:
@@ -605,7 +605,7 @@
 
   response:
     status: 200
-    file: ../json/template.json
+    file: ../json/response/json_response_5.json
 
 
 - request:
@@ -665,7 +665,7 @@
     url: /complex/json/tree
     headers:
       content-type: application/json
-    file: ../json/graph.1.json
+    file: ../json/request/json_payload_3.json
 
   response:
     headers:
@@ -678,7 +678,7 @@
     url: /complex/xml/tree
     headers:
       content-type: application/xml
-    file: ../xml/graph.1.xml
+    file: ../xml/request/xml_payload_1.xml
 
   response:
     headers:
@@ -689,7 +689,7 @@
 - request:
     method: PUT
     url: /complex/json/tree/put
-    file: ../json/graph.2.json
+    file: ../json/request/json_payload_4.json
 
   response:
     headers:
@@ -749,7 +749,7 @@
 - request:
     method: PATCH
     url: /azagniotov/stubby4j/issues/93
-    file: ../json/patch-failure-request.json
+    file: ../json/request/json_payload_10.json
 
   response:
     headers:
@@ -765,7 +765,7 @@
     status: 200
     headers:
       content-type: application/json
-    file: ../json/patch-success-response.json
+    file: ../json/response/json_response_6.json
 
 
 - request:

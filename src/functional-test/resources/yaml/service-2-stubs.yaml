@@ -3,7 +3,7 @@
     url: /jsonapi-json-object-comparison
     headers:
       content-type: application/json
-    file: ../json/jsonapi.post.json
+    file: ../json/request/json_payload_1.json
 
   response:
     headers:
@@ -18,7 +18,7 @@
     url: /jsonapi-json-regex
     headers:
       content-type: application/json
-    file: ../json/jsonapi.regex.json
+    file: ../json/request/json_payload_2.json
 
   response:
     headers:
@@ -303,17 +303,17 @@
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.ok.json
+      file: ../json/response/json_response_2.json
 
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.goingstrong.json
+      file: ../json/response/json_response_3.json
 
     - status: 500
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.omfg.json
+      file: ../json/response/json_response_4.json
 
 
 - request:
@@ -329,7 +329,7 @@
     - status: 201
       headers:
         content-type: application/json
-      file: ../json/sequenced.response.goingstrong.json
+      file: ../json/response/json_response_3.json
 
     - status: 500
       headers:
@@ -387,7 +387,7 @@
 
   response:
     status: 200
-    file: ../json/template.json
+    file: ../json/response/json_response_5.json
 
 
 - request:
