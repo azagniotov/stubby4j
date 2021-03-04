@@ -31,6 +31,8 @@ enum RegexParser {
      * '('    - 40
      * ')'    - 41
      * '*'    - 42
+     * '+'    - 43
+     * '.'    - 46
      * '?'    - 63
      * '['    - 91
      * ']'    - 93
@@ -42,13 +44,13 @@ enum RegexParser {
      */
 
     @VisibleForTesting
-    static final char[] REGEX_CHARS = new char[]{'$', '(', ')', '*', '?', '[', ']', '\\', '^', '{', '|', '}'};
+    static final char[] REGEX_CHARS = new char[]{'$', '(', ')', '*', '+', '.', '?', '[', ']', '\\', '^', '{', '|', '}'};
     // 7200 secs => 2 hours
     private static final long CACHE_ENTRY_LIFETIME_SECONDS = 7200L;
     @VisibleForTesting
     static final Cache<Integer, Pattern> REGEX_PATTERN_CACHE = Cache.regexPatternCache(CACHE_ENTRY_LIFETIME_SECONDS);
     private static final boolean[] SPECIAL_CHARS;
-    private static final int CHAR_LENGTH_THRESHOLD = 3;
+    private static final int REGEX_CHAR_LENGTH_THRESHOLD = 2;
 
     static {
         SPECIAL_CHARS = new boolean[127];
@@ -63,14 +65,14 @@ enum RegexParser {
      * @param pattern to check for presence of regex special characters
      */
     static boolean potentialRegex(final String pattern) {
-        return potentialRegex(pattern, 2);
+        return potentialRegex(pattern, REGEX_CHAR_LENGTH_THRESHOLD);
     }
 
     private static boolean potentialRegex(final String pattern, int threshold) {
 
         char[] chars = pattern.toCharArray();
 
-        if (chars.length < CHAR_LENGTH_THRESHOLD) {
+        if (chars.length < threshold) {
             return false;
         }
 
@@ -134,7 +136,7 @@ enum RegexParser {
 
     private boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups, final int flags) {
         try {
-            final Pattern computedPattern = getCachedPatternOrCompileNew(patternCandidate, flags);
+            final Pattern computedPattern = getCachedPatternOrCacheNewCompiled(patternCandidate, flags);
             final Matcher matcher = computedPattern.matcher(subject);
             final boolean isMatch = matcher.matches();
             if (isMatch) {
@@ -158,7 +160,7 @@ enum RegexParser {
         }
     }
 
-    private Pattern getCachedPatternOrCompileNew(final String patternCandidate, int flags) {
+    private Pattern getCachedPatternOrCacheNewCompiled(final String patternCandidate, int flags) {
         final int patternHashCodeRegexFlagKey = patternCandidate.hashCode() + flags;
         final Optional<Pattern> compiledPatternOptional = REGEX_PATTERN_CACHE.get(patternHashCodeRegexFlagKey);
 
