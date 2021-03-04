@@ -333,7 +333,7 @@ public class MultiIncludeStubsPortalTest {
     public void should_FindPostContentsEqual_WhenJsonContentOrderIrrelevant() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/json/tree");
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/graph.2.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/request/json_payload_4.json");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -365,7 +365,7 @@ public class MultiIncludeStubsPortalTest {
     public void should_FindPostContentsEqual_WhenXmlContentOrderIrrelevant() throws Exception {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/complex/xml/tree");
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/xml/graph.2.xml");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/xml/request/xml_payload_2.xml");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -395,7 +395,7 @@ public class MultiIncludeStubsPortalTest {
     @Test
     public void should_ReturnAllProducts_WhenGetRequestMade() throws Exception {
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -422,7 +422,7 @@ public class MultiIncludeStubsPortalTest {
     @Test
     public void should_ReturnAllProducts_WhenGetRequestMadeOverSsl() throws Exception {
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -761,7 +761,7 @@ public class MultiIncludeStubsPortalTest {
     @Test
     public void should_MakeSuccessfulRequest_WhenStubbedValidJsonMatchesComplexValidJsonPost() throws Exception {
 
-        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/jsonapi.post.rearranged.json");
+        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/request/json_payload_9.json");
         final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-object-comparison");
@@ -780,7 +780,7 @@ public class MultiIncludeStubsPortalTest {
     @Test
     public void should_MakeSuccessfulRequest_WhenStubbedJsonRegexMatchesComplexValidJsonPost() throws Exception {
 
-        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/jsonapi.post.json");
+        final URL dataPostUrl = MultiIncludeStubsPortalTest.class.getResource("/json/request/json_payload_1.json");
         final String content = StringUtils.inputStreamToString(dataPostUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/jsonapi-json-regex");
@@ -953,7 +953,7 @@ public class MultiIncludeStubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/simulator/content/v1/url/one");
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/patch-failure-request.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/request/json_payload_10.json");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -980,7 +980,7 @@ public class MultiIncludeStubsPortalTest {
 
         final String responseContent = response.parseAsString().trim();
 
-        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/patch-success-response.json");
+        final URL jsonContentUrl = MultiIncludeStubsPortalTest.class.getResource("/json/response/json_response_6.json");
         assertThat(jsonContentUrl).isNotNull();
         final String expectedResponseContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 

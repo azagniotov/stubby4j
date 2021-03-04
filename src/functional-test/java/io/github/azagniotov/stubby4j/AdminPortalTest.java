@@ -127,7 +127,7 @@ public class AdminPortalTest {
         assertThat(responseContentAsString).contains("request");
         assertThat(responseContentAsString).contains("url: ^/resources/asn/");
         assertThat(responseContentAsString).contains("content-disposition: attachment; filename=hello-world.pdf");
-        assertThat(responseContentAsString).contains("file: ../json/response.json");
+        assertThat(responseContentAsString).contains("file: ../json/response/json_response_1.json");
         assertThat(responseContentAsString).contains("url: /uri/with/single/sequenced/response");
     }
 
@@ -350,7 +350,7 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
 
-        final URL url = AdminPortalTest.class.getResource("/json/update.request.by.uuid.json");
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_6.json");
         final InputStream jsonInputStream = url.openStream();
         final String jsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
@@ -393,7 +393,7 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
 
-        final URL url = AdminPortalTest.class.getResource("/json/update.request.without.escaped.slashes.json");
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_8.json");
         final InputStream jsonInputStream = url.openStream();
         final String jsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
@@ -437,7 +437,7 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
 
-        final URL url = AdminPortalTest.class.getResource("/json/update.request.with.enquoted.escaped.forward.slashes.json");
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_5.json");
         final InputStream jsonInputStream = url.openStream();
         final String escapedJsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
@@ -481,7 +481,7 @@ public class AdminPortalTest {
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
 
-        final URL url = AdminPortalTest.class.getResource("/json/update.request.with.escaped.forward.slashes.json");
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_7.json");
         final InputStream jsonInputStream = url.openStream();
         final String escapedJsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
