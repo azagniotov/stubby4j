@@ -15,6 +15,11 @@ public class RegexParserTest {
     @Test
     public void shouldDetermineStringAsPotentialRegexPatterns() throws Exception {
 
+        assertThat(RegexParser.potentialRegex(".*")).isTrue();
+        assertThat(RegexParser.potentialRegex("[^")).isTrue();
+        assertThat(RegexParser.potentialRegex("(.*)")).isTrue();
+        assertThat(RegexParser.potentialRegex("\\s+")).isTrue();
+        assertThat(RegexParser.potentialRegex("\\w+")).isTrue();
         assertThat(RegexParser.potentialRegex("[Hello^]")).isTrue();
         assertThat(RegexParser.potentialRegex("[Array]")).isTrue();
         assertThat(RegexParser.potentialRegex("{JsonObject}")).isTrue();
@@ -26,11 +31,13 @@ public class RegexParserTest {
         assertThat(RegexParser.potentialRegex("^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")).isTrue();
         assertThat(RegexParser.potentialRegex("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$")).isTrue();
         assertThat(RegexParser.potentialRegex("^\\\\")).isTrue();
+        assertThat(RegexParser.potentialRegex("^\\")).isTrue();
+        assertThat(RegexParser.potentialRegex("**")).isTrue();
+        assertThat(RegexParser.potentialRegex("()")).isTrue();
 
         assertThat(RegexParser.potentialRegex("!\"~")).isFalse();
-        assertThat(RegexParser.potentialRegex("^\\")).isFalse();
-        assertThat(RegexParser.potentialRegex("**")).isFalse();
-        assertThat(RegexParser.potentialRegex("()")).isFalse();
+        assertThat(RegexParser.potentialRegex("This is a sentence ending with a dot.")).isFalse();
+        assertThat(RegexParser.potentialRegex("Is this a sentence ending with a question?")).isFalse();
         assertThat(RegexParser.potentialRegex("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")).isFalse();
         assertThat(RegexParser.potentialRegex("")).isFalse();
         assertThat(RegexParser.potentialRegex(")")).isFalse();
