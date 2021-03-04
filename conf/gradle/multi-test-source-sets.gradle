@@ -6,6 +6,10 @@ testSets {
     functionalTest {
         dirName = 'functional-test'
     }
+
+    loadTest {
+        dirName = 'load-test'
+    }
 }
 
 tasks.withType(Test).configureEach {
@@ -24,3 +28,4 @@ tasks.withType(Test).configureEach {
 test.outputs.upToDateWhen { false }
 integrationTest.outputs.upToDateWhen { false }
 functionalTest.outputs.upToDateWhen { false }
+loadTest.outputs.upToDateWhen { false }
