@@ -846,3 +846,16 @@
   response:
     body: rule_3
     status: 201
+
+- request:
+    url: /azagniotov/stubby4j/issues/29
+    method: POST
+    headers:
+      content-type: application/xml
+    post: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><idex:type xmlns:idex="http://idex.bbc.co.uk/v1"><idex:authority>PIPS</idex:authority><idex:name>pid</idex:name><idex:startsWith>pid://</idex:startsWith></idex:type>
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_1.xml

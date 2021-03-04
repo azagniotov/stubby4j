@@ -1,0 +1,5 @@
+<idex:type id="https://idex.cloud.bbc.co.uk/api/v1/types/pid" xmlns:idex="http://java.sun.com/xml/ns/j2ee">
+    <idex:authority>PIPS</idex:authority>
+    <idex:name>pid</idex:name>
+    <idex:startsWith>pid://</idex:startsWith>
+</idex:type>
