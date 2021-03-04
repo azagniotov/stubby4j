@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
+    <idex:authority>PIPS</idex:authority>
+    <idex:name>pid</idex:name>
+    <idex:startsWith>pid://</idex:startsWith>
+</idex:type>

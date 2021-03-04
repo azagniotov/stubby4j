@@ -210,12 +210,12 @@ class StubMatcher {
 
             final Diff diff = DiffBuilder
                     .compare(control)
+                    .withTest(assertion)
                     .checkForSimilar()
                     .normalizeWhitespace()
                     .ignoreComments()
                     .withNodeMatcher(NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES)
-                    .withTest(assertion)
-                    .withComparisonController(ComparisonControllers.StopWhenSimilar)
+                    .withComparisonController(ComparisonControllers.StopWhenDifferent)
                     .build();
 
             return !diff.hasDifferences();
