@@ -6,16 +6,18 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
-import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import org.eclipse.jetty.http.HttpStatus;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -42,15 +44,12 @@ public class StubsPortalLoadTest {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalLoadTest.class.getResource("/yaml/10k_stubs_load_test.yaml");
+        final URL url = StubsPortalLoadTest.class.getResource("/yaml/25k_stubs_load_test.yaml");
         final InputStream stubsDataInputStream = url.openStream();
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
-
-        final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
-        assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
     }
 
     @AfterClass
@@ -58,15 +57,42 @@ public class StubsPortalLoadTest {
         STUBBY_CLIENT.stopJetty();
     }
 
-    @After
-    public void afterEach() throws Exception {
-        ANSITerminal.muteConsole(true);
+    @Test
+    public void dataGenerator() throws Exception {
+
+        final StringBuilder builder = new StringBuilder();
+        for (int idx = 1; idx <= 25000; idx++) {
+
+            final String yamlToUpdate = new YamlBuilder()
+                    .newStubbedRequest()
+                    .withUrl("/azagniotov/load/test/uri/" + idx)
+                    .withMethodPost()
+                    .withHeaderContentType("application/json")
+                    .withFoldedPost("{\"request_id\":\"abc_" + idx + "\", \"payload\":\"(.*)\"}")
+                    .newStubbedResponse()
+                    .withHeaderContentType("application/json")
+                    .withFoldedBody("{\"status\":\"CREATED RESOURCE#" + idx + "!\"}")
+                    .withStatus("201")
+                    .build();
+
+            builder.append(yamlToUpdate).append("\n\n\n");
+
+        }
+
+        final File temp = File.createTempFile("tmp" + System.currentTimeMillis(), ".yaml");
+
+        try (final FileWriter fileWriter = new FileWriter(temp);
+             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(builder.toString());
+        }
+
+        int a = 8;
     }
 
     @Test
     public void cacheTesting_CheckResponseTimeOnRepeatedRequests() throws Exception {
 
-        final int idx = 10_000;
+        final int idx = 25_000;
 
         final String content = "{\"request_id\":\"abc_" + idx + "\", \"payload\":\"Yo, this is big!!\"}";
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/load/test/uri/" + idx);
