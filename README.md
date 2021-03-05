@@ -219,9 +219,9 @@ compile("io.github.azagniotov:stubby4j:7.1.4-SNAPSHOT:no-jetty")
 ## Command-line switches
 ```
 usage:
-java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds] [-h] [-k
-       <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v]
-       [-w <arg>]
+java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
+       [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>]
+       [-v] [-w <arg>]
  -a,--admin <arg>             Port for admin portal. Defaults to 8889.
  -d,--data <arg>              Data file to pre-load endpoints. Data file
                               to pre-load endpoints. Optional valid YAML
@@ -229,6 +229,9 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds] [-h] [-k
                               you will be expected to configure stubs via
                               the stubby4j HTTP POST API.
  -da,--disable_admin_portal   Does not start Admin portal
+ -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs
+                              are successfully matched to the incoming
+                              HTTP requests
  -ds,--disable_ssl            Does not enable SSL connections
  -h,--help                    This help text.
  -k,--keystore <arg>          Keystore file for custom TLS. By default TLS
@@ -1123,6 +1126,8 @@ incoming request are compared to each other to determine a complete equality bas
 
 If a complete equality against the cached stub was not achieved, the incoming request is compared to all other stubs
 loaded in memory. If a full match was found, then that match will be cached using the incoming request hashCode as a key.
+
+To disable stub caching pass `--disable_stub_caching` command-line arg to stubby4j jar upon start up (refer to [Command-line switches](#command-line-switches) sectio )
 
 ## The admin portal
 

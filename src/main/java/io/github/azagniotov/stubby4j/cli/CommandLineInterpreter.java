@@ -35,6 +35,7 @@ public final class CommandLineInterpreter {
     public static final String OPTION_HELP = "help";
     public static final String OPTION_DISABLE_ADMIN = "disable_admin_portal";
     public static final String OPTION_DISABLE_SSL = "disable_ssl";
+    public static final String OPTION_DISABLE_STUB_CACHING = "disable_stub_caching";
     private static final String OPTION_VERSION = "version";
     private static final String OPTION_DEBUG = "debug";
     private static final CommandLineParser POSIX_PARSER = new DefaultParser();
@@ -53,6 +54,7 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("v", OPTION_VERSION, false, "Prints out to console stubby version.");
         OPTIONS.addOption("o", OPTION_DEBUG, false, "Dumps raw HTTP request to the console (if console is not muted!).");
         OPTIONS.addOption("da", OPTION_DISABLE_ADMIN, false, "Does not start Admin portal");
+        OPTIONS.addOption("dc", OPTION_DISABLE_STUB_CACHING, false, "Disables stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests");
         OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable SSL connections");
         @SuppressWarnings("static-access")
         Option watch =

@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
+import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
@@ -82,7 +83,9 @@ public class StubRepositoryTest {
         requestBuilder = new StubRequest.Builder();
         responseBuilder = new StubResponse.Builder();
 
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, YAML_PARSE_RESULT_SET_FUTURE);
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE,
+                Cache.stubHttpLifecycleCache(3600L, false),
+                YAML_PARSE_RESULT_SET_FUTURE);
         final Field stubbyHttpTransportField = stubRepository.getClass().getDeclaredField("stubbyHttpTransport");
         FieldSetter.setField(stubRepository, stubbyHttpTransportField, mockStubbyHttpTransport);
 

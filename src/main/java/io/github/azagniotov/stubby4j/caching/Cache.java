@@ -4,17 +4,22 @@ package io.github.azagniotov.stubby4j.caching;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import org.ehcache.UserManagedCache;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public interface Cache<K, V> {
 
-    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds) {
-        return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+    static Cache<String, StubHttpLifecycle> noOpStubHttpLifecycleCache() {
+        return new NoOpStubHttpLifecycleCache();
+    }
+
+    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds, final boolean buildNoOpCache) {
+        if (buildNoOpCache) {
+            return noOpStubHttpLifecycleCache();
+        } else {
+            return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+        }
     }
 
     static Cache<Integer, Pattern> regexPatternCache(final long cacheEntryLifetimeSeconds) {
@@ -22,7 +27,7 @@ public interface Cache<K, V> {
     }
 
     default Optional<V> get(final K key) {
-        return Optional.<V>ofNullable(cache().get(key));
+        return Optional.ofNullable(cache().get(key));
     }
 
     default void putIfAbsent(final K key, final V value) {
@@ -46,10 +51,6 @@ public interface Cache<K, V> {
     default void clear() {
         cache().clear();
         size().set(0);
-    }
-
-    default void close() {
-        cache().close();
     }
 
     UserManagedCache<K, V> cache();

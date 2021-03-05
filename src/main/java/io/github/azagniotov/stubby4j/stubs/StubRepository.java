@@ -45,9 +45,6 @@ import static java.util.Collections.list;
 public class StubRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubRepository.class);
 
-    // 7200 secs => 2 hours
-    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 7200L;
-
     private final File configFile;
 
     private final List<StubHttpLifecycle> stubs;
@@ -59,14 +56,16 @@ public class StubRepository {
     private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
     private final StubbyHttpTransport stubbyHttpTransport;
 
-    public StubRepository(final File configFile, final CompletableFuture<YamlParseResultSet> stubLoadComputation) {
+    public StubRepository(final File configFile,
+                          final Cache<String, StubHttpLifecycle> stubMatchesCache,
+                          final CompletableFuture<YamlParseResultSet> stubLoadComputation) {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = new StubbyHttpTransport();
         this.resourceStats = new ConcurrentHashMap<>();
-        this.stubMatchesCache = Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS);
+        this.stubMatchesCache = stubMatchesCache;
     }
 
 

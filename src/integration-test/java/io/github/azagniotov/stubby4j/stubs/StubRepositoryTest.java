@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
+import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
@@ -55,7 +56,9 @@ public class StubRepositoryTest {
     private HttpServletRequest mockHttpServletRequest;
 
     @Spy
-    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE, YAML_PARSE_RESULT_SET_FUTURE);
+    private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE,
+            Cache.stubHttpLifecycleCache(3600L, false),
+            YAML_PARSE_RESULT_SET_FUTURE);
 
     private StubRequest.Builder requestBuilder;
 
