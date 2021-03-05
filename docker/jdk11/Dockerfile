@@ -18,7 +18,7 @@ WORKDIR $GRADLE_USER_HOME
 RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch -f --tags && \
-      git checkout v7.1.3 && \
+      git checkout v7.2.0 && \
       gradle clean jar
 
 ########################################################################################
@@ -64,6 +64,6 @@ ENTRYPOINT java -jar stubby4j.jar \
       --stubs ${STUBS_PORT} \
       --tls ${STUBS_TLS_PORT} \
       --data data/${YAML_CONFIG} \
-      ${WITH_WATCH} \
       ${WITH_STUB_CACHE_DISABLED} \
-      ${WITH_DEBUG}
+      ${WITH_DEBUG} \
+      ${WITH_WATCH}
