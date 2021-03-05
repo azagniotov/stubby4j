@@ -45,10 +45,9 @@ enum RegexParser {
 
     @VisibleForTesting
     static final char[] REGEX_CHARS = new char[]{'$', '(', ')', '*', '+', '.', '?', '[', ']', '\\', '^', '{', '|', '}'};
-    // 7200 secs => 2 hours
-    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 7200L;
+
     @VisibleForTesting
-    static final Cache<Integer, Pattern> REGEX_PATTERN_CACHE = Cache.regexPatternCache(CACHE_ENTRY_LIFETIME_SECONDS);
+    static final Cache<Integer, Pattern> REGEX_PATTERN_CACHE = Cache.regexPatternCache();
     private static final boolean[] SPECIAL_CHARS;
     private static final int REGEX_CHAR_LENGTH_THRESHOLD = 2;
 

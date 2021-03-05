@@ -12,7 +12,7 @@ public class NoOpStubHttpLifecycleCacheTest {
 
     @Test
     public void putIfAbsentAndGet() {
-        final Cache<String, StubHttpLifecycle> cache = Cache.noOpStubHttpLifecycleCache();
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(true);
         assertThat(cache.size().get()).isEqualTo(0);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
@@ -27,7 +27,7 @@ public class NoOpStubHttpLifecycleCacheTest {
     @Test
     public void clearByKey() {
 
-        final Cache<String, StubHttpLifecycle> cache = Cache.noOpStubHttpLifecycleCache();
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(true);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
         final String targetKey = "/some/url";
@@ -41,7 +41,7 @@ public class NoOpStubHttpLifecycleCacheTest {
 
     @Test
     public void cache() {
-        final Cache<String, StubHttpLifecycle> cache = Cache.noOpStubHttpLifecycleCache();
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(true);
         assertThrows(UnsupportedOperationException.class, cache::cache);
     }
 }

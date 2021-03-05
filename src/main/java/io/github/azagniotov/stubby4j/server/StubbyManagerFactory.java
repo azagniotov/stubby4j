@@ -16,8 +16,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class StubbyManagerFactory {
 
-    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 3600L;  // 3600 secs => 60 minutes
-
     public StubbyManagerFactory() {
 
     }
@@ -29,9 +27,8 @@ public class StubbyManagerFactory {
         // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
         Log.setLog(new EmptyLogger());
 
-        final Cache<String, StubHttpLifecycle> stubCache =
-                Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS,
-                        commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING));
+        final boolean shouldDisableStubCache = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
+        final Cache<String, StubHttpLifecycle> stubCache = Cache.stubHttpLifecycleCache(shouldDisableStubCache);
 
         final StubRepository stubRepository = new StubRepository(configFile, stubCache, stubLoadComputation);
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);
