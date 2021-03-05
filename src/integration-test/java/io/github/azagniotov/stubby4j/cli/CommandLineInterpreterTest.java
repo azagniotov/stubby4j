@@ -10,7 +10,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 
-public class CommandLineIntepreterTest {
+public class CommandLineInterpreterTest {
 
 
     @Test
@@ -27,9 +27,9 @@ public class CommandLineIntepreterTest {
         System.setOut(oldPrintStream);
 
         final String expectedConsoleOutput = "usage:" + BR +
-                "java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-ds] [-h] [-k" + BR +
-                "       <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>] [-v]" + BR +
-                "       [-w <arg>]" + BR +
+                "java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]" + BR +
+                "       [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>]" + BR +
+                "       [-v] [-w <arg>]" + BR +
                 " -a,--admin <arg>             Port for admin portal. Defaults to 8889." + BR +
                 " -d,--data <arg>              Data file to pre-load endpoints. Data file" + BR +
                 "                              to pre-load endpoints. Optional valid YAML" + BR +
@@ -37,6 +37,9 @@ public class CommandLineIntepreterTest {
                 "                              you will be expected to configure stubs via" + BR +
                 "                              the stubby4j HTTP POST API." + BR +
                 " -da,--disable_admin_portal   Does not start Admin portal" + BR +
+                " -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs" + BR +
+                "                              are successfully matched to the incoming" + BR +
+                "                              HTTP requests" + BR +
                 " -ds,--disable_ssl            Does not enable SSL connections" + BR +
                 " -h,--help                    This help text." + BR +
                 " -k,--keystore <arg>          Keystore file for custom TLS. By default TLS" + BR +

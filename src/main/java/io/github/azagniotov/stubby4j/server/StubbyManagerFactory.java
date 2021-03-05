@@ -31,7 +31,7 @@ public class StubbyManagerFactory {
 
         final Cache<String, StubHttpLifecycle> stubCache =
                 Cache.stubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS,
-                        commandLineArgs.containsKey(CommandLineInterpreter.OPTION_MUTE));
+                        commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING));
 
         final StubRepository stubRepository = new StubRepository(configFile, stubCache, stubLoadComputation);
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);

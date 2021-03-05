@@ -11,7 +11,7 @@ import java.util.Map;
 import static com.google.common.truth.Truth.assertThat;
 
 
-public class CommandLineIntepreterTest {
+public class CommandLineInterpreterTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -68,6 +68,24 @@ public class CommandLineIntepreterTest {
         final boolean isDebug = commandLineInterpreter.isDebug();
 
         assertThat(isDebug).isTrue();
+    }
+
+    @Test
+    public void testIsCacheDisabledWhenLongOptionGiven() throws Exception {
+        final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+        commandLineInterpreter.parseCommandLine(new String[]{"--disable_stub_caching"});
+        final boolean isCacheDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
+
+        assertThat(isCacheDisabled).isTrue();
+    }
+
+    @Test
+    public void testIsCacheDisabledWhenShortOptionGiven() throws Exception {
+        final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+        commandLineInterpreter.parseCommandLine(new String[]{"-dc"});
+        final boolean isCacheDisabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
+
+        assertThat(isCacheDisabled).isTrue();
     }
 
     @Test
@@ -234,7 +252,7 @@ public class CommandLineIntepreterTest {
     }
 
     @Test
-    public void testtHasPasswordWhenShortOptionGiven() throws Exception {
+    public void testHasPasswordWhenShortOptionGiven() throws Exception {
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(new String[]{"-p", "very-complex-password"});
         final boolean isPassword = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_KEYPASS);
