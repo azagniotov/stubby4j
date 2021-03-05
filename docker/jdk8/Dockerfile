@@ -36,6 +36,7 @@ ENV STUBS_TLS_PORT=7443
 ENV ADMIN_PORT=8889
 ENV WITH_DEBUG=""
 ENV WITH_WATCH=""
+ENV WITH_STUB_CACHE_DISABLED=""
 ENV YAML_CONFIG="main.yaml"
 
 ENV STUBBY4J_USER_HOME=/home/stubby4j
@@ -64,4 +65,5 @@ ENTRYPOINT java -jar stubby4j.jar \
       --tls ${STUBS_TLS_PORT} \
       --data data/${YAML_CONFIG} \
       ${WITH_WATCH} \
+      ${WITH_STUB_CACHE_DISABLED} \
       ${WITH_DEBUG}
