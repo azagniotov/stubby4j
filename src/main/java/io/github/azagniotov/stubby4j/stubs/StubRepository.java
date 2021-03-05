@@ -45,8 +45,7 @@ import static java.util.Collections.list;
 public class StubRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubRepository.class);
 
-    // 7200 secs => 2 hours
-    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 7200L;
+    private static final long CACHE_ENTRY_LIFETIME_SECONDS = 3600L;  // 3600 secs => 60 minutes
 
     private final File configFile;
 
