@@ -10,20 +10,18 @@ import java.util.regex.Pattern;
 
 public interface Cache<K, V> {
 
-    static Cache<String, StubHttpLifecycle> noOpStubHttpLifecycleCache() {
-        return new NoOpStubHttpLifecycleCache();
-    }
+    long CACHE_ENTRY_LIFETIME_SECONDS = 3600L;  // 3600 secs => 60 minutes
 
-    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds, final boolean buildNoOpCache) {
+    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final boolean buildNoOpCache) {
         if (buildNoOpCache) {
-            return noOpStubHttpLifecycleCache();
+            return new NoOpStubHttpLifecycleCache();
         } else {
-            return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+            return new StubHttpLifecycleCache(CACHE_ENTRY_LIFETIME_SECONDS);
         }
     }
 
-    static Cache<Integer, Pattern> regexPatternCache(final long cacheEntryLifetimeSeconds) {
-        return new RegexPatternCache(cacheEntryLifetimeSeconds);
+    static Cache<Integer, Pattern> regexPatternCache() {
+        return new RegexPatternCache(CACHE_ENTRY_LIFETIME_SECONDS);
     }
 
     default Optional<V> get(final K key) {

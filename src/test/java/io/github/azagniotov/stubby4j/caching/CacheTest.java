@@ -11,14 +11,14 @@ public class CacheTest {
 
     @Test
     public void shouldBuildNoOpCache() throws Exception {
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, true);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(true);
 
         assertThat(cache).isInstanceOf(NoOpStubHttpLifecycleCache.class);
     }
 
     @Test
     public void shouldBuildDefaultCache() throws Exception {
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(false);
 
         assertThat(cache).isInstanceOf(StubHttpLifecycleCache.class);
     }
@@ -26,7 +26,7 @@ public class CacheTest {
     @Test
     public void shouldClearCacheByKey() throws Exception {
 
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(false);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
         final String targetKey = "/some/url";
@@ -44,7 +44,7 @@ public class CacheTest {
     @Test
     public void shouldNotClearCacheByKey() throws Exception {
 
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(false);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
         final String targetHashCodeKey = "-124354548";

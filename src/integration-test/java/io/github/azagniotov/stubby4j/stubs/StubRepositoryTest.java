@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -35,6 +37,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUS
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -56,8 +59,14 @@ public class StubRepositoryTest {
     private HttpServletRequest mockHttpServletRequest;
 
     @Spy
+    private Cache<String, StubHttpLifecycle> spyDefaultCache = Cache.stubHttpLifecycleCache(false);
+
+    @Spy
+    private Cache<String, StubHttpLifecycle> spyNoOpCache = Cache.stubHttpLifecycleCache(true);
+
+    @Spy
     private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE,
-            Cache.stubHttpLifecycleCache(3600L, false),
+            Cache.stubHttpLifecycleCache(false),
             YAML_PARSE_RESULT_SET_FUTURE);
 
     private StubRequest.Builder requestBuilder;
@@ -65,6 +74,82 @@ public class StubRepositoryTest {
     @Before
     public void beforeEach() throws Exception {
         requestBuilder = new StubRequest.Builder();
+    }
+
+    @Test
+    public void shouldCacheStubOnlyOnFirstRequestWhenUsingDefaultCache() throws Exception {
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE);
+
+        final String url = "/invoice/123";
+        final String expectedStatus = "200";
+        final String expectedBody = "This is a response for 123";
+
+        final String yaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl(url)
+                .newStubbedResponse()
+                .withStatus(expectedStatus)
+                .withLiteralBody(expectedBody).build();
+
+        stubRepository.resetStubsCache(new YamlParser().parse(".", yaml));
+
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+        when(mockHttpServletRequest.getQueryString()).thenReturn("");
+        when(mockHttpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(new ArrayList<>()));
+
+        final StubSearchResult stubSearchResult = stubRepository.search(mockHttpServletRequest);
+        final StubResponse foundStubResponse = stubSearchResult.getMatch();
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
+
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+
+        verify(spyDefaultCache, times(7)).get(anyString());
+        verify(spyDefaultCache, times(1)).putIfAbsent(anyString(), any(StubHttpLifecycle.class));
+    }
+
+    @Test
+    public void shouldNoOpCacheEveryRequestWhenUsingNoOpCache() throws Exception {
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyNoOpCache, YAML_PARSE_RESULT_SET_FUTURE);
+
+        final String url = "/invoice/123";
+        final String expectedStatus = "200";
+        final String expectedBody = "This is a response for 123";
+
+        final String yaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl(url)
+                .newStubbedResponse()
+                .withStatus(expectedStatus)
+                .withLiteralBody(expectedBody).build();
+
+        stubRepository.resetStubsCache(new YamlParser().parse(".", yaml));
+
+        when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
+        when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
+        when(mockHttpServletRequest.getQueryString()).thenReturn("");
+        when(mockHttpServletRequest.getHeaderNames()).thenReturn(Collections.enumeration(new ArrayList<>()));
+
+        final StubSearchResult stubSearchResult = stubRepository.search(mockHttpServletRequest);
+        final StubResponse foundStubResponse = stubSearchResult.getMatch();
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getBody()).isEqualTo(expectedBody);
+
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+        stubRepository.search(mockHttpServletRequest);
+
+        verify(spyNoOpCache, times(7)).get(anyString());
+        verify(spyNoOpCache, times(7)).putIfAbsent(anyString(), any(StubHttpLifecycle.class));
     }
 
     @Test
@@ -98,12 +183,6 @@ public class StubRepositoryTest {
         assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
         assertThat(foundStubResponse.getBody()).isEqualTo(sequenceResponseBody);
         assertThat(foundStubResponse.getHeaders()).containsEntry(sequenceResponseHeaderKey, sequenceResponseHeaderValue);
-    }
-
-    private StubResponse setUpStubSearchBehavior(final StubRequest assertingRequest) throws IOException {
-        doReturn(assertingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
-        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
-        return stubSearchResult.getMatch();
     }
 
     @Test
@@ -661,7 +740,7 @@ public class StubRepositoryTest {
         final File expectedRequestFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/request.external.file.json").getFile());
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-        resetStubHttpLifecyclesFromYamlResource("/yaml/two.external.files.yaml");
+        resetStubHttpLifeCyclesFromYamlResource("/yaml/two.external.files.yaml");
         final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(2);
@@ -683,7 +762,7 @@ public class StubRepositoryTest {
         final File expectedRequestFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/request.external.file.json").getFile());
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-        resetStubHttpLifecyclesFromYamlResource("/yaml/one.external.files.yaml");
+        resetStubHttpLifeCyclesFromYamlResource("/yaml/one.external.files.yaml");
         final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
@@ -704,7 +783,7 @@ public class StubRepositoryTest {
         final File expectedRequestFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/request.external.file.json").getFile());
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-        resetStubHttpLifecyclesFromYamlResource("/yaml/same.external.files.yaml");
+        resetStubHttpLifeCyclesFromYamlResource("/yaml/same.external.files.yaml");
         final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
@@ -725,7 +804,7 @@ public class StubRepositoryTest {
         final File expectedRequestFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/request.external.file.json").getFile());
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-        resetStubHttpLifecyclesFromYamlResource("/yaml/request.null.external.files.yaml");
+        resetStubHttpLifeCyclesFromYamlResource("/yaml/request.null.external.files.yaml");
         final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
@@ -746,7 +825,7 @@ public class StubRepositoryTest {
         final File expectedRequestFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/request.external.file.json").getFile());
         final File expectedResponseFile = FileUtils.uriToFile(StubRepositoryTest.class.getResource("/json/response.1.external.file.json").getFile());
 
-        resetStubHttpLifecyclesFromYamlResource("/yaml/response.null.external.files.yaml");
+        resetStubHttpLifeCyclesFromYamlResource("/yaml/response.null.external.files.yaml");
         final Map<File, Long> externalFiles = spyStubRepository.getExternalFiles();
 
         assertThat(externalFiles.size()).isEqualTo(1);
@@ -1024,10 +1103,16 @@ public class StubRepositoryTest {
         spyStubRepository.resetStubsCache(new YamlParser().parse(".", yaml));
     }
 
-    private void resetStubHttpLifecyclesFromYamlResource(final String resourcePath) throws Exception {
+    private void resetStubHttpLifeCyclesFromYamlResource(final String resourcePath) throws Exception {
         final URL yamlUrl = StubRepositoryTest.class.getResource(resourcePath);
-        final InputStream stubsDatanputStream = yamlUrl.openStream();
+        final InputStream stubsDataInputStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
-        spyStubRepository.resetStubsCache(new YamlParser().parse(parentDirectory, inputStreamToString(stubsDatanputStream)));
+        spyStubRepository.resetStubsCache(new YamlParser().parse(parentDirectory, inputStreamToString(stubsDataInputStream)));
+    }
+
+    private StubResponse setUpStubSearchBehavior(final StubRequest assertingRequest) throws IOException {
+        doReturn(assertingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        return stubSearchResult.getMatch();
     }
 }
