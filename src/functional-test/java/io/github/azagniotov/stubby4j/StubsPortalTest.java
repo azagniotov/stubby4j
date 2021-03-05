@@ -1049,29 +1049,55 @@ public class StubsPortalTest {
     public void stubby4jIssue29() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/29");
-
-        final URL xmlContentResource = StubsPortalTest.class.getResource("/xml/request/xml_payload_3.xml");
-        assertThat(xmlContentResource).isNotNull();
-        final String content = StringUtils.inputStreamToString(xmlContentResource.openStream());
-
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
-        request.setHeaders(httpHeaders);
 
-        final HttpResponse response = request.execute();
-        final HttpHeaders headers = response.getHeaders();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Making request#1 which matches rule_2 ONLY, this will cache stub for rule_2 by the above requestUrl
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        final String contentOne = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(headers.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
+        requestOne.setHeaders(httpHeaders);
 
-        final String responseContent = response.parseAsString().trim();
+        final HttpResponse responseOne = requestOne.execute();
+        final HttpHeaders headersOne = responseOne.getHeaders();
 
-        final URL xmlActualContentResource = StubsPortalTest.class.getResource("/xml/response/xml_response_1.xml");
-        assertThat(xmlActualContentResource).isNotNull();
-        final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResource.openStream());
+        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(headersOne.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
 
-        assertThat(responseContent).isEqualTo(expectedResponseContent);
+        final String responseContentOne = responseOne.parseAsString().trim();
+
+        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_2.xml");
+        assertThat(xmlActualContentResourceOne).isNotNull();
+        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+
+        assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Making request#2 which matches rule_1 AND rule_2. But, in this case,
+        // we are expecting rule_1 as a response, because the rule_1 is defined earlier than rule_2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        final URL xmlContentResourceTwo = StubsPortalTest.class.getResource("/xml/request/xml_payload_3.xml");
+        assertThat(xmlContentResourceTwo).isNotNull();
+        final String contentTwo = StringUtils.inputStreamToString(xmlContentResourceTwo.openStream());
+
+        final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentTwo);
+        requestTwo.setHeaders(httpHeaders);
+
+        final HttpResponse responseTwo = requestTwo.execute();
+        final HttpHeaders headersTwo = responseTwo.getHeaders();
+
+        assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(headersTwo.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+
+        final String responseContentTwo = responseTwo.parseAsString().trim();
+
+        final URL xmlActualContentResourceTwo = StubsPortalTest.class.getResource("/xml/response/xml_response_1.xml");
+        assertThat(xmlActualContentResourceTwo).isNotNull();
+        final String expectedResponseContentTwo = StringUtils.inputStreamToString(xmlActualContentResourceTwo.openStream());
+
+        assertThat(responseContentTwo).isEqualTo(expectedResponseContentTwo);
     }
 
     @Test

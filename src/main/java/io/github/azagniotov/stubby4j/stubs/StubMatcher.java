@@ -14,6 +14,7 @@ import org.xmlunit.diff.ComparisonControllers;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.ElementSelectors;
+import org.xmlunit.placeholder.PlaceholderSupport;
 
 import java.util.HashMap;
 import java.util.List;
@@ -208,17 +209,28 @@ class StubMatcher {
             final Input.Builder control = fromByteArray(getBytesUtf8(stubbedXml));
             final Input.Builder assertion = fromByteArray(getBytesUtf8(assertingXml));
 
-            final Diff diff = DiffBuilder
+            final DiffBuilder xmlDiffBuilder = DiffBuilder
                     .compare(control)
                     .withTest(assertion)
                     .checkForSimilar()
                     .normalizeWhitespace()
                     .ignoreComments()
                     .withNodeMatcher(NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES)
-                    .withComparisonController(ComparisonControllers.StopWhenDifferent)
+                    .withComparisonController(ComparisonControllers.StopWhenDifferent);
+
+            final Diff simpleDocumentMatchingDiff = xmlDiffBuilder.build();
+            if (!simpleDocumentMatchingDiff.hasDifferences()) {
+                return true;
+            }
+
+            // There is a chance that the stubbed XML contains XMLUnit placeholders,
+            // e.g.: ${xmlunit.matchesRegex(..)}, so let's do another comparison pass
+            // using placeholder support. More info: https://github.com/azagniotov/stubby4j#regex-stubbing-for-xml-content
+            final Diff exceptionalDocumentMatchingDiff = PlaceholderSupport
+                    .withPlaceholderSupport(xmlDiffBuilder)
                     .build();
 
-            return !diff.hasDifferences();
+            return !exceptionalDocumentMatchingDiff.hasDifferences();
         } catch (Exception e) {
             return stringsMatch(stubbedXml, assertingXml, POST.toString());
         }

@@ -39,7 +39,8 @@ dependencies {
     api "commons-cli:commons-cli:1.4"
     api "org.yaml:snakeyaml:1.28"
     api "org.skyscreamer:jsonassert:1.5.0"
-    api 'org.xmlunit:xmlunit-core:2.8.2'
+    api "org.xmlunit:xmlunit-core:${xmlUnitVersion}"
+    api "org.xmlunit:xmlunit-placeholders:${xmlUnitVersion}"
     api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
     api "org.slf4j:slf4j-api:1.7.30"
 
