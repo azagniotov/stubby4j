@@ -14,8 +14,12 @@ public interface Cache<K, V> {
         return new NoOpStubHttpLifecycleCache();
     }
 
-    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds) {
-        return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+    static Cache<String, StubHttpLifecycle> stubHttpLifecycleCache(final long cacheEntryLifetimeSeconds, final boolean buildNoOpCache) {
+        if (buildNoOpCache) {
+            return noOpStubHttpLifecycleCache();
+        } else {
+            return new StubHttpLifecycleCache(cacheEntryLifetimeSeconds);
+        }
     }
 
     static Cache<Integer, Pattern> regexPatternCache(final long cacheEntryLifetimeSeconds) {

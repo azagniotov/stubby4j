@@ -10,9 +10,23 @@ import static com.google.common.truth.Truth.assertThat;
 public class CacheTest {
 
     @Test
+    public void shouldBuildNoOpCache() throws Exception {
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, true);
+
+        assertThat(cache).isInstanceOf(NoOpStubHttpLifecycleCache.class);
+    }
+
+    @Test
+    public void shouldBuildDefaultCache() throws Exception {
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
+
+        assertThat(cache).isInstanceOf(StubHttpLifecycleCache.class);
+    }
+
+    @Test
     public void shouldClearCacheByKey() throws Exception {
 
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
         final String targetKey = "/some/url";
@@ -30,7 +44,7 @@ public class CacheTest {
     @Test
     public void shouldNotClearCacheByKey() throws Exception {
 
-        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L);
+        final Cache<String, StubHttpLifecycle> cache = Cache.stubHttpLifecycleCache(1000L, false);
 
         final StubHttpLifecycle stubHttpLifeCycle = new StubHttpLifecycle.Builder().build();
         final String targetHashCodeKey = "-124354548";
