@@ -17,7 +17,7 @@ Please refer to [Key features](#key-features) for more information
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.1.3
+## User manual for stubby4j v7.2.0
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
@@ -172,12 +172,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.3")
+compile("io.github.azagniotov:stubby4j:7.2.0")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.3:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.2.0:no-jetty")
 ```
 
 #### Maven
@@ -185,7 +185,7 @@ compile("io.github.azagniotov:stubby4j:7.1.3:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.3</version>
+    <version>7.2.0</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -194,7 +194,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.1.3</version>
+    <version>7.2.0</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -203,17 +203,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installLocally` command to:
 
-* Install `stubby4j-7.1.4-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.1.4-SNAPSHOT/`
+* Install `stubby4j-7.2.1-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.2.1-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.4-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.2.1-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.1.4-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.2.1-SNAPSHOT:no-jetty")
 ```
 
 
@@ -642,9 +642,9 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 
 XML is not a regular language, it cannot (well, sometimes it can. But, most of the times this will cause you tears) be parsed using a regular expression, especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
-Therefore, stubby4j uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
+Therefore, `stubby4j` uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
 
-XMLUnit enables stubbing of XML content with the help of XMLUnit-specific match Regex placeholders. Placeholders are used to specify exceptional requirements in the control XML document for use during equality comparison, for example: regex matching.
+XMLUnit enables stubbing of XML content with regular expressions by leveraging XMLUnit-specific Regex match placeholders. Placeholders are used to specify exceptional requirements in the control XML document for use during equality comparison (i.e.: regex matching).
 
 #### How to stub XML containing regular expressions?
 
@@ -668,7 +668,7 @@ XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue. Consider the
 In the above example, the regular expressions defined in `post` XML will match any values inside `idex:authority`, `idex:name` and `idex:startsWith` elements.
 
 
-Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) for more information.
+Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) guide or/and [their unit tests](https://github.com/xmlunit/xmlunit/blob/1c25e0171123b1a1fc543c87c5a9039d850d9b73/xmlunit-placeholders/src/test/java/org/xmlunit/placeholder/PlaceholderDifferenceEvaluatorTest.java) for more information.
 
 ### Authorization Header
 ```yaml
