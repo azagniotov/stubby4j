@@ -2,9 +2,9 @@
 
 #### 7.2.0
 
-* * PR [#179](https://github.com/azagniotov/stubby4j/pull/179) & [#185](https://github.com/azagniotov/stubby4j/pull/185) - Enabled internal `StubHttpLifecycleCache` with an option to disable it via a command line flag `--disable_stub_caching` (https://github.com/azagniotov)
-* * PR [#182](https://github.com/azagniotov/stubby4j/pull/182) - Made XML comparator stricter (https://github.com/azagniotov)
-* * PR [#186](https://github.com/azagniotov/stubby4j/pull/186) - Enabled for regex stubbing in XML content (https://github.com/azagniotov)
+* PR [#179](https://github.com/azagniotov/stubby4j/pull/179) & [#185](https://github.com/azagniotov/stubby4j/pull/185) - Enabled internal `StubHttpLifecycleCache` with an option to disable it via a command line flag `--disable_stub_caching` (https://github.com/azagniotov)
+* PR [#182](https://github.com/azagniotov/stubby4j/pull/182) - Made XML comparator stricter (https://github.com/azagniotov)
+* PR [#186](https://github.com/azagniotov/stubby4j/pull/186) - Enabled for regex stubbing in XML content (https://github.com/azagniotov)
 
 #### 7.1.3
 
