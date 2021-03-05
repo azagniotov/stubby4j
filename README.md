@@ -34,6 +34,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Stub/Feature](#stubfeature)
    * [Request](#request)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
+      * [Regex stubbing for XML content](#regex-stubbing-for-xml-content)
       * [Authorization Header](#authorization-header)
    * [Response](#response)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
@@ -637,6 +638,37 @@ __Please note__, before using regex patterns in stubs, first it is best to ensur
 
 The latter would ensure that the stubbed regex pattern actually works, also it is easier to debug a simple unit test case instead of trying to figure out why stub matching failed
 
+### Regex stubbing for XML content
+
+XML is not a regular language, it cannot (well, sometimes it can. But, most of the times this will cause you tears) be parsed using a regular expression, especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
+
+Therefore, stubby4j uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
+
+XMLUnit enables stubbing of XML content with the help of XMLUnit-specific match Regex placeholders. Placeholders are used to specify exceptional requirements in the control XML document for use during equality comparison, for example: regex matching.
+
+#### How to stub XML containing regular expressions?
+
+XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue. Consider the following example of stubbed `request`:
+
+```yaml
+- description: rule_1
+  request:
+    url: /some/resource/uri
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
+          <idex:authority>${xmlunit.matchesRegex(.*)}</idex:authority>
+          <idex:name>${xmlunit.matchesRegex(.*)}</idex:name>
+          <idex:startsWith>${xmlunit.matchesRegex(.*)}</idex:startsWith>
+      </idex:type>
+```
+In the above example, the regular expressions defined in `post` XML will match any values inside `idex:authority`, `idex:name` and `idex:startsWith` elements.
+
+
+Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) for more information.
 
 ### Authorization Header
 ```yaml
