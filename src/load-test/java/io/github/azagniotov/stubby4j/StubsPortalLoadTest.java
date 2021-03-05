@@ -79,14 +79,11 @@ public class StubsPortalLoadTest {
 
         }
 
-        final File temp = File.createTempFile("tmp" + System.currentTimeMillis(), ".yaml");
-
-        try (final FileWriter fileWriter = new FileWriter(temp);
+        try (final FileWriter fileWriter = new FileWriter(new File("./load_test_data.yaml"));
              final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(builder.toString());
+            bufferedWriter.flush();
         }
-
-        int a = 8;
     }
 
     @Test
