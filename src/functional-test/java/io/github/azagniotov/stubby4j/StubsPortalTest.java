@@ -1101,6 +1101,34 @@ public class StubsPortalTest {
     }
 
     @Test
+    public void stubby4jIssue29_VanillaRegex() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/29/vanilla/regex");
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(HEADER_APPLICATION_XML);
+
+        // The '?' in <?xml are escaped in YAML as these are regex characters
+        final String contentOne = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
+
+        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
+        requestOne.setHeaders(httpHeaders);
+
+        final HttpResponse responseOne = requestOne.execute();
+        final HttpHeaders headersOne = responseOne.getHeaders();
+
+        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(headersOne.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+
+        final String responseContentOne = responseOne.parseAsString().trim();
+
+        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_2.xml");
+        assertThat(xmlActualContentResourceOne).isNotNull();
+        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+
+        assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
+    }
+
+    @Test
     public void stubby4jIssue93_WithBody() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");

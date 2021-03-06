@@ -881,3 +881,19 @@
       content-type: application/xml
     status: 201
     file: ../xml/response/xml_response_2.xml
+
+
+- description: rule_3
+  request:
+    url: /azagniotov/stubby4j/issues/29/vanilla/regex
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <\?xml version="1.0" encoding="UTF-8" standalone="yes"\?><idex:type xmlns:idex="http://idex.bbc.co.uk/v1"><idex:authority>(.*)</idex:authority><idex:name>(.*)</idex:name><idex:startsWith>(.*)</idex:startsWith></idex:type>
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_2.xml

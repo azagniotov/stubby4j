@@ -640,13 +640,35 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 
 ### Regex stubbing for XML content
 
-XML is not a regular language, it cannot (well, sometimes it can. But, most of the times this will cause you tears) be parsed using a regular expression, especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
+XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
 Therefore, `stubby4j` uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
 
 XMLUnit enables stubbing of XML content with regular expressions by leveraging XMLUnit-specific Regex match placeholders. Placeholders are used to specify exceptional requirements in the control XML document for use during equality comparison (i.e.: regex matching).
 
 #### How to stub XML containing regular expressions?
+
+1. Using vanilla regular expressions
+2. Using [XMLUnit](https://github.com/xmlunit/xmlunit) regular expression matcher placeholders
+
+##### Using vanilla regular expressions
+
+Consider the following example of stubbed `request`:
+
+```yaml
+- description: rule_1
+  request:
+    url: /some/resource/uri
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <\?xml version="1.0" encoding="UTF-8" standalone="yes"\?><idex:type xmlns:idex="http://idex.bbc.co.uk/v1"><idex:authority>(.*)</idex:authority><idex:name>(.*)</idex:name><idex:startsWith>(.*)</idex:startsWith></idex:type>
+```
+
+In the above example, do note that the `?` in `<?xml .. ?>` are escaped (i.e.: `<\?xml .. \?>`) as these are regex specific characters.
+
+##### Using XMLUnit regular expression matcher placeholders
 
 XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue. Consider the following example of stubbed `request`:
 
