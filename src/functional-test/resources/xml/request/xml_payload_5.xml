@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person xmlns="http://www.your.example.com/xml/person">
+    <VocabularyElement id="urn:epc:idpat:sgtin:0652642.107340">
+        <attribute id="urn:epcglobal:product:drugName">vaccine</attribute>
+        <attribute id="urn:epcglobal:product:manufacturer">astra-zeneca</attribute>
+        <attribute id="urn:epcglobal:product:dosageForm">capsule</attribute>
+        <attribute id="urn:epcglobal:product:strength">strong</attribute>
+        <attribute id="urn:epcglobal:product:containerSize">200</attribute>
+    </VocabularyElement>
+    <name>Monkey</name>
+    <age>7</age>
+    <!--
+      Hello,
+         I am a multi-line XML comment
+         <staticText>
+            <reportElement x="180" y="0" width="200" height="20"/>
+            <text><![CDATA[Hello World!]]></text>
+          </staticText>
+      -->
+    <homecity xmlns="great_world_cities">
+        <long>123.456</long>
+        <lat>456.123</lat>
+        <name>Melbourne</name>
+    </homecity>
+    <one name="one_attribute_name" id="urn:company:namespace:type:id:one">One Value</one>
+    <two id="urn:company:namespace:type:id:two" name="two_attribute_name">Two Value</two>
+    <three name="three_attribute_name" id="urn:company:namespace:type:id:three">Three Value</three>
+</person>

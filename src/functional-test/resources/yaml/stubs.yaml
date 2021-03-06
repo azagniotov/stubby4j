@@ -897,3 +897,17 @@
       content-type: application/xml
     status: 201
     file: ../xml/response/xml_response_2.xml
+
+- description: rule_4
+  request:
+    url: /azagniotov/stubby4j/issues/29/vanilla/regex
+    method: POST
+    headers:
+      content-type: application/xml
+    file: ../xml/request/xml_payload_4.xml
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_3.xml
