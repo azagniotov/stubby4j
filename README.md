@@ -653,7 +653,7 @@ XMLUnit enables stubbing of XML content with regular expressions by leveraging X
 
 ##### Using vanilla regular expressions
 
-Consider the following example of stubbed `request`:
+Consider the following examples of stubbed `request` that have XML regex snippets under `post`:
 
 ```yaml
 - description: rule_1
@@ -667,6 +667,48 @@ Consider the following example of stubbed `request`:
 ```
 
 In the above example, do note that the `?` in `<?xml .. ?>` are escaped (i.e.: `<\?xml .. \?>`) as these are regex specific characters.
+
+```yaml
+- description: rule_1
+  request:
+    url: /some/resource/uri
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <\?xml version="1.0" encoding="UTF-8"\?>
+      <person xmlns="http://www.your.example.com/xml/person">
+          <VocabularyElement id="urn:epc:idpat:sgtin:(.*)">
+              <attribute id="urn:epcglobal:product:drugName">(.*)</attribute>
+              <attribute id="urn:epcglobal:product:manufacturer">(.*)</attribute>
+              <attribute id="urn:epcglobal:product:dosageForm">(.*)</attribute>
+              <attribute id="urn:epcglobal:product:strength">(.*)</attribute>
+              <attribute id="urn:epcglobal:product:containerSize">(.*)</attribute>
+          </VocabularyElement>
+          <name>(.*)</name>
+          <age>(.*)</age>
+          <!--
+            Hello,
+               I am a multi-line XML comment
+               <staticText>
+                  <reportElement x="180" y="0" width="200" height="20"/>
+                  <text><!\[CDATA\[(.*)\]\]></text>
+                </staticText>
+            -->
+          <homecity xmlns="(.*)cities">
+              <long>(.*)</long>
+              <lat>(.*)</lat>
+              <name>(.*)</name>
+          </homecity>
+          <one name="(.*)" id="urn:company:namespace:type:id:one">(.*)</one>
+          <two id="urn:company:namespace:type:id:two" name="(.*)">(.*)</two>
+          <three name="(.*)" id="urn:company:namespace:type:id:(.*)">(.*)</three>
+      </person>
+```
+
+In the above example, do note that the:
+1. `?` in `<?xml .. ?>` are escaped (i.e.: `<\?xml .. \?>`) as these are regex specific characters, and
+2. `[` and `]` in `<![CDATA[ .. ]]>` are escaped (i.e.: `<!\[CDATA\[(.*)\]\]>`) as these are regex specific characters
 
 ##### Using XMLUnit regular expression matcher placeholders
 
