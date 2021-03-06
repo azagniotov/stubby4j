@@ -234,6 +234,12 @@ class StubMatcher {
 
             return !diff.hasDifferences();
         } catch (Exception e) {
+            // A common exception that I have seen to happen is:
+            // org.xmlunit.XMLUnitException: The markup in the document preceding the root element must be well-formed.
+
+            ANSITerminal.error(String.format("Failed to parse XML markup: %s, cause: %s", e, e.getCause()));
+            LOGGER.error("Failed to parse XML markup: {}, cause: {}", e, e.getCause());
+
             return stringsMatch(stubbedXml, assertingXml, POST.toString());
         }
     }
