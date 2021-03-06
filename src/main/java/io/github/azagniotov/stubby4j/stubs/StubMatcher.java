@@ -12,6 +12,7 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.ComparisonControllers;
 import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.DifferenceEvaluators;
 import org.xmlunit.diff.ElementSelectors;
@@ -229,8 +230,9 @@ class StubMatcher {
                     .withNodeMatcher(NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES)
                     .withComparisonController(ComparisonControllers.StopWhenDifferent);
 
-            return !xmlDiffBuilder.build().hasDifferences();
+            final Diff diff = xmlDiffBuilder.build();
 
+            return !diff.hasDifferences();
         } catch (Exception e) {
             return stringsMatch(stubbedXml, assertingXml, POST.toString());
         }

@@ -269,7 +269,30 @@ public class StubMatcherTest {
     }
 
     @Test
-    public void postBodiesMatchUsingRegex_ShouldReturnTrue_WhenEquivalentXml() {
+    public void postBodiesMatchUsingVanillaRegex_ShouldReturnTrue() {
+        final String stubbedXml = "<\\?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"\\?>" +
+                ".*<idex:authority>(.+?)</idex:authority>.*<idex:startsWith>(.+?)</idex:startsWith>.*";
+
+        final String postedXml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                        "<idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\">\n" +
+                        "    <idex:authority>ALEX-1</idex:authority>\n" +
+                        "    <idex:name>ALEX-2</idex:name>\n" +
+                        "    <idex:startsWith>ALEX-3</idex:startsWith>\n" +
+                        "</idex:type>";
+
+        StubRequest request = new StubRequest.Builder()
+                .withPost(postedXml)
+                .withHeaderContentType("application/xml")
+                .build();
+
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+
+        assertThat(isBodiesMatch).isTrue();
+    }
+
+    @Test
+    public void postBodiesMatchUsingXMLUnitRegexPlaceholder_ShouldReturnTrue() {
         final String stubbedXml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                         "<person xmlns=\"http://www.your.example.com/xml/person\">\n" +
