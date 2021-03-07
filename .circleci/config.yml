@@ -1,54 +1,75 @@
-# Java Gradle CircleCI 2.0 configuration file
+# Java Gradle CircleCI 2.1 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
+defaults: &defaults
+  working_directory: ~/repo
+  environment:
+    # Customize the JVM maximum heap limit
+    JVM_OPTS: -Xmx3200m
+    TERM: dumb
+
+  steps:
+    - checkout
+    - run: java -version
+
+    # Download and cache dependencies
+    - restore_cache:
+        keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+    - save_cache:
+        paths:
+          - ~/.gradle
+        key: v1-dependencies-{{ checksum "build.gradle" }}
+
+    - run:
+        name: Run all test suits
+        command: ./gradlew clean test integrationTest functionalTest
+        when: always
+
+    - run:
+        name: Run JaCoCo plugin code coverage
+        when: on_success
+        command: |
+          if [ "$CIRCLE_JOB" = "gradle_6_7_1_jdk8_openj9" ]; then
+              ./gradlew clean jacocoTestReport
+          else
+              echo "Skipping 'Run JaCoCo plugin code coverage' on job '$CIRCLE_JOB' as per config.yml"
+          fi
+
+    - run:
+        name: Upload code coverage data to Codecov
+        when: on_success
+        command: |
+          if [ "$CIRCLE_JOB" = "gradle_6_7_1_jdk8_openj9" ]; then
+              bash <(curl -s https://codecov.io/bash)
+          else
+              echo "Skipping 'Upload code coverage data to Codecov' on job '$CIRCLE_JOB' as per config.yml"
+          fi
+
 jobs:
-  build:
+  gradle_6_7_1_jdk8_openj9:
     docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: gradle:6.7.1-jdk8-openj9@sha256:917922c2dcddf66493b4ad55b576b5fde4cb77344ecab250c7c3e710f03137eb
+    <<: *defaults
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+  gradle_6_7_1_jdk11_openj9:
+    docker:
+      - image: gradle:6.7.1-jdk11-openj9@sha256:0ea7abec757ae57b1e5298732e3141c528563029c76a8637faf854222fa36fe0
+    <<: *defaults
 
-    working_directory: ~/repo
+  gradle_6_7_1_jdk15:
+    docker:
+      - image: gradle:6.7.1-jdk15@sha256:b1366cd238eb775bcea6ed1d15908a326dfefa99061e16a6a156042661bba99a
+    <<: *defaults
 
-    environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true"
-      TERM: dumb
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
-
-      - run:
-          name: Run all test suits
-          command: ./gradlew clean test integrationTest functionalTest
-          when: always
-
-      - run:
-          name: Run JaCoCo plugin code coverage
-          command: ./gradlew clean jacocoTestReport
-          when: on_success
-
-      - run:
-          name: Upload code coverage data to Codecov
-          command: bash <(curl -s https://codecov.io/bash)
-          when: on_success
-
+workflows:
+  version: 2
+  build-test-code-coverage:
+    jobs:
+      - gradle_6_7_1_jdk8_openj9
+      - gradle_6_7_1_jdk11_openj9
+      - gradle_6_7_1_jdk15
