@@ -135,7 +135,12 @@ For more information and more complex examples, please dive into the rest of doc
 
 stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
 
-Alternatively you can build your own image locally using the project's Dockerfiles under [docker/jdk8/](docker/jdk8) or [docker/jdk11](docker/jdk11). Navigate to the desired directory and run:
+Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
+* [docker/jdk8/](docker/jdk8)
+* [docker/jdk11](docker/jdk11)
+* [docker/jdk15](docker/jdk15)
+
+Navigate to the desired directory and run:
 
 ```shell script
 docker build --rm --no-cache -t stubby4j:latest .
@@ -144,7 +149,7 @@ docker build --rm --no-cache -t stubby4j:latest .
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How To Use This Image` section regarding how to use the built image
 
 ## Building
-stubby4j is a multi source-set Gradle `v6.7.1` project
+stubby4j is a multi source-set Gradle `v6.8.3` project
 
 Run `./gradlew` command to:
 * Clean

@@ -9,7 +9,7 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:6.7.1-jdk11-openj9@sha256:0ea7abec757ae57b1e5298732e3141c528563029c76a8637faf854222fa36fe0 AS BUILD_JAR_STAGE
+FROM gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e AS BUILD_JAR_STAGE
 
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
@@ -51,7 +51,7 @@ VOLUME "$STUBBY4J_USER_HOME/data"
 WORKDIR "$STUBBY4J_USER_HOME"
 
 COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
-RUN chown stubby4j:stubby4j stubby4j.jar && ls -al
+RUN chown stubby4j:stubby4j stubby4j.jar && java -version && ls -al
 
 # Set the UID and GID to stubby4j for the ENTRYPOINT instructions
 USER stubby4j:stubby4j
