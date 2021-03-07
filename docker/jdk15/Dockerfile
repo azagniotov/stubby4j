@@ -9,7 +9,7 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa AS BUILD_JAR_STAGE
+FROM gradle:6.8.3-jdk15@sha256:642395fe8f800d292d01073ecdb8ffd0d4995305b5856fda6a8cf52514877183 AS BUILD_JAR_STAGE
 
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
@@ -25,7 +25,7 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
 # Stage 2 : create the Docker final image
 ########################################################################################
 # https://hub.docker.com/r/azul/zulu-openjdk-alpine
-FROM azul/zulu-openjdk-alpine:8u252-8.46.0.19-jre-headless@sha256:cae5887524ad90564eb63ca8af558d759901eb4048768179cd8ba2ab3004b479
+FROM azul/zulu-openjdk-alpine:15.0.0-15.27.17-jre@sha256:d3635678a62452828e0ee7f7ef2c5a61e5833a06a10f04a7fa5f0081541cb227
 
 MAINTAINER Alexander Zagniotov <azagniotov@gmail.com>
 
