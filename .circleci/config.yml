@@ -14,8 +14,14 @@ defaults: &defaults
   steps:
     - checkout
     - run:
-        name: Building a PR branch merge
-        command: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
+        name: Building a PR-to-Master branch merge
+        command: |
+          if [ "$CIRCLE_BRANCH" != "master" ]; then
+              git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
+          else
+              echo "Currently running on 'master', skipping building a PR-to-Master branch merge"
+          fi
+
     - run: git branch
     - run: git log -n 2
     - run: java -version
