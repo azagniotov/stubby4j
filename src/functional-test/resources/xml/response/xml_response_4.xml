@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynamic-token-replacement-in-stubbed-response>
+    <dynamic-token>0652642.107340</dynamic-token>
+    <dynamic-token>vaccine</dynamic-token>
+    <dynamic-token>astra-zeneca</dynamic-token>
+    <dynamic-token>capsule</dynamic-token>
+    <dynamic-token>strong</dynamic-token>
+    <dynamic-token>200</dynamic-token>
+    <dynamic-token>Monkey</dynamic-token>
+    <dynamic-token>7</dynamic-token>
+    <dynamic-token>Hello World!</dynamic-token>
+    <dynamic-token>great_world_</dynamic-token>
+    <dynamic-token>123.456</dynamic-token>
+    <dynamic-token>456.123</dynamic-token>
+    <dynamic-token>Melbourne</dynamic-token>
+    <dynamic-token>one_attribute_name</dynamic-token>
+    <dynamic-token>One Value</dynamic-token>
+    <dynamic-token>two_attribute_name</dynamic-token>
+    <dynamic-token>Two Value</dynamic-token>
+    <dynamic-token>two_attribute_name</dynamic-token>
+    <dynamic-token>three</dynamic-token>
+    <dynamic-token>Three Value</dynamic-token>
+</dynamic-token-replacement-in-stubbed-response>

@@ -1153,11 +1153,9 @@ public class StubsPortalTest {
 
         final String responseContentOne = responseOne.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_3.xml");
+        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_4.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
-        final String expectedResponseContentOne =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<homecity>Melbourne</homecity>";
+        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 
         assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
     }
