@@ -9,8 +9,15 @@ defaults: &defaults
     JVM_OPTS: -Xmx3200m
     TERM: dumb
 
+  # https://discuss.circleci.com/t/show-test-results-for-prospective-merge-of-a-github-pr/1662/14
+  # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
     - checkout
+    - run:
+        name: Building a PR branch merge
+        command: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
+    - run: git branch
+    - run: git log -n 2
     - run: java -version
     - run: ./gradlew --version
 
