@@ -55,7 +55,7 @@ public class StubsPortalTest {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
         final InputStream stubsDataInputStream = url.openStream();
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
@@ -1202,7 +1202,7 @@ public class StubsPortalTest {
     @Test
     public void stubby4jIssue93_ExtraTest() throws Exception {
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/individuals/SAME/address");
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93/SAME/address");
 
         final String contentOne = "{\"type\": \"MOBILE\"}";
         final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, contentOne);

@@ -20,6 +20,8 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class StubbyClientTest {
 
+    private static final String MAIN_TEST_STUBS_YAML = "/yaml/main-test-stubs.yaml";
+
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
 
     private static final int SSL_PORT = 4443;
@@ -32,7 +34,7 @@ public class StubbyClientTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        final URL url = StubbyClientTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = StubbyClientTest.class.getResource(MAIN_TEST_STUBS_YAML);
         STUBBY_CLIENT.startJetty(JettyFactory.DEFAULT_STUBS_PORT, SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, url.getFile());
     }
 
@@ -411,7 +413,7 @@ public class StubbyClientTest {
         final String uri = AdminPortalHandler.ADMIN_ROOT;
         final int port = JettyFactory.DEFAULT_ADMIN_PORT;
 
-        final URL url = StubbyClientTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = StubbyClientTest.class.getResource(MAIN_TEST_STUBS_YAML);
         final InputStream stubsDatanputStream = url.openStream();
         final String content = StringUtils.inputStreamToString(stubsDatanputStream);
         stubsDatanputStream.close();
@@ -426,7 +428,7 @@ public class StubbyClientTest {
     public void updateStubbedData_ShouldMakeSuccessfulPostToCreateStubData() throws Exception {
         final String adminUrl = String.format("http://localhost:%s%s", JettyFactory.DEFAULT_ADMIN_PORT, AdminPortalHandler.ADMIN_ROOT);
 
-        final URL url = StubbyClientTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = StubbyClientTest.class.getResource(MAIN_TEST_STUBS_YAML);
         final InputStream stubsDatanputStream = url.openStream();
         final String content = StringUtils.inputStreamToString(stubsDatanputStream);
         stubsDatanputStream.close();
