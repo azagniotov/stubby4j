@@ -13,18 +13,21 @@ defaults: &defaults
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
     - checkout
-    - run:
-        name: Building a PR-to-Master branch merge
-        command: |
-          if [ "$CIRCLE_BRANCH" != "master" ]; then
-              git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
-          else
-              echo "Currently running on 'master', skipping building a PR-to-Master branch merge"
-          fi
+    - when:
+        condition:
+          not:
+            equal: [ master, << pipeline.git.branch >> ]
 
-    - run: git branch
-    - run: git log -n 2
+        steps:
+          - run:
+              name: Creating pr-to-master merge branch to run the tests on
+              command: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
+          - run: git branch
+          - run: git log -n 2
+
     - run: java -version
+
+    # This will download the Gradle binary via the wrapper before printing the version
     - run: ./gradlew --version
 
     # Download and cache dependencies
@@ -48,7 +51,7 @@ defaults: &defaults
         name: Run JaCoCo plugin code coverage
         when: on_success
         command: |
-          if [ "$CIRCLE_JOB" = "gradle_6_8_3_jdk8_openj9" ]; then
+          if [ "$CIRCLE_JOB" == "gradle_6_8_3_jdk8_openj9" ]; then
               ./gradlew clean jacocoTestReport
           else
               echo "Skipping 'Run JaCoCo plugin code coverage' on job '$CIRCLE_JOB' as per config.yml"
@@ -58,7 +61,7 @@ defaults: &defaults
         name: Upload code coverage data to Codecov
         when: on_success
         command: |
-          if [ "$CIRCLE_JOB" = "gradle_6_8_3_jdk8_openj9" ]; then
+          if [ "$CIRCLE_JOB" == "gradle_6_8_3_jdk8_openj9" ]; then
               bash <(curl -s https://codecov.io/bash)
           else
               echo "Skipping 'Upload code coverage data to Codecov' on job '$CIRCLE_JOB' as per config.yml"
