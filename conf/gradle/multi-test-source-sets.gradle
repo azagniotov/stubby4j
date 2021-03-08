@@ -14,7 +14,7 @@ testSets {
 
 tasks.withType(Test).configureEach {
     reports.html.enabled = false
-    reports.junitXml.enabled = false
+    reports.junitXml.enabled = true
     ignoreFailures = false
     testLogging {
         events /*"passed", */ "skipped", "failed"

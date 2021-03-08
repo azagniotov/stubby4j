@@ -57,7 +57,7 @@ public class AbstractHandlerExtensionTest {
                 mockHttpServletRequest,
                 mockHttpServletResponse);
 
-        assertThat(isHandled).isTrue();
+        assertThat(isHandled).isFalse();
     }
 
     @Test

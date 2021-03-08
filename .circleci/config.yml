@@ -51,6 +51,14 @@ defaults: &defaults
         command: ./gradlew clean test integrationTest functionalTest
         when: always
 
+    - run:
+        name: Save all test suit results
+        command: cp -R ./build/test-results ~/test-results
+        when: always
+
+    - store_test_results:
+        path: ~/test-results
+
     - when:
         condition: << parameters.run_code_coverage_with_codecov_post >>
         steps:
