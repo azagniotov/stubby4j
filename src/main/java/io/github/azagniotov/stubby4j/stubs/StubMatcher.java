@@ -240,7 +240,7 @@ class StubMatcher {
             ANSITerminal.error(String.format("Failed to parse XML markup: %s, cause: %s", e, e.getCause()));
             LOGGER.error("Failed to parse XML markup: {}, cause: {}", e, e.getCause());
 
-            return stringsMatch(stubbedXml, assertingXml, POST.toString());
+            return regexMatch(stubbedXml, assertingXml, POST.toString());
         }
     }
 }
