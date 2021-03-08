@@ -1,4 +1,4 @@
-# Java Gradle CircleCI 2.0 configuration file
+# Java Gradle CircleCI 2.1 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
@@ -18,16 +18,20 @@ defaults: &defaults
           not:
             equal: [ master, << pipeline.git.branch >> ]
 
+        # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
         steps:
           - run:
               name: Creating pr-to-master merge branch to run the tests on
               command: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
-          - run: git branch
-          - run: git log -n 2
+          - run:
+              name: "Sanity check: listing current git branch name"
+              command: git branch
+          - run:
+              name: "Sanity check: listing git merge commit"
+              command: git log -n 2
 
     - run: java -version
 
-    # This will download the Gradle binary via the wrapper before printing the version
     - run: ./gradlew --version
 
     # Download and cache dependencies
@@ -47,46 +51,53 @@ defaults: &defaults
         command: ./gradlew clean test integrationTest functionalTest
         when: always
 
-    - run:
-        name: Run JaCoCo plugin code coverage
-        when: on_success
-        command: |
-          if [ "$CIRCLE_JOB" == "gradle_6_8_3_jdk8_openj9" ]; then
-              ./gradlew clean jacocoTestReport
-          else
-              echo "Skipping 'Run JaCoCo plugin code coverage' on job '$CIRCLE_JOB' as per config.yml"
-          fi
+    - when:
+        condition: << parameters.run_code_coverage_with_codecov_post >>
+        steps:
+          - run:
+              name: Run JaCoCo plugin code coverage
+              when: on_success
+              command: ./gradlew clean jacocoTestReport
 
-    - run:
-        name: Upload code coverage data to Codecov
-        when: on_success
-        command: |
-          if [ "$CIRCLE_JOB" == "gradle_6_8_3_jdk8_openj9" ]; then
-              bash <(curl -s https://codecov.io/bash)
-          else
-              echo "Skipping 'Upload code coverage data to Codecov' on job '$CIRCLE_JOB' as per config.yml"
-          fi
-
+          - run:
+              name: Upload code coverage data to Codecov
+              when: on_success
+              command: bash <(curl -s https://codecov.io/bash)
 
 jobs:
   gradle_6_8_3_jdk8_openj9:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: true
+
     docker:
       - image: gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa
     <<: *defaults
 
   gradle_6_8_3_jdk11_openj9:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: false
+
     docker:
       - image: gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e
     <<: *defaults
 
   gradle_6_8_3_jdk15:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: false
+
     docker:
       - image: gradle:6.8.3-jdk15@sha256:642395fe8f800d292d01073ecdb8ffd0d4995305b5856fda6a8cf52514877183
     <<: *defaults
 
+
 version: 2.1
 workflows:
-
   build-test-code-coverage:
     jobs:
       - gradle_6_8_3_jdk8_openj9
