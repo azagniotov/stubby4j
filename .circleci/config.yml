@@ -30,6 +30,7 @@ defaults: &defaults
               name: "Sanity check: listing git merge commit"
               command: git log -n 2
 
+    - run: ls -al
     - run: java -version
 
     - run: ./gradlew --version
@@ -51,46 +52,48 @@ defaults: &defaults
         command: ./gradlew clean test integrationTest functionalTest
         when: always
 
-    - when:
-        condition: << parameters.run_code_coverage_with_codecov_post >>
-        steps:
-          - run:
-              name: Run JaCoCo plugin code coverage
-              when: on_success
-              command: ./gradlew clean jacocoTestReport
 
-          - run:
-              name: Upload code coverage data to Codecov
-              when: on_success
-              command: bash <(curl -s https://codecov.io/bash)
+code_coverage_with_codecov_post: &code_coverage_with_codecov_post
+  steps:
+    - run: echo "code_coverage_with_codecov_post"
+    - run: ls -al
+    - run:
+        name: Run JaCoCo plugin code coverage
+        command: ./gradlew clean jacocoTestReport
+        when: always
+
+    - run:
+        name: Upload code coverage data to Codecov
+        command: bash <(curl -s https://codecov.io/bash)
+        when: on_success
 
 jobs:
   gradle_6_8_3_jdk8_openj9:
-    parameters:
-      run_code_coverage_with_codecov_post:
-        type: boolean
-        default: true
-
     docker:
       - image: gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa
-    <<: *defaults
+    <<: [*defaults, *code_coverage_with_codecov_post]
+
+#    steps:
+#        # Reuse the workspace from the common *defaults, which contains the build section
+#      - run: ls -al
+#      - run:
+#          name: Run JaCoCo plugin code coverage
+#          when: on_success
+#          command: ./gradlew clean jacocoTestReport
+#
+#      - run:
+#          name: Upload code coverage data to Codecov
+#          when: on_success
+#          command: bash <(curl -s https://codecov.io/bash)
+
 
   gradle_6_8_3_jdk11_openj9:
-    parameters:
-      run_code_coverage_with_codecov_post:
-        type: boolean
-        default: false
-
     docker:
       - image: gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e
     <<: *defaults
 
-  gradle_6_8_3_jdk15:
-    parameters:
-      run_code_coverage_with_codecov_post:
-        type: boolean
-        default: false
 
+  gradle_6_8_3_jdk15:
     docker:
       - image: gradle:6.8.3-jdk15@sha256:642395fe8f800d292d01073ecdb8ffd0d4995305b5856fda6a8cf52514877183
     <<: *defaults
