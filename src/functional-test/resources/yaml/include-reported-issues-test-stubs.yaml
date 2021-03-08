@@ -1,0 +1,167 @@
+- request:
+    method: PATCH
+    url: /azagniotov/stubby4j/issues/93
+    file: ../json/request/json_payload_10.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+
+
+- request:
+    method: PATCH
+    url: /azagniotov/stubby4j/issues/93
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    file: ../json/response/json_response_6.json
+
+
+- request:
+    url: /azagniotov/stubby4j/issues/93/.*/address$
+    method: PUT
+    post: >
+      {"type": "MOBILE"}
+
+  response:
+    status: 400
+    body: >
+      {"type": "BAD_REQUEST"}
+
+
+- request:
+    url: /azagniotov/stubby4j/issues/93/.*/address$
+    method: PUT
+    post: >
+      {"type": "HOME"}
+
+  response:
+    body: OK
+    status: 200
+
+
+- request:
+    url: /azagniotov/stubby4j/issues/171
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      .*([^"Declaration"\:]).*"firstName":"(.*?)".*"capSubProductCode":"(\w+)".*"natureOfProduct":"(\w+)".*
+
+  response:
+    body: MATCHED!
+    headers:
+      content-type: application/json
+    status: 201
+
+
+- description: rule_1
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"rule_1","request_id":"rule_1_request_id"}
+
+  response:
+    body: rule_1
+    status: 201
+
+
+- description: rule_2
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"rule_2","request_id":"rule_2_request_id"}
+
+  response:
+    body: rule_2
+    status: 201
+
+
+- description: rule_3
+  request:
+    url: /azagniotov/stubby4j/issues/170
+    method: POST
+    headers:
+      content-type: application/json
+    post: >
+      {"rule":"(.*)","request_id":"(.*)"}
+
+  response:
+    body: rule_3
+    status: 201
+
+
+- description: rule_1
+  request:
+    url: /azagniotov/stubby4j/issues/29
+    method: POST
+    headers:
+      content-type: application/xml
+    post: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><idex:type xmlns:idex="http://idex.bbc.co.uk/v1"><idex:authority>PIPS</idex:authority><idex:name>pid</idex:name><idex:startsWith>pid://</idex:startsWith></idex:type>
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_1.xml
+
+
+- description: rule_2
+  request:
+    url: /azagniotov/stubby4j/issues/29
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
+          <idex:authority>${xmlunit.matchesRegex(.*)}</idex:authority>
+          <idex:name>${xmlunit.matchesRegex(.*)}</idex:name>
+          <idex:startsWith>${xmlunit.matchesRegex(.*)}</idex:startsWith>
+      </idex:type>
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_2.xml
+
+
+- description: rule_3
+  request:
+    url: /azagniotov/stubby4j/issues/29/vanilla/regex
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <\?xml version="1.0" encoding="UTF-8" standalone="yes"\?><idex:type xmlns:idex="http://idex.bbc.co.uk/v1"><idex:authority>(.*)</idex:authority><idex:name>(.*)</idex:name><idex:startsWith>(.*)</idex:startsWith></idex:type>
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_2.xml
+
+
+- description: rule_4
+  request:
+    url: /azagniotov/stubby4j/issues/29/vanilla/regex
+    method: POST
+    headers:
+      content-type: application/xml
+    file: ../xml/request/xml_payload_4.xml
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 201
+    file: ../xml/response/xml_response_3.xml

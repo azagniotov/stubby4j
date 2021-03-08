@@ -42,7 +42,7 @@ public class StubsAdminPortalsTest {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsAdminPortalsTest.class.getResource("/yaml/stubs.yaml");
+        final URL url = StubsAdminPortalsTest.class.getResource("/yaml/main-test-stubs.yaml");
         final InputStream stubsDataInputStream = url.openStream();
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
