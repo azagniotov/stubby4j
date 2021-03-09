@@ -1,11 +1,10 @@
 # Official `stubby4j` Docker Images
 
-[![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
 [![GitHubStars][stars-badge]][stars-link]
 [![GitHubForks][forks-badge]][forks-link]
-[![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
+[![Maven Central][maven-badge]][maven-link]
 
 
 [![stubb4j][logo-badge]][logo-link]
@@ -38,14 +37,14 @@
 
 A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments. It is an actual HTTP server (`stubby4j` uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract, edge case, failure modes & behavior testing.
 
-# Some of the `stubby4j` key features
+### Some of the `stubby4j` key features
 ```
 * Stub out external services in a Docker based micro-service architecture
 * Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
 * Simulate edge cases and/or failure modes that the real API won't reliably produce
 * Fault injection, where after X good responses on the same URI you get a bad one
 ```
-... and more! Please refer to https://github.com/azagniotov/stubby4j for more information about the features and capabilities.
+... and much more! Please refer to https://github.com/azagniotov/stubby4j for more information about the features and capabilities.
 
 # How to use this image
 
@@ -61,11 +60,13 @@ This image uses environment variables for configuration
 |`STUBS_TLS_PORT`   | `7443` |Port for stub portal over SSL|
 |`WITH_STUB_CACHE_DISABLED`| no default |Disables matched stubs in-memory caching  |
 |`WITH_DEBUG`     | no default |Dumps raw HTTP request to the console |
-|`WITH_WATCH`     | no default |Periodically scans for changes of YAML configs and reloads |
+|`WITH_WATCH`     | no default |Periodically scans for changes & reloads YAML configs |
 
 See https://github.com/azagniotov/stubby4j#command-line-switches for more information.
 
 ## Starting a `stubby4j` instance
+
+Please note that in all `stubby4j` Docker images, the `UID`/`GID` `1007` (user `stubby4j` & group `stubby4j`) is set before the `ENTRYPOINT` instruction to avoid running the service as root.
 
 ### Basic command
 
