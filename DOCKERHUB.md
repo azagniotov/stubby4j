@@ -14,8 +14,9 @@
 
 
 # Quick reference
+* __Source repository__: https://github.com/azagniotov/stubby4j
 * __Maintained by__: [Alexander Zagniotov (of the stubby4j project)](https://github.com/azagniotov/stubby4j)
-* __Where to get help__: https://github.com/azagniotov/stubby4j or [StackOverflow](http://stackoverflow.com/questions/tagged/stubby4j)
+* __Where to get help__: https://github.com/azagniotov/stubby4j/issues or [StackOverflow](http://stackoverflow.com/questions/tagged/stubby4j)
 
 # Supported tags and respective `Dockerfile` links
 
@@ -36,6 +37,15 @@
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="45px" height="45px" />
 
 A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments. It is an actual HTTP server (`stubby4j` uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract, edge case, failure modes & behavior testing.
+
+# Some of the `stubby4j` key features
+```
+* Stub out external services in a Docker based micro-service architecture
+* Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
+* Simulate edge cases and/or failure modes that the real API won't reliably produce
+* Fault injection, where after X good responses on the same URI you get a bad one
+```
+... and more! Please refer to https://github.com/azagniotov/stubby4j for more information about the features and capabilities.
 
 # How to use this image
 
@@ -112,22 +122,6 @@ docker run --rm \
 * `7.2.0-zulu-openjdk-alpine-11.0.7-jre` is the tag specifying the `stubby4j` version. See the list above for relevant tags
 
 See https://github.com/azagniotov/stubby4j#command-line-switches for more information
-
-# Key features
-```
-* Stub out external services in a Docker based micro-service architecture
-* Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
-* Emulate external webservice in a SANDBOX for your application to consume over HTTP(s)
-* HTTP request verification and HTTP response stubbing
-* Simulate edge cases and/or failure modes that the real API won't reliably produce
-* Fault injection, where after X good responses on the same URI you get a bad one
-* Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. mod_rewrite in Apache)
-* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
-* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response
-* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
-* Serve binary files as stubbed response content (images, PDFs. etc.)
-* Embed stubby4j to create a web service SANDBOX for your integration test suite
-```
 
 # License
 [View license information](https://github.com/azagniotov/stubby4j/blob/master/LICENSE) for the software contained in this image.
