@@ -96,6 +96,28 @@ jobs:
     <<: *defaults
 
 
+  docker_build_latest_jre8:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - checkout
+
+      - run: |
+          echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+
+      # build the application image
+      - run:
+          name: Building Docker image from docker/jdk8/Dockerfile
+          working_directory: ~/repo/docker/jdk8
+          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest_jre8 .
+
+      # deploy the image
+      - run:
+          name: Pushing Docker image to Docker Hub
+          working_directory: ~/repo/docker/jdk8
+          command: docker push azagniotov/stubby4j
+
+
 version: 2.1
 workflows:
   build-test-code-coverage:
@@ -103,6 +125,16 @@ workflows:
       - gradle_6_8_3_jdk8_openj9
       - gradle_6_8_3_jdk11_openj9
       - gradle_6_8_3_jdk15
+
+      - docker_build_latest_jre8:
+          context:
+            - Docker-Hub-Credentials
+          requires:
+            - gradle_6_8_3_jdk8_openj9
+          filters:
+            branches:
+              only:
+                - master
 
   nightly:
     triggers:
