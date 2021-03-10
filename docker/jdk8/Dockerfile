@@ -1,16 +1,18 @@
 # A few useful Docker commands to build an image and run the stubby4j container.
 #
 # Build (run with '--no-cache' to ensure that Git repo new tags will be pulled down, as Docker caches RUNs):
-# 'docker build --no-cache -t stubby4j:latest .'
+# '$ docker build --build-arg REVISION=v7.2.0 --rm --no-cache -t stubby4j:latest .' or
+# '$ docker build --rm --no-cache -t stubby4j:latest .' to build from master
 #
 # Run:
-# 'docker run -p 8882:8882 -p 8889:8889 -p 7443:7443 stubby4j'
+# https://hub.docker.com/r/azagniotov/stubby4j ("How to use this image")
 
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
 FROM gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa AS BUILD_JAR_STAGE
 
+ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
 
@@ -18,7 +20,7 @@ WORKDIR $GRADLE_USER_HOME
 RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch -f --tags && \
-      git checkout v7.2.0 && \
+      git checkout $REVISION && \
       gradle clean jar
 
 ########################################################################################
