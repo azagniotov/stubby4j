@@ -153,6 +153,17 @@ jobs:
     <<: *build_push_image_steps
 
 
+  docker_build_latest_jre15:
+    parameters:
+      jdk_version:
+        type: string
+        default: "15"
+
+    <<: *circle_working_directory
+    machine: true
+    <<: *build_push_image_steps
+
+
 version: 2.1
 workflows:
   build-test-code-coverage:
@@ -176,6 +187,16 @@ workflows:
             - Docker-Hub-Credentials
           requires:
             - gradle_6_8_3_jdk11_openj9
+          filters:
+            branches:
+              only:
+                - master
+
+      - docker_build_latest_jre15:
+          context:
+            - Docker-Hub-Credentials
+          requires:
+            - gradle_6_8_3_jdk15
           filters:
             branches:
               only:
