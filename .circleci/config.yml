@@ -102,19 +102,44 @@ jobs:
     steps:
       - checkout
 
-      - run: |
-          echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+      - run:
+          name: Authenticating to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
 
       # build the application image
       - run:
-          name: Building Docker image from docker/jdk8/Dockerfile
+          name: Building Docker image
           working_directory: ~/repo/docker/jdk8
-          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest_jre8 .
+          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre8 .
 
       # deploy the image
       - run:
           name: Pushing Docker image to Docker Hub
           working_directory: ~/repo/docker/jdk8
+          command: docker push azagniotov/stubby4j
+
+  docker_build_latest_jre11:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: Authenticating to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+
+      # build the application image
+      - run:
+          name: Building Docker image
+          working_directory: ~/repo/docker/jdk11
+          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre11 .
+
+      # deploy the image
+      - run:
+          name: Pushing Docker image to Docker Hub
+          working_directory: ~/repo/docker/jdk11
           command: docker push azagniotov/stubby4j
 
 
@@ -131,6 +156,16 @@ workflows:
             - Docker-Hub-Credentials
           requires:
             - gradle_6_8_3_jdk8_openj9
+          filters:
+            branches:
+              only:
+                - master
+
+      - docker_build_latest_jre11:
+          context:
+            - Docker-Hub-Credentials
+          requires:
+            - gradle_6_8_3_jdk11_openj9
           filters:
             branches:
               only:
