@@ -6,7 +6,7 @@
 ###########################################################################################
 ##  YAML aliases definition
 ###########################################################################################
-aliases:
+anchors:
   - &base_environment
       working_directory: ~/repo
       environment:
@@ -80,6 +80,11 @@ aliases:
             when: on_success
             command: bash <(curl -s https://codecov.io/bash)
 
+  - &checkout_build_test_stage_with_code_coverage
+      <<: *checkout_build_test_stage
+      <<: *run_code_coverage_with_codecov_post
+
+  
 
 
 ###########################################################################################
@@ -88,8 +93,9 @@ aliases:
 jobs:
   gradle_6_8_3_jdk8_openj9:
     <<: *gradle_6_8_3_jdk8_openj9_environment
-    <<: *checkout_build_test_stage
-    <<: *run_code_coverage_with_codecov_post
+    <<: *checkout_build_test_stage_with_code_coverage
+       
+
 
 
 ###########################################################################################
