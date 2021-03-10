@@ -16,22 +16,20 @@
 * __Source repository__: https://github.com/azagniotov/stubby4j
 * __Maintained by__: [Alexander Zagniotov (of the stubby4j project)](https://github.com/azagniotov/stubby4j)
 * __Where to get help__: https://github.com/azagniotov/stubby4j/issues or [StackOverflow](http://stackoverflow.com/questions/tagged/stubby4j)
+* __Changelog__: https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md
+
 
 # Supported tags and respective `Dockerfile` links
 
-### stubby4j on Alpine-Native Zulu OpenJDK JRE 8 
-* [`7.2.0-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
+### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
+* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
 
-### stubby4j on Alpine-Native Zulu OpenJDK JRE 11 
-* [`7.2.0-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
+### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
+* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.2.0-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
 
-### stubby4j on Alpine-Native Zulu OpenJDK JRE 15 
-* [`7.2.0-zulu-openjdk-alpine-15.0.0-15.27.17-jre`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
+### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
+* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile), [`7.2.0-zulu-openjdk-alpine-15.0.0-15.27.17-jre`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
 
-
-# Quick reference (cont.)
-* __Where to file issues__: https://github.com/azagniotov/stubby4j/issues
-* __Changelog__: https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="45px" height="45px" />
 
