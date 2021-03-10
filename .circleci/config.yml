@@ -2,13 +2,19 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-defaults: &defaults
+
+circle_working_directory: &circle_working_directory
   working_directory: ~/repo
+
+base_environment: &base_environment
+  <<: *circle_working_directory
   environment:
     # Customize the JVM maximum heap limit
     JVM_OPTS: -Xmx3200m
     TERM: dumb
 
+
+default_steps: &default_steps
   # https://discuss.circleci.com/t/show-test-results-for-prospective-merge-of-a-github-pr/1662/14
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
@@ -64,16 +70,42 @@ defaults: &defaults
               when: on_success
               command: bash <(curl -s https://codecov.io/bash)
 
+
+build_push_image_steps: &build_push_image_steps
+  steps:
+    - checkout
+
+    - run:
+        name: Authenticating to Docker Hub
+        command: |
+          echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+
+    # build the application image
+    - run:
+        name: Building Docker image
+        working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
+        command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> .
+
+    # deploy the image
+    - run:
+        name: Pushing Docker image to Docker Hub
+        working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
+        command: docker push azagniotov/stubby4j
+
+
 jobs:
+
   gradle_6_8_3_jdk8_openj9:
     parameters:
       run_code_coverage_with_codecov_post:
         type: boolean
         default: true
 
+    <<: *base_environment
     docker:
       - image: gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa
-    <<: *defaults
+    <<: *default_steps
+
 
   gradle_6_8_3_jdk11_openj9:
     parameters:
@@ -81,9 +113,11 @@ jobs:
         type: boolean
         default: false
 
+    <<: *base_environment
     docker:
       - image: gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e
-    <<: *defaults
+    <<: *default_steps
+
 
   gradle_6_8_3_jdk15:
     parameters:
@@ -91,56 +125,32 @@ jobs:
         type: boolean
         default: false
 
+    <<: *base_environment
     docker:
       - image: gradle:6.8.3-jdk15@sha256:642395fe8f800d292d01073ecdb8ffd0d4995305b5856fda6a8cf52514877183
-    <<: *defaults
+    <<: *default_steps
 
 
   docker_build_latest_jre8:
-    working_directory: ~/repo
+    parameters:
+      jdk_version:
+        type: string
+        default: "8"
+
+    <<: *circle_working_directory
     machine: true
-    steps:
-      - checkout
+    <<: *build_push_image_steps
 
-      - run:
-          name: Authenticating to Docker Hub
-          command: |
-            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
-
-      # build the application image
-      - run:
-          name: Building Docker image
-          working_directory: ~/repo/docker/jdk8
-          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre8 .
-
-      # deploy the image
-      - run:
-          name: Pushing Docker image to Docker Hub
-          working_directory: ~/repo/docker/jdk8
-          command: docker push azagniotov/stubby4j
 
   docker_build_latest_jre11:
-    working_directory: ~/repo
+    parameters:
+      jdk_version:
+        type: string
+        default: "11"
+
+    <<: *circle_working_directory
     machine: true
-    steps:
-      - checkout
-
-      - run:
-          name: Authenticating to Docker Hub
-          command: |
-            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
-
-      # build the application image
-      - run:
-          name: Building Docker image
-          working_directory: ~/repo/docker/jdk11
-          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre11 .
-
-      # deploy the image
-      - run:
-          name: Pushing Docker image to Docker Hub
-          working_directory: ~/repo/docker/jdk11
-          command: docker push azagniotov/stubby4j
+    <<: *build_push_image_steps
 
 
 version: 2.1
