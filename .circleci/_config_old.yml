@@ -1,0 +1,185 @@
+# Java Gradle CircleCI 2.1 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+defaults: &defaults
+  working_directory: ~/repo
+  environment:
+    # Customize the JVM maximum heap limit
+    JVM_OPTS: -Xmx3200m
+    TERM: dumb
+
+  # https://discuss.circleci.com/t/show-test-results-for-prospective-merge-of-a-github-pr/1662/14
+  # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
+  steps:
+    - checkout
+    - when:
+        condition:
+          not:
+            equal: [ master, << pipeline.git.branch >> ]
+
+        # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
+        steps:
+          - run:
+              name: Creating pr-to-master merge branch to run the tests on
+              command: git pull --ff-only origin "refs/pull/${CIRCLE_PULL_REQUEST##*/}/merge"
+          - run:
+              name: "Sanity check: listing current git branch name"
+              command: git branch
+          - run:
+              name: "Sanity check: listing git merge commit"
+              command: git log -n 2
+
+    - run: java -version
+
+    - run: ./gradlew --version
+
+    # Download and cache dependencies
+    - restore_cache:
+        keys:
+          - v1-dependencies-{{ checksum "build.gradle" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+    - save_cache:
+        paths:
+          - ~/.gradle
+        key: v1-dependencies-{{ checksum "build.gradle" }}
+
+    - run:
+        name: Run all test suits
+        command: ./gradlew clean test integrationTest functionalTest
+        when: always
+
+    - when:
+        condition: << parameters.run_code_coverage_with_codecov_post >>
+        steps:
+          - run:
+              name: Run JaCoCo plugin code coverage
+              when: on_success
+              command: ./gradlew clean jacocoTestReport
+
+          - run:
+              name: Upload code coverage data to Codecov
+              when: on_success
+              command: bash <(curl -s https://codecov.io/bash)
+
+jobs:
+  gradle_6_8_3_jdk8_openj9:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: true
+
+    docker:
+      - image: gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa
+    <<: *defaults
+
+  gradle_6_8_3_jdk11_openj9:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: false
+
+    docker:
+      - image: gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e
+    <<: *defaults
+
+  gradle_6_8_3_jdk15:
+    parameters:
+      run_code_coverage_with_codecov_post:
+        type: boolean
+        default: false
+
+    docker:
+      - image: gradle:6.8.3-jdk15@sha256:642395fe8f800d292d01073ecdb8ffd0d4995305b5856fda6a8cf52514877183
+    <<: *defaults
+
+
+  docker_build_latest_jre8:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: Authenticating to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+
+      # build the application image
+      - run:
+          name: Building Docker image
+          working_directory: ~/repo/docker/jdk8
+          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre8 .
+
+      # deploy the image
+      - run:
+          name: Pushing Docker image to Docker Hub
+          working_directory: ~/repo/docker/jdk8
+          command: docker push azagniotov/stubby4j
+
+  docker_build_latest_jre11:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - checkout
+
+      - run:
+          name: Authenticating to Docker Hub
+          command: |
+            echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USER --password-stdin
+
+      # build the application image
+      - run:
+          name: Building Docker image
+          working_directory: ~/repo/docker/jdk11
+          command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre11 .
+
+      # deploy the image
+      - run:
+          name: Pushing Docker image to Docker Hub
+          working_directory: ~/repo/docker/jdk11
+          command: docker push azagniotov/stubby4j
+
+
+version: 2.1
+workflows:
+  build-test-code-coverage:
+    jobs:
+      - gradle_6_8_3_jdk8_openj9
+      - gradle_6_8_3_jdk11_openj9
+      - gradle_6_8_3_jdk15
+
+      - docker_build_latest_jre8:
+          context:
+            - Docker-Hub-Credentials
+          requires:
+            - gradle_6_8_3_jdk8_openj9
+          filters:
+            branches:
+              only:
+                - master
+
+      - docker_build_latest_jre11:
+          context:
+            - Docker-Hub-Credentials
+          requires:
+            - gradle_6_8_3_jdk11_openj9
+          filters:
+            branches:
+              only:
+                - master
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "15 19 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - gradle_6_8_3_jdk8_openj9
+      - gradle_6_8_3_jdk11_openj9
+      - gradle_6_8_3_jdk15
