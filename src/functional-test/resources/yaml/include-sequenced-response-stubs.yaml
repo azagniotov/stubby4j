@@ -1,0 +1,74 @@
+
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      body: OK
+
+    - status: 201
+      headers:
+        content-type: application/json
+      body: Still going strong!
+
+    - status: 500
+      headers:
+        content-type: application/json
+      body: OMFG!!!
+
+
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses/infile
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/response/json_response_2.json
+
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/response/json_response_3.json
+
+    - status: 500
+      headers:
+        content-type: application/json
+      file: ../json/response/json_response_4.json
+
+
+- request:
+    method: [GET]
+    url: /uri/with/sequenced/responses/infile/withbadurls
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/this.file.does.not.exist.json
+
+    - status: 201
+      headers:
+        content-type: application/json
+      file: ../json/response/json_response_3.json
+
+    - status: 500
+      headers:
+        content-type: application/json
+      file: ../json/this.file.does.not.exist.either.json
+
+
+- request:
+    method: [GET]
+    url: /uri/with/single/sequenced/response
+
+  response:
+    - status: 201
+      headers:
+        content-type: application/json
+      body: Still going strong!
+

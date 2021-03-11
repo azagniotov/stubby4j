@@ -1,3 +1,5 @@
 includes:
   - include-all-test-stubs.yaml
+  - include-sequenced-response-stubs.yaml
+  - include-regex-dynamic-tokens-templated-stubs.yaml
   - include-reported-issues-test-stubs.yaml
