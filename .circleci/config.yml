@@ -47,6 +47,12 @@ filter_only_master: &filter_only_master
       only:
         - master
 
+filter_ignore_master: &filter_ignore_master
+  filters:
+    branches:
+      ignore:
+        - master
+
 
 condition_when_not_master: &condition_when_not_master
   condition:
@@ -227,14 +233,8 @@ workflows:
   jdk-8:
     jobs:
       - gradle_6_8_3_jdk8
-
       - gradle_6_8_3_jdk8_code_coverage:
-          requires:
-            - gradle_6_8_3_jdk8
-
-      - docker_build_latest_jre8:
-          <<: *context_docker_hub
-          <<: *filter_only_master
+          <<: *filter_ignore_master
           requires:
             - gradle_6_8_3_jdk8
 
@@ -242,28 +242,48 @@ workflows:
     jobs:
       - gradle_6_8_3_jdk11
 
-      - docker_build_latest_jre11:
-          <<: *context_docker_hub
-          <<: *filter_only_master
-          requires:
-            - gradle_6_8_3_jdk11
-
   jdk-15:
     jobs:
       - gradle_6_8_3_jdk15
 
-      - docker_build_latest_jre15:
-          <<: *context_docker_hub
-          <<: *filter_only_master
-          requires:
-            - gradle_6_8_3_jdk15
 
-  nightly:
+  nightly-jdk8:
     triggers:
       - schedule:
           cron: "15 19 * * *"
           <<: *filter_only_master
     jobs:
       - gradle_6_8_3_jdk8
+      - docker_build_latest_jre8:
+          <<: *context_docker_hub
+          <<: *filter_only_master
+          requires:
+            - gradle_6_8_3_jdk8
+
+
+  nightly-jdk11:
+    triggers:
+      - schedule:
+          cron: "16 19 * * *"
+          <<: *filter_only_master
+    jobs:
       - gradle_6_8_3_jdk11
+      - docker_build_latest_jre11:
+          <<: *context_docker_hub
+          <<: *filter_only_master
+          requires:
+            - gradle_6_8_3_jdk11
+
+
+  nightly-jdk15:
+    triggers:
+      - schedule:
+          cron: "17 19 * * *"
+          <<: *filter_only_master
+    jobs:
       - gradle_6_8_3_jdk15
+      - docker_build_latest_jre15:
+          <<: *context_docker_hub
+          <<: *filter_only_master
+          requires:
+            - gradle_6_8_3_jdk15
