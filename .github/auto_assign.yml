@@ -2,7 +2,7 @@
 addReviewers: true
 
 # Set to true to add assignees to pull requests
-addAssignees: true
+addAssignees: author
 
 # A list of reviewers to be added to pull requests (GitHub user name)
 reviewers: 
@@ -26,4 +26,3 @@ assignees:
 # Set to 0 to add all of the assignees.
 # Uses numberOfReviewers if unset.
 numberOfAssignees: 0
-
