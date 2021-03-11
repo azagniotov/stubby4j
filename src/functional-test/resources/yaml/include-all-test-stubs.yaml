@@ -65,6 +65,7 @@
     headers:
       content-type: application/json
 
+
 - request:
     method: GET
     url: /entity.find
@@ -97,6 +98,7 @@
       {"status": "hello world with single quote"}
     headers:
       content-type: application/json
+
 
 - request:
     method: GET
@@ -138,6 +140,7 @@
     status: 200
     file: ../binary/hello-world.pdf
 
+
 - request:
     method: GET
     url: /invoice
@@ -168,6 +171,7 @@
     body: >
       {"id": "123", "status": "updated"}
 
+
 - request:
     method: POST
     url: /invoice/new
@@ -187,37 +191,6 @@
 
 - request:
     method: POST
-    url: /post-body-as-json
-    headers:
-      content-type: application/json
-    post: >
-      {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    body: >
-      {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
-
-- request:
-    method: POST
-    url: /post-body-as-json-2
-    headers:
-      content-type: application/json
-    post: >
-      {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    body: >
-      {"internalKey": "<%post.1%>"}
-
-
-- request:
-    method: POST
     url: /jsonapi-json-object-comparison
     headers:
       content-type: application/json
@@ -229,21 +202,6 @@
     status: 200
     body: >
       {"status": "OK"}
-
-
-- request:
-    method: POST
-    url: /jsonapi-json-regex
-    headers:
-      content-type: application/json
-    file: ../json/request/json_payload_2.json
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    body: >
-      {"people#id": "<% post.2 %>"}
 
 
 - request:
@@ -262,7 +220,6 @@
   response:
     status: 201
     body: OK
-
 
 
 - request:
@@ -493,81 +450,6 @@
 
 
 - request:
-    method: [GET]
-    url: /uri/with/sequenced/responses
-
-  response:
-    - status: 201
-      headers:
-        content-type: application/json
-      body: OK
-
-    - status: 201
-      headers:
-        content-type: application/json
-      body: Still going strong!
-
-    - status: 500
-      headers:
-        content-type: application/json
-      body: OMFG!!!
-
-
-- request:
-    method: [GET]
-    url: /uri/with/sequenced/responses/infile
-
-  response:
-    - status: 201
-      headers:
-        content-type: application/json
-      file: ../json/response/json_response_2.json
-
-    - status: 201
-      headers:
-        content-type: application/json
-      file: ../json/response/json_response_3.json
-
-    - status: 500
-      headers:
-        content-type: application/json
-      file: ../json/response/json_response_4.json
-
-
-- request:
-    method: [GET]
-    url: /uri/with/sequenced/responses/infile/withbadurls
-
-  response:
-    - status: 201
-      headers:
-        content-type: application/json
-      file: ../json/this.file.does.not.exist.json
-
-    - status: 201
-      headers:
-        content-type: application/json
-      file: ../json/response/json_response_3.json
-
-    - status: 500
-      headers:
-        content-type: application/json
-      file: ../json/this.file.does.not.exist.either.json
-
-
-
-- request:
-    method: [GET]
-    url: /uri/with/single/sequenced/response
-
-  response:
-    - status: 201
-      headers:
-        content-type: application/json
-      body: Still going strong!
-
-
-- request:
     method: [POST]
     url: /uri/with/post/regex
     post: "^[\\.,'a-zA-Z\\s+]*$"
@@ -577,66 +459,6 @@
       headers:
         content-type: application/json
       body: OK
-
-
-- request:
-    method: [GET]
-    url: ^/resources/invoices/(\d{5})/category/([a-zA-Z]+)
-
-  response:
-    status: 200
-    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
-
-
-- request:
-    method: [GET]
-    url: ^/resources/invoices/(\d{5})
-
-  response:
-    status: 200
-    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
-
-
-- request:
-    method: [GET]
-    url: ^/account/(\d{5})/category/([a-zA-Z]+)
-    query:
-      date: "([a-zA-Z]+)"
-
-  response:
-    status: 200
-    file: ../json/response/json_response_5.json
-
-
-- request:
-    method: [GET]
-    url: ^/no/explicit/groups/\d{5}
-    query:
-      param: "[a-zA-Z]+"
-    headers:
-      custom-header: "[a-zA-Z]+"
-
-  response:
-    status: 200
-    body: Returned content with URL <% url.0 %>, query param <% query.param.0 %> and custom-header <% headers.custom-header.0 %>
-
-
-- request:
-    method: [GET]
-    url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
-
-  response:
-    status: 200
-    body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
-
-
-- request:
-    method: [GET]
-    url: ^/regex-fileserver/([a-z]+).html$
-
-  response:
-    status: 200
-    file: ../html/<% url.1 %>.html
 
 
 - request:
@@ -660,6 +482,7 @@
     status: 200
     body: EMPTY SINGLE WORKS
 
+
 - request:
     method: POST
     url: /complex/json/tree
@@ -673,6 +496,7 @@
     status: 200
     body: OK
 
+
 - request:
     method: POST
     url: /complex/xml/tree
@@ -685,6 +509,7 @@
       content-type: application/xml
     status: 200
     body: OK
+
 
 - request:
     method: PUT
@@ -710,18 +535,6 @@
     status: 200
     body: >
       {"id" : "12", "description" : "deleted authorized using bearer"}
-
-
-- request:
-    method: [GET]
-    url: ^/v\d/identity/authorize
-    query:
-      redirect_uri: "https://(.*)/app.*"
-
-  response:
-    headers:
-      location: https://<% query.redirect_uri.1 %>/auth
-    status: 302
 
 
 - request:

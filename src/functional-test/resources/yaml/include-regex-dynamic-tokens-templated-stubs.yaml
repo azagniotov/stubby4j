@@ -1,0 +1,117 @@
+- request:
+    method: [GET]
+    url: ^/v\d/identity/authorize
+    query:
+      redirect_uri: "https://(.*)/app.*"
+
+  response:
+    headers:
+      location: https://<% query.redirect_uri.1 %>/auth
+    status: 302
+
+
+- request:
+    method: POST
+    url: /post-body-as-json
+    headers:
+      content-type: application/json
+    post: >
+      {"userId":"19","requestId":"(.*)","transactionDate":"(.*)","transactionTime":"(.*)"}
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"requestId": "<%post.1%>", "transactionDate": "<%post.2%>", "transactionTime": "<%post.3%>"}
+
+
+- request:
+    method: POST
+    url: /post-body-as-json-2
+    headers:
+      content-type: application/json
+    post: >
+      {"objects": [{"key": "value"}, {"key": "value"}, {"key": {"key": "(.*)"}}]}
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"internalKey": "<%post.1%>"}
+
+
+- request:
+    method: POST
+    url: /jsonapi-json-regex
+    headers:
+      content-type: application/json
+    file: ../json/request/json_payload_2.json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"people#id": "<% post.2 %>"}
+
+
+- request:
+    method: [GET]
+    url: ^/resources/invoices/(\d{5})/category/([a-zA-Z]+)
+
+  response:
+    status: 200
+    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
+
+
+- request:
+    method: [GET]
+    url: ^/resources/invoices/(\d{5})
+
+  response:
+    status: 200
+    body: Returned invoice number# <%url.1%> in category '<%url.2%>'
+
+
+- request:
+    method: [GET]
+    url: ^/account/(\d{5})/category/([a-zA-Z]+)
+    query:
+      date: "([a-zA-Z]+)"
+
+  response:
+    status: 200
+    file: ../json/response/json_response_5.json
+
+
+- request:
+    method: [GET]
+    url: ^/no/explicit/groups/\d{5}
+    query:
+      param: "[a-zA-Z]+"
+    headers:
+      custom-header: "[a-zA-Z]+"
+
+  response:
+    status: 200
+    body: Returned content with URL <% url.0 %>, query param <% query.param.0 %> and custom-header <% headers.custom-header.0 %>
+
+
+- request:
+    method: [GET]
+    url: ^/groups/with/sub/groups/(([a-z]{3})-([0-9]{3}))$
+
+  response:
+    status: 200
+    body: Returned content with URL <% url.0 %>, parent group <% url.1 %> and two sub-groups <% url.2 %> & <% url.3 %>
+
+
+- request:
+    method: [GET]
+    url: ^/regex-fileserver/([a-z]+).html$
+
+  response:
+    status: 200
+    file: ../html/<% url.1 %>.html
