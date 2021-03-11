@@ -223,15 +223,14 @@ jobs:
 
 version: 2.1
 workflows:
-  build-test-code-coverage:
+
+  jdk-8:
     jobs:
       - gradle_6_8_3_jdk8
+
       - gradle_6_8_3_jdk8_code_coverage:
           requires:
             - gradle_6_8_3_jdk8
-
-      - gradle_6_8_3_jdk11
-      - gradle_6_8_3_jdk15
 
       - docker_build_latest_jre8:
           <<: *context_docker_hub
@@ -239,11 +238,19 @@ workflows:
           requires:
             - gradle_6_8_3_jdk8
 
+  jdk-11:
+    jobs:
+      - gradle_6_8_3_jdk11
+
       - docker_build_latest_jre11:
           <<: *context_docker_hub
           <<: *filter_only_master
           requires:
             - gradle_6_8_3_jdk11
+
+  jdk-15:
+    jobs:
+      - gradle_6_8_3_jdk15
 
       - docker_build_latest_jre15:
           <<: *context_docker_hub
