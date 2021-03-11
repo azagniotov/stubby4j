@@ -66,14 +66,12 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 
 ## Quick start example
 
-This section explains how to get stubby4j up and running using a very simple example "Hello, World", without building stubby4j from source locally using Gradle. 
+This section explains how to get stubby4j up and running using a very simple example `Hello, World`, without building `stubby4j` from locally using `Gradle`.
 
 #### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
-* version >= 4.0.0:  Oracle JRE v1.8 or OpenJDK 1.8
-* version >= 3.0.0:  Oracle JRE v1.7.0_76
-* version = 2.0.22: Oracle JRE v1.7.0_04
-* version < 2.0.22: Oracle JRE 1.6.0_65-b14-462
+* version >= `4.0.0`: JRE >= `v1.8`
+* version >= `3.0.0`: JRE >= `v1.7`
 
 #### Setup
 
@@ -90,8 +88,8 @@ This section explains how to get stubby4j up and running using a very simple exa
          content-type: application/json
       body: Hello World!
 ```
-* Execute the downloaded stubby JAR using command `java -jar stubby4j-x.x.xx.jar -d <PATH_TO_YOUR_CREATED_LOCAL_YAML_FILE>`
-* Navigate to `http://localhost:8882/hello-world` to get the stubbed response "Hello World!"
+* Execute the downloaded stubby JAR using command `java -jar stubby4j-x.x.xx.jar -d <PATH_TO_LOCAL_YAML_CONFIG>` (also see [Command-line switches](#command-line-switches) and [Splitting main YAML config in to sub-includes](#splitting-main-yaml-config))
+* Navigate to `http://localhost:8882/hello-world` to get the stubbed response `Hello World!`
 * Navigate to stubby4j admin portal at `http://localhost:8889/status` to see what has been stubbed & other useful data
 
 That's it!
