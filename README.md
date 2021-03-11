@@ -21,10 +21,10 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 ### Table of contents
 
 * [Quick start example](#quick-start-example)
+* [Running in Docker](#running-in-docker)
 * [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
-* [Running in Docker](#running-in-docker)
 * [Building](#building)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
@@ -96,6 +96,29 @@ That's it!
 
 For more information and more complex examples, please dive into the rest of documentation, especially [Endpoint configuration HOWTO](#endpoint-configuration-howto)
 
+## Running in Docker
+
+stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
+
+Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
+* [docker/jdk8](docker/jdk8)
+* [docker/jdk11](docker/jdk11)
+* [docker/jdk15](docker/jdk15)
+
+Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
+
+```shell script
+$ docker build --rm --no-cache -t stubby4j:latest .
+```
+
+or the following command to build from a specific tag, e.g.:
+
+```shell script
+$ docker build --build-arg REVISION=v7.2.0 --rm --no-cache -t stubby4j:latest .
+```
+
+Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
+
 ## Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
@@ -130,23 +153,6 @@ For more information and more complex examples, please dive into the rest of doc
 * Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
 * Easily swappable data config files to run different data sets and responses.
 * All-in-one stub server to handle mock data with less need to upkeep code for test generation
-
-## Running in Docker
-
-stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
-
-Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
-* [docker/jdk8/](docker/jdk8)
-* [docker/jdk11](docker/jdk11)
-* [docker/jdk15](docker/jdk15)
-
-Navigate to the desired directory and run:
-
-```shell script
-docker build --rm --no-cache -t stubby4j:latest .
-```
-
-Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How To Use This Image` section regarding how to use the built image
 
 ## Building
 stubby4j is a multi source-set Gradle `v6.8.3` project
