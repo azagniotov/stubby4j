@@ -10,7 +10,9 @@
 [![stubb4j][logo-badge]][logo-link]
 
 
-A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments. It is an actual HTTP server (stubby4j uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract & behavior testing.
+A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments. `stubby4j` makes it especially easy to stub out external services in a Docker based micro-service architecture.
+
+It is an actual HTTP server (stubby4j uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract & behavior testing.
 
 Please refer to [Key features](#key-features) for more information
 
