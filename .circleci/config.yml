@@ -3,6 +3,9 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 
+#############################################################################################
+## Anchors definition
+#############################################################################################
 circle_working_directory: &circle_working_directory
   working_directory: ~/repo
 
@@ -93,6 +96,20 @@ build_push_image_steps: &build_push_image_steps
         command: docker push azagniotov/stubby4j
 
 
+context_docker_hub: &context_docker_hub
+  context:
+    - Docker-Hub-Credentials
+
+
+filter_only_master: &filter_only_master
+  filters:
+    branches:
+      only:
+        - master
+
+#############################################################################################
+## Jobs definition
+#############################################################################################
 jobs:
 
   gradle_6_8_3_jdk8_openj9:
@@ -164,6 +181,10 @@ jobs:
     <<: *build_push_image_steps
 
 
+#############################################################################################
+## Workflows definition
+#############################################################################################
+
 version: 2.1
 workflows:
   build-test-code-coverage:
@@ -173,43 +194,28 @@ workflows:
       - gradle_6_8_3_jdk15
 
       - docker_build_latest_jre8:
-          context:
-            - Docker-Hub-Credentials
+          <<: *context_docker_hub
+          <<: *filter_only_master
           requires:
             - gradle_6_8_3_jdk8_openj9
-          filters:
-            branches:
-              only:
-                - master
 
       - docker_build_latest_jre11:
-          context:
-            - Docker-Hub-Credentials
+          <<: *context_docker_hub
+          <<: *filter_only_master
           requires:
             - gradle_6_8_3_jdk11_openj9
-          filters:
-            branches:
-              only:
-                - master
 
       - docker_build_latest_jre15:
-          context:
-            - Docker-Hub-Credentials
+          <<: *context_docker_hub
+          <<: *filter_only_master
           requires:
             - gradle_6_8_3_jdk15
-          filters:
-            branches:
-              only:
-                - master
 
   nightly:
     triggers:
       - schedule:
           cron: "15 19 * * *"
-          filters:
-            branches:
-              only:
-                - master
+          <<: *filter_only_master
     jobs:
       - gradle_6_8_3_jdk8_openj9
       - gradle_6_8_3_jdk11_openj9
