@@ -1,19 +1,51 @@
-# Number of days of inactivity before an issue becomes stale
-daysUntilStale: 45
-# Number of days of inactivity before a stale issue is closed
-daysUntilClose: 7
-# Issues with these labels will never be considered stale
+# Configuration for probot-stale - https://github.com/probot/stale
+# Configuration options apply to both Issues and Pull Requests.
+# We configure those individually to match our workflow (see `pulls:` and `issues:`)
+
+pulls:
+  # Number of days of inactivity before a Pull Request becomes stale
+  daysUntilStale: 60
+
+  # Number of days of inactivity before a Pull Request with the stale label is closed.
+  # Set to false to disable. If disabled, Pull Request still need to be closed manually, but will remain marked as stale.
+  daysUntilClose: 21
+
+  # Comment to post when marking as stale. Set to `false` to disable
+  markComment: >
+    This pull request has been automatically marked as stale because it has not had recent activity.
+    Given the limited bandwidth of the project maintainers, it will be closed if no further activity occurs.
+    If you intend to work on this pull request, please reopen the PR. Thank you for your contributions.
+  # Comment to post when closing a stale Pull Request.
+  closeComment: >
+    This pull request has been automatically closed due to inactivity.
+    If you are still interested in contributing this, please ensure that
+    it is rebased against the latest branch (usually `master`), all review
+    comments have been addressed and the build is passing.
+
+issues:
+  daysUntilStale: 365
+
+  # Number of days of inactivity before an Issue with the stale label is closed.
+  # Set to false to disable. If disabled, issues still need to be closed manually, but will remain marked as stale.
+  daysUntilClose: 21
+
+  # Comment to post when marking as stale. Set to `false` to disable
+  markComment: >
+    This issue has been automatically marked as stale because it has not had recent activity.
+    Given the limited bandwidth of the team, it will be automatically closed if no further
+    activity occurs. Thank you for your contribution.
+  # Comment to post when closing a stale Issue.
+  closeComment: >
+    This issue has been automatically closed due to inactivity. If you can reproduce this on a
+    recent version of `stubby4j` or if you have a good use case for this feature, please feel free
+    to reopen the issue with steps to reproduce, a quick explanation of your use case or a
+    high-quality pull request.
+
 exemptLabels:
   - pinned
   - security
   - work-in-progress
+  - epic
+
 # Label to use when marking an issue as stale
 staleLabel: wontfix
-# Comment to post when marking an issue as stale. Set to `false` to disable
-markComment: >
-  This issue has been automatically marked as stale because it has not had
-  recent activity. It will be closed if no further activity occurs. Thank you
-  for your contributions.
-# Comment to post when closing a stale issue. Set to `false` to disable
-closeComment: >
-  This issue has been automatically closed because there has been no activity.
