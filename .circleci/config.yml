@@ -238,7 +238,8 @@ workflows:
 
   jdk8:
     jobs:
-      - gradle_6_8_3_jdk8
+      - gradle_6_8_3_jdk8:
+          <<: *filter_ignore_master
       - gradle_6_8_3_jdk8_code_coverage:
           <<: *filter_ignore_master
           requires:
@@ -246,11 +247,13 @@ workflows:
 
   jdk11:
     jobs:
-      - gradle_6_8_3_jdk11
+      - gradle_6_8_3_jdk11:
+          <<: *filter_ignore_master
 
   jdk15:
     jobs:
-      - gradle_6_8_3_jdk15
+      - gradle_6_8_3_jdk15:
+          <<: *filter_ignore_master
 
 
   master-twelve-hour-jdk8:
