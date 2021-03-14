@@ -21,6 +21,12 @@
 
 # Supported tags and respective `Dockerfile` links
 
+The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJDK](https://hub.docker.com/r/azul/zulu-openjdk-alpine) images used as base):
+* Built from tagged `stubby4j` `v7.x.x` versions
+* Built from default (i.e.: `master`)  branch (the naming convention is `latest-jreXX`)
+
+See https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md for more information
+
 ### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
 * [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
 
@@ -52,7 +58,7 @@ This image uses environment variables for configuration
 
 |Available variables     |Default value        |Description                                         |
 |------------------------|------------------------|----------------------------------------------------|
-|`YAML_CONFIG`    | `main.yaml`          |The Username (not mail address) used to authenticate|
+|`YAML_CONFIG`    | `main.yaml`          |YAML config with stub definitions filename|
 |`STUBS_PORT`    | `8882`|Port for stub portal|
 |`ADMIN_PORT` |`8889`|Port for admin portal |
 |`STUBS_TLS_PORT`   | `7443` |Port for stub portal over SSL|
