@@ -10,17 +10,21 @@ buildscript {
             }
         }
     }
+    dependencies {
+        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:3.0.1"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
+        classpath "com.bmuschko:gradle-nexus-plugin:2.3"
+    }
 }
 
-plugins {
-    id "java-library"
-    id "idea"
-    id "eclipse"
-    id "org.unbroken-dome.test-sets" version "3.0.1"
-    id "com.bmuschko.nexus" version "2.3"
-    id "jacoco"
-    id "com.github.ben-manes.versions" version "0.36.0"
-}
+apply plugin: "java-library"
+apply plugin: "idea"
+apply plugin: "eclipse"
+apply plugin: "jacoco"
+apply plugin: "org.unbroken-dome.test-sets"
+apply plugin: "com.bmuschko.nexus"
+apply plugin: "com.github.ben-manes.versions"
+
 
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
