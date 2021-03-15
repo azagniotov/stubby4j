@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
-import static io.github.azagniotov.stubby4j.stubs.StubResponse.redirectResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logAssertingRequest;
@@ -137,7 +136,9 @@ public class StubRepository {
         }
 
         if (matchedStubResponse.hasHeaderLocation()) {
-            return redirectResponse(Optional.of(matchedStubResponse));
+            // FYI: for the redirect to work correctly, the stubbed status code must be one fo the HTTP
+            // codes that cause the redirect. See StubsResponseHandlingStrategyFactory
+            return matchedStubResponse;
         }
 
         if (matchedStubResponse.isRecordingRequired()) {

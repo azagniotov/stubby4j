@@ -40,6 +40,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Authorization Header](#authorization-header)
    * [Response](#response)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
+      * [Stubbing HTTP 30x redirects](#stubbing-http-30x-redirects)
       * [Record and Play](#record-and-play)
    * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
       * [Splitting main YAML config](#splitting-main-yaml-config)
@@ -47,7 +48,6 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
-   * [Supplying endpoints to stubby](#supplying-endpoints-to-stubby)
    * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
    * [JSON support](#json-support)
    * [Getting the current list of stubbed endpoints](#getting-the-current-list-of-stubbed-endpoints)
@@ -1103,6 +1103,43 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
+
+### Stubbing HTTP 30x redirects
+
+In order to stub a `30x` HTTP redirect, you need to stub the following:
+* the `location` header in `headers` section of the `response`
+* the `status` of the `response` must be `one` of the following HTTP codes: `301`, `302`, `303`, `307` or `308`.
+
+#### Example
+```yaml
+- request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /item/redirect/source
+
+  response:
+    status: 301
+    headers:
+      location: /item/redirect/destination
+
+
+- request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /item/redirect/destination
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"response" : "content"}
+```
+#### Example explained
+
+Upon successful HTTP request verification, the `/item/redirect/destination` value of the stubbed `response` header `location` will be set as the value of the location header of the Jetty HTTP response, which will cause the redirect to another stub with `url` value `/item/redirect/destination`
 
 
 ### Record and play

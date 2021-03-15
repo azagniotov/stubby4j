@@ -27,13 +27,13 @@ The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJD
 
 See https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md for more information
 
-### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
+#### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
 * [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
 
-### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
+#### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
 * [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.2.0-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
 
-### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
+#### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
 * [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile), [`7.2.0-jre15`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
 
 
@@ -99,7 +99,7 @@ $ docker run --rm \
     --env YAML_CONFIG=stubs.yaml \
     --volume /Users/zaggy/docker-playground/yaml:/home/stubby4j/data \
     -p 8882:8882 -p 8889:8889 -p 7443:7443 \
-    azagniotov/stubby4j:7.2.0-zulu-openjdk-alpine-8u252-jre
+    azagniotov/stubby4j:7.2.0-jre8
 ```
 
 ### Full command
@@ -117,7 +117,7 @@ docker run --rm \
     --env WITH_WATCH=--watch \
     --volume /Users/zaggy/docker-playground/yaml:/home/stubby4j/data \
     -p 9991:9991 -p 8889:8889 -p 8443:8443 \
-    azagniotov/stubby4j:7.2.0-zulu-openjdk-alpine-11.0.7-jre
+    azagniotov/stubby4j:7.2.0-jre8
 ```
 
 ... where the command:
@@ -129,7 +129,7 @@ docker run --rm \
 * Passes `--debug ` to `WITH_DEBUG` env var to make `stubby4j` to dump raw incoming HTTP requests to the console. If the `WITH_DEBUG` is not set, then the dumping incoming HTTP requests is disabled by default.
 * Passes `--watch ` to `WITH_WATCH` env var to make `stubby4j` to periodically scan for changes in last modification date of the YAML configs and referenced external files (if any). The watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded. If the `WITH_WATCH` is not set, then the periodic scan is disabled by default.
 * `-p` publishes/exposes set container's ports `9991`, `8889` & `8443` for stubs, admin & stubs on SSL portals respectively to the host.
-* `7.2.0-zulu-openjdk-alpine-11.0.7-jre` is the tag specifying the `stubby4j` version. See the list above for relevant tags
+* `7.2.0-jre8` is the tag specifying the `stubby4j` version. See the list above for relevant tags
 
 See https://github.com/azagniotov/stubby4j#command-line-switches for more information
 
