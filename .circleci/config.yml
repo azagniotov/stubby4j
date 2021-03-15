@@ -236,7 +236,12 @@ jobs:
 version: 2.1
 workflows:
 
-  jdk8:
+  master-jdk8:
+    jobs:
+      - gradle_6_8_3_jdk8
+
+
+  branch-jdk8:
     jobs:
       - gradle_6_8_3_jdk8:
           <<: *filter_ignore_master
@@ -245,12 +250,14 @@ workflows:
           requires:
             - gradle_6_8_3_jdk8
 
-  jdk11:
+
+  branch-jdk11:
     jobs:
       - gradle_6_8_3_jdk11:
           <<: *filter_ignore_master
 
-  jdk15:
+
+  branch-jdk15:
     jobs:
       - gradle_6_8_3_jdk15:
           <<: *filter_ignore_master
