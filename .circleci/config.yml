@@ -91,7 +91,7 @@ default_steps: &default_steps
 
     - run: java -version
 
-    - run: ./gradlew --version
+    - run: gradle --version
 
     # Download and cache dependencies
     - restore_cache:
@@ -107,7 +107,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: ./gradlew clean test integrationTest functionalTest
+        command: gradle clean test integrationTest functionalTest
         when: always
 
 
@@ -123,7 +123,7 @@ code_coverage_steps: &code_coverage_steps
 
     - run: java -version
 
-    - run: ./gradlew --version
+    - run: gradle --version
 
     # Download and cache dependencies
     - restore_cache:
@@ -140,7 +140,7 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
-        command: ./gradlew clean jacocoTestReport
+        command: gradle clean jacocoTestReport
 
     - run:
         name: Upload code coverage data to Codecov
