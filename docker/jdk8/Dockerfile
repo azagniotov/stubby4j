@@ -27,7 +27,7 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
 # Stage 2 : create the Docker final image
 ########################################################################################
 # https://hub.docker.com/r/azul/zulu-openjdk-alpine
-FROM azul/zulu-openjdk-alpine:8u252-8.46.0.19-jre-headless@sha256:cae5887524ad90564eb63ca8af558d759901eb4048768179cd8ba2ab3004b479
+FROM azul/zulu-openjdk-alpine:8u282-8.52.0.23-jre-headless@sha256:91fe8ae651d5c778312e946e89f934240c2a80f55b7ca894d76daef8f5281375
 
 MAINTAINER Alexander Zagniotov <azagniotov@gmail.com>
 
