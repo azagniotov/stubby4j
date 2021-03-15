@@ -28,13 +28,13 @@ The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJD
 See https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md for more information
 
 ### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
-* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
+* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.1.3-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-zulu-openjdk-alpine-8u252-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
 
 ### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
-* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.2.0-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
+* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.2.0-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.1.3-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-zulu-openjdk-alpine-11.0.7-jre`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
 
 ### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
-* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile), [`7.2.0-zulu-openjdk-alpine-15.0.0-15.27.17-jre`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
+* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile), [`7.2.0-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile)
 
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="45px" height="45px" />
@@ -54,7 +54,7 @@ A highly flexible and configurable tool for testing interactions of service-orie
 
 ## Environment variables
 
-This image uses environment variables for configuration
+`stubby4j` images use environment variables for configuration. Pre `v7.2.0`, the following are the available environment variables:
 
 |Available variables     |Default value        |Description                                         |
 |------------------------|------------------------|----------------------------------------------------|
@@ -62,9 +62,14 @@ This image uses environment variables for configuration
 |`STUBS_PORT`    | `8882`|Port for stub portal|
 |`ADMIN_PORT` |`8889`|Port for admin portal |
 |`STUBS_TLS_PORT`   | `7443` |Port for stub portal over SSL|
-|`WITH_STUB_CACHE_DISABLED`| no default |Disables matched stubs in-memory caching  |
 |`WITH_DEBUG`     | no default |Dumps raw HTTP request to the console |
 |`WITH_WATCH`     | no default |Periodically scans for changes & reloads YAML configs |
+
+As of `v7.2.0` (incl.), there is an additional environment variable available:
+
+|Available variables     |Default value        |Description                                         |
+|------------------------|------------------------|----------------------------------------------------|
+|`WITH_STUB_CACHE_DISABLED`| no default |Disables matched stubs in-memory caching  |
 
 See https://github.com/azagniotov/stubby4j#command-line-switches for more information.
 
