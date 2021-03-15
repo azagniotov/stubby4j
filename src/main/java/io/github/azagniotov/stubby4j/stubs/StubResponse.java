@@ -59,19 +59,6 @@ public class StubResponse implements ReflectableStub {
         return new StubResponse.Builder().withHttpStatusCode(Code.UNAUTHORIZED).build();
     }
 
-    public static StubResponse redirectResponse(final Optional<StubResponse> stubResponseOptional) {
-        if (!stubResponseOptional.isPresent()) {
-            return new StubResponse.Builder().withHttpStatusCode(Code.MOVED_PERMANENTLY).build();
-        }
-        final StubResponse foundStubResponse = stubResponseOptional.get();
-        return new StubResponse(
-                foundStubResponse.getHttpStatusCode(),
-                foundStubResponse.getBody(),
-                foundStubResponse.getRawFile(),
-                foundStubResponse.getLatency(),
-                foundStubResponse.getHeaders());
-    }
-
     public Code getHttpStatusCode() {
         return httpStatusCode;
     }

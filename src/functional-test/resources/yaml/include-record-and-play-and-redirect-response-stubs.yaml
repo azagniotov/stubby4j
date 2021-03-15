@@ -1,0 +1,147 @@
+- request:
+    method: GET
+    url: /recordable/feed/1
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
+
+
+- request:
+    method: GET
+    url: /recordable/feed/2
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/xml
+    status: 200
+    body: <?xml version="1.0" encoding="UTF-8"?><payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>
+
+
+- request:
+    method: [GET]
+    url: /feed/1
+    query:
+      greeting: nihao
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    body: http://localhost:5892/recordable
+
+
+- request:
+    method: [GET]
+    url: /feed/2
+    query:
+      greeting: nihao
+      language: russian
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    body: http://localhost:5892/recordable
+
+
+- request:
+    method: [GET]
+    url: /feed/3
+    query:
+      greeting: "([0-9]+)"
+      language: "([a-zA-Z]+)"
+    headers:
+      content-type: application/json
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: http://localhost:5892/recordableAgain
+
+
+- request:
+    method: GET
+    url: /recordableAgain/feed/3
+    query:
+      greeting: 12345
+      language: chinese
+    headers:
+      content-type: application/json
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: "{\"status\" : \"OK\", \"description\" : \"actual query params when recording\"}"
+
+
+- request:
+    method: [GET]
+    url: /maps/api/geocode/json
+    query:
+      address: "1600%20Amphitheatre%20Parkway,%20Mountain%20View,%20CA"
+      sensor: false
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: http://maps.googleapis.com
+
+
+- request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /item/redirect/source
+
+  response:
+    latency: 1000
+    status: 301
+    headers:
+      location: /item/redirect/destination
+
+
+- request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /item/redirect/source/with/wrong/status
+
+  response:
+    status: 200
+    headers:
+      location: /item/redirect/destination
+
+
+- request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /item/redirect/destination
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      {"response" : "content"}

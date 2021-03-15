@@ -36,7 +36,9 @@ import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML
 
 public class StubsPortalTest {
 
-    // This port needs to be hardcoded due to `location` related redirection tests
+    // This port needs to be hardcoded due to tests for the:
+    // 1. recordable response behavior (the `response` `body` key value starts with http://..... )
+    // 2. redirect response behavior (the `location` header is set on the `response` )
     private static final int STUBS_PORT = 5892;
     private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
@@ -906,6 +908,44 @@ public class StubsPortalTest {
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         request.execute();
+    }
+
+    @Test
+    public void should_MakeSuccessfulRedirectRequest_WhenLocationHeaderAndStatusSet() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/item/redirect/source");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+        request.setHeaders(requestHeaders);
+
+        final HttpResponse response = request.execute();
+
+        final HttpHeaders headers = response.getHeaders();
+        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
+
+        String responseContent = response.parseAsString().trim();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(responseContent).isEqualTo("{\"response\" : \"content\"}");
+    }
+
+    @Test
+    public void should_NotMakeRedirectRequest_WhenLocationHeaderButStatusNot30x() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/item/redirect/source/with/wrong/status");
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(HEADER_APPLICATION_JSON);
+        request.setHeaders(requestHeaders);
+
+        final HttpResponse response = request.execute();
+
+        // No redirect, only empty response because the stubbed status code is not 30x
+        String responseContent = response.parseAsString().trim();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(responseContent).isEmpty();
     }
 
     @Test
