@@ -19,8 +19,8 @@ public final class Common {
     public static final String HEADER_APPLICATION_JSON = "application/json";
     public static final String HEADER_APPLICATION_XML = "application/xml";
     public static final String HEADER_X_STUBBY_RESOURCE_ID = "x-stubby-resource-id";
-    public static final String HEADER_X_STUBBY_PROXIED_REQUEST = "x-stubby4j-proxied-request";
-    public static final String HEADER_X_STUBBY_PROXIED_RESPONSE = "x-stubby4j-proxied-response";
+    public static final String HEADER_X_STUBBY_PROXY_REQUEST = "x-stubby4j-proxy-request-uuid";
+    public static final String HEADER_X_STUBBY_PROXY_RESPONSE = "x-stubby4j-proxy-response-uuid";
 
     private Common() {
 
