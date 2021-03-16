@@ -940,8 +940,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -956,8 +956,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }
@@ -984,8 +984,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -1022,8 +1022,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }
@@ -1063,8 +1063,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -1093,8 +1093,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }

@@ -8,7 +8,6 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
-import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import org.eclipse.jetty.http.HttpStatus;
@@ -105,8 +104,8 @@ public class StubsAdminPortalsTest {
         final HttpRequest stubsGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
         final HttpResponse preDeletionStubGetResponse = stubsGetRequest.execute();
         final HttpHeaders preDeletionResponseHeaders = preDeletionStubGetResponse.getHeaders();
-        assertThat(preDeletionResponseHeaders.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
-        assertThat(preDeletionResponseHeaders.getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo("1");
+        assertThat(preDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
+        assertThat(preDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo("1");
 
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, String.format("%s%s", ADMIN_URL, "/0"));
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
@@ -117,8 +116,8 @@ public class StubsAdminPortalsTest {
         final HttpRequest postDeletionStubGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
         final HttpResponse postDeletionStubGetResponse = postDeletionStubGetRequest.execute();
         final HttpHeaders postDeletionResponseHeaders = postDeletionStubGetResponse.getHeaders();
-        assertThat(postDeletionResponseHeaders.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
-        assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo("0");
+        assertThat(postDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
+        assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo("0");
     }
 
     @Test
@@ -136,7 +135,7 @@ public class StubsAdminPortalsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/request/post");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
@@ -161,7 +160,7 @@ public class StubsAdminPortalsTest {
         final String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/body");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
@@ -179,7 +178,7 @@ public class StubsAdminPortalsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/1/file");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
@@ -203,7 +202,7 @@ public class StubsAdminPortalsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/completeYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
@@ -241,7 +240,7 @@ public class StubsAdminPortalsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/requestAsYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
@@ -272,7 +271,7 @@ public class StubsAdminPortalsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
-        final String resourceID = response.getHeaders().getFirstHeaderStringValue(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
         final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/responseAsYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 

@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
+import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus.Code;
@@ -23,8 +24,6 @@ import static org.eclipse.jetty.http.HttpStatus.getCode;
 
 
 public class StubResponse implements ReflectableStub {
-
-    public static final String STUBBY_RESOURCE_ID_HEADER = "x-stubby-resource-id";
 
     private final Code httpStatusCode;
     private final String body;
@@ -150,11 +149,11 @@ public class StubResponse implements ReflectableStub {
     }
 
     void addResourceIDHeader(final int resourceIndex) {
-        getHeaders().put(STUBBY_RESOURCE_ID_HEADER, String.valueOf(resourceIndex));
+        getHeaders().put(Common.HEADER_X_STUBBY_RESOURCE_ID, String.valueOf(resourceIndex));
     }
 
     String getResourceIDHeader() {
-        return getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER);
+        return getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID);
     }
 
     public static final class Builder extends AbstractBuilder<StubResponse> {

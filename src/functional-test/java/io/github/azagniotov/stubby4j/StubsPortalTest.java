@@ -9,7 +9,6 @@ import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
-import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -812,9 +811,9 @@ public class StubsPortalTest {
 
         final HttpHeaders headers = response.getHeaders();
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
-        assertThat(headers.containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isTrue();
+        assertThat(headers.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
 
-        final List<String> headerValues = asCheckedArrayList(headers.get(StubResponse.STUBBY_RESOURCE_ID_HEADER), String.class);
+        final List<String> headerValues = asCheckedArrayList(headers.get(Common.HEADER_X_STUBBY_RESOURCE_ID), String.class);
 
         assertThat(headerValues.get(0)).isEqualTo("1");
     }

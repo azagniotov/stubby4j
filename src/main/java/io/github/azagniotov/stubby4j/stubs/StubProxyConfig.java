@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
