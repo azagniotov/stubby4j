@@ -21,10 +21,8 @@ public abstract class AbstractBuilder<T extends ReflectableStub> {
         return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : defaultValue;
     }
 
-    public void stage(final Optional<ConfigurableYAMLProperty> fieldNameOptional, final Optional<Object> fieldValueOptional) {
-        if (fieldNameOptional.isPresent() && fieldValueOptional.isPresent()) {
-            fieldNameAndValues.put(fieldNameOptional.get(), fieldValueOptional.get());
-        }
+    public void stage(final ConfigurableYAMLProperty fieldName, final Optional<Object> fieldValueOptional) {
+        fieldValueOptional.ifPresent(value -> fieldNameAndValues.put(fieldName, value));
     }
 
     public abstract T build();

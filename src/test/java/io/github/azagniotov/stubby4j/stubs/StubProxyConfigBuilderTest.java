@@ -55,6 +55,15 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyNamesDifferent() throws Exception {
+
+        final StubProxyConfig expectedStubProxyConfig = builder.withProxyName("one").build();
+        final StubProxyConfig assertingStubProxyConfig = builder.withProxyName("two").build();
+
+        assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
+    }
+
+    @Test
     public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyPropertiesDifferent() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder.withProxyProperty("key", "anotherValue").build();

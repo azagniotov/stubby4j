@@ -47,8 +47,8 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.fromString;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.ofNullableProperty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
@@ -69,11 +69,6 @@ public class YamlParser {
                 ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.INCLUDES.toString());
     }
 
-    public boolean isProxyConfigMapping(final Object loadedYamlConfig) {
-        return loadedYamlConfig instanceof Map &&
-                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
-    }
-
     public List<File> getYamlIncludes(final String dataConfigHomeDirectory, final Object loadedYamlConfig) throws IOException {
         final Object includePathsObject = ((Map) loadedYamlConfig).get(ConfigurableYAMLProperty.INCLUDES.toString());
         final List<String> includePaths = asCheckedArrayList(includePathsObject, String.class);
@@ -90,7 +85,6 @@ public class YamlParser {
     public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configContent));
     }
-
 
     public YamlParseResultSet parse(final String dataConfigHomeDirectory, final File configFile) throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configFile));
@@ -238,26 +232,26 @@ public class YamlParser {
 
             final Object rawFieldNameValue = propertyPair.getValue();
             if (rawFieldNameValue instanceof List) {
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(rawFieldNameValue));
+                stubTypeBuilder.stage(fromString(stageableFieldName), of(rawFieldNameValue));
                 continue;
             }
 
             if (rawFieldNameValue instanceof Map) {
                 final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldNameValue, String.class, String.class);
                 final Map<String, String> headers = configureAuthorizationHeader(rawHeaders);
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(headers));
+                stubTypeBuilder.stage(fromString(stageableFieldName), of(headers));
                 continue;
             }
 
             if (METHOD.isA(stageableFieldName)) {
                 final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldNameValue)));
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(methods));
+                stubTypeBuilder.stage(fromString(stageableFieldName), of(methods));
                 continue;
             }
 
             if (FILE.isA(stageableFieldName)) {
                 final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldNameValue);
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
+                stubTypeBuilder.stage(fromString(stageableFieldName), fileContentOptional);
                 continue;
             }
 
@@ -270,11 +264,11 @@ public class YamlParser {
 
                 final Optional<StubProxyStrategy> stubProxyStrategyOptional = StubProxyStrategy.ofNullableProperty(stubbedProperty);
                 final Optional<Object> stubProxyStrategyObjectOptional = stubProxyStrategyOptional.map(stubProxyStrategy -> stubProxyStrategy);
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), stubProxyStrategyObjectOptional);
+                stubTypeBuilder.stage(fromString(stageableFieldName), stubProxyStrategyObjectOptional);
                 continue;
             }
 
-            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(objectToString(rawFieldNameValue)));
+            stubTypeBuilder.stage(fromString(stageableFieldName), ofNullable(objectToString(rawFieldNameValue)));
         }
 
         return stubTypeBuilder;
@@ -297,9 +291,9 @@ public class YamlParser {
 
                 if (FILE.isA(stageableFieldName)) {
                     final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
-                    stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
+                    stubResponseBuilder.stage(fromString(stageableFieldName), fileContentOptional);
                 } else {
-                    stubResponseBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(propertyPair.getValue()));
+                    stubResponseBuilder.stage(fromString(stageableFieldName), ofNullable(propertyPair.getValue()));
                 }
             }
 
@@ -365,6 +359,11 @@ public class YamlParser {
         }
 
         return headers;
+    }
+
+    private boolean isProxyConfigMapping(final Object loadedYamlConfig) {
+        return loadedYamlConfig instanceof Map &&
+                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
     }
 
     private void checkStubbedProperty(String stageableFieldName) {

@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 
@@ -52,8 +51,8 @@ public enum ConfigurableYAMLProperty {
         return !PROPERTY_NAME_TO_ENUM_MEMBER.containsKey(toLower(stubbedProperty));
     }
 
-    public static Optional<ConfigurableYAMLProperty> ofNullableProperty(final String stubbedProperty) {
-        return Optional.ofNullable(PROPERTY_NAME_TO_ENUM_MEMBER.get(toLower(stubbedProperty)));
+    public static ConfigurableYAMLProperty fromString(final String stubbedProperty) {
+        return PROPERTY_NAME_TO_ENUM_MEMBER.get(toLower(stubbedProperty));
     }
 
     public boolean isA(final String stubbedProperty) {
