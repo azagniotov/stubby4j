@@ -1134,9 +1134,8 @@ public class StubRepositoryTest {
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
 
-        assertThat(Code.USE_PROXY).isEqualTo(foundStubResponse.getHttpStatusCode());
-        assertThat(foundStubResponse.getHeaders().containsKey("Server")).isTrue();
-        assertThat(foundStubResponse.getHeaders().containsKey("x-ratelimit-remaining")).isTrue();
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getHeaders().isEmpty()).isFalse();
 
         assertThat(foundStubResponse.getBody()).isEqualTo(
                 "{" + BR +

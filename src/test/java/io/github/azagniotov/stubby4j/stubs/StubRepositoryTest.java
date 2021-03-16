@@ -7,6 +7,7 @@ import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +21,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +31,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_REQUEST;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -724,36 +730,122 @@ public class StubRepositoryTest {
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
-//
-//    @Test
-//    public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
-//        final String sourceToRecord = "http://google.com";
-//        final String expectedOriginalUrl = "/resource/item/1";
-//        final YamlParseResultSet yamlParseResultSet = parseYaml(expectedOriginalUrl, responseBuilder.emptyWithBody(sourceToRecord).build(), STUB_UUID_ONE);
-//
-//        spyStubRepository.resetStubsCache(yamlParseResultSet);
-//
-//        final StubResponse stubbedResponse = spyStubRepository.getStubs().get(0).getResponse(true);
-//        assertThat(stubbedResponse.getBody()).isEqualTo(sourceToRecord);
-//        assertThat(stubbedResponse.isRecordingRequired()).isTrue();
-//
-//        final String actualResponseText = "OK, this is recorded response text!";
-//        final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
-//        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
-//
-//        final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
-//        for (int idx = 0; idx < 5; idx++) {
-//            doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
-//            final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
-//            final StubResponse recordedResponse = stubSearchResult.getMatch();
-//
-//            assertThat(recordedResponse.getBody()).isEqualTo(actualResponseText);
-//            assertThat(recordedResponse.isRecordingRequired()).isFalse();
-//            assertThat(stubbedResponse.getBody()).isEqualTo(recordedResponse.getBody());
-//            assertThat(stubbedResponse.isRecordingRequired()).isFalse();
-//        }
-//        verify(mockStubbyHttpTransport).httpRequestFromStub(eq(stubbedRequest), anyString());
-//    }
+
+    @Test
+    public void shouldPassExpectedHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
+                .withProxyStrategy("as-is")
+                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfig.getProxyName(), stubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        final String actualResponseText = "OK, this is proxied response text!";
+        final HashMap<String, List<String>> httpProxyResponseHeaders = new HashMap<>();
+        httpProxyResponseHeaders.put(null, Collections.singletonList("someNullHeaderValue"));
+        httpProxyResponseHeaders.put("Server", Collections.singletonList("CloudFare"));
+        httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
+        httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        final StubResponse proxiedResponse = stubSearchResult.getMatch();
+
+        assertThat(proxiedResponse.getBody()).isEqualTo(actualResponseText);
+        assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.CREATED);
+
+        assertThat(proxiedResponse.getHeaders().size()).isEqualTo(5);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXIED_RESPONSE)).isEqualTo("true");
+        assertThat(proxiedResponse.getHeaders().get("null")).isEqualTo("someNullHeaderValue");
+        assertThat(proxiedResponse.getHeaders().get("Server")).isEqualTo("CloudFare");
+        assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
+        assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+
+        assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXIED_REQUEST)).isTrue();
+    }
+
+    @Test
+    public void shouldPassExpectedHeadersToHttpTransport_WhenResponseIsProxiableButExceptionThrow() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
+                .withProxyStrategy("as-is")
+                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfig.getProxyName(), stubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        final String actualResponseText = "OK, this is proxied response text!";
+        final HashMap<String, List<String>> httpProxyResponseHeaders = new HashMap<>();
+        httpProxyResponseHeaders.put(null, Collections.singletonList("someNullHeaderValue"));
+        httpProxyResponseHeaders.put("Server", Collections.singletonList("CloudFare"));
+        httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
+        httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenThrow(new IOException("Boom!"));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        final StubResponse proxiedResponse = stubSearchResult.getMatch();
+
+        assertThat(proxiedResponse.getBody()).isEqualTo("Boom!");
+        assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.INTERNAL_SERVER_ERROR);
+
+        assertThat(proxiedResponse.getHeaders().size()).isEqualTo(1);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXIED_RESPONSE)).isEqualTo("true");
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+
+        assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXIED_REQUEST)).isTrue();
+    }
 
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing() throws Exception {
