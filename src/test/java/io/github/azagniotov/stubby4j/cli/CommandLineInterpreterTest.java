@@ -291,7 +291,7 @@ public class CommandLineInterpreterTest {
     @Test
     public void shouldBeFalseThatYamlIsNotProvided() throws Exception {
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-        commandLineInterpreter.parseCommandLine(new String[]{"alex", "zagniotov"});
+        commandLineInterpreter.parseCommandLine(new String[]{"cheburashka", "zagniotov"});
         final boolean isYamlProvided = commandLineInterpreter.isYamlProvided();
 
         assertThat(isYamlProvided).isFalse();
@@ -302,7 +302,7 @@ public class CommandLineInterpreterTest {
         expectedException.expect(ParseException.class);
 
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
-        commandLineInterpreter.parseCommandLine(new String[]{"--alex"});
+        commandLineInterpreter.parseCommandLine(new String[]{"--cheburashka"});
     }
 
     @Test

@@ -61,12 +61,14 @@ public class StubRepositoryTest {
     @Mock
     private YamlParser mockYamlParser;
 
-
     @Captor
     private ArgumentCaptor<String> stringCaptor;
 
     @Captor
     private ArgumentCaptor<File> fileCaptor;
+
+    @Captor
+    private ArgumentCaptor<StubRequest> stubRequestCaptor;
 
     @Captor
     private ArgumentCaptor<YamlParseResultSet> yamlParseResultSetCaptor;
@@ -527,7 +529,7 @@ public class StubRepositoryTest {
     public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
         final String paramOne = "names";
-        final String paramOneValue = "[\"alex\",\"tracy\"]";
+        final String paramOneValue = "[\"cheburashka\",\"wendy\"]";
 
         final String url = "/invoice/789";
 
@@ -539,7 +541,7 @@ public class StubRepositoryTest {
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22cheburashka%22,%22wendy%22]");
 
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
 
@@ -550,7 +552,7 @@ public class StubRepositoryTest {
     public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
 
         final String paramOne = "names";
-        final String paramOneValue = "[\"alex\",\"tracy\"]";
+        final String paramOneValue = "[\"cheburashka\",\"wendy\"]";
 
         final String url = "/invoice/789";
 
@@ -562,7 +564,7 @@ public class StubRepositoryTest {
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22alex%22,%22tracy%22%5D");
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%22cheburashka%22,%22wendy%22%5D");
 
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
 
@@ -573,7 +575,7 @@ public class StubRepositoryTest {
     public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
 
         final String paramOne = "names";
-        final String paramOneValue = "['alex','tracy']";
+        final String paramOneValue = "['cheburashka','wendy']";
 
         final String url = "/invoice/789";
 
@@ -586,7 +588,7 @@ public class StubRepositoryTest {
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27alex%27,%27tracy%27%5D");
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=%5B%27cheburashka%27,%27wendy%27%5D");
 
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
 
@@ -722,12 +724,42 @@ public class StubRepositoryTest {
 
         assertThat(assertingRequest).isEqualTo(expectedRequest);
     }
+//
+//    @Test
+//    public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
+//        final String sourceToRecord = "http://google.com";
+//        final String expectedOriginalUrl = "/resource/item/1";
+//        final YamlParseResultSet yamlParseResultSet = parseYaml(expectedOriginalUrl, responseBuilder.emptyWithBody(sourceToRecord).build(), STUB_UUID_ONE);
+//
+//        spyStubRepository.resetStubsCache(yamlParseResultSet);
+//
+//        final StubResponse stubbedResponse = spyStubRepository.getStubs().get(0).getResponse(true);
+//        assertThat(stubbedResponse.getBody()).isEqualTo(sourceToRecord);
+//        assertThat(stubbedResponse.isRecordingRequired()).isTrue();
+//
+//        final String actualResponseText = "OK, this is recorded response text!";
+//        final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
+//        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
+//
+//        final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
+//        for (int idx = 0; idx < 5; idx++) {
+//            doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+//            final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+//            final StubResponse recordedResponse = stubSearchResult.getMatch();
+//
+//            assertThat(recordedResponse.getBody()).isEqualTo(actualResponseText);
+//            assertThat(recordedResponse.isRecordingRequired()).isFalse();
+//            assertThat(stubbedResponse.getBody()).isEqualTo(recordedResponse.getBody());
+//            assertThat(stubbedResponse.isRecordingRequired()).isFalse();
+//        }
+//        verify(mockStubbyHttpTransport).httpRequestFromStub(eq(stubbedRequest), anyString());
+//    }
 
     @Test
     public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing() throws Exception {
 
         final String paramOne = "names";
-        final String paramOneValue = "[\"alex\", \"tracy\"]";
+        final String paramOneValue = "[\"cheburashka\", \"wendy\"]";
 
         final String url = "/invoice/789";
 
@@ -740,7 +772,7 @@ public class StubRepositoryTest {
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
-        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22alex%22,%22tracy%22]");
+        when(mockHttpServletRequest.getQueryString()).thenReturn("names=[%22cheburashka%22,%22wendy%22]");
 
         final StubRequest assertingRequest = spyStubRepository.toStubRequest(mockHttpServletRequest);
 

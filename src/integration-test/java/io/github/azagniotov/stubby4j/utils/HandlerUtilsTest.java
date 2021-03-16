@@ -21,8 +21,8 @@ public class HandlerUtilsTest {
 
     @Test
     public void shouldPopulateHtmlTemplate() throws Exception {
-        final String templateContent = HandlerUtils.populateHtmlTemplate("test-template", "alex");
-        assertThat("<html><head></head><body>alex</body></html>").isEqualTo(templateContent);
+        final String templateContent = HandlerUtils.populateHtmlTemplate("test-template", "cheburashka");
+        assertThat("<html><head></head><body>cheburashka</body></html>").isEqualTo(templateContent);
     }
 
     @Test
@@ -30,6 +30,6 @@ public class HandlerUtilsTest {
 
         expectedException.expect(IOException.class);
 
-        HandlerUtils.populateHtmlTemplate("non-existent-template", "alex");
+        HandlerUtils.populateHtmlTemplate("non-existent-template", "cheburashka");
     }
 }

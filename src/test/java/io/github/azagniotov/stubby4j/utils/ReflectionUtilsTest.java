@@ -65,7 +65,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void shouldReturnPropertyValueWhenClassHasDeclaredMethods() throws Exception {
-        final String expectedMethodValue = "alex";
+        final String expectedMethodValue = "cheburashka";
         final Object result = ReflectionUtils.getPropertyValue(new MethodFulInterface() {
             @Override
             public String getName() {
