@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.proxiedResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logAssertingRequest;
@@ -39,6 +40,8 @@ import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFi
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STATUS;
 import static java.util.Collections.list;
 
 public class StubRepository {
@@ -51,6 +54,7 @@ public class StubRepository {
 
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
     private final ConcurrentHashMap<String, StubHttpLifecycle> uuidToStub;
+    private final ConcurrentHashMap<String, StubProxyConfig> proxyConfigs;
 
     private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
     private final StubbyHttpTransport stubbyHttpTransport;
@@ -60,6 +64,7 @@ public class StubRepository {
                           final CompletableFuture<YamlParseResultSet> stubLoadComputation) {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
+        this.proxyConfigs = new ConcurrentHashMap<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = new StubbyHttpTransport();
@@ -117,12 +122,15 @@ public class StubRepository {
         return builder.withQuery(constructParamMap(request.getQueryString())).build();
     }
 
-    private StubResponse findMatch(final StubHttpLifecycle incomingRequest) {
+    private StubResponse findMatch(final StubHttpLifecycle incomingHttpLifecycle) {
 
-        final Optional<StubHttpLifecycle> matchedStubOptional = matchStub(incomingRequest);
-
+        final Optional<StubHttpLifecycle> matchedStubOptional = matchStub(incomingHttpLifecycle);
         if (!matchedStubOptional.isPresent()) {
-            return notFoundResponse();
+            if (!proxyConfigs.isEmpty()) {
+                return proxyRequest(incomingHttpLifecycle);
+            } else {
+                return notFoundResponse();
+            }
         }
 
         final StubHttpLifecycle matchedStub = matchedStubOptional.get();
@@ -131,7 +139,7 @@ public class StubRepository {
         resourceStats.get(resourceId).incrementAndGet();
 
         final StubResponse matchedStubResponse = matchedStub.getResponse(true);
-        if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingRequest)) {
+        if (matchedStub.isAuthorizationRequired() && matchedStub.isIncomingRequestUnauthorized(incomingHttpLifecycle)) {
             return unauthorizedResponse();
         }
 
@@ -142,15 +150,9 @@ public class StubRepository {
         }
 
         if (matchedStubResponse.isRecordingRequired()) {
-            final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
-            try {
-                final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
-                injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
-            } catch (Exception e) {
-                ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
-                LOGGER.error("Could not record from {}.", recordingSource, e);
-            }
+            recordResponse(incomingHttpLifecycle, matchedStub, matchedStubResponse);
         }
+
         return matchedStubResponse;
     }
 
@@ -192,6 +194,38 @@ public class StubRepository {
             return Optional.of(cachedMatchCandidate);
 
         }).orElseGet(() -> matchAll(incomingStub, initialStart));
+    }
+
+    private StubResponse proxyRequest(final StubHttpLifecycle incomingHttpLifecycle) {
+        final StubResponse proxiedResponse = proxiedResponse();
+
+        // The catch-all will always be there if we have proxy configs, otherwise the YamlParser throws
+        final StubProxyConfig catchAllProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
+        final StubRequest incomingRequest = incomingHttpLifecycle.getRequest();
+        final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getProxyEndpoint(), incomingHttpLifecycle.getUrl());
+
+        try {
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(incomingRequest, proxyEndpoint);
+            injectObjectFields(proxiedResponse, HEADERS.toString(), stubbyResponse.getContent());
+            injectObjectFields(proxiedResponse, STATUS.toString(), stubbyResponse.getResponseCode());
+            injectObjectFields(proxiedResponse, BODY.toString(), stubbyResponse.getContent());
+        } catch (Exception e) {
+            ANSITerminal.error(String.format("Could not proxy to %s: %s", proxyEndpoint, e.toString()));
+            LOGGER.error("Could not proxy to {}.", proxyEndpoint, e);
+        }
+
+        return proxiedResponse;
+    }
+
+    private void recordResponse(StubHttpLifecycle incomingRequest, StubHttpLifecycle matchedStub, StubResponse matchedStubResponse) {
+        final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
+        try {
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
+            injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
+        } catch (Exception e) {
+            ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
+            LOGGER.error("Could not record from {}.", recordingSource, e);
+        }
     }
 
     private Optional<StubHttpLifecycle> matchAll(final StubHttpLifecycle incomingStub, final long initialStart) {
@@ -389,12 +423,12 @@ public class StubRepository {
         }
     }
 
-
     public void retrieveLoadedStubs() {
         try {
             final YamlParseResultSet yamlParseResultSet = stubLoadComputation.get();
             stubs.addAll(yamlParseResultSet.getStubs());
             uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
+            proxyConfigs.putAll(yamlParseResultSet.getProxyConfigs());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

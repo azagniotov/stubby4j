@@ -73,6 +73,19 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigReturnsExpectedEndpoint() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder
+                .withProxyName("unique")
+                .withProxyStrategy("as-is")
+                .withProxyProperty("key", "value")
+                .withProxyPropertyEndpoint("http://google.com")
+                .build();
+
+        assertThat(stubProxyConfig.getProxyEndpoint()).isEqualTo("http://google.com");
+    }
+
+    @Test
     public void stubbedProxyConfigEqualsAssertingConfig() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder

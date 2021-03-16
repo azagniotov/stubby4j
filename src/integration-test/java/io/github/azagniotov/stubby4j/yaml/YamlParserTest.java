@@ -1049,6 +1049,23 @@ public class YamlParserTest {
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
+    @Test
+    public void shouldThrowWhenDefaultProxyConfigMissing() throws Exception {
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-without-default-config.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Missing default proxy config";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {
         return new YamlParser().parse(".", yaml);
     }

@@ -50,6 +50,16 @@ public class StubResponse implements ReflectableStub {
         return new StubResponse.Builder().build();
     }
 
+    public static StubResponse proxiedResponse() {
+        // The 305 HTTP code has been deprecated:
+        // 1. https://tools.ietf.org/html/rfc2616#section-10.3.6
+        // 2. https://tools.ietf.org/html/rfc7231#section-6.4.5
+        //
+        // This HTTP code is not going to be rendered to the caller as part of stubby4j HTTP response,
+        // but only used internally by the StubResponseHandlingStrategy
+        return new StubResponse.Builder().withHttpStatusCode(Code.USE_PROXY).build();
+    }
+
     public static StubResponse notFoundResponse() {
         return new StubResponse.Builder().withHttpStatusCode(Code.NOT_FOUND).build();
     }
