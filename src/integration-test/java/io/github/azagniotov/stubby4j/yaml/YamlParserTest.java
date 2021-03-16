@@ -3,6 +3,8 @@ package io.github.azagniotov.stubby4j.yaml;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -20,6 +22,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
@@ -27,6 +30,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEA
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
+import static org.junit.Assert.assertThrows;
 
 
 public class YamlParserTest {
@@ -943,6 +947,106 @@ public class YamlParserTest {
         assertThat(yamlIncludes.isEmpty()).isFalse();
         assertThat(yamlIncludes.size()).isEqualTo(3);
         assertThat(yamlIncludes.get(0).getAbsolutePath()).isEqualTo(parentDirectory + "/multi-included-service-1.yaml");
+    }
+
+    @Test
+    public void shouldUnmarshall_toProxyConfigs() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-invalid-config.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        final Map<String, StubProxyConfig> proxyConfigs = yamlParseResultSet.getProxyConfigs();
+        assertThat(proxyConfigs.isEmpty()).isFalse();
+
+        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
+        assertThat(defaultStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+        assertThat(defaultStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
+        assertThat(defaultStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
+        assertThat(defaultStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+
+        final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
+        assertThat(customStubProxyConfig.getProxyName()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
+        assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+
+        assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
+                "proxy-config:\n" +
+                        "  proxy-name: some-unique-name\n" +
+                        "  proxy-strategy: custom\n" +
+                        "  proxy-properties:\n" +
+                        "    endpoint: https://jsonplaceholder.typicode.com\n");
+    }
+
+    @Test
+    public void shouldUnmarshall_toProxyConfigsWithStubs() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config-with-stubs.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        final Map<String, StubProxyConfig> proxyConfigs = yamlParseResultSet.getProxyConfigs();
+        assertThat(proxyConfigs.isEmpty()).isFalse();
+
+        final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
+        assertThat(stubs.isEmpty()).isFalse();
+        assertThat(stubs.size()).isEqualTo(1);
+        assertThat(stubs.get(0).getRequest().getUrl()).isEqualTo("^/resources/asn/.*$");
+        assertThat(stubs.get(0).getResponses().get(0).getBody()).isEqualTo("{\"status\": \"ASN found!\"}");
+
+        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
+        assertThat(defaultStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+        assertThat(defaultStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
+        assertThat(defaultStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
+        assertThat(defaultStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+
+        final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
+        assertThat(customStubProxyConfig.getProxyName()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
+        assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+
+        assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
+                "proxy-config:\n" +
+                        "  proxy-name: some-unique-name\n" +
+                        "  proxy-strategy: custom\n" +
+                        "  proxy-properties:\n" +
+                        "    endpoint: https://jsonplaceholder.typicode.com\n");
+    }
+
+    @Test
+    public void shouldThrowWhenProxyConfigWithInvalidStrategyName() throws Exception {
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "invalid-strategy-name";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenProxyConfigWithDoubleName() throws Exception {
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-double-name.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Proxy config with name some-unique-name already exists";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {

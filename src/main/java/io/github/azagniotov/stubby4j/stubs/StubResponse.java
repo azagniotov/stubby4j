@@ -8,7 +8,6 @@ import org.eclipse.jetty.http.HttpStatus.Code;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
