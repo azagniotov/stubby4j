@@ -951,7 +951,7 @@ public class YamlParserTest {
 
     @Test
     public void shouldUnmarshall_toProxyConfigs() throws Exception {
-        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-invalid-config.yaml");
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config.yaml");
         final InputStream stubsConfigStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
@@ -1019,7 +1019,7 @@ public class YamlParserTest {
     public void shouldThrowWhenProxyConfigWithInvalidStrategyName() throws Exception {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config.yaml");
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-invalid-config.yaml");
             final InputStream stubsConfigStream = yamlUrl.openStream();
             final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 

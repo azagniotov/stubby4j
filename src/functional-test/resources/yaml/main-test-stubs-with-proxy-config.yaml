@@ -1,0 +1,3 @@
+includes:
+  - include-all-test-stubs.yaml
+  - include-proxy-config.yaml
