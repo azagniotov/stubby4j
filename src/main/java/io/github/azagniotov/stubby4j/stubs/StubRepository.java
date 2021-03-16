@@ -4,7 +4,6 @@ import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
-import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -26,13 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_REQUEST;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_RESPONSE;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.constructParamMap;
@@ -206,25 +206,26 @@ public class StubRepository {
         final StubRequest incomingRequest = incomingHttpLifecycle.getRequest();
         final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getProxyEndpoint(), incomingHttpLifecycle.getUrl());
 
-        final Map<String, String> flatHeaders = new HashMap<>();
-        flatHeaders.put(HEADER_X_STUBBY_PROXIED_RESPONSE, "true");
+        final String proxyRoundTripUuid = UUID.randomUUID().toString();
+        final Map<String, String> proxyResponseFlatHeaders = new HashMap<>();
+        proxyResponseFlatHeaders.put(HEADER_X_STUBBY_PROXY_RESPONSE, proxyRoundTripUuid);
 
         try {
-            incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXIED_REQUEST, DateTimeUtils.systemDefault());
+            incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXY_REQUEST, proxyRoundTripUuid);
             final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(incomingRequest, proxyEndpoint);
             for (Map.Entry<String, List<String>> entry : stubbyResponse.headers().entrySet()) {
                 final String headerName = ObjectUtils.isNull(entry.getKey()) ? "null" : entry.getKey();
                 if (entry.getValue().size() == 1) {
-                    flatHeaders.put(headerName, entry.getValue().get(0));
+                    proxyResponseFlatHeaders.put(headerName, entry.getValue().get(0));
                 } else {
-                    flatHeaders.put(headerName, new HashSet<>(entry.getValue()).toString());
+                    proxyResponseFlatHeaders.put(headerName, new HashSet<>(entry.getValue()).toString());
                 }
             }
 
             return new StubResponse.Builder()
                     .withHttpStatusCode(getCode(stubbyResponse.statusCode()))
                     .withBody(stubbyResponse.body())
-                    .withHeaders(flatHeaders)
+                    .withHeaders(proxyResponseFlatHeaders)
                     .build();
 
         } catch (Exception e) {
@@ -234,7 +235,7 @@ public class StubRepository {
             return new StubResponse.Builder()
                     .withHttpStatusCode(HttpStatus.Code.INTERNAL_SERVER_ERROR)
                     .withBody(e.getMessage())
-                    .withHeaders(flatHeaders)
+                    .withHeaders(proxyResponseFlatHeaders)
                     .build();
         }
     }

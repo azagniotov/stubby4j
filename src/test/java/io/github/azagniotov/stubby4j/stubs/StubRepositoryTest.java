@@ -31,8 +31,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_REQUEST;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_RESPONSE;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyString;
@@ -779,7 +779,6 @@ public class StubRepositoryTest {
         assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.CREATED);
 
         assertThat(proxiedResponse.getHeaders().size()).isEqualTo(5);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXIED_RESPONSE)).isEqualTo("true");
         assertThat(proxiedResponse.getHeaders().get("null")).isEqualTo("someNullHeaderValue");
         assertThat(proxiedResponse.getHeaders().get("Server")).isEqualTo("CloudFare");
         assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
@@ -788,7 +787,10 @@ public class StubRepositoryTest {
         verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXIED_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+
+        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
     }
 
     @Test
@@ -814,14 +816,6 @@ public class StubRepositoryTest {
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
-
-        final String actualResponseText = "OK, this is proxied response text!";
-        final HashMap<String, List<String>> httpProxyResponseHeaders = new HashMap<>();
-        httpProxyResponseHeaders.put(null, Collections.singletonList("someNullHeaderValue"));
-        httpProxyResponseHeaders.put("Server", Collections.singletonList("CloudFare"));
-        httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
-        httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
-
         when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenThrow(new IOException("Boom!"));
 
         final StubRequest incomingRequest =
@@ -837,14 +831,15 @@ public class StubRepositoryTest {
 
         assertThat(proxiedResponse.getBody()).isEqualTo("Boom!");
         assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.INTERNAL_SERVER_ERROR);
-
         assertThat(proxiedResponse.getHeaders().size()).isEqualTo(1);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXIED_RESPONSE)).isEqualTo("true");
 
         verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXIED_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+
+        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
     }
 
     @Test
