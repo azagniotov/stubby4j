@@ -4,6 +4,7 @@ import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.annotations.PotentiallyFlaky;
 import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
@@ -69,7 +70,8 @@ public class StubRepositoryTest {
     @Spy
     private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE,
             Cache.stubHttpLifecycleCache(false),
-            YAML_PARSE_RESULT_SET_FUTURE);
+            YAML_PARSE_RESULT_SET_FUTURE,
+            new StubbyHttpTransport());
 
     private StubRequest.Builder requestBuilder;
 
@@ -80,7 +82,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldCacheStubOnlyOnFirstRequestWhenUsingDefaultCache() throws Exception {
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE);
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE, new StubbyHttpTransport());
 
         final String url = "/invoice/123";
         final String expectedStatus = "200";
@@ -118,7 +120,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldNoOpCacheEveryRequestWhenUsingNoOpCache() throws Exception {
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyNoOpCache, YAML_PARSE_RESULT_SET_FUTURE);
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyNoOpCache, YAML_PARSE_RESULT_SET_FUTURE, new StubbyHttpTransport());
 
         final String url = "/invoice/123";
         final String expectedStatus = "200";

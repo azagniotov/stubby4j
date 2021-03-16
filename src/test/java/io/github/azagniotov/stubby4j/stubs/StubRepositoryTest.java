@@ -15,13 +15,11 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,9 +83,8 @@ public class StubRepositoryTest {
 
         final StubRepository stubRepository = new StubRepository(CONFIG_FILE,
                 Cache.stubHttpLifecycleCache(false),
-                YAML_PARSE_RESULT_SET_FUTURE);
-        final Field stubbyHttpTransportField = stubRepository.getClass().getDeclaredField("stubbyHttpTransport");
-        FieldSetter.setField(stubRepository, stubbyHttpTransportField, mockStubbyHttpTransport);
+                YAML_PARSE_RESULT_SET_FUTURE,
+                mockStubbyHttpTransport);
 
         spyStubRepository = spy(stubRepository);
     }
@@ -429,7 +426,7 @@ public class StubRepositoryTest {
 
         final String actualResponseText = "OK, this is recorded response text!";
         final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         for (int idx = 0; idx < 5; idx++) {
@@ -442,7 +439,7 @@ public class StubRepositoryTest {
             assertThat(stubbedResponse.getBody()).isEqualTo(recordedResponse.getBody());
             assertThat(stubbedResponse.isRecordingRequired()).isFalse();
         }
-        verify(mockStubbyHttpTransport).requestFromStub(eq(stubbedRequest), anyString());
+        verify(mockStubbyHttpTransport).httpRequestFromStub(eq(stubbedRequest), anyString());
     }
 
     @Test
@@ -483,7 +480,7 @@ public class StubRepositoryTest {
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
         final String actualResponseText = "OK, this is recorded response text!";
-        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
         final StubRequest incomingRequest =
                 requestBuilder
@@ -515,7 +512,7 @@ public class StubRepositoryTest {
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
         final StubRequest matchedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.requestFromStub(eq(matchedRequest), anyString())).thenThrow(IOException.class);
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(matchedRequest), anyString())).thenThrow(IOException.class);
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));

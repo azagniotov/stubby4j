@@ -63,13 +63,14 @@ public class StubRepository {
 
     public StubRepository(final File configFile,
                           final Cache<String, StubHttpLifecycle> stubMatchesCache,
-                          final CompletableFuture<YamlParseResultSet> stubLoadComputation) {
+                          final CompletableFuture<YamlParseResultSet> stubLoadComputation,
+                          final StubbyHttpTransport stubbyHttpTransport) {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
         this.proxyConfigs = new ConcurrentHashMap<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
-        this.stubbyHttpTransport = new StubbyHttpTransport();
+        this.stubbyHttpTransport = stubbyHttpTransport;
         this.resourceStats = new ConcurrentHashMap<>();
         this.stubMatchesCache = stubMatchesCache;
     }
@@ -208,7 +209,7 @@ public class StubRepository {
 
         try {
             incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXIED_REQUEST, DateTimeUtils.systemDefault());
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(incomingRequest, proxyEndpoint);
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(incomingRequest, proxyEndpoint);
 
             injectObjectFields(proxiedResponse, HEADERS.toString(), stubbyResponse.headers());
             injectObjectFields(proxiedResponse, STATUS.toString(), stubbyResponse.statusCode());
@@ -224,7 +225,7 @@ public class StubRepository {
     private void recordResponse(StubHttpLifecycle incomingRequest, StubHttpLifecycle matchedStub, StubResponse matchedStubResponse) {
         final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
         try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(matchedStub.getRequest(), recordingSource);
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(matchedStub.getRequest(), recordingSource);
             injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.body());
         } catch (Exception e) {
             ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));

@@ -1075,7 +1075,7 @@ public class StubsPortalTest {
             String firstCallResponseContent = actualResponse.parseAsString().trim();
             assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
             // Make sure we only hitting recordable source once
-            assertThat(actualConsoleOutput).contains("Recording HTTP response using");
+            assertThat(actualConsoleOutput).contains("HTTP request from stub metadata to");
 
             if (idx == LIMIT) {
                 System.setOut(oldPrintStream);

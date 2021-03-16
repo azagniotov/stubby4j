@@ -51,13 +51,13 @@ public class StubbyHttpTransport {
 
     }
 
-    public StubbyResponse requestFromStub(final StubRequest request, final String recordingSource) throws IOException {
+    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, recordingSource);
+            final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
-        LOGGER.debug("Recording HTTP response using {} [{}].", method, recordingSource);
+        LOGGER.debug("Making {} HTTP request from stub metadata to: [{}].", method, recordingSource);
         return request(method,
                 recordingSource,
                 request.getPostBody(),

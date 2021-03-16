@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.cli.EmptyLogger;
+import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
@@ -30,7 +31,7 @@ public class StubbyManagerFactory {
         final boolean shouldDisableStubCache = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
         final Cache<String, StubHttpLifecycle> stubCache = Cache.stubHttpLifecycleCache(shouldDisableStubCache);
 
-        final StubRepository stubRepository = new StubRepository(configFile, stubCache, stubLoadComputation);
+        final StubRepository stubRepository = new StubRepository(configFile, stubCache, stubLoadComputation, new StubbyHttpTransport());
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);
         final Server server = jettyFactory.construct();
 
