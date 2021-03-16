@@ -1,8 +1,10 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import com.google.api.client.http.HttpMethods;
+import io.github.azagniotov.stubby4j.annotations.PotentiallyFlaky;
 import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
@@ -34,6 +36,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +70,8 @@ public class StubRepositoryTest {
     @Spy
     private StubRepository spyStubRepository = new StubRepository(CONFIG_FILE,
             Cache.stubHttpLifecycleCache(false),
-            YAML_PARSE_RESULT_SET_FUTURE);
+            YAML_PARSE_RESULT_SET_FUTURE,
+            new StubbyHttpTransport());
 
     private StubRequest.Builder requestBuilder;
 
@@ -78,7 +82,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldCacheStubOnlyOnFirstRequestWhenUsingDefaultCache() throws Exception {
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE);
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE, new StubbyHttpTransport());
 
         final String url = "/invoice/123";
         final String expectedStatus = "200";
@@ -116,7 +120,7 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldNoOpCacheEveryRequestWhenUsingNoOpCache() throws Exception {
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyNoOpCache, YAML_PARSE_RESULT_SET_FUTURE);
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyNoOpCache, YAML_PARSE_RESULT_SET_FUTURE, new StubbyHttpTransport());
 
         final String url = "/invoice/123";
         final String expectedStatus = "200";
@@ -940,8 +944,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -956,8 +960,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }
@@ -984,8 +988,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -1022,8 +1026,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }
@@ -1063,8 +1067,8 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
 
@@ -1093,10 +1097,53 @@ public class StubRepositoryTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
+    }
+
+    @Test
+    @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
+    public void shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched() throws Exception {
+
+        // https://jsonplaceholder.typicode.com/todos/1
+        final String targetUriPath = "/todos/1";
+
+        final String stubsYaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl("/a/totally/different/endpoint/stubbed")
+                .newStubbedResponse()
+                .withStatus("200")
+                .withLiteralBody("This is a response for todo 1")
+                .build();
+
+        final String proxyConfigYaml = YAML_BUILDER
+                .newStubbedProxyConfig()
+                .witProxyStrategyAsIs()
+                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .toString()
+                .trim();
+
+        loadYamlToDataStore(stubsYaml + BR + BR + proxyConfigYaml);
+
+        final StubRequest assertingRequest =
+                requestBuilder
+                        .withUrl(targetUriPath)
+                        .withMethodGet().build();
+
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
+
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getHeaders().isEmpty()).isFalse();
+
+        assertThat(foundStubResponse.getBody()).isEqualTo(
+                "{" + BR +
+                        "  \"userId\": 1," + BR +
+                        "  \"id\": 1," + BR +
+                        "  \"title\": \"delectus aut autem\"," + BR +
+                        "  \"completed\": false" + BR +
+                        "}");
     }
 
     private void loadYamlToDataStore(final String yaml) throws Exception {

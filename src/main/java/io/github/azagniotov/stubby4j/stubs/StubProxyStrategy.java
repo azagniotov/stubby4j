@@ -2,7 +2,6 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,10 +32,6 @@ public enum StubProxyStrategy {
 
     public static Optional<StubProxyStrategy> ofNullableProperty(final String stubbedProperty) {
         return Optional.ofNullable(PROPERTY_NAME_TO_ENUM_MEMBER.get(toLower(stubbedProperty)));
-    }
-
-    public boolean isA(final String strategy) {
-        return this.toString().equals(strategy.toLowerCase(Locale.US));
     }
 
     @Override

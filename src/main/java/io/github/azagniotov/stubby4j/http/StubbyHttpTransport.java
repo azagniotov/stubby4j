@@ -16,7 +16,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,25 +51,25 @@ public class StubbyHttpTransport {
 
     }
 
-    public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String recordingSource) throws IOException {
+    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, recordingSource);
+            final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
-        LOGGER.debug("Recording HTTP response using {} [{}].", method, recordingSource);
-        return getResponse(method,
+        LOGGER.debug("Making {} HTTP request from stub metadata to: [{}].", method, recordingSource);
+        return request(method,
                 recordingSource,
                 request.getPostBody(),
                 request.getHeaders(),
                 StringUtils.calculateStringLength(request.getPostBody()));
     }
 
-    public StubbyResponse getResponse(final String method,
-                                      final String fullUrl,
-                                      final String post,
-                                      final Map<String, String> headers,
-                                      final int postLength) throws IOException {
+    public StubbyResponse request(final String method,
+                                  final String fullUrl,
+                                  final String post,
+                                  final Map<String, String> headers,
+                                  final int postLength) throws IOException {
 
         if (!SUPPORTED_METHODS.contains(method)) {
             throw new UnsupportedOperationException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));
@@ -92,14 +94,15 @@ public class StubbyHttpTransport {
         try {
             connection.connect();
             final int responseCode = connection.getResponseCode();
+            final Map<String, List<String>> responseHeaders = new HashMap<>(connection.getHeaderFields());
             if (responseCode == HttpStatus.OK_200 || responseCode == HttpStatus.CREATED_201) {
                 try (final InputStream inputStream = connection.getInputStream()) {
                     final String responseContent = inputStreamToString(inputStream);
 
-                    return new StubbyResponse(responseCode, responseContent);
+                    return new StubbyResponse(responseCode, responseContent, responseHeaders);
                 }
             }
-            return new StubbyResponse(responseCode, connection.getResponseMessage());
+            return new StubbyResponse(responseCode, connection.getResponseMessage(), responseHeaders);
         } finally {
             connection.disconnect();
         }

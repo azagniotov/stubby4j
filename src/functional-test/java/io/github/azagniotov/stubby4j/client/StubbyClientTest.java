@@ -51,8 +51,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -68,8 +68,8 @@ public class StubbyClientTest {
                 SSL_PORT,
                 null);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -90,8 +90,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -101,8 +101,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"1\", \"description\" : \"milk\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -113,8 +113,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -125,8 +125,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -137,8 +137,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.CUSTOM, AUTHORIZATION_HEADER_CUSTOM));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -148,8 +148,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -159,8 +159,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -170,8 +170,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.CUSTOM, AUTHORIZATION_HEADER_CUSTOM));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -180,8 +180,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"8\", \"description\" : \"authorized using basic\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -190,8 +190,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using bearer\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -200,8 +200,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGetUsingDefaults(uri, new Authorization(Authorization.AuthorizationType.CUSTOM, AUTHORIZATION_HEADER_CUSTOM));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"authorized using custom\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -212,7 +212,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64("bob:wrong-secret")));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, "blahblahblah=="));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port, new Authorization(Authorization.AuthorizationType.CUSTOM, "CustomAuthorizationName blahblahblah=="));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -245,7 +245,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -256,7 +256,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED_401);
     }
 
     @Test
@@ -278,7 +278,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -289,8 +289,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("Got post response").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("Got post response").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -302,8 +302,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)), post);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -313,8 +313,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostUsingDefaults(uri, post, new Authorization(Authorization.AuthorizationType.BASIC, StringUtils.encodeBase64(BOB_SECRET)));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -323,8 +323,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostUsingDefaults(uri, "post body");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("Got post response").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("Got post response").isEqualTo(stubbyResponse.body());
     }
 
 
@@ -336,7 +336,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -347,7 +347,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "post body");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -358,7 +358,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "unexpected or wrong post body");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -369,7 +369,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
     @Test
@@ -380,8 +380,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
 
@@ -393,8 +393,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -403,8 +403,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPostUsingDefaults(uri, "");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -420,8 +420,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, content);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("Configuration created successfully").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("Configuration created successfully").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -435,8 +435,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.updateStubbedData(adminUrl, content);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("Configuration created successfully").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("Configuration created successfully").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -447,7 +447,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
     }
 
     @Test
@@ -458,7 +458,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
     }
 
     @Test
@@ -469,20 +469,20 @@ public class StubbyClientTest {
         final int port = JettyFactory.DEFAULT_STUBS_PORT;
 
         StubbyResponse firstSequencedStubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
-        assertThat(firstSequencedStubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
+        assertThat(firstSequencedStubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(firstSequencedStubbyResponse.body()).isEqualTo("OK");
 
         final StubbyResponse secondSequencedStubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
-        assertThat(secondSequencedStubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(secondSequencedStubbyResponse.getContent()).isEqualTo("Still going strong!");
+        assertThat(secondSequencedStubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(secondSequencedStubbyResponse.body()).isEqualTo("Still going strong!");
 
         final StubbyResponse thirdSequencedStubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
-        assertThat(thirdSequencedStubbyResponse.getResponseCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
-        assertThat(thirdSequencedStubbyResponse.getContent()).isEqualTo("Server Error");
+        assertThat(thirdSequencedStubbyResponse.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        assertThat(thirdSequencedStubbyResponse.body()).isEqualTo("Server Error");
 
         firstSequencedStubbyResponse = STUBBY_CLIENT.doGet(host, uri, port);
-        assertThat(firstSequencedStubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(firstSequencedStubbyResponse.getContent()).isEqualTo("OK");
+        assertThat(firstSequencedStubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(firstSequencedStubbyResponse.body()).isEqualTo("OK");
     }
 
     @Test
@@ -497,8 +497,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPut(host, uri, port, null, payload);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -512,8 +512,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPutOverSsl(host, uri, SSL_PORT, null, payload);
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat("OK").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat("OK").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -524,8 +524,8 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doDelete(host, uri, port, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.body());
     }
 
     @Test
@@ -535,7 +535,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doDeleteOverSsl(host, uri, SSL_PORT, new Authorization(Authorization.AuthorizationType.BEARER, ENCODED_STRING));
 
-        assertThat(stubbyResponse.getResponseCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.getContent());
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("{\"id\" : \"12\", \"description\" : \"deleted authorized using bearer\"}").isEqualTo(stubbyResponse.body());
     }
 }

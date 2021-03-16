@@ -910,7 +910,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[\"alex\",\"tracy\"]";
+        final String paramTwoValue = "[\"cheburashka\",\"wendy\"]";
 
         final String url = "/invoice/789";
 
@@ -938,7 +938,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+        final String paramTwoValue = "[%22alex%22,%22wendy%22]";
 
         final String contentType = "application/blah";
         final String contentLength = "30";
@@ -1405,7 +1405,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+        final String paramTwoValue = "[%22alex%22,%22wendy%22]";
 
         final String contentLength = "30";
         final String contentLanguage = "en-US";
@@ -1899,7 +1899,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+        final String paramTwoValue = "[%22alex%22,%22wendy%22]";
 
         final String contentLength = "30";
         final String contentLanguage = "en-US";
@@ -1943,7 +1943,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+        final String paramTwoValue = "[%22alex%22,%22wendy%22]";
 
         final String contentLength = "30";
         final String contentLanguage = "en-US";
@@ -1985,7 +1985,7 @@ public class StubRequestBuilderTest {
         final String paramOneValue = "one";
 
         final String paramTwo = "paramTwo";
-        final String paramTwoValue = "[%22alex%22,%22tracy%22]";
+        final String paramTwoValue = "[%22alex%22,%22wendy%22]";
 
         final String contentLength = "30";
         final String contentLanguage = "en-US";

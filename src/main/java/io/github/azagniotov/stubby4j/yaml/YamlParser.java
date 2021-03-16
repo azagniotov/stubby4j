@@ -127,6 +127,10 @@ public class YamlParser {
             }
         }
 
+        if (!proxyConfigs.isEmpty() && !proxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_NAME)) {
+            throw new IllegalStateException("Missing default proxy config");
+        }
+
         return new YamlParseResultSet(stubs, uuidToStubs, proxyConfigs);
     }
 

@@ -26,11 +26,15 @@ public final class YamlBuilder {
     private final static String UUID_AS_TOP = String.format("-%s%s", TWO_SPACE, "uuid: ");
     private final static String UUID = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "uuid: ");
 
+    private final static String PROXY_CONFIG_AS_TOP = String.format("-%s%s", TWO_SPACE, "proxy-config:");
     private final static String REQUEST_AS_TOP = String.format("-%s%s", TWO_SPACE, "request:");
     private final static String REQUEST = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "request:");
     private final static String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
 
     private final static String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
+    private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-properties:");
+    private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-strategy: ");
+    private final static String PROXY_NAME = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-name: ");
     private final static String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
 
     private final static String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
@@ -57,18 +61,21 @@ public final class YamlBuilder {
     private final static String NL = FileUtils.BR;
 
     private static final String TWO_DASHED_TOKENS_TEMPLATE = "%s-%s";
+    private final static String PROXY_PROPERTIES_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_PROPERTIES);
     private final static String REQUEST_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, HEADERS);
     private final static String REQUEST_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, QUERY);
     private final static String RESPONSE_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, HEADERS);
     private final static String RESPONSE_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, QUERY);
 
     private static final StringBuilder FEATURE_STRING_BUILDER = new StringBuilder();
+    private static final StringBuilder PROXY_CONFIG_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder REQUEST_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder RESPONSE_STRING_BUILDER = new StringBuilder();
     private static final String YAML_KEY_SPACE_TEMPLATE = "%s%s: ";
 
     private final Set<String> storedStubbedMethods = new LinkedHashSet<>();
     private final Set<String> unusedNodes = new HashSet<String>() {{
+        add(PROXY_PROPERTIES_KEY);
         add(REQUEST_HEADERS_KEY);
         add(REQUEST_QUERY_KEY);
         add(RESPONSE_HEADERS_KEY);
@@ -85,6 +92,10 @@ public final class YamlBuilder {
 
     public Request newStubbedRequest() {
         return new Request(true);
+    }
+
+    public ProxyConfig newStubbedProxyConfig() {
+        return new ProxyConfig();
     }
 
     public final class Feature {
@@ -118,6 +129,57 @@ public final class YamlBuilder {
 
         public Request newStubbedRequest() {
             return new Request(false);
+        }
+    }
+
+    public final class ProxyConfig {
+
+        private ProxyConfig() {
+            PROXY_CONFIG_STRING_BUILDER.setLength(0);
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_AS_TOP).append(NL);
+        }
+
+        public ProxyConfig witProxyName(final String value) {
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_NAME).append(value).append(NL);
+
+            return this;
+        }
+
+        public ProxyConfig witProxyStrategyAsIs() {
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_STRATEGY).append("as-is").append(NL);
+
+            return this;
+        }
+
+        public ProxyConfig withProxyProperty(final String key, final String value) {
+
+            checkProxyPropertiesNodeRequired();
+
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, key);
+            PROXY_CONFIG_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+            return this;
+        }
+
+        public ProxyConfig withProxyPropertyEndpoint(final String value) {
+
+            checkProxyPropertiesNodeRequired();
+
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "endpoint");
+            PROXY_CONFIG_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+            return this;
+        }
+
+        private void checkProxyPropertiesNodeRequired() {
+            if (unusedNodes.contains(PROXY_PROPERTIES_KEY)) {
+                PROXY_CONFIG_STRING_BUILDER.append(PROXY_PROPERTIES).append(NL);
+                unusedNodes.remove(PROXY_PROPERTIES_KEY);
+            }
+        }
+
+        public String toString() {
+            return PROXY_CONFIG_STRING_BUILDER.toString();
         }
     }
 
@@ -455,6 +517,7 @@ public final class YamlBuilder {
             final String yaml = String.format("%s%s%s%s%s", rawFeatureString, NL, cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
 
             unusedNodes.clear();
+            unusedNodes.add(PROXY_PROPERTIES_KEY);
             unusedNodes.add(REQUEST_HEADERS_KEY);
             unusedNodes.add(REQUEST_QUERY_KEY);
             unusedNodes.add(RESPONSE_HEADERS_KEY);
@@ -464,6 +527,7 @@ public final class YamlBuilder {
             FEATURE_STRING_BUILDER.setLength(0);
             REQUEST_STRING_BUILDER.setLength(0);
             RESPONSE_STRING_BUILDER.setLength(0);
+            PROXY_CONFIG_STRING_BUILDER.setLength(0);
 
             return yaml;
         }

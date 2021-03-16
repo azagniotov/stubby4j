@@ -260,4 +260,27 @@ public class YamlBuilderTest {
         assertThat(actualYaml).isEqualTo(expectedYaml);
 
     }
+
+    @Test
+    public void shouldBuildStubbedProxyConfig() throws Exception {
+        final String expectedYaml =
+                "-  proxy-config:" + BR +
+                        "      proxy-name: very-unique-name" + BR +
+                        "      proxy-strategy: as-is" + BR +
+                        "      proxy-properties:" + BR +
+                        "         endpoint: http://google.com" + BR +
+                        "         key: value";
+
+        final YamlBuilder YamlBuilder = new YamlBuilder();
+        final String actualYaml = YamlBuilder
+                .newStubbedProxyConfig()
+                .witProxyName("very-unique-name")
+                .witProxyStrategyAsIs()
+                .withProxyPropertyEndpoint("http://google.com")
+                .withProxyProperty("key", "value")
+                .toString().trim();
+
+        assertThat(actualYaml).isEqualTo(expectedYaml);
+
+    }
 }

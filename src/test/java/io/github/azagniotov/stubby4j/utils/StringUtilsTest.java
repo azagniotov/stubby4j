@@ -64,8 +64,8 @@ public class StringUtilsTest {
     @Test
     public void shouldFilterOutSpacesBetweenElementsWithQuotes() throws Exception {
 
-        final String originalElementsWithQuotes = "[\"alex\", \"tracy\", \"logan\", \"charlie\", \"isa\"]";
-        final String expectedElementsWithQuotes = "[\"alex\",\"tracy\",\"logan\",\"charlie\",\"isa\"]";
+        final String originalElementsWithQuotes = "[\"cheburashka\", \"wendy\", \"logan\", \"charlie\", \"isa\"]";
+        final String expectedElementsWithQuotes = "[\"cheburashka\",\"wendy\",\"logan\",\"charlie\",\"isa\"]";
 
         final String filteredElementsWithQuotes = StringUtils.trimSpacesBetweenCSVElements(originalElementsWithQuotes);
 
@@ -75,8 +75,8 @@ public class StringUtilsTest {
     @Test
     public void shouldFilterOutSpacesBetweenElementsWithoutQuotes() throws Exception {
 
-        final String originalElements = "[alex, tracy, logan, charlie, isa]";
-        final String expectedElements = "[alex,tracy,logan,charlie,isa]";
+        final String originalElements = "[cheburashka, wendy, logan, charlie, isa]";
+        final String expectedElements = "[cheburashka,wendy,logan,charlie,isa]";
 
         final String filteredElements = StringUtils.trimSpacesBetweenCSVElements(originalElements);
 
@@ -86,8 +86,8 @@ public class StringUtilsTest {
     @Test
     public void shouldRemoveEncodedSquareBracketsFromString() throws Exception {
 
-        final String originalElements = "%5Balex,tracy,logan,charlie,isa%5D";
-        final String expectedElements = "alex,tracy,logan,charlie,isa";
+        final String originalElements = "%5Bcheburashka,wendy,logan,charlie,isa%5D";
+        final String expectedElements = "cheburashka,wendy,logan,charlie,isa";
 
         final String filteredElements = StringUtils.removeSquareBrackets(originalElements);
 
@@ -97,8 +97,8 @@ public class StringUtilsTest {
     @Test
     public void shouldRemoveSquareBracketsFromString() throws Exception {
 
-        final String originalElements = "[alex,tracy,logan,charlie,isa]";
-        final String expectedElements = "alex,tracy,logan,charlie,isa";
+        final String originalElements = "[cheburashka,wendy,logan,charlie,isa]";
+        final String expectedElements = "cheburashka,wendy,logan,charlie,isa";
 
         final String filteredElements = StringUtils.removeSquareBrackets(originalElements);
 
@@ -118,7 +118,7 @@ public class StringUtilsTest {
     @Test
     public void shouldReturnTrueWhenStringWithinEncodedSquareBrackets() throws Exception {
 
-        final String originalElements = "%5Balex,tracy,logan,charlie,isa%5D";
+        final String originalElements = "%5Bcheburashka,wendy,logan,charlie,isa%5D";
 
         final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
 
@@ -129,7 +129,7 @@ public class StringUtilsTest {
     @Test
     public void shouldReturnFalseWhenStringWithinNotPairOfEscapedSquareBracket() throws Exception {
 
-        final String originalElements = "%5Balex,tracy,logan,charlie,isa";
+        final String originalElements = "%5Bcheburashka,wendy,logan,charlie,isa";
 
         final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
 
@@ -139,7 +139,7 @@ public class StringUtilsTest {
     @Test
     public void shouldReturnFalseWhenStringWithinNotPairOfSquareBracket() throws Exception {
 
-        final String originalElements = "[alex,tracy,logan,charlie,isa";
+        final String originalElements = "[cheburashka,wendy,logan,charlie,isa";
 
         final boolean isWithinSquareBrackets = StringUtils.isWithinSquareBrackets(originalElements);
 
@@ -209,26 +209,26 @@ public class StringUtilsTest {
     public void shouldReplaceTokensInATemplateWhenAllTokensPresent() throws Exception {
 
         final Map<String, String> tokensAndValues = new HashMap<>();
-        tokensAndValues.put("url.1", "ALEX");
+        tokensAndValues.put("url.1", "cheburashka");
         tokensAndValues.put("url.2", "JOHN");
-        tokensAndValues.put("url.3", "TRACY");
+        tokensAndValues.put("url.3", "wendy");
         tokensAndValues.put("query.1", "KOKO");
         final String template = "This is a response <% url.1 %> content <%url.2%> that going to be <%query.1    %> returned";
 
         final String replacedTemplate = StringUtils.replaceTokens(StringUtils.getBytesUtf8(template), tokensAndValues);
-        assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be KOKO returned");
+        assertThat(replacedTemplate).isEqualTo("This is a response cheburashka content JOHN that going to be KOKO returned");
     }
 
     @Test
     public void shouldReplaceTokensInATemplateWhenNotAllTokenValuesPresent() throws Exception {
 
         final Map<String, String> tokensAndValues = new HashMap<String, String>();
-        tokensAndValues.put("url.1", "ALEX");
+        tokensAndValues.put("url.1", "cheburashka");
         tokensAndValues.put("url.2", "JOHN");
         final String template = "This is a response <% url.1 %> content <%url.2%> that going to be <% query.1 %> returned";
 
         final String replacedTemplate = StringUtils.replaceTokens(StringUtils.getBytesUtf8(template), tokensAndValues);
-        assertThat(replacedTemplate).isEqualTo("This is a response ALEX content JOHN that going to be <% query.1 %> returned");
+        assertThat(replacedTemplate).isEqualTo("This is a response cheburashka content JOHN that going to be <% query.1 %> returned");
     }
 
     @Test

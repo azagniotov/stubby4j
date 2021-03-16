@@ -42,6 +42,10 @@ public class StubProxyConfig implements ReflectableStub {
         return new HashMap<>(proxyProperties);
     }
 
+    public String getProxyEndpoint() {
+        return proxyProperties.get(ENDPOINT.toString());
+    }
+
     /**
      * Do not remove this method if your IDE complains that it is unused.
      * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response

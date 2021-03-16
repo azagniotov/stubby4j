@@ -816,8 +816,8 @@ public class YamlParserTest {
             final StubHttpLifecycle cycle = loadedHttpCycles.get(idx);
             final StubResponse cycleResponse = cycle.getResponse(true);
 
-            assertThat(cycleResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-            assertThat(cycleResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(idx));
+            assertThat(cycleResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+            assertThat(cycleResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(idx));
         }
     }
 
@@ -845,8 +845,8 @@ public class YamlParserTest {
 
         for (int idx = 0; idx < allResponses.size(); idx++) {
             final StubResponse sequenceStubResponse = allResponses.get(idx);
-            assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-            assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(0));
+            assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+            assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(0));
         }
     }
 
@@ -892,8 +892,8 @@ public class YamlParserTest {
 
             for (int sequence = 0; sequence < allResponses.size(); sequence++) {
                 final StubResponse sequenceStubResponse = allResponses.get(sequence);
-                assertThat(sequenceStubResponse.getHeaders()).containsKey(StubResponse.STUBBY_RESOURCE_ID_HEADER);
-                assertThat(sequenceStubResponse.getHeaders().get(StubResponse.STUBBY_RESOURCE_ID_HEADER)).isEqualTo(String.valueOf(resourceId));
+                assertThat(sequenceStubResponse.getHeaders()).containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID);
+                assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
     }
@@ -951,7 +951,7 @@ public class YamlParserTest {
 
     @Test
     public void shouldUnmarshall_toProxyConfigs() throws Exception {
-        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-invalid-config.yaml");
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config.yaml");
         final InputStream stubsConfigStream = yamlUrl.openStream();
         final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
@@ -1019,7 +1019,7 @@ public class YamlParserTest {
     public void shouldThrowWhenProxyConfigWithInvalidStrategyName() throws Exception {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-valid-config.yaml");
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-invalid-config.yaml");
             final InputStream stubsConfigStream = yamlUrl.openStream();
             final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
@@ -1044,6 +1044,23 @@ public class YamlParserTest {
         });
 
         String expectedMessage = "Proxy config with name some-unique-name already exists";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenDefaultProxyConfigMissing() throws Exception {
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-without-default-config.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Missing default proxy config";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);
