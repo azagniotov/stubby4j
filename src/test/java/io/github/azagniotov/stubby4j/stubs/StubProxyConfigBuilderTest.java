@@ -29,12 +29,38 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigHasDefaultName() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder.build();
+        assertThat(stubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+    }
+
+    @Test
+    public void stubbedProxyConfigNameResetsToDefaultName() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder.withProxyName("newName").build();
+        assertThat(stubProxyConfig.getProxyName()).isEqualTo("newName");
+
+        final StubProxyConfig freshStubProxyConfig = builder.build();
+        assertThat(freshStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+    }
+
+    @Test
     public void stubbedProxyConfigEqualsAssertingConfig_WhenProxyNameNull() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder.withProxyName(null).build();
         final StubProxyConfig assertingStubProxyConfig = builder.withProxyName(null).build();
 
         assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
+    }
+
+    @Test
+    public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyPropertiesDifferent() throws Exception {
+
+        final StubProxyConfig expectedStubProxyConfig = builder.withProxyProperty("key", "anotherValue").build();
+        final StubProxyConfig assertingStubProxyConfig = builder.withProxyProperty("key", "value").build();
+
+        assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
     }
 
     @Test
@@ -95,6 +121,28 @@ public class StubProxyConfigBuilderTest {
         mapping.put(stubProxyConfigTwo, stubProxyConfigTwo);
 
         assertThat(mapping.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void stubbedProxyConfigAsYaml() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder
+                .withProxyName("unique")
+                .withProxyStrategy("as-is")
+                .withProxyProperty("key", "value")
+                .withProxyPropertyEndpoint("http://google.com")
+                .withProxyConfigAsYAML(
+                        "- proxy-config:\n" +
+                                "    proxy-strategy: as-is\n" +
+                                "    proxy-properties:\n" +
+                                "      endpoint: https://jsonplaceholder.typicode.com")
+                .build();
+
+        assertThat(stubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
+                "- proxy-config:\n" +
+                        "    proxy-strategy: as-is\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com");
     }
 
     @Test

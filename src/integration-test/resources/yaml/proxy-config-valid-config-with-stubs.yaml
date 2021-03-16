@@ -1,0 +1,24 @@
+- proxy-config:
+    proxy-strategy: as-is
+    proxy-properties:
+      endpoint: https://jsonplaceholder.typicode.com
+
+- proxy-config:
+    proxy-name: some-unique-name
+    proxy-strategy: custom
+    proxy-properties:
+      endpoint: https://jsonplaceholder.typicode.com
+
+- request:
+    method:
+      - GET
+      - POST
+      - PUT
+    url: ^/resources/asn/.*$
+
+  response:
+    status: 200
+    body: >
+      {"status": "ASN found!"}
+    headers:
+      content-type: application/json

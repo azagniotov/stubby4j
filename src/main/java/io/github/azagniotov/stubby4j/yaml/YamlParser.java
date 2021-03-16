@@ -4,6 +4,8 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -40,6 +42,8 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_CONFIG;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
@@ -63,6 +67,11 @@ public class YamlParser {
     public boolean isMainYamlHasIncludes(final Object loadedYamlConfig) {
         return loadedYamlConfig instanceof Map &&
                 ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.INCLUDES.toString());
+    }
+
+    public boolean isProxyConfigMapping(final Object loadedYamlConfig) {
+        return loadedYamlConfig instanceof Map &&
+                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
     }
 
     public List<File> getYamlIncludes(final String dataConfigHomeDirectory, final Object loadedYamlConfig) throws IOException {
@@ -94,23 +103,37 @@ public class YamlParser {
 
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
         final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
+        final Map<String, StubProxyConfig> proxyConfigs = new HashMap<>();
 
-        final List<Map> httpLifecycleConfigs = asCheckedArrayList(loadedConfig, Map.class);
+        final List<Map> yamlMappings = asCheckedArrayList(loadedConfig, Map.class);
 
-        for (final Map rawHttpLifecycleConfig : httpLifecycleConfigs) {
-            final Map<String, Object> httpLifecycleProperties = asCheckedLinkedHashMap(rawHttpLifecycleConfig, String.class, Object.class);
-            final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(httpLifecycleProperties);
-
-            if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
-                if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
-                    throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
+        for (final Map yamlMapping : yamlMappings) {
+            final Map<String, Object> yamlMappingProperties = asCheckedLinkedHashMap(yamlMapping, String.class, Object.class);
+            if (isProxyConfigMapping(yamlMapping)) {
+                // the YAML contains top-level:
+                // - proxy-config
+                final StubProxyConfig stubProxyConfig = parseStubProxyConfig(yamlMappingProperties);
+                if (proxyConfigs.containsKey(stubProxyConfig.getProxyName())) {
+                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getProxyName() + " already exists");
                 }
-                uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+
+                proxyConfigs.put(stubProxyConfig.getProxyName(), stubProxyConfig);
+            } else {
+                // the YAML contains top-level:
+                // - request
+                final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(yamlMappingProperties);
+
+                if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
+                    if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
+                        throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
+                    }
+                    uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+                }
+                stubs.add(stubHttpLifecycle);
             }
-            stubs.add(stubHttpLifecycle);
         }
 
-        return new YamlParseResultSet(stubs, uuidToStubs);
+        return new YamlParseResultSet(stubs, uuidToStubs, proxyConfigs);
     }
 
     private Object loadYamlFromInputStream(final InputStream configAsStream) throws IOException {
@@ -143,10 +166,25 @@ public class YamlParser {
         return loadedConfig;
     }
 
-    private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> httpLifecycleConfig) {
+    private StubProxyConfig parseStubProxyConfig(final Map<String, Object> yamlMappingProperties) {
+        final StubProxyConfig.Builder proxyConfigBuilder = new StubProxyConfig.Builder();
+
+        for (final Map.Entry<String, Object> stubType : yamlMappingProperties.entrySet()) {
+            final Object stubTypeValue = stubType.getValue();
+
+            final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+
+            buildReflectableStub(stubbedProperties, proxyConfigBuilder);
+            proxyConfigBuilder.withProxyConfigAsYAML(toYaml(yamlMappingProperties, PROXY_CONFIG));
+        }
+
+        return proxyConfigBuilder.build();
+    }
+
+    private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> yamlMappingProperties) {
         final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
 
-        for (final Map.Entry<String, Object> stubType : httpLifecycleConfig.entrySet()) {
+        for (final Map.Entry<String, Object> stubType : yamlMappingProperties.entrySet()) {
             final Object stubTypeValue = stubType.getValue();
             final String stubTypeKey = stubType.getKey();
 
@@ -168,9 +206,9 @@ public class YamlParser {
             }
         }
 
-        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(httpLifecycleConfig))
-                .withRequestAsYAML(toYaml(httpLifecycleConfig, REQUEST))
-                .withResponseAsYAML(toYaml(httpLifecycleConfig, RESPONSE))
+        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(yamlMappingProperties))
+                .withRequestAsYAML(toYaml(yamlMappingProperties, REQUEST))
+                .withResponseAsYAML(toYaml(yamlMappingProperties, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
                 .build();
 
@@ -180,52 +218,66 @@ public class YamlParser {
     }
 
     private void parseStubbedRequestConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
-        final StubRequest requestStub = buildReflectableStub(requestProperties, new StubRequest.Builder());
-        requestStub.compileRegexPatternsAndCache();
-        stubBuilder.withRequest(requestStub);
+        final StubRequest.Builder requestStubBuilder = buildReflectableStub(requestProperties, new StubRequest.Builder());
+        final StubRequest stubRequest = requestStubBuilder.build();
+        stubRequest.compileRegexPatternsAndCache();
+        stubBuilder.withRequest(stubRequest);
     }
 
     private void parseStubbedResponseConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
-        final StubResponse responseStub = buildReflectableStub(responseProperties, new StubResponse.Builder());
-        stubBuilder.withResponse(responseStub);
+        final StubResponse.Builder responseStubBuilder = buildReflectableStub(responseProperties, new StubResponse.Builder());
+        stubBuilder.withResponse(responseStubBuilder.build());
     }
 
-    private <T extends ReflectableStub, B extends AbstractBuilder<T>> T buildReflectableStub(final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
+    private <T extends ReflectableStub, B extends AbstractBuilder<T>> B buildReflectableStub(final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
 
         for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
 
             final String stageableFieldName = propertyPair.getKey();
             checkStubbedProperty(stageableFieldName);
 
-            final Object rawFieldName = propertyPair.getValue();
-            if (rawFieldName instanceof List) {
-                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(rawFieldName));
+            final Object rawFieldNameValue = propertyPair.getValue();
+            if (rawFieldNameValue instanceof List) {
+                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(rawFieldNameValue));
                 continue;
             }
 
-            if (rawFieldName instanceof Map) {
-                final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldName, String.class, String.class);
+            if (rawFieldNameValue instanceof Map) {
+                final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldNameValue, String.class, String.class);
                 final Map<String, String> headers = configureAuthorizationHeader(rawHeaders);
                 stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(headers));
                 continue;
             }
 
             if (METHOD.isA(stageableFieldName)) {
-                final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldName)));
+                final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldNameValue)));
                 stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), of(methods));
                 continue;
             }
 
             if (FILE.isA(stageableFieldName)) {
-                final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldName);
+                final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(rawFieldNameValue);
                 stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), fileContentOptional);
                 continue;
             }
 
-            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(objectToString(rawFieldName)));
+            if (PROXY_STRATEGY.isA(stageableFieldName)) {
+
+                final String stubbedProperty = objectToString(rawFieldNameValue);
+                if (StubProxyStrategy.isUnknownProperty(stubbedProperty)) {
+                    throw new IllegalArgumentException(stubbedProperty);
+                }
+
+                final Optional<StubProxyStrategy> stubProxyStrategyOptional = StubProxyStrategy.ofNullableProperty(stubbedProperty);
+                final Optional<Object> stubProxyStrategyObjectOptional = stubProxyStrategyOptional.map(stubProxyStrategy -> stubProxyStrategy);
+                stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), stubProxyStrategyObjectOptional);
+                continue;
+            }
+
+            stubTypeBuilder.stage(ofNullableProperty(stageableFieldName), ofNullable(objectToString(rawFieldNameValue)));
         }
 
-        return stubTypeBuilder.build();
+        return stubTypeBuilder;
     }
 
     private void parseStubbedResponseListConfig(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) {
@@ -281,9 +333,9 @@ public class YamlParser {
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
-    private String toYaml(final Map<String, Object> httpLifecycleConfig, final ConfigurableYAMLProperty stubName) {
+    private String toYaml(final Map<String, Object> yamlMappingProperties, final ConfigurableYAMLProperty stubName) {
         final Map<String, Object> httpType = new HashMap<String, Object>() {{
-            put(stubName.toString(), httpLifecycleConfig.get(stubName.toString()));
+            put(stubName.toString(), yamlMappingProperties.get(stubName.toString()));
         }};
 
         return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);
