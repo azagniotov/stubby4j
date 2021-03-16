@@ -16,7 +16,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -92,14 +94,15 @@ public class StubbyHttpTransport {
         try {
             connection.connect();
             final int responseCode = connection.getResponseCode();
+            final Map<String, List<String>> responseHeaders = new HashMap<>(connection.getHeaderFields());
             if (responseCode == HttpStatus.OK_200 || responseCode == HttpStatus.CREATED_201) {
                 try (final InputStream inputStream = connection.getInputStream()) {
                     final String responseContent = inputStreamToString(inputStream);
 
-                    return new StubbyResponse(responseCode, responseContent);
+                    return new StubbyResponse(responseCode, responseContent, responseHeaders);
                 }
             }
-            return new StubbyResponse(responseCode, connection.getResponseMessage());
+            return new StubbyResponse(responseCode, connection.getResponseMessage(), responseHeaders);
         } finally {
             connection.disconnect();
         }

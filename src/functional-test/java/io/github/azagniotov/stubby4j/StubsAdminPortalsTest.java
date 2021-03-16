@@ -57,7 +57,7 @@ public class StubsAdminPortalsTest {
     @Before
     public void beforeEach() throws Exception {
         final StubbyResponse adminPortalResponse = STUBBY_CLIENT.updateStubbedData(ADMIN_URL, stubsData);
-        assertThat(adminPortalResponse.getResponseCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(adminPortalResponse.statusCode()).isEqualTo(HttpStatus.CREATED_201);
     }
 
     @Test

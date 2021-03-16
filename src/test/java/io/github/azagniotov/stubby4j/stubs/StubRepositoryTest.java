@@ -429,7 +429,7 @@ public class StubRepositoryTest {
 
         final String actualResponseText = "OK, this is recorded response text!";
         final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText));
+        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         for (int idx = 0; idx < 5; idx++) {
@@ -483,7 +483,7 @@ public class StubRepositoryTest {
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
         final String actualResponseText = "OK, this is recorded response text!";
-        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
+        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
         final StubRequest incomingRequest =
                 requestBuilder

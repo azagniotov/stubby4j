@@ -210,9 +210,9 @@ public class StubRepository {
             incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXIED_REQUEST, DateTimeUtils.systemDefault());
             final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(incomingRequest, proxyEndpoint);
 
-            injectObjectFields(proxiedResponse, HEADERS.toString(), stubbyResponse.getContent());
-            injectObjectFields(proxiedResponse, STATUS.toString(), stubbyResponse.getResponseCode());
-            injectObjectFields(proxiedResponse, BODY.toString(), stubbyResponse.getContent());
+            injectObjectFields(proxiedResponse, HEADERS.toString(), stubbyResponse.headers());
+            injectObjectFields(proxiedResponse, STATUS.toString(), stubbyResponse.statusCode());
+            injectObjectFields(proxiedResponse, BODY.toString(), stubbyResponse.body());
         } catch (Exception e) {
             ANSITerminal.error(String.format("Could not proxy to %s: %s", proxyEndpoint, e.toString()));
             LOGGER.error("Could not proxy to {}.", proxyEndpoint, e);
@@ -225,7 +225,7 @@ public class StubRepository {
         final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
         try {
             final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(matchedStub.getRequest(), recordingSource);
-            injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
+            injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.body());
         } catch (Exception e) {
             ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
             LOGGER.error("Could not record from {}.", recordingSource, e);
@@ -261,14 +261,18 @@ public class StubRepository {
         this.stubMatchesCache.clear();
         this.stubs.clear();
         this.uuidToStub.clear();
+        this.proxyConfigs.clear();
 
-        final boolean added = this.stubs.addAll(yamlParseResultSet.getStubs());
-        if (added) {
+        final boolean addedStubs = this.stubs.addAll(yamlParseResultSet.getStubs());
+        if (addedStubs) {
             this.stubMatchesCache.clear();
             updateResourceIDHeaders();
             this.uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
         }
-        return added;
+
+        this.proxyConfigs.putAll(yamlParseResultSet.getProxyConfigs());
+
+        return addedStubs;
     }
 
     public synchronized void refreshStubsFromYamlConfig(final YamlParser yamlParser) throws Exception {
