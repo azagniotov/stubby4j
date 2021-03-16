@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
+import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXIED_REQUEST;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.proxiedResponse;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.unauthorizedResponse;
@@ -205,7 +207,9 @@ public class StubRepository {
         final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getProxyEndpoint(), incomingHttpLifecycle.getUrl());
 
         try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(incomingRequest, proxyEndpoint);
+            incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXIED_REQUEST, DateTimeUtils.systemDefault());
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(incomingRequest, proxyEndpoint);
+
             injectObjectFields(proxiedResponse, HEADERS.toString(), stubbyResponse.getContent());
             injectObjectFields(proxiedResponse, STATUS.toString(), stubbyResponse.getResponseCode());
             injectObjectFields(proxiedResponse, BODY.toString(), stubbyResponse.getContent());
@@ -220,7 +224,7 @@ public class StubRepository {
     private void recordResponse(StubHttpLifecycle incomingRequest, StubHttpLifecycle matchedStub, StubResponse matchedStubResponse) {
         final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
         try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.fetchRecordableHTTPResponse(matchedStub.getRequest(), recordingSource);
+            final StubbyResponse stubbyResponse = stubbyHttpTransport.requestFromStub(matchedStub.getRequest(), recordingSource);
             injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.getContent());
         } catch (Exception e) {
             ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));

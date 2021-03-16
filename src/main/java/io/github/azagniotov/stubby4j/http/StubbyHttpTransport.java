@@ -49,25 +49,25 @@ public class StubbyHttpTransport {
 
     }
 
-    public StubbyResponse fetchRecordableHTTPResponse(final StubRequest request, final String recordingSource) throws IOException {
+    public StubbyResponse requestFromStub(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
             final String logMessage = String.format("[%s] -> Recording HTTP response using %s [%s]", ConsoleUtils.getTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
         LOGGER.debug("Recording HTTP response using {} [{}].", method, recordingSource);
-        return getResponse(method,
+        return request(method,
                 recordingSource,
                 request.getPostBody(),
                 request.getHeaders(),
                 StringUtils.calculateStringLength(request.getPostBody()));
     }
 
-    public StubbyResponse getResponse(final String method,
-                                      final String fullUrl,
-                                      final String post,
-                                      final Map<String, String> headers,
-                                      final int postLength) throws IOException {
+    public StubbyResponse request(final String method,
+                                  final String fullUrl,
+                                  final String post,
+                                  final Map<String, String> headers,
+                                  final int postLength) throws IOException {
 
         if (!SUPPORTED_METHODS.contains(method)) {
             throw new UnsupportedOperationException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));

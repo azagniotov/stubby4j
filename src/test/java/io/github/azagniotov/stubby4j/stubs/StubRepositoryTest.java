@@ -429,7 +429,7 @@ public class StubRepositoryTest {
 
         final String actualResponseText = "OK, this is recorded response text!";
         final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText));
+        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText));
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         for (int idx = 0; idx < 5; idx++) {
@@ -442,7 +442,7 @@ public class StubRepositoryTest {
             assertThat(stubbedResponse.getBody()).isEqualTo(recordedResponse.getBody());
             assertThat(stubbedResponse.isRecordingRequired()).isFalse();
         }
-        verify(mockStubbyHttpTransport).fetchRecordableHTTPResponse(eq(stubbedRequest), anyString());
+        verify(mockStubbyHttpTransport).requestFromStub(eq(stubbedRequest), anyString());
     }
 
     @Test
@@ -483,7 +483,7 @@ public class StubRepositoryTest {
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
         final String actualResponseText = "OK, this is recorded response text!";
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
+        when(mockStubbyHttpTransport.requestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText));
 
         final StubRequest incomingRequest =
                 requestBuilder
@@ -515,7 +515,7 @@ public class StubRepositoryTest {
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
         final StubRequest matchedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.fetchRecordableHTTPResponse(eq(matchedRequest), anyString())).thenThrow(IOException.class);
+        when(mockStubbyHttpTransport.requestFromStub(eq(matchedRequest), anyString())).thenThrow(IOException.class);
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));

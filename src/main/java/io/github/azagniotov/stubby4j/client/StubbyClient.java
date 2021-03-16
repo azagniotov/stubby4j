@@ -487,7 +487,7 @@ public final class StubbyClient {
             headers.put("Authorization", stubbyRequest.getAuthorization().asFullValue());
         }
 
-        return new StubbyHttpTransport().getResponse(
+        return new StubbyHttpTransport().request(
                 stubbyRequest.getMethod(),
                 stubbyRequest.constructFullUrl(),
                 stubbyRequest.getPost(),
