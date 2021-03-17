@@ -1,9 +1,11 @@
 - proxy-config:
+    proxy-config-description: this is a default catch-all config
     proxy-strategy: as-is
     proxy-properties:
       endpoint: https://jsonplaceholder.typicode.com
 
 - proxy-config:
+    proxy-config-description: woah! this is a unique proxy-config
     proxy-name: some-unique-name
     proxy-strategy: custom
     proxy-properties:

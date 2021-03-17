@@ -55,6 +55,20 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigEqualsAssertingConfig_WhenProxyConfigDescriptionDifferent() throws Exception {
+
+        // proxy config description does NOT participate in equality
+        final StubProxyConfig expectedStubProxyConfig = builder.withProxyName("one")
+                .withProxyConfigDescription("description")
+                .build();
+        final StubProxyConfig assertingStubProxyConfig = builder
+                .withProxyName("one")
+                .build();
+
+        assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
+    }
+
+    @Test
     public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyNamesDifferent() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder.withProxyName("one").build();
@@ -73,9 +87,10 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
-    public void stubbedProxyConfigReturnsExpectedEndpoint() throws Exception {
+    public void stubbedProxyConfigReturnsExpectedEndpointAndDescription() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder
+                .withProxyConfigDescription("This is a proxy config for Google")
                 .withProxyName("unique")
                 .withProxyStrategy("as-is")
                 .withProxyProperty("key", "value")
@@ -83,6 +98,7 @@ public class StubProxyConfigBuilderTest {
                 .build();
 
         assertThat(stubProxyConfig.getProxyEndpoint()).isEqualTo("http://google.com");
+        assertThat(stubProxyConfig.getProxyConfigDescription()).isEqualTo("This is a proxy config for Google");
     }
 
     @Test

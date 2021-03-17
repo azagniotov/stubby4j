@@ -3,6 +3,7 @@ package io.github.azagniotov.stubby4j.utils;
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
@@ -109,11 +110,20 @@ public final class ConsoleUtils {
         }
     }
 
+    public static void logUnmarshalledProxyConfig(final StubProxyConfig stubProxyConfig) {
+        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded proxy config metadata: ")
+                .append(stubProxyConfig.getProxyName());
+        if (isSet(stubProxyConfig.getProxyConfigDescription())) {
+            loadedMsgBuilder.append(String.format(" [%s]", stubProxyConfig.getProxyConfigDescription()));
+        }
+
+        ANSITerminal.loaded(loadedMsgBuilder.toString());
+    }
 
     public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
         final StubRequest request = lifecycle.getRequest();
 
-        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded: ")
+        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded stub metadata: ")
                 .append(request.getMethod())
                 .append(" ")
                 .append(request.getUrl());

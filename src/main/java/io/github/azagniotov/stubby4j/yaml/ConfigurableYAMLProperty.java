@@ -11,6 +11,7 @@ public enum ConfigurableYAMLProperty {
 
     // proxy-config properties
     PROXY_CONFIG("proxy-config"),
+    PROXY_CONFIG_DESCRIPTION("proxy-config-description"),
     PROXY_NAME("proxy-name"),
     PROXY_STRATEGY("proxy-strategy"),
     PROXY_PROPERTIES("proxy-properties"),
