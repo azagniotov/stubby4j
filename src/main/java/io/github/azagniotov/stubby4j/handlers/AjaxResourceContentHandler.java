@@ -1,6 +1,5 @@
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
@@ -23,7 +22,6 @@ import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
-@GeneratedCodeCoverageExclusion
 public class AjaxResourceContentHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
@@ -91,7 +89,7 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
                 final StubProxyConfig foundProxyConfig = stubRepository.matchProxyConfigByName(stubType);
                 renderProxyConfigAjaxResponse(response, targetFieldName, foundProxyConfig);
             } else {
-                response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+                response.getWriter().println(String.format("Could not fetch the content for proxy config: %s", resourceIndexAsString));
             }
 
         }

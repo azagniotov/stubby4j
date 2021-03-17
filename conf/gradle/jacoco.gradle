@@ -18,9 +18,7 @@ jacocoTestReport {
     executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
     reports {
         csv.enabled false
-
-        xml.enabled true
-        xml.destination = file("${buildDir}/reports/jacoco/xml/jacocoCoverage.xml")
+        xml.enabled false
 
         html.enabled true
         html.destination = file("${buildDir}/reports/jacoco/html")
