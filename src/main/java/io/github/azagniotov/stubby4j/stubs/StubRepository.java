@@ -417,6 +417,22 @@ public class StubRepository {
         return proxyConfigs.containsKey(uuid);
     }
 
+    synchronized void updateProxyConfigByUuid(final String uuid, final StubProxyConfig newStubProxyConfig) {
+        if (!uuid.equals(newStubProxyConfig.getUUID())) {
+            final String message = String.format("Provided proxy config UUID '%s' does not match the target UUID '%s'",
+                    newStubProxyConfig.getUUID(), uuid);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (uuid.equals(StubProxyConfig.Builder.DEFAULT_UUID)) {
+            proxyConfigs.remove(StubProxyConfig.Builder.DEFAULT_UUID);
+            proxyConfigs.put(StubProxyConfig.Builder.DEFAULT_UUID, newStubProxyConfig);
+        } else {
+            proxyConfigs.remove(uuid);
+            proxyConfigs.put(uuid, newStubProxyConfig);
+        }
+    }
+
     synchronized void updateStubByIndex(final int index, final StubHttpLifecycle newStub) {
         final StubHttpLifecycle deletedStub = deleteStubByIndex(index);
         stubs.add(index, newStub);

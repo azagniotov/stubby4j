@@ -291,6 +291,179 @@ public class StubRepositoryTest {
     }
 
     @Test
+    public void shouldUpdateProxyConfigsByUuid() throws Exception {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigOne = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_ONE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigTwo = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_TWO)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigThree = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_THREE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+            put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
+            put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
+            put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+        final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
+        assertThat(resetResult).isTrue();
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: update by second UUID (STUB_UUID_TWO)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final StubProxyConfig newStubProxyConfigTwo = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_TWO)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://google.com")
+                .build();
+        spyStubRepository.updateProxyConfigByUuid(STUB_UUID_TWO, newStubProxyConfigTwo);
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_TWO).getPropertyEndpoint().equals("http://google.com")).isTrue();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: update by third UUID (STUB_UUID_THREE)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final StubProxyConfig newStubProxyConfigThree = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_THREE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://yahoo.com")
+                .build();
+        spyStubRepository.updateProxyConfigByUuid(STUB_UUID_THREE, newStubProxyConfigThree);
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_THREE).getPropertyEndpoint().equals("http://yahoo.com")).isTrue();
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: update by third UUID (STUB_UUID_ONE)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final StubProxyConfig newStubProxyConfigOne = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_ONE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://mail.com")
+                .build();
+        spyStubRepository.updateProxyConfigByUuid(STUB_UUID_ONE, newStubProxyConfigOne);
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_ONE).getPropertyEndpoint().equals("http://mail.com")).isTrue();
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: update by 'default' UUID
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final StubProxyConfig newStubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withUuid("default")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://rambler.ru")
+                .build();
+        spyStubRepository.updateProxyConfigByUuid("default", newStubProxyConfigDefault);
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        assertThat(spyStubRepository.getProxyConfigs().get("default").getPropertyEndpoint().equals("http://rambler.ru")).isTrue();
+    }
+
+    @Test
+    public void shouldFailUpdatingProxyConfigByUuidWhenUuidDoNotMatch() throws Exception {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+        final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
+        assertThat(resetResult).isTrue();
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(1);
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: Updating by UUIDs that do not match
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final StubProxyConfig newStubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withUuid("default")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://rambler.ru")
+                .build();
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            spyStubRepository.updateProxyConfigByUuid("totally-different-uuid", newStubProxyConfigDefault);
+        });
+
+        String expectedMessage = "Provided proxy config UUID 'default' does not match the target UUID 'totally-different-uuid'";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
     public void shouldDeleteProxyConfigsByUuid() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
@@ -418,7 +591,6 @@ public class StubRepositoryTest {
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);
-
     }
 
     @Test
