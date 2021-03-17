@@ -14,11 +14,8 @@ import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author: Alexander Zagniotov
- * Created: 4/28/13 8:53 PM
- */
-public final class HttpUtils {
+
+final class HttpUtils {
 
     private static final HttpRequestFactory WEB_CLIENT;
 
@@ -35,6 +32,12 @@ public final class HttpUtils {
                 .setConnectionTimeToLive(-1, TimeUnit.MILLISECONDS)
                 .setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
                 .disableRedirectHandling()
+
+                // In ProxyConfigWithStubsTest.shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched():
+                //
+                // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
+                // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
+                .disableContentCompression()
                 .disableAutomaticRetries()
                 .build();
 
@@ -49,15 +52,13 @@ public final class HttpUtils {
 
     }
 
-    public static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
-
+    static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
         return WEB_CLIENT.buildRequest(method,
                 new GenericUrl(targetUrl),
                 null);
     }
 
-    public static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
-
+    static HttpRequest constructHttpRequest(final String method, final String targetUrl, final String content) throws IOException {
         return WEB_CLIENT.buildRequest(method,
                 new GenericUrl(targetUrl),
                 new ByteArrayContent(null, StringUtils.getBytesUtf8(content)));
