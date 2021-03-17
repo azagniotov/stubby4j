@@ -380,7 +380,7 @@ public class StubRepository {
         }
     }
 
-    public synchronized String getStubYaml() {
+    public synchronized String dumpCompleteYamlConfig() {
         final StringBuilder builder = new StringBuilder();
         for (final StubHttpLifecycle stub : stubs) {
             builder.append(stub.getCompleteYaml()).append(FileUtils.BR).append(FileUtils.BR);
