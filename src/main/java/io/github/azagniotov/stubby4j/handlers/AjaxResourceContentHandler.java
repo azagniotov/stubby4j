@@ -3,10 +3,13 @@ package io.github.azagniotov.stubby4j.handlers;
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.StubTypes;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
+import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -25,6 +28,7 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
 
     private static final Pattern REGEX_REQUEST = Pattern.compile("^(request)$");
     private static final Pattern REGEX_RESPONSE = Pattern.compile("^(response)$");
+    private static final Pattern REGEX_PROXY_CONFIG = Pattern.compile("^(proxy-config)$");
     private static final Pattern REGEX_HTTPLIFECYCLE = Pattern.compile("^(httplifecycle)$");
     private static final Pattern REGEX_NUMERIC = Pattern.compile("^[0-9]+$");
 
@@ -45,11 +49,19 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
         response.setContentType("text/plain;charset=UTF-8");
         response.setStatus(HttpStatus.OK_200);
 
+        // e.g.: http://localhost:8889/ajax/resource/proxy-config/some-unique-name/proxyConfigAsYAML => /proxy-config/some-unique-name/proxyConfigAsYAML
+        // e.g.: http://localhost:8889/ajax/resource/32/httplifecycle/responseAsYAML => /32/httplifecycle/responseAsYAML
+        // e.g.: http://localhost:8889/ajax/resource/0/response/body => /0/response/body
         final String[] uriFragments = request.getRequestURI().split("/");
         final int urlFragmentsLength = uriFragments.length;
+
+        // e.g.: 'body' or 'responseAsYAML'
         final String targetFieldName = uriFragments[urlFragmentsLength - 1];
+
+        // e.g.: 'request', 'httplifecycle' or unique name of a proxy-config
         final String stubType = uriFragments[urlFragmentsLength - 2];
 
+        // e.g.: sequenced responses
         if (REGEX_NUMERIC.matcher(stubType).matches()) {
             final int sequencedResponseId = Integer.parseInt(stubType);
             final int resourceIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 4]);
@@ -57,20 +69,46 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
             renderAjaxResponseContent(response, sequencedResponseId, targetFieldName, foundStub);
         } else {
 
-            final int resourceIndex = Integer.parseInt(uriFragments[urlFragmentsLength - 3]);
-            final StubHttpLifecycle foundStub = throwErrorOnNonExistentResourceIndex(response, resourceIndex);
-            if (REGEX_REQUEST.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStub);
-            } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStub);
-            } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
-                renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStub);
+            // e.g.: /32/httplifecycle/responseAsYAML , the '32'
+            final String resourceIndexAsString = uriFragments[urlFragmentsLength - 3];
+            if (REGEX_NUMERIC.matcher(resourceIndexAsString).matches()) {
+                final int resourceIndex = Integer.parseInt(resourceIndexAsString);
+                final StubHttpLifecycle foundStub = throwErrorOnNonExistentResourceIndex(response, resourceIndex);
+                if (REGEX_REQUEST.matcher(stubType).matches()) {
+                    renderAjaxResponseContent(response, StubTypes.REQUEST, targetFieldName, foundStub);
+                } else if (REGEX_RESPONSE.matcher(stubType).matches()) {
+                    renderAjaxResponseContent(response, StubTypes.RESPONSE, targetFieldName, foundStub);
+                } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
+                    renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStub);
+                } else {
+                    response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+                }
+            }
+            // e.g.: /proxy-config/some-unique-name/proxyConfigAsYAML , the 'proxy-config'
+            else if (REGEX_PROXY_CONFIG.matcher(resourceIndexAsString).matches()) {
+
+                // the 'stubType' is actually proxy config unique name here
+                final StubProxyConfig foundProxyConfig = stubRepository.matchProxyConfigByName(stubType);
+                renderProxyConfigAjaxResponse(response, targetFieldName, foundProxyConfig);
             } else {
                 response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
             }
+
         }
 
         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
+    }
+
+    @VisibleForTesting
+    void renderProxyConfigAjaxResponse(final HttpServletResponse response, final String targetFieldName, final StubProxyConfig foundProxyConfig) throws IOException {
+        try {
+            final String ajaxResponse = StringUtils.objectToString(ReflectionUtils.getPropertyValue(foundProxyConfig, targetFieldName));
+            final String popupHtmlTemplate = getHtmlResourceByName("_popup_proxy_config");
+            final String htmlPopup = String.format(popupHtmlTemplate, foundProxyConfig.getProxyName(), ajaxResponse);
+            response.getWriter().println(htmlPopup);
+        } catch (final Exception ex) {
+            HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
+        }
     }
 
     @VisibleForTesting

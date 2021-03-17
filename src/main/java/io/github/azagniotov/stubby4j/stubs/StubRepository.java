@@ -276,6 +276,10 @@ public class StubRepository {
         return Optional.of(stubs.get(index));
     }
 
+    public synchronized StubProxyConfig matchProxyConfigByName(final String proxyConfigUniqueName) {
+        return proxyConfigs.get(proxyConfigUniqueName);
+    }
+
     synchronized boolean resetStubsCache(final YamlParseResultSet yamlParseResultSet) {
         this.stubMatchesCache.clear();
         this.stubs.clear();
@@ -321,6 +325,10 @@ public class StubRepository {
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
     public List<StubHttpLifecycle> getStubs() {
         return new LinkedList<>(stubs);
+    }
+
+    public Map<String, StubProxyConfig> getProxyConfigs() {
+        return new HashMap<>(proxyConfigs);
     }
 
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
@@ -442,6 +450,7 @@ public class StubRepository {
         this.stubMatchesCache.clear();
         this.stubs.clear();
         this.uuidToStub.clear();
+        this.proxyConfigs.clear();
     }
 
     private void updateResourceIDHeaders() {
