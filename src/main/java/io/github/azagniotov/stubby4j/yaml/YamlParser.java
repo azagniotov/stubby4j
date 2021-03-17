@@ -43,7 +43,6 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
@@ -174,7 +173,7 @@ public class YamlParser {
             final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
             buildReflectableStub(stubbedProperties, proxyConfigBuilder);
-            proxyConfigBuilder.withProxyConfigAsYAML(toYaml(yamlMappingProperties, PROXY_CONFIG));
+            proxyConfigBuilder.withProxyConfigAsYAML(toCompleteYamlListString(yamlMappingProperties));
         }
 
         final StubProxyConfig stubProxyConfig = proxyConfigBuilder.build();
@@ -208,7 +207,7 @@ public class YamlParser {
             }
         }
 
-        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYAMLString(yamlMappingProperties))
+        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYamlListString(yamlMappingProperties))
                 .withRequestAsYAML(toYaml(yamlMappingProperties, REQUEST))
                 .withResponseAsYAML(toYaml(yamlMappingProperties, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
@@ -327,9 +326,9 @@ public class YamlParser {
         return Optional.empty();
     }
 
-    private String toCompleteYAMLString(final Map<String, Object> httpLifecycleConfig) {
+    private String toCompleteYamlListString(final Map<String, Object> yamlMappingProperties) {
         final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
-            add(httpLifecycleConfig);
+            add(yamlMappingProperties);
         }};
 
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);

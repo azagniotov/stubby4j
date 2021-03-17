@@ -1,5 +1,8 @@
 package io.github.azagniotov.stubby4j;
 
+import com.google.api.client.http.HttpMethods;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpResponse;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -21,7 +24,6 @@ import static com.google.common.truth.Truth.assertThat;
 public class ProxyConfigWithStubsTest {
 
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
-    ;
     private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
 
@@ -64,7 +66,21 @@ public class ProxyConfigWithStubsTest {
     }
 
     @Test
-    public void sanityCheck() throws Exception {
-        assertThat(true).isEqualTo(true);
+    public void should_ReturnCompleteYAMLConfig_WhenSuccessfulGetMade_ToAdminPortalRoot() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/");
+        final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpResponse httpResponse = httpGetRequest.execute();
+        final String responseContentAsString = httpResponse.parseAsString().trim();
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(responseContentAsString).contains(
+                "- proxy-config:\n" +
+                        "    proxy-config-description: this is a catch-all proxy config\n" +
+                        "    proxy-strategy: as-is\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com"
+        );
     }
 }

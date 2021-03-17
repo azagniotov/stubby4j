@@ -115,7 +115,7 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnAllStubbedRequestsAsYAML_WhenSuccessfulGetMade_ToAdminPortalRoot() throws Exception {
+    public void should_ReturnCompleteYAMLConfig_WhenSuccessfulGetMade_ToAdminPortalRoot() throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/");
         final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -124,6 +124,7 @@ public class AdminPortalTest {
         final String responseContentAsString = httpResponse.parseAsString().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(responseContentAsString).doesNotContain("proxy-config");
         assertThat(responseContentAsString).contains("request");
         assertThat(responseContentAsString).contains("url: ^/resources/asn/");
         assertThat(responseContentAsString).contains("content-disposition: attachment; filename=hello-world.pdf");
