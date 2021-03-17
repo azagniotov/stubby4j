@@ -150,14 +150,14 @@ public class StubRepositoryTest {
                 .build();
 
         final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
         final StubProxyConfig stubProxyConfigOther = new StubProxyConfig.Builder()
-                .withProxyName("other-unique")
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .withUuid("other-unique")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
         final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
@@ -165,8 +165,8 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getProxyName(), stubProxyConfigDefault);
-            put(stubProxyConfigOther.getProxyName(), stubProxyConfigOther);
+            put(stubProxyConfigDefault.getUuid(), stubProxyConfigDefault);
+            put(stubProxyConfigOther.getUuid(), stubProxyConfigOther);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -175,7 +175,7 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.getStubs().size()).isGreaterThan(0);
 
         assertThat(spyStubRepository.matchProxyConfigByName("does-not-exist")).isNull();
-        assertThat(spyStubRepository.matchProxyConfigByName("CATCH_ALL")).isEqualTo(stubProxyConfigDefault);
+        assertThat(spyStubRepository.matchProxyConfigByName("default")).isEqualTo(stubProxyConfigDefault);
         assertThat(spyStubRepository.matchProxyConfigByName("other-unique")).isEqualTo(stubProxyConfigOther);
     }
 
@@ -779,8 +779,8 @@ public class StubRepositoryTest {
                 .build();
 
         final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
         final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
@@ -788,7 +788,7 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getProxyName(), stubProxyConfig);
+            put(stubProxyConfig.getUuid(), stubProxyConfig);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -841,8 +841,8 @@ public class StubRepositoryTest {
                 .build();
 
         final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
         final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
@@ -850,7 +850,7 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getProxyName(), stubProxyConfig);
+            put(stubProxyConfig.getUuid(), stubProxyConfig);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);

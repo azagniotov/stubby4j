@@ -8,50 +8,50 @@ import java.util.Map;
 import java.util.Objects;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.ENDPOINT;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_CONFIG_DESCRIPTION;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_NAME;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_PROPERTIES;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_STRATEGY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROPERTIES;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STRATEGY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
 
 public class StubProxyConfig implements ReflectableStub {
 
-    private final String proxyConfigDescription;
-    private final String proxyName;
-    private final StubProxyStrategy proxyStrategy;
-    private final Map<String, String> proxyProperties;
+    private final String description;
+    private final String uuid;
+    private final StubProxyStrategy strategy;
+    private final Map<String, String> properties;
     private final String proxyConfigAsYAML;
 
-    private StubProxyConfig(final String proxyConfigDescription,
-                            final String proxyName,
-                            final StubProxyStrategy proxyStrategy,
-                            final Map<String, String> proxyProperties,
+    private StubProxyConfig(final String description,
+                            final String uuid,
+                            final StubProxyStrategy strategy,
+                            final Map<String, String> properties,
                             final String proxyConfigAsYAML) {
-        this.proxyConfigDescription = proxyConfigDescription;
-        this.proxyName = proxyName;
-        this.proxyStrategy = proxyStrategy;
-        this.proxyProperties = proxyProperties;
+        this.description = description;
+        this.uuid = uuid;
+        this.strategy = strategy;
+        this.properties = properties;
         this.proxyConfigAsYAML = proxyConfigAsYAML;
     }
 
-    public String getProxyConfigDescription() {
-        return proxyConfigDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public String getProxyName() {
-        return proxyName;
+    public String getUuid() {
+        return uuid;
     }
 
-    public StubProxyStrategy getProxyStrategy() {
-        return proxyStrategy;
+    public StubProxyStrategy getStrategy() {
+        return strategy;
     }
 
-    public Map<String, String> getProxyProperties() {
-        return new HashMap<>(proxyProperties);
+    public Map<String, String> getProperties() {
+        return new HashMap<>(properties);
     }
 
-    public String getProxyEndpoint() {
-        return proxyProperties.get(ENDPOINT.toString());
+    public String getPropertyEndpoint() {
+        return properties.get(ENDPOINT.toString());
     }
 
     /**
@@ -67,61 +67,61 @@ public class StubProxyConfig implements ReflectableStub {
         if (this == o) return true;
         if (!(o instanceof StubProxyConfig)) return false;
         StubProxyConfig that = (StubProxyConfig) o;
-        return Objects.equals(proxyName, that.proxyName) &&
-                proxyStrategy == that.proxyStrategy &&
-                proxyProperties.equals(that.proxyProperties);
+        return Objects.equals(uuid, that.uuid) &&
+                strategy == that.strategy &&
+                properties.equals(that.properties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(proxyName, proxyStrategy, proxyProperties);
+        return Objects.hash(uuid, strategy, properties);
     }
 
     public static final class Builder extends AbstractBuilder<StubProxyConfig> {
 
-        public static final String DEFAULT_NAME = "CATCH_ALL";
-        private String proxyConfigDescription;
-        private String proxyName;
-        private StubProxyStrategy proxyStrategy;
-        private Map<String, String> proxyProperties;
+        public static final String DEFAULT_UUID = "default";
+        private String description;
+        private String uuid;
+        private StubProxyStrategy strategy;
+        private Map<String, String> properties;
         private String proxyConfigAsYAML;
 
         public Builder() {
             super();
-            this.proxyConfigDescription = null;
-            this.proxyName = DEFAULT_NAME;
-            this.proxyStrategy = null;
-            this.proxyProperties = new LinkedHashMap<>();
+            this.description = null;
+            this.uuid = DEFAULT_UUID;
+            this.strategy = null;
+            this.properties = new LinkedHashMap<>();
             this.proxyConfigAsYAML = null;
         }
 
-        public Builder withProxyConfigDescription(final String proxyConfigDescription) {
-            this.proxyConfigDescription = proxyConfigDescription;
+        public Builder withDescription(final String description) {
+            this.description = description;
 
             return this;
         }
 
-        public Builder withProxyName(final String proxyName) {
-            this.proxyName = proxyName;
+        public Builder withUuid(final String uuid) {
+            this.uuid = uuid;
 
             return this;
         }
 
-        public Builder withProxyStrategy(final String proxyStrategy) {
-            this.proxyStrategy = StubProxyStrategy.ofNullableProperty(proxyStrategy)
-                    .orElseThrow(() -> new IllegalArgumentException(proxyStrategy));
+        public Builder withStrategy(final String strategy) {
+            this.strategy = StubProxyStrategy.ofNullableProperty(strategy)
+                    .orElseThrow(() -> new IllegalArgumentException(strategy));
 
             return this;
         }
 
-        public Builder withProxyProperty(final String key, final String value) {
-            this.proxyProperties.put(key, value);
+        public Builder withProperty(final String key, final String value) {
+            this.properties.put(key, value);
 
             return this;
         }
 
-        public Builder withProxyPropertyEndpoint(final String value) {
-            this.proxyProperties.put(ENDPOINT.toString(), value);
+        public Builder withPropertyEndpoint(final String endpoint) {
+            this.properties.put(ENDPOINT.toString(), endpoint);
 
             return this;
         }
@@ -135,22 +135,22 @@ public class StubProxyConfig implements ReflectableStub {
 
         @Override
         public StubProxyConfig build() {
-            this.proxyConfigDescription = getStaged(String.class, PROXY_CONFIG_DESCRIPTION, proxyConfigDescription);
-            this.proxyName = getStaged(String.class, PROXY_NAME, proxyName);
-            this.proxyStrategy = getStaged(StubProxyStrategy.class, PROXY_STRATEGY, proxyStrategy);
-            this.proxyProperties = asCheckedLinkedHashMap(getStaged(Map.class, PROXY_PROPERTIES, proxyProperties), String.class, String.class);
+            this.description = getStaged(String.class, DESCRIPTION, description);
+            this.uuid = getStaged(String.class, UUID, uuid);
+            this.strategy = getStaged(StubProxyStrategy.class, STRATEGY, strategy);
+            this.properties = asCheckedLinkedHashMap(getStaged(Map.class, PROPERTIES, properties), String.class, String.class);
 
             final StubProxyConfig stubProxyConfig = new StubProxyConfig(
-                    proxyConfigDescription,
-                    proxyName,
-                    proxyStrategy,
-                    proxyProperties,
+                    description,
+                    uuid,
+                    strategy,
+                    properties,
                     proxyConfigAsYAML);
 
-            this.proxyConfigDescription = null;
-            this.proxyName = DEFAULT_NAME;
-            this.proxyStrategy = null;
-            this.proxyProperties = new LinkedHashMap<>();
+            this.description = null;
+            this.uuid = DEFAULT_UUID;
+            this.strategy = null;
+            this.properties = new LinkedHashMap<>();
             this.proxyConfigAsYAML = null;
             this.fieldNameAndValues.clear();
 

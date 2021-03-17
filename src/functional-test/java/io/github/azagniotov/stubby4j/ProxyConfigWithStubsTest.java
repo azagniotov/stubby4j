@@ -81,9 +81,9 @@ public class ProxyConfigWithStubsTest {
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(responseContentAsString).contains(
                 "- proxy-config:\n" +
-                        "    proxy-config-description: this is a catch-all proxy config\n" +
-                        "    proxy-strategy: as-is\n" +
-                        "    proxy-properties:\n" +
+                        "    description: this is a catch-all proxy config\n" +
+                        "    strategy: as-is\n" +
+                        "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com"
         );
     }

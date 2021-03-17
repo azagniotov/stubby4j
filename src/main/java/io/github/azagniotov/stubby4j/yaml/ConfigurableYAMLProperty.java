@@ -9,29 +9,38 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 
 public enum ConfigurableYAMLProperty {
 
+    // allows for YAML sub-configs
+    INCLUDES("includes"),
+
+    // proxy-config & http lifecycle properties
+    DESCRIPTION("description"),
+    UUID("uuid"),
+
     // proxy-config properties
     PROXY_CONFIG("proxy-config"),
-    PROXY_CONFIG_DESCRIPTION("proxy-config-description"),
-    PROXY_NAME("proxy-name"),
-    PROXY_STRATEGY("proxy-strategy"),
-    PROXY_PROPERTIES("proxy-properties"),
+    STRATEGY("strategy"),
+    PROPERTIES("properties"),
     ENDPOINT("endpoint"),
 
-    INCLUDES("includes"),
-    BODY("body"),
-    FILE("file"),
-    HEADERS("headers"),
     HTTPLIFECYCLE("httplifecycle"),
-    LATENCY("latency"),
+    REQUEST("request"),
+    RESPONSE("response"),
+
+    // stub request specific
+    URL("url"),
     METHOD("method"),
     POST("post"),
     QUERY("query"),
-    REQUEST("request"),
-    RESPONSE("response"),
+
+    // stub response specific
+    BODY("body"),
+    LATENCY("latency"),
     STATUS("status"),
-    URL("url"),
-    DESCRIPTION("description"),
-    UUID("uuid");
+
+    // stub request & response properties
+    FILE("file"),
+    HEADERS("headers");
+
 
     private static final Map<String, ConfigurableYAMLProperty> PROPERTY_NAME_TO_ENUM_MEMBER;
 

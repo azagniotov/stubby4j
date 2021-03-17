@@ -959,31 +959,31 @@ public class YamlParserTest {
         final Map<String, StubProxyConfig> proxyConfigs = yamlParseResultSet.getProxyConfigs();
         assertThat(proxyConfigs.isEmpty()).isFalse();
 
-        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
-        assertThat(defaultStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
-        assertThat(defaultStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
-        assertThat(defaultStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
-        assertThat(defaultStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
+        assertThat(defaultStubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(defaultStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
+        assertThat(defaultStubProxyConfig.getProperties().size()).isEqualTo(1);
+        assertThat(defaultStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
-        assertThat(customStubProxyConfig.getProxyName()).isEqualTo("some-unique-name");
-        assertThat(customStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
-        assertThat(customStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
-        assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+        assertThat(customStubProxyConfig.getUuid()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
+        assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         assertThat(defaultStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
-                        "    proxy-config-description: this is a default catch-all config\n" +
-                        "    proxy-strategy: as-is\n" +
-                        "    proxy-properties:\n" +
+                        "    description: this is a default catch-all config\n" +
+                        "    strategy: as-is\n" +
+                        "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
 
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
-                        "    proxy-config-description: woah! this is a unique proxy-config\n" +
-                        "    proxy-name: some-unique-name\n" +
-                        "    proxy-strategy: custom\n" +
-                        "    proxy-properties:\n" +
+                        "    description: woah! this is a unique proxy-config\n" +
+                        "    uuid: some-unique-name\n" +
+                        "    strategy: custom\n" +
+                        "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
     }
 
@@ -1003,29 +1003,29 @@ public class YamlParserTest {
         assertThat(stubs.get(0).getRequest().getUrl()).isEqualTo("^/resources/asn/.*$");
         assertThat(stubs.get(0).getResponses().get(0).getBody()).isEqualTo("{\"status\": \"ASN found!\"}");
 
-        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
-        assertThat(defaultStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
-        assertThat(defaultStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
-        assertThat(defaultStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
-        assertThat(defaultStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+        final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
+        assertThat(defaultStubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(defaultStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
+        assertThat(defaultStubProxyConfig.getProperties().size()).isEqualTo(1);
+        assertThat(defaultStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
-        assertThat(customStubProxyConfig.getProxyName()).isEqualTo("some-unique-name");
-        assertThat(customStubProxyConfig.getProxyStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
-        assertThat(customStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
-        assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
+        assertThat(customStubProxyConfig.getUuid()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
+        assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         assertThat(defaultStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
-                        "    proxy-strategy: as-is\n" +
-                        "    proxy-properties:\n" +
+                        "    strategy: as-is\n" +
+                        "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
 
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
-                        "    proxy-name: some-unique-name\n" +
-                        "    proxy-strategy: custom\n" +
-                        "    proxy-properties:\n" +
+                        "    uuid: some-unique-name\n" +
+                        "    strategy: custom\n" +
+                        "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
     }
 
