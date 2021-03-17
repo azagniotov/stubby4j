@@ -32,17 +32,17 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigHasDefaultUuid() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder.build();
-        assertThat(stubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(stubProxyConfig.getUUID()).isEqualTo("default");
     }
 
     @Test
     public void stubbedProxyConfigNameResetsToDefaultUuid() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder.withUuid("newName").build();
-        assertThat(stubProxyConfig.getUuid()).isEqualTo("newName");
+        assertThat(stubProxyConfig.getUUID()).isEqualTo("newName");
 
         final StubProxyConfig freshStubProxyConfig = builder.build();
-        assertThat(freshStubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(freshStubProxyConfig.getUUID()).isEqualTo("default");
     }
 
     @Test

@@ -38,7 +38,7 @@ public class StubProxyConfig implements ReflectableStub {
         return description;
     }
 
-    public String getUuid() {
+    public String getUUID() {
         return uuid;
     }
 

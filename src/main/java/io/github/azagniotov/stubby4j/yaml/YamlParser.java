@@ -107,11 +107,11 @@ public class YamlParser {
                 // the YAML config file contains a top-level:
                 // - proxy-config
                 final StubProxyConfig stubProxyConfig = parseStubProxyConfig(yamlMappingProperties);
-                if (proxyConfigs.containsKey(stubProxyConfig.getUuid())) {
-                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getUuid() + " already exists");
+                if (proxyConfigs.containsKey(stubProxyConfig.getUUID())) {
+                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getUUID() + " already exists");
                 }
 
-                proxyConfigs.put(stubProxyConfig.getUuid(), stubProxyConfig);
+                proxyConfigs.put(stubProxyConfig.getUUID(), stubProxyConfig);
             } else {
                 // the YAML config file contains a top-level:
                 // - request

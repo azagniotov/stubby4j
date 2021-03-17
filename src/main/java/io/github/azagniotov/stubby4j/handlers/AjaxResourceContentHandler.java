@@ -102,7 +102,7 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
         try {
             final String ajaxResponse = StringUtils.objectToString(ReflectionUtils.getPropertyValue(foundProxyConfig, targetFieldName));
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_proxy_config");
-            final String htmlPopup = String.format(popupHtmlTemplate, foundProxyConfig.getUuid(), ajaxResponse);
+            final String htmlPopup = String.format(popupHtmlTemplate, foundProxyConfig.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());

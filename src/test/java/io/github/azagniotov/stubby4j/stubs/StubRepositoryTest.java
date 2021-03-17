@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyString;
@@ -165,8 +166,8 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUuid(), stubProxyConfigDefault);
-            put(stubProxyConfigOther.getUuid(), stubProxyConfigOther);
+            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+            put(stubProxyConfigOther.getUUID(), stubProxyConfigOther);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -201,14 +202,14 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.getStubs().size()).isGreaterThan(0);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
 
-        spyStubRepository.deleteAllStubs();
+        spyStubRepository.clear();
         assertThat(spyStubRepository.getStubs()).isEmpty();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isFalse();
     }
 
     @Test
     public void shouldDeleteOriginalHttpCycleList_WhenStubsDontExist() throws Exception {
-        spyStubRepository.deleteAllStubs();
+        spyStubRepository.clear();
         assertThat(spyStubRepository.getStubs()).isEmpty();
     }
 
@@ -287,6 +288,137 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isFalse();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_TWO)).isFalse();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isFalse();
+    }
+
+    @Test
+    public void shouldDeleteProxyConfigsByUuid() throws Exception {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigOne = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_ONE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigTwo = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_TWO)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigThree = new StubProxyConfig.Builder()
+                .withUuid(STUB_UUID_THREE)
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+            put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
+            put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
+            put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+        final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
+        assertThat(resetResult).isTrue();
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(4);
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: deleting by second UUID (STUB_UUID_TWO)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        assertThat(spyStubRepository.deleteProxyConfigByUuid(STUB_UUID_TWO)).isNotNull();
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(3);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isFalse();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: deleting by third UUID (STUB_UUID_THREE)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        assertThat(spyStubRepository.deleteProxyConfigByUuid(STUB_UUID_THREE)).isNotNull();
+
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(2);
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isTrue();
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isFalse();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isFalse();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: deleting by first UUID (STUB_UUID_ONE)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        assertThat(spyStubRepository.deleteProxyConfigByUuid(STUB_UUID_ONE)).isNotNull();
+
+        assertThat(spyStubRepository.getProxyConfigs().isEmpty()).isFalse();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_ONE)).isFalse();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isFalse();
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isFalse();
+    }
+
+    @Test
+    public void shouldFailDeletingDefaultProxyConfigByUuid() throws Exception {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+        final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
+        assertThat(resetResult).isTrue();
+        assertThat(spyStubRepository.getProxyConfigs().size()).isEqualTo(1);
+
+        assertThat(spyStubRepository.canMatchProxyConfigByUuid("default")).isTrue();
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: deleting by 'default' UUID value
+        ///////////////////////////////////////////////////////////////////////////////////////
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            spyStubRepository.deleteProxyConfigByUuid("default");
+        });
+
+        String expectedMessage = "You cannot delete 'default' (i.e.: catch-all) proxy config via API";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+
     }
 
     @Test
@@ -788,7 +920,7 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUuid(), stubProxyConfig);
+            put(stubProxyConfig.getUUID(), stubProxyConfig);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -850,7 +982,7 @@ public class StubRepositoryTest {
         }}, new HashMap<String, StubHttpLifecycle>() {{
             put(httpLifecycle.getUUID(), httpLifecycle);
         }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUuid(), stubProxyConfig);
+            put(stubProxyConfig.getUUID(), stubProxyConfig);
         }});
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
