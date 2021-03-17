@@ -47,7 +47,7 @@ public class GetHandlingStrategy implements AdminResponseHandlingStrategy {
                 yamlAppender.append(stubRepository.getStubYamlByUuid(lastUriPathSegment));
             }
         } else {
-            yamlAppender.append(stubRepository.getStubYaml());
+            yamlAppender.append(stubRepository.dumpCompleteYamlConfig());
         }
 
         response.setContentType("text/plain;charset=UTF-8");

@@ -972,19 +972,19 @@ public class YamlParserTest {
         assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         assertThat(defaultStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
-                "proxy-config:\n" +
-                        "  proxy-config-description: this is a default catch-all config\n" +
-                        "  proxy-strategy: as-is\n" +
-                        "  proxy-properties:\n" +
-                        "    endpoint: https://jsonplaceholder.typicode.com\n");
+                "- proxy-config:\n" +
+                        "    proxy-config-description: this is a default catch-all config\n" +
+                        "    proxy-strategy: as-is\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com\n");
 
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
-                "proxy-config:\n" +
-                        "  proxy-config-description: woah! this is a unique proxy-config\n" +
-                        "  proxy-name: some-unique-name\n" +
-                        "  proxy-strategy: custom\n" +
-                        "  proxy-properties:\n" +
-                        "    endpoint: https://jsonplaceholder.typicode.com\n");
+                "- proxy-config:\n" +
+                        "    proxy-config-description: woah! this is a unique proxy-config\n" +
+                        "    proxy-name: some-unique-name\n" +
+                        "    proxy-strategy: custom\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com\n");
     }
 
     @Test
@@ -1015,12 +1015,18 @@ public class YamlParserTest {
         assertThat(customStubProxyConfig.getProxyProperties().size()).isEqualTo(1);
         assertThat(customStubProxyConfig.getProxyProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
+        assertThat(defaultStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
+                "- proxy-config:\n" +
+                        "    proxy-strategy: as-is\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com\n");
+
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
-                "proxy-config:\n" +
-                        "  proxy-name: some-unique-name\n" +
-                        "  proxy-strategy: custom\n" +
-                        "  proxy-properties:\n" +
-                        "    endpoint: https://jsonplaceholder.typicode.com\n");
+                "- proxy-config:\n" +
+                        "    proxy-name: some-unique-name\n" +
+                        "    proxy-strategy: custom\n" +
+                        "    proxy-properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com\n");
     }
 
     @Test

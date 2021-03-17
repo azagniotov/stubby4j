@@ -380,8 +380,16 @@ public class StubRepository {
         }
     }
 
-    public synchronized String getStubYaml() {
+    public synchronized String dumpCompleteYamlConfig() {
         final StringBuilder builder = new StringBuilder();
+
+        if (!proxyConfigs.isEmpty()) {
+            for (final Map.Entry<String, StubProxyConfig> entry : proxyConfigs.entrySet()) {
+                builder.append(entry.getValue().getProxyConfigAsYAML()).append(FileUtils.BR).append(FileUtils.BR);
+            }
+            builder.append(FileUtils.BR);
+        }
+
         for (final StubHttpLifecycle stub : stubs) {
             builder.append(stub.getCompleteYaml()).append(FileUtils.BR).append(FileUtils.BR);
         }
