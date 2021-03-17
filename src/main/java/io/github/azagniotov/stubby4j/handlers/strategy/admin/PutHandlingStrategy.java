@@ -10,7 +10,6 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
@@ -22,14 +21,7 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        // e.g.: http://localhost:8889/<NUMERIC_ID>
-        // e.g.: http://localhost:8889/<ALPHA_NUMERIC_UUID_STRING>
-        // e.g.: http://localhost:8889/proxy-config/<ALPHA_NUMERIC_UUID_STRING>
-        final String[] uriFragments = Arrays.stream(request.getRequestURI().split("/"))
-                .filter(uriPath -> !uriPath.trim().isEmpty())
-                .map(String::trim)
-                .toArray(String[]::new);
-
+        final String[] uriFragments = splitRequestURI(request);
         if (uriFragments.length == 1) {
             final String lastUriPathSegment = uriFragments[0];
 

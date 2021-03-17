@@ -10,7 +10,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
 
@@ -24,14 +23,7 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        // e.g.: http://localhost:8889/<NUMERIC_ID>
-        // e.g.: http://localhost:8889/<ALPHA_NUMERIC_UUID_STRING>
-        // e.g.: http://localhost:8889/proxy-config/<ALPHA_NUMERIC_UUID_STRING>
-        final String[] uriFragments = Arrays.stream(request.getRequestURI().split("/"))
-                .filter(uriPath -> !uriPath.trim().isEmpty())
-                .map(String::trim)
-                .toArray(String[]::new);
-
+        final String[] uriFragments = splitRequestURI(request);
         if (uriFragments.length == 1) {
             final String lastUriPathSegment = uriFragments[0];
             // We are trying to delete a stub by ID, e.g.: DELETE localhost:8889/8
