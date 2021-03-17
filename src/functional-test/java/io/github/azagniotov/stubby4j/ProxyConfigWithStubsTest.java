@@ -1,8 +1,10 @@
 package io.github.azagniotov.stubby4j;
 
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
+import io.github.azagniotov.stubby4j.annotations.PotentiallyFlaky;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -20,6 +22,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public class ProxyConfigWithStubsTest {
 
@@ -82,5 +86,38 @@ public class ProxyConfigWithStubsTest {
                         "    proxy-properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com"
         );
+    }
+
+    @Test
+    @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
+    public void shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched() throws Exception {
+
+        // https://jsonplaceholder.typicode.com/todos/1
+        final String targetUriPath = "/todos/1";
+
+        // Stub with URL '/todos/1' does not exist, so the request will be proxied
+        final String requestUrl = String.format("%s%s", STUBS_URL, targetUriPath);
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+
+        // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
+        // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
+        httpHeaders.setAcceptEncoding(null);
+        request.setHeaders(httpHeaders);
+
+        final HttpResponse response = request.execute();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+
+        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE)).isTrue();
+
+        final String responseContent = response.parseAsString().trim();
+        assertThat(responseContent).isEqualTo(
+                "{" + BR +
+                        "  \"userId\": 1," + BR +
+                        "  \"id\": 1," + BR +
+                        "  \"title\": \"delectus aut autem\"," + BR +
+                        "  \"completed\": false" + BR +
+                        "}");
     }
 }
