@@ -122,6 +122,60 @@ public class ProxyConfigWithStubsTest {
     }
 
     @Test
+    public void should_UpdateStubbedProxyConfig_WithJsonRequest_ByValidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/some-unique-name");
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // 1st sanity check: verifying the original endpoint URL
+        ///////////////////////////////////////////////////////////////////////////////////////
+        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        HttpResponse httpGetResponse = httpGetRequest.execute();
+        String getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).isEqualTo(
+                "- proxy-config:\n" +
+                        "    uuid: some-unique-name\n" +
+                        "    strategy: custom\n" +
+                        "    properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com");
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: updating by UUID
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_11.json");
+        final InputStream jsonInputStream = url.openStream();
+        final String jsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
+
+        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, jsonToUpdate);
+
+        final HttpResponse httpPutResponse = httpPutRequest.execute();
+        final String putResponseContent = httpPutResponse.parseAsString().trim();
+        final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(putResponseLocationHeader).isEqualTo("https://UPDATED.com");
+        assertThat(putResponseContent).isEqualTo("Proxy config uuid#some-unique-name updated successfully");
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // 2nd sanity check: verifying the updated endpoint URL
+        ///////////////////////////////////////////////////////////////////////////////////////
+        httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        httpGetResponse = httpGetRequest.execute();
+        getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).isEqualTo(
+                "- proxy-config:\n" +
+                        "    uuid: some-unique-name\n" +
+                        "    strategy: custom\n" +
+                        "    properties:\n" +
+                        "      endpoint: https://UPDATED.com");
+    }
+
+    @Test
     public void should_DeleteStubbedProxyConfig_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidUuid() throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/some-unique-name-two");

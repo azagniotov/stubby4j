@@ -43,9 +43,9 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.fromString;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
@@ -125,10 +125,6 @@ public class YamlParser {
                 }
                 stubs.add(stubHttpLifecycle);
             }
-        }
-
-        if (!proxyConfigs.isEmpty() && !proxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
-            throw new IllegalStateException("Missing default proxy config");
         }
 
         return new YamlParseResultSet(stubs, uuidToStubs, proxyConfigs);

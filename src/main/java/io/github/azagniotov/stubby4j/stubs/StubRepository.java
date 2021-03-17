@@ -201,7 +201,7 @@ public class StubRepository {
 
     private StubResponse proxyRequest(final StubHttpLifecycle incomingHttpLifecycle) {
 
-        // The catch-all will always be there if we have proxy configs, otherwise the YamlParser throws
+        // The catch-all will always be there if we have proxy configs, otherwise the YAML loading throws
         final StubProxyConfig catchAllProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
         final StubRequest incomingRequest = incomingHttpLifecycle.getRequest();
         final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
@@ -293,7 +293,12 @@ public class StubRepository {
             this.uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
         }
 
-        this.proxyConfigs.putAll(yamlParseResultSet.getProxyConfigs());
+        final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
+        if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
+            throw new IllegalStateException("Missing default proxy config");
+        }
+
+        this.proxyConfigs.putAll(loadedProxyConfigs);
 
         return addedStubs;
     }
@@ -320,6 +325,14 @@ public class StubRepository {
         updateStubByUuid(uuid, newStub);
 
         return newStub.getUrl();
+    }
+
+    public synchronized String refreshProxyConfigByUuid(final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
+        final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
+        final StubProxyConfig newStubProxyConfig = yamlParseResultSet.getProxyConfigs().get(uuid);
+        updateProxyConfigByUuid(uuid, newStubProxyConfig);
+
+        return newStubProxyConfig.getPropertyEndpoint();
     }
 
     // Just a shallow copy that protects collection from modification, the points themselves are not copied
@@ -403,6 +416,10 @@ public class StubRepository {
 
     public synchronized String getStubYamlByUuid(final String uuid) {
         return uuidToStub.get(uuid).getCompleteYaml();
+    }
+
+    public synchronized String getProxyConfigYamlByUuid(final String uuid) {
+        return proxyConfigs.get(uuid).getProxyConfigAsYAML();
     }
 
     public synchronized boolean canMatchStubByIndex(final int index) {
@@ -499,7 +516,13 @@ public class StubRepository {
             final YamlParseResultSet yamlParseResultSet = stubLoadComputation.get();
             stubs.addAll(yamlParseResultSet.getStubs());
             uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
-            proxyConfigs.putAll(yamlParseResultSet.getProxyConfigs());
+
+            final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
+            if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
+                throw new IllegalStateException("Missing default proxy config");
+            }
+
+            this.proxyConfigs.putAll(loadedProxyConfigs);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

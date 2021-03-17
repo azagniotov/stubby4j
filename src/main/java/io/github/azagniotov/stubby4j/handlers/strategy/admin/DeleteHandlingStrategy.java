@@ -11,11 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
-
-    private static final Pattern REGEX_PROXY_CONFIG = Pattern.compile("^(proxy-config)$");
 
     @Override
     public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws IOException {
@@ -65,8 +62,10 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
         } else if (uriFragments.length == 2) {
             // e.g.: http://localhost:8889/proxy-config/<ALPHA_NUMERIC_UUID_STRING>
             final String maybeProxyConfig = uriFragments[0];
+
             if (REGEX_PROXY_CONFIG.matcher(maybeProxyConfig).matches()) {
                 final String proxyConfigUuid = uriFragments[uriFragments.length - 1];
+
                 // We attempt to delete a proxy config by uuid, e.g.: DELETE localhost:8889/proxy-config/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchProxyConfigByUuid(proxyConfigUuid)) {
                     final String errorMessage = String.format("Proxy config uuid#%s does not exist, cannot delete", proxyConfigUuid);
@@ -83,7 +82,7 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
                 response.setStatus(HttpStatus.OK_200);
                 response.getWriter().println(String.format("Proxy config uuid#%s deleted successfully", proxyConfigUuid));
             } else {
-                final String errorMessage = String.format("Invalid URI path requested", maybeProxyConfig);
+                final String errorMessage = String.format("Invalid URI path requested: %s", maybeProxyConfig);
                 HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
             }
         }

@@ -39,6 +39,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUS
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.ReflectionUtils.injectObjectFields;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -1101,6 +1102,23 @@ public class StubRepositoryTest {
                 assertThat(sequenceStubResponse.getHeaders().get(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo(String.valueOf(resourceId));
             }
         }
+    }
+
+    @Test
+    public void shouldThrowWhenDefaultProxyConfigMissing() throws Exception {
+
+        final StubRepository stubRepository = new StubRepository(CONFIG_FILE, spyDefaultCache, YAML_PARSE_RESULT_SET_FUTURE, new StubbyHttpTransport());
+        final URL yamlUrl = this.getClass().getResource("/yaml/proxy-config-without-default-config.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            stubRepository.resetStubsCache(new YamlParser().parse(".", inputStreamToString(stubsConfigStream)));
+        });
+
+        String expectedMessage = "Missing default proxy config";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
     @Test
