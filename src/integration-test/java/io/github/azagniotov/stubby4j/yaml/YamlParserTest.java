@@ -960,13 +960,13 @@ public class YamlParserTest {
         assertThat(proxyConfigs.isEmpty()).isFalse();
 
         final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
-        assertThat(defaultStubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(defaultStubProxyConfig.getUUID()).isEqualTo("default");
         assertThat(defaultStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
         assertThat(defaultStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(defaultStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
-        assertThat(customStubProxyConfig.getUuid()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getUUID()).isEqualTo("some-unique-name");
         assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
         assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
@@ -1004,13 +1004,13 @@ public class YamlParserTest {
         assertThat(stubs.get(0).getResponses().get(0).getBody()).isEqualTo("{\"status\": \"ASN found!\"}");
 
         final StubProxyConfig defaultStubProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
-        assertThat(defaultStubProxyConfig.getUuid()).isEqualTo("default");
+        assertThat(defaultStubProxyConfig.getUUID()).isEqualTo("default");
         assertThat(defaultStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
         assertThat(defaultStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(defaultStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
-        assertThat(customStubProxyConfig.getUuid()).isEqualTo("some-unique-name");
+        assertThat(customStubProxyConfig.getUUID()).isEqualTo("some-unique-name");
         assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
         assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");

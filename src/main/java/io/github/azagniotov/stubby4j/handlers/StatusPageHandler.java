@@ -121,7 +121,7 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
     }
 
     private String buildStubProxyConfigtHtmlTable(final StubProxyConfig stubProxyConfig, final String templateHtmlTable) throws Exception {
-        final String proxyUuid = stubProxyConfig.getUuid();
+        final String proxyUuid = stubProxyConfig.getUUID();
         final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, PROXY_CONFIG, proxyUuid, "proxyConfigAsYAML");
         final StringBuilder proxyConfigTableBuilder = buildStubHtmlTableBody(proxyUuid, PROXY_CONFIG.toString(), ReflectionUtils.getProperties(stubProxyConfig));
         proxyConfigTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));

@@ -413,6 +413,10 @@ public class StubRepository {
         return uuidToStub.containsKey(uuid);
     }
 
+    public synchronized boolean canMatchProxyConfigByUuid(final String uuid) {
+        return proxyConfigs.containsKey(uuid);
+    }
+
     synchronized void updateStubByIndex(final int index, final StubHttpLifecycle newStub) {
         final StubHttpLifecycle deletedStub = deleteStubByIndex(index);
         stubs.add(index, newStub);
@@ -454,7 +458,14 @@ public class StubRepository {
         return deleteStubByIndex(resourceId);
     }
 
-    public synchronized void deleteAllStubs() {
+    public synchronized StubProxyConfig deleteProxyConfigByUuid(final String uuid) {
+        if (uuid.equals(StubProxyConfig.Builder.DEFAULT_UUID)) {
+            throw new IllegalArgumentException("You cannot delete 'default' (i.e.: catch-all) proxy config via API");
+        }
+        return proxyConfigs.remove(uuid);
+    }
+
+    public synchronized void clear() {
         this.stubMatchesCache.clear();
         this.stubs.clear();
         this.uuidToStub.clear();
