@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,24 +55,54 @@ public class StubsPortalHandlerTest {
 
         }
     };
+
     @Mock
     private StubResponse mockStubResponse;
+
     @Mock
     private StubSearchResult mockStubSearchResult;
+
     @Mock
     private PrintWriter mockPrintWriter;
+
     @Mock
     private HttpServletResponse mockHttpServletResponse;
+
     @Mock
     private StubRepository mockStubRepository;
+
     @Mock
     private HttpServletRequest mockHttpServletRequest;
+
     @Mock
-    private Request mockRequest;
+    private Request mockBaseRequest;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         ANSITerminal.muteConsole(true);
+    }
+
+    @Test
+    public void shouldDetermineRequestAsHandledWhenBaseRequestHandled() throws Exception {
+        when(mockBaseRequest.isHandled()).thenReturn(true);
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle("/path/1", mockBaseRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+        verify(mockBaseRequest, never()).setHandled(eq(true));
+        verify(mockStubRepository, never()).search(any(HttpServletRequest.class));
+    }
+
+    @Test
+    public void shouldDetermineRequestAsHandledWhenResponseCommitted() throws Exception {
+        when(mockBaseRequest.isHandled()).thenReturn(false);
+        when(mockHttpServletResponse.isCommitted()).thenReturn(true);
+
+        final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
+        stubsPortalHandler.handle("/path/1", mockBaseRequest, mockHttpServletRequest, mockHttpServletResponse);
+
+        verify(mockBaseRequest, never()).setHandled(eq(true));
+        verify(mockStubRepository, never()).search(any(HttpServletRequest.class));
     }
 
     @Test
@@ -265,7 +297,7 @@ public class StubsPortalHandlerTest {
         when(mockStubSearchResult.getMatch()).thenReturn(mockStubResponse);
 
         final StubsPortalHandler stubsPortalHandler = new StubsPortalHandler(mockStubRepository);
-        stubsPortalHandler.handle(requestPathInfo, mockRequest, mockHttpServletRequest, mockHttpServletResponse);
+        stubsPortalHandler.handle(requestPathInfo, mockBaseRequest, mockHttpServletRequest, mockHttpServletResponse);
     }
 
     private ServletInputStream getServletInputStream(final InputStream inputStream) {
