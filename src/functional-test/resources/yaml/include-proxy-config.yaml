@@ -1,4 +1,5 @@
 - proxy-config:
+    proxy-config-description: this is a catch-all proxy config
     proxy-strategy: as-is
     proxy-properties:
       endpoint: https://jsonplaceholder.typicode.com

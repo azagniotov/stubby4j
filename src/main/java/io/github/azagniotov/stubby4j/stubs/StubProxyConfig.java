@@ -1,7 +1,6 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,25 +9,33 @@ import java.util.Objects;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.ENDPOINT;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_CONFIG_DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_NAME;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_PROPERTIES;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_STRATEGY;
 
 public class StubProxyConfig implements ReflectableStub {
 
+    private final String proxyConfigDescription;
     private final String proxyName;
     private final StubProxyStrategy proxyStrategy;
     private final Map<String, String> proxyProperties;
     private final String proxyConfigAsYAML;
 
-    private StubProxyConfig(final String proxyName,
+    private StubProxyConfig(final String proxyConfigDescription,
+                            final String proxyName,
                             final StubProxyStrategy proxyStrategy,
                             final Map<String, String> proxyProperties,
                             final String proxyConfigAsYAML) {
+        this.proxyConfigDescription = proxyConfigDescription;
         this.proxyName = proxyName;
         this.proxyStrategy = proxyStrategy;
         this.proxyProperties = proxyProperties;
         this.proxyConfigAsYAML = proxyConfigAsYAML;
+    }
+
+    public String getProxyConfigDescription() {
+        return proxyConfigDescription;
     }
 
     public String getProxyName() {
@@ -73,6 +80,7 @@ public class StubProxyConfig implements ReflectableStub {
     public static final class Builder extends AbstractBuilder<StubProxyConfig> {
 
         public static final String DEFAULT_NAME = "CATCH_ALL";
+        private String proxyConfigDescription;
         private String proxyName;
         private StubProxyStrategy proxyStrategy;
         private Map<String, String> proxyProperties;
@@ -80,10 +88,17 @@ public class StubProxyConfig implements ReflectableStub {
 
         public Builder() {
             super();
+            this.proxyConfigDescription = null;
             this.proxyName = DEFAULT_NAME;
             this.proxyStrategy = null;
             this.proxyProperties = new LinkedHashMap<>();
             this.proxyConfigAsYAML = null;
+        }
+
+        public Builder withProxyConfigDescription(final String proxyConfigDescription) {
+            this.proxyConfigDescription = proxyConfigDescription;
+
+            return this;
         }
 
         public Builder withProxyName(final String proxyName) {
@@ -120,12 +135,19 @@ public class StubProxyConfig implements ReflectableStub {
 
         @Override
         public StubProxyConfig build() {
+            this.proxyConfigDescription = getStaged(String.class, PROXY_CONFIG_DESCRIPTION, proxyConfigDescription);
             this.proxyName = getStaged(String.class, PROXY_NAME, proxyName);
             this.proxyStrategy = getStaged(StubProxyStrategy.class, PROXY_STRATEGY, proxyStrategy);
             this.proxyProperties = asCheckedLinkedHashMap(getStaged(Map.class, PROXY_PROPERTIES, proxyProperties), String.class, String.class);
 
-            final StubProxyConfig stubProxyConfig = new StubProxyConfig(proxyName, proxyStrategy, proxyProperties, proxyConfigAsYAML);
+            final StubProxyConfig stubProxyConfig = new StubProxyConfig(
+                    proxyConfigDescription,
+                    proxyName,
+                    proxyStrategy,
+                    proxyProperties,
+                    proxyConfigAsYAML);
 
+            this.proxyConfigDescription = null;
             this.proxyName = DEFAULT_NAME;
             this.proxyStrategy = null;
             this.proxyProperties = new LinkedHashMap<>();

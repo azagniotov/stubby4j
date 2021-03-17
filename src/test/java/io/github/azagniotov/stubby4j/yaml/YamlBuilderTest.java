@@ -265,6 +265,7 @@ public class YamlBuilderTest {
     public void shouldBuildStubbedProxyConfig() throws Exception {
         final String expectedYaml =
                 "-  proxy-config:" + BR +
+                        "      proxy-config-description: very-interesting-description" + BR +
                         "      proxy-name: very-unique-name" + BR +
                         "      proxy-strategy: as-is" + BR +
                         "      proxy-properties:" + BR +
@@ -274,6 +275,7 @@ public class YamlBuilderTest {
         final YamlBuilder YamlBuilder = new YamlBuilder();
         final String actualYaml = YamlBuilder
                 .newStubbedProxyConfig()
+                .witProxyConfigDescription("very-interesting-description")
                 .witProxyName("very-unique-name")
                 .witProxyStrategyAsIs()
                 .withProxyPropertyEndpoint("http://google.com")

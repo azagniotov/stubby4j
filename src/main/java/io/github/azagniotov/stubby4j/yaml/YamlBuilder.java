@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
+import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.eclipse.jetty.http.HttpMethod;
@@ -35,6 +36,7 @@ public final class YamlBuilder {
     private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-properties:");
     private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-strategy: ");
     private final static String PROXY_NAME = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-name: ");
+    private final static String PROXY_CONFIG_DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-config-description: ");
     private final static String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
 
     private final static String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
@@ -139,6 +141,12 @@ public final class YamlBuilder {
             PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_AS_TOP).append(NL);
         }
 
+        public ProxyConfig witProxyConfigDescription(final String value) {
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_DESCRIPTION).append(value).append(NL);
+
+            return this;
+        }
+
         public ProxyConfig witProxyName(final String value) {
             PROXY_CONFIG_STRING_BUILDER.append(PROXY_NAME).append(value).append(NL);
 
@@ -146,7 +154,7 @@ public final class YamlBuilder {
         }
 
         public ProxyConfig witProxyStrategyAsIs() {
-            PROXY_CONFIG_STRING_BUILDER.append(PROXY_STRATEGY).append("as-is").append(NL);
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_STRATEGY).append(StubProxyStrategy.AS_IS.toString()).append(NL);
 
             return this;
         }
@@ -165,7 +173,8 @@ public final class YamlBuilder {
 
             checkProxyPropertiesNodeRequired();
 
-            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, "endpoint");
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE,
+                    ConfigurableYAMLProperty.ENDPOINT.toString());
             PROXY_CONFIG_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;

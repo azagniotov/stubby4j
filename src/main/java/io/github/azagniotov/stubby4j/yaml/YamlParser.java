@@ -31,6 +31,7 @@ import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHas
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledProxyConfig;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledStub;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
@@ -104,7 +105,7 @@ public class YamlParser {
         for (final Map yamlMapping : yamlMappings) {
             final Map<String, Object> yamlMappingProperties = asCheckedLinkedHashMap(yamlMapping, String.class, Object.class);
             if (isProxyConfigMapping(yamlMapping)) {
-                // the YAML contains top-level:
+                // the YAML config file contains a top-level:
                 // - proxy-config
                 final StubProxyConfig stubProxyConfig = parseStubProxyConfig(yamlMappingProperties);
                 if (proxyConfigs.containsKey(stubProxyConfig.getProxyName())) {
@@ -113,7 +114,7 @@ public class YamlParser {
 
                 proxyConfigs.put(stubProxyConfig.getProxyName(), stubProxyConfig);
             } else {
-                // the YAML contains top-level:
+                // the YAML config file contains a top-level:
                 // - request
                 final StubHttpLifecycle stubHttpLifecycle = parseStubbedHttpLifecycleConfig(yamlMappingProperties);
 
@@ -176,7 +177,10 @@ public class YamlParser {
             proxyConfigBuilder.withProxyConfigAsYAML(toYaml(yamlMappingProperties, PROXY_CONFIG));
         }
 
-        return proxyConfigBuilder.build();
+        final StubProxyConfig stubProxyConfig = proxyConfigBuilder.build();
+        logUnmarshalledProxyConfig(stubProxyConfig);
+
+        return stubProxyConfig;
     }
 
     private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> yamlMappingProperties) {
