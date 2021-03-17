@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class AjaxResourceContentHandlerTest {
 
     private static final Optional<StubHttpLifecycle> STUB_HTTP_LIFECYCLE_OPTIONAL = Optional.of(new StubHttpLifecycle.Builder().build());
-    private static final StubProxyConfig STUB_PROXY_CONFIG = new StubProxyConfig.Builder().withProxyPropertyEndpoint("http://google.com").build();
+    private static final StubProxyConfig STUB_PROXY_CONFIG = new StubProxyConfig.Builder().withPropertyEndpoint("http://google.com").build();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

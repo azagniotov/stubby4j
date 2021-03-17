@@ -1,4 +1,4 @@
 - proxy-config:
-    proxy-strategy: invalid-strategy-name
-    proxy-properties:
+    strategy: invalid-strategy-name
+    properties:
       endpoint: https://jsonplaceholder.typicode.com

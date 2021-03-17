@@ -98,7 +98,7 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
         final Map<String, StubProxyConfig> proxyConfigs = stubRepository.getProxyConfigs();
         if (!proxyConfigs.isEmpty()) {
             builder.append(HTML_BR);
-            final String proxyConfigDefaultName = StubProxyConfig.Builder.DEFAULT_NAME;
+            final String proxyConfigDefaultName = StubProxyConfig.Builder.DEFAULT_UUID;
             builder.append(buildStubProxyConfigtHtmlTable(proxyConfigs.get(proxyConfigDefaultName), templateHtmlTable));
             for (Map.Entry<String, StubProxyConfig> entry : proxyConfigs.entrySet()) {
                 if (entry.getKey().equals(proxyConfigDefaultName)) {
@@ -121,9 +121,9 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
     }
 
     private String buildStubProxyConfigtHtmlTable(final StubProxyConfig stubProxyConfig, final String templateHtmlTable) throws Exception {
-        final String proxyName = stubProxyConfig.getProxyName();
-        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, PROXY_CONFIG, proxyName, "proxyConfigAsYAML");
-        final StringBuilder proxyConfigTableBuilder = buildStubHtmlTableBody(proxyName, PROXY_CONFIG.toString(), ReflectionUtils.getProperties(stubProxyConfig));
+        final String proxyUuid = stubProxyConfig.getUuid();
+        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, PROXY_CONFIG, proxyUuid, "proxyConfigAsYAML");
+        final StringBuilder proxyConfigTableBuilder = buildStubHtmlTableBody(proxyUuid, PROXY_CONFIG.toString(), ReflectionUtils.getProperties(stubProxyConfig));
         proxyConfigTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
 
         return String.format(templateHtmlTable, PROXY_CONFIG, proxyConfigTableBuilder.toString());

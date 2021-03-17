@@ -33,10 +33,10 @@ public final class YamlBuilder {
     private final static String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
 
     private final static String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
-    private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-properties:");
-    private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-strategy: ");
-    private final static String PROXY_NAME = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-name: ");
-    private final static String PROXY_CONFIG_DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "proxy-config-description: ");
+    private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "properties:");
+    private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "strategy: ");
+    private final static String PROXY_UUID = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "uuid: ");
+    private final static String PROXY_CONFIG_DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "description: ");
     private final static String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
 
     private final static String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
@@ -141,25 +141,25 @@ public final class YamlBuilder {
             PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_AS_TOP).append(NL);
         }
 
-        public ProxyConfig witProxyConfigDescription(final String value) {
+        public ProxyConfig withDescription(final String value) {
             PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_DESCRIPTION).append(value).append(NL);
 
             return this;
         }
 
-        public ProxyConfig witProxyName(final String value) {
-            PROXY_CONFIG_STRING_BUILDER.append(PROXY_NAME).append(value).append(NL);
+        public ProxyConfig withUuid(final String value) {
+            PROXY_CONFIG_STRING_BUILDER.append(PROXY_UUID).append(value).append(NL);
 
             return this;
         }
 
-        public ProxyConfig witProxyStrategyAsIs() {
+        public ProxyConfig withProxyStrategyAsIs() {
             PROXY_CONFIG_STRING_BUILDER.append(PROXY_STRATEGY).append(StubProxyStrategy.AS_IS.toString()).append(NL);
 
             return this;
         }
 
-        public ProxyConfig withProxyProperty(final String key, final String value) {
+        public ProxyConfig withProperty(final String key, final String value) {
 
             checkProxyPropertiesNodeRequired();
 
@@ -169,7 +169,7 @@ public final class YamlBuilder {
             return this;
         }
 
-        public ProxyConfig withProxyPropertyEndpoint(final String value) {
+        public ProxyConfig withPropertyEndpoint(final String value) {
 
             checkProxyPropertiesNodeRequired();
 

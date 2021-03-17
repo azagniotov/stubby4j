@@ -43,7 +43,7 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_STRATEGY;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
@@ -107,11 +107,11 @@ public class YamlParser {
                 // the YAML config file contains a top-level:
                 // - proxy-config
                 final StubProxyConfig stubProxyConfig = parseStubProxyConfig(yamlMappingProperties);
-                if (proxyConfigs.containsKey(stubProxyConfig.getProxyName())) {
-                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getProxyName() + " already exists");
+                if (proxyConfigs.containsKey(stubProxyConfig.getUuid())) {
+                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getUuid() + " already exists");
                 }
 
-                proxyConfigs.put(stubProxyConfig.getProxyName(), stubProxyConfig);
+                proxyConfigs.put(stubProxyConfig.getUuid(), stubProxyConfig);
             } else {
                 // the YAML config file contains a top-level:
                 // - request
@@ -127,7 +127,7 @@ public class YamlParser {
             }
         }
 
-        if (!proxyConfigs.isEmpty() && !proxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_NAME)) {
+        if (!proxyConfigs.isEmpty() && !proxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
             throw new IllegalStateException("Missing default proxy config");
         }
 
@@ -262,7 +262,7 @@ public class YamlParser {
                 continue;
             }
 
-            if (PROXY_STRATEGY.isA(stageableFieldName)) {
+            if (STRATEGY.isA(stageableFieldName)) {
 
                 final String stubbedProperty = objectToString(rawFieldNameValue);
                 if (StubProxyStrategy.isUnknownProperty(stubbedProperty)) {

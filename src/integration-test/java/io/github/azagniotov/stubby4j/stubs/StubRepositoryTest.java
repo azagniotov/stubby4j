@@ -1120,8 +1120,8 @@ public class StubRepositoryTest {
 
         final String proxyConfigYaml = YAML_BUILDER
                 .newStubbedProxyConfig()
-                .witProxyStrategyAsIs()
-                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .toString()
                 .trim();
 

@@ -202,9 +202,9 @@ public class StubRepository {
     private StubResponse proxyRequest(final StubHttpLifecycle incomingHttpLifecycle) {
 
         // The catch-all will always be there if we have proxy configs, otherwise the YamlParser throws
-        final StubProxyConfig catchAllProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_NAME);
+        final StubProxyConfig catchAllProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
         final StubRequest incomingRequest = incomingHttpLifecycle.getRequest();
-        final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getProxyEndpoint(), incomingHttpLifecycle.getUrl());
+        final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
 
         final String proxyRoundTripUuid = UUID.randomUUID().toString();
         final Map<String, String> proxyResponseFlatHeaders = new HashMap<>();

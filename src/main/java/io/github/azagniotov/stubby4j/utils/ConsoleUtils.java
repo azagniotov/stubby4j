@@ -112,9 +112,9 @@ public final class ConsoleUtils {
 
     public static void logUnmarshalledProxyConfig(final StubProxyConfig stubProxyConfig) {
         final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded proxy config metadata: ")
-                .append(stubProxyConfig.getProxyName());
-        if (isSet(stubProxyConfig.getProxyConfigDescription())) {
-            loadedMsgBuilder.append(String.format(" [%s]", stubProxyConfig.getProxyConfigDescription()));
+                .append(stubProxyConfig.getUuid());
+        if (isSet(stubProxyConfig.getDescription())) {
+            loadedMsgBuilder.append(String.format(" [%s]", stubProxyConfig.getDescription()));
         }
 
         ANSITerminal.loaded(loadedMsgBuilder.toString());

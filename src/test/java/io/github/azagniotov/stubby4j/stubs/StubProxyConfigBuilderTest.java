@@ -29,27 +29,27 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
-    public void stubbedProxyConfigHasDefaultName() throws Exception {
+    public void stubbedProxyConfigHasDefaultUuid() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder.build();
-        assertThat(stubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+        assertThat(stubProxyConfig.getUuid()).isEqualTo("default");
     }
 
     @Test
-    public void stubbedProxyConfigNameResetsToDefaultName() throws Exception {
+    public void stubbedProxyConfigNameResetsToDefaultUuid() throws Exception {
 
-        final StubProxyConfig stubProxyConfig = builder.withProxyName("newName").build();
-        assertThat(stubProxyConfig.getProxyName()).isEqualTo("newName");
+        final StubProxyConfig stubProxyConfig = builder.withUuid("newName").build();
+        assertThat(stubProxyConfig.getUuid()).isEqualTo("newName");
 
         final StubProxyConfig freshStubProxyConfig = builder.build();
-        assertThat(freshStubProxyConfig.getProxyName()).isEqualTo("CATCH_ALL");
+        assertThat(freshStubProxyConfig.getUuid()).isEqualTo("default");
     }
 
     @Test
     public void stubbedProxyConfigEqualsAssertingConfig_WhenProxyNameNull() throws Exception {
 
-        final StubProxyConfig expectedStubProxyConfig = builder.withProxyName(null).build();
-        final StubProxyConfig assertingStubProxyConfig = builder.withProxyName(null).build();
+        final StubProxyConfig expectedStubProxyConfig = builder.withUuid(null).build();
+        final StubProxyConfig assertingStubProxyConfig = builder.withUuid(null).build();
 
         assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
     }
@@ -58,11 +58,11 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigEqualsAssertingConfig_WhenProxyConfigDescriptionDifferent() throws Exception {
 
         // proxy config description does NOT participate in equality
-        final StubProxyConfig expectedStubProxyConfig = builder.withProxyName("one")
-                .withProxyConfigDescription("description")
+        final StubProxyConfig expectedStubProxyConfig = builder.withUuid("one")
+                .withDescription("description")
                 .build();
         final StubProxyConfig assertingStubProxyConfig = builder
-                .withProxyName("one")
+                .withUuid("one")
                 .build();
 
         assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
@@ -71,8 +71,8 @@ public class StubProxyConfigBuilderTest {
     @Test
     public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyNamesDifferent() throws Exception {
 
-        final StubProxyConfig expectedStubProxyConfig = builder.withProxyName("one").build();
-        final StubProxyConfig assertingStubProxyConfig = builder.withProxyName("two").build();
+        final StubProxyConfig expectedStubProxyConfig = builder.withUuid("one").build();
+        final StubProxyConfig assertingStubProxyConfig = builder.withUuid("two").build();
 
         assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
     }
@@ -80,8 +80,8 @@ public class StubProxyConfigBuilderTest {
     @Test
     public void stubbedProxyConfigNotEqualsAssertingConfig_WhenProxyPropertiesDifferent() throws Exception {
 
-        final StubProxyConfig expectedStubProxyConfig = builder.withProxyProperty("key", "anotherValue").build();
-        final StubProxyConfig assertingStubProxyConfig = builder.withProxyProperty("key", "value").build();
+        final StubProxyConfig expectedStubProxyConfig = builder.withProperty("key", "anotherValue").build();
+        final StubProxyConfig assertingStubProxyConfig = builder.withProperty("key", "value").build();
 
         assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
     }
@@ -90,32 +90,32 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigReturnsExpectedEndpointAndDescription() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder
-                .withProxyConfigDescription("This is a proxy config for Google")
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyProperty("key", "value")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withDescription("This is a proxy config for Google")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
-        assertThat(stubProxyConfig.getProxyEndpoint()).isEqualTo("http://google.com");
-        assertThat(stubProxyConfig.getProxyConfigDescription()).isEqualTo("This is a proxy config for Google");
+        assertThat(stubProxyConfig.getPropertyEndpoint()).isEqualTo("http://google.com");
+        assertThat(stubProxyConfig.getDescription()).isEqualTo("This is a proxy config for Google");
     }
 
     @Test
     public void stubbedProxyConfigEqualsAssertingConfig() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyProperty("key", "value")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         final StubProxyConfig assertingStubProxyConfig = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyProperty("key", "value")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
@@ -125,15 +125,15 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigNotEqualsAssertingConfig() throws Exception {
 
         final StubProxyConfig expectedStubProxyConfig = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         final StubProxyConfig assertingStubProxyConfig = builder
-                .withProxyName("unique")
-                .withProxyStrategy("custom")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("custom")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
@@ -143,15 +143,15 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigHashCode() throws Exception {
 
         final StubProxyConfig stubProxyConfigOne = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         final StubProxyConfig stubProxyConfigTwo = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("http://google.com")
                 .build();
 
         Map<StubProxyConfig, StubProxyConfig> mapping = new HashMap<>();
@@ -165,10 +165,10 @@ public class StubProxyConfigBuilderTest {
     public void stubbedProxyConfigAsYaml() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder
-                .withProxyName("unique")
-                .withProxyStrategy("as-is")
-                .withProxyProperty("key", "value")
-                .withProxyPropertyEndpoint("http://google.com")
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
                 .withProxyConfigAsYAML(
                         "- proxy-config:\n" +
                                 "    proxy-strategy: as-is\n" +
@@ -187,9 +187,9 @@ public class StubProxyConfigBuilderTest {
     public void shouldThrowWhenUnexpectedProxyStrategyPassedIn() throws Exception {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            builder.withProxyName("unique")
-                    .withProxyStrategy("this-is-a-wrong-value")
-                    .withProxyPropertyEndpoint("http://google.com")
+            builder.withUuid("unique")
+                    .withStrategy("this-is-a-wrong-value")
+                    .withPropertyEndpoint("http://google.com")
                     .build();
         });
 
