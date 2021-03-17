@@ -142,6 +142,44 @@ public class StubRepositoryTest {
     }
 
     @Test
+    public void shouldMatchProxyConfig_WhenUniqueProxyNameGiven() throws Exception {
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfigDefault = new StubProxyConfig.Builder()
+                .withProxyStrategy("as-is")
+                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig stubProxyConfigOther = new StubProxyConfig.Builder()
+                .withProxyName("other-unique")
+                .withProxyStrategy("as-is")
+                .withProxyPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfigDefault.getProxyName(), stubProxyConfigDefault);
+            put(stubProxyConfigOther.getProxyName(), stubProxyConfigOther);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+        final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
+        assertThat(resetResult).isTrue();
+        assertThat(spyStubRepository.getStubs().size()).isGreaterThan(0);
+
+        assertThat(spyStubRepository.matchProxyConfigByName("does-not-exist")).isNull();
+        assertThat(spyStubRepository.matchProxyConfigByName("CATCH_ALL")).isEqualTo(stubProxyConfigDefault);
+        assertThat(spyStubRepository.matchProxyConfigByName("other-unique")).isEqualTo(stubProxyConfigOther);
+    }
+
+    @Test
     public void shouldDeleteOriginalHttpCycleList_WhenValidIndexGiven() throws Exception {
         final YamlParseResultSet yamlParseResultSet = parseYaml("/resource/item/1", STUB_UUID_ONE);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);

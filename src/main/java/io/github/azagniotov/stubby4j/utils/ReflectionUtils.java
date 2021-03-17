@@ -18,8 +18,9 @@ import java.util.Map;
 
 public final class ReflectionUtils {
 
-    private static List<String> skipableProperties =
-            Collections.unmodifiableList(Arrays.asList("STUBBY_RESOURCE_ID_HEADER", "regexGroups", "fileBytes"));
+    // These fields are defined in various Stub* classes, e.g.: StubRequest or StubProxyConfig
+    private static List<String> reflectionSkippableProperties =
+            Collections.unmodifiableList(Arrays.asList("proxyConfigAsYAML", "regexGroups", "fileBytes"));
 
     private ReflectionUtils() {
 
@@ -31,17 +32,14 @@ public final class ReflectionUtils {
 
         for (final Field field : reflectable.getClass().getDeclaredFields()) {
 
-            AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-                @Override
-                public Boolean run() {
-                    if (!field.isAccessible()) {
-                        field.setAccessible(true);
-                    }
-                    return true;
+            AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
                 }
+                return true;
             });
 
-            if (skipableProperties.contains(field.getName())) {
+            if (reflectionSkippableProperties.contains(field.getName())) {
                 continue;
             }
 
@@ -68,14 +66,11 @@ public final class ReflectionUtils {
         for (final Field field : reflectable.getClass().getDeclaredFields()) {
             final String fieldName = field.getName().toLowerCase(Locale.US);
             if (fieldsAndValues.containsKey(fieldName)) {
-                AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
-                    @Override
-                    public Boolean run() {
-                        if (!field.isAccessible()) {
-                            field.setAccessible(true);
-                        }
-                        return true;
+                AccessController.doPrivileged((PrivilegedAction<Boolean>) () -> {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
                     }
+                    return true;
                 });
 
                 field.set(reflectable, fieldsAndValues.get(fieldName));
@@ -85,6 +80,7 @@ public final class ReflectionUtils {
 
     public static Object getPropertyValue(final Object object, final String fieldName) throws InvocationTargetException, IllegalAccessException {
         for (final Method method : object.getClass().getDeclaredMethods()) {
+            // e.g.: "responseAsYAML" => StubHttpLifecycle.getResponseAsYAML
             if (method.getName().equalsIgnoreCase("get" + fieldName)) {
                 return method.invoke(object);
             }

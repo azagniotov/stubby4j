@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.JettyContext;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
@@ -37,6 +38,7 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.toUpper;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
 import static java.util.Arrays.asList;
@@ -59,9 +61,9 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
     private final StubRepository stubRepository;
     private final JettyContext jettyContext;
 
-    public StatusPageHandler(final JettyContext newContext, final StubRepository newStubRepository) {
-        this.jettyContext = newContext;
-        this.stubRepository = newStubRepository;
+    public StatusPageHandler(final JettyContext jettyContext, final StubRepository stubRepository) {
+        this.jettyContext = jettyContext;
+        this.stubRepository = stubRepository;
     }
 
     @Override
@@ -93,9 +95,22 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
         builder.append(buildStubbyParametersHtmlTable(templateHtmlTable));
         builder.append(buildEndpointStatsHtmlTable(templateHtmlTable));
 
+        final Map<String, StubProxyConfig> proxyConfigs = stubRepository.getProxyConfigs();
+        if (!proxyConfigs.isEmpty()) {
+            builder.append(HTML_BR);
+            final String proxyConfigDefaultName = StubProxyConfig.Builder.DEFAULT_NAME;
+            builder.append(buildStubProxyConfigtHtmlTable(proxyConfigs.get(proxyConfigDefaultName), templateHtmlTable));
+            for (Map.Entry<String, StubProxyConfig> entry : proxyConfigs.entrySet()) {
+                if (entry.getKey().equals(proxyConfigDefaultName)) {
+                    continue;
+                }
+                builder.append(buildStubProxyConfigtHtmlTable(entry.getValue(), templateHtmlTable));
+            }
+            builder.append(HTML_BR).append(HTML_BR);
+        }
+
         final List<StubHttpLifecycle> stubHttpLifecycles = stubRepository.getStubs();
-        for (int cycleIndex = 0; cycleIndex < stubHttpLifecycles.size(); cycleIndex++) {
-            final StubHttpLifecycle stubHttpLifecycle = stubHttpLifecycles.get(cycleIndex);
+        for (final StubHttpLifecycle stubHttpLifecycle : stubHttpLifecycles) {
             builder.append(buildStubRequestHtmlTable(stubHttpLifecycle, templateHtmlTable));
             builder.append(buildStubResponseHtmlTable(stubHttpLifecycle, templateHtmlTable));
             builder.append(HTML_BR).append(HTML_BR);
@@ -103,6 +118,15 @@ public final class StatusPageHandler extends AbstractHandler implements Abstract
 
         final long timestamp = System.currentTimeMillis();
         return HandlerUtils.populateHtmlTemplate("status", timestamp, timestamp, builder.toString());
+    }
+
+    private String buildStubProxyConfigtHtmlTable(final StubProxyConfig stubProxyConfig, final String templateHtmlTable) throws Exception {
+        final String proxyName = stubProxyConfig.getProxyName();
+        final String ajaxLinkToRequestAsYaml = String.format(TEMPLATE_AJAX_TO_RESOURCE_HYPERLINK, PROXY_CONFIG, proxyName, "proxyConfigAsYAML");
+        final StringBuilder proxyConfigTableBuilder = buildStubHtmlTableBody(proxyName, PROXY_CONFIG.toString(), ReflectionUtils.getProperties(stubProxyConfig));
+        proxyConfigTableBuilder.append(interpolateHtmlTableRowTemplate("RAW YAML", ajaxLinkToRequestAsYaml));
+
+        return String.format(templateHtmlTable, PROXY_CONFIG, proxyConfigTableBuilder.toString());
     }
 
     private String buildStubRequestHtmlTable(final StubHttpLifecycle stubHttpLifecycle, final String templateHtmlTable) throws Exception {
