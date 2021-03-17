@@ -1115,7 +1115,7 @@ public class StubRepositoryTest {
             stubRepository.resetStubsCache(new YamlParser().parse(".", inputStreamToString(stubsConfigStream)));
         });
 
-        String expectedMessage = "Missing default proxy config";
+        String expectedMessage = "YAML config contains proxy configs, but the 'default' proxy config is not configured, how so?";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);

@@ -293,12 +293,7 @@ public class StubRepository {
             this.uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
         }
 
-        final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
-        if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
-            throw new IllegalStateException("Missing default proxy config");
-        }
-
-        this.proxyConfigs.putAll(loadedProxyConfigs);
+        loadProxyConfigsWithOptionalThrow(yamlParseResultSet);
 
         return addedStubs;
     }
@@ -517,14 +512,19 @@ public class StubRepository {
             stubs.addAll(yamlParseResultSet.getStubs());
             uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
 
-            final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
-            if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
-                throw new IllegalStateException("Missing default proxy config");
-            }
-
-            this.proxyConfigs.putAll(loadedProxyConfigs);
+            loadProxyConfigsWithOptionalThrow(yamlParseResultSet);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadProxyConfigsWithOptionalThrow(final YamlParseResultSet yamlParseResultSet) {
+        final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
+
+        if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
+            throw new IllegalStateException("YAML config contains proxy configs, but the 'default' proxy config is not configured, how so?");
+        }
+
+        this.proxyConfigs.putAll(loadedProxyConfigs);
     }
 }

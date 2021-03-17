@@ -2,14 +2,13 @@ package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
-import io.github.azagniotov.stubby4j.utils.HandlerUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
 
@@ -24,20 +23,15 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
             return;
         }
 
-        final String post = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
-        if (!StringUtils.isSet(post)) {
-            final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
-            HandlerUtils.configureErrorResponse(response, HttpStatus.NO_CONTENT_204, errorMessage);
-            return;
+        final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
+        if (payloadOptional.isPresent()) {
+            stubRepository.refreshStubsByPost(new YamlParser(), payloadOptional.get());
+            if (stubRepository.getStubs().size() == NUM_OF_STUBS_THRESHOLD) {
+                response.addHeader(HttpHeader.LOCATION.asString(), stubRepository.getOnlyStubRequestUrl());
+            }
+
+            response.setStatus(HttpStatus.CREATED_201);
+            response.getWriter().println("Configuration created successfully");
         }
-
-        stubRepository.refreshStubsByPost(new YamlParser(), post);
-
-        if (stubRepository.getStubs().size() == NUM_OF_STUBS_THRESHOLD) {
-            response.addHeader(HttpHeader.LOCATION.asString(), stubRepository.getOnlyStubRequestUrl());
-        }
-
-        response.setStatus(HttpStatus.CREATED_201);
-        response.getWriter().println("Configuration created successfully");
     }
 }

@@ -1,0 +1,48 @@
+[
+  {
+    "request": {
+      "url": "/resources/something/new",
+      "query": {
+        "someKey": "someValue"
+      },
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  },
+  {
+    "proxy-config": {
+      "description": "this would be the default proxy config",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://google.com"
+      }
+    }
+  },
+  {
+    "proxy-config": {
+      "uuid": "some-unique-name-1",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://yahoo.com"
+      }
+    }
+  },
+  {
+    "proxy-config": {
+      "description": "this would be the 2nd description",
+      "uuid": "some-unique-name-2",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://microsoft.com"
+      }
+    }
+  }
+]
