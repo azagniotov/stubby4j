@@ -447,7 +447,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, "");
 
-        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test
@@ -458,7 +458,7 @@ public class StubbyClientTest {
 
         final StubbyResponse stubbyResponse = STUBBY_CLIENT.doPost(host, uri, port, null);
 
-        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(stubbyResponse.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test

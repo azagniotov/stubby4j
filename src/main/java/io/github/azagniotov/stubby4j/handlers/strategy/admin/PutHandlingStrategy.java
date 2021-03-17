@@ -10,6 +10,7 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
@@ -35,20 +36,14 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
                     return;
                 }
 
-                final String putPayload = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
-                if (!StringUtils.isSet(putPayload)) {
-                    final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
-                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
-                    return;
+                final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
+                if (payloadOptional.isPresent()) {
+                    final String updatedCycleUrl = stubRepository.refreshStubByIndex(new YamlParser(), payloadOptional.get(), stubIndexToUpdate);
+                    response.setStatus(HttpStatus.CREATED_201);
+                    response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
+                    final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
+                    response.getWriter().println(successfulMessage);
                 }
-
-                final String updatedCycleUrl = stubRepository.refreshStubByIndex(new YamlParser(), putPayload, stubIndexToUpdate);
-
-                response.setStatus(HttpStatus.CREATED_201);
-                response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
-                final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
-                response.getWriter().println(successfulMessage);
-
             } else {
                 // We attempt to update a stub by uuid as a fallback, e.g.: UPDATE localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchStubByUuid(lastUriPathSegment)) {
@@ -57,19 +52,14 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
                     return;
                 }
 
-                final String putPayload = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
-                if (!StringUtils.isSet(putPayload)) {
-                    final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
-                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
-                    return;
+                final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
+                if (payloadOptional.isPresent()) {
+                    final String updatedCycleUrl = stubRepository.refreshStubByUuid(new YamlParser(), payloadOptional.get(), lastUriPathSegment);
+                    response.setStatus(HttpStatus.CREATED_201);
+                    response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
+                    final String successfulMessage = String.format("Stub request uuid#%s updated successfully", lastUriPathSegment);
+                    response.getWriter().println(successfulMessage);
                 }
-
-                final String updatedCycleUrl = stubRepository.refreshStubByUuid(new YamlParser(), putPayload, lastUriPathSegment);
-
-                response.setStatus(HttpStatus.CREATED_201);
-                response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
-                final String successfulMessage = String.format("Stub request uuid#%s updated successfully", lastUriPathSegment);
-                response.getWriter().println(successfulMessage);
             }
         } else if (uriFragments.length == 2) {
             // e.g.: http://localhost:8889/proxy-config/<ALPHA_NUMERIC_UUID_STRING>
@@ -85,19 +75,14 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
                     return;
                 }
 
-                final String putPayload = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
-                if (!StringUtils.isSet(putPayload)) {
-                    final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
-                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
-                    return;
+                final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
+                if (payloadOptional.isPresent()) {
+                    final String proxyEndpointUrl = stubRepository.refreshProxyConfigByUuid(new YamlParser(), payloadOptional.get(), proxyConfigUuid);
+                    response.setStatus(HttpStatus.CREATED_201);
+                    response.addHeader(HttpHeader.LOCATION.asString(), proxyEndpointUrl);
+                    final String successfulMessage = String.format("Proxy config uuid#%s updated successfully", proxyConfigUuid);
+                    response.getWriter().println(successfulMessage);
                 }
-
-                final String proxyEndpointUrl = stubRepository.refreshProxyConfigByUuid(new YamlParser(), putPayload, proxyConfigUuid);
-
-                response.setStatus(HttpStatus.CREATED_201);
-                response.addHeader(HttpHeader.LOCATION.asString(), proxyEndpointUrl);
-                final String successfulMessage = String.format("Proxy config uuid#%s updated successfully", proxyConfigUuid);
-                response.getWriter().println(successfulMessage);
 
             } else {
                 final String errorMessage = String.format("Invalid URI path requested: %s", maybeProxyConfig);

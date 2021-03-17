@@ -1,6 +1,9 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
+import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
+import io.github.azagniotov.stubby4j.utils.HandlerUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
@@ -41,5 +45,16 @@ public interface AdminResponseHandlingStrategy {
                 .filter(uriPath -> !uriPath.trim().isEmpty())
                 .map(String::trim)
                 .toArray(String[]::new);
+    }
+
+    default Optional<String> extractRequestBodyWithOptionalError(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        final String payload = HandlerUtils.extractPostRequestBody(request, AdminPortalHandler.NAME);
+        if (!StringUtils.isSet(payload)) {
+            final String errorMessage = String.format("%s request on URI %s was empty", request.getMethod(), request.getRequestURI());
+            HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(payload);
     }
 }

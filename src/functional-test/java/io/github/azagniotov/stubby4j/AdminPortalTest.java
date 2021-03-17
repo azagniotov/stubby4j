@@ -261,7 +261,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
@@ -316,7 +316,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("/with/UPDATED/uuid/property?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request uuid#" + toUpdateByUuid + " updated successfully");
 
@@ -361,7 +361,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("/with/UPDATED/uuid/property?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request uuid#" + toUpdateByUuid + " updated successfully");
 
@@ -404,7 +404,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
@@ -448,7 +448,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
@@ -492,7 +492,7 @@ public class AdminPortalTest {
         final String putResponseContent = httpPutResponse.parseAsString().trim();
         final String putResponseLocationHeader = httpPutResponse.getHeaders().getLocation();
 
-        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
@@ -633,7 +633,7 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT_204);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test
