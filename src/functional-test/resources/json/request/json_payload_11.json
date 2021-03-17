@@ -1,0 +1,11 @@
+[
+  {
+    "proxy-config": {
+      "uuid": "some-unique-name",
+      "strategy": "custom",
+      "properties": {
+        "endpoint": "https://UPDATED.com"
+      }
+    }
+  }
+]
