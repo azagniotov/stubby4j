@@ -9,3 +9,17 @@
     strategy: custom
     properties:
       endpoint: https://jsonplaceholder.typicode.com
+
+- proxy-config:
+    description: description-2
+    uuid: some-unique-name-two
+    strategy: custom
+    properties:
+      endpoint: https://google.com
+
+- proxy-config:
+    description: description-3
+    uuid: some-unique-name-three
+    strategy: custom
+    properties:
+      endpoint: https://google.com

@@ -120,4 +120,47 @@ public class ProxyConfigWithStubsTest {
                         "  \"completed\": false" + BR +
                         "}");
     }
+
+    @Test
+    public void should_DeleteStubbedProxyConfig_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/some-unique-name-two");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
+        assertThat(deleteResponseContent).isEqualTo("Proxy config uuid#some-unique-name-two deleted successfully");
+    }
+
+    @Test
+    public void should_Return400_WhenDeletingProxyConfig_ByInvalidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/this-uuid-does-not-exist");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    public void should_Return400_WhenDeletingDefaultProxyConfig() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/default");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    public void should_Return400_WhenRequestWrongURIPathForDeletingProxyConfig() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/WRONGproxy-config/some-unique-name-two");
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
 }
