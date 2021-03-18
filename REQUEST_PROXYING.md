@@ -2,7 +2,7 @@
 
 `stubby4j` can proxy requests to other services. This supports an ability to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs.
 
-As of stubby4j `v7.3.0` it is possible to configure only one proxy configuration that serves as a catch-all for all requests that don't match any of the `stubby4j`'s stubs.
+As of stubby4j `v7.3.0` it is possible to configure only `one` proxy configuration that serves as a `catch-all` for all requests that don't match any of the `stubby4j`'s stubs. In the future enhancements to the request proxying functionality, multiple proxy configurations will be supported.
 
 ### Table of contents
 
