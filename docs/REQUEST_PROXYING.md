@@ -71,7 +71,9 @@ includes:
 
 #### uuid (`required`)
 
-At this stage, this property reserved for future enhancements to the request proxying functionality. When no explicit `uuid` is configured, an `uuid` will be configured internally using the value `default`. If you do choose to configure it, do not set it to anything other than `default` value.
+At this stage, explicitly setting this property to anything but `default` value reserved for future enhancements to the request proxying functionality.
+
+When no explicit `uuid` is configured, an `uuid` will be configured internally using the value `default`. If you do choose to configure it, do not set it to anything other than `default` value.
 
 #### description (`optional`)
 
