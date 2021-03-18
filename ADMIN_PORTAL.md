@@ -11,7 +11,7 @@
       * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
       * [POST / PUT request body format](#post--put-request-body-format)
 
-## The admin Portal
+## The admin portal
 
 Upon starting the `stubby4j` service, the admin portal runs on `<admin_portal_host>:<port>` (e.g.: `localhost`:`8889`) or wherever you described through stubby's command line args.
 
