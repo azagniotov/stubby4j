@@ -69,7 +69,7 @@ includes:
 
 ### Supported YAML properties
 
-#### uuid (`optional`)
+#### uuid (`required`)
 
 At this stage, this property reserved for future enhancements to the request proxying functionality. When no explicit `uuid` is configured, an `uuid` will be configured internally using the value `default`. If you do choose to configure it, do not set it to anything other than `default` value.
 
