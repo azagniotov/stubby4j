@@ -55,7 +55,7 @@ includes:
   - include-all-test-stubs.yaml
   - include-proxy-config.yaml
 ```
-(from: [main-test-stubs-with-proxy-config.yaml](src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml)
+(from: [main-test-stubs-with-proxy-config.yaml](src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
 
 
 ### Supported properties
@@ -96,3 +96,6 @@ This makes it easy & convenient to correlate proxy responses from `stubby4j` to 
 
 Just like with stubs management, `stubby4j` enables you to manage your `proxy-config` definitions via the REST API exposed by the [Admin Portal](ADMIN_PORTAL.md). See the [available REST API summary](ADMIN_PORTAL.md#available-rest-api-summary)
 
+
+
+[Back to the main README.md](README.md)
