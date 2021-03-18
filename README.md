@@ -122,6 +122,7 @@ Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this im
 ## Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
 * HTTP request verification and HTTP response stubbing
+* Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
@@ -130,7 +131,7 @@ Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this im
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
-## Why would a developer use stubby4j?
+## Why would a developer use `stubby4j`?
 
 #### You want to:
 * Simulate responses from real server and don't care (or cannot) to go over the network
@@ -148,7 +149,7 @@ Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this im
 * Concentrate on the task at hand
 
 
-## Why would a QA use stubby4j?
+## Why would a QA use `stubby4j`?
 * Specifiable mock responses to simulate page conditions without real data.
 * Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
 * Easily swappable data config files to run different data sets and responses.
