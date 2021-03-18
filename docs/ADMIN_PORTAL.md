@@ -38,7 +38,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 #### Scenarios: creating new/overwriting existing stubs & proxy configs
 | verb     | resource        |success|error|scenario                                         |
 |------------------------|-------------|-----------|---------------|-------------------------------------|
-|`POST`    | `/`          |`201`|`405`|overwrites all in-memory `stub` and/or `proxy-config`|
+|`POST`    | `/`          |`201`|`400`|overwrites all in-memory `stub` and/or `proxy-config`|
 
 #### Scenarios: listing existing stubs & proxy configs as YAML string
 | verb     | resource        |success|error|scenario                                         |
@@ -69,7 +69,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 #### `POST` / `PUT` request body format
 
-To manage the stubbed data via the `POST`/`PUT` API, use either a JSON array or YAML list `(-)` syntax.
+To manage the stubbed data via the `POST`/`PUT` API, structure the request payload as either a JSON array or YAML list `(-)` syntax.
 
 ##### JSON support
 `JSON` is a subset of YAML 1.2, `SnakeYAML` that `stubby4j` leverages for YAML & JSON parsing implements YAML 1.1 (https://yaml.org/spec/1.1/)
