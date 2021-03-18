@@ -15,13 +15,13 @@
 
 ## The admin portal
 
-Upon starting the `stubby4j` service, the admin portal runs on `<admin_portal_host>:<port>` (e.g.: `localhost`:`8889`) or wherever you described through stubby's command line args.
+Upon starting the `stubby4j` service, the admin portal runs on `<host>:<admin_port>` (e.g.: `localhost`:`8889`) or wherever you described through stubby's command line args.
 
-The admin portal provides a web UI page (i.e.: `status` page) to view the stubbed data. In addition, the admin portal exposes a set of `REST`ful(ish) APIs that enables management of in-memory stubs & proxy configs, loaded from the YAML config provided to `stubby4j` during start-up.
+The admin portal provides a web UI page (i.e.: `status` page) to view the stubbed data. In addition, the admin portal exposes a set of `REST`ful(ish) APIs that enable management of loaded in-memory stubs & proxy configs, which were loaded from the YAML config provided to `stubby4j` during start-up.
 
 
 ### The status page
-You can view the configured stubs & proxy configs by navigating to `<admin_portal_host>:<port>/status` from your browser
+You can view the configured stubs & proxy configs by navigating to `<host>:<admin_port>/status` from your browser
 
 ### Available REST API summary
 
