@@ -22,9 +22,9 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 ## User manual for stubby4j v7.3.0-SNAPSHOT
 ### Table of contents
 
+* [Key features](#key-features)
 * [Quick start example](#quick-start-example)
 * [Running in Docker](#running-in-docker)
-* [Key features](#key-features)
 * [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
 * [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
@@ -63,6 +63,18 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Authors](#authors)
 * [Kudos](#kudos)
 * [See also](#see-also)
+
+## Key features
+* Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
+* HTTP request verification and HTTP response stubbing
+* Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
+* Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
+* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
+* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
+* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
+* Fault injection, where after X good responses on the same URI you get a bad one
+* Serve binary files as stubbed response content (images, PDFs. etc.)
+* Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 ## Quick start example
 
@@ -119,17 +131,6 @@ $ docker build --build-arg REVISION=v7.2.0 --rm --no-cache -t stubby4j:latest .
 
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
 
-## Key features
-* Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
-* HTTP request verification and HTTP response stubbing
-* Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
-* Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
-* Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
-* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
-* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
-* Fault injection, where after X good responses on the same URI you get a bad one
-* Serve binary files as stubbed response content (images, PDFs. etc.)
-* Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 ## Why would a developer use `stubby4j`?
 
