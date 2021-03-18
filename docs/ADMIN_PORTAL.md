@@ -30,7 +30,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
   * unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))
 * Proxy configs can `only` be updated by a unique identifier, `uuid`, if this property has been configured
-* When proxy configs are configured, the `default` proxy config cannot be deleted via the `DELETE` REST API
+* When defining only one proxy config (e.g.: a `catch-all` for all stubs), it must be configured without a `uuid` OR have a `uuid` with a value `default`
+* The `default` proxy config cannot be deleted via the `DELETE` REST API, but it is possible to update it via the `PUT` REST API
+* When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
 
 #### Scenarios: creating new/overwriting existing stubs & proxy configs
 | verb     | resource        |success|error|scenario                                         |
