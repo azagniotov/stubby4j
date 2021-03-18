@@ -10,9 +10,9 @@
 [![stubb4j][logo-badge]][logo-link]
 
 
-A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments. `stubby4j` makes it especially easy to stub out external services in a Docker based micro-service architecture.
+A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol.
 
-It is an actual HTTP server (stubby4j uses embedded Jetty) that allows stubbing of external systems with ease for integration, contract & behavior testing.
+It is an HTTP server that allows stubbing of external systems in both Docker and non-containerized environments with ease for integration, contract & behavior testing.
 
 Please refer to [Key features](#key-features) for more information
 
@@ -48,14 +48,12 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
-   * [YAML (file only or POST/PUT)](#yaml-file-only-or-postput)
-   * [JSON support](#json-support)
-   * [Getting the current list of stubbed endpoints](#getting-the-current-list-of-stubbed-endpoints)
    * [The status page](#the-status-page)
-   * [Refreshing stubbed data via an endpoint](#refreshing-stubbed-data-via-an-endpoint)
-   * [Updating existing endpoints](#updating-existing-endpoints)
-   * [Deleting endpoints](#deleting-endpoints)
-   * [Deleting ALL endpoints at once](#deleting-all-endpoints-at-once)
+   * [Available REST API summary](#available-rest-api-summary)
+      * [Scenarios: creating new/overwriting existing stubs & proxy configs](#scenarios-creating-newoverwriting-existing-stubs--proxy-configs)
+      * [Scenarios: listing existing stubs & proxy configs as YAML string](#scenarios-listing-existing-stubs--proxy-configs-as-yaml-string)
+      * [Scenarios: updating existing stubs & proxy configs](#scenarios-updating-existing-stubs--proxy-configs)
+      * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
 * [The stubs portal](#the-stubs-portal)
 * [Programmatic API](#programmatic-api)
 * [Change log](#change-log)
@@ -1275,117 +1273,92 @@ To disable stub caching pass `--disable_stub_caching` command-line arg to stubby
 
 ## The admin portal
 
-The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wherever you described through stubby's command line args.
+Upon starting the `stubby4j` service, the admin portal runs on `<admin_portal_host>:<port>` (e.g.: `localhost`:`8889`) or wherever you described through stubby's command line args.
+
+The admin portal provides a web UI page (i.e.: `status` page) to view the stubbed data. In addition, the admin portal exposes a set of `REST`ful(ish) APIs that enables management of in-memory stubs & proxy configs, loaded from the YAML config provided to `stubby4j` during start-up.
 
 
-#### The status page
+### The status page
+You can view the configured stubs & proxy configs by navigating to `<admin_portal_host>:<port>/status` from your browser
 
-You can view the currently configured endpoints by going to `localhost:8889/status`
+### Available REST API summary
 
-#### Getting the current list of stubbed endpoints
+##### Caveats
+* Stubs can be updated/deleted by either:
+  * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
+  * unique identifier (See [Stub/Feature UUID](#uuid-optional))
+* Proxy configs can `only` be updated by a unique identifier, `uuid`, if this property has been configured
+* When proxy configs are configured, the `default` proxy config cannot be deleted via the `DELETE` REST API
 
-Performing a `GET` request on `localhost:8889` will return a YAML list of all currently saved responses. It will reply with `204 : No Content` if there are none saved.
-Performing a `GET` request on `localhost:8889/<id>` will return the YAML object representing the response with the supplied id.
+#### Scenarios: creating new/overwriting existing stubs & proxy configs
+| verb     | resource        |success|error|scenario                                         |
+|------------------------|-------------|-----------|---------------|-------------------------------------|
+|`POST`    | `/`          |`201`|`405`|overwrites all in-memory `stub` and/or `proxy-config`|
 
-#### Refreshing stubbed data via an endpoint
+#### Scenarios: listing existing stubs & proxy configs as YAML string
+| verb     | resource        |success|error|scenario                                         |
+|------------------------|-------------|------|-----------|----------------------------------------------|
+|`GET`    | `/`          |`200`|`400`|gets all in-memory `stub` & `proxy-config` configs|
+|`GET`    | `/:stub_numeric_id`          |`200`|`400`|gets `stub` by its resource-id-`<id>` in the YAML config|
+|`GET`    | `/:uuid`          |`200`|`400`|gets `stub` by its `uuid` property |
+|`GET`    | `/proxy-config/default`          |`200`|`400`|gets `default` `proxy-config`|
+|`GET`    | `/proxy-config/:uuid`          |`200`|`400`|gets `proxy-config` by its `uuid` property|
 
-If for some reason you do not want/cannot/not able to use `--watch` flag when starting stubby4j (or cannot restart stubby),
-you can submit `GET` request to `localhost:8889/refresh` (or load it in a browser) in order to refresh the stubbed data.
+#### Scenarios: updating existing stubs & proxy configs
 
-#### Updating existing endpoints
+| verb     | resource        |success|error|scenario                                         |
+|------------------------|-------------|-----------|---------|-------------------------------------------|
+|`PUT`    | `/:stub_numeric_id`          |`201`|`400`|updates `stub` by its resource-id-`<id>` in the config|
+|`PUT`    | `/:uuid`          |`201`|`400`|updates `stub` by its `uuid` property |
+|`PUT`    | `/proxy-config/default`          |`201`|`400`|updates `default` `proxy-config`|
+|`PUT`    | `/proxy-config/:uuid`          |`201`|`400`|updates `proxy-config` by its `uuid` property|
 
-Stubs can be updated by either `(a)` stub ID or `(b)` unique identifier (See [Stub/Feature UUID](#uuid-optional)).
+#### Scenarios: deleting existing stubs & proxy configs
 
-The specific stub ID (`resource-id-<id>`) can be found when viewing stubs at `localhost:8889/status`. 
+| verb     | resource        |success|error|scenario                                         |
+|------------------------|-------------|-----------|--------|--------------------------------------------|
+|`DELETE`    | `/`          |`200`|`400`|deletes all in-memory `stub` & `proxy-config` |
+|`DELETE`    | `/:stub_numeric_id`          |`200`|`400`|deletes `stub` by its resource-id-`<id>` in the config|
+|`DELETE`    | `/:uuid`          |`200`|`400`|deletes `stub` by its `uuid` property |
+|`DELETE`    | `/proxy-config/:uuid`          |`200`|`400`|deletes `proxy-config` by its `uuid` property|
 
-Updating stubs by stub ID can get rather brittle when dealing with big YAML configs or working with shared stubs. Therefore it is better to configure `uuid` property 
-per stub in order to make stub management easier & isolated. 
+#### `POST` / `PUT` request body format
 
-* Send a `PUT` request with a stub payload to `localhost:8889/<id>`. It will reply with `400 Bad Request` if id does not exist. Success `201 Created`
-* Send a `PUT` request with a stub payload to `localhost:8889/configured-uuid`. It will reply with `400 Bad Request` if uuid does not exist. Success `201 Created` 
+To manage the stubbed data via the `POST`/`PUT` API, use either a JSON array or YAML list `(-)` syntax.
 
-#### Deleting endpoints
+##### JSON support
+`JSON` is a subset of YAML 1.2, `SnakeYAML` that `stubby4j` leverages for YAML & JSON parsing implements YAML 1.1 (https://yaml.org/spec/1.1/)
 
-Stubs can be deleted by either `(a)` stub ID or `(b)` unique identifier (See [Stub/Feature UUID](#uuid-optional)).
+##### `POST` / `PUT` JSON payload examples
 
-The specific stub ID (`resource-id-<id>`) can be found when viewing stubs at `localhost:8889/status`. 
+Single stub definition
 
-Deleting stubs by stub ID can get rather brittle when dealing with big YAML configs or working with shared stubs. Therefore it is better to configure `uuid` property 
-per stub in order to make stub management easier & isolated. 
-
-* Send a `DELETE` request to `localhost:8889/<id>`. It will reply with `400 Bad Request` if id does not exist. Success `200 OK`
-* Send a `DELETE` request to `localhost:8889/configured-uuid`. It will reply with `400 Bad Request` if uuid does not exist. Success `200 OK`
-
-#### Deleting ALL endpoints at once
-
-Send a `DELETE` request to `localhost:8889`
-
-
-#### YAML (file only or POST/PUT)
-```yaml
--  description: "this is a feature describing something"
-   request:
-      url: ^/path/to/something$
-      method: POST
-      headers:
-         authorization-basic: "bob:password" 
-         x-custom-header: "^this/is/\d/test"
-      post: this is some post data in textual format
-   response:
-      headers:
-         Content-Type: application/json
-      latency: 1000
-      status: 200
-      body: Your request was successfully processed!
-
--  request:
-      url: ^/path/to/bearer$
-      method: POST
-      headers:
-         authorization-bearer: "YNZmIzI2Ts0Q=="
-      post: this is some post data in textual format
-   response:
-      headers:
-         Content-Type: application/json
-      status: 200
-      body: Your request with Bearer was successfully authorized!
-
--  request:
-      url: ^/path/to/anotherThing
-      query:
-         a: anything
-         b: more
-         custom: "^this/is/\d/test"
-      method: GET
-      headers:
-         Content-Type: application/json
-      post:
-   response:
-      headers:
-         Content-Type: application/json
-         Access-Control-Allow-Origin: "*"
-      status: 204
-      file: path/to/page.html
-
--  request:
-      url: ^/path/to/thing$
-      method: POST
-      headers:
-         Content-Type: application/json
-      post: this is some post data in textual format
-   response:
-      headers:
-         Content-Type: application/json
-      status: 304
+```javascript
+[
+  {
+    "request": {
+      "url": "^/resources/something/new",
+      "query": {
+        "someKey": "someValue"
+      },
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  }
+]
 ```
 
-#### JSON support
+Multiple stub definitions
 
-JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j for YAML & JSON parsing) implements YAML 1.1 at the moment. It means that not all the JSON documents can be parsed. Just give it a go.
-
-#### JSON (file or POST/PUT)
-
-```json
+```javascript
 [
   { 
     "description": "this is a feature describing something",
@@ -1446,7 +1419,58 @@ JSON is a subset of YAML 1.2, SnakeYAML (Third-party library used by stubby4j fo
 ]
 ```
 
-If you want to load more than one endpoint via file, use either a JSON array or YAML list (-) syntax. When creating or updating one stubbed request, the response will contain `Location` in the header with the newly created resources' location
+Stub definition with multiple proxy configs
+
+```javascript
+[
+  {
+    "request": {
+      "url": "/resources/something/new",
+      "query": {
+        "someKey": "someValue"
+      },
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  },
+  {
+    "proxy-config": {
+      "description": "this would be the default proxy config",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://google.com"
+      }
+    }
+  },
+  {
+    "proxy-config": {
+      "uuid": "some-unique-name-1",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://yahoo.com"
+      }
+    }
+  },
+  {
+    "proxy-config": {
+      "description": "this would be the 2nd description",
+      "uuid": "some-unique-name-2",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://microsoft.com"
+      }
+    }
+  }
+]
+```
 
 
 ## The stubs portal
@@ -1468,30 +1492,29 @@ For instance, the following will match any `POST` request to the root url:
 
 The request could have any headers and any post body it wants. It will match the above.
 
-Pseudocode ([StubRepository#matchStub](main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L142)):
+Pseudocode ([StubRepository#matchStub](src/main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L128)):
 
-```
-    if (<incoming request>.url found in <previous matched cache>) {
-        get <cached stubbed endpoint> from <previous matched cache> by <incoming request>.url
-        if (<cached stubbed endpoint> == <incoming request>) {
-            return <cached stubbed endpoint>
-        }
-    }
-    for each <stubbed endpoint> of stored endpoints {
-        for each <property> of <stubbed endpoint> {
-            if (<stubbed endpoint>.<property> != <incoming request>.<property>) {
-                next stubbed endpoint
+```javascript
+    if (<incoming request>.hashCode found in <local cache>) {
+        get <cached stubbed endpoint> from <local cache> by <incoming request>.hashCode
+        return <cached stubbed endpoint>
+    } else {
+        for each <stubbed endpoint> of stored endpoints {
+            for each <property> of <stubbed endpoint> {
+                if (<stubbed endpoint>.<property> != <incoming request>.<property>) {
+                    next stubbed endpoint
+                }
             }
-        }
-        store in <previous matched cache> the found <stubbed endpoint> by url
+            store in <local cache> the found <stubbed endpoint> by hashCode
 
-        return <stubbed endpoint>
+            return <stubbed endpoint>
+        }
     }
 ```
 
 ## Programmatic API
 
-You can start-up and manage stubby4j with the help of [StubbyClient](main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java)
+You can start-up and manage stubby4j with the help of [StubbyClient](src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java)
 
 ## Change log
 
