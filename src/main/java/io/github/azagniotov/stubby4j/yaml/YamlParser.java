@@ -108,7 +108,7 @@ public class YamlParser {
                 // - proxy-config
                 final StubProxyConfig stubProxyConfig = parseStubProxyConfig(yamlMappingProperties);
                 if (proxyConfigs.containsKey(stubProxyConfig.getUUID())) {
-                    throw new IllegalStateException("Proxy config with name " + stubProxyConfig.getUUID() + " already exists");
+                    throw new IOException("Proxy config YAML contains duplicate UUIDs: " + stubProxyConfig.getUUID());
                 }
 
                 proxyConfigs.put(stubProxyConfig.getUUID(), stubProxyConfig);
@@ -119,7 +119,7 @@ public class YamlParser {
 
                 if (StringUtils.isSet(stubHttpLifecycle.getUUID())) {
                     if (uuidToStubs.containsKey(stubHttpLifecycle.getUUID())) {
-                        throw new IOException("Stubbed YAML contains duplicates of UUID " + stubHttpLifecycle.getUUID());
+                        throw new IOException("Stubs YAML contains duplicate UUIDs: " + stubHttpLifecycle.getUUID());
                     }
                     uuidToStubs.put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
                 }

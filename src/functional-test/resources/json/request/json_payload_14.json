@@ -1,0 +1,40 @@
+[
+  {
+    "uuid": "SAME-SAME-SAME-SAME-SAME-SAME",
+    "request": {
+      "url": "/resources/current",
+      "query": {
+        "someKey": "someValue"
+      },
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "OK",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 201
+    }
+  },
+  {
+    "uuid": "SAME-SAME-SAME-SAME-SAME-SAME",
+    "request": {
+      "url": "/resources/something/new",
+      "query": {
+        "someKey": "someValue"
+      },
+      "method": [
+        "GET"
+      ]
+    },
+    "response": {
+      "body": "MAYBE",
+      "headers": {
+        "content-type": "application/xml"
+      },
+      "status": 200
+    }
+  }
+]

@@ -643,7 +643,22 @@ public class AdminPortalTest {
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, "unparseable rubbish post content");
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
-        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    public void should_Return400_WhenCreatingWholeStubsConfig_WithDuplicateUUIDs() throws Exception {
+
+        final String requestUrl = String.format("%s/", ADMIN_URL);
+
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_14.json");
+        final InputStream jsonInputStream = url.openStream();
+        final String jsonToCreate = StringUtils.inputStreamToString(jsonInputStream);
+
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test

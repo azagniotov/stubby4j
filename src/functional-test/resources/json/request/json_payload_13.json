@@ -1,0 +1,20 @@
+[
+  {
+    "proxy-config": {
+      "description": "this should be the catch-all config",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://google.com"
+      }
+    }
+  },
+  {
+    "proxy-config": {
+      "description": "but this one is missing uuid key, which also makes it a catch-all???",
+      "strategy": "as-is",
+      "properties": {
+        "endpoint": "https://yahoo.com"
+      }
+    }
+  }
+]
