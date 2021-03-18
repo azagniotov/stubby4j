@@ -44,6 +44,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Record and Play](#record-and-play)
    * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
       * [Splitting main YAML config](#splitting-main-yaml-config)
+* [Request proxying](#request-proxying)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
@@ -1250,6 +1251,9 @@ includes:
          content-type: application/json
 ```  
 
+## Request proxying
+
+See [REQUEST_PROXYING.md](REQUEST_PROXYING.md) for details
 
 ## Performance optimization index
 
@@ -1321,7 +1325,7 @@ You can start-up and manage stubby4j with the help of [StubbyClient](src/main/ja
 
 ## Change log
 
-See [CHANGELOG,md](CHANGELOG.md) for details
+See [CHANGELOG.md](CHANGELOG.md) for details
 
 ## Roadmap
 * Add support for OAuth in Record & Replay feature
