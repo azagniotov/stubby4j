@@ -4,6 +4,13 @@
 
 As of stubby4j `v7.3.0` it is possible to configure only one proxy configuration that serves as a catch-all for all requests that don't match any of the `stubby4j`'s stubs.
 
+### Table of contents
+
+* [Proxy configuration HOWTO](#proxy-configuration-howto)
+   * [Supported YAML properties](#supported-yaml-properties)
+* [Proxied request & response tracking](#proxied-request--response-tracking)
+* [Managing proxy configuration via the REST API](#managing-proxy-configuration-via-the-rest-api)
+
 
 ## Proxy configuration HOWTO
 
@@ -58,7 +65,7 @@ includes:
 (from: [main-test-stubs-with-proxy-config.yaml](src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
 
 
-### Supported properties
+### Supported YAML properties
 
 #### uuid (`optional`)
 
