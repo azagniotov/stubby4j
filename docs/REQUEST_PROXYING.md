@@ -1,3 +1,5 @@
+[Back to the main README.md](../README.md)
+
 ## Request proxying
 
 `stubby4j` can proxy requests to other services. This supports an ability to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs.
@@ -27,7 +29,7 @@ The following is a fully-populated `proxy-config` configuration:
       endpoint: https://jsonplaceholder.typicode.com
 ```
 
-YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totaly OK to mix `request`/`response` ([Endpoint configuration HOWTO](README.md#endpoint-configuration-howto)) and `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
+YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totaly OK to mix `request`/`response` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) and `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
 ```yaml
 - proxy-config:
     uuid: default
@@ -55,14 +57,14 @@ YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it i
       endpoint: https://jsonplaceholder.typicode.com
 ```
 
-Alternatively, you may consider [splitting main YAML config](README.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
+Alternatively, you may consider [splitting main YAML config](../README.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
 
 ```yaml
 includes:
   - include-all-test-stubs.yaml
   - include-proxy-config.yaml
 ```
-(from: [main-test-stubs-with-proxy-config.yaml](src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
+(from: [main-test-stubs-with-proxy-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
 
 
 ### Supported YAML properties
@@ -105,4 +107,4 @@ Just like with stubs management, `stubby4j` enables you to manage your `proxy-co
 
 
 
-[Back to the main README.md](README.md)
+[Back to the main README.md](../README.md)

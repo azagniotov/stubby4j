@@ -1253,7 +1253,7 @@ includes:
 
 ## Request proxying
 
-See [REQUEST_PROXYING.md](REQUEST_PROXYING.md) for details
+See [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
 
 ## Performance optimization index
 
@@ -1278,7 +1278,7 @@ To disable stub caching pass `--disable_stub_caching` command-line arg to stubby
 
 ## The admin portal
 
-See [ADMIN_PORTAL.md](ADMIN_PORTAL.md) for details
+See [ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
 
 ## The stubs portal
 

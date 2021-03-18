@@ -1,6 +1,6 @@
 #### 7.3.0-SNAPSHOT
 
-* New feature: added support for request proxying. See the [REQUEST_PROXYING.md](REQUEST_PROXYING.md) and the original feature request [#232](https://github.com/azagniotov/stubby4j/issues/232) for context
+* New feature: added support for request proxying. See the [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) and the original feature request [#232](https://github.com/azagniotov/stubby4j/issues/232) for context
 
 #### 7.2.0
 
