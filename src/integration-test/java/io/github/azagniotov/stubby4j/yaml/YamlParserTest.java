@@ -55,7 +55,7 @@ public class YamlParserTest {
     @Test
     public void shouldThrow_WhenDuplicatedUuidSpecified() throws Exception {
         expectedException.expect(IOException.class);
-        expectedException.expectMessage("Stubbed YAML contains duplicates of UUID 9136d8b7-f7a7-478d-97a5-53292484aaf6");
+        expectedException.expectMessage("Stubs YAML contains duplicate UUIDs: 9136d8b7-f7a7-478d-97a5-53292484aaf6");
 
         final URL yamlUrl = YamlParserTest.class.getResource("/yaml/duplicated.uuid.stub.yaml");
         final InputStream stubsConfigStream = yamlUrl.openStream();
@@ -1047,17 +1047,17 @@ public class YamlParserTest {
     }
 
     @Test
-    public void shouldThrowWhenProxyConfigWithDoubleName() throws Exception {
+    public void shouldThrowWhenProxyConfigWithDuplicateUUID() throws Exception {
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-double-name.yaml");
+        Exception exception = assertThrows(IOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/proxy-config-duplicate-uuid.yaml");
             final InputStream stubsConfigStream = yamlUrl.openStream();
             final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 
             new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
         });
 
-        String expectedMessage = "Proxy config with name some-unique-name already exists";
+        String expectedMessage = "Proxy config YAML contains duplicate UUIDs: some-unique-name";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);

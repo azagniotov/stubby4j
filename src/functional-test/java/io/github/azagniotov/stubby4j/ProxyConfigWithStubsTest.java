@@ -271,9 +271,24 @@ public class ProxyConfigWithStubsTest {
     public void should_Return400_WhenCreatingWholeConfig_WithEmptyPayload() throws Exception {
 
         final String requestUrl = String.format("%s/", ADMIN_URL);
-        final String jsonToUpdate = "";
+        final String jsonToCreate = "";
 
-        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToUpdate);
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
+
+        final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
+        assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    public void should_Return400_WhenCreatingWholeProxyConfig_WithDuplicateUUIDs() throws Exception {
+
+        final String requestUrl = String.format("%s/", ADMIN_URL);
+
+        final URL url = AdminPortalTest.class.getResource("/json/request/json_payload_13.json");
+        final InputStream jsonInputStream = url.openStream();
+        final String jsonToCreate = StringUtils.inputStreamToString(jsonInputStream);
+
+        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
 
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
         assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
