@@ -39,7 +39,6 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 <details>
   <summary><code>POST <b>/</b></code> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
-  <br />
 
 ##### Responses
 
