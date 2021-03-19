@@ -1327,32 +1327,15 @@ You can start-up and manage stubby4j with the help of [StubbyClient](src/main/ja
 
 ## Change log
 
-See [CHANGELOG.md](CHANGELOG.md) for details
-
-## Roadmap
-* Add support for OAuth in Record & Replay feature
-* Scenarios where multiple endpoints correlate with each other based on the scenario. Useful in e2e testing where system brought to a certain state (maybe?)
+See [CHANGELOG.md](docs/CHANGELOG.md)
 
 ## Authors
-A number of people have contributed directly to stubby4j by writing
-documentation or developing software.
 
-1. Alexander Zagniotov <azagniotov@gmail.com>
-2. Eric Mrak <enmrak@gmail.com>
+See [AUTHORS.md](docs/AUTHORS.md)
 
+## Contributors
 
-## Kudos
-A number of people have contributed to stubby4j by reporting problems, suggesting improvements or submitting changes. Special thanks fly out to the following **Ninjas** for their help, support and feedback
-
-* Isa Goksu
-* Eric Mrak
-* Oleksandr Berezianskyi
-* Sankalp Saxena
-* Simon Brunning
-* Ed Hewell
-* Kenny Lin
-* Logan McGrath
-
+See [CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
 
 ## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
@@ -1360,7 +1343,8 @@ A number of people have contributed to stubby4j by reporting problems, suggestin
 
 
 ## Copyright
-Yes. See [COPYRIGHT.md](COPYRIGHT.md) for details
+
+See [COPYRIGHT.md](docs/COPYRIGHT.md) for details
 
 ## License
 MIT. See [LICENSE](LICENSE) for details
