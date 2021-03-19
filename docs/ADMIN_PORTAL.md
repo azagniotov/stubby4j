@@ -51,6 +51,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 </details>
 
+------------------------------------------------------------------------------------------
+
 #### `Scenarios`: listing existing stubs & proxy configs as YAML string
 
 <details>
@@ -132,6 +134,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 </details>
 
+------------------------------------------------------------------------------------------
+
+
 #### `Scenarios`: updating existing stubs & proxy configs
 
 <details>
@@ -204,6 +209,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 </details>
 
+------------------------------------------------------------------------------------------
 
 #### `Scenarios`: deleting existing stubs & proxy configs
 
@@ -273,6 +279,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `400`         | error          | None                                                                |
 
 </details>
+
+------------------------------------------------------------------------------------------
 
 #### `POST` / `PUT` request body format
 
