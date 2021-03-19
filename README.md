@@ -12,7 +12,7 @@
 
 A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol.
 
-It is an HTTP server for stubbing external systems in both Docker and non-containerized environments with ease for integration, contract & behavior testing.
+It is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
 
 Please refer to [Key features](#key-features) for more information
 
