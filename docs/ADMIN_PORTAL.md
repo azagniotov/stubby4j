@@ -76,7 +76,7 @@ To manage the stubbed data via the `POST`/`PUT` API, structure the request paylo
 
 ##### `POST` / `PUT` JSON payload examples
 
-Single stub definition
+Single stub payload
 
 <details>
   <summary>Click to expand</summary>
@@ -105,7 +105,7 @@ Single stub definition
 ```
 </details>
 
-Multiple stub definitions
+Multiple stub payload
 
 <details>
   <summary>Click to expand</summary>
@@ -173,7 +173,7 @@ Multiple stub definitions
 </details>
 
 
-Stub definition with multiple proxy configs
+Single stub with multiple proxy configs payload
 
 <details>
   <summary>Click to expand</summary>
