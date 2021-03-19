@@ -25,41 +25,44 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ### Available REST API summary
 
-##### Caveats
-* Stubs can be updated/deleted by either:
-   * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
-   * unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))
-* When defining only one proxy config (e.g.: a `catch-all` for all stubs), it must be configured without a `uuid` OR have a `uuid` with a value `default`
-* The `default` proxy config cannot be deleted via the `DELETE` REST API
-* Proxy configs can `only` be updated by a unique identifier, `uuid`
-* The `default` proxy config can be updated via the `PUT` REST API even if `uuid` has not been explicilty defined (it will be defined impliclty).
-* When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
+> **CAVEATS**
+>
+> * Stubs can be updated/deleted by either:
+>    * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
+>    * unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))
+> * When defining only one proxy config (e.g.: a `catch-all` for all stubs), it must be configured without a `uuid` OR have a `uuid` with a value `default`
+> * The `default` proxy config cannot be deleted via the `DELETE` REST API
+> * Proxy configs can `only` be updated by a unique identifier, `uuid`
+> * The `default` proxy config can be updated via the `PUT` REST API even if `uuid` has not been explicilty defined (it will be defined impliclty).
+> * When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
 
-#### `Scenarios: creating new/overwriting existing stubs & proxy configs`
+#### `Scenarios`: creating new/overwriting existing stubs & proxy configs
 
 <details>
  <summary><code>POST</code> <code><b>/</b></code> <code>(overwrites all in-memory stub and/or proxy-config)</code></summary>
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `201`         | success        | `Configuration created successfully`                                |
-| `400`         | error          | None                                                                |
-| `405`         | error          | `Method POST is not allowed on URI <ANYTHING_BUT_ROOT>`             |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `201`         | success        | `Configuration created successfully`                                |
+> | `400`         | error          | None                                                                |
+> | `405`         | error          | `Method POST is not allowed on URI <ANYTHING_BUT_ROOT>`             |
 
 </details>
 
-#### `Scenarios: listing existing stubs & proxy configs as YAML string`
+------------------------------------------------------------------------------------------
+
+#### `Scenarios`: listing existing stubs & proxy configs as YAML string
 
 <details>
  <summary><code>GET</code> <code><b>/</b></code> <code>(gets all in-memory stub & proxy configs)</code></summary>
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | None                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | None                                |
 
 </details>
 
@@ -68,16 +71,16 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
 
 </details>
 
@@ -86,16 +89,16 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid`            | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid`            | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
 
 </details>
 
@@ -105,10 +108,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
 
 </details>
 
@@ -118,57 +121,59 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid`            | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid`            | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
 
 </details>
 
-#### `Scenarios: updating existing stubs & proxy configs`
+------------------------------------------------------------------------------------------
+
+
+#### `Scenarios`: updating existing stubs & proxy configs
 
 <details>
   <summary><code>PUT</code> <code><b>/{stub_numeric_id}</b></code> <code>(updates stub by its resource-id-{stub_numeric_id} in the config)</code></summary>
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `201`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
-| `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `201`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
+> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
 
 </details>
-
 
 <details>
   <summary><code>PUT</code> <code><b>/{uuid}</b></code> <code>(updates stub by its defined uuid property)</code></summary>
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `201`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
-| `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `201`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
+> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
 
 </details>
 
@@ -177,11 +182,11 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `201`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
-| `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `201`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
+> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
 
 </details>
 
@@ -190,31 +195,32 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `201`         | success        | None                                                                |
-| `400`         | error          | None                                                                |
-| `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `201`         | success        | None                                                                |
+> | `400`         | error          | None                                                                |
+> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
 
 </details>
 
+------------------------------------------------------------------------------------------
 
-#### `Scenarios: deleting existing stubs & proxy configs`
+#### `Scenarios`: deleting existing stubs & proxy configs
 
 <details>
   <summary><code>DELETE</code> <code><b>/</b></code> <code>(deletes all in-memory stub & proxy configs)</code></summary>
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | `Stub requests deleted successfully`                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | `Stub requests deleted successfully`                                |
 
 </details>
 
@@ -223,16 +229,16 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | `Stub request index#<stub_numeric_id> deleted successfully`         |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | `Stub request index#<stub_numeric_id> deleted successfully`         |
+> | `400`         | error          | None                                                                |
 
 </details>
 
@@ -242,16 +248,16 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | `Stub request uuid#<uuid> deleted successfully`                     |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | `Stub request uuid#<uuid> deleted successfully`                     |
+> | `400`         | error          | None                                                                |
 
 </details>
 
@@ -261,18 +267,20 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-| name              | type              | description                                                 |
-|-------------------|-------------------|-------------------------------------------------------------|
-| `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name              | type              | description                                                 |
+> |-------------------|-------------------|-------------------------------------------------------------|
+> | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
 ##### Responses
 
-| http code     | type           | message                                                             |
-|---------------|----------------|---------------------------------------------------------------------|
-| `200`         | success        | `Proxy config uuid#<uuid> deleted successfully`                     |
-| `400`         | error          | None                                                                |
+> | http code     | type           | message                                                             |
+> |---------------|----------------|---------------------------------------------------------------------|
+> | `200`         | success        | `Proxy config uuid#<uuid> deleted successfully`                     |
+> | `400`         | error          | None                                                                |
 
 </details>
+
+------------------------------------------------------------------------------------------
 
 #### `POST` / `PUT` request body format
 
