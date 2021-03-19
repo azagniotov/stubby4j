@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#contributors)
 
 * Isa Goksu
 * Eric Mrak

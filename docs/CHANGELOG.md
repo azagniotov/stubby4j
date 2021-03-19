@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#change-log)
 
 #### 7.3.0-SNAPSHOT
 
@@ -320,3 +320,6 @@
 
 #### 1.0.54
 * Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
+
+
+[Back to the main README.md](../README.md#change-log)
