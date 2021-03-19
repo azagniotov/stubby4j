@@ -41,7 +41,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>POST <b>/</b></code> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
   <br />
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -57,7 +57,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>GET <b>/</b></code> (<em>gets all in-memory stub & proxy configs</em>)</summary>
   <br />
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -69,13 +69,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>GET <b>/{stub_numeric_id}</b></code> (<em>gets stub by its resource-id-{stub_numeric_id} in the YAML config</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -88,13 +88,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>GET <b>/{uuid}</b></code> (<em>gets stub by its defined uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid`            | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -108,7 +108,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>GET <b>/proxy-config/default</b></code> (<em>gets <b>default</b> proxy-config</em>)</summary>
   <br />
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -122,13 +122,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>GET <b>/proxy-config/{uuid}</b></code> (<em>gets proxy config by its uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid`            | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -144,13 +144,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>PUT <b>/{stub_numeric_id}</b></code> (<em>updates stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -165,13 +165,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>PUT <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -185,7 +185,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>PUT <b>/proxy-config/default</b></code> (<em>updates <b>default</b> proxy-config</em>)</summary>
   <br />
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -199,13 +199,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>PUT <b>/proxy-config/{uuid}</b></code> (<em>updates proxy-config by its uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -222,7 +222,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>DELETE <b>/</b></code> (<em>deletes all in-memory stub & proxy configs</em>)</summary>
   <br />
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -234,13 +234,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>DELETE <b>/{stub_numeric_id}</b></code> (<em>deletes stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -254,13 +254,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>DELETE <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
@@ -274,13 +274,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   <summary><code>DELETE <b>/proxy-config/{uuid}</b></code> (<em>deletes proxy-config by its uuid property</em>)</summary>
   <br />
 
-**Parameters**
+##### Parameters
 
 | name              | type              | description                                                 |
 |-------------------|-------------------|-------------------------------------------------------------|
 | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
 
-**Responses**
+##### Responses
 
 | http code     | type           | message                                                             |
 |---------------|----------------|---------------------------------------------------------------------|
