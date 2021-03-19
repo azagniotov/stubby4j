@@ -35,7 +35,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 * The `default` proxy config can be updated via the `PUT` REST API even if `uuid` has not been explicilty defined (it will be defined impliclty).
 * When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
 
-#### Scenarios: creating new/overwriting existing stubs & proxy configs
+#### `Scenarios: creating new/overwriting existing stubs & proxy configs`
 
 <details>
   <summary><b>POST</b> to <b>/</b> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
@@ -51,7 +51,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   
 </details>
 
-#### Scenarios: listing existing stubs & proxy configs as YAML string
+#### `Scenarios: listing existing stubs & proxy configs as YAML string`
 
 <details>
   <summary><b>GET</b> to <b>/</b> (<em>gets all in-memory stub & proxy configs</em>)</summary>
@@ -137,7 +137,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
   
 </details>
 
-#### Scenarios: updating existing stubs & proxy configs
+#### `Scenarios: updating existing stubs & proxy configs`
 
 
 <details>
@@ -216,7 +216,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 
-#### Scenarios: deleting existing stubs & proxy configs
+#### `Scenarios: deleting existing stubs & proxy configs`
 
 <details>
   <summary><b>DELETE</b> to <b>/</b> (<em>deletes all in-memory stub & proxy configs</em>)</summary>
