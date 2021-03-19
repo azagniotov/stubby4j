@@ -108,6 +108,8 @@ That's it!
 
 For more information and more complex examples, please dive into the rest of documentation, especially [Endpoint configuration HOWTO](#endpoint-configuration-howto)
 
+[Back to top](#table-of-contents)
+
 ## Running in Docker
 
 stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
@@ -131,6 +133,7 @@ $ docker build --build-arg REVISION=v7.2.0 --rm --no-cache -t stubby4j:latest .
 
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
 
+[Back to top](#table-of-contents)
 
 ## Why would a developer use `stubby4j`?
 
@@ -168,6 +171,7 @@ Run `./gradlew clean jacocoTestReport` command to:
 * Clean
 * Generate JaCoCo report under the `<PROJECT_ROOT>/build/reports/jacoco/html/index.html`
 
+[Back to top](#table-of-contents)
 
 ## Third-party dependencies
 
@@ -229,6 +233,7 @@ or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`
 compile("io.github.azagniotov:stubby4j:7.3.0-SNAPSHOT:no-jetty")
 ```
 
+[Back to top](#table-of-contents)
 
 ## Command-line switches
 ```
@@ -363,6 +368,8 @@ Here is a fully-populated, unrealistic endpoint:
       body: >
          {"status" : "OK"}
 ```
+
+[Back to top](#table-of-contents)
 
 
 ## Request
@@ -639,6 +646,9 @@ The following endpoint only accepts requests with `application/json` post values
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
 
+[Back to top](#table-of-contents)
+
+
 ### Request proxying
 
 See [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
@@ -795,6 +805,8 @@ Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/
       status: 200
       body: Your request with custom authorization type was successfully authorized!
 ```
+
+[Back to top](#table-of-contents)
 
 
 ## Response
@@ -1151,6 +1163,9 @@ In order to stub a `30x` HTTP redirect, you need to stub the following:
 Upon successful HTTP request verification, the `/item/redirect/destination` value of the stubbed `response` header `location` will be set as the value of the location header of the Jetty HTTP response, which will cause the redirect to another stub with `url` value `/item/redirect/destination`
 
 
+[Back to top](#table-of-contents)
+
+
 ### Record and play
 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
@@ -1286,6 +1301,10 @@ To disable stub caching pass `--disable_stub_caching` command-line arg to stubby
 ## The admin portal
 
 See [ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
+
+
+[Back to top](#table-of-contents)
+
 
 ## The stubs portal
 
