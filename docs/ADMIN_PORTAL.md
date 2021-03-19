@@ -36,36 +36,258 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 * When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
 
 #### Scenarios: creating new/overwriting existing stubs & proxy configs
-| verb     | resource        |success|error|scenario                                         |
-|------------------------|-------------|-----------|---------------|-------------------------------------|
-|`POST`    | `/`          |`201`|`400`|overwrites all in-memory `stub` and/or `proxy-config`|
+
+<details>
+  <summary><b>POST</b> to <b>/</b> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
+  <br />
+ 
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `201`         | success        | `Configuration created successfully`                                |
+  | `400`         | error          | None                                                                |
+  | `405`         | error          | `Method POST is not allowed on URI <ANYTHING_BUT_ROOT>`             |
+  
+</details>
 
 #### Scenarios: listing existing stubs & proxy configs as YAML string
-| verb     | resource        |success|error|scenario                                         |
-|------------------------|-------------|------|-----------|----------------------------------------------|
-|`GET`    | `/`          |`200`|`400`|gets all in-memory `stub` & `proxy-config` configs|
-|`GET`    | `/:stub_numeric_id`          |`200`|`400`|gets `stub` by its resource-id-`<id>` in the YAML config|
-|`GET`    | `/:uuid`          |`200`|`400`|gets `stub` by its `uuid` property |
-|`GET`    | `/proxy-config/default`          |`200`|`400`|gets `default` `proxy-config`|
-|`GET`    | `/proxy-config/:uuid`          |`200`|`400`|gets `proxy-config` by its `uuid` property|
+
+<details>
+  <summary><b>GET</b> to <b>/</b> (<em>gets all in-memory stub & proxy configs</em>)</summary>
+  <br />
+ 
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | None                                |
+  
+</details>
+
+<details>
+  <summary><b>GET</b> to <b>/{stub_numeric_id}</b> (<em>gets stub by its resource-id-{stub_numeric_id} in the YAML config</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  
+</details>
+
+<details>
+  <summary><b>GET</b> to <b>/{uuid}</b> (<em>gets stub by its defined uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid`            | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  
+</details>
+
+
+<details>
+  <summary><b>GET</b> to <b>/proxy-config/default</b> (<em>gets <b>default</b> proxy-config</em>)</summary>
+  <br />
+ 
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  
+</details>
+
+
+<details>
+  <summary><b>GET</b> to <b>/proxy-config/{uuid}</b> (<em>gets proxy config by its uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid`            | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  
+</details>
 
 #### Scenarios: updating existing stubs & proxy configs
 
-| verb     | resource        |success|error|scenario                                         |
-|------------------------|-------------|-----------|---------|-------------------------------------------|
-|`PUT`    | `/:stub_numeric_id`          |`201`|`400`|updates `stub` by its resource-id-`<id>` in the config|
-|`PUT`    | `/:uuid`          |`201`|`400`|updates `stub` by its `uuid` property |
-|`PUT`    | `/proxy-config/default`          |`201`|`400`|updates `default` `proxy-config`|
-|`PUT`    | `/proxy-config/:uuid`          |`201`|`400`|updates `proxy-config` by its `uuid` property|
+
+<details>
+  <summary><b>PUT</b> to <b>/{stub_numeric_id}</b> (<em>updates stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `201`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+  
+</details>
+
+
+<details>
+  <summary><b>PUT</b> to <b>/{uuid}</b> (<em>updates stub by its defined uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `201`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+  
+</details>
+
+<details>
+  <summary><b>PUT</b> to <b>/proxy-config/default</b> (<em>updates <b>default</b> proxy-config</em>)</summary>
+  <br />
+ 
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `201`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+  
+</details>
+
+<details>
+  <summary><b>PUT</b> to <b>/proxy-config/{uuid}</b> (<em>updates proxy-config by its uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `201`         | success        | None                                                                |
+  | `400`         | error          | None                                                                |
+  | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+  
+</details>
+
 
 #### Scenarios: deleting existing stubs & proxy configs
 
-| verb     | resource        |success|error|scenario                                         |
-|------------------------|-------------|-----------|--------|--------------------------------------------|
-|`DELETE`    | `/`          |`200`|`400`|deletes all in-memory `stub` & `proxy-config` |
-|`DELETE`    | `/:stub_numeric_id`          |`200`|`400`|deletes `stub` by its resource-id-`<id>` in the config|
-|`DELETE`    | `/:uuid`          |`200`|`400`|deletes `stub` by its `uuid` property |
-|`DELETE`    | `/proxy-config/:uuid`          |`200`|`400`|deletes `proxy-config` by its `uuid` property|
+<details>
+  <summary><b>DELETE</b> to <b>/</b> (<em>deletes all in-memory stub & proxy configs</em>)</summary>
+  <br />
+ 
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | `Stub requests deleted successfully`                                |
+  
+</details>
+
+<details>
+  <summary><b>DELETE</b> to <b>/{stub_numeric_id}</b> (<em>deletes stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<id>`)    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | `Stub request index#<stub_numeric_id> deleted successfully`         |
+  | `400`         | error          | None                                                                |
+  
+</details>
+
+
+<details>
+  <summary><b>DELETE</b> to <b>/{uuid}</b> (<em>updates stub by its defined uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | `Stub request uuid#<uuid> deleted successfully`                     |
+  | `400`         | error          | None                                                                |
+  
+</details>
+
+
+<details>
+  <summary><b>DELETE</b> to <b>/proxy-config/{uuid}</b> (<em>deletes proxy-config by its uuid property</em>)</summary>
+  <br />
+ 
+  **Parameters**
+  
+  | name              | type              | description                                                 |
+  |-------------------|-------------------|-------------------------------------------------------------|
+  | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+  
+  **Responses**
+  
+  | http code     | type           | message                                                             |
+  |---------------|----------------|---------------------------------------------------------------------|
+  | `200`         | success        | `Proxy config uuid#<uuid> deleted successfully`                     |
+  | `400`         | error          | None                                                                |
+  
+</details>
 
 #### `POST` / `PUT` request body format
 
