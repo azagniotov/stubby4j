@@ -78,6 +78,9 @@ To manage the stubbed data via the `POST`/`PUT` API, structure the request paylo
 
 Single stub definition
 
+<details>
+  <summary>Click to expand</summary>
+
 ```json
 [
   {
@@ -100,9 +103,13 @@ Single stub definition
   }
 ]
 ```
+</details>
 
 Multiple stub definitions
 
+<details>
+  <summary>Click to expand</summary>
+  
 ```json
 [
   { 
@@ -163,9 +170,14 @@ Multiple stub definitions
   }
 ]
 ```
+</details>
+
 
 Stub definition with multiple proxy configs
 
+<details>
+  <summary>Click to expand</summary>
+ 
 ```json
 [
   {
@@ -216,6 +228,9 @@ Stub definition with multiple proxy configs
   }
 ]
 ```
+</details>
+
+
 
 
 [Back to the main README.md](../README.md)
