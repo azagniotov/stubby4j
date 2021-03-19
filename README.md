@@ -35,6 +35,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Stub/Feature](#stubfeature)
    * [Request](#request)
+      * [Request proxying](#request-proxying)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
       * [Regex stubbing for XML content](#regex-stubbing-for-xml-content)
       * [Authorization Header](#authorization-header)
@@ -44,7 +45,6 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Record and Play](#record-and-play)
    * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
       * [Splitting main YAML config](#splitting-main-yaml-config)
-* [Request proxying](#request-proxying)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
    * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
@@ -635,6 +635,10 @@ The following endpoint only accepts requests with `application/json` post values
          x-custom-header: "^this/is/\d/test"
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
+
+### Request proxying
+
+See [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
 
 ### Regex stubbing for dynamic matching
 
@@ -1252,10 +1256,6 @@ includes:
       headers:
          content-type: application/json
 ```  
-
-## Request proxying
-
-See [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
 
 ## Performance optimization index
 
