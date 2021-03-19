@@ -21,6 +21,7 @@ public final class Common {
     public static final String HEADER_X_STUBBY_RESOURCE_ID = "x-stubby-resource-id";
     public static final String HEADER_X_STUBBY_PROXY_REQUEST = "x-stubby4j-proxy-request-uuid";
     public static final String HEADER_X_STUBBY_PROXY_RESPONSE = "x-stubby4j-proxy-response-uuid";
+    public static final String HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON = "x-stubby4j-http-error-real-reason";
 
     private Common() {
 

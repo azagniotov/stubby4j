@@ -21,7 +21,6 @@ public class PostHandlingStrategy implements AdminResponseHandlingStrategy {
 
         if (!request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-            response.getWriter().println("Method POST is not allowed on URI " + request.getRequestURI());
             return;
         }
 

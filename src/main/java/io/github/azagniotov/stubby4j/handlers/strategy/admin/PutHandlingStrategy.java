@@ -18,7 +18,6 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
-            response.getWriter().println("Method PUT is not allowed on URI " + request.getRequestURI());
             return;
         }
 

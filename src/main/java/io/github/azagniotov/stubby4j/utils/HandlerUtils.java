@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -33,6 +34,9 @@ public final class HandlerUtils {
         // Setting custom error message will no longer work in Jetty versions > 9.4.20, see:
         // https://github.com/eclipse/jetty.project/issues/4154
         // response.sendError(httpStatus, message);
+        //
+        // using header as a medium to pass an error message to JsonErrorHandler. This is a workaround as a result of the above
+        response.setHeader(HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON, message);
         response.sendError(httpStatus);
         response.flushBuffer();
 
