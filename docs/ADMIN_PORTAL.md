@@ -38,7 +38,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 #### `Scenarios: creating new/overwriting existing stubs & proxy configs`
 
 <details>
-  <summary><code>POST to <b>/</b></code> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
+  <summary><code>POST <b>/</b></code> (<em>overwrites all in-memory stub and/or proxy-config</em>)</summary>
   <br />
 
 **Responses**
@@ -54,7 +54,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 #### `Scenarios: listing existing stubs & proxy configs as YAML string`
 
 <details>
-  <summary><code>GET to <b>/</b></code> (<em>gets all in-memory stub & proxy configs</em>)</summary>
+  <summary><code>GET <b>/</b></code> (<em>gets all in-memory stub & proxy configs</em>)</summary>
   <br />
 
 **Responses**
@@ -66,7 +66,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 <details>
-  <summary><code>GET to <b>/{stub_numeric_id}</b></code> (<em>gets stub by its resource-id-{stub_numeric_id} in the YAML config</em>)</summary>
+  <summary><code>GET <b>/{stub_numeric_id}</b></code> (<em>gets stub by its resource-id-{stub_numeric_id} in the YAML config</em>)</summary>
   <br />
 
 **Parameters**
@@ -85,7 +85,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 <details>
-  <summary><code>GET to <b>/{uuid}</b></code> (<em>gets stub by its defined uuid property</em>)</summary>
+  <summary><code>GET <b>/{uuid}</b></code> (<em>gets stub by its defined uuid property</em>)</summary>
   <br />
 
 **Parameters**
@@ -105,7 +105,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>GET to <b>/proxy-config/default</b></code> (<em>gets <b>default</b> proxy-config</em>)</summary>
+  <summary><code>GET <b>/proxy-config/default</b></code> (<em>gets <b>default</b> proxy-config</em>)</summary>
   <br />
 
 **Responses**
@@ -119,7 +119,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>GET to <b>/proxy-config/{uuid}</b></code> (<em>gets proxy config by its uuid property</em>)</summary>
+  <summary><code>GET <b>/proxy-config/{uuid}</b></code> (<em>gets proxy config by its uuid property</em>)</summary>
   <br />
 
 **Parameters**
@@ -141,7 +141,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>PUT to <b>/{stub_numeric_id}</b></code> (<em>updates stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
+  <summary><code>PUT <b>/{stub_numeric_id}</b></code> (<em>updates stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
   <br />
 
 **Parameters**
@@ -162,7 +162,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>PUT to <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
+  <summary><code>PUT <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
   <br />
 
 **Parameters**
@@ -182,7 +182,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 <details>
-  <summary><code>PUT to <b>/proxy-config/default</b></code> (<em>updates <b>default</b> proxy-config</em>)</summary>
+  <summary><code>PUT <b>/proxy-config/default</b></code> (<em>updates <b>default</b> proxy-config</em>)</summary>
   <br />
 
 **Responses**
@@ -196,7 +196,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 <details>
-  <summary><code>PUT to <b>/proxy-config/{uuid}</b></code> (<em>updates proxy-config by its uuid property</em>)</summary>
+  <summary><code>PUT <b>/proxy-config/{uuid}</b></code> (<em>updates proxy-config by its uuid property</em>)</summary>
   <br />
 
 **Parameters**
@@ -219,7 +219,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 #### `Scenarios: deleting existing stubs & proxy configs`
 
 <details>
-  <summary><code>DELETE to <b>/</b></code> (<em>deletes all in-memory stub & proxy configs</em>)</summary>
+  <summary><code>DELETE <b>/</b></code> (<em>deletes all in-memory stub & proxy configs</em>)</summary>
   <br />
 
 **Responses**
@@ -231,7 +231,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 </details>
 
 <details>
-  <summary><code>DELETE to <b>/{stub_numeric_id}</b></code> (<em>deletes stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
+  <summary><code>DELETE <b>/{stub_numeric_id}</b></code> (<em>deletes stub by its resource-id-{stub_numeric_id} in the config</em>)</summary>
   <br />
 
 **Parameters**
@@ -251,7 +251,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>DELETE to <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
+  <summary><code>DELETE <b>/{uuid}</b></code> (<em>updates stub by its defined uuid property</em>)</summary>
   <br />
 
 **Parameters**
@@ -271,7 +271,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 
 <details>
-  <summary><code>DELETE to <b>/proxy-config/{uuid}</b></code> (<em>deletes proxy-config by its uuid property</em>)</summary>
+  <summary><code>DELETE <b>/proxy-config/{uuid}</b></code> (<em>deletes proxy-config by its uuid property</em>)</summary>
   <br />
 
 **Parameters**
