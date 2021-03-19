@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#the-admin-portal)
 
 ## stubby4j Admin Portal
 
@@ -448,4 +448,4 @@ Single stub with multiple proxy configs payload
 
 
 
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#the-admin-portal)

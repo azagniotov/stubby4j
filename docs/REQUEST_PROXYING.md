@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#request-proxying)
 
 ## Request proxying
 
@@ -109,4 +109,4 @@ Just like with stubs management, `stubby4j` enables you to manage your `proxy-co
 
 
 
-[Back to the main README.md](../README.md)
+[Back to the main README.md](../README.md#request-proxying)

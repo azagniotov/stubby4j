@@ -269,6 +269,9 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
                               configuration is reloaded
 ```
 
+[Back to top](#table-of-contents)
+
+
 ## Endpoint configuration HOWTO
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
@@ -1257,6 +1260,8 @@ includes:
          content-type: application/json
 ```  
 
+[Back to top](#table-of-contents)
+
 ## Performance optimization index
 
 stubby4j uses a number of techniques to optimize evaluation of stubs
@@ -1349,6 +1354,8 @@ See [COPYRIGHT.md](docs/COPYRIGHT.md) for details
 ## License
 MIT. See [LICENSE](LICENSE) for details
 
+
+[Back to top](#table-of-contents)
 
 <!-- references -->
 
