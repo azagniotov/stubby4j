@@ -46,8 +46,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
 > | `201`         | success        | `Configuration created successfully`                                |
-> | `400`         | error          | None                                                                |
-> | `405`         | error          | `Method POST is not allowed on URI <ANYTHING_BUT_ROOT>`             |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
+> | `405`         | error          | None                                                                |
 
 </details>
 
@@ -62,7 +62,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | None                                |
+> | `200`         | success        | YAML string                                                         |
 
 </details>
 
@@ -79,8 +79,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
+> | `200`         | success        | YAML string                                                         |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -97,8 +97,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
+> | `200`         | success        | YAML string                                                         |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -110,8 +110,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
+> | `200`         | success        | YAML string                                                         |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -129,8 +129,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
+> | `200`         | success        | YAML string                                                         |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -152,9 +152,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `201`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
-> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | `201`         | success        | `Stub request index#<stub_numeric_id> updated successfully"`        |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
+> | `405`         | error          | None                                                                |
 
 </details>
 
@@ -171,9 +171,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `201`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
-> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | `201`         | success        | `Stub request uuid#<uuid> updated successfully`                     |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
+> | `405`         | error          | None                                                                |
 
 </details>
 
@@ -184,9 +184,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `201`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
-> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | `201`         | success        | `Proxy config uuid#default updated successfully`                    |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
+> | `405`         | error          | None                                                                |
 
 </details>
 
@@ -203,9 +203,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `201`         | success        | None                                                                |
-> | `400`         | error          | None                                                                |
-> | `405`         | error          | `Method PUT is not allowed on URI /`                                |
+> | `201`         | success        | `Proxy config uuid#<uuid> updated successfully`                     |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
+> | `405`         | error          | None                                                                |
 
 </details>
 
@@ -220,7 +220,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
-> | `200`         | success        | `Stub requests deleted successfully`                                |
+> | `200`         | success        | `All in-memory YAML config was deleted successfully`                |
 
 </details>
 
@@ -238,7 +238,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
 > | `200`         | success        | `Stub request index#<stub_numeric_id> deleted successfully`         |
-> | `400`         | error          | None                                                                |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -257,7 +257,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
 > | `200`         | success        | `Stub request uuid#<uuid> deleted successfully`                     |
-> | `400`         | error          | None                                                                |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
@@ -276,7 +276,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | type           | message                                                             |
 > |---------------|----------------|---------------------------------------------------------------------|
 > | `200`         | success        | `Proxy config uuid#<uuid> deleted successfully`                     |
-> | `400`         | error          | None                                                                |
+> | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
 
 </details>
 
