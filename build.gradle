@@ -74,3 +74,16 @@ apply from: "$rootDir/conf/gradle/multi-test-source-sets.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"
+
+// There are some tweaks done to this task by bmuschko/gradle-nexus-plugin that in
+// addition to the expected destination: ~/.m2/repository/io/github/azagniotov/stubby4j/version/,
+// it also installs stubby4j artifacts into ~/.m2/repository/stubby4j, which is wrong
+task installToMavenLocal(type: Upload, dependsOn: [assemble, install]) {
+    repositories.mavenInstaller {
+        configuration = configurations.archives
+        version = "$stubbyProjectVersion"
+        pom.artifactId = "$stubbyProjectName"
+        pom.groupId = "$stubbyProjectGroup"
+        pom.packaging = "jar"
+    }
+}

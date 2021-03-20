@@ -219,7 +219,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 ### Installing stubby4j to local .m2 repository
 
-Run `./gradlew installLocally` command to:
+Run `./gradlew installToMavenLocal` command to:
 
 * Install `stubby4j-7.3.0-SNAPSHOT*.jar` to local `~/.m2/repository`
 * All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.3.0-SNAPSHOT/`
