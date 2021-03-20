@@ -35,11 +35,13 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Stub/Feature](#stubfeature)
    * [Request](#request)
+      * [Request YAML properties](#request-yaml-properties)
       * [Request proxying](#request-proxying)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
       * [Regex stubbing for XML content](#regex-stubbing-for-xml-content)
       * [Authorization Header](#authorization-header)
    * [Response](#response)
+      * [Response YAML properties](#response-yaml-properties)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Stubbing HTTP 30x redirects](#stubbing-http-30x-redirects)
       * [Record and Play](#record-and-play)
@@ -313,6 +315,8 @@ Here is a fully-populated, unrealistic endpoint:
       file: responseData.xml
 ```
 
+[Back to top](#table-of-contents)
+
 ## Stub/Feature
 
 #### description (optional)
@@ -381,7 +385,7 @@ In YAML config, the `request` configuration supports the following keys:
 
 `url`, `method`, `query`, `headers`, `post`, `file`
 
-### Details
+### Request YAML properties
 
 #### url (required)
 
@@ -668,6 +672,8 @@ __Please note__, before using regex patterns in stubs, first it is best to ensur
 
 The latter would ensure that the stubbed regex pattern actually works, also it is easier to debug a simple unit test case instead of trying to figure out why stub matching failed
 
+[Back to top](#table-of-contents)
+
 ### Regex stubbing for XML content
 
 XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
@@ -761,8 +767,9 @@ XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue. Consider the
 ```
 In the above example, the regular expressions defined in `post` XML will match any values inside `idex:authority`, `idex:name` and `idex:startsWith` elements.
 
-
 Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) guide or/and [their unit tests](https://github.com/xmlunit/xmlunit/blob/1c25e0171123b1a1fc543c87c5a9039d850d9b73/xmlunit-placeholders/src/test/java/org/xmlunit/placeholder/PlaceholderDifferenceEvaluatorTest.java) for more information.
+
+[Back to top](#table-of-contents)
 
 ### Authorization Header
 ```yaml
@@ -818,7 +825,7 @@ In YAML config, the `response` configuration supports the following keys:
 
 `status`, `body`, `file`, `headers`, `latency`
 
-### Details
+### Response YAML properties
 
 * Response configuration an be a single `response` or a sequence of responses.
 * When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
@@ -1011,6 +1018,8 @@ response:
       body: Hello, World!
 ```
 
+[Back to top](#table-of-contents)
+
 ### Dynamic token replacement in stubbed response
 
 During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
@@ -1125,6 +1134,8 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
 
+[Back to top](#table-of-contents)
+
 ### Stubbing HTTP 30x redirects
 
 In order to stub a `30x` HTTP redirect, you need to stub the following:
@@ -1198,6 +1209,7 @@ In the above example, stubby will record HTTP response received after submitting
 * Recorded HTTP response is not persistable, but kept in memory only. In other words, upon stubby shutdown the recording is lost
 * Make sure to specify in `response` `body` only the URL, without the path info. Path info should be specified in `request` `url`
 
+[Back to top](#table-of-contents)
 
 ## Supplying stubbed endpoints to stubby
 
@@ -1220,6 +1232,8 @@ There are two ways available (listed in no particular order):
    * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
    * `body`: the textual body of the server's response to the client
    * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+
+[Back to top](#table-of-contents)
 
 ### Splitting main YAML config
 
