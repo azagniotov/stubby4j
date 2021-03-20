@@ -286,7 +286,8 @@ Also, you will learn about request proxying to other hosts, regex stubbing for d
 
 <details>
  <summary>Click to expand</summary>
-
+ <br />
+  
 Here is a fully-populated, unrealistic endpoint:
 ```yaml
 -  description: Optional description shown in logs
@@ -693,6 +694,10 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 
 XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
+<details>
+ <summary>Click to expand</summary>
+ <br />
+
 Therefore, `stubby4j` uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
 
 XMLUnit enables stubbing of XML content with regular expressions by leveraging XMLUnit-specific Regex match placeholders. Placeholders are used to specify exceptional requirements in the control XML document for use during equality comparison (i.e.: regex matching).
@@ -784,6 +789,8 @@ In the above example, the regular expressions defined in `post` XML will match a
 
 Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) guide or/and [their unit tests](https://github.com/xmlunit/xmlunit/blob/1c25e0171123b1a1fc543c87c5a9039d850d9b73/xmlunit-placeholders/src/test/java/org/xmlunit/placeholder/PlaceholderDifferenceEvaluatorTest.java) for more information.
 
+</details>
+
 [Back to top](#table-of-contents)
 
 ### Authorization Header
@@ -843,13 +850,14 @@ In YAML config, the `response` object supports the following properties:
 
 Keep on reading to understand their usage, intent and behavior.
 
-### Response YAML properties
+### Response object properties
 
 
 <details>
  <summary>Click to expand</summary>
+ <br />
   
-* Response configuration an be a single `response` or a sequence of responses.
+* Response configuration can be a single `response` or a sequence of `response`s under the same `- request` definition.
 * When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
 
 ```yaml
@@ -1048,6 +1056,10 @@ response:
 
 During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
 
+<details>
+ <summary>Click to expand</summary>
+ <br />
+
 stubby supports dynamic token replacement on the following properties:
 - `response` `body`
 - `response` `header` name values (including `location` header value)
@@ -1157,6 +1169,8 @@ After successful HTTP request verification, if your `body` or contents of local 
 * Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parenthesis within your regex if your token IDs start from `1`
 * Make sure that you are using token ID zero, when wanting to use __full__ regex match as the token value
 * Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<% ` and ` %>`
+
+</details>
 
 [Back to top](#table-of-contents)
 
