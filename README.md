@@ -33,15 +33,14 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
-   * [Stub/Feature](#stubfeature)
    * [Request](#request)
-      * [Request YAML properties](#request-yaml-properties)
+      * [Request object properties](#request-object-properties)
       * [Request proxying](#request-proxying)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
       * [Regex stubbing for XML content](#regex-stubbing-for-xml-content)
       * [Authorization Header](#authorization-header)
    * [Response](#response)
-      * [Response YAML properties](#response-yaml-properties)
+      * [Response object properties](#response-object-properties)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Stubbing HTTP 30x redirects](#stubbing-http-30x-redirects)
       * [Record and Play](#record-and-play)
@@ -283,6 +282,11 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
+Also, you will learn about request proxying to other hosts, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more.
+
+<details>
+ <summary>Click to expand</summary>
+
 Here is a fully-populated, unrealistic endpoint:
 ```yaml
 -  description: Optional description shown in logs
@@ -373,6 +377,8 @@ Here is a fully-populated, unrealistic endpoint:
          {"status" : "OK"}
 ```
 
+</details>
+
 [Back to top](#table-of-contents)
 
 
@@ -381,11 +387,17 @@ Here is a fully-populated, unrealistic endpoint:
 This object is used to match an incoming request to stubby against the available endpoints that have been configured.
 
 ### Summary
-In YAML config, the `request` configuration supports the following keys:
+
+In YAML config, the `request` object supports the following properties:
 
 `url`, `method`, `query`, `headers`, `post`, `file`
 
-### Request YAML properties
+Keep on reading to understand their usage, intent and behavior.
+
+### Request object properties
+
+<details>
+ <summary>Click to expand</summary>
 
 #### url (required)
 
@@ -650,6 +662,9 @@ The following endpoint only accepts requests with `application/json` post values
          x-custom-header-2: "^[a-z]{4}_\\d{32}_(local|remote)"
 ```
 
+
+</details>
+
 [Back to top](#table-of-contents)
 
 
@@ -818,15 +833,22 @@ Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/
 
 ## Response
 
-Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
+Assuming a match between the incoming HTTP request and one of the stubbed `request` objects has been found, its stubbed `response` object properties are used to build the HTTP response back to the client.
 
 ### Summary
-In YAML config, the `response` configuration supports the following keys:
+
+In YAML config, the `response` object supports the following properties:
 
 `status`, `body`, `file`, `headers`, `latency`
 
+Keep on reading to understand their usage, intent and behavior.
+
 ### Response YAML properties
 
+
+<details>
+ <summary>Click to expand</summary>
+  
 * Response configuration an be a single `response` or a sequence of responses.
 * When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
 
@@ -1017,6 +1039,8 @@ response:
       latency: 800000
       body: Hello, World!
 ```
+
+</details>
 
 [Back to top](#table-of-contents)
 
