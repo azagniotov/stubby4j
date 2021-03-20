@@ -47,7 +47,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > |---------------|----------------|---------------------------------------------------------------------|
 > | `201`         | success        | `Configuration created successfully`                                |
 > | `400`         | error          | `{"code":"400","message":"Bad Request"}`                            |
-> | `405`         | error          | `Method POST is not allowed on URI <ANYTHING_BUT_ROOT>`             |
+> | `405`         | error          | None                                                                |
 
 </details>
 
