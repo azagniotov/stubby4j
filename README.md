@@ -1216,7 +1216,7 @@ Upon successful HTTP request verification, the `/item/redirect/destination` valu
 [Back to top](#table-of-contents)
 
 
-### Record and play
+### Record and replay
 
 If `body` of the stubbed `response` contains a URL starting with http(s), stubby knows that it should record an HTTP response
 from the provided URL (before rendering the stubbed response) and replay the recorded HTTP response on each subsequent call.
