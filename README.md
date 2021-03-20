@@ -59,12 +59,12 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * Scenarios: deleting existing stubs & proxy configs
       * POST / PUT request body format
 * [The stubs portal](#the-stubs-portal)
-* [Programmatic API](#programmatic-api)
+* [stubby4j client programmatic API](#stubby4j-client-programmatic-api)
 * [Change log](#change-log)
-* [Roadmap](#roadmap)
 * [Authors](#authors)
-* [Kudos](#kudos)
-* [See also](#see-also)
+* [Contributors](#contributors)
+* [Copyright](#copyright)
+* [License](#license)
 
 ## Key features
 * Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
@@ -1359,7 +1359,7 @@ Pseudocode ([StubRepository#matchStub](src/main/java/io/github/azagniotov/stubby
     }
 ```
 
-## Programmatic API
+## `stubby4j` client programmatic API
 
 You can start-up and manage stubby4j with the help of [StubbyClient](src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java)
 
