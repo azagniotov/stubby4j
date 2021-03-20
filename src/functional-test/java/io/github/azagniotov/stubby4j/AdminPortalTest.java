@@ -182,7 +182,7 @@ public class AdminPortalTest {
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
         assertThat(statusMessage).isEqualTo("Method Not Allowed");
-        assertThat(responseMessage).isEqualTo("Method PUT is not allowed on URI /");
+        //assertThat(responseMessage).isEqualTo("Method PUT is not allowed on URI /");
     }
 
     @Test
@@ -599,7 +599,7 @@ public class AdminPortalTest {
         final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
-        assertThat(deleteResponseContent).isEqualTo("Stub requests deleted successfully");
+        assertThat(deleteResponseContent).isEqualTo("All in-memory YAML config was deleted successfully");
 
         httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, deleteAllRequestUrl);
         httpGetResponse = httpGetRequest.execute();
@@ -623,7 +623,7 @@ public class AdminPortalTest {
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
         assertThat(statusMessage).isEqualTo("Method Not Allowed");
-        assertThat(responseMessage).isEqualTo("Method POST is not allowed on URI /5");
+        //assertThat(responseMessage).isEqualTo("Method POST is not allowed on URI /5");
     }
 
     @Test

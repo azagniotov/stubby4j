@@ -19,7 +19,7 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             stubRepository.clear();
             response.setStatus(HttpStatus.OK_200);
-            response.getWriter().println("Stub requests deleted successfully");
+            response.getWriter().println("All in-memory YAML config was deleted successfully");
             return;
         }
 
