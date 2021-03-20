@@ -43,7 +43,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Response object properties](#response-object-properties)
       * [Dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response)
       * [Stubbing HTTP 30x redirects](#stubbing-http-30x-redirects)
-      * [Record and Play](#record-and-play)
+      * [Record and Replay](#record-and-replay)
    * [Supplying stubbed endpoints to stubby](#supplying-stubbed-endpoints-to-stubby)
       * [Splitting main YAML config](#splitting-main-yaml-config)
 * [Performance optimization index](#performance-optimization-index)
@@ -285,7 +285,7 @@ This section explains the usage, intent and behavior of each property on the `re
 Also, you will learn about request proxying to other hosts, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more.
 
 <details>
- <summary>Click to expand</summary>
+  <summary><code>Click to expand</code></summary>
  <br />
   
 Here is a fully-populated, unrealistic endpoint:
@@ -324,7 +324,7 @@ Here is a fully-populated, unrealistic endpoint:
 
 ## Stub/Feature
 
-#### description (optional)
+#### description (`optional`)
 
 * Description field which can be used to show optional descriptions in the logs
 * Useful when you have a number of stubs loaded for the same endpoint and it starts to get confusing as to which is being matched
@@ -360,7 +360,7 @@ Here is a fully-populated, unrealistic endpoint:
       body: 'Three!'
 ```
 
-#### uuid (optional)
+#### uuid (`optional`)
 
 * Useful when you want to specify unique identifier so it would be easier to update/delete it at runtime
 
@@ -398,9 +398,9 @@ Keep on reading to understand their usage, intent and behavior.
 ### Request object properties
 
 <details>
- <summary>Click to expand</summary>
+  <summary><code>Click to expand</code></summary>
 
-#### url (required)
+#### url (`required`)
 
 * is a full-fledged __regular expression__
 * This is the only required property of an endpoint.
@@ -438,7 +438,7 @@ A demonstration using regular expressions:
       url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 ```
 
-#### method
+#### method (`required`)
 
 * defaults to `GET`.
 * case-insensitive.
@@ -472,7 +472,7 @@ A demonstration using regular expressions:
          -  HEAD
 ```
 
-#### query
+#### query (`optional`)
 
 * can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores query parameters on incoming request and will match only request URL
@@ -553,7 +553,7 @@ A demonstration using regular expressions:
          term: "['stalin and truman']"
 ```
 
-#### post
+#### post (`optional`)
 
 * Represents the body POST of incoming request, ie.: form data
 * can be a full-fledged __regular expression__
@@ -612,7 +612,7 @@ A demonstration using regular expressions:
          {"internalKey": "<%post.1%>"}
 ```
 
-#### file
+#### file (`optional`)
 
 * holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to stub a big POST payload, so instead of dumping a lot of text under the `post` property, you could specify a local file with the payload using the `file` property:
 
@@ -643,7 +643,7 @@ postedData.json
 
 * if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is matched in incoming request, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
 
-#### headers
+#### headers (`optional`)
 
 * can be a full-fledged __regular expression__
 * if not stubbed, stubby ignores headers on incoming request and will match only request URL
@@ -695,7 +695,7 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
 <details>
- <summary>Click to expand</summary>
+ <summary><code>Click to expand</code></summary>
  <br />
 
 Therefore, `stubby4j` uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
@@ -794,6 +794,7 @@ Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/
 [Back to top](#table-of-contents)
 
 ### Authorization Header
+
 ```yaml
 -  request:
       url: ^/path/to/basic$
@@ -854,7 +855,7 @@ Keep on reading to understand their usage, intent and behavior.
 
 
 <details>
- <summary>Click to expand</summary>
+ <summary><code>Click to expand</code></summary>
  <br />
   
 * Response configuration can be a single `response` or a sequence of `response`s under the same `- request` definition.
@@ -925,7 +926,7 @@ Keep on reading to understand their usage, intent and behavior.
          body: Still going strong!
 ```
 
-#### status
+#### status (`required`)
 
 * the HTTP status code of the response.
 * integer or integer-like string.
@@ -939,11 +940,11 @@ Keep on reading to understand their usage, intent and behavior.
       status: 420
 ```
 
-#### body
+#### body (`optional`)
 
 * contents of the response body
 * defaults to an empty content body
-* can be a URL (OAUTH is not supported) to record & replay. The HTTP response is recorded on the first call to stubbed `url`, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
+* can be a URL (OAUTH is not supported) to `record & replay` response from a remote host (see [Record and Replay](#record-and-replay)). The HTTP response is recorded on the first call to stubbed URL, having the subsequent calls replay back the recorded HTTP response, without actually connecting to the remote host again.
 
 ```yaml
 -  request:
@@ -988,7 +989,7 @@ Keep on reading to understand their usage, intent and behavior.
       body: https://api.twitter.com/1.1/direct_messages.json?since_id=240136858829479935&count=1
 ```
 
-#### file
+#### file (`optional`)
 
 * similar to `request.file`, holds a path to a local file (it can be an `absolute` or `relative` path to the main YAML specified in `-d` or `--data`). This property allows you to split up stubby data across multiple files instead of making one huge bloated main config YAML. For example, let's say you want to render a large response body upon successful stub matching, so instead of dumping a lot of text under the `body` property, you could specify a local file with the response content using the `file` property (btw, the `file` can also refer to binary files):
 
@@ -1014,7 +1015,7 @@ response:
       file: extremelyLongJsonFile.json
 ```
 
-#### headers
+#### headers (`optional`)
 
 * similar to `request.headers` except that these are sent back to the client.
 * by default, header `x-stubby-resource-id` containing resource ID is returned with each stubbed response. The ID is useful if the returned resource needs to be updated at run time by ID via Admin portal
@@ -1035,9 +1036,9 @@ response:
          }]
 ```
 
-#### latency
+#### latency (`optional`)
 
-* time to wait, in milliseconds, before sending back the response
+* time to wait, in `milliseconds`, before sending the response to the caller
 * good for testing timeouts, or slow connections
 
 ```yaml
@@ -1057,7 +1058,7 @@ response:
 During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
 
 <details>
- <summary>Click to expand</summary>
+ <summary><code>Click to expand</code></summary>
  <br />
 
 stubby supports dynamic token replacement on the following properties:
