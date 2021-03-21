@@ -28,13 +28,16 @@ The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJD
 See https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md for more information
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
-* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile), [`7.2.0-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
+* [`7.3.0-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.3.0/docker/jdk8/Dockerfile), [`7.2.0-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk8/Dockerfile), [`7.1.3-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk8/Dockerfile), [`7.1.1-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk8/Dockerfile)
+* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
-* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile), [`7.2.0-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
+* [`7.3.0-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.3.0/docker/jdk11/Dockerfile), [`7.2.0-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.2.0/docker/jdk11/Dockerfile), [`7.1.3-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.3/docker/jdk11/Dockerfile), [`7.1.1-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.1.1/docker/jdk11/Dockerfile)
+* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
-* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile), [`7.2.0-jre15`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
+* [`7.3.0-jre15`](https://github.com/azagniotov/stubby4j/blob/v7.3.0/docker/jdk15/Dockerfile), [`7.2.0-jre15`](https://github.com/azagniotov/stubby4j/blob/381c9a15844f153ae40f9edcb526c9ce3d4f90e4/docker/jdk15/Dockerfile)
+* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile)
 
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />
@@ -45,6 +48,7 @@ A highly flexible and configurable tool for testing interactions of service-orie
 ```
 * Stub out external services in a Docker based micro-service architecture
 * Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
+* Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
 * Simulate edge cases and/or failure modes that the real API won't reliably produce
 * Fault injection, where after X good responses on the same URI you get a bad one
 ```
@@ -132,6 +136,12 @@ docker run --rm \
 * `7.2.0-jre8` is the tag specifying the `stubby4j` version. See the list above for relevant tags
 
 See https://github.com/azagniotov/stubby4j#command-line-switches for more information
+
+# Managing stubs via REST API
+
+Upon running the `stubby4j` container as per aforementioned examples, the Admin portal runs on `localhost`:`<port>` (e.g.: `localhost`:`8889`) or wherever you described through `stubby4j` image environment variables. The admin portal exposes a set of REST APIs that enable management of the loaded in-memory stubs, which were loaded from the YAML config provided to `stubby4j` during start-up.
+
+See https://github.com/azagniotov/stubby4j/blob/master/docs/ADMIN_PORTAL.md for more information
 
 # License
 [View license information](https://github.com/azagniotov/stubby4j/blob/master/LICENSE) for the software contained in this image.
