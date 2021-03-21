@@ -36,6 +36,8 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > * The `default` proxy config can be updated via the `PUT` REST API even if `uuid` has not been explicilty defined (it will be defined impliclty).
 > * When updating stubs via `PUT` API, you can update only `one` stub at the time, i.e.: bulk updates are not supported yet.
 
+------------------------------------------------------------------------------------------
+
 #### Creating new/overwriting existing stubs & proxy configs
 
 <details>
