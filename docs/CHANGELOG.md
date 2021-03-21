@@ -1,6 +1,8 @@
 [Back to the main README.md](../README.md#change-log)
 
-#### 7.3.0-SNAPSHOT
+#### 7.3.1-SNAPSHOT
+
+#### 7.3.0
 
 * New feature: added support for request proxying. See the [REQUEST_PROXYING.md](REQUEST_PROXYING.md) and the original feature request [#232](https://github.com/azagniotov/stubby4j/issues/232) for context
 
