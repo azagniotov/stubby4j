@@ -49,6 +49,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 > | `405`         | `text/html;charset=utf-8`         | None                                                                |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X POST -H "Content-Type: application/json" --data @post.json http://localhost:8889/
+> ```
+
 </details>
 
 ------------------------------------------------------------------------------------------
@@ -63,6 +69,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/
+> ```
 
 </details>
 
@@ -82,6 +94,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/0
+> ```
+
 </details>
 
 <details>
@@ -100,6 +118,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/some-unique-uuid-string
+> ```
+
 </details>
 
 
@@ -112,6 +136,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/proxy-config/default
+> ```
 
 </details>
 
@@ -131,6 +161,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | YAML string                                                         |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/proxy-config/some-unique-uuid-string
+> ```
 
 </details>
 
@@ -156,6 +192,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 > | `405`         | `text/html;charset=utf-8`         | None                                                                |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/0
+> ```
+
 </details>
 
 <details>
@@ -175,6 +217,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 > | `405`         | `text/html;charset=utf-8`         | None                                                                |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/some-unique-uuid-string
+> ```
+
 </details>
 
 <details>
@@ -187,6 +235,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `201`         | `text/plain;charset=UTF-8`        | `Proxy config uuid#default updated successfully`                    |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 > | `405`         | `text/html;charset=utf-8`         | None                                                                |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/proxy-config/default
+> ```
 
 </details>
 
@@ -207,6 +261,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 > | `405`         | `text/html;charset=utf-8`         | None                                                                |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/proxy-config/some-unique-uuid-string
+> ```
+
 </details>
 
 ------------------------------------------------------------------------------------------
@@ -221,6 +281,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | http code     | content-type                      | response                                                            |
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | `All in-memory YAML config was deleted successfully`                |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/
+> ```
 
 </details>
 
@@ -239,6 +305,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | `Stub request index#<stub_numeric_id> deleted successfully`         |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/0
+> ```
 
 </details>
 
@@ -259,6 +331,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > | `200`         | `text/plain;charset=UTF-8`        | `Stub request uuid#<uuid> deleted successfully`                     |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
 
+##### Example cURL
+
+> ```javascript
+>  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/abc-123-some-unique-uuid-string
+> ```
+
 </details>
 
 
@@ -277,6 +355,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 > |---------------|-----------------------------------|---------------------------------------------------------------------|
 > | `200`         | `text/plain;charset=UTF-8`        | `Proxy config uuid#<uuid> deleted successfully`                     |
 > | `400`         | `application/json`                | `{"code":"400","message":"Bad Request"}`                            |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/proxy-config/some-unique-uuid-string
+> ```
 
 </details>
 
