@@ -334,7 +334,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 ##### Example cURL
 
 > ```javascript
->  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/abc-123-some-unique-uuid-string
+>  curl -X DELETE -H "Content-Type: application/json" http://localhost:8889/some-unique-uuid-string
 > ```
 
 </details>
