@@ -420,12 +420,34 @@ public final class StubbyClient {
     }
 
     /**
-     * Updated stubbed data with new data. This method creates a POST request to Admin portal
+     * Updated stubbed data with new data. This method creates an request to the provided URL.
+     * This API meant to be used when making requests to Admin portal to update the stubby4j in-memory stubbed data.
+     * <p>
+     * For example: making POST to http://localhost:8889/ to re/create in-memory YAML config or
+     * making a PUT to http://localhost:8889/proxy-config/some-unique-uuid.
      *
-     * @param url       fully constructed URL which included HTTP scheme, host and port
+     * @param url       fully constructed URL which included HTTP scheme, host and port, e.g.: http://localhost:8889/some-unique-uuid
+     * @param method    POST or PUT
+     * @param stubsData data to post/put
+     */
+    public StubbyResponse updateStubbedData(final String url, HttpMethod method, final String stubsData) throws Exception {
+        if (method != HttpMethod.PUT && method != HttpMethod.POST) {
+            throw new IllegalArgumentException("Unexpected HTTP method: " + method.asString());
+        }
+        final URL adminUrl = new URL(url);
+
+        return makeRequest(adminUrl.getProtocol(), method.asString(), adminUrl.getHost(), adminUrl.getPath(), adminUrl.getPort(), stubsData);
+    }
+
+    /**
+     * Updated stubbed data with new data. This method creates an request to the provided URL.
+     * This API meant to be used when making requests to Admin portal to create the stubby4j in-memory stubbed data.
+     * <p>
+     * For example: making POST to http://localhost:8889/.
+     *
+     * @param url       fully constructed URL which included HTTP scheme, host and port, e.g.: http://localhost:8889/
      * @param stubsData data to post
      */
-
     public StubbyResponse updateStubbedData(final String url, final String stubsData) throws Exception {
         final URL adminUrl = new URL(url);
 
