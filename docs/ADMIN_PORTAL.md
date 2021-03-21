@@ -382,7 +382,7 @@ Single stub payload
 <details>
   <summary>Click to expand</summary>
 
-```json
+```javascript
 [
   {
     "request": {
@@ -411,7 +411,7 @@ Multiple stub payload
 <details>
   <summary>Click to expand</summary>
 
-```json
+```javascript
 [
   { 
     "description": "this is a feature describing something",
@@ -479,7 +479,7 @@ Single stub with multiple proxy configs payload
 <details>
   <summary>Click to expand</summary>
 
-```json
+```javascript
 [
   {
     "request": {
