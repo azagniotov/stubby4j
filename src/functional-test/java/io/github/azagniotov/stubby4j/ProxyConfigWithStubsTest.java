@@ -9,6 +9,8 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -173,6 +175,62 @@ public class ProxyConfigWithStubsTest {
                         "    strategy: custom\n" +
                         "    properties:\n" +
                         "      endpoint: https://UPDATED.com");
+    }
+
+    @Test
+    public void should_UpdateStubbedDefaultProxyConfig_WithYamlRequest_ByValidUuid() throws Exception {
+
+        final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/default");
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // 1st sanity check: verifying the state of the stubbed 'default' proxy config by UUID
+        ///////////////////////////////////////////////////////////////////////////////////////
+        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        HttpResponse httpGetResponse = httpGetRequest.execute();
+        String getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).isEqualTo(
+                "- proxy-config:\n" +
+                        "    description: this is a catch-all proxy config\n" +
+                        "    strategy: as-is\n" +
+                        "    properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com");
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // The actual test: updating the 'default' proxy config by UUID
+        ///////////////////////////////////////////////////////////////////////////////////////
+        final String yamlPayload = new YamlBuilder()
+                .newStubbedProxyConfig()
+                .withDescription("this is a catch-all proxy config that was updated")
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://google.com")
+                .withProperty("uniqueKey", "arbitraryValue")
+                .toString();
+
+        final StubbyClient stubbyClient = new StubbyClient();
+
+        final StubbyResponse stubbyResponse = stubbyClient.updateStubbedData(requestUrl, HttpMethod.PUT, yamlPayload);
+        assertThat(HttpStatus.CREATED_201).isEqualTo(stubbyResponse.statusCode());
+
+        final String putResponseContent = stubbyResponse.body();
+        assertThat(putResponseContent).isEqualTo("Proxy config uuid#default updated successfully");
+
+        ///////////////////////////////////////////////////////////////////////////////////////
+        // 2nd sanity check: verifying the state of the updated 'default' proxy config by UUID
+        ///////////////////////////////////////////////////////////////////////////////////////
+        httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+        httpGetResponse = httpGetRequest.execute();
+        getResponseContent = httpGetResponse.parseAsString().trim();
+
+        assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
+        assertThat(getResponseContent).isEqualTo(
+                "- proxy-config:\n" +
+                        "    description: this is a catch-all proxy config that was updated\n" +
+                        "    strategy: as-is\n" +
+                        "    properties:\n" +
+                        "      endpoint: https://google.com\n" +
+                        "      uniqueKey: arbitraryValue");
     }
 
     @Test
