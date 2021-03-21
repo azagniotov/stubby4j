@@ -29,7 +29,7 @@ uploadArchives {
          modifyPom {
             project {
                name 'stubby4j'
-               description 'A highly flexible & configurable tool for testing interactions of SOA applications with web services (REST, SOAP, WSDL etc.) over HTTP(S) protocol. It is an actual HTTP server (stubby4j uses embedded Jetty) that acts like a real web service, ready for consumption by your code. Allows stubbing of external systems with ease for integration testing'
+               description 'A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol. It is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.'
                url 'https://github.com/azagniotov/stubby4j'
                inceptionYear '2012'
                packaging 'jar'
@@ -42,8 +42,8 @@ uploadArchives {
 
                licenses {
                   license {
-                      name 'The Apache Software License, Version 2.0'
-                      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                      name 'MIT'
+                      url 'https://opensource.org/licenses/MIT'
                       distribution 'repo'
                   }
                }
