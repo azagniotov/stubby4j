@@ -6,11 +6,11 @@
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
 
-An HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
+`stubby4j` is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
 
 [![stubb4j][logo-badge]][logo-link]
 
-Highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over HTTP(s) protocol.
+It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over HTTP(s) protocol.
 
 Please refer to [Key features](#key-features) for more information
 
