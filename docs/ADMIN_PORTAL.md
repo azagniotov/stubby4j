@@ -12,6 +12,7 @@
   * [Scenarios: updating existing stubs & proxy configs](#scenarios-updating-existing-stubs--proxy-configs)
   * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
   * [POST / PUT request body format](#post--put-request-body-format)
+  * [stubby4j client programmatic API](#stubby4j-client-programmatic-api)
 
 ## The admin portal
 
@@ -531,7 +532,15 @@ Single stub with multiple proxy configs payload
 ```
 </details>
 
+### `stubby4j` client programmatic API
 
+You can manage `stubby4j` loaded config with the help of [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java).
+
+`stubby4`j has a class `YamlBuilder`, a builder, that enables to build a YAML string, which can be used as a `POST`/`PUT` payload. You can then make a requests to the admin portal using [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java) to manage the stubs programamtically.
+
+There is [a test that demonstrates the usage](../src/functional-test/java/io/github/azagniotov/stubby4j/ProxyConfigWithStubsTest.java#L203) of the  [YamlBuilder](../src/main/java/io/github/azagniotov/stubby4j/yaml/YamlBuilder.java) and [StubbyClient#updateStubbedData(...)](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java#L433) when updating `proxy-config`  configuration by `uuid`.
+
+Although the aforementioned test is about managing an existing `proxy-config` definition, the same builder can be used for building request payloads to create/update stub `request` with its `response`. 
 
 
 [Back to the main README.md](../README.md#the-admin-portal)
