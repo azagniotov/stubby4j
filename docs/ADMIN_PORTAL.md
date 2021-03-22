@@ -12,7 +12,7 @@
   * [Scenarios: updating existing stubs & proxy configs](#scenarios-updating-existing-stubs--proxy-configs)
   * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
   * [POST / PUT request body format](#post--put-request-body-format)
-  * [stubby4j client programmatic API](#stubby4j-client-programmatic-api)
+  * [Client programmatic API](#stubby4j-client-programmatic-api)
 
 ## The admin portal
 
@@ -532,7 +532,7 @@ Single stub with multiple proxy configs payload
 ```
 </details>
 
-### `stubby4j` client programmatic API
+### Client programmatic API
 
 You can manage `stubby4j` loaded config with the help of [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java).
 
