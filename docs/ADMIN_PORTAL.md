@@ -12,7 +12,7 @@
   * [Scenarios: updating existing stubs & proxy configs](#scenarios-updating-existing-stubs--proxy-configs)
   * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
   * [POST / PUT request body format](#post--put-request-body-format)
-  * [Client programmatic API](#stubby4j-client-programmatic-api)
+  * [Client programmatic API](#client-programmatic-api)
 
 ## The admin portal
 
