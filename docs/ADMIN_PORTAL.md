@@ -536,7 +536,7 @@ Single stub with multiple proxy configs payload
 
 You can manage `stubby4j` loaded config with the help of [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java).
 
-`stubby4`j has a class `YamlBuilder`, a builder, that enables to build a YAML string, which can be used as a `POST`/`PUT` payload. You can then make a requests to the admin portal using [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java) to manage the stubs programamtically.
+`stubby4`j has a class `YamlBuilder`, a builder, that enables to build a YAML string, which can be used as a `POST`/`PUT` payload (alternatively, you can always load your payload content from a local file as a resource when making requests). You can then make a requests to the admin portal using [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java) to manage the stubs programamtically.
 
 There is [a test that demonstrates the usage](../src/functional-test/java/io/github/azagniotov/stubby4j/ProxyConfigWithStubsTest.java#L203) of the  [YamlBuilder](../src/main/java/io/github/azagniotov/stubby4j/yaml/YamlBuilder.java) and [StubbyClient#updateStubbedData(...)](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java#L433) when updating `proxy-config`  configuration by `uuid`.
 
