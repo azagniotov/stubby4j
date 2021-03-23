@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
@@ -92,7 +93,7 @@ public class ProxyConfigWithStubsTest {
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched() throws Exception {
+    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched() throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";
@@ -106,6 +107,41 @@ public class ProxyConfigWithStubsTest {
         // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
         // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
         httpHeaders.setAcceptEncoding(null);
+        request.setHeaders(httpHeaders);
+
+        final HttpResponse response = request.execute();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+
+        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE)).isTrue();
+
+        final String responseContent = response.parseAsString().trim();
+        assertThat(responseContent).isEqualTo(
+                "{" + BR +
+                        "  \"userId\": 1," + BR +
+                        "  \"id\": 1," + BR +
+                        "  \"title\": \"delectus aut autem\"," + BR +
+                        "  \"completed\": false" + BR +
+                        "}");
+    }
+
+    @Test
+    @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
+    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched() throws Exception {
+
+        // https://jsonplaceholder.typicode.com/todos/1
+        final String targetUriPath = "/todos/1";
+
+        // Stub with URL '/todos/1' does not exist, so the request will be proxied
+        final String requestUrl = String.format("%s%s", STUBS_URL, targetUriPath);
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
+
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
+        // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
+        httpHeaders.setAcceptEncoding(null);
+
+        // The 'some-unique-name' is actually set in include-proxy-config.yaml
+        httpHeaders.set(HEADER_X_STUBBY_PROXY_CONFIG, "some-unique-name");
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
