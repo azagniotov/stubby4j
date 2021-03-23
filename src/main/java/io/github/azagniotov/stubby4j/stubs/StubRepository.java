@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
 import static io.github.azagniotov.stubby4j.stubs.StubResponse.notFoundResponse;
@@ -203,8 +204,20 @@ public class StubRepository {
 
         // The catch-all will always be there if we have proxy configs, otherwise the YAML loading throws
         final StubProxyConfig catchAllProxyConfig = proxyConfigs.get(StubProxyConfig.Builder.DEFAULT_UUID);
+
         final StubRequest incomingRequest = incomingHttpLifecycle.getRequest();
-        final String proxyEndpoint = String.format("%s%s", catchAllProxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
+        final String proxyConfigUuidHeader = incomingRequest
+                .getHeaders()
+                .getOrDefault(HEADER_X_STUBBY_PROXY_CONFIG, StubProxyConfig.Builder.DEFAULT_UUID);
+
+        if (!proxyConfigs.containsKey(proxyConfigUuidHeader)) {
+            final String warning = String.format("Could not find proxy config by UUID using header value '%s', falling back to 'default'", proxyConfigUuidHeader);
+            ANSITerminal.warn(warning);
+            LOGGER.warn(warning);
+        }
+
+        final StubProxyConfig proxyConfig = proxyConfigs.getOrDefault(proxyConfigUuidHeader, catchAllProxyConfig);
+        final String proxyEndpoint = String.format("%s%s", proxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
 
         final String proxyRoundTripUuid = UUID.randomUUID().toString();
         final Map<String, String> proxyResponseFlatHeaders = new HashMap<>();

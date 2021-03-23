@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
 import static org.junit.Assert.assertThrows;
@@ -38,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -1074,7 +1076,7 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void shouldPassExpectedHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+    public void shouldApplyDefaultProxyConfigToHttpTransport_WhenResponseIsProxiable() throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
@@ -1136,7 +1138,157 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void shouldPassExpectedHeadersToHttpTransport_WhenResponseIsProxiableButExceptionThrow() throws Exception {
+    public void shouldApplyProxyConfigByProxyConfigUuidHeaderToHttpTransport_WhenResponseIsProxiable() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig defaultStubProxyConfig = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig anotherStubProxyConfig = new StubProxyConfig.Builder()
+                .withDescription("This is another configured proxy")
+                .withUuid("unique-no-default-proxy-config-uuid")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://google.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
+            put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        final String actualResponseText = "OK, this is proxied response text!";
+        final HashMap<String, List<String>> httpProxyResponseHeaders = new HashMap<>();
+        httpProxyResponseHeaders.put(null, Collections.singletonList("someNullHeaderValue"));
+        httpProxyResponseHeaders.put("Server", Collections.singletonList("CloudFare"));
+        httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
+        httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, anotherStubProxyConfig.getUUID())
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        final StubResponse proxiedResponse = stubSearchResult.getMatch();
+
+        assertThat(proxiedResponse.getBody()).isEqualTo(actualResponseText);
+        assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.CREATED);
+
+        assertThat(proxiedResponse.getHeaders().size()).isEqualTo(5);
+        assertThat(proxiedResponse.getHeaders().get("null")).isEqualTo("someNullHeaderValue");
+        assertThat(proxiedResponse.getHeaders().get("Server")).isEqualTo("CloudFare");
+        assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
+        assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+
+        // the non-default proxy config was used to proxy the request because
+        // the 'x-stubby4j-proxy-config-uuid' header was set on the asserting incoming HTTP request
+        assertThat(stringCaptor.getValue()).isEqualTo("https://google.com/post/1");
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+
+        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+
+        verify(mockStubbyHttpTransport, never()).httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
+    }
+
+    @Test
+    public void shouldApplyDefaultProxyConfigWhenProxyConfigUuidHeaderIncorrectToHttpTransport_WhenResponseIsProxiable() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig defaultStubProxyConfig = new StubProxyConfig.Builder()
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final StubProxyConfig anotherStubProxyConfig = new StubProxyConfig.Builder()
+                .withDescription("This is another configured proxy")
+                .withUuid("unique-no-default-proxy-config-uuid")
+                .withStrategy("as-is")
+                .withPropertyEndpoint("https://google.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
+            put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        final String actualResponseText = "OK, this is proxied response text!";
+        final HashMap<String, List<String>> httpProxyResponseHeaders = new HashMap<>();
+        httpProxyResponseHeaders.put(null, Collections.singletonList("someNullHeaderValue"));
+        httpProxyResponseHeaders.put("Server", Collections.singletonList("CloudFare"));
+        httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
+        httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, "WrongStubProxyConfigHeaderUUID")
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
+        final StubResponse proxiedResponse = stubSearchResult.getMatch();
+
+        assertThat(proxiedResponse.getBody()).isEqualTo(actualResponseText);
+        assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.CREATED);
+
+        assertThat(proxiedResponse.getHeaders().size()).isEqualTo(5);
+        assertThat(proxiedResponse.getHeaders().get("null")).isEqualTo("someNullHeaderValue");
+        assertThat(proxiedResponse.getHeaders().get("Server")).isEqualTo("CloudFare");
+        assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
+        assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+
+        // the default proxy config was used to proxy the request because
+        // the 'x-stubby4j-proxy-config-uuid' header was set to a value that does not exist in proxyConfigs map
+        assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+
+        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+
+        verify(mockStubbyHttpTransport, never()).httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
+    }
+
+    @Test
+    public void shouldPassDefaultProxyConfigStateToHttpTransport_WhenResponseIsProxiableButExceptionThrows() throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")

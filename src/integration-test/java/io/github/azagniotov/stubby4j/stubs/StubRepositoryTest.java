@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BASIC;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
@@ -1123,7 +1124,7 @@ public class StubRepositoryTest {
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched() throws Exception {
+    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched() throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";
@@ -1140,14 +1141,118 @@ public class StubRepositoryTest {
                 .newStubbedProxyConfig()
                 .withProxyStrategyAsIs()
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
-                .toString()
-                .trim();
+                .build();
 
         loadYamlToDataStore(stubsYaml + BR + BR + proxyConfigYaml);
 
         final StubRequest assertingRequest =
                 requestBuilder
                         .withUrl(targetUriPath)
+                        .withMethodGet().build();
+
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
+
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getHeaders().isEmpty()).isFalse();
+
+        assertThat(foundStubResponse.getBody()).isEqualTo(
+                "{" + BR +
+                        "  \"userId\": 1," + BR +
+                        "  \"id\": 1," + BR +
+                        "  \"title\": \"delectus aut autem\"," + BR +
+                        "  \"completed\": false" + BR +
+                        "}");
+    }
+
+    @Test
+    @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
+    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched() throws Exception {
+
+        // https://jsonplaceholder.typicode.com/todos/1
+        final String targetUriPath = "/todos/1";
+
+        final String stubsYaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl("/a/totally/different/endpoint/stubbed")
+                .newStubbedResponse()
+                .withStatus("200")
+                .withLiteralBody("This is a response for todo 1")
+                .build();
+
+        final String headerProxyConfigUuid = "very-unique-proxy-config";
+        final String specificProxyConfigYaml = YAML_BUILDER
+                .newStubbedProxyConfig()
+                .withUuid(headerProxyConfigUuid)
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final String defaultProxyConfigYaml = YAML_BUILDER
+                .newStubbedProxyConfig()
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://google.com")
+                .build();
+
+        loadYamlToDataStore(stubsYaml + BR + BR + specificProxyConfigYaml+ BR + BR + defaultProxyConfigYaml);
+
+        // Setting HEADER_X_STUBBY_PROXY_CONFIG with existing value in proxyConfigs map will select
+        // a proxy config by the value of the header at runtime, even if the default proxy config is defined
+        final StubRequest assertingRequest =
+                requestBuilder
+                        .withUrl(targetUriPath)
+                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, headerProxyConfigUuid)
+                        .withMethodGet().build();
+
+        final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);
+
+        assertThat(Code.OK).isEqualTo(foundStubResponse.getHttpStatusCode());
+        assertThat(foundStubResponse.getHeaders().isEmpty()).isFalse();
+
+        assertThat(foundStubResponse.getBody()).isEqualTo(
+                "{" + BR +
+                        "  \"userId\": 1," + BR +
+                        "  \"id\": 1," + BR +
+                        "  \"title\": \"delectus aut autem\"," + BR +
+                        "  \"completed\": false" + BR +
+                        "}");
+    }
+
+    @Test
+    @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
+    public void shouldReturnProxiedResponseFallingBackOnDefaultProxyConfig_WhenStubsWereNotMatched() throws Exception {
+
+        // https://jsonplaceholder.typicode.com/todos/1
+        final String targetUriPath = "/todos/1";
+
+        final String stubsYaml = YAML_BUILDER.newStubbedRequest()
+                .withMethodGet()
+                .withUrl("/a/totally/different/endpoint/stubbed")
+                .newStubbedResponse()
+                .withStatus("200")
+                .withLiteralBody("This is a response for todo 1")
+                .build();
+
+        final String headerProxyConfigUuid = "very-unique-proxy-config";
+        final String specificProxyConfigYaml = YAML_BUILDER
+                .newStubbedProxyConfig()
+                .withUuid(headerProxyConfigUuid)
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://google.com")
+                .build();
+
+        final String defaultProxyConfigYaml = YAML_BUILDER
+                .newStubbedProxyConfig()
+                .withProxyStrategyAsIs()
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        loadYamlToDataStore(stubsYaml + BR + BR + specificProxyConfigYaml+ BR + BR + defaultProxyConfigYaml);
+
+        // Setting HEADER_X_STUBBY_PROXY_CONFIG with WRONG value will select default proxy config at runtime
+        final StubRequest assertingRequest =
+                requestBuilder
+                        .withUrl(targetUriPath)
+                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, "WRONGHeaderProxyConfigUuid")
                         .withMethodGet().build();
 
         final StubResponse foundStubResponse = setUpStubSearchBehavior(assertingRequest);

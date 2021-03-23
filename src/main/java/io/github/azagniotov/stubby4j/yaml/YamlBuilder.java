@@ -190,6 +190,15 @@ public final class YamlBuilder {
         public String toString() {
             return PROXY_CONFIG_STRING_BUILDER.toString();
         }
+
+        public String build() {
+
+            final String yaml = PROXY_CONFIG_STRING_BUILDER.toString().trim();
+
+            clear();
+
+            return yaml;
+        }
     }
 
     public final class Request {
@@ -525,20 +534,24 @@ public final class YamlBuilder {
             final String cleansedRequestString = rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
             final String yaml = String.format("%s%s%s%s%s", rawFeatureString, NL, cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
 
-            unusedNodes.clear();
-            unusedNodes.add(PROXY_PROPERTIES_KEY);
-            unusedNodes.add(REQUEST_HEADERS_KEY);
-            unusedNodes.add(REQUEST_QUERY_KEY);
-            unusedNodes.add(RESPONSE_HEADERS_KEY);
-            unusedNodes.add(RESPONSE_QUERY_KEY);
-            storedStubbedMethods.clear();
-
-            FEATURE_STRING_BUILDER.setLength(0);
-            REQUEST_STRING_BUILDER.setLength(0);
-            RESPONSE_STRING_BUILDER.setLength(0);
-            PROXY_CONFIG_STRING_BUILDER.setLength(0);
+            clear();
 
             return yaml;
         }
+    }
+
+    private void clear() {
+        unusedNodes.clear();
+        unusedNodes.add(PROXY_PROPERTIES_KEY);
+        unusedNodes.add(REQUEST_HEADERS_KEY);
+        unusedNodes.add(REQUEST_QUERY_KEY);
+        unusedNodes.add(RESPONSE_HEADERS_KEY);
+        unusedNodes.add(RESPONSE_QUERY_KEY);
+        storedStubbedMethods.clear();
+
+        FEATURE_STRING_BUILDER.setLength(0);
+        REQUEST_STRING_BUILDER.setLength(0);
+        RESPONSE_STRING_BUILDER.setLength(0);
+        PROXY_CONFIG_STRING_BUILDER.setLength(0);
     }
 }
