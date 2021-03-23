@@ -2,7 +2,7 @@
 
 ## Request proxying
 
-As of `v7.3.0`, the `stubby4j` has a new feature that enables you to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
+As of `v7.3.0` of `stubby4j`, a new feature is available that enables you to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
 
 On this page you will learn how to add a proxy configuration described in YAML to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto). Keep on reading to understand how to configure a proxy.
 
@@ -73,11 +73,11 @@ includes:
 
 #### uuid (`optional`)
 
-Currently, it is possible to configure only one proxy configuration that serves as a catch-all for all requests that don't match any of the stubby4j's stubs. This is basically a default proxy config (denoted with `default proxy config` hereafter).
+Currently, it is possible to configure only one proxy configuration that serves as a catch-all for all requests that don't match any of the stubby4j's stubs. This catch-all proxy is basically a default proxy config (denoted with `default proxy config` hereafter).
 
-When no explicit `uuid` is configured, an `uuid` will be configured internally using a value `default`. If you do choose to configure the `uuid` property, do not set it to anything other than `default` value.
+When creating a `proxy-config` definition without an explicit `uuid` property, an `uuid` property will be configured internally with a value `default` (i.e.: `uuid: default`. If you do choose to explicitly define the `uuid` property, do not set it to anything other than value `default`.
 
-At this stage, explicitly setting this property to anything but `default` value reserved for future enhancements to the request proxying functionality.
+Please note, at this stage, explicitly setting `uuid` property to anything but value `default` is reserved for future enhancements to the request proxying functionality.
 
 
 #### description (`optional`)
