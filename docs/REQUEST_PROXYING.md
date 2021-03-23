@@ -12,6 +12,7 @@ Currently, it is possible to configure only `one` proxy configuration that serve
 
 * [Proxy configuration HOWTO](#proxy-configuration-howto)
    * [Supported YAML properties](#supported-yaml-properties)
+* [Application of proxy config at runtime](#application-of-proxy-config-at-runtime)
 * [Proxied request & response tracking](#proxied-request--response-tracking)
 * [Managing proxy configuration via the REST API](#managing-proxy-configuration-via-the-rest-api)
 
@@ -99,6 +100,10 @@ Describes the target service endpoint where the request will be proxied to. This
 * Incorrect: `jsonplaceholder.typicode.com`
 * Incorrect: `https://jsonplaceholder.typicode.com/`
 * Incorrect: `https://jsonplaceholder.typicode.com/posts/1`
+
+## Application of proxy config at runtime
+
+Request proxying happens when there is a `default proxy config` defined in the YAML config and the incoming HTTP request did not match any of the stubby4j's stubs.
 
 ## Proxied request & response tracking
 
