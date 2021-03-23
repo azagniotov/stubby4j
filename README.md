@@ -17,7 +17,7 @@ Please refer to [Key features](#key-features) for more information
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.3.0
+## User manual for stubby4j v7.3.1
 ### Table of contents
 
 * [Key features](#key-features)
@@ -127,7 +127,7 @@ $ docker build --rm --no-cache -t stubby4j:latest .
 or the following command to build from a specific tag, e.g.:
 
 ```shell script
-$ docker build --build-arg REVISION=v7.3.0 --rm --no-cache -t stubby4j:latest .
+$ docker build --build-arg REVISION=v7.3.1 --rm --no-cache -t stubby4j:latest .
 ```
 
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
@@ -188,12 +188,12 @@ The following are the stubby4j artifacts that are hosted on [Maven Central][mave
 
 #### Gradle
 ```xml
-compile("io.github.azagniotov:stubby4j:7.3.0")
+compile("io.github.azagniotov:stubby4j:7.3.1")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.3.0:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.3.1:no-jetty")
 ```
 
 #### Maven
@@ -201,7 +201,7 @@ compile("io.github.azagniotov:stubby4j:7.3.0:no-jetty")
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.3.0</version>
+    <version>7.3.1</version>
 </dependency>
 ```
 or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
@@ -210,7 +210,7 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 <dependency>
     <groupId>io.github.azagniotov</groupId>
     <artifactId>stubby4j</artifactId>
-    <version>7.3.0</version>
+    <version>7.3.1</version>
     <classifier>no-dependencies</classifier>
 </dependency>
 ```
@@ -219,17 +219,17 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 
 Run `./gradlew installToMavenLocal` command to:
 
-* Install `stubby4j-7.3.1-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.3.1-SNAPSHOT/`
+* Install `stubby4j-7.3.2-SNAPSHOT*.jar` to local `~/.m2/repository`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.3.2-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
 ```xml
-compile("io.github.azagniotov:stubby4j:7.3.1-SNAPSHOT")
+compile("io.github.azagniotov:stubby4j:7.3.2-SNAPSHOT")
 ```
 or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
 ```xml
-compile("io.github.azagniotov:stubby4j:7.3.1-SNAPSHOT:no-jetty")
+compile("io.github.azagniotov:stubby4j:7.3.2-SNAPSHOT:no-jetty")
 ```
 
 [Back to top](#table-of-contents)

@@ -1,6 +1,10 @@
 [Back to the main README.md](../README.md#change-log)
 
-#### 7.3.1-SNAPSHOT
+#### 7.3.2-SNAPSHOT
+
+#### 7.3.1
+
+* PR [#264](https://github.com/azagniotov/stubby4j/pull/264) - Multiple proxy configurations support (https://github.com/azagniotov)
 
 #### 7.3.0
 

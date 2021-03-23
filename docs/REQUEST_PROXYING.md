@@ -92,7 +92,7 @@ When creating a `proxy-config` definition without an explicit `uuid` property, a
 
 ##### Property is `required` when
 
-Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please keep in mind that you always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all).
+Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please note: you must always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all) when adding proxy configurations.
 
 #### description (`optional`)
 
