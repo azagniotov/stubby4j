@@ -1,3 +1,5 @@
+`stubby4j` is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
+
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
 [![GitHubStars][stars-badge]][stars-link]
@@ -5,8 +7,6 @@
 [![codecov][codecov-badge]][codecov-link]
 [![Maven Central][maven-badge]][maven-link]
 [![Stackoverflow stubby4j][stackoverflow-badge]][stackoverflow-link]
-
-`stubby4j` is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
 
 [![stubb4j][logo-badge]][logo-link]
 
