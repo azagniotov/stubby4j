@@ -71,11 +71,14 @@ includes:
 
 ### Supported YAML properties
 
-#### uuid (`required`)
+#### uuid (`optional`)
+
+Currently, it is possible to configure only one proxy configuration that serves as a catch-all for all requests that don't match any of the stubby4j's stubs. This is basically a default proxy config (denoted with `default proxy config` hereafter).
+
+When no explicit `uuid` is configured, an `uuid` will be configured internally using a value `default`. If you do choose to configure the `uuid` property, do not set it to anything other than `default` value.
 
 At this stage, explicitly setting this property to anything but `default` value reserved for future enhancements to the request proxying functionality.
 
-When no explicit `uuid` is configured, an `uuid` will be configured internally using the value `default`. If you do choose to configure it, do not set it to anything other than `default` value.
 
 #### description (`optional`)
 
