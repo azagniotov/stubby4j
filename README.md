@@ -669,7 +669,7 @@ The following endpoint only accepts requests with `application/json` post values
 
 ### Request proxying
 
-See [REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
+See [docs/REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
 
 ### Regex stubbing for dynamic matching
 
@@ -1351,7 +1351,7 @@ To disable stub caching pass `--disable_stub_caching` command-line arg to stubby
 
 ## The admin portal
 
-See [ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
+See [docs/ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
 
 
 [Back to top](#table-of-contents)
@@ -1398,15 +1398,15 @@ Pseudocode ([StubRepository#matchStub](src/main/java/io/github/azagniotov/stubby
 
 ## Change log
 
-See [CHANGELOG.md](docs/CHANGELOG.md)
+See [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
 ## Authors
 
-See [AUTHORS.md](docs/AUTHORS.md)
+See [docs/AUTHORS.md](docs/AUTHORS.md)
 
 ## Contributors
 
-See [CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
+See [docs/CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
 
 ## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
@@ -1415,7 +1415,7 @@ See [CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
 
 ## Copyright
 
-See [COPYRIGHT.md](docs/COPYRIGHT.md) for details
+See [docs/COPYRIGHT.md](docs/COPYRIGHT.md) for details
 
 ## License
 MIT. See [LICENSE](LICENSE) for details
