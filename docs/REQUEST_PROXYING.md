@@ -14,24 +14,22 @@
 
 ### Summary
 
-As of `v7.3.0` (incl.) of `stubby4j`, a new feature is available that enables you to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
+As of `v7.3.0` (incl.) of `stubby4j`, it is possible to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
 
-On this page you will learn how to add a proxy configuration described in YAML to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto).
+On this page you will learn how to add a proxy configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto).
 
 Keep on reading to understand how to add proxy configurations to your `stubby4j` YAML config.
 
 
 ## Proxy configuration HOWTO
 
-This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration object is denoted using the `proxy-config` property in YAML.
+This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration object is declared using the `proxy-config` property.
 
-In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (denoted with `default proxy config` hereafter in this guide). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. That's the most basic setup.
+In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (in this guide it is denoted as `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. To have only one `proxy-config` declared is the most basic setup you can have for request proxying behavior.
 
-In addition to the `default proxy config`, you can also add additional `proxy-config`s. To have multiple proxy configurations is useful when you do not want to apply the same catch-all proxy behavior to non-matched requests. Instead, you can have a fine-grained per-request control which remote host you want to route the unmatched request to by selecting a relevant proxy configuration.
+In addition to the declared `default proxy config`, you can also add additional `proxy-config`s. To have multiple proxy configurations is useful when you do not want to apply the same catch-all proxying behavior to all non-matched requests. Instead, you want to have a fine-grained per-request control which remote host you want to route an unmatched request by enforcing a specific proxy configuration at runtime. How to select a specific proxy configuration at runtime discussed further in the [Application of proxy config at runtime](#application-of-proxy-config-at-runtime) section.
 
-You can control at runtime using an HTTP header `x-stubby4j-proxy-config-uuid` (you set this header on the HTTP request to `stubby4j`) which proxy configuration (identified by the `uuid` property) should be applied if your request was not matched to any of the stubs.
-
-The following is a fully-populated example with multiple `proxy-config` objects:
+First, let's understand how to declare a proxy configuration. The following is a fully-populated example with multiple `proxy-config` objects:
 
 ```yaml
 - proxy-config:
@@ -94,11 +92,11 @@ includes:
 
 Defining only a single `proxy-config` object in your YAML configuration. That single `proxy-config` object serves as a catch-all for all requests that don't match any of the stubby4j's stubs, it is the `default proxy config`.
 
-When creating a `proxy-config` definition without an explicit `uuid` property, an `uuid` property will be configured internally with a value `default` (i.e.: `uuid: default`. You can however, explicitly define the `uuid` property even for the only `proxy-config` defined, but do not set it to anything other than value `default`.
+When creating a `proxy-config` definition without an explicit `uuid` property, an `uuid` property will be configured internally with a value `default` (i.e.: `uuid: default`. You can however, explicitly define the `uuid` property even for the only `proxy-config` defined, but do not set it to anything other than value `default`. If you do set the `uuid` property on the single declared `proxy-config` object to something other than `default`, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
 
 ##### Property is `required` when
 
-Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please note: you must always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all) when adding proxy configurations.
+Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please note: you must always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all) when adding proxy configurations. If you do set multiple `uuid` properties to have the same values, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
 
 #### description (`optional`)
 
@@ -122,15 +120,17 @@ Describes the target service endpoint where the request will be proxied to. This
 
 ## Application of proxy config at runtime
 
-Request proxying happens when there is at least one `proxy config` object defined in the YAML config and the incoming HTTP request did not match any of the stubby4j's stubs.
+Request proxying happens when there is at least one `proxy config` object defined in the YAML config and an incoming HTTP request did not match any of the declared `stubby4j`'s stubs.
 
-First, `stubby4j` will check if the HTTP header `x-stubby4j-proxy-config-uuid` has been set on the incoming request. If header is set, then the header value will be used to apply the respective proxy configuration to the request. Please note: the header value must be one of the configured unique `uuid` values in your `proxy-config` objects.
+When a request did not match any of the stubs, first, `stubby4j` will check if the HTTP header `x-stubby4j-proxy-config-uuid` has been set on the incoming request. This header allows you to control at runtime which proxy configuration should be picked for proxying of the unmatched request. As the header value, you should set the value of `uuid` property of the desired `proxy-config` object.  
 
-If the aforementioned header is not set or it is set but there is no matching `proxy-config` for the provided `uuid` value, then the `default proxy config` will be used as a fallback. Please note: you `do not` need to pass in the `x-stubby4j-proxy-config-uuid` header if you have only `default proxy-config` in your YAML configuration.
+If the aforementioned header is not set or it is set but there is no matching `proxy-config` for the provided `uuid` value (e.g.: you passed in a wrong value), then the `default proxy config` will be used as a fallback.
+
+Please note: you `do not` need to pass in the `x-stubby4j-proxy-config-uuid` header if you have a single `proxy-config` object (i.e.: `default proxy-config`) in your YAML configuration.
 
 ## Proxied request & response tracking
 
-Before proxying the request, `stubby4j` will decorate the request being proxied with `x-stubby4j-proxy-request-uuid` header where its value will be a UUID, generated at runtime.
+Before proxying the request, `stubby4j` will decorate the request being proxied with `x-stubby4j-proxy-request-uuid` header where its value will be an arbitrary UUID, generated at runtime.
 
 Upon receiving a response from the proxy service, before `stubby4j` renders the response, the response will be decorated with `x-stubby4j-proxy-response-uuid` containing the `same` aforementioned UUID value (the same value passed in as `x-stubby4j-proxy-request-uuid` header).
 
