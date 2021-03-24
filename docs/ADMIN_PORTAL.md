@@ -44,6 +44,13 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 <details>
  <summary><code>POST</code> <code><b>/</b></code> <code>(overwrites all in-memory stub and/or proxy-config)</code></summary>
 
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |-----------|-----------|-------------------------|-----------------------------------------------------------------------|
+> | None      |  required | object (JSON or YAML)   | See [POST / PUT request body format](#post--put-request-body-format)  |
+
+
 ##### Responses
 
 > | http code     | content-type                      | response                                                            |
@@ -66,6 +73,11 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 <details>
  <summary><code>GET</code> <code><b>/</b></code> <code>(gets all in-memory stub & proxy configs)</code></summary>
+ 
+##### Parameters
+
+> None
+
 
 ##### Responses
 
@@ -132,6 +144,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 <details>
   <summary><code>GET</code> <code><b>/proxy-config/default</b></code> <code>(gets <b>default</b> proxy-config)</code></summary>
+ 
+##### Parameters
+
+> None
 
 ##### Responses
 
@@ -209,9 +225,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name   |  type      | data type      | description                                          |
-> |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
+> | name      |  type      | data type                | description                                          |
+> |-----------|------------|--------------------------|------------------------------------------------------|
+> | `uuid`    |  required  | string                   | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
+> | None      |  required  | object (JSON or YAML)    | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
 
@@ -231,6 +248,12 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 <details>
   <summary><code>PUT</code> <code><b>/proxy-config/default</b></code> <code>(updates <b>default</b> proxy-config)</code></summary>
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |-----------|-----------|-------------------------|-----------------------------------------------------------------------|
+> | None      |  required | object (JSON or YAML)   | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
 
@@ -253,9 +276,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name   |  type      | data type      | description                                          |
-> |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+> | name      |  type      | data type               | description                                          |
+> |-----------|------------|-------------------------|------------------------------------------------------|
+> | `uuid`    |  required  | string                  | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+> | None      |  required  | object (JSON or YAML)   | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
 
@@ -279,6 +303,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 <details>
   <summary><code>DELETE</code> <code><b>/</b></code> <code>(deletes all in-memory stub & proxy configs)</code></summary>
+
+##### Parameters
+
+> None
 
 ##### Responses
 
