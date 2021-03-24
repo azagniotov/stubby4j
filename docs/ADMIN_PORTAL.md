@@ -7,11 +7,11 @@
   * [The admin portal](#the-admin-portal)
   * [The status page](#the-status-page)
   * [Available REST API summary](#available-rest-api-summary)
-  * [Scenarios: creating new/overwriting existing stubs & proxy configs](#scenarios-creating-newoverwriting-existing-stubs--proxy-configs)
-  * [Scenarios: listing existing stubs & proxy configs as YAML string](#scenarios-listing-existing-stubs--proxy-configs-as-yaml-string)
-  * [Scenarios: updating existing stubs & proxy configs](#scenarios-updating-existing-stubs--proxy-configs)
-  * [Scenarios: deleting existing stubs & proxy configs](#scenarios-deleting-existing-stubs--proxy-configs)
-  * [POST / PUT request body format](#post--put-request-body-format)
+     * [Creating new/overwriting existing stubs & proxy configs](#creating-newoverwriting-existing-stubs--proxy-configs)
+     * [Listing existing stubs & proxy configs as YAML string](#listing-existing-stubs--proxy-configs-as-yaml-string)
+     * [Updating existing stubs & proxy configs](#updating-existing-stubs--proxy-configs)
+     * [Deleting existing stubs & proxy configs](#deleting-existing-stubs--proxy-configs)
+     * [POST / PUT request body format](#post--put-request-body-format)
   * [Client programmatic API](#client-programmatic-api)
 
 ## The admin portal
