@@ -17,7 +17,7 @@ Please refer to [Key features](#key-features) for more information
 #### Why the word "stubby"?
 It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
-## User manual for stubby4j v7.3.1
+## User manual for stubby4j v7.3.2-SNAPSHOT
 ### Table of contents
 
 * [Key features](#key-features)
