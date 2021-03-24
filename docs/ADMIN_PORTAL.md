@@ -124,7 +124,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
+> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint HOWTO" section](../README.md#endpoint-configuration-howto)) |
 
 ##### Responses
 
@@ -227,7 +227,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name      |  type      | data type                | description                                          |
 > |-----------|------------|--------------------------|------------------------------------------------------|
-> | `uuid`    |  required  | string                   | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
+> | `uuid`    |  required  | string                   | The specific stub unique idendifier (See ["uuid" in "Endpoint HOWTO" section](../README.md#endpoint-configuration-howto)) |
 > | None      |  required  | object (JSON or YAML)    | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
@@ -354,7 +354,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
+> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint HOWTO" section](../README.md#endpoint-configuration-howto)) |
 
 ##### Responses
 
