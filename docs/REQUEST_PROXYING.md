@@ -2,9 +2,11 @@
 
 ## Request proxying
 
+### Summary
+
 As of `v7.3.0` of `stubby4j`, a new feature is available that enables you to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
 
-On this page you will learn how to add a proxy configuration described in YAML to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto). Currently, it is possible to add multiple proxy configurations for requests that don't match any of the `stubby4j`'s stubs.
+On this page you will learn how to add a proxy configuration described in YAML to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto).
 
 In order to enable request proxying behavior, you need to add at least one proxy configuration to your YAML config, the default proxy config (denoted with `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs.
 
