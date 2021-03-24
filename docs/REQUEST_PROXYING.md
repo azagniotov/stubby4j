@@ -56,6 +56,7 @@ First, let's understand how to declare a proxy configuration. The following is a
 ```
 
 YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
+
 ```yaml
 - proxy-config:
     uuid: default
@@ -63,6 +64,7 @@ YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it i
     strategy: as-is
     properties:
       endpoint: https://jsonplaceholder.typicode.com
+
 
 - request:
     method:
@@ -75,6 +77,7 @@ YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it i
       {"status": "OK"}
     headers:
       content-type: application/json
+
 
 - proxy-config:
     uuid: some-other-unique-name
