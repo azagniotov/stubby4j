@@ -38,12 +38,21 @@ First, let's understand how to declare a proxy configuration. The following is a
     properties:
       endpoint: https://jsonplaceholder.typicode.com
 
+
 - proxy-config:
-    uuid: some-very-unique-key
+    uuid: some-very-unique-string
     description: this is a non-default proxy config which hits Google
     strategy: as-is
     properties:
       endpoint: https://google.com
+      
+
+- proxy-config:
+    uuid: another-very-unique-string
+    description: this is a non-default proxy config which hits Yahoo
+    strategy: as-is
+    properties:
+      endpoint: https://yahoo.com
 ```
 
 YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
