@@ -23,11 +23,11 @@ Keep on reading to understand how to add proxy configurations to your `stubby4j`
 
 ## Proxy configuration HOWTO
 
-This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration object is declared using the `proxy-config` property.
+This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration metadata is declared using the `proxy-config` property.
 
-In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (in this guide it is denoted as `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. To have only one `proxy-config` declared is the most basic setup you can have for request proxying behavior.
+In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (in this guide it is denoted as `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. To have only one `proxy-config` declared it is the most basic setup.
 
-In addition to the declared `default proxy config`, you can also add additional `proxy-config`s. To have multiple proxy configurations is useful when you do not want to apply the same catch-all proxying behavior to all non-matched requests. Instead, you want to have a fine-grained per-request control which remote host you want to route an unmatched request by enforcing a specific proxy configuration at runtime. How to select a specific proxy configuration at runtime discussed further in the [Application of proxy config at runtime](#application-of-proxy-config-at-runtime) section.
+In addition to the declared `default proxy config`, you can also add additional `proxy-config`s. To have multiple proxy configurations is useful when you do not want to apply the same catch-all proxying behavior to all non-matched requests. Instead, you want to have a fine-grained per-request control which remote host you want to route an unmatched request by enforcing a specific proxying behavior at runtime. How to select a specific proxy configuration at runtime per-request discussed further in the [Application of proxy config at runtime](#application-of-proxy-config-at-runtime) section.
 
 First, let's understand how to declare a proxy configuration. The following is a fully-populated example with multiple `proxy-config` objects:
 
