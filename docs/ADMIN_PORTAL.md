@@ -86,9 +86,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              |  type     | data type         | description                         |
+> |-------------------|-----------|-------------------|-------------------------------------|
+> | `stub_numeric_id` |  required | integer (int64)   | The specific stub numeric id        |
 
 ##### Responses
 
@@ -110,9 +110,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid`            | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
 
 ##### Responses
 
@@ -154,9 +154,10 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid`            | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+
 
 ##### Responses
 
@@ -183,9 +184,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              |  type     | data type         | description                         |
+> |-------------------|-----------|-------------------|-------------------------------------|
+> | `stub_numeric_id` |  required | integer (int64)   | The specific stub numeric id        |
 
 ##### Responses
 
@@ -208,9 +209,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
 
 ##### Responses
 
@@ -252,9 +253,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
 
 ##### Responses
 
@@ -298,9 +299,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `stub_numeric_id` | required          | The specific stub `stub_numeric_id` (resource-id-`<stub_numeric_id>`)    |
+> | name              |  type     | data type         | description                         |
+> |-------------------|-----------|-------------------|-------------------------------------|
+> | `stub_numeric_id` |  required | integer (int64)   | The specific stub numeric id        |
 
 ##### Responses
 
@@ -323,9 +324,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid` | required          | unique identifier (See [README.md "Stub/Feature UUID" section](../README.md#uuid-optional))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific stub unique idendifier (See ["uuid" in "Endpoint configuration HOWTO" section](../README.md#endpoint-configuration-howto)) |
 
 ##### Responses
 
@@ -348,9 +349,9 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 ##### Parameters
 
-> | name              | type              | description                                                 |
-> |-------------------|-------------------|-------------------------------------------------------------|
-> | `uuid` | required          | unique identifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid-required))    |
+> | name   |  type      | data type      | description                                          |
+> |--------|------------|----------------|------------------------------------------------------|
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
 
 ##### Responses
 
