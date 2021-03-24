@@ -50,12 +50,12 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [The admin portal](#the-admin-portal)
    * The status page
    * Available REST API summary
-      * Scenarios: creating new/overwriting existing stubs & proxy configs
-      * Scenarios: listing existing stubs & proxy configs as YAML string
-      * Scenarios: updating existing stubs & proxy configs
-      * Scenarios: deleting existing stubs & proxy configs
+      * Creating new/overwriting existing stubs & proxy configs
+      * Listing existing stubs & proxy configs as YAML string
+      * Updating existing stubs & proxy configs
+      * Deleting existing stubs & proxy configs
       * POST / PUT request body format
-      * Client programmatic API
+   * Client programmatic API
 * [The stubs portal](#the-stubs-portal)
 * [Change log](#change-log)
 * [Authors](#authors)
