@@ -18,18 +18,20 @@ As of `v7.3.0` (incl.) of `stubby4j`, a new feature is available that enables yo
 
 On this page you will learn how to add a proxy configuration described in YAML to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto).
 
-In order to enable request proxying behavior in `stubby4j`, you need to add at least one proxy configuration to your YAML config. This would be the default proxy config (denoted with `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. That's the most basic setup.
-
-In addition to the `default proxy config`, you can also add additional proxy configurations. This is useful when you do not want to apply the same catch-all proxy behavior, but instead have a fine-grained per-request control which remote host you want to route the unmatched request to. You can control at runtime using an HTTP header `x-stubby4j-proxy-config-uuid` (you set this header on the HTTP request to `stubby4j`) which proxy configuration (identified by set `uuid`) should be applied if your request was not matched to any of the stubs.
-
 Keep on reading to understand how to add proxy configurations to your `stubby4j` YAML config.
 
 
 ## Proxy configuration HOWTO
 
-This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration are denoted using the `proxy-config` key.
+This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration object is denoted using the `proxy-config` property in YAML.
 
-The following is a fully-populated multiple `proxy-config` configuration:
+In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (denoted with `default proxy config` hereafter in this guide). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. That's the most basic setup.
+
+In addition to the `default proxy config`, you can also add additional `proxy-config`s. To have multiple proxy configurations is useful when you do not want to apply the same catch-all proxy behavior to non-matched requests. Instead, you can have a fine-grained per-request control which remote host you want to route the unmatched request to by selecting a relevant proxy configuration.
+
+You can control at runtime using an HTTP header `x-stubby4j-proxy-config-uuid` (you set this header on the HTTP request to `stubby4j`) which proxy configuration (identified by the `uuid` property) should be applied if your request was not matched to any of the stubs.
+
+The following is a fully-populated example with multiple `proxy-config` objects:
 
 ```yaml
 - proxy-config:
