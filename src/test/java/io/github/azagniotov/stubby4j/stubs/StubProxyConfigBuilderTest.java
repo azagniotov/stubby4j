@@ -29,6 +29,14 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigHasNoHeaders() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder.build();
+        assertThat(stubProxyConfig.hasHeaders()).isFalse();
+        assertThat(stubProxyConfig.getHeaders().isEmpty()).isTrue();
+    }
+
+    @Test
     public void stubbedProxyConfigHasDefaultUuid() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder.build();
@@ -107,6 +115,7 @@ public class StubProxyConfigBuilderTest {
         final StubProxyConfig expectedStubProxyConfig = builder
                 .withUuid("unique")
                 .withStrategy("as-is")
+                .withHeader("headerKey", "headerValue")
                 .withProperty("key", "value")
                 .withPropertyEndpoint("http://google.com")
                 .build();
@@ -114,11 +123,43 @@ public class StubProxyConfigBuilderTest {
         final StubProxyConfig assertingStubProxyConfig = builder
                 .withUuid("unique")
                 .withStrategy("as-is")
+                .withHeader("headerKey", "headerValue")
                 .withProperty("key", "value")
                 .withPropertyEndpoint("http://google.com")
                 .build();
 
+        assertThat(expectedStubProxyConfig.hasHeaders()).isTrue();
+        assertThat(expectedStubProxyConfig.getHeaders().isEmpty()).isFalse();
+
         assertThat(assertingStubProxyConfig).isEqualTo(expectedStubProxyConfig);
+    }
+
+    @Test
+    public void stubbedProxyConfigNotEqualsAssertingConfigWithDifferentHeader() throws Exception {
+
+        final StubProxyConfig expectedStubProxyConfig = builder
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withHeader("headerKey", "headerValue")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
+                .build();
+
+        final StubProxyConfig assertingStubProxyConfig = builder
+                .withUuid("unique")
+                .withStrategy("as-is")
+                .withHeader("headerKey", "headerDifferentValue")
+                .withProperty("key", "value")
+                .withPropertyEndpoint("http://google.com")
+                .build();
+
+        assertThat(expectedStubProxyConfig.hasHeaders()).isTrue();
+        assertThat(expectedStubProxyConfig.getHeaders().isEmpty()).isFalse();
+
+        assertThat(assertingStubProxyConfig.hasHeaders()).isTrue();
+        assertThat(assertingStubProxyConfig.getHeaders().isEmpty()).isFalse();
+
+        assertThat(assertingStubProxyConfig).isNotEqualTo(expectedStubProxyConfig);
     }
 
     @Test

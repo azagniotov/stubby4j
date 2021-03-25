@@ -3,6 +3,9 @@
     strategy: as-is
     properties:
       endpoint: https://jsonplaceholder.typicode.com
+    headers:
+      headerKeyOne: headerValueOne
+      headerKeyTwo: headerValueTwo
 
 - proxy-config:
     description: woah! this is a unique proxy-config

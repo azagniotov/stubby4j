@@ -300,6 +300,7 @@ public class StubRequest implements ReflectableStub {
         }
 
         public Builder withHeader(final String key, final String value) {
+            // Although it is weird to see .valueOf invoked on string, it will convert a null value to "null"
             this.headers.put(valueOf(key), valueOf(value));
 
             return this;

@@ -976,7 +976,10 @@ public class YamlParserTest {
                         "    description: this is a default catch-all config\n" +
                         "    strategy: as-is\n" +
                         "    properties:\n" +
-                        "      endpoint: https://jsonplaceholder.typicode.com\n");
+                        "      endpoint: https://jsonplaceholder.typicode.com\n" +
+                        "    headers:\n" +
+                        "      headerKeyOne: headerValueOne\n" +
+                        "      headerKeyTwo: headerValueTwo\n");
 
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
