@@ -23,7 +23,7 @@ Keep on reading to understand how to add proxy configurations to your `stubby4j`
 
 ## Proxy configuration HOWTO
 
-This section explains the usage, intent and behavior of each YAML property on the proxy configuration object. In `stubby4j` YAML config, the proxy configuration metadata is declared using the `proxy-config` property.
+In `stubby4j` YAML config, the proxy configuration metadata is declared using the `proxy-config` property.
 
 In order to enable request proxying behavior in `stubby4j`, you need to add at least one `proxy-config` object to your YAML config. This would be the default proxy config (in this guide it is denoted as `default proxy config` hereafter). The `default proxy config` serves as a catch-all for requests that don't match any of the `stubby4j`'s stubs. To have only one `proxy-config` declared it is the most basic setup.
 
@@ -98,17 +98,23 @@ includes:
 
 ### Supported YAML properties
 
+This section explains the usage, intent and behavior of each YAML property on the `proxy-config` object. 
+
 #### uuid
 
 ##### Property is `optional` when
 
 Defining only a single `proxy-config` object in your YAML configuration. That single `proxy-config` object serves as a catch-all for all requests that don't match any of the stubby4j's stubs, it is the `default proxy config`.
 
-When creating a `proxy-config` definition without an explicit `uuid` property, an `uuid` property will be configured internally with a value `default` (i.e.: `uuid: default`. You can however, explicitly define the `uuid` property even for the only `proxy-config` defined, but do not set it to anything other than value `default`. If you do set the `uuid` property on the single declared `proxy-config` object to something other than `default`, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
+When creating a `proxy-config` definition without an explicit `uuid` property, an `uuid` property will be configured internally with a value `default` (i.e.: `uuid: default`. You can however, explicitly define the `uuid` property even for the single `proxy-config` defined, but do not set it to anything other than value `default`.
+
+If you do set the `uuid` property on the single declared `proxy-config` object to something other than `default`, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
 
 ##### Property is `required` when
 
-Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please note: you must always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all) when adding proxy configurations. If you do set multiple `uuid` properties to have the same values, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
+Defining multiple `proxy-config` objects in your YAML configuration. The `uuid` property must have unique values across all defined `proxy-config` objects. Please note: you must always have defined a `default proxy config` (i.e.: with `uuid: default` or without `uuid` at all) when adding proxy configurations.
+
+If you do set multiple `uuid` properties to have the same values across multiple `proxy-config` objects, `stubby4j` fails to parse YAML config upon start-up and throws an exception. 
 
 #### description (`optional`)
 
