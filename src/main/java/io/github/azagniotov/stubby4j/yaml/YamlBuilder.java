@@ -33,6 +33,7 @@ public final class YamlBuilder {
     private final static String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
 
     private final static String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
+    private final static String PROXY_HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
     private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "properties:");
     private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "strategy: ");
     private final static String PROXY_UUID = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "uuid: ");
@@ -63,6 +64,7 @@ public final class YamlBuilder {
     private final static String NL = FileUtils.BR;
 
     private static final String TWO_DASHED_TOKENS_TEMPLATE = "%s-%s";
+    private final static String PROXY_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_HEADERS);
     private final static String PROXY_PROPERTIES_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_PROPERTIES);
     private final static String REQUEST_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, HEADERS);
     private final static String REQUEST_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, QUERY);
@@ -77,6 +79,7 @@ public final class YamlBuilder {
 
     private final Set<String> storedStubbedMethods = new LinkedHashSet<>();
     private final Set<String> unusedNodes = new HashSet<String>() {{
+        add(PROXY_HEADERS_KEY);
         add(PROXY_PROPERTIES_KEY);
         add(REQUEST_HEADERS_KEY);
         add(REQUEST_QUERY_KEY);
@@ -98,6 +101,22 @@ public final class YamlBuilder {
 
     public ProxyConfig newStubbedProxyConfig() {
         return new ProxyConfig();
+    }
+
+    private void clear() {
+        unusedNodes.clear();
+        unusedNodes.add(PROXY_HEADERS_KEY);
+        unusedNodes.add(PROXY_PROPERTIES_KEY);
+        unusedNodes.add(REQUEST_HEADERS_KEY);
+        unusedNodes.add(REQUEST_QUERY_KEY);
+        unusedNodes.add(RESPONSE_HEADERS_KEY);
+        unusedNodes.add(RESPONSE_QUERY_KEY);
+        storedStubbedMethods.clear();
+
+        FEATURE_STRING_BUILDER.setLength(0);
+        REQUEST_STRING_BUILDER.setLength(0);
+        RESPONSE_STRING_BUILDER.setLength(0);
+        PROXY_CONFIG_STRING_BUILDER.setLength(0);
     }
 
     public final class Feature {
@@ -159,6 +178,16 @@ public final class YamlBuilder {
             return this;
         }
 
+        public ProxyConfig withHeader(final String key, final String value) {
+
+            checkProxyHeadersNodeRequired();
+
+            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, key);
+            PROXY_CONFIG_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
+
+            return this;
+        }
+
         public ProxyConfig withProperty(final String key, final String value) {
 
             checkProxyPropertiesNodeRequired();
@@ -184,6 +213,13 @@ public final class YamlBuilder {
             if (unusedNodes.contains(PROXY_PROPERTIES_KEY)) {
                 PROXY_CONFIG_STRING_BUILDER.append(PROXY_PROPERTIES).append(NL);
                 unusedNodes.remove(PROXY_PROPERTIES_KEY);
+            }
+        }
+
+        private void checkProxyHeadersNodeRequired() {
+            if (unusedNodes.contains(PROXY_HEADERS_KEY)) {
+                PROXY_CONFIG_STRING_BUILDER.append(PROXY_HEADERS).append(NL);
+                unusedNodes.remove(PROXY_HEADERS_KEY);
             }
         }
 
@@ -538,20 +574,5 @@ public final class YamlBuilder {
 
             return yaml;
         }
-    }
-
-    private void clear() {
-        unusedNodes.clear();
-        unusedNodes.add(PROXY_PROPERTIES_KEY);
-        unusedNodes.add(REQUEST_HEADERS_KEY);
-        unusedNodes.add(REQUEST_QUERY_KEY);
-        unusedNodes.add(RESPONSE_HEADERS_KEY);
-        unusedNodes.add(RESPONSE_QUERY_KEY);
-        storedStubbedMethods.clear();
-
-        FEATURE_STRING_BUILDER.setLength(0);
-        REQUEST_STRING_BUILDER.setLength(0);
-        RESPONSE_STRING_BUILDER.setLength(0);
-        PROXY_CONFIG_STRING_BUILDER.setLength(0);
     }
 }

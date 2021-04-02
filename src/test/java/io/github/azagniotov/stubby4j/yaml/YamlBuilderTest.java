@@ -268,6 +268,9 @@ public class YamlBuilderTest {
                         "      description: very-interesting-description" + BR +
                         "      uuid: very-unique-name" + BR +
                         "      strategy: as-is" + BR +
+                        "      headers:" + BR +
+                        "         keyOne: valueOne" + BR +
+                        "         keyTwo: valueTwo" + BR +
                         "      properties:" + BR +
                         "         endpoint: http://google.com" + BR +
                         "         key: value";
@@ -278,6 +281,8 @@ public class YamlBuilderTest {
                 .withDescription("very-interesting-description")
                 .withUuid("very-unique-name")
                 .withProxyStrategyAsIs()
+                .withHeader("keyOne", "valueOne")
+                .withHeader("keyTwo", "valueTwo")
                 .withPropertyEndpoint("http://google.com")
                 .withProperty("key", "value")
                 .toString().trim();
