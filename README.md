@@ -1,4 +1,4 @@
-An HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.
+An HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract and behavior testing.
 
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
