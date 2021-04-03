@@ -20,11 +20,10 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 ## User manual for stubby4j v7.3.3-SNAPSHOT
 ### Table of contents
 
+* [Advantages of using stubby4j HTTP stub server](#advantages-of-using-stubby4j-http-stub-server)
 * [Key features](#key-features)
 * [Quick start example](#quick-start-example)
 * [Running in Docker](#running-in-docker)
-* [Why would a developer use stubby4j](#why-would-a-developer-use-stubby4j)
-* [Why would a QA use stubby4j](#why-would-a-qa-use-stubby4j)
 * [Building](#building)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
@@ -63,16 +62,30 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Copyright](#copyright)
 * [License](#license)
 
+## Advantages of using stubby4j HTTP stub server
+
+There are a number of use cases where you'd want to use HTTP stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
+
+* Simulate responses from real server and don't care (or cannot) to go over the network
+* Stub out external services in a Docker based micro-service architecture
+* Third party web service your application suppose to contract with is not ready yet
+* Verify that your code makes HTTP requests with all the required parameters and/or headers
+* Verify that your code correctly handles HTTP error codes
+
 ## Key features
-* Emulate external webservice in a SANDBOX for your application to consume over HTTP(S)
+
+* Dockerzied. Stub out external services in a Docker based micro-service architecture
+* Fault injection, where after X good responses on the same URI you get a bad one
+* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
+* Request proxying. Ability to configure a proxy/intercept where requests are proxied to another service
+* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * HTTP request verification and HTTP response stubbing
-* Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
-* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
-* Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
-* Fault injection, where after X good responses on the same URI you get a bad one
 * Serve binary files as stubbed response content (images, PDFs. etc.)
+* Support for delayed responses for performance and stability testing
+* Support for HTTP 30x redirects verification
+* Support for different types of HTTP Authorizations: Basic, Bearer Token & others
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 ## Quick start example
@@ -133,30 +146,6 @@ $ docker build --build-arg REVISION=v7.3.2 --rm --no-cache -t stubby4j:latest .
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
 
 [Back to top](#table-of-contents)
-
-## Why would a developer use `stubby4j`?
-
-#### You want to:
-* Simulate responses from real server and don't care (or cannot) to go over the network
-* Stub out external services in a Docker based micro-service architecture
-* Third party web service your application suppose to contract with is not ready yet
-* Verify that your code makes HTTP requests with all the required parameters and/or headers
-* Verify that your code correctly handles HTTP error codes
-* You want to trigger response from the server based on the request parameters over HTTP or HTTPS
-* Support for any of the available HTTP methods
-* Simulate support for different types of HTTP Authorizations: Basic, Bearer Token & others
-* Support for HTTP 30x redirects
-* Provide canned answers in your contract/integration tests
-* Enable delayed responses for performance and stability testing
-* Avoid to spend time coding for the above requirements
-* Concentrate on the task at hand
-
-
-## Why would a QA use `stubby4j`?
-* Specifiable mock responses to simulate page conditions without real data.
-* Ability to test polling mechanisms by stubbing a sequence of responses for the same URI
-* Easily swappable data config files to run different data sets and responses.
-* All-in-one stub server to handle mock data with less need to upkeep code for test generation
 
 ## Building
 stubby4j is a multi source-set Gradle `v6.8.3` project
