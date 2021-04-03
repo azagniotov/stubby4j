@@ -72,6 +72,9 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP error codes
 
+[Back to top](#table-of-contents)
+
+
 ## Key features
 
 * Dockerzied. Stub out external services in a Docker based micro-service architecture
@@ -87,6 +90,9 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 * Support for HTTP 30x redirects verification
 * Support for different types of HTTP Authorizations: Basic, Bearer Token & others
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
+
+[Back to top](#table-of-contents)
+
 
 ## Quick start example
 
@@ -165,6 +171,7 @@ Run `./gradlew clean jacocoTestReport` command to:
 
 * See the [build.gradle](build.gradle)
 
+[Back to top](#table-of-contents)
 
 ## Adding stubby4j to your project
 The following are the stubby4j artifacts that are hosted on [Maven Central][maven-link]:
@@ -1338,6 +1345,8 @@ loaded in memory. If a full match was found, then that match will be cached usin
 
 To disable stub caching pass `--disable_stub_caching` command-line arg to stubby4j jar upon start up (refer to [Command-line switches](#command-line-switches) sectio )
 
+[Back to top](#table-of-contents)
+
 ## The admin portal
 
 See [docs/ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
@@ -1384,6 +1393,8 @@ Pseudocode ([StubRepository#matchStub](src/main/java/io/github/azagniotov/stubby
         }
     }
 ```
+
+[Back to top](#table-of-contents)
 
 ## Change log
 
