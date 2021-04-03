@@ -122,11 +122,15 @@ This can be anything describing your proxy configuration.
 
 #### strategy (`required`)
 
-Describes how the request to-be-proxied should be proxied. Currently only `as-is` strategy is supported, which means that request will be proxied without any changes/modifications before being sent to the proxy service. In the future enhancements to the request proxying functionality, more strategies will be supported.
+Describes how the request to-be-proxied should be proxied. Currently only the following strategy values are supported:
+* `as-is`: no changes/modifications will be applied to the request before proxying it
+* `additive`: additive changes will be applied to the request, before proxying it. The additive changes currently supported are setting of additional HTTP headers using the `headers` property on the `proxy-config` object.
+
+In the future enhancements to the request proxying functionality, more strategies will be supported.
 
 #### properties (`required`)
 
-Describes the properties of the proxy, e.g.: endpoint, headers, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
+Describes the properties of the proxy, e.g.: endpoint, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
 
 #### endpoint (`required`)
 
@@ -135,6 +139,25 @@ Describes the target service endpoint where the request will be proxied to. This
 * Incorrect: `jsonplaceholder.typicode.com`
 * Incorrect: `https://jsonplaceholder.typicode.com/`
 * Incorrect: `https://jsonplaceholder.typicode.com/posts/1`
+
+#### headers (`optional`)
+
+A map of key/value pairs describing an HTTP header name and its value. The `headers` property can be used when `strategy` property is set to `additive`. The headers will be applied to the request being proxied in an additive manner, i.e.: they will not replace the headers already set on the request.
+
+```yaml
+- proxy-config:
+    uuid: some-other-unique-name
+    strategy: additive
+    properties:
+      endpoint: https://jsonplaceholder.typicode.com
+    headers:
+      content-type: application/json+special
+      x-custom-header: something/unique
+      x-custom-header-2: another/thing
+```
+
+Describes the properties of the proxy, e.g.: endpoint, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
+
 
 ## Application of proxy config at runtime
 

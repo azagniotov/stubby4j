@@ -2,6 +2,8 @@
 
 #### 7.3.2-SNAPSHOT
 
+* PR [#270](https://github.com/azagniotov/stubby4j/pull/270) - Additive proxy strategy that sets additional headers (https://github.com/azagniotov)
+
 #### 7.3.1
 
 * PR [#264](https://github.com/azagniotov/stubby4j/pull/264) - Multiple proxy configurations support (https://github.com/azagniotov)
