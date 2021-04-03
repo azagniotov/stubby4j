@@ -124,17 +124,18 @@ This can be anything describing your proxy configuration.
 
 Describes how the request to-be-proxied should be proxied. Currently only the following strategy values are supported:
 * `as-is`: no changes/modifications will be applied to the request before proxying it
-* `additive`: additive changes will be applied to the request, before proxying it. The additive changes currently supported are setting of additional HTTP headers using the `headers` property on the `proxy-config` object.
+* `additive`: additive changes will be applied to the request before proxying it. The additive changes currently supported are setting of additional HTTP headers using the `headers` property on the `proxy-config` object.
 
 In the future enhancements to the request proxying functionality, more strategies will be supported.
 
 #### properties (`required`)
 
-Describes the properties of the proxy, e.g.: endpoint, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
+A map of key/value pairs describing the properties of the proxy, e.g.: endpoint, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
 
-#### endpoint (`required`)
+##### endpoint (`required`)
 
-Describes the target service endpoint where the request will be proxied to. This should be a protocol scheme + fully qualified domain name (i.e.: `FQDN`) without any URI paths:
+Must be defined under the `properties` property. Describes the target service endpoint where the request will be proxied to. This should be a protocol scheme + fully qualified domain name (i.e.: `FQDN`) without any URI paths:
+
 * Correct: `https://jsonplaceholder.typicode.com`
 * Incorrect: `jsonplaceholder.typicode.com`
 * Incorrect: `https://jsonplaceholder.typicode.com/`
@@ -142,7 +143,7 @@ Describes the target service endpoint where the request will be proxied to. This
 
 #### headers (`optional`)
 
-A map of key/value pairs describing an HTTP header name and its value. The `headers` property can be used when `strategy` property is set to `additive`. The headers will be applied to the request being proxied in an additive manner, i.e.: they will not replace the headers already set on the request.
+A map of key/value pairs describing an HTTP header name and its value. The `headers` property can be used when `strategy` property is set to `additive`. The headers will be added to the request being proxied in an additive manner, i.e.: they will not replace the headers already set on the request.
 
 ```yaml
 - proxy-config:
@@ -155,9 +156,6 @@ A map of key/value pairs describing an HTTP header name and its value. The `head
       x-custom-header: something/unique
       x-custom-header-2: another/thing
 ```
-
-Describes the properties of the proxy, e.g.: endpoint, etc. Currently only `endpoint` property is supported. In the future enhancements to the request proxying functionality, more properties will be supported.
-
 
 ## Application of proxy config at runtime
 

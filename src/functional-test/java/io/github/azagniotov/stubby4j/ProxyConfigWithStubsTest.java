@@ -140,7 +140,7 @@ public class ProxyConfigWithStubsTest {
         // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
         httpHeaders.setAcceptEncoding(null);
 
-        // The 'some-unique-name' is actually set in include-proxy-config.yaml
+        // The 'some-unique-name' is actually set in 'proxy-config' object defined in resources/yaml/include-proxy-config.yaml
         httpHeaders.set(HEADER_X_STUBBY_PROXY_CONFIG, "some-unique-name");
         request.setHeaders(httpHeaders);
 
@@ -176,6 +176,8 @@ public class ProxyConfigWithStubsTest {
                 "- proxy-config:\n" +
                         "    uuid: some-unique-name\n" +
                         "    strategy: additive\n" +
+                        "    headers:\n" +
+                        "      x-original-stubby4j-custom-header: custom/value\n" +
                         "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com");
 
@@ -209,6 +211,8 @@ public class ProxyConfigWithStubsTest {
                 "- proxy-config:\n" +
                         "    uuid: some-unique-name\n" +
                         "    strategy: additive\n" +
+                        "    headers:\n" +
+                        "      x-custom-header: custom/value\n" +
                         "    properties:\n" +
                         "      endpoint: https://UPDATED.com");
     }

@@ -7,6 +7,8 @@
 - proxy-config:
     uuid: some-unique-name
     strategy: additive
+    headers:
+      x-original-stubby4j-custom-header: custom/value
     properties:
       endpoint: https://jsonplaceholder.typicode.com
 

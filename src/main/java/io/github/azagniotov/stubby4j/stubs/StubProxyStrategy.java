@@ -9,14 +9,14 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.toLower;
 
 public enum StubProxyStrategy {
     /**
-     * No changes/modifications will be applied to the request, before proxying it.
+     * No changes/modifications will be applied to the request before proxying it.
      * <p>
      * See: https://github.com/azagniotov/stubby4j/blob/master/docs/REQUEST_PROXYING.md#supported-yaml-properties
      */
     AS_IS("as-is"),
 
     /**
-     * Additive changes will be applied to the request, before proxying it. The additive changes
+     * Additive changes will be applied to the request before proxying it. The additive changes
      * currently supported are setting of additional HTTP headers using the `headers` property on the
      * `proxy-config` object.
      * <p>
