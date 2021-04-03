@@ -1,6 +1,8 @@
 [Back to the main README.md](../README.md#change-log)
 
-#### 7.3.2-SNAPSHOT
+#### 7.3.3-SNAPSHOT
+
+#### 7.3.2
 
 * PR [#270](https://github.com/azagniotov/stubby4j/pull/270) - Added `additive` proxy strategy behavior that sets additional headers to the request (https://github.com/azagniotov)
 
