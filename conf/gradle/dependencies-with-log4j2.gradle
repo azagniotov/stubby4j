@@ -1,0 +1,21 @@
+dependencies {
+    api "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    api "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+    api "org.ehcache:ehcache:3.9.1"
+    api "commons-cli:commons-cli:1.4"
+    api "org.yaml:snakeyaml:1.28"
+    api "org.skyscreamer:jsonassert:1.5.0"
+    api "org.xmlunit:xmlunit-core:${xmlUnitVersion}"
+    api "org.xmlunit:xmlunit-placeholders:${xmlUnitVersion}"
+    api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
+    api "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    api "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+    api "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2Version}"
+
+    testImplementation "junit:junit:4.13.1"
+    testImplementation "org.mockito:mockito-core:3.3.3"
+    testImplementation "com.google.truth:truth:1.1.2"
+
+    // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+    testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+}
