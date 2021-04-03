@@ -49,7 +49,7 @@ repositories {
     mavenCentral()
 }
 
-apply from: "$rootDir/conf/gradle/default-dependencies.gradle"
+apply from: "$rootDir/conf/gradle/dependencies.gradle"
 apply from: "$rootDir/conf/gradle/ide.gradle"
 apply from: "$rootDir/conf/gradle/multi-test-source-sets.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"

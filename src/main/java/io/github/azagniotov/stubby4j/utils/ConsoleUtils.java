@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
@@ -22,7 +24,10 @@ public final class ConsoleUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
     private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP_END = " ***** [/DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
+
     private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END = " ***** [/DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
 
     private static boolean debug = false;
 
@@ -48,10 +53,11 @@ public final class ConsoleUtils {
     private static void logRawIncomingRequest(final HttpServletRequest request) {
         ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
         ANSITerminal.info(HttpRequestUtils.dump(request));
-        ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP + BR);
+        ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END + BR);
+
         LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
         LOGGER.debug(HttpRequestUtils.dump(request));
-        LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
+        LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END);
     }
 
 
@@ -63,8 +69,22 @@ public final class ConsoleUtils {
                 request.getRequestURI()
         );
         ANSITerminal.incoming(logMessage);
+        LOGGER.info(logMessage);
 
         if (debug) {
+
+            final List<String> skipUriPrefix = new LinkedList<String>() {{
+                add("/ajax");
+                add("/status");
+                add("/favicon");
+            }};
+
+            for (final String prefix : skipUriPrefix) {
+                if (request.getRequestURI().startsWith(prefix)) {
+                    return;
+                }
+            }
+
             ConsoleUtils.logRawIncomingRequest(request);
         }
     }
@@ -74,10 +94,11 @@ public final class ConsoleUtils {
         if (debug) {
             ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
             ANSITerminal.info(assertingStubRequest.toString());
-            ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP + BR);
+            ANSITerminal.warn(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP_END + BR);
+
             LOGGER.debug(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
             LOGGER.debug("{}", assertingStubRequest);
-            LOGGER.debug(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP);
+            LOGGER.debug(DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP_END);
         }
     }
 
@@ -117,7 +138,9 @@ public final class ConsoleUtils {
             loadedMsgBuilder.append(String.format(" [%s]", stubProxyConfig.getDescription()));
         }
 
-        ANSITerminal.loaded(loadedMsgBuilder.toString());
+        final String logMessage = loadedMsgBuilder.toString();
+        ANSITerminal.loaded(logMessage);
+        LOGGER.info(logMessage);
     }
 
     public static void logUnmarshalledStub(final StubHttpLifecycle lifecycle) {
@@ -131,7 +154,9 @@ public final class ConsoleUtils {
             loadedMsgBuilder.append(String.format(" [%s]", lifecycle.getDescription()));
         }
 
-        ANSITerminal.loaded(loadedMsgBuilder.toString());
+        final String logMessage = loadedMsgBuilder.toString();
+        ANSITerminal.loaded(logMessage);
+        LOGGER.info(logMessage);
     }
 
 
