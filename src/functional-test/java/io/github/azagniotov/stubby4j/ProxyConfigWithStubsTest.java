@@ -175,7 +175,7 @@ public class ProxyConfigWithStubsTest {
         assertThat(getResponseContent).isEqualTo(
                 "- proxy-config:\n" +
                         "    uuid: some-unique-name\n" +
-                        "    strategy: custom\n" +
+                        "    strategy: additive\n" +
                         "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com");
 
@@ -208,7 +208,7 @@ public class ProxyConfigWithStubsTest {
         assertThat(getResponseContent).isEqualTo(
                 "- proxy-config:\n" +
                         "    uuid: some-unique-name\n" +
-                        "    strategy: custom\n" +
+                        "    strategy: additive\n" +
                         "    properties:\n" +
                         "      endpoint: https://UPDATED.com");
     }
