@@ -50,6 +50,10 @@ public class StubProxyConfig implements ReflectableStub {
         return strategy;
     }
 
+    public boolean isAdditiveStrategy() {
+        return strategy == StubProxyStrategy.ADDITIVE;
+    }
+
     public final Map<String, String> getHeaders() {
         return new HashMap<>(headers);
     }
@@ -102,12 +106,7 @@ public class StubProxyConfig implements ReflectableStub {
 
         public Builder() {
             super();
-            this.description = null;
-            this.uuid = DEFAULT_UUID;
-            this.strategy = null;
-            this.headers = new LinkedHashMap<>();
-            this.properties = new LinkedHashMap<>();
-            this.proxyConfigAsYAML = null;
+            reset();
         }
 
         public Builder withDescription(final String description) {
@@ -170,15 +169,20 @@ public class StubProxyConfig implements ReflectableStub {
                     properties,
                     proxyConfigAsYAML);
 
-            this.description = null;
-            this.uuid = DEFAULT_UUID;
-            this.strategy = null;
-            this.headers = new LinkedHashMap<>();
-            this.properties = new LinkedHashMap<>();
-            this.proxyConfigAsYAML = null;
+            reset();
+
             this.fieldNameAndValues.clear();
 
             return stubProxyConfig;
+        }
+
+        private void reset() {
+            this.description = null;
+            this.uuid = DEFAULT_UUID;
+            this.strategy = StubProxyStrategy.AS_IS;
+            this.headers = new LinkedHashMap<>();
+            this.properties = new LinkedHashMap<>();
+            this.proxyConfigAsYAML = null;
         }
     }
 }

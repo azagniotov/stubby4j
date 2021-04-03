@@ -967,7 +967,7 @@ public class YamlParserTest {
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
         assertThat(customStubProxyConfig.getUUID()).isEqualTo("some-unique-name");
-        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.ADDITIVE);
         assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
@@ -985,7 +985,7 @@ public class YamlParserTest {
                 "- proxy-config:\n" +
                         "    description: woah! this is a unique proxy-config\n" +
                         "    uuid: some-unique-name\n" +
-                        "    strategy: custom\n" +
+                        "    strategy: additive\n" +
                         "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
     }
@@ -1014,7 +1014,7 @@ public class YamlParserTest {
 
         final StubProxyConfig customStubProxyConfig = proxyConfigs.get("some-unique-name");
         assertThat(customStubProxyConfig.getUUID()).isEqualTo("some-unique-name");
-        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.CUSTOM);
+        assertThat(customStubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.ADDITIVE);
         assertThat(customStubProxyConfig.getProperties().size()).isEqualTo(1);
         assertThat(customStubProxyConfig.getProperties().get("endpoint")).isEqualTo("https://jsonplaceholder.typicode.com");
 
@@ -1027,7 +1027,7 @@ public class YamlParserTest {
         assertThat(customStubProxyConfig.getProxyConfigAsYAML()).isEqualTo(
                 "- proxy-config:\n" +
                         "    uuid: some-unique-name\n" +
-                        "    strategy: custom\n" +
+                        "    strategy: additive\n" +
                         "    properties:\n" +
                         "      endpoint: https://jsonplaceholder.typicode.com\n");
     }

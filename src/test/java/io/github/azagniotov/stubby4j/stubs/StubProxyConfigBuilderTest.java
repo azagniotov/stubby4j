@@ -29,6 +29,22 @@ public class StubProxyConfigBuilderTest {
     }
 
     @Test
+    public void stubbedProxyConfigDefaultStrategyNotAdditive() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder.build();
+        assertThat(stubProxyConfig.isAdditiveStrategy()).isFalse();
+        assertThat(stubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.AS_IS);
+    }
+
+    @Test
+    public void stubbedProxyConfigStrategyAdditive() throws Exception {
+
+        final StubProxyConfig stubProxyConfig = builder.withStrategy(StubProxyStrategy.ADDITIVE.toString()).build();
+        assertThat(stubProxyConfig.isAdditiveStrategy()).isTrue();
+        assertThat(stubProxyConfig.getStrategy()).isEqualTo(StubProxyStrategy.ADDITIVE);
+    }
+
+    @Test
     public void stubbedProxyConfigHasNoHeaders() throws Exception {
 
         final StubProxyConfig stubProxyConfig = builder.build();
@@ -173,7 +189,7 @@ public class StubProxyConfigBuilderTest {
 
         final StubProxyConfig assertingStubProxyConfig = builder
                 .withUuid("unique")
-                .withStrategy("custom")
+                .withStrategy("additive")
                 .withPropertyEndpoint("http://google.com")
                 .build();
 

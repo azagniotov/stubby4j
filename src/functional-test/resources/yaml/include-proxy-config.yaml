@@ -6,20 +6,22 @@
 
 - proxy-config:
     uuid: some-unique-name
-    strategy: custom
+    strategy: additive
+    headers:
+      x-original-stubby4j-custom-header: custom/value
     properties:
       endpoint: https://jsonplaceholder.typicode.com
 
 - proxy-config:
     description: description-2
     uuid: some-unique-name-two
-    strategy: custom
+    strategy: additive
     properties:
       endpoint: https://google.com
 
 - proxy-config:
     description: description-3
     uuid: some-unique-name-three
-    strategy: custom
+    strategy: additive
     properties:
       endpoint: https://google.com

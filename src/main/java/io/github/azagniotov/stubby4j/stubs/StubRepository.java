@@ -225,6 +225,9 @@ public class StubRepository {
 
         try {
             incomingRequest.getHeaders().put(HEADER_X_STUBBY_PROXY_REQUEST, proxyRoundTripUuid);
+
+            handleIfAdditiveProxyStrategy(incomingRequest, proxyConfig);
+
             final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(incomingRequest, proxyEndpoint);
             for (Map.Entry<String, List<String>> entry : stubbyResponse.headers().entrySet()) {
                 final String headerName = ObjectUtils.isNull(entry.getKey()) ? "null" : entry.getKey();
@@ -250,6 +253,16 @@ public class StubRepository {
                     .withBody(e.getMessage())
                     .withHeaders(proxyResponseFlatHeaders)
                     .build();
+        }
+    }
+
+    private void handleIfAdditiveProxyStrategy(final StubRequest incomingRequest, final StubProxyConfig proxyConfig) {
+        if (proxyConfig.isAdditiveStrategy()) {
+            if (proxyConfig.hasHeaders()) {
+                for (final Map.Entry<String, String> headerEntry : proxyConfig.getHeaders().entrySet()) {
+                    incomingRequest.getHeaders().put(headerEntry.getKey(), headerEntry.getValue());
+                }
+            }
         }
     }
 

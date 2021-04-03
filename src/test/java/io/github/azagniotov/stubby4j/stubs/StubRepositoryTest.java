@@ -1138,6 +1138,97 @@ public class StubRepositoryTest {
     }
 
     @Test
+    public void shouldApplyProxyConfigAdditiveStrategyHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
+                .withStrategy("additive")
+                .withHeader("x-custom-header", "something/unique")
+                .withHeader("x-custom-header-2", "another/thing")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfig.getUUID(), stubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        spyStubRepository.search(mockHttpServletRequest);
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), anyString());
+
+        // The 'content-type', HEADER_X_STUBBY_PROXY_REQUEST and two additive headers
+        assertThat(stubRequestCaptor.getValue().getHeaders().size()).isEqualTo(4);
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header")).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header-2")).isTrue();
+    }
+
+    @Test
+    public void shouldNotApplyProxyConfigAdditiveStrategyEmptyHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+
+        final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
+                .withUUID("uuid")
+                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withResponse(new StubResponse.Builder().build())
+                .build();
+
+        final StubProxyConfig stubProxyConfig = new StubProxyConfig.Builder()
+                .withStrategy("additive")
+                .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
+                .build();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
+            add(httpLifecycle);
+        }}, new HashMap<String, StubHttpLifecycle>() {{
+            put(httpLifecycle.getUUID(), httpLifecycle);
+        }}, new HashMap<String, StubProxyConfig>() {{
+            put(stubProxyConfig.getUUID(), stubProxyConfig);
+        }});
+
+        spyStubRepository.resetStubsCache(yamlParseResultSet);
+
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
+
+        final StubRequest incomingRequest =
+                requestBuilder
+                        .withUrl("/post/1")
+                        .withMethodGet()
+                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                        .build();
+
+        doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
+        spyStubRepository.search(mockHttpServletRequest);
+
+        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), anyString());
+
+        // The 'content-type' header and the HEADER_X_STUBBY_PROXY_REQUEST only
+        assertThat(stubRequestCaptor.getValue().getHeaders().size()).isEqualTo(2);
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("content-type")).isTrue();
+    }
+
+    @Test
     public void shouldApplyProxyConfigByProxyConfigUuidHeaderToHttpTransport_WhenResponseIsProxiable() throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()

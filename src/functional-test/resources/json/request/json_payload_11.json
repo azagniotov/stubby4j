@@ -2,7 +2,10 @@
   {
     "proxy-config": {
       "uuid": "some-unique-name",
-      "strategy": "custom",
+      "strategy": "additive",
+      "headers": {
+        "x-custom-header": "custom/value"
+      },
       "properties": {
         "endpoint": "https://UPDATED.com"
       }

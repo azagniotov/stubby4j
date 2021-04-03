@@ -10,6 +10,6 @@
 - proxy-config:
     description: woah! this is a unique proxy-config
     uuid: some-unique-name
-    strategy: custom
+    strategy: additive
     properties:
       endpoint: https://jsonplaceholder.typicode.com

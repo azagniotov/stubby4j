@@ -6,6 +6,6 @@
 
 - proxy-config:
     uuid: another-unique-name
-    strategy: custom
+    strategy: additive
     properties:
       endpoint: https://jsonplaceholder.typicode.com
