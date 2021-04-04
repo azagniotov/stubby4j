@@ -2,6 +2,8 @@
 
 #### 7.3.3-SNAPSHOT
 
+* PR [#272](https://github.com/azagniotov/stubby4j/pull/272) - Added `log4j2` support to Docker images. `stubby4j` conatiner aplication now emits file-based logs (https://github.com/azagniotov)
+
 #### 7.3.2
 
 * PR [#270](https://github.com/azagniotov/stubby4j/pull/270) - Added `additive` proxy strategy behavior that sets additional headers to the request (https://github.com/azagniotov)
