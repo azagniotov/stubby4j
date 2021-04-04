@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+    <!-- Logging Properties -->
+    <Properties>
+        <Property name="LOG_PATTERN">%d{ISO8601_OFFSET_DATE_TIME_HHCMM} %p %c{1.} %m%n</Property>
+        <!-- Docker images mount 'data' as volume -->
+        <Property name="APP_LOG_ROOT">data/logs</Property>
+        <Property name="LOG_NAME">stubby4j</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender -->
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Rolling Random Access File Appender -->
+        <RollingRandomAccessFile name="LogToRollingFile" fileName="${APP_LOG_ROOT}/${LOG_NAME}.log"
+                     filePattern="${APP_LOG_ROOT}/${LOG_NAME}-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10240KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- Avoid duplicated logs with additivity=false -->
+        <Logger name="io.github.azagniotov.stubby4j" level="DEBUG" additivity="false">
+            <AppenderRef ref="LogToRollingFile"/>
+            <AppenderRef ref="LogToConsole"/>
+        </Logger>
+
+        <Root level="INFO"/>
+    </Loggers>
+
+</Configuration>

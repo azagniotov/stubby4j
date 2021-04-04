@@ -8,9 +8,16 @@ dependencies {
     api "org.xmlunit:xmlunit-core:${xmlUnitVersion}"
     api "org.xmlunit:xmlunit-placeholders:${xmlUnitVersion}"
     api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
-    api "org.apache.logging.log4j:log4j-api:${log4j2Version}"
-    api "org.apache.logging.log4j:log4j-core:${log4j2Version}"
-    api "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2Version}"
+
+    if (project.hasProperty("log4j")) {
+        println "> Building with log4j included in default dependencies"
+        api "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+        api "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+        api "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2Version}"
+    } else {
+        println "> Building with default dependencies"
+        api "org.slf4j:slf4j-api:1.7.30"
+    }
 
     testImplementation "junit:junit:4.13.1"
     testImplementation "org.mockito:mockito-core:3.3.3"
