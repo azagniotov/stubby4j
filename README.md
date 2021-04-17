@@ -24,6 +24,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Key features](#key-features)
 * [Quick start example](#quick-start-example)
 * [Running in Docker](#running-in-docker)
+   * [Docker Compose](#docker-compose)
 * [Building](#building)
 * [Logging](#logging)
 * [Third-party dependencies](#third-party-dependencies)
@@ -151,6 +152,40 @@ $ docker build --build-arg REVISION=v7.3.2 --rm --no-cache -t stubby4j:latest .
 ```
 
 Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
+
+[Back to top](#table-of-contents)
+
+### Docker Compose
+
+stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
+
+Alternatively you can add stubby4j image to your stack using Docker Compose:
+
+```yaml
+# This compose file adds stubby4j https://hub.docker.com/r/azagniotov/stubby4j to your stack
+# See "Environment variables" section at https://hub.docker.com/r/azagniotov/stubby4j
+version: '3.5'
+services:
+  stubby4j:
+    image: azagniotov/stubby4j:latest-jre8 # you can also use other tags: latest-jre11, latest-jre15
+    volumes:
+      - "<HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>:/home/stubby4j/data"
+    container_name: stubby4j
+    ports:
+      - 8882:8882
+      - 8889:8889
+      - 7443:7443
+    environment:
+      YAML_CONFIG: main.yaml
+      STUBS_PORT: 8882
+      ADMIN_PORT: 8889
+      STUBS_TLS_PORT: 7443
+      WITH_DEBUG: --debug
+      WITH_WATCH: --watch
+```
+
+See [docker-compose.yml](docker/docker-compose.yml)
+
 
 [Back to top](#table-of-contents)
 
