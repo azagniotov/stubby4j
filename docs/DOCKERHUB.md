@@ -87,12 +87,12 @@ Starting a `stubby4j` instance is simple using the most basic following command:
 ```
 $ docker run --rm \
     --env YAML_CONFIG=stubs.yaml \
-    --volume <HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>:/home/stubby4j/data \
+    --volume <HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>:/home/stubby4j/data \
     -p 8882:8882 -p 8889:8889 -p 7443:7443 \
     azagniotov/stubby4j:<TAG>
 ```
 ... where:
-* `<HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>` is the host machine directory you want to map to the container volume `/home/stubby4j/data`
+* `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var below) that you want to map to the container volume `/home/stubby4j/data`
 * Passing `stubs.yaml` to `YAML_CONFIG` env var as the name of the main YAML config
 * `-p` publishes/exposes default container's ports `8882`, `8889` & `7443` for stubs, admin & stubs on SSL portals respectively to the host.
 * `<TAG>` is the tag specifying the `stubby4j` version you want. See the list above for relevant tags
@@ -149,7 +149,7 @@ services:
   stubby4j:
     image: azagniotov/stubby4j:latest-jre8 # you can also use other tags: latest-jre11, latest-jre15
     volumes:
-      - "<HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>:/home/stubby4j/data"
+      - "<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>:/home/stubby4j/data"
     container_name: stubby4j
     ports:
       - 8882:8882
@@ -163,6 +163,7 @@ services:
       WITH_DEBUG: --debug
       WITH_WATCH: --watch
 ```
+... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var) that you want to map to the container volume `/home/stubby4j/data`
 
 
 ## Container application logs
@@ -175,14 +176,14 @@ When starting a `stubby4j` instance using the `docker run ...` command, e.g.:
 ```
 $ docker run --rm \
     --env YAML_CONFIG=stubs.yaml \
-    --volume <HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>:/home/stubby4j/data \
+    --volume <HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>:/home/stubby4j/data \
     -p 8882:8882 -p 8889:8889 -p 7443:7443 \
     ...
     ...
     ...
 ```
 
-... where the `<HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>` is the host machine directory that will be mapped to the aforementioned container volume `/home/stubby4j/data`. The `logs` directory will appears under the aforementioned host machine directory, i.e.: `<HOST_MACHINE_DIR_TO_MAP_VOLUME_TO>/logs`
+... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config that will be mapped to the aforementioned container volume `/home/stubby4j/data`. The `logs` directory will appears under the aforementioned host machine directory, i.e.: `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>/logs`
 
 
 # Managing stubs via REST API
