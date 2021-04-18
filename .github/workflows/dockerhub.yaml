@@ -1,0 +1,23 @@
+name: Syncs Docker Hub Description 
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - docs/DOCKERHUB.md
+      - .github/workflows/dockerhub.yaml
+
+jobs:
+  sync-docker-hub-description:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Sync information on Docker Hub
+        uses: meeDamian/sync-readme@v1.0.6
+        with:
+          user: ${{ secrets.DOCKER_USERNAME }}
+          pass: ${{ secrets.DOCKER_PASSWORD }}
+          slug: azagniotov/stubby4j
+          readme: ./docs/DOCKERHUB.md
+          description: true
+          
