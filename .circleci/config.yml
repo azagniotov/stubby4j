@@ -265,7 +265,10 @@ workflows:
 
 
   master-twelve-hour-jdk8:
-    <<: *twelve_hour_master_trigger
+    triggers:
+      - schedule:
+          cron: "10 7,19 * * *"
+          <<: *filter_only_master
     jobs:
       - gradle_6_8_3_jdk8
       - docker_build_latest_jre8:
@@ -275,7 +278,10 @@ workflows:
 
 
   master-twelve-hour-jdk11:
-    <<: *twelve_hour_master_trigger
+    triggers:
+      - schedule:
+          cron: "15 7,19 * * *"
+          <<: *filter_only_master
     jobs:
       - gradle_6_8_3_jdk11
       - docker_build_latest_jre11:
@@ -285,7 +291,10 @@ workflows:
 
 
   master-twelve-hour-jdk15:
-    <<: *twelve_hour_master_trigger
+    triggers:
+      - schedule:
+          cron: "20 7,19 * * *"
+          <<: *filter_only_master
     jobs:
       - gradle_6_8_3_jdk15
       - docker_build_latest_jre15:
