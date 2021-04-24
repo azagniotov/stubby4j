@@ -93,7 +93,7 @@ public class ProxyConfigWithStubsTest {
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched() throws Exception {
+    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky() throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";
@@ -126,7 +126,7 @@ public class ProxyConfigWithStubsTest {
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched() throws Exception {
+    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky() throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";

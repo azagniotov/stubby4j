@@ -23,6 +23,12 @@ tasks.withType(Test).configureEach {
         showCauses true
         showStackTraces true
     }
+
+    filter {
+        if (project.hasProperty("ciRun")) {
+            excludeTestsMatching "*Flaky*"
+        }
+    }
 }
 
 test.outputs.upToDateWhen { false }
