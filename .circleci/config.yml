@@ -53,12 +53,11 @@ filter_ignore_master: &filter_ignore_master
       ignore:
         - master
 
-twelve_hour_master_trigger: &twelve_hour_master_trigger
-  triggers:
-    - schedule:
-        cron: "15 7,19 * * *"
-        <<: *filter_only_master
-
+#twelve_hour_master_trigger: &twelve_hour_master_trigger
+#  triggers:
+#    - schedule:
+#        cron: "15 7,19 * * *"
+#        <<: *filter_only_master
 
 condition_when_not_master: &condition_when_not_master
   condition:
@@ -107,7 +106,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: gradle clean test integrationTest functionalTest
+        command: gradle -PciRun clean test integrationTest functionalTest
         when: always
 
 
