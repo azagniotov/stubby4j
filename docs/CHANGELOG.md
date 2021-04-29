@@ -1,8 +1,10 @@
 [Back to the main README.md](../README.md#change-log)
 
-#### 7.3.3-SNAPSHOT
+#### 7.3.4-SNAPSHOT
 
-* PR [#272](https://github.com/azagniotov/stubby4j/pull/272) - Added `log4j2` support to Docker images. `stubby4j` conatiner aplication now emits file-based logs (https://github.com/azagniotov)
+#### 7.3.3
+
+* PR [#272](https://github.com/azagniotov/stubby4j/pull/272) - Added `log4j2` support to Docker images. `stubby4j` container application now emits file-based logs under `logs` (https://github.com/azagniotov)
 
 #### 7.3.2
 
