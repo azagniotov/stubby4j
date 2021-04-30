@@ -68,11 +68,13 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 
 There are a number of use cases where you'd want to use HTTP stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
 
-* Simulate responses from real server and don't care (or cannot) to go over the network
-* Stub out external services in a Docker based micro-service architecture
-* Third party web service your application suppose to contract with is not ready yet
+* Simulate responses from a real server and don't care (or cannot) to send requests over the network
+* Stub out external web services (when developing & testing locally) in a Docker based micro-service architecture
+* Avoid negative productivity impact when an external API you depend on doesn't exist or isn't complete
+* Simulate edge cases and/or failure modes for your web service that the real remote API won't reliably produce
+* Fault injection, where after X good responses on the same URI your web service gets a bad one
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
-* Verify that your code correctly handles HTTP error codes
+* Verify that your code correctly handles HTTP response error codes
 
 [Back to top](#table-of-contents)
 
