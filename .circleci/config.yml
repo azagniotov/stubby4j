@@ -144,7 +144,7 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Upload code coverage data to Codecov
         when: on_success
-        command: echo "Skipping CodeCov Skipping CodeCov Bash Uploader: 'bash <(curl -s https://codecov.io/bash)'"
+        command: echo "Skipping CodeCov Skipping CodeCov Bash Uploader"
 
 
 
