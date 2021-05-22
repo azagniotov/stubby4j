@@ -21,6 +21,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 ### Table of contents
 
 * [Advantages of using stubby4j HTTP stub server](#advantages-of-using-stubby4j-http-stub-server)
+* [In the Press](#in-the-press)
 * [Key features](#key-features)
 * [Quick start example](#quick-start-example)
 * [Running in Docker](#running-in-docker)
@@ -75,6 +76,13 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 * Fault injection, where after X good responses on the same URI your web service gets a bad one
 * Verify that your code makes HTTP requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP response error codes
+
+[Back to top](#table-of-contents)
+
+## In the Press
+
+* https://alexanderzagniotov.medium.com/testing-microservices-in-docker-and-docker-compose-4dd54b02bd1c
+* https://blog.solutotlv.com/integration-tests-fake-it-till-you-make-it/
 
 [Back to top](#table-of-contents)
 
