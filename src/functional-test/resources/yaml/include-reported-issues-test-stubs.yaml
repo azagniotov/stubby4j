@@ -165,18 +165,3 @@
       content-type: application/xml
     status: 201
     file: ../xml/response/xml_response_3.xml
-
-# https://stackoverflow.com/questions/69025268/using-stubby-multiple-responses-for-the-same-patch-request-endpoint
-- request:
-    method: PATCH
-    url: ^/stackoverflow/api/test
-    headers:
-      content-type: application/json
-    post: >
-      {"testVar": "(.*)"}
-
-  response:
-    headers:
-      content-type: application/json
-    status: 200
-    file: ../json/response/json_response_<% post.1 %>.json

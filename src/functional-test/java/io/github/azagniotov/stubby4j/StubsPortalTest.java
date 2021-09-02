@@ -1335,39 +1335,4 @@ public class StubsPortalTest {
         assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
         assertThat("rule_1").isEqualTo(responseTwoContentAsString);
     }
-
-    // https://stackoverflow.com/questions/69025268/using-stubby-multiple-responses-for-the-same-patch-request-endpoint
-    @Test
-    public void stubby4jStackOverFlowQuestion69025268() throws Exception {
-
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/stackoverflow/api/test");
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(HEADER_APPLICATION_JSON);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Making request#1 which matches resources/json/response/json_response_2.json
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        final String contentOne = "{\"testVar\": \"2\"}";
-        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.PATCH, requestUrl, contentOne);
-
-        requestOne.setHeaders(httpHeaders);
-        final HttpResponse responseOne = requestOne.execute();
-        final String responseOneContentAsString = responseOne.parseAsString().trim();
-
-        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("OK").isEqualTo(responseOneContentAsString);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Making request#2 which matches resources/json/response/json_response_3.json
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        final String contentTwo = "{\"testVar\": \"3\"}";
-        final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.PATCH, requestUrl, contentTwo);
-
-        requestTwo.setHeaders(httpHeaders);
-        final HttpResponse responseTwo = requestTwo.execute();
-        final String responseTwoContentAsString = responseTwo.parseAsString().trim();
-
-        assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("Still going strong!").isEqualTo(responseTwoContentAsString);
-    }
 }
