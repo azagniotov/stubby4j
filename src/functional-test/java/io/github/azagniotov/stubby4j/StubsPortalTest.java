@@ -1199,6 +1199,7 @@ public class StubsPortalTest {
         assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
     }
 
+    // Originally fixed in: https://github.com/azagniotov/stubby4j/pull/126
     @Test
     public void stubby4jIssue93_WithBody() throws Exception {
 
@@ -1217,6 +1218,7 @@ public class StubsPortalTest {
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
     }
 
+    // Originally fixed in: https://github.com/azagniotov/stubby4j/pull/126
     @Test
     public void stubby4jIssue93_WithoutBody() throws Exception {
 
