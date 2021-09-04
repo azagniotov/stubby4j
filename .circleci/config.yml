@@ -18,16 +18,16 @@ base_environment: &base_environment
     TERM: dumb
 
 
-gradle_6_8_3_jdk8_environment: &gradle_6_8_3_jdk8_environment
+gradle_6_9_1_jdk8_environment: &gradle_6_9_1_jdk8_environment
   <<: *base_environment
   docker:
-    - image: gradle:6.8.3-jdk8-openj9@sha256:9a6af40de81c839063ebd767523ad3bf3b0a4d449101a7c1e354b3233a97eeaa
+    - image: gradle:6.9.1-jdk8-openj9@sha256:1b0d52fa0ed940134d9a874702bec64427a9fc4e0a0a2f943b4af08f0f83ec2b
 
 
-gradle_6_8_3_jdk11_environment: &gradle_6_8_3_jdk11_environment
+gradle_6_9_1_jdk11_environment: &gradle_6_9_1_jdk11_environment
   <<: *base_environment
   docker:
-    - image: gradle:6.8.3-jdk11-openj9@sha256:3608d73c73897f0919c942012a299eb66be9c113fba3324c0bbcb0fae69f548e
+    - image: gradle:6.9.1-jdk11-openj9@sha256:255e918a53b408def76046885308bb98ab3f42dc4db856d932e48d2ef81e64a4
 
 
 gradle_6_8_3_jdk15_environment: &gradle_6_8_3_jdk15_environment
@@ -175,18 +175,18 @@ build_push_image_steps: &build_push_image_steps
 #############################################################################################
 jobs:
 
-  gradle_6_8_3_jdk8:
-    <<: *gradle_6_8_3_jdk8_environment
+  gradle_6_9_1_jdk8:
+    <<: *gradle_6_9_1_jdk8_environment
     <<: *default_steps
 
 
-  gradle_6_8_3_jdk8_code_coverage:
-    <<: *gradle_6_8_3_jdk8_environment
+  gradle_6_9_1_jdk8_code_coverage:
+    <<: *gradle_6_9_1_jdk8_environment
     <<: *code_coverage_steps
 
 
-  gradle_6_8_3_jdk11:
-    <<: *gradle_6_8_3_jdk11_environment
+  gradle_6_9_1_jdk11:
+    <<: *gradle_6_9_1_jdk11_environment
     <<: *default_steps
 
 
@@ -237,23 +237,23 @@ workflows:
 
   master-jdk8:
     jobs:
-      - gradle_6_8_3_jdk8:
+      - gradle_6_9_1_jdk8:
           <<: *filter_only_master
 
 
   branch-jdk8:
     jobs:
-      - gradle_6_8_3_jdk8:
+      - gradle_6_9_1_jdk8:
           <<: *filter_ignore_master
-      - gradle_6_8_3_jdk8_code_coverage:
+      - gradle_6_9_1_jdk8_code_coverage:
           <<: *filter_ignore_master
           requires:
-            - gradle_6_8_3_jdk8
+            - gradle_6_9_1_jdk8
 
 
   branch-jdk11:
     jobs:
-      - gradle_6_8_3_jdk11:
+      - gradle_6_9_1_jdk11:
           <<: *filter_ignore_master
 
 
@@ -269,11 +269,11 @@ workflows:
           cron: "10 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_6_8_3_jdk8
+      - gradle_6_9_1_jdk8
       - docker_build_latest_jre8:
           <<: *context_docker_hub
           requires:
-            - gradle_6_8_3_jdk8
+            - gradle_6_9_1_jdk8
 
 
   master-twelve-hour-jdk11:
@@ -282,11 +282,11 @@ workflows:
           cron: "15 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_6_8_3_jdk11
+      - gradle_6_9_1_jdk11
       - docker_build_latest_jre11:
           <<: *context_docker_hub
           requires:
-            - gradle_6_8_3_jdk11
+            - gradle_6_9_1_jdk11
 
 
   master-twelve-hour-jdk15:

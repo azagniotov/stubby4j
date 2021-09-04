@@ -203,7 +203,7 @@ See [docker-compose.yml](docker/docker-compose.yml)
 [Back to top](#table-of-contents)
 
 ## Building
-stubby4j is a multi source-set Gradle `v6.8.3` project
+stubby4j is a multi source-set Gradle `v6.9.1` project
 
 Run `./gradlew` command to:
 * Clean
