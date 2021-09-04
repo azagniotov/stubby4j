@@ -2,6 +2,8 @@
 
 #### 7.3.4-SNAPSHOT
 
+* PR [#284](https://github.com/azagniotov/stubby4j/pull/284) - During YAML parsing, checking if configured properties belong in their respective top-level objects (https://github.com/azagniotov)
+
 #### 7.3.3
 
 * PR [#272](https://github.com/azagniotov/stubby4j/pull/272) - Added `log4j2` support to Docker images. `stubby4j` container application now emits file-based logs under `logs` (https://github.com/azagniotov)

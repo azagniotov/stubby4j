@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -152,6 +153,10 @@ public class StubProxyConfig implements ReflectableStub {
             return this;
         }
 
+        @Override
+        public String yamlFamilyName() {
+            return ConfigurableYAMLProperty.PROXY_CONFIG.toString();
+        }
 
         @Override
         public StubProxyConfig build() {
