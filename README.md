@@ -1443,7 +1443,7 @@ For instance, the following will match any `POST` request to the root url:
 
 The request could have any headers and any post body it wants. It will match the above.
 
-Pseudocode ([StubRepository#matchStub](src/main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L128)):
+Pseudocode ([StubRepository#matchStub](https://github.com/azagniotov/stubby4j/blob/75ae8e8ad7e0a75cf87ff710cfeff2d46a154096/src/main/java/io/github/azagniotov/stubby4j/stubs/StubRepository.java#L184)):
 
 ```javascript
     if (<incoming request>.hashCode found in <local cache>) {
