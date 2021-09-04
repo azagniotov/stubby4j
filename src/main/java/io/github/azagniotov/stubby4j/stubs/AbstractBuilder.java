@@ -25,5 +25,7 @@ public abstract class AbstractBuilder<T extends ReflectableStub> {
         fieldValueOptional.ifPresent(value -> fieldNameAndValues.put(fieldName, value));
     }
 
+    public abstract String yamlFamilyName();
+
     public abstract T build();
 }

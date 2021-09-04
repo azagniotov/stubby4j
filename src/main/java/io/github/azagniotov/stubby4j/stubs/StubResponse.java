@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpStatus.Code;
 
 import java.io.File;
@@ -192,6 +193,11 @@ public class StubResponse implements ReflectableStub {
             this.headers = headers;
 
             return this;
+        }
+
+        @Override
+        public String yamlFamilyName() {
+            return ConfigurableYAMLProperty.RESPONSE.toString();
         }
 
         @Override

@@ -120,6 +120,82 @@ public class YamlParserTest {
     }
 
     @Test
+    public void shouldThrow_WhenResponseYAMLContainsPropertyThatDoesNotBelong() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Invalid property 'post' configured. This property does not belong in object 'response'");
+
+        final String yaml =
+                "-  request:\n" +
+                        "      method: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      post: 200\n" +
+                        "      status: 200";
+
+        unmarshall(yaml);
+    }
+
+    @Test
+    public void shouldThrow_WhenRequestYAMLContainsPropertyThatDoesNotBelong() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Invalid property 'status' configured. This property does not belong in object 'request'");
+
+        final String yaml =
+                "-  description: This is a stub\n" +
+                        "   uuid: abc-123-def-456\n" +
+                        "   request:\n" +
+                        "      method: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "      status: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      body: OK\n" +
+                        "      status: 200";
+
+        unmarshall(yaml);
+    }
+
+    @Test
+    public void shouldThrow_WhenHttpLifeCycleYAMLContainsPropertyThatDoesNotBelong() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Invalid property 'method' configured. This property cannot be configured above the 'request'");
+
+        final String yaml =
+                "-  description: This is a stub\n" +
+                        "   uuid: abc-123-def-456\n" +
+                        "   method: does-not-belong\n" +
+                        "   request:\n" +
+                        "      method: [PUT]\n" +
+                        "      url: /invoice\n" +
+                        "\n" +
+                        "   response:\n" +
+                        "      body: OK\n" +
+                        "      status: 200";
+
+        unmarshall(yaml);
+    }
+
+    @Test
+    public void shouldThrow_WhenProxyConfigYAMLContainsPropertyThatDoesNotBelong() throws Exception {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Invalid property 'file' configured. This property does not belong in object 'proxy-config'");
+
+        final String yaml =
+                "- proxy-config:\n" +
+                        "    uuid: some-unique-name\n" +
+                        "    description: this is our first proxy\n" +
+                        "    strategy: additive\n" +
+                        "    file: ../json/payload.json\n" +
+                        "    headers:\n" +
+                        "      x-original-stubby4j-custom-header: custom/value\n" +
+                        "    properties:\n" +
+                        "      endpoint: https://jsonplaceholder.typicode.com";
+
+        unmarshall(yaml);
+    }
+
+    @Test
     public void shouldUnmarshall_WhenYAMLValid_WithNoProperties() throws Exception {
 
         final String yaml = yamlBuilder

@@ -7,6 +7,7 @@ import io.github.azagniotov.stubby4j.utils.CollectionUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import org.eclipse.jetty.http.HttpMethod;
 
 import java.io.File;
@@ -382,6 +383,11 @@ public class StubRequest implements ReflectableStub {
             this.query.putAll(query);
 
             return this;
+        }
+
+        @Override
+        public String yamlFamilyName() {
+            return ConfigurableYAMLProperty.REQUEST.toString();
         }
 
         @Override

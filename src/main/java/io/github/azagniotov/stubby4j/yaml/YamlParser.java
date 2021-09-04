@@ -42,12 +42,14 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.objectToString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.trimIfSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DESCRIPTION;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HTTPLIFECYCLE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.METHOD;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.REQUEST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.RESPONSE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STRATEGY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.UUID;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.fromString;
+import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownFamilyProperty;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.isUnknownProperty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -200,6 +202,8 @@ public class YamlParser {
 
             } else if (stubTypeValue instanceof List) {
                 parseStubbedResponseListConfig(stubBuilder, stubType);
+            } else {
+                checkStubbedProperty(stubTypeKey, HTTPLIFECYCLE.toString());
             }
         }
 
@@ -231,7 +235,7 @@ public class YamlParser {
         for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
 
             final String stageableFieldName = propertyPair.getKey();
-            checkStubbedProperty(stageableFieldName);
+            checkStubbedProperty(stageableFieldName, stubTypeBuilder.yamlFamilyName());
 
             final Object rawFieldNameValue = propertyPair.getValue();
             if (rawFieldNameValue instanceof List) {
@@ -290,7 +294,7 @@ public class YamlParser {
             final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
             for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
-                checkStubbedProperty(stageableFieldName);
+                checkStubbedProperty(stageableFieldName, RESPONSE.toString());
 
                 if (FILE.isA(stageableFieldName)) {
                     final Optional<Object> fileContentOptional = loadFileContentFromFileUrl(propertyPair.getValue());
@@ -369,9 +373,15 @@ public class YamlParser {
                 ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
     }
 
-    private void checkStubbedProperty(String stageableFieldName) {
+    private void checkStubbedProperty(final String stageableFieldName, final String propertyFamilyName) {
         if (isUnknownProperty(stageableFieldName)) {
             throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
+        } else if (isUnknownFamilyProperty(stageableFieldName, propertyFamilyName)) {
+            if (propertyFamilyName.equals(HTTPLIFECYCLE.toString())) {
+                throw new IllegalStateException(String.format("Invalid property '%s' configured. This property cannot be configured above the 'request'", stageableFieldName));
+            } else {
+                throw new IllegalStateException(String.format("Invalid property '%s' configured. This property does not belong in object '%s'", stageableFieldName, propertyFamilyName));
+            }
         }
     }
 }
