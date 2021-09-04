@@ -12,6 +12,17 @@
 - request:
     method: PATCH
     url: /azagniotov/stubby4j/issues/93
+    post: "This is a PATCH update"
+
+  response:
+    headers:
+      content-type: application/json
+    status: 201
+
+
+- request:
+    method: PATCH
+    url: /azagniotov/stubby4j/issues/93
 
   response:
     status: 200

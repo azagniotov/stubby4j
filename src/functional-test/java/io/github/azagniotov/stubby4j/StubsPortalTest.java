@@ -1201,7 +1201,7 @@ public class StubsPortalTest {
 
     // Originally fixed in: https://github.com/azagniotov/stubby4j/pull/126
     @Test
-    public void stubby4jIssue93_WithBody() throws Exception {
+    public void stubby4jIssue93_WithRequestFilePayloadWithoutResponseBody() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
 
@@ -1216,11 +1216,32 @@ public class StubsPortalTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+        assertThat(response.parseAsString().trim()).isEmpty();
     }
 
     // Originally fixed in: https://github.com/azagniotov/stubby4j/pull/126
     @Test
-    public void stubby4jIssue93_WithoutBody() throws Exception {
+    public void stubby4jIssue93_WithRequestBodyPayloadWithoutResponseBody() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
+
+        final String content = "This is a PATCH update";
+        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
+
+        final HttpResponse response = request.execute();
+        final HttpHeaders headers = response.getHeaders();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
+        assertThat(response.parseAsString().trim()).isEmpty();
+    }
+
+    // Originally fixed in: https://github.com/azagniotov/stubby4j/pull/126
+    @Test
+    public void stubby4jIssue93_WithoutRequestPayloadWithResponseBody() throws Exception {
+
+        // This stub is defined last in the series of stubs for the URI '/azagniotov/stubby4j/issues/93',
+        // since its 'request' object has the least number of properties to match, a-la a 'catch-all' stub
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
 
