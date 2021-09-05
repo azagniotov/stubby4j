@@ -79,7 +79,7 @@ See https://github.com/azagniotov/stubby4j#command-line-switches for more inform
 
 ## Starting a `stubby4j` instance
 
-Please note that in all `stubby4j` Docker images, the `UID`/`GID` `1007` (user `stubby4j` & group `stubby4j`) is set before the `ENTRYPOINT` instruction to avoid running the service as root.
+Please note that in all `stubby4j` Docker images, the `UID`/`GID` `1001` (user `stubby4j` & group `stubby4j`) is set before the `ENTRYPOINT` instruction to avoid running the service as root.
 
 ### Basic command
 

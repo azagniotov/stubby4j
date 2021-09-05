@@ -44,8 +44,8 @@ ENV YAML_CONFIG="main.yaml"
 ENV STUBBY4J_USER_HOME=/home/stubby4j
 
 # Users & permissions, docs: https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
-RUN addgroup --system --gid 1000 stubby4j && \
-      adduser --system --uid 1000 stubby4j --shell /bin/bash --home "$STUBBY4J_USER_HOME" && \
+RUN addgroup --system --gid 1001 stubby4j && \
+      adduser --system --uid 1001 stubby4j --shell /bin/bash --home "$STUBBY4J_USER_HOME" && \
       chown --recursive stubby4j:stubby4j "$STUBBY4J_USER_HOME"
 
 WORKDIR "$STUBBY4J_USER_HOME"
@@ -57,8 +57,10 @@ RUN chown stubby4j:stubby4j stubby4j.jar && \
     java -version && \
     ls -al
 
-# Set the UID and GID to stubby4j for the ENTRYPOINT instructions
-USER stubby4j:stubby4j
+# Set the UID and GID of 'stubby4j' for the ENTRYPOINT instructions,
+# because root inside the container == root outside the container,
+# since there’s a single kernel and a single, shared pool of UIDs and GIDs.
+USER 1001:1001
 
 # Mark the 'data' directory as volume
 VOLUME "$STUBBY4J_USER_HOME/data"
