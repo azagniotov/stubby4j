@@ -1,0 +1,14 @@
+- uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+  description: stubby4j sanity smoke test for Docker compose in CircleCI
+  request:
+    method: GET
+    headers:
+      content-type: application/json
+    url: /tests/smoke-test/1
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      OK

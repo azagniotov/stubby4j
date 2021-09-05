@@ -17,7 +17,6 @@ base_environment: &base_environment
     JVM_OPTS: -Xmx3200m
     TERM: dumb
 
-
 gradle_6_9_1_jdk8_environment: &gradle_6_9_1_jdk8_environment
   <<: *base_environment
   docker:
@@ -170,10 +169,44 @@ build_push_image_steps: &build_push_image_steps
         command: docker push azagniotov/stubby4j
 
 
+smoke_test_in_docker_compose_steps: &smoke_test_in_docker_compose_steps
+  steps:
+    - checkout
+    - run:
+        name: Start stubby4j container
+        # The `docker-compose up` command aggregates the output of each container. When
+        # the command exits, all containers are stopped. Running `docker-compose up -d`
+        # starts the containers in the background and leaves them running.
+        command: |
+          cd /home/circleci/project/docker/smoke-test && docker-compose up -d
+
+    - run:
+        # ubuntu-2004:202107-02 uses 'ash' shell, not 'bash'
+        name: Make cURL request to the stubby4j container
+        command: |
+          sleep 1
+          smoke_test_response=$(curl --silent  -X GET -H "Content-Type: application/json" http://localhost:8882/tests/smoke-test/1)
+
+          if [ "$smoke_test_response" != "OK" ]
+          then
+            echo "Got response $smoke_test_response from stubby4j container, failing ... "
+            exit 1
+          else
+            echo "Smoke tests passed!"
+            exit 0
+          fi
+
 #############################################################################################
 ## Jobs definition
 #############################################################################################
 jobs:
+
+  smoke_test_in_docker:
+    # When docker-compose file shares local directories with a container, 'machine' executor will work as expected.
+    machine:
+      # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      image: ubuntu-2004:202107-02
+    <<: *smoke_test_in_docker_compose_steps
 
   gradle_6_9_1_jdk8:
     <<: *gradle_6_9_1_jdk8_environment
@@ -241,6 +274,12 @@ workflows:
           <<: *filter_only_master
 
 
+  smoke-test:
+    jobs:
+      - smoke_test_in_docker:
+          <<: *filter_only_master
+
+
   branch-jdk8:
     jobs:
       - gradle_6_9_1_jdk8:
@@ -261,7 +300,6 @@ workflows:
     jobs:
       - gradle_6_8_3_jdk15:
           <<: *filter_ignore_master
-
 
   master-twelve-hour-jdk8:
     triggers:
