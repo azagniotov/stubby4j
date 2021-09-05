@@ -4,7 +4,7 @@
 version: '3.5'
 services:
   stubby4j:
-    # 'root' - so that stubby4j can write 'logs' into volume '/home/stubby4j/data'
+    # 'root' - so that stubby4j can write 'logs' into host machine's directory mapped to container volume
     user: root
     image: azagniotov/stubby4j:latest-jre8
     # '/home/circleci/project/docker/smoke-test/yaml' - local path on Circle CI 'machine' type executor
