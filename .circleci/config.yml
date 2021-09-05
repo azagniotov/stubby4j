@@ -305,6 +305,16 @@ workflows:
       - gradle_6_8_3_jdk15:
           <<: *filter_ignore_master
 
+
+  master-twelve-hour-smoke-test:
+    triggers:
+      - schedule:
+          cron: "5 7,19 * * *"
+          <<: *filter_only_master
+    jobs:
+      - smoke_test_in_docker
+
+
   master-twelve-hour-jdk8:
     triggers:
       - schedule:
