@@ -29,38 +29,46 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
 # https://hub.docker.com/r/azul/zulu-openjdk-alpine
 FROM azul/zulu-openjdk-alpine:8u282-8.52.0.23-jre-headless@sha256:91fe8ae651d5c778312e946e89f934240c2a80f55b7ca894d76daef8f5281375
 
+ARG USER_ID=1001
+ARG GROUP_ID=1001
+
 MAINTAINER Alexander Zagniotov <azagniotov@gmail.com>
 
 # Why --location=0.0.0.0 ??? Read: https://stackoverflow.com/a/59182290
-ENV LOCATION=0.0.0.0
-ENV STUBS_PORT=8882
-ENV STUBS_TLS_PORT=7443
-ENV ADMIN_PORT=8889
-ENV WITH_DEBUG=""
-ENV WITH_WATCH=""
-ENV WITH_STUB_CACHE_DISABLED=""
-ENV YAML_CONFIG="main.yaml"
-
-ENV STUBBY4J_USER_HOME=/home/stubby4j
+ENV LOCATION=0.0.0.0 \
+    STUBS_PORT=8882 \
+    STUBS_TLS_PORT=7443 \
+    ADMIN_PORT=8889 \
+    WITH_DEBUG="" \
+    WITH_WATCH="" \
+    WITH_STUB_CACHE_DISABLED="" \
+    YAML_CONFIG="main.yaml" \
+    STUBBY4J_USER_HOME=/home/stubby4j
 
 # Users & permissions, docs: https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user
-RUN addgroup --system --gid 1001 stubby4j && \
-      adduser --system --uid 1001 stubby4j --shell /bin/bash --home "$STUBBY4J_USER_HOME" && \
-      chown --recursive stubby4j:stubby4j "$STUBBY4J_USER_HOME"
+RUN addgroup --system --gid $GROUP_ID stubby4j && \
+    adduser \
+        --system \
+        --disabled-password \
+        --gecos '' \
+        --uid $USER_ID stubby4j \
+        --shell /bin/bash \
+        --home "$STUBBY4J_USER_HOME" && \
+    chown --recursive stubby4j:stubby4j "$STUBBY4J_USER_HOME"
 
 WORKDIR "$STUBBY4J_USER_HOME"
 
 COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
 COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/docker/log4j2-for-docker.xml ./log4j2.xml
-RUN chown stubby4j:stubby4j stubby4j.jar && \
-    chown stubby4j:stubby4j log4j2.xml && \
+RUN chown $USER_ID:$GROUP_ID stubby4j.jar && \
+    chown $USER_ID:$GROUP_ID log4j2.xml && \
     java -version && \
     ls -al
 
 # Set the UID and GID of 'stubby4j' for the ENTRYPOINT instructions,
 # because root inside the container == root outside the container,
 # since there’s a single kernel and a single, shared pool of UIDs and GIDs.
-USER 1001:1001
+USER $USER_ID:$GROUP_ID
 
 # Mark the 'data' directory as volume
 VOLUME "$STUBBY4J_USER_HOME/data"
