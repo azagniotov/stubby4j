@@ -289,11 +289,11 @@ jobs:
     <<: *build_push_image_steps
 
 
-  docker_build_latest_jre15:
+  docker_build_latest_jre16:
     parameters:
       jdk_version:
         type: string
-        default: "15"
+        default: "16"
     <<: *docker_in_docker_environment
     <<: *build_push_image_steps
 
@@ -385,7 +385,7 @@ workflows:
     jobs:
       - gradle_7_0_2_jdk16:
           <<: *context_sonatype
-      - docker_build_latest_jre15:
+      - docker_build_latest_jre16:
           <<: *context_docker_hub
           requires:
             - gradle_7_0_2_jdk16
