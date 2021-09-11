@@ -110,9 +110,9 @@ publish_snapshot_steps: &publish_snapshot_steps
     - run:
         name: Publish SNAPSHOT artifacts to OSS Sonatype snapshots repository
         command: |
-          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
-          echo ":::     ATTENTION:\tThe SNAPSHOT artifacts will not be signed by GPG\n"
-          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+          echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
+          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
           gradle publish
         when: on_success
 
