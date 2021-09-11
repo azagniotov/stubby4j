@@ -30,6 +30,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Logging](#logging)
 * [Third-party dependencies](#third-party-dependencies)
 * [Adding stubby4j to your project](#adding-stubby4j-to-your-project)
+   * [Adding stubby4j SNAPSHOT versions to your project](#adding-stubby4j-snapshot-versions-to-your-project)
    * [Installing stubby4j to local .m2 repository](#installing-stubby4j-to-local-m2-repository)
 * [Command-line switches](#command-line-switches)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
@@ -203,7 +204,7 @@ See smoke test [docker/smoke-test/docker-compose.yml](docker/smoke-test/docker-c
 [Back to top](#table-of-contents)
 
 ## Building
-stubby4j is a multi source-set Gradle `v6.9.1` project
+stubby4j is a multi source-set Gradle `v7.0.2` project
 
 Run `./gradlew` command to:
 * Clean
@@ -243,22 +244,24 @@ Please refer to https://hub.docker.com/r/azagniotov/stubby4j `Container applicat
 [Back to top](#table-of-contents)
 
 ## Adding stubby4j to your project
+
 The following are the stubby4j artifacts that are hosted on [Maven Central][maven-link]:
 
 * `stubby4j-x.x.x.jar` - an `uber/fat` JAR containing all the 3rd-party deps
 * `stubby4j-x.x.x-no-dependencies.jar` - a `skinny` JAR containing no 3rd-party dependencies at all
-* `stubby4j-x.x.x-no-jetty.jar` - an `uber-ish` JAR containing all the 3rd-party deps __except__ Jetty binaries
+* `stubby4j-x.x.x-no-jetty.jar` - an `uber-ish` JAR containing all stubby4j's 3rd-party deps __except__ the Jetty binaries
 * `stubby4j-x.x.x-sources.jar`
 * `stubby4j-x.x.x-javadoc.jar`
 
 #### Gradle
-```xml
-compile("io.github.azagniotov:stubby4j:7.3.3")
-```
-or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
-```xml
-compile("io.github.azagniotov:stubby4j:7.3.3:no-jetty")
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.3")
+```
+additionally, by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
+
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.3:no-jetty")
 ```
 
 #### Maven
@@ -269,7 +272,7 @@ compile("io.github.azagniotov:stubby4j:7.3.3:no-jetty")
     <version>7.3.3</version>
 </dependency>
 ```
-or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
+additionally, by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`, i.e.:
 
 ```xml
 <dependency>
@@ -280,21 +283,47 @@ or by adding a `classifier` to the JAR name like `no-dependencies` or `no-jetty`
 </dependency>
 ```
 
+### Adding stubby4j SNAPSHOT versions to your project
+
+stubby4j `SNAPSHOT` versions are built and uploaded to OSS Sonatype snapshots repository. Please make sure that Sonatype's snapshot repository is configured in your project, e.g.: in Gradle:
+
+```groovy
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+```
+
+Now you can include stubby4j `SNAPSHOT` artifacts in your project:
+
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.4-SNAPSHOT")
+```
+additionally, by adding a `classifier` to the JAR name like `no-dependencies`s or `no-jetty`, i.e.:
+
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.4-SNAPSHOT:no-jetty")
+```
+
+
+
 ### Installing stubby4j to local .m2 repository
 
-Run `./gradlew installToMavenLocal` command to:
+Run `./gradlew clean build publishToMavenLocal` command to:
 
 * Install `stubby4j-7.3.4-SNAPSHOT*.jar` to local `~/.m2/repository`
-* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.3.3-SNAPSHOT/`
+* All the artifacts will be installed under `~/.m2/repository/{groupId}/{artifactId}/{version}/`, e.g.: `~/.m2/repository/io/github/azagniotov/stubby4j/7.3.4-SNAPSHOT/`
 
 Now you can include locally installed stubby4j `SNAPSHOT` artifacts in your project:
-```xml
-compile("io.github.azagniotov:stubby4j:7.3.3-SNAPSHOT")
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.4-SNAPSHOT")
 ```
-or by adding a `classifier` to the JAR name like `no-dependencie`s or `no-jetty`, i.e.:
 
-```xml
-compile("io.github.azagniotov:stubby4j:7.3.3-SNAPSHOT:no-jetty")
+additionally, by adding a `classifier` to the JAR name like `no-dependencies`s or `no-jetty`, i.e.:
+
+```groovy
+api("io.github.azagniotov:stubby4j:7.3.4-SNAPSHOT:no-jetty")
 ```
 
 [Back to top](#table-of-contents)
