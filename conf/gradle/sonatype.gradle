@@ -57,16 +57,16 @@ afterEvaluate {
 
                 def message = "\n"
                 message += "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
-                message += ":::     ------------------------------------------\n"
+                message += ":::     --------------------------------------------------\n"
 
                 if (project.ext.isReleaseVersion) {
-                    message += ":::     ATTENTION:\tSTAGING A RELEASE VERSION\n"
+                    message += ":::     ATTENTION:\t\tSTAGING A RELEASE VERSION\n"
                 } else {
-                    message += ":::     ATTENTION:\tTHIS IS A SNAPSHOT VERSION\n"
+                    message += ":::     ATTENTION:\t\tTHIS IS A SNAPSHOT VERSION\n"
                 }
-                message += ":::     ------------------------------------------\n"
-                message += ":::     Publishing:\t${stubbyProjectName}-${stubbyProjectVersion}.jar\n"
-                message += ":::     Repository:\t$url\n"
+                message += ":::     --------------------------------------------------\n"
+                message += ":::     Version:\t\t${stubbyProjectName}-${stubbyProjectVersion}\n"
+                message += ":::     Target repository:\t$url\n"
                 message += "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
                 message += "\n"
                 println(message)
