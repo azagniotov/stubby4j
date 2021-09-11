@@ -103,8 +103,17 @@ publish_snapshot_steps: &publish_snapshot_steps
           echo "sonatypePassword=$sonatypePassword" >> /home/gradle/.gradle/gradle.properties
 
     - run:
-        name: Publish SNAPSHOT version to OSS Sonatype snapshots repository
-        command: gradle -PciRun clean build publish
+        name: Building artifacts
+        command: gradle -PciRun clean build
+        when: on_success
+
+    - run:
+        name: Publish SNAPSHOT artifacts to OSS Sonatype snapshots repository
+        command: |
+          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+          echo ":::     ATTENTION:\tThe SNAPSHOT artifacts will not be signed by GPG\n"
+          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+          gradle publish
         when: on_success
 
 
