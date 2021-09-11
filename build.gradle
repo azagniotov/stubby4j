@@ -1,6 +1,5 @@
-// https://blog.gradle.org/jcenter-shutdown
-// jcenter has/is shutting down, therefore the following
-// legacy plugin application config is forcing Gradle to look in Maven
+project.ext.isReleaseVersion = !"${stubbyProjectVersion}".endsWith("SNAPSHOT")
+
 buildscript {
     repositories {
         mavenLocal()
@@ -11,19 +10,17 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:3.0.1"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
-        classpath "com.bmuschko:gradle-nexus-plugin:2.3"
+        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:4.0.0"
     }
 }
 
 apply plugin: "java-library"
+apply plugin: "maven-publish"
+apply plugin: "signing"
 apply plugin: "idea"
 apply plugin: "eclipse"
 apply plugin: "jacoco"
 apply plugin: "org.unbroken-dome.test-sets"
-apply plugin: "com.bmuschko.nexus"
-apply plugin: "com.github.ben-manes.versions"
 
 
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
