@@ -97,6 +97,12 @@ pr_to_master_merge_branch_steps: &pr_to_master_merge_branch_steps
 publish_snapshot_steps: &publish_snapshot_steps
   steps:
     - run:
+        name: Configure Gradle to Sonatype authentication
+        command: |
+          echo "sonatypeUsername=$sonatypeUsername" > /home/gradle/.gradle/gradle.properties
+          echo "sonatypePassword=$sonatypePassword" >> /home/gradle/.gradle/gradle.properties
+
+    - run:
         name: Publish SNAPSHOT version to OSS Sonatype snapshots repository
         command: gradle -PciRun clean build publish
         when: on_success
