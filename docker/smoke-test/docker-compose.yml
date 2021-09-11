@@ -3,26 +3,6 @@
 # See "Environment variables" section at https://hub.docker.com/r/azagniotov/stubby4j
 version: '3.5'
 services:
-  stubby4j-jre11:
-    # 'root' - so that stubby4j can write 'logs' into host machine's directory mapped to container volume
-    user: root
-    image: azagniotov/stubby4j:latest-jre11
-    # '/home/circleci/project/docker/smoke-test/yaml' - local path on Circle CI 'machine' type executor
-    volumes:
-      - "/home/circleci/project/docker/smoke-test/yaml:/home/stubby4j/data"
-    container_name: stubby4j_jre11
-    ports:
-      - 8883:8883
-      - 8890:8890
-      - 7444:7444
-    environment:
-      YAML_CONFIG: smoke-tests-stubs.yaml
-      STUBS_PORT: 8883
-      ADMIN_PORT: 8890
-      STUBS_TLS_PORT: 7444
-      WITH_DEBUG: --debug
-      WITH_WATCH: --watch
-
   stubby4j-jre16:
     # 'root' - so that stubby4j can write 'logs' into host machine's directory mapped to container volume
     user: root
