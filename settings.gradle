@@ -1,4 +1,1 @@
 rootProject.name = 'stubby4j'
-
-// https://docs.gradle.org/6.9.1/userguide/single_versions.html
-enableFeaturePreview("VERSION_ORDERING_V2")

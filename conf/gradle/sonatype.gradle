@@ -1,63 +1,92 @@
-apply plugin: 'com.bmuschko.nexus'
+afterEvaluate {
 
-extraArchive {
-   sources = false
-   tests = false
-   javadoc = false
+    publishing {
+
+        publications {
+
+            mavenJava(MavenPublication) {
+
+                version = "$stubbyProjectVersion"
+                artifactId = "$stubbyProjectName"
+                groupId = "$stubbyProjectGroup"
+
+                artifact jar
+                artifact stubbyNoJettyJar
+                artifact stubbySkinnyJar
+                artifact stubbyJavadocJar
+                artifact stubbySourceJar
+
+                pom {
+                    name = 'stubby4j'
+                    description = 'A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol. It is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.'
+                    url = 'https://github.com/azagniotov/stubby4j'
+                    inceptionYear = '2012'
+                    packaging = 'jar'
+
+                    scm {
+                        url = 'https://github.com/azagniotov/stubby4j'
+                        connection = 'scm:https://azagniotov@github.com/azagniotov/stubby4j.git'
+                        developerConnection = 'scm:git://github.com/azagniotov/stubby4j.git'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://opensource.org/licenses/MIT'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'azagniotov'
+                            name = 'Alexander Zagniotov'
+                            email = 'azagniotov@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+
+                def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+                url = project.ext.isReleaseVersion ? releaseRepo : snapshotRepo
+
+                def message = "\n"
+                message += "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
+                message += ":::     ------------------------------------------\n"
+
+                if (project.ext.isReleaseVersion) {
+                    message += ":::     ATTENTION:\tSTAGING A RELEASE VERSION\n"
+                } else {
+                    message += ":::     ATTENTION:\tTHIS IS A SNAPSHOT VERSION\n"
+                }
+                message += ":::     ------------------------------------------\n"
+                message += ":::     Publishing:\t${stubbyProjectName}-${stubbyProjectVersion}.jar\n"
+                message += ":::     Repository:\t$url\n"
+                message += "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+                message += "\n"
+                println(message)
+
+                credentials {
+                    username = project.hasProperty('sonatypeUsername') ? "$sonatypeUsername" : "Property 'sonatypeUsername' is undefined"
+                    password = project.hasProperty('sonatypePassword') ? "$sonatypePassword" : "Property 'sonatypePassword' is undefined"
+                }
+            }
+        }
+    }
 }
 
-uploadArchives {
 
-   doFirst {
-      def doSign = !"${stubbyProjectVersion}".contains('SNAPSHOT')
-      if (!doSign) {
-         def error = "\n"
-         error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n"
-         error += ":::     ATTENTION: Latest development version is ${stubbyProjectVersion}     :::\n"
-         error += ":::         Remove the '-SNAPSHOT' before signing artifacts         :::\n"
-         error += ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-         error += "\n"
-         throw new GradleException(error)
-      }
-   }
-
-   repositories {
-      mavenDeployer {
-         pom.version = "$stubbyProjectVersion"
-         pom.artifactId = "$stubbyProjectName"
-         pom.groupId = "$stubbyProjectGroup"
-         modifyPom {
-            project {
-               name 'stubby4j'
-               description 'A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol. It is an HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract & behavior testing.'
-               url 'https://github.com/azagniotov/stubby4j'
-               inceptionYear '2012'
-               packaging 'jar'
-
-               scm {
-                  url 'https://github.com/azagniotov/stubby4j'
-                  connection 'scm:https://azagniotov@github.com/azagniotov/stubby4j.git'
-                  developerConnection 'scm:git://github.com/azagniotov/stubby4j.git'
-               }
-
-               licenses {
-                  license {
-                      name 'MIT'
-                      url 'https://opensource.org/licenses/MIT'
-                      distribution 'repo'
-                  }
-               }
-
-               developers {
-                  developer {
-                      id 'azagniotov'
-                      name 'Alexander Zagniotov'
-                      email 'azagniotov@gmail.com'
-                  }
-               }
-            }
-         }
-      }
-   }
+signing {
+    afterEvaluate {
+        required {
+            project.ext.isReleaseVersion && !gradle.taskGraph.hasTask("publishToMavenLocal")
+        }
+        sign publishing.publications.mavenJava
+    }
 }
 
