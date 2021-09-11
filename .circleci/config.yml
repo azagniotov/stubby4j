@@ -23,6 +23,11 @@ context_docker_hub: &context_docker_hub
     - Docker-Hub-Credentials
 
 
+context_sonatype: &context_sonatype
+  context:
+    - Sonatype-Credentials
+
+
 docker_in_docker_environment: &docker_in_docker_environment
   <<: *base_environment
   docker:
@@ -297,6 +302,7 @@ workflows:
   master-jdk8:
     jobs:
       - gradle_7_0_2_jdk8:
+          <<: *context_sonatype
           <<: *filter_only_master
 
 
@@ -343,7 +349,8 @@ workflows:
           cron: "10 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk8
+      - gradle_7_0_2_jdk8:
+          <<: *context_sonatype
       - docker_build_latest_jre8:
           <<: *context_docker_hub
           requires:
@@ -356,20 +363,22 @@ workflows:
           cron: "15 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk11
+      - gradle_7_0_2_jdk11:
+          <<: *context_sonatype
       - docker_build_latest_jre11:
           <<: *context_docker_hub
           requires:
             - gradle_7_0_2_jdk11
 
 
-  master-twelve-hour-jdk15:
+  master-twelve-hour-jdk16:
     triggers:
       - schedule:
           cron: "20 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk16
+      - gradle_7_0_2_jdk16:
+          <<: *context_sonatype
       - docker_build_latest_jre15:
           <<: *context_docker_hub
           requires:
