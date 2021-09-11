@@ -37,7 +37,9 @@ See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for mor
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 15
 * [`7.3.3-jre15`](https://github.com/azagniotov/stubby4j/blob/v7.3.3/docker/jdk15/Dockerfile)
-* [`latest-jre15`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk15/Dockerfile)
+
+#### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 16
+* [`latest-jre16`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk16/Dockerfile)
 
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />

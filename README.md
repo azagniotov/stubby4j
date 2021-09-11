@@ -148,7 +148,7 @@ stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4
 Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
 * [docker/jdk8](docker/jdk8)
 * [docker/jdk11](docker/jdk11)
-* [docker/jdk15](docker/jdk15)
+* [docker/jdk16](docker/jdk16)
 
 Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
 
