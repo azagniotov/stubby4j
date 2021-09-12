@@ -197,7 +197,7 @@ services:
 
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var under [Environment variables](https://hub.docker.com/r/azagniotov/stubby4j)) that you want to map to the container volume `/home/stubby4j/data`
 
-See smoke test [docker/smoke-test/docker-compose.yml](docker/smoke-test/docker-compose.yml) as a working example.
+See smoke test [docker/smoke-test/docker-compose-jre16.yml](docker/smoke-test/docker-compose-jre16.yml) as a working example.
 
 
 [Back to top](#table-of-contents)
