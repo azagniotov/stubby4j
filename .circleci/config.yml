@@ -233,56 +233,9 @@ smoke_test_in_docker_compose_steps: &smoke_test_in_docker_compose_steps
 
     - run:
         # ubuntu-2004:202107-02 uses 'ash' shell, not 'bash'
-        name: Make cURL request to the stubby4j JRE 8, 11 & 16 containers
+        name: Make cURL request to the stubby4j JRE 16 container
         command: |
-          cd /home/circleci/project/docker/smoke-test
-
-          echo "Docker Compose is starting stubby4j JRE 8 container"
-          docker-compose up -f docker-compose-jre8.yml -d
           sleep 1
-
-          smoke_test_response=$(docker run \
-            --network container:stubby4j_jre8 appropriate/curl \
-            --retry 10 --retry-delay 1 --retry-connrefused --silent  \
-            -X GET -H "Content-Type: application/json" \
-            http://localhost:8884/tests/smoke-test/1)
-
-          if [ "$smoke_test_response" != "OK" ]
-          then
-            echo "Got response $smoke_test_response from stubby4j JRE 8 container, failing ... "
-            docker-compose down
-            exit 1
-          else
-            echo "stubby4j JRE 8 smoke tests passed!"
-            docker-compose down
-          fi
-
-          sleep 1
-          echo "Docker Compose is starting stubby4j JRE 11 container"
-          docker-compose up -f docker-compose-jre11.yml -d
-          sleep 1
-
-          smoke_test_response=$(docker run \
-            --network container:stubby4j_jre11 appropriate/curl \
-            --retry 10 --retry-delay 1 --retry-connrefused --silent  \
-            -X GET -H "Content-Type: application/json" \
-            http://localhost:8884/tests/smoke-test/1)
-
-          if [ "$smoke_test_response" != "OK" ]
-          then
-            echo "Got response $smoke_test_response from stubby4j JRE 11 container, failing ... "
-            docker-compose down
-            exit 1
-          else
-            echo "stubby4j JRE 11 smoke tests passed!"
-            docker-compose down
-          fi
-
-          sleep 1
-          echo "Docker Compose is starting stubby4j JRE 16 container"
-          docker-compose up -f docker-compose-jre16.yml -d
-          sleep 1
-
           smoke_test_response=$(docker run \
             --network container:stubby4j_jre16 appropriate/curl \
             --retry 10 --retry-delay 1 --retry-connrefused --silent  \
@@ -292,15 +245,11 @@ smoke_test_in_docker_compose_steps: &smoke_test_in_docker_compose_steps
           if [ "$smoke_test_response" != "OK" ]
           then
             echo "Got response $smoke_test_response from stubby4j JRE 16 container, failing ... "
-            docker-compose down
             exit 1
           else
             echo "stubby4j JRE 16 smoke tests passed!"
-            docker-compose down
+            exit 0
           fi
-
-          echo "Success! All stubby4j smoke tests passed!"
-          exit 0
 
 #############################################################################################
 ## Jobs definition
