@@ -10,7 +10,7 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:7.0.2-jdk16-openj9@sha256:e53668d3b02639a554a24991658a7dbbb380652fe8f530c09ee7e69991ecc69e AS BUILD_JAR_STAGE
+FROM gradle:7.2.0-jdk16-openj9@sha256:9620865af4f35026abfc9680603449296f832ea79da9a7f4e79d00989ccddcee AS BUILD_JAR_STAGE
 
 ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
