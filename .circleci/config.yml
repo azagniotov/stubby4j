@@ -37,19 +37,19 @@ docker_in_docker_environment: &docker_in_docker_environment
 gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.2.0-jre8-openj9@sha256:a0f5475ffc2ccfebc9e35867f8e1969125a19fc5cecf39f8e7233dc7006714a0
+    - image: gradle:7.2.0-jdk8-openj9@sha256:d4128edf5ac579f93e3149a9f89be3af779de1d3d85a9f25f25cb3d4b432b69a
 
 
 gradle_7_2_0_jdk11_environment: &gradle_7_2_0_jdk11_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.2.0-jre11-openj9@sha256:cc0df5e8a0f1523717ea6fbecc55653797c9765f6c7828260b36392d7914a0dc
+    - image: gradle:7.2.0-jdk11-openj9@sha256:6c628ab1edc7b733b4880804fcd27dc360fc350f333546924e64e3a34a009fa2
 
 
 gradle_7_2_0_jdk16_environment: &gradle_7_2_0_jdk16_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.2.0-jre16-openj9@sha256:9817369365b55e5b286321b344bc956ecd9a54929c4bd6f93be6a56572d6888b
+    - image: gradle:7.2.0-jdk16-openj9@sha256:9620865af4f35026abfc9680603449296f832ea79da9a7f4e79d00989ccddcee
 
 
 filter_only_master: &filter_only_master
