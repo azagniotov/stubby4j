@@ -204,7 +204,7 @@ See smoke test [docker/smoke-test/docker-compose.yml](docker/smoke-test/docker-c
 [Back to top](#table-of-contents)
 
 ## Building
-stubby4j is a multi source-set Gradle `v7.0.2` project
+stubby4j is a multi source-set Gradle `v7.2.0` project
 
 Run `./gradlew` command to:
 * Clean

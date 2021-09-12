@@ -34,22 +34,22 @@ docker_in_docker_environment: &docker_in_docker_environment
     - image: docker:20.10.8-alpine3.14@sha256:6ac2f3862aa1353a5fe6bf12439f3e56e695e56d7c3098898c96ef33eae78bf9
 
 
-gradle_7_0_2_jdk8_environment: &gradle_7_0_2_jdk8_environment
+gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.0.2-jdk8-openj9@sha256:9065a4a1d9004c9b32c5586c0dfdef960c10767c470533f11f2c6e3985af51b2
+    - image: gradle:7.2.0-jre8-openj9@sha256:a0f5475ffc2ccfebc9e35867f8e1969125a19fc5cecf39f8e7233dc7006714a0
 
 
-gradle_7_0_2_jdk11_environment: &gradle_7_0_2_jdk11_environment
+gradle_7_2_0_jdk11_environment: &gradle_7_2_0_jdk11_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.0.2-jdk11-openj9@sha256:7fe39a8ae7a2e4282a4f57248b18268efc96c858709820d2dcff1c2a5cf2c0e7
+    - image: gradle:7.2.0-jre11-openj9@sha256:cc0df5e8a0f1523717ea6fbecc55653797c9765f6c7828260b36392d7914a0dc
 
 
-gradle_7_0_2_jdk16_environment: &gradle_7_0_2_jdk16_environment
+gradle_7_2_0_jdk16_environment: &gradle_7_2_0_jdk16_environment
   <<: *base_environment
   docker:
-    - image: gradle:7.0.2-jdk16-openj9@sha256:e53668d3b02639a554a24991658a7dbbb380652fe8f530c09ee7e69991ecc69e
+    - image: gradle:7.2.0-jre16-openj9@sha256:9817369365b55e5b286321b344bc956ecd9a54929c4bd6f93be6a56572d6888b
 
 
 filter_only_master: &filter_only_master
@@ -265,23 +265,23 @@ jobs:
     resource_class: medium
     <<: *smoke_test_in_docker_compose_steps
 
-  gradle_7_0_2_jdk8:
-    <<: *gradle_7_0_2_jdk8_environment
+  gradle_7_2_0_jdk8:
+    <<: *gradle_7_2_0_jdk8_environment
     <<: *default_steps
 
 
-  gradle_7_0_2_jdk8_code_coverage:
-    <<: *gradle_7_0_2_jdk8_environment
+  gradle_7_2_0_jdk8_code_coverage:
+    <<: *gradle_7_2_0_jdk8_environment
     <<: *code_coverage_steps
 
 
-  gradle_7_0_2_jdk11:
-    <<: *gradle_7_0_2_jdk11_environment
+  gradle_7_2_0_jdk11:
+    <<: *gradle_7_2_0_jdk11_environment
     <<: *default_steps
 
 
-  gradle_7_0_2_jdk16:
-    <<: *gradle_7_0_2_jdk16_environment
+  gradle_7_2_0_jdk16:
+    <<: *gradle_7_2_0_jdk16_environment
     <<: *default_steps
 
 
@@ -321,7 +321,7 @@ workflows:
 
   master-jdk8:
     jobs:
-      - gradle_7_0_2_jdk8:
+      - gradle_7_2_0_jdk8:
           <<: *context_sonatype
           <<: *filter_only_master
 
@@ -334,23 +334,23 @@ workflows:
 
   branch-jdk8:
     jobs:
-      - gradle_7_0_2_jdk8:
+      - gradle_7_2_0_jdk8:
           <<: *filter_ignore_master
-      - gradle_7_0_2_jdk8_code_coverage:
+      - gradle_7_2_0_jdk8_code_coverage:
           <<: *filter_ignore_master
           requires:
-            - gradle_7_0_2_jdk8
+            - gradle_7_2_0_jdk8
 
 
   branch-jdk11:
     jobs:
-      - gradle_7_0_2_jdk11:
+      - gradle_7_2_0_jdk11:
           <<: *filter_ignore_master
 
 
   branch-jdk16:
     jobs:
-      - gradle_7_0_2_jdk16:
+      - gradle_7_2_0_jdk16:
           <<: *filter_ignore_master
 
 
@@ -369,12 +369,12 @@ workflows:
           cron: "10 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk8:
+      - gradle_7_2_0_jdk8:
           <<: *context_sonatype
       - docker_build_latest_jre8:
           <<: *context_docker_hub
           requires:
-            - gradle_7_0_2_jdk8
+            - gradle_7_2_0_jdk8
 
 
   master-twelve-hour-jdk11:
@@ -383,12 +383,12 @@ workflows:
           cron: "15 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk11:
+      - gradle_7_2_0_jdk11:
           <<: *context_sonatype
       - docker_build_latest_jre11:
           <<: *context_docker_hub
           requires:
-            - gradle_7_0_2_jdk11
+            - gradle_7_2_0_jdk11
 
 
   master-twelve-hour-jdk16:
@@ -397,9 +397,9 @@ workflows:
           cron: "20 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_0_2_jdk16:
+      - gradle_7_2_0_jdk16:
           <<: *context_sonatype
       - docker_build_latest_jre16:
           <<: *context_docker_hub
           requires:
-            - gradle_7_0_2_jdk16
+            - gradle_7_2_0_jdk16
