@@ -110,6 +110,6 @@ task stubbySourceJar(type: Jar) {
     archiveVersion = "${stubbyProjectVersion}"
     archiveClassifier = "sources"
     archiveExtension = "jar"
-    from sourceSets.main.allSource
+    from sourceSets.main.allJava
 }
 
