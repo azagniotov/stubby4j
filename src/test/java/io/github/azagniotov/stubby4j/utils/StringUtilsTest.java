@@ -23,6 +23,16 @@ public class StringUtilsTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
+    public void isNotSet() throws Exception {
+        assertThat(StringUtils.isNotSet(null)).isTrue();
+        assertThat(StringUtils.isNotSet("")).isTrue();
+        assertThat(StringUtils.isNotSet(" ")).isTrue();
+
+        assertThat(StringUtils.isNotSet(" a ")).isFalse();
+        assertThat(StringUtils.isNotSet("null")).isFalse();
+    }
+
+    @Test
     public void isNumeric() throws Exception {
         assertThat(StringUtils.isNumeric("9136d8b7-f7a7-478d-97a5-53292484aaf6")).isFalse();
         assertThat(StringUtils.isNumeric("8-88")).isFalse();
