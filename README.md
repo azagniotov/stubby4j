@@ -113,8 +113,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 #### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
 
-* version >= `4.0.0`: JRE >= `v1.8`
-* version >= `3.0.0`: JRE >= `v1.7`
+* JRE >= `v1.8`
 
 #### Setup
 
@@ -285,7 +284,9 @@ additionally, by adding a `classifier` to the JAR name like `no-dependencies` or
 
 ### Adding stubby4j SNAPSHOT versions to your project
 
-stubby4j `SNAPSHOT` versions are built and uploaded to OSS Sonatype snapshots repository. Please make sure that Sonatype's snapshot repository is configured in your project, e.g.: in Gradle:
+stubby4j `SNAPSHOT` version contains the latest changes from the `master` branch. A snapshot version is built from every commit to the `master` branch and published to the OSS Sonatype snapshots repository. 
+
+In order to pull down a `SNAPSHOT` version from Maven Central, please make sure that Sonatype's snapshot repository is configured in your project project build tool, e.g.: Gradle configuration:
 
 ```groovy
 repositories {
