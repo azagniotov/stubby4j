@@ -17,13 +17,14 @@ jacocoTestReport {
     dependsOn test, integrationTest, functionalTest
     executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
     reports {
-        csv.enabled false
+        csv.required = false
 
-        xml.enabled true
-        xml.destination = file("${buildDir}/reports/jacoco/xml/jacocoCoverage.xml")
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file("${buildDir}/reports/jacoco/xml/jacocoCoverage.xml")
 
-        html.enabled true
-        html.destination = file("${buildDir}/reports/jacoco/html")
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir("${buildDir}/reports/jacoco/html")
+
     }
 
     classDirectories.setFrom(getMainExcludes())
