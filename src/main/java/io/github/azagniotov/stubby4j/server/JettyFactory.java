@@ -272,6 +272,7 @@ public final class JettyFactory {
         final SslContextFactory sslFactory = new SslContextFactory.Server();
         sslFactory.setKeyStorePassword(password);
         sslFactory.setKeyManagerPassword(password);
+        sslFactory.setIncludeProtocols("TLSv1.1", "TLSv1.2", "TLSv1.3");
 
         relaxSslTrustManager();
 
