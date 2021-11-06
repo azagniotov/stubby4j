@@ -231,7 +231,7 @@ public final class JettyFactory {
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
         String keystorePath = null;
-        String password = "password";
+        String password = "stubby4j";
         if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYSTORE)
                 && commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYPASS)) {
             password = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYPASS);
@@ -269,25 +269,39 @@ public final class JettyFactory {
 
     private SslContextFactory constructSslContextFactory(final String password, final String keystorePath) throws IOException {
 
-        final SslContextFactory sslFactory = new SslContextFactory.Server();
-        sslFactory.setKeyStorePassword(password);
-        sslFactory.setKeyManagerPassword(password);
-        sslFactory.setIncludeProtocols("TLSv1.1", "TLSv1.2", "TLSv1.3");
+        // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#configuring-ssl
+
+        // https://github.com/eclipse/jetty.project/issues/860
+        // https://github.com/eclipse/jetty.project/issues/2807
+        // https://github.com/eclipse/jetty.project/issues/3773
+        // https://github.com/eclipse/jetty.project/issues/5039
+        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        sslContextFactory.setKeyStorePassword(password);
+        sslContextFactory.setKeyManagerPassword(password);
+        sslContextFactory.setIncludeProtocols("TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3");
+        sslContextFactory.setExcludeCipherSuites();
 
         relaxSslTrustManager();
 
         if (ObjectUtils.isNull(keystorePath)) {
-            final URL keyURL = this.getClass().getResource("/ssl/localhost.jks");
+            // Commands used to generate the following self-signed certificate:
+            // 1. openssl req -x509 -newkey rsa:4096 -keyout stubby4j.key.pem -out stubby4j.crt.pem -sha256 -subj "/C=AU/ST=Victoria/L=Melbourne/O=stubby4j/OU=Org/CN=localhost" -days 10950
+            // 2. openssl pkcs12 -inkey stubby4j.key.pem -in stubby4j.crt.pem -export -out stubby4j.pkcs12
+            final URL keyURL = this.getClass().getResource("/ssl/stubby4j.pkcs12");
             try (final Resource keyStoreResource = Resource.newResource(keyURL)) {
-                sslFactory.setKeyStoreResource(keyStoreResource);
+                // Usually, we'll use a keystore when we are a server and want to use HTTPS.
+                // During an SSL handshake, the server looks up the private key from the
+                // keystore and presents its corresponding public key and certificate to the client.
+                sslContextFactory.setKeyStoreResource(keyStoreResource);
+                sslContextFactory.setKeyStoreType("PKCS12");
 
-                return sslFactory;
+                return sslContextFactory;
             }
         }
 
-        sslFactory.setKeyStorePath(keystorePath);
+        sslContextFactory.setKeyStorePath(keystorePath);
 
-        return sslFactory;
+        return sslContextFactory;
     }
 
     private void relaxSslTrustManager() {
