@@ -169,7 +169,9 @@ public class StubsPortalTlsProtocolTests {
 
         // https://www.baeldung.com/httpclient-ssl
         final TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
-        final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+        final SSLContext sslContext = SSLContexts.custom()
+                .setProtocol(tlsVersion)
+                .loadTrustMaterial(null, acceptingTrustStrategy).build();
 
         SSLEngine engine = sslContext.createSSLEngine();
         System.out.println("SSLEngine [client] enabled protocols: ");

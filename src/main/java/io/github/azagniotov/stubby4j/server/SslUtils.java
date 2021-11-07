@@ -67,21 +67,27 @@ public class SslUtils {
 //        System.out.println("SSLEngine original enabled protocols: ");
 //        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 //
-//        System.out.println("SSLEngine supported cipher suites: ");
-//        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
-//
-//        System.out.println("SSLEngine enabled cipher suites: ");
-//        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
+        System.out.println("SSLEngine supported cipher suites: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
+
+        System.out.println("SSLEngine enabled cipher suites: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
 
         // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
         // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        //engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
+        engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
 
         System.out.println("SSLEngine [server] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 
         Set<String> supportedCiphers = supportedCiphers(engine);
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
+
+        System.out.println("TLSV1_3_JDK_SUPPORTED: ");
+        System.out.println(TLSV1_3_JDK_SUPPORTED);
+
+        System.out.println("TLSV1_3_JDK_DEFAULT_ENABLED: ");
+        System.out.println(TLSV1_3_JDK_DEFAULT_ENABLED);
 
         if (TLSV1_3_JDK_SUPPORTED && !TLSV1_3_JDK_DEFAULT_ENABLED) {
             // To avoid:
