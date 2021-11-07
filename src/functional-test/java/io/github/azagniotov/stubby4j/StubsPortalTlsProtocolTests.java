@@ -43,6 +43,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1;
+import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_1;
+import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_3;
 
 public class StubsPortalTlsProtocolTests {
 
@@ -96,7 +100,7 @@ public class StubsPortalTlsProtocolTests {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
-        final HttpRequestFactory httpClient = buildHttpClient(SslUtils.TLS_v1);
+        final HttpRequestFactory httpClient = buildHttpClient(TLS_v1);
         final HttpResponse response = httpClient.buildRequest(HttpMethods.GET, new GenericUrl(requestUrl), null).execute();
 
         final String contentTypeHeader = response.getContentType();
@@ -114,7 +118,7 @@ public class StubsPortalTlsProtocolTests {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
-        final HttpRequestFactory httpClient = buildHttpClient(SslUtils.TLS_v1_1);
+        final HttpRequestFactory httpClient = buildHttpClient(TLS_v1_1);
         final HttpResponse response = httpClient.buildRequest(HttpMethods.GET, new GenericUrl(requestUrl), null).execute();
 
         final String contentTypeHeader = response.getContentType();
@@ -132,7 +136,7 @@ public class StubsPortalTlsProtocolTests {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
-        final HttpRequestFactory httpClient = buildHttpClient(SslUtils.TLS_v1_2);
+        final HttpRequestFactory httpClient = buildHttpClient(TLS_v1_2);
         final HttpResponse response = httpClient.buildRequest(HttpMethods.GET, new GenericUrl(requestUrl), null).execute();
 
         final String contentTypeHeader = response.getContentType();
@@ -150,7 +154,7 @@ public class StubsPortalTlsProtocolTests {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
-        final HttpRequestFactory httpClient = buildHttpClient(SslUtils.TLS_v1_3);
+        final HttpRequestFactory httpClient = buildHttpClient(TLS_v1_3);
         final HttpResponse response = httpClient.buildRequest(HttpMethods.GET, new GenericUrl(requestUrl), null).execute();
 
         final String contentTypeHeader = response.getContentType();
@@ -174,6 +178,8 @@ public class StubsPortalTlsProtocolTests {
                 .loadTrustMaterial(null, acceptingTrustStrategy).build();
 
         SSLEngine engine = sslContext.createSSLEngine();
+        engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
+
         System.out.println("SSLEngine [client] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 
