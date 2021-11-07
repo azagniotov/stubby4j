@@ -73,9 +73,11 @@ public class SslUtils {
 //        System.out.println("SSLEngine enabled cipher suites: ");
 //        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
 
-        engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
+        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
+        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
+        //engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
 
-        System.out.println("SSLEngine modified enabled protocols: ");
+        System.out.println("SSLEngine [server] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 
         Set<String> supportedCiphers = supportedCiphers(engine);

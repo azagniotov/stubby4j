@@ -33,9 +33,12 @@ import org.junit.rules.ExpectedException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -166,7 +169,12 @@ public class StubsPortalTlsProtocolTests {
 
         // https://www.baeldung.com/httpclient-ssl
         final TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
-        final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).setProtocol(tlsVersion).build();
+        final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+
+        SSLEngine engine = sslContext.createSSLEngine();
+        System.out.println("SSLEngine [client] enabled protocols: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
+
         final HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
