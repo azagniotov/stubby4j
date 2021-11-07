@@ -7,6 +7,7 @@
 * PR [#295](https://github.com/azagniotov/stubby4j/pull/295) - When matching stubs, the log output is now clearer what has been matched (https://github.com/azagniotov)
 * PR [#315](https://github.com/azagniotov/stubby4j/pull/315) - Calling `setIncludeProtocols` on `SslContextFactory.Server` (https://github.com/azagniotov)
 * PR [#316](https://github.com/azagniotov/stubby4j/pull/316) - Revisited stubby SSL configuration (https://github.com/azagniotov)
+* PR [#317](https://github.com/azagniotov/stubby4j/pull/317) - Setting SSL ciphers for TLS versions `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3` (https://github.com/azagniotov)
 
 #### 7.3.3
 
