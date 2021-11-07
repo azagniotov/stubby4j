@@ -37,6 +37,7 @@ import javax.net.ssl.SSLEngine;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.security.Security;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -91,8 +92,23 @@ public class StubsPortalTlsProtocolTests {
     }
 
     @Test
-    @PotentiallyFlaky("JDK versions used on CircleCI has TLSv1 disabled. Fix requires changes to java.security")
-    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0_PotentiallyFlaky() throws Exception {
+    //@PotentiallyFlaky("JDK versions used on CircleCI has TLSv1 disabled. Fix requires changes to java.security")
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0() throws Exception {
+
+        String disabledAlgorithms = Security.getProperty("jdk.tls.disabledAlgorithms");
+        System.out.println("jdk.tls.disabledAlgorithms");
+        System.out.println(disabledAlgorithms);
+        Security.setProperty("jdk.tls.disabledAlgorithms", disabledAlgorithms .replace("TLSv1,", ""));
+        System.out.println(Security.getProperty("jdk.tls.disabledAlgorithms"));
+
+        String clientProtocls = Security.getProperty("jdk.tls.client.protocols");
+        System.out.println("jdk.tls.client.protocols");
+        System.out.println(clientProtocls);
+
+        if (clientProtocls != null) {
+            Security.setProperty("jdk.tls.client.protocols", clientProtocls.replace("TLSv1,", ""));
+            System.out.println(Security.getProperty("jdk.tls.client.protocols"));
+        }
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();

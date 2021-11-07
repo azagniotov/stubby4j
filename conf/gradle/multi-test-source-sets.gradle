@@ -17,7 +17,7 @@ tasks.withType(Test).configureEach {
     reports.junitXml.required = false
     ignoreFailures = false
     testLogging {
-        // showStandardStreams true
+        showStandardStreams true
         events /*"passed", */ "skipped", "failed"
         exceptionFormat "full"
         showExceptions true
