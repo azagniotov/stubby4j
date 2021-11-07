@@ -31,16 +31,20 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import static io.github.azagniotov.stubby4j.server.SslUtils.ALL_TLS_VERSIONS;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_2;
@@ -64,6 +68,17 @@ public class StubsPortalTlsProtocolTests {
     @BeforeClass
     public static void beforeClass() throws Exception {
 
+        final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
+        defaultSslContext.init(null, null, null);
+
+        SSLEngine engine = defaultSslContext.createSSLEngine();
+        final String[] supportedProtocols = defaultSslContext.getDefaultSSLParameters().getProtocols();
+        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
+        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
+        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
+        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
+        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
+
         ANSITerminal.muteConsole(true);
 
         final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
@@ -72,6 +87,9 @@ public class StubsPortalTlsProtocolTests {
         stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
+
+        System.out.println("SSLEngine [client] enabled protocols: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
     }
 
     @AfterClass
@@ -177,18 +195,11 @@ public class StubsPortalTlsProtocolTests {
                 .setProtocol(tlsVersion)
                 .loadTrustMaterial(null, acceptingTrustStrategy).build();
 
-        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
-        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        SSLEngine engine = sslContext.createSSLEngine();
-        engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
-
-        final HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
-
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
                 new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
                 null,
-                allowAllHosts);
+                new NoopHostnameVerifier());
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
                 RegistryBuilder.<ConnectionSocketFactory>create()

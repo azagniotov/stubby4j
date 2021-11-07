@@ -34,7 +34,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -258,9 +260,13 @@ public final class JettyFactory {
             sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final String status = String.format("Stubs portal configured with TLS at https://%s:%s using %s keystore",
-                sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal" : "provided " + keystorePath));
+        final HashSet<String> supportedTlsProtocals = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
+        final String status = String.format("Stubs portal configured with TLS at https://%s:%s using %s",
+                sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal self-signed certificate" : "provided " + keystorePath));
         statuses.add(status);
+
+        final String tlsStatus = String.format("Stubs portal supports TLS protocol versions: %s", supportedTlsProtocals);
+        statuses.add(tlsStatus);
 
         currentStubsSslPort = sslConnector.getPort();
 
@@ -278,7 +284,7 @@ public final class JettyFactory {
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePassword(password);
         sslContextFactory.setKeyManagerPassword(password);
-        sslContextFactory.setIncludeProtocols(SslUtils.TLS_v1, SslUtils.TLS_v1_1, SslUtils.TLS_v1_2, SslUtils.TLS_v1_3);
+        sslContextFactory.setIncludeProtocols(SslUtils.SSL_ENGINE.getEnabledProtocols());
         sslContextFactory.setExcludeCipherSuites();
 
         sslContextFactory.setIncludeCipherSuites(SslUtils.includedCipherSuites());
