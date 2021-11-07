@@ -64,14 +64,19 @@ public class SslUtils {
         TLSV1_3_JDK_DEFAULT_ENABLED = isTLSv13EnabledByJDK0();
 
         SSLEngine engine = DEFAULT_SSL_CONTEXT.createSSLEngine();
-        System.out.println("SSLEngine enabled protocols: ");
+//        System.out.println("SSLEngine original enabled protocols: ");
+//        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
+//
+//        System.out.println("SSLEngine supported cipher suites: ");
+//        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
+//
+//        System.out.println("SSLEngine enabled cipher suites: ");
+//        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
+
+        engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
+
+        System.out.println("SSLEngine modified enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
-
-        System.out.println("SSLEngine supported cipher suites: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
-
-        System.out.println("SSLEngine enabled cipher suites: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
 
         Set<String> supportedCiphers = supportedCiphers(engine);
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
