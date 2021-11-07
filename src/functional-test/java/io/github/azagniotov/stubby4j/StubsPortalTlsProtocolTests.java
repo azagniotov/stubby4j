@@ -180,8 +180,15 @@ public class StubsPortalTlsProtocolTests {
         SSLEngine engine = sslContext.createSSLEngine();
         engine.setEnabledProtocols(new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3});
 
+
         System.out.println("SSLEngine [client] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
+
+        System.out.println("SSLEngine [client] supported cipher suites: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
+
+        System.out.println("SSLEngine [client] enabled cipher suites: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
 
         final HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 
