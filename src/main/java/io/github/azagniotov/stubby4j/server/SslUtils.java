@@ -38,6 +38,7 @@ public class SslUtils {
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
     public static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
+    public static final SSLEngine SSL_ENGINE;
 
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
     private static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
@@ -62,22 +63,22 @@ public class SslUtils {
         }
 
         // Choose the sensible default list of protocols that respects JDK flags, eg. jdk.tls.client.protocols
-        SSLEngine engine = DEFAULT_SSL_CONTEXT.createSSLEngine();
+        SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
 
         final String[] supportedProtocols = DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols();
         Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
         enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
         // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
         // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
+        SSL_ENGINE.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
 
         System.out.println("SSLEngine [server] enabled protocols: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
+        System.out.println(new HashSet<>(Arrays.asList(SSL_ENGINE.getEnabledProtocols())));
 
         TLSV1_3_JDK_SUPPORTED = isTLSv13SupportedByJDK0();
         TLSV1_3_JDK_DEFAULT_ENABLED = isTLSv13EnabledByJDK0();
 
-        Set<String> supportedCiphers = supportedCiphers(engine);
+        Set<String> supportedCiphers = supportedCiphers(SSL_ENGINE);
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
 
         // GCM (Galois/Counter Mode) requires JDK 8.
