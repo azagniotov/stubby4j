@@ -98,7 +98,7 @@ public class StubsPortalTlsProtocolTests {
         String disabledAlgorithms = Security.getProperty("jdk.tls.disabledAlgorithms");
         System.out.println("jdk.tls.disabledAlgorithms");
         System.out.println(disabledAlgorithms);
-        Security.setProperty("jdk.tls.disabledAlgorithms", disabledAlgorithms .replace("TLSv1,", ""));
+        Security.setProperty("jdk.tls.disabledAlgorithms", "");
         System.out.println(Security.getProperty("jdk.tls.disabledAlgorithms"));
 
         String clientProtocls = Security.getProperty("jdk.tls.client.protocols");
