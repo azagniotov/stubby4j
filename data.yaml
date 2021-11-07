@@ -1,0 +1,35 @@
+-  description: Optional description shown in logs
+   request:
+      url: ^/your/awesome/endpoint$
+      method: POST
+      query:
+         exclamation: post requests can have query strings!
+      headers:
+         content-type: application/xml
+      post: >
+         <!xml blah="blah blah blah">
+         <envelope>
+            <unaryTag/>
+         </envelope>
+      file: tryMyFirst.xml
+
+   response:
+      status: 200
+      latency: 5000
+      headers:
+         content-type: application/xml
+         server: stubbedServer/4.2
+      body: >
+         <!xml blah="blah blah blah">
+         <responseXML>
+            <content></content>
+         </responseXML>
+      file: responseData.xml
+
+- request:
+    url: ^/hello$
+    method: GET
+  response:
+    status: 200
+    body: world!
+
