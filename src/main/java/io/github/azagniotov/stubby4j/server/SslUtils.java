@@ -64,14 +64,6 @@ public class SslUtils {
         TLSV1_3_JDK_DEFAULT_ENABLED = isTLSv13EnabledByJDK0();
 
         SSLEngine engine = DEFAULT_SSL_CONTEXT.createSSLEngine();
-//        System.out.println("SSLEngine original enabled protocols: ");
-//        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
-//
-        System.out.println("SSLEngine supported cipher suites: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getSupportedCipherSuites())));
-
-        System.out.println("SSLEngine enabled cipher suites: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledCipherSuites())));
 
         // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
         // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
@@ -82,16 +74,6 @@ public class SslUtils {
 
         Set<String> supportedCiphers = supportedCiphers(engine);
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
-        System.out.println("SUPPORTED_CIPHERS: ");
-        System.out.println(SUPPORTED_CIPHERS);
-
-        // TLS_AES_128_GCM_SHA256, TLS_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TLS_DHE_DSS_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_DSS_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_RSA_WITH_AES_256_CBC_SHA256, TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384, TLS_DHE_RSA_WITH_AES_256_CBC_SHA256, TLS_DHE_DSS_WITH_AES_256_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_256_CBC_SHA, TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDH_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_DSS_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256, TLS_DHE_DSS_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDH_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_DSS_WITH_AES_128_CBC_SHA, TLS_EMPTY_RENEGOTIATION_INFO_SCSV
-
-        System.out.println("TLSV1_3_JDK_SUPPORTED: ");
-        System.out.println(TLSV1_3_JDK_SUPPORTED);
-
-        System.out.println("TLSV1_3_JDK_DEFAULT_ENABLED: ");
-        System.out.println(TLSV1_3_JDK_DEFAULT_ENABLED);
 
         if (TLSV1_3_JDK_SUPPORTED && !TLSV1_3_JDK_DEFAULT_ENABLED) {
             // To avoid:

@@ -182,7 +182,7 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
-        command: gradle clean jacocoTestReport
+        command: gradle -PciRun clean jacocoTestReport
 
     - run:
         name: Upload code coverage data to Codecov
