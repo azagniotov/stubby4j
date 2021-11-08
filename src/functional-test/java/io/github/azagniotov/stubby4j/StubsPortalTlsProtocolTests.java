@@ -61,11 +61,6 @@ public class StubsPortalTlsProtocolTests {
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static String stubsData;
 
-    static {
-        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 1024, EC keySize < 224, DES40_CBC, RC4_40, 3DES_EDE_CBC");
-        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
-    }
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -275,7 +270,7 @@ public class StubsPortalTlsProtocolTests {
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
                 new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
-                null,
+                supportedCipherSuites.toArray(new String[]{}),
                 new NoopHostnameVerifier());
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
