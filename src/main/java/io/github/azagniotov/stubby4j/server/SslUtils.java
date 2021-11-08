@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.server;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
