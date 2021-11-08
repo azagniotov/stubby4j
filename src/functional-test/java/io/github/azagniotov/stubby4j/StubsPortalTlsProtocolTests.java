@@ -215,7 +215,6 @@ public class StubsPortalTlsProtocolTests {
                         "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
                         "TLS_ECDH_RSA_WITH_RC4_128_SHA",
                         "TLS_ECDH_anon_WITH_RC4_128_SHA",
-                        "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
                         "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
                         "TLS_KRB5_WITH_RC4_128_MD5",
                         "TLS_KRB5_WITH_RC4_128_SHA"));
