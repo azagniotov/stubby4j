@@ -9,28 +9,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/*
- * The code in the current file has been adopted from the Netty project:
- *
+/**
+ * Some of code in the current file has been adopted from the Netty project:
+ * <p>
  * https://github.com/netty/netty/blob/ede7a604f185cd716032ecbb356b6ea5130f7d0d/handler/src/main/java/io/netty/handler/ssl/SslUtils.java
  * https://github.com/netty/netty/blob/ede7a604f185cd716032ecbb356b6ea5130f7d0d/handler/src/main/java/io/netty/handler/ssl/JdkSslContext.java
- *
- * I am keeping their original copyright notice here:
- *
- *
- * Copyright 2014 The Netty Project
- *
- * The Netty Project licenses this file to you under the Apache License,
- * version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at:
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
  */
 public class SslUtils {
 
@@ -38,25 +21,25 @@ public class SslUtils {
     public static final String TLS_v1_1 = "TLSv1.1";
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
-    public static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
-    public static final SSLEngine SSL_ENGINE;
+    static final SSLEngine SSL_ENGINE;
+    private static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
 
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
-    public static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
+    private static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
             Arrays.asList(
                     "TLS_AES_256_GCM_SHA384",
                     "TLS_CHACHA20_POLY1305_SHA256",
                     "TLS_AES_128_GCM_SHA256",
                     "TLS_AES_128_CCM_8_SHA256",
                     "TLS_AES_128_CCM_SHA256")));
-
     private static final SSLContext DEFAULT_SSL_CONTEXT;
     private static final Set<String> SUPPORTED_CIPHERS;
 
     static {
 
-//        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 1024, EC keySize < 224, DES40_CBC, RC4_40, 3DES_EDE_CBC");
-//        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+        // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
+        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 1024, EC keySize < 224, DES40_CBC, RC4_40, 3DES_EDE_CBC");
+        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
 
         try {
             DEFAULT_SSL_CONTEXT = SSLContext.getInstance(TLS_v1_3);
