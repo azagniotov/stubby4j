@@ -41,7 +41,7 @@ public class SslUtils {
     public static final SSLEngine SSL_ENGINE;
 
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
-    private static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
+    public static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
             Arrays.asList(
                     "TLS_AES_256_GCM_SHA384",
                     "TLS_CHACHA20_POLY1305_SHA256",

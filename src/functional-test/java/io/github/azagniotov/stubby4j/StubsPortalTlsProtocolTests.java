@@ -5,10 +5,10 @@ import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
-import io.github.azagniotov.stubby4j.annotations.PotentiallyFlaky;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
+import io.github.azagniotov.stubby4j.server.SslUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.Registry;
@@ -109,8 +109,7 @@ public class StubsPortalTlsProtocolTests {
     }
 
     @Test
-    @PotentiallyFlaky("JDK versions used on CircleCI has TLSv1 disabled. Fix requires changes to java.security")
-    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0_PotentiallyFlaky() throws Exception {
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0() throws Exception {
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
@@ -128,8 +127,7 @@ public class StubsPortalTlsProtocolTests {
     }
 
     @Test
-    @PotentiallyFlaky("JDK versions used on CircleCI has TLSv1.1 disabled. Fix requires changes to java.security")
-    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1_PotentiallyFlaky() throws Exception {
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1() throws Exception {
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
@@ -193,13 +191,22 @@ public class StubsPortalTlsProtocolTests {
         final TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
         final SSLContext sslContext = SSLContexts.custom()
                 .setProtocol(tlsVersion)
-                .loadTrustMaterial(null, acceptingTrustStrategy).build();
+                .loadTrustMaterial(null, acceptingTrustStrategy)
+                .build();
+
+        final LinkedHashSet<String> supportedCipherSuites = new LinkedHashSet<>(Arrays.asList(SslUtils.includedCipherSuites()));
+        Arrays.asList(new String[]{
+                "TLS_CHACHA20_POLY1305_SHA256",
+                "TLS_AES_128_CCM_8_SHA256",
+                "TLS_AES_128_CCM_SHA256"
+        }).forEach(supportedCipherSuites::remove);
 
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
                 new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
-                null,
+                supportedCipherSuites.toArray(new String[0]),
                 new NoopHostnameVerifier());
+
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
                 RegistryBuilder.<ConnectionSocketFactory>create()
