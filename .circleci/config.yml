@@ -145,7 +145,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: gradle ‑Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2,TLSv1.3" -PciRun clean test integrationTest functionalTest
+        command: gradle -PciRun clean test integrationTest functionalTest
         when: always
 
     - when:
