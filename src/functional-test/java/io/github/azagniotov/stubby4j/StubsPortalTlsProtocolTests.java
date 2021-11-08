@@ -192,7 +192,7 @@ public class StubsPortalTlsProtocolTests {
                         .build();
 
         final HttpClient apacheHttpClient = HttpClientBuilder.create()
-                .useSystemProperties()
+                //.useSystemProperties()
                 .setSSLContext(sslContext)
                 .setSSLSocketFactory(sslSocketFactory)
                 .setConnectionManager(new BasicHttpClientConnectionManager(socketFactoryRegistry))
