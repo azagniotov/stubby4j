@@ -2,7 +2,6 @@ package io.github.azagniotov.stubby4j.server;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,14 +49,12 @@ public class SslUtils {
                     "TLS_AES_128_CCM_8_SHA256",
                     "TLS_AES_128_CCM_SHA256")));
 
-    private static final boolean TLSV1_3_JDK_SUPPORTED;
-    private static final boolean TLSV1_3_JDK_DEFAULT_ENABLED;
     private static final SSLContext DEFAULT_SSL_CONTEXT;
     private static final Set<String> SUPPORTED_CIPHERS;
 
     static {
         try {
-            DEFAULT_SSL_CONTEXT = SSLContext.getInstance("TLS");
+            DEFAULT_SSL_CONTEXT = SSLContext.getInstance(TLS_v1_3);
             DEFAULT_SSL_CONTEXT.init(null, null, null);
         } catch (Exception e) {
             throw new Error("failed to initialize the default SSL context", e);
@@ -65,52 +62,23 @@ public class SslUtils {
 
         // Choose the sensible default list of protocols that respects JDK flags, eg. jdk.tls.client.protocols
         SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
-
-        final String[] supportedProtocols = DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols();
-        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
-        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
-        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
-        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        SSL_ENGINE.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
+        SSL_ENGINE.setEnabledProtocols(ALL_TLS_VERSIONS);
 
         System.out.println("SSLEngine [server] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(SSL_ENGINE.getEnabledProtocols())));
 
-        TLSV1_3_JDK_SUPPORTED = isTLSv13SupportedByJDK0();
-        TLSV1_3_JDK_DEFAULT_ENABLED = isTLSv13EnabledByJDK0();
-
-        Set<String> supportedCiphers = supportedCiphers(SSL_ENGINE);
+        Set<String> supportedCiphers = supportedCiphers();
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
-
-        // GCM (Galois/Counter Mode) requires JDK 8.
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384");
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256");
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256");
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384");
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA");
-        // AES256 requires JCE unlimited strength jurisdiction policy files.
-        SUPPORTED_CIPHERS.add("TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA");
-        // GCM (Galois/Counter Mode) requires JDK 8.
-        SUPPORTED_CIPHERS.add("TLS_RSA_WITH_AES_128_GCM_SHA256");
-        SUPPORTED_CIPHERS.add("TLS_RSA_WITH_AES_128_CBC_SHA");
-        // AES256 requires JCE unlimited strength jurisdiction policy files.
-        SUPPORTED_CIPHERS.add("TLS_RSA_WITH_AES_256_CBC_SHA");
-
-        if (TLSV1_3_JDK_SUPPORTED) {
-            // To avoid:
-            // javax.net.ssl.SSLHandshakeException: The client supported protocol versions [TLSv1.3] are not accepted by server preferences [TLS12, TLS11, TLS10]
-            // https://github.com/reactor/reactor-netty/issues/1224#issuecomment-666643495
-            SUPPORTED_CIPHERS.addAll(TLSV13_CIPHERS);
-        }
+        SUPPORTED_CIPHERS.addAll(TLSV13_CIPHERS);
     }
 
     public static String[] includedCipherSuites() {
-        return SUPPORTED_CIPHERS.toArray(new String[0]);
+        return SUPPORTED_CIPHERS.toArray(new String[]{});
     }
 
-    private static Set<String> supportedCiphers(SSLEngine engine) {
+    private static Set<String> supportedCiphers() {
         // Choose the sensible default list of cipher suites.
-        final String[] supportedCiphers = engine.getSupportedCipherSuites();
+        final String[] supportedCiphers = SSL_ENGINE.getSupportedCipherSuites();
         Set<String> supportedCiphersSet = new LinkedHashSet<>(supportedCiphers.length);
         for (String supportedCipher : supportedCiphers) {
             supportedCiphersSet.add(supportedCipher);
@@ -126,7 +94,7 @@ public class SslUtils {
             if (supportedCipher.startsWith("SSL_")) {
                 final String tlsPrefixedCipherName = "TLS_" + supportedCipher.substring("SSL_".length());
                 try {
-                    engine.setEnabledCipherSuites(new String[]{tlsPrefixedCipherName});
+                    SSL_ENGINE.setEnabledCipherSuites(new String[]{tlsPrefixedCipherName});
                     supportedCiphersSet.add(tlsPrefixedCipherName);
                 } catch (IllegalArgumentException ignored) {
                     // The cipher is not supported ... move on to the next cipher.
@@ -134,32 +102,5 @@ public class SslUtils {
             }
         }
         return supportedCiphersSet;
-    }
-
-    private static boolean isTLSv13SupportedByJDK0() {
-        try {
-            return arrayContainsTls13(DEFAULT_SSL_CONTEXT.getSupportedSSLParameters().getProtocols());
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-            return false;
-        }
-    }
-
-    private static boolean isTLSv13EnabledByJDK0() {
-        try {
-            return arrayContainsTls13(DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols());
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-            return false;
-        }
-    }
-
-    private static boolean arrayContainsTls13(String[] array) {
-        for (String v : array) {
-            if (SslUtils.TLS_v1_3.equals(v)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

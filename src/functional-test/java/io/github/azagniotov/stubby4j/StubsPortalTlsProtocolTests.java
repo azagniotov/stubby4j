@@ -39,12 +39,10 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.server.SslUtils.ALL_TLS_VERSIONS;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_2;
@@ -179,12 +177,7 @@ public class StubsPortalTlsProtocolTests {
                 .build();
 
         SSLEngine engine = sslContext.createSSLEngine();
-        final String[] supportedProtocols = sslContext.getSupportedSSLParameters().getProtocols();
-        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
-        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
-        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
-        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
+        engine.setEnabledProtocols(new String[]{tlsVersion});
         System.out.println("SSLEngine [client] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 
@@ -323,6 +316,7 @@ public class StubsPortalTlsProtocolTests {
                         .build();
 
         final HttpClient apacheHttpClient = HttpClientBuilder.create()
+                .setSSLContext(sslContext)
                 .setSSLSocketFactory(sslSocketFactory)
                 .setConnectionManager(new BasicHttpClientConnectionManager(socketFactoryRegistry))
                 .setMaxConnTotal(200)
