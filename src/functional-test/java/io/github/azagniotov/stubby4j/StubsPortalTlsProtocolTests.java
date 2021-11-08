@@ -201,6 +201,25 @@ public class StubsPortalTlsProtocolTests {
                 "TLS_AES_128_CCM_SHA256"
         }).forEach(supportedCipherSuites::remove);
 
+        supportedCipherSuites.addAll(
+                Arrays.asList(
+                        "TLS_RSA_WITH_AES_128_CBC_SHA256",
+                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+                        "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
+                        "SSL_DH_anon_WITH_RC4_128_MD5",
+                        "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
+                        "SSL_RSA_WITH_RC4_128_MD5",
+                        "SSL_RSA_WITH_RC4_128_SHA",
+                        "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
+                        "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+                        "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
+                        "TLS_ECDH_RSA_WITH_RC4_128_SHA",
+                        "TLS_ECDH_anon_WITH_RC4_128_SHA",
+                        "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
+                        "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
+                        "TLS_KRB5_WITH_RC4_128_MD5",
+                        "TLS_KRB5_WITH_RC4_128_SHA"));
+
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
                 new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
