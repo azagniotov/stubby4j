@@ -36,6 +36,7 @@ import javax.net.ssl.SSLEngine;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -55,12 +56,15 @@ public class StubsPortalTlsProtocolTests {
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
-
-    private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
     private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static String stubsData;
+
+    static {
+        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 1024, EC keySize < 224, DES40_CBC, RC4_40, 3DES_EDE_CBC");
+        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+    }
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
