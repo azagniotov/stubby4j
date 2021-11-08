@@ -5,7 +5,6 @@ import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
-import io.github.azagniotov.stubby4j.annotations.PotentiallyFlaky;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
@@ -38,13 +37,10 @@ import java.net.ProxySelector;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.server.SslUtils.ALL_TLS_VERSIONS;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_1;
 import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_2;
@@ -55,8 +51,6 @@ public class StubsPortalTlsProtocolTests {
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
     private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
-
-    private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
     private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
@@ -68,17 +62,6 @@ public class StubsPortalTlsProtocolTests {
     @BeforeClass
     public static void beforeClass() throws Exception {
 
-        final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
-        defaultSslContext.init(null, null, null);
-
-        SSLEngine engine = defaultSslContext.createSSLEngine();
-        final String[] supportedProtocols = defaultSslContext.getDefaultSSLParameters().getProtocols();
-        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
-        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
-        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
-        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
-
         ANSITerminal.muteConsole(true);
 
         final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
@@ -87,9 +70,6 @@ public class StubsPortalTlsProtocolTests {
         stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
-
-        System.out.println("SSLEngine [client] enabled protocols: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
     }
 
     @AfterClass
@@ -109,8 +89,7 @@ public class StubsPortalTlsProtocolTests {
     }
 
     @Test
-    @PotentiallyFlaky("JDK versions used on CircleCI has TLSv1 disabled. Fix requires changes to java.security")
-    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0_PotentiallyFlaky() throws Exception {
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0() throws Exception {
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
@@ -128,8 +107,7 @@ public class StubsPortalTlsProtocolTests {
     }
 
     @Test
-    @PotentiallyFlaky("JDK versions used on CircleCI has TLSv1.1 disabled. Fix requires changes to java.security")
-    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1_PotentiallyFlaky() throws Exception {
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1() throws Exception {
 
         final URL jsonContentUrl = StubsPortalTest.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
@@ -193,11 +171,17 @@ public class StubsPortalTlsProtocolTests {
         final TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
         final SSLContext sslContext = SSLContexts.custom()
                 .setProtocol(tlsVersion)
-                .loadTrustMaterial(null, acceptingTrustStrategy).build();
+                .loadTrustMaterial(null, acceptingTrustStrategy)
+                .build();
+
+        SSLEngine engine = sslContext.createSSLEngine();
+        engine.setEnabledProtocols(new String[]{tlsVersion});
+        System.out.println("SSLEngine [client] enabled protocols: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
 
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
-                new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
+                new String[]{tlsVersion},
                 null,
                 new NoopHostnameVerifier());
 
@@ -208,6 +192,7 @@ public class StubsPortalTlsProtocolTests {
                         .build();
 
         final HttpClient apacheHttpClient = HttpClientBuilder.create()
+                .setSSLContext(sslContext)
                 .setSSLSocketFactory(sslSocketFactory)
                 .setConnectionManager(new BasicHttpClientConnectionManager(socketFactoryRegistry))
                 .setMaxConnTotal(200)
