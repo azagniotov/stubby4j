@@ -271,7 +271,7 @@ public class StubsPortalTlsProtocolTests {
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
                 new String[]{tlsVersion}, /* "TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3" */
-                supportedCipherSuites.toArray(new String[0]),
+                null,
                 new NoopHostnameVerifier());
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
