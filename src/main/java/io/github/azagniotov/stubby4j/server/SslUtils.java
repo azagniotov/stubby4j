@@ -37,9 +37,8 @@ public class SslUtils {
 
     static {
 
-        // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
-        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DH keySize < 1024, EC keySize < 224, DES40_CBC, RC4_40, 3DES_EDE_CBC");
-        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+        System.out.println(Security.getProperty("jdk.tls.disabledAlgorithms"));
+        System.out.println(Security.getProperty("jdk.certpath.disabledAlgorithms"));
 
         try {
             DEFAULT_SSL_CONTEXT = SSLContext.getInstance(TLS_v1_3);
