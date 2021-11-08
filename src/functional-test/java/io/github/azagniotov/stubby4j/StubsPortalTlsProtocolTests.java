@@ -68,17 +68,6 @@ public class StubsPortalTlsProtocolTests {
     @BeforeClass
     public static void beforeClass() throws Exception {
 
-        final SSLContext defaultSslContext = SSLContext.getInstance("TLS");
-        defaultSslContext.init(null, null, null);
-
-        SSLEngine engine = defaultSslContext.createSSLEngine();
-        final String[] supportedProtocols = defaultSslContext.getDefaultSSLParameters().getProtocols();
-        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
-        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
-        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
-        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
-        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
-
         ANSITerminal.muteConsole(true);
 
         final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
@@ -87,9 +76,6 @@ public class StubsPortalTlsProtocolTests {
         stubsDataInputStream.close();
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
-
-        System.out.println("SSLEngine [client] enabled protocols: ");
-        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
     }
 
     @AfterClass
@@ -193,6 +179,17 @@ public class StubsPortalTlsProtocolTests {
                 .setProtocol(tlsVersion)
                 .loadTrustMaterial(null, acceptingTrustStrategy)
                 .build();
+
+        SSLEngine engine = sslContext.createSSLEngine();
+        final String[] supportedProtocols = sslContext.getSupportedSSLParameters().getProtocols();
+        Set<String> enabledProtocols = new LinkedHashSet<>(Arrays.asList(supportedProtocols));
+        enabledProtocols.addAll(Arrays.asList(ALL_TLS_VERSIONS));
+        // https://aws.amazon.com/blogs/opensource/tls-1-0-1-1-changes-in-openjdk-and-amazon-corretto/
+        // https://support.azul.com/hc/en-us/articles/360061143191-TLSv1-v1-1-No-longer-works-after-upgrade-No-appropriate-protocol-error
+        engine.setEnabledProtocols(enabledProtocols.toArray(new String[0]));
+        System.out.println("SSLEngine [client] enabled protocols: ");
+        System.out.println(new HashSet<>(Arrays.asList(engine.getEnabledProtocols())));
+
 
         final LinkedHashSet<String> supportedCipherSuites = new LinkedHashSet<>(Arrays.asList(SslUtils.includedCipherSuites()));
         Arrays.asList(new String[]{
