@@ -41,10 +41,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1;
-import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_1;
-import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_2;
-import static io.github.azagniotov.stubby4j.server.SslUtils.TLS_v1_3;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_1;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
 
 public class StubsPortalTlsProtocolTests {
 

@@ -10,6 +10,7 @@ import io.github.azagniotov.stubby4j.handlers.JsonErrorHandler;
 import io.github.azagniotov.stubby4j.handlers.StatusPageHandler;
 import io.github.azagniotov.stubby4j.handlers.StubDataRefreshActionHandler;
 import io.github.azagniotov.stubby4j.handlers.StubsPortalHandler;
+import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -284,12 +285,10 @@ public final class JettyFactory {
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePassword(password);
         sslContextFactory.setKeyManagerPassword(password);
-        sslContextFactory.setIncludeProtocols(SslUtils.SSL_ENGINE.getEnabledProtocols());
+        sslContextFactory.setIncludeProtocols(SslUtils.ALL_TLS_VERSIONS);
         sslContextFactory.setExcludeCipherSuites();
 
         sslContextFactory.setIncludeCipherSuites(SslUtils.includedCipherSuites());
-
-        relaxSslTrustManager();
 
         if (ObjectUtils.isNull(keystorePath)) {
             // Commands used to generate the following self-signed certificate:
@@ -310,14 +309,6 @@ public final class JettyFactory {
         sslContextFactory.setKeyStorePath(keystorePath);
 
         return sslContextFactory;
-    }
-
-    private void relaxSslTrustManager() {
-        try {
-            new FakeX509TrustManager().allowAllSSL();
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.toString(), ex);
-        }
     }
 
     private HttpConfiguration constructHttpConfiguration() {
