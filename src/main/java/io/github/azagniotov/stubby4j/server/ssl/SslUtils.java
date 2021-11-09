@@ -1,7 +1,11 @@
-package io.github.azagniotov.stubby4j.server;
+package io.github.azagniotov.stubby4j.server.ssl;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManager;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,23 +19,24 @@ import java.util.Set;
  * https://github.com/netty/netty/blob/ede7a604f185cd716032ecbb356b6ea5130f7d0d/handler/src/main/java/io/netty/handler/ssl/SslUtils.java
  * https://github.com/netty/netty/blob/ede7a604f185cd716032ecbb356b6ea5130f7d0d/handler/src/main/java/io/netty/handler/ssl/JdkSslContext.java
  */
-public class SslUtils {
+@GeneratedCodeCoverageExclusion
+public final class SslUtils {
 
     public static final String TLS_v1 = "TLSv1";
     public static final String TLS_v1_1 = "TLSv1.1";
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
-    static final SSLEngine SSL_ENGINE;
-    private static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
+    public static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
 
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
-    private static final Set<String> TLSV13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
+    private static final Set<String> TLS_v13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
             Arrays.asList(
                     "TLS_AES_256_GCM_SHA384",
                     "TLS_CHACHA20_POLY1305_SHA256",
                     "TLS_AES_128_GCM_SHA256",
                     "TLS_AES_128_CCM_8_SHA256",
                     "TLS_AES_128_CCM_SHA256")));
+    private static final SSLEngine SSL_ENGINE;
     private static final SSLContext DEFAULT_SSL_CONTEXT;
     private static final Set<String> SUPPORTED_CIPHERS;
 
@@ -39,26 +44,30 @@ public class SslUtils {
 
         // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
         // Removed TLSv1, TLSv1.1
-        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, include jdk.disabled.namedCurves");
-        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224, include jdk.disabled.namedCurves");
+        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
+        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
 
         try {
             DEFAULT_SSL_CONTEXT = SSLContext.getInstance(TLS_v1_3);
-            DEFAULT_SSL_CONTEXT.init(null, null, null);
+            DEFAULT_SSL_CONTEXT.init(new KeyManager[]{}, new TrustManager[]{new FakeX509TrustManager()}, null);
+            // Choose the sensible default list of protocols that respects JDK flags, eg. jdk.tls.client.protocols
+            SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
+            SSL_ENGINE.setEnabledProtocols(ALL_TLS_VERSIONS);
+            SSLContext.setDefault(DEFAULT_SSL_CONTEXT);
         } catch (Exception e) {
             throw new Error("failed to initialize the default SSL context", e);
         }
-
-        // Choose the sensible default list of protocols that respects JDK flags, eg. jdk.tls.client.protocols
-        SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
-        SSL_ENGINE.setEnabledProtocols(ALL_TLS_VERSIONS);
 
         System.out.println("SSLEngine [server] enabled protocols: ");
         System.out.println(new HashSet<>(Arrays.asList(SSL_ENGINE.getEnabledProtocols())));
 
         Set<String> supportedCiphers = supportedCiphers();
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
-        SUPPORTED_CIPHERS.addAll(TLSV13_CIPHERS);
+        SUPPORTED_CIPHERS.addAll(TLS_v13_CIPHERS);
+    }
+
+    private SslUtils() {
+
     }
 
     public static String[] includedCipherSuites() {
