@@ -38,6 +38,17 @@ class StubMatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubMatcher.class);
     private static final DefaultNodeMatcher NODE_MATCHER_BY_NAME_AND_ALL_ATTRIBUTES = new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes);
     private static final Pattern SUB_TYPE_PATTERN = Pattern.compile("/(?:.*\\+)?(\\w*);?");
+
+    private static final String FAILED_TO_MATCH_ON_STUBBED = "Failed to match on stubbed";
+    private static final String MATCHED_ON_STUBBED = "Matched on stubbed";
+
+    private static final String MSG_FIELDS_TEMPLATE = "[%s] WITH incoming [%s]";
+    private static final String MSG_FIELD_URL = " URL ";
+    private static final String MSG_FIELD_METHOD = " METHOD ";
+    private static final String MSG_FIELD_POST_BODY = " POST BODY ";
+    private static final String MSG_FIELD_HEADERS = " HEADERS ";
+    private static final String MSG_FIELD_QUERY = " QUERY ";
+
     private final Map<String, String> regexGroups;
 
     StubMatcher(final Map<String, String> regexGroups) {
@@ -47,55 +58,65 @@ class StubMatcher {
     boolean matches(final StubRequest stubbedRequest, final StubRequest assertingRequest) {
         // Match stubbed request URI path
         if (!urlsMatch(stubbedRequest.getUri(), assertingRequest.getUri())) {
-            ANSITerminal.error(String.format("Failed to match on URL [%s] WITH [%s]", stubbedRequest.getUri(), assertingRequest.getUri()));
-            LOGGER.error("Failed to match on URL [{}] WITH [{}].", stubbedRequest.getUri(), assertingRequest.getUri());
+            final String urlMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_URL + MSG_FIELDS_TEMPLATE, stubbedRequest.getUri(), assertingRequest.getUri());
+            ANSITerminal.error(urlMatchFailed);
+            LOGGER.error(urlMatchFailed);
             return false;
         }
-        ANSITerminal.info(String.format("Matched on URL [%s] WITH [%s]", stubbedRequest.getUri(), assertingRequest.getUri()));
-        LOGGER.info(String.format("Matched on URL [%s] WITH [%s].", stubbedRequest.getUri(), assertingRequest.getUri()));
+        final String urlMatchSuccess = String.format(MATCHED_ON_STUBBED + MSG_FIELD_URL + MSG_FIELDS_TEMPLATE, stubbedRequest.getUri(), assertingRequest.getUri());
+        ANSITerminal.info(urlMatchSuccess);
+        LOGGER.info(urlMatchSuccess);
 
         // Match stubbed request HTTP method(s)
         if (!stubbedRequest.getMethod().isEmpty()) {
             if (!listsIntersect(stubbedRequest.getMethod(), assertingRequest.getMethod())) {
-                ANSITerminal.error(String.format("Failed to match on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
-                LOGGER.error("Failed to match on METHOD [{}] WITH [{}].", stubbedRequest.getMethod(), assertingRequest.getMethod());
+                final String methodMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_METHOD + MSG_FIELDS_TEMPLATE, stubbedRequest.getMethod(), assertingRequest.getMethod());
+                ANSITerminal.error(methodMatchFailed);
+                LOGGER.error(methodMatchFailed);
                 return false;
             }
-            ANSITerminal.info(String.format("Matched on METHOD [%s] WITH [%s]", stubbedRequest.getMethod(), assertingRequest.getMethod()));
-            LOGGER.info("Matched on METHOD [{}] WITH [{}]", stubbedRequest.getMethod(), assertingRequest.getMethod());
+            final String methodMatchSuccess = String.format(MATCHED_ON_STUBBED + MSG_FIELD_METHOD + MSG_FIELDS_TEMPLATE, stubbedRequest.getMethod(), assertingRequest.getMethod());
+            ANSITerminal.info(methodMatchSuccess);
+            LOGGER.info(methodMatchSuccess);
         }
 
         // Match stubbed request body payload (POST, PUT & PATCH)
         if (stubbedRequest.isRequestBodyStubbed()) {
             if (!postBodiesMatch(stubbedRequest.isRequestBodyStubbed(), stubbedRequest.getPostBody(), assertingRequest)) {
-                ANSITerminal.error(String.format("Failed to match on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), assertingRequest.getPostBody()));
-                LOGGER.error("Failed to match on POST BODY [{}] WITH [{}].", stubbedRequest.getPostBody(), assertingRequest.getPostBody());
+                final String bodyMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_POST_BODY + MSG_FIELDS_TEMPLATE, stubbedRequest.getPostBody(), assertingRequest.getPostBody());
+                ANSITerminal.error(bodyMatchFailed);
+                LOGGER.error(bodyMatchFailed);
                 return false;
             }
-            ANSITerminal.info(String.format("Matched on POST BODY [%s] WITH [%s]", stubbedRequest.getPostBody(), assertingRequest.getPostBody()));
-            LOGGER.info("Matched on POST BODY [{}] WITH [{}].", stubbedRequest.getPostBody(), assertingRequest.getPostBody());
+            final String bodyMatchSuccess = String.format(MATCHED_ON_STUBBED + MSG_FIELD_POST_BODY + MSG_FIELDS_TEMPLATE, stubbedRequest.getPostBody(), assertingRequest.getPostBody());
+            ANSITerminal.info(bodyMatchSuccess);
+            LOGGER.info(bodyMatchSuccess);
         }
 
         // Match stubbed request headers
         if (!stubbedRequest.getHeaders().isEmpty()) {
             if (!headersMatch(stubbedRequest.getHeaders(), assertingRequest.getHeaders())) {
-                ANSITerminal.error(String.format("Failed to match on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), assertingRequest.getHeaders()));
-                LOGGER.error("Failed to match on HEADERS [{}] WITH [{}].", stubbedRequest.getHeaders(), assertingRequest.getHeaders());
+                final String headersMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_HEADERS + MSG_FIELDS_TEMPLATE, stubbedRequest.getHeaders(), assertingRequest.getHeaders());
+                ANSITerminal.error(headersMatchFailed);
+                LOGGER.error(headersMatchFailed);
                 return false;
             }
-            ANSITerminal.info(String.format("Matched on HEADERS [%s] WITH [%s]", stubbedRequest.getHeaders(), assertingRequest.getHeaders()));
-            LOGGER.info("Matched on HEADERS [{}] WITH [{}].", stubbedRequest.getHeaders(), assertingRequest.getHeaders());
+            final String headersMatchSuccess = String.format(MATCHED_ON_STUBBED + MSG_FIELD_HEADERS + MSG_FIELDS_TEMPLATE, stubbedRequest.getHeaders(), assertingRequest.getHeaders());
+            ANSITerminal.info(headersMatchSuccess);
+            LOGGER.info(headersMatchSuccess);
         }
 
         // Match stubbed request query params
         if (!stubbedRequest.getQuery().isEmpty()) {
             if (!queriesMatch(stubbedRequest.getQuery(), assertingRequest.getQuery())) {
-                ANSITerminal.error(String.format("Failed to match on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), assertingRequest.getQuery()));
-                LOGGER.error("Failed to match on QUERY [{}] WITH [{}].", stubbedRequest.getQuery(), assertingRequest.getQuery());
+                final String uriQueryMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_QUERY + MSG_FIELDS_TEMPLATE, stubbedRequest.getQuery(), assertingRequest.getQuery());
+                ANSITerminal.error(uriQueryMatchFailed);
+                LOGGER.error(uriQueryMatchFailed);
                 return false;
             }
-            ANSITerminal.info(String.format("Matched on QUERY [%s] WITH [%s]", stubbedRequest.getQuery(), assertingRequest.getQuery()));
-            LOGGER.info("Matched on QUERY [{}] WITH [{}].", stubbedRequest.getQuery(), assertingRequest.getQuery());
+            final String uriQueryMatchSuccess = String.format(MATCHED_ON_STUBBED + MSG_FIELD_QUERY + MSG_FIELDS_TEMPLATE, stubbedRequest.getQuery(), assertingRequest.getQuery());
+            ANSITerminal.info(uriQueryMatchSuccess);
+            LOGGER.info(uriQueryMatchSuccess);
         }
 
         return true;

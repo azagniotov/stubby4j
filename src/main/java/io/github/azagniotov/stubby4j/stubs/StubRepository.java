@@ -77,13 +77,19 @@ public class StubRepository {
     }
 
 
-    private static void logMatch(long elapsed, StubHttpLifecycle matched) {
+    private static void logMatch(final String typeDescription, long elapsed, StubHttpLifecycle matched) {
+//        StringBuilder message = new StringBuilder()
+//                .append("Found a match after ")
+//                .append(elapsed)
+//                .append(" milliseconds URL [")
+//                .append(matched.getUrl())
+//                .append("]");
         StringBuilder message = new StringBuilder()
-                .append("Found a match after ")
+                .append("Found a ")
+                .append(typeDescription)
+                .append(" after ")
                 .append(elapsed)
-                .append(" milliseconds URL [")
-                .append(matched.getUrl())
-                .append("]");
+                .append(" milliseconds");
         if (isSet(matched.getDescription())) {
             message.append(" Description [")
                     .append(matched.getDescription())
@@ -193,7 +199,7 @@ public class StubRepository {
             LOGGER.debug("Local cache contains a match for hashCode [{}].", incomingRequestHashCode);
 
             final long elapsed = System.currentTimeMillis() - initialStart;
-            logMatch(elapsed, cachedMatchCandidate);
+            logMatch("stubbed match in cache (i.e.: repeated request)", elapsed, cachedMatchCandidate);
 
             return Optional.of(cachedMatchCandidate);
 
@@ -281,11 +287,11 @@ public class StubRepository {
         for (final StubHttpLifecycle stubbed : stubs) {
             if (incomingStub.equals(stubbed)) {
                 final long elapsed = System.currentTimeMillis() - initialStart;
-                logMatch(elapsed, stubbed);
+                logMatch("stubbed match", elapsed, stubbed);
 
                 final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
-                ANSITerminal.status(String.format("Caching the found match for hashCode [%s]", incomingRequestHashCode));
-                LOGGER.debug("Caching the found match for hashCode [{}].", incomingRequestHashCode);
+                // ANSITerminal.status(String.format("Caching the found match for hashCode [%s]", incomingRequestHashCode));
+                // LOGGER.debug("Caching the found match for hashCode [{}].", incomingRequestHashCode);
                 stubMatchesCache.putIfAbsent(incomingRequestHashCode, stubbed);
 
                 return Optional.of(stubbed);
