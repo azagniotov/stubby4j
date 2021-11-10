@@ -15,6 +15,13 @@ base_environment: &base_environment
   environment:
     # Customize the JVM maximum heap limit
     JVM_OPTS: -Xmx3200m
+
+    # For JDK 8 for the specific JDK vendor used by stubby4j on CircleCI
+    OPENJ9_JAVA_OPTIONS: -DoverrideDisabledAlgorithms=true
+
+    # As of JDK 9 (incl.) respected by all JDK vendors
+    JDK_JAVA_OPTIONS: -DoverrideDisabledAlgorithms=true
+
     TERM: dumb
 
 

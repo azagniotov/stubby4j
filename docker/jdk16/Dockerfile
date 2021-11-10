@@ -75,7 +75,7 @@ VOLUME "$STUBBY4J_USER_HOME/data"
 
 # Expose the three stubby4j ports and run the JAR
 EXPOSE $ADMIN_PORT $STUBS_PORT $STUBS_TLS_PORT
-ENTRYPOINT java -Dlog4j2.configurationFile=log4j2.xml -jar stubby4j.jar \
+ENTRYPOINT java -DoverrideDisabledAlgorithms=true -Dlog4j2.configurationFile=log4j2.xml -jar stubby4j.jar \
       --location ${LOCATION} \
       --admin ${ADMIN_PORT} \
       --stubs ${STUBS_PORT} \

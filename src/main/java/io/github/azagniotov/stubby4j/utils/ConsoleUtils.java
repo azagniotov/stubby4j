@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
@@ -29,6 +29,8 @@ public final class ConsoleUtils {
     private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
     private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END = " ***** [/DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private static boolean debug = false;
 
     private ConsoleUtils() {
@@ -39,7 +41,7 @@ public final class ConsoleUtils {
     public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
 
         final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-                getTime(),
+                getLocalDateTime(),
                 request.getMethod(),
                 source,
                 request.getRequestURI(),
@@ -63,8 +65,8 @@ public final class ConsoleUtils {
 
     public static void logIncomingRequest(final HttpServletRequest request) {
 
-        final String logMessage = String.format("\n[%s] => %s %s on [%s]",
-                getTime(),
+        final String logMessage = String.format("[%s] => %s %s on [%s]",
+                getLocalDateTime(),
                 StringUtils.toUpper(request.getScheme()),
                 request.getMethod(),
                 request.getRequestURI()
@@ -107,8 +109,8 @@ public final class ConsoleUtils {
     public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
         final int status = response.getStatus();
 
-        final String logMessage = String.format("[%s] <= %s %s",
-                getTime(),
+        final String logMessage = String.format("[%s] <= %s %s\n",
+                getLocalDateTime(),
                 status,
                 HttpStatus.getMessage(status)
         );
@@ -159,14 +161,8 @@ public final class ConsoleUtils {
         LOGGER.info(logMessage);
     }
 
-
-    public static String getTime() {
-        final Calendar now = Calendar.getInstance(Locale.US);
-        return String.format("%02d:%02d:%02d",
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
-                now.get(Calendar.SECOND)
-        );
+    public static String getLocalDateTime() {
+        return DATE_TIME_FORMATTER.format(LocalDateTime.now());
     }
 
     /**
