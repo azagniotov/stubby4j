@@ -15,6 +15,7 @@ public final class ANSITerminal {
     private static final String BLACK = String.format("%s[30m", ESCAPE);
     private static final String BOLD_BLACK = String.format("%s%s", BOLD, BLACK);
     private static final String BOLD_LIGHT_GRAY = String.format("%s%s", BOLD, LIGHT_GRAY);
+    private static final String BRIGHT_BLUE = String.format("%s[34;1m", ESCAPE);
     private static final String BLUE = String.format("%s[34m", ESCAPE);
     private static final String CYAN = String.format("%s[36m", ESCAPE);
     private static final String GREEN = String.format("%s[32m", ESCAPE);
@@ -31,7 +32,7 @@ public final class ANSITerminal {
         if (mute) {
             return;
         }
-        System.out.println(String.format("%s%s%s", color, msg, RESET));
+        System.out.printf("%s%s%s%n", color, msg, RESET);
     }
 
     public static void log(final String msg) {
@@ -62,7 +63,7 @@ public final class ANSITerminal {
      * @param msg message to to print to the console
      */
     public static void info(final String msg) {
-        print(BLUE, msg);
+        print(BRIGHT_BLUE, msg);
     }
 
     /**

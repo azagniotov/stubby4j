@@ -54,7 +54,7 @@ public class StubbyHttpTransport {
     public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws IOException {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getTime(), method, recordingSource);
+            final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getLocalDateTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
         LOGGER.debug("Making {} HTTP request from stub metadata to: [{}].", method, recordingSource);

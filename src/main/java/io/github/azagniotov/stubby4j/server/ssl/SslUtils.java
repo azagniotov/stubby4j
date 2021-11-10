@@ -1,6 +1,9 @@
 package io.github.azagniotov.stubby4j.server.ssl;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -9,7 +12,6 @@ import javax.net.ssl.TrustManager;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,6 +23,8 @@ import java.util.Set;
  */
 @GeneratedCodeCoverageExclusion
 public final class SslUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SslUtils.class);
 
     public static final String TLS_v1 = "TLSv1";
     public static final String TLS_v1_1 = "TLSv1.1";
@@ -42,10 +46,17 @@ public final class SslUtils {
 
     static {
 
-        // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
-        // Removed TLSv1, TLSv1.1
-        Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
-        Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+        String overrideDisabledAlgorithms = System.getProperty("overrideDisabledAlgorithms");
+        if (overrideDisabledAlgorithms != null && overrideDisabledAlgorithms.equalsIgnoreCase("true")) {
+            final String overrideRequest = "Removing TLSv1 & TLSv1.1 from the JDK's 'jdk.tls.disabledAlgorithms' property..";
+            ANSITerminal.warn(overrideRequest);
+            LOGGER.warn(overrideRequest);
+
+            // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
+            // Removed TLSv1, TLSv1.1
+            Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
+            Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+        }
 
         try {
             DEFAULT_SSL_CONTEXT = SSLContext.getInstance(TLS_v1_3);
@@ -57,9 +68,6 @@ public final class SslUtils {
         } catch (Exception e) {
             throw new Error("failed to initialize the default SSL context", e);
         }
-
-        System.out.println("SSLEngine [server] enabled protocols: ");
-        System.out.println(new HashSet<>(Arrays.asList(SSL_ENGINE.getEnabledProtocols())));
 
         Set<String> supportedCiphers = supportedCiphers();
         SUPPORTED_CIPHERS = new LinkedHashSet<>(supportedCiphers);
