@@ -100,8 +100,9 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Support for delayed responses for performance and stability testing
-* Support for HTTP 30x redirects verification
-* Support for different types of HTTP Authorizations: Basic, Bearer Token & others
+* Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
+* Support for HTTP `30x` redirects verification
+* Support for different types of HTTP Authorizations: `Basic`, `Bearer Token` & others
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
 
 [Back to top](#table-of-contents)
