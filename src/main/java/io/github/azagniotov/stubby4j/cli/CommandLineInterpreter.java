@@ -47,7 +47,7 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("a", OPTION_ADMINPORT, true, "Port for admin portal. Defaults to 8889.");
         OPTIONS.addOption("t", OPTION_TLSPORT, true, "Port for TLS connection. Defaults to 7443.");
         OPTIONS.addOption("d", OPTION_CONFIG, true, "Data file to pre-load endpoints. Data file to pre-load endpoints. Optional valid YAML 1.1 is expected. If YAML is not provided, you will be expected to configure stubs via the stubby4j HTTP POST API.");
-        OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom TLS. By default TLS is enabled using internal keystore.");
+        OPTIONS.addOption("k", OPTION_KEYSTORE, true, "Keystore file for custom TLS. By default TLS is enabled using internal self-signed certificate.");
         OPTIONS.addOption("p", OPTION_KEYPASS, true, "Password for the provided keystore file.");
         OPTIONS.addOption("h", OPTION_HELP, false, "This help text.");
         OPTIONS.addOption("m", OPTION_MUTE, false, "Mute console output.");
@@ -55,7 +55,7 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("o", OPTION_DEBUG, false, "Dumps raw HTTP request to the console (if console is not muted!).");
         OPTIONS.addOption("da", OPTION_DISABLE_ADMIN, false, "Does not start Admin portal");
         OPTIONS.addOption("dc", OPTION_DISABLE_STUB_CACHING, false, "Disables stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests");
-        OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable SSL connections");
+        OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable TLS connections");
         @SuppressWarnings("static-access")
         Option watch =
                 Option.builder("w")

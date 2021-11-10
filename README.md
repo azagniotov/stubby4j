@@ -346,10 +346,10 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
  -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs
                               are successfully matched to the incoming
                               HTTP requests
- -ds,--disable_ssl            Does not enable SSL connections
+ -ds,--disable_ssl            Does not enable TLS connections
  -h,--help                    This help text.
  -k,--keystore <arg>          Keystore file for custom TLS. By default TLS
-                              is enabled using internal keystore.
+                              is enabled using internal self-signed certificate.
  -l,--location <arg>          Hostname at which to bind stubby.
  -m,--mute                    Mute console output.
  -o,--debug                   Dumps raw HTTP request to the console (if
