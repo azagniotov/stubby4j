@@ -4,9 +4,8 @@
 
 * PR [#284](https://github.com/azagniotov/stubby4j/pull/284) - During YAML parsing, checking if configured properties belong in their respective top-level objects (https://github.com/azagniotov)
 * PR [#286](https://github.com/azagniotov/stubby4j/pull/286) - Upgraded jetty to `9.4.43.v20210629` and SnakeYAML to `v1.29` (https://github.com/azagniotov)
-* PR [#295](https://github.com/azagniotov/stubby4j/pull/295) - When matching stubs, the log output is now clearer what has been matched (https://github.com/azagniotov)
-* PR [#315](https://github.com/azagniotov/stubby4j/pull/315) - Calling `setIncludeProtocols` on `SslContextFactory.Server` (https://github.com/azagniotov)
-* PR [#316](https://github.com/azagniotov/stubby4j/pull/316), [#317](https://github.com/azagniotov/stubby4j/pull/317), [#318](https://github.com/azagniotov/stubby4j/pull/318), [#320](https://github.com/azagniotov/stubby4j/pull/320), [#324](https://github.com/azagniotov/stubby4j/pull/324) - Revisited stubby SSL configuration to enable support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3` (https://github.com/azagniotov)
+* PR [#295](https://github.com/azagniotov/stubby4j/pull/295), [#325](https://github.com/azagniotov/stubby4j/pull/325), [#327](https://github.com/azagniotov/stubby4j/pull/327) - When matching stubs, the log output is now clearer what has been matched (https://github.com/azagniotov)
+* PR [#315](https://github.com/azagniotov/stubby4j/pull/315), [#316](https://github.com/azagniotov/stubby4j/pull/316), [#317](https://github.com/azagniotov/stubby4j/pull/317), [#318](https://github.com/azagniotov/stubby4j/pull/318), [#320](https://github.com/azagniotov/stubby4j/pull/320), [#324](https://github.com/azagniotov/stubby4j/pull/324), [#327](https://github.com/azagniotov/stubby4j/pull/327) - Revisited stubby SSL configuration which enables support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3` (https://github.com/azagniotov)
 
 #### 7.3.3
 
