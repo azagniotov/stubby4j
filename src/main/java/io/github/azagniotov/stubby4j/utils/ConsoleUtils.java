@@ -63,8 +63,9 @@ public final class ConsoleUtils {
 
     public static void logIncomingRequest(final HttpServletRequest request) {
 
-        final String logMessage = String.format("[%s] -> %s [%s]",
+        final String logMessage = String.format("\n[%s] => %s %s on [%s]",
                 getTime(),
+                StringUtils.toUpper(request.getScheme()),
                 request.getMethod(),
                 request.getRequestURI()
         );
@@ -106,10 +107,9 @@ public final class ConsoleUtils {
     public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
         final int status = response.getStatus();
 
-        final String logMessage = String.format("[%s] <- %s [%s] %s",
+        final String logMessage = String.format("[%s] <= %s %s",
                 getTime(),
                 status,
-                url,
                 HttpStatus.getMessage(status)
         );
 
