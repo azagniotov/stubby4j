@@ -42,7 +42,6 @@ public class ConsoleUtilsTest {
         final boolean NO_AUTO_FLUSH = false;
         System.setOut(new PrintStream(consoleCaptor, NO_AUTO_FLUSH, StringUtils.UTF_8));
 
-        when(mockHttpServletRequest.getScheme()).thenReturn(HttpScheme.HTTP.asString());
         when(mockHttpServletRequest.getRequestURI()).thenReturn(URI);
     }
 
@@ -55,7 +54,7 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_500() throws Exception {
 
         final int expectedStatus = 500;
-        final String expectedConsoleOutput = String.format("<= %s Server Error\u001B[0m", expectedStatus);
+        final String expectedConsoleOutput = String.format("<= %s Server Error\n\u001B[0m", expectedStatus);
         final String expectedConsoleColor = "[31m";
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
@@ -71,7 +70,7 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_301() throws Exception {
 
         final int expectedStatus = 301;
-        final String expectedConsoleOutput = String.format("<= %s Moved Permanently\u001B[0m", expectedStatus);
+        final String expectedConsoleOutput = String.format("<= %s Moved Permanently\n\u001B[0m", expectedStatus);
         final String expectedConsoleColor = "[33m";
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
@@ -87,7 +86,7 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_201() throws Exception {
 
         final int expectedStatus = 201;
-        final String expectedConsoleOutput = String.format("<= %s Created\u001B[0m", expectedStatus);
+        final String expectedConsoleOutput = String.format("<= %s Created\n\u001B[0m", expectedStatus);
         final String expectedConsoleColor = "[32m";
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
@@ -103,7 +102,7 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_200() throws Exception {
 
         final int expectedStatus = 200;
-        final String expectedConsoleOutput = String.format("<= %s OK\u001B[0m", expectedStatus);
+        final String expectedConsoleOutput = String.format("<= %s OK\n\u001B[0m", expectedStatus);
         final String expectedConsoleColor = "[32m";
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
@@ -119,8 +118,8 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_100() throws Exception {
 
         final int expectedStatus = 100;
-        final String expectedConsoleOutput = String.format("<= %s Continue\u001B[0m", expectedStatus);
-        final String expectedConsoleColor = "[34m";
+        final String expectedConsoleOutput = String.format("<= %s Continue\n\u001B[0m", expectedStatus);
+        final String expectedConsoleColor = "[34;1m";
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
 
@@ -135,7 +134,7 @@ public class ConsoleUtilsTest {
     public void shouldPrintToConsoleExpectedErrorWithColor_WhenStatus_LessThan100() throws Exception {
 
         final int expectedStatus = 99;
-        final String expectedConsoleOutput = String.format("<= %s 99\u001B[0m", expectedStatus);
+        final String expectedConsoleOutput = String.format("<= %s 99\n\u001B[0m", expectedStatus);
 
         when(mockHttpServletResponse.getStatus()).thenReturn(expectedStatus);
 
