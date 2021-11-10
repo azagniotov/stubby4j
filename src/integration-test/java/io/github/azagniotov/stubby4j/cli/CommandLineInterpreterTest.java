@@ -40,10 +40,11 @@ public class CommandLineInterpreterTest {
                 " -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs" + BR +
                 "                              are successfully matched to the incoming" + BR +
                 "                              HTTP requests" + BR +
-                " -ds,--disable_ssl            Does not enable SSL connections" + BR +
+                " -ds,--disable_ssl            Does not enable TLS connections" + BR +
                 " -h,--help                    This help text." + BR +
                 " -k,--keystore <arg>          Keystore file for custom TLS. By default TLS" + BR +
-                "                              is enabled using internal keystore." + BR +
+                "                              is enabled using internal self-signed" + BR +
+                "                              certificate." + BR +
                 " -l,--location <arg>          Hostname at which to bind stubby." + BR +
                 " -m,--mute                    Mute console output." + BR +
                 " -o,--debug                   Dumps raw HTTP request to the console (if" + BR +
