@@ -36,6 +36,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
       * [Request object properties](#request-object-properties)
+      * [Making requests over TLS](#making-requests-over-tls)
       * [Request proxying](#request-proxying)
       * [Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)
       * [Regex stubbing for XML content](#regex-stubbing-for-xml-content)
@@ -762,6 +763,26 @@ The following endpoint only accepts requests with `application/json` post values
 
 [Back to top](#table-of-contents)
 
+### Making requests over TLS
+
+Although as part of continuous improvement of Java security, the industry is moving towards disabling
+`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` accepts requests made over all
+available versions of `TLS` protocol. `stubby4j` supports the following legacy `TLSv1.0` and `TLSv1.1`, as well
+as the current `TLSv1.2` and `TLSv1.3` versions.
+
+The `TLS` in `stubby4j` is enabled by default using an internal self-signed certificate in `PKCS12` format. Do note
+that as per [Command-line switches](#command-line-switches) it is possible to completely disable `TLS` in `stubby4j` or
+to provide your own keystore file generated from a certificate which is signed by a certificate authority when
+configuring `stubby4j` hostname. The keystore should be with `.PKCS12` or `.JKS` file extensions.
+
+Internally, `stubby4j` uses a _trust all_ implementation of `X509TrustManager` (an `X.509` certificate contains an
+identity which can be a hostname/organization/individual, and a public key) that trusts _any_ certificate. This trust
+manager set in the default `SSLContext` (the object that is responsible for setting up SSL connections).
+
+Thus, when a request over `TLS` is made, during SSL handshake phase, the `stubby4j` server skips verification of
+authentication credentials presented by the remote party.
+
+[Back to top](#table-of-contents)
 
 ### Request proxying
 
