@@ -779,9 +779,12 @@ its own certificate authority) certificate in `PKCS12` format. During TLS config
 `SSLContext` instance (the object that is responsible for setting up SSL connections) is initialized with a custom
 implementation of `X509TrustManager`__*__ that trusts _any_ certificate.
 
-Trusting _any_ certificate allows the ease of testing when using `stubby4j`, but it is very insecure and should not
-be used in production environments. As a result, when a request to `stubby4j` is made over TLS, during the SSL
-handshake phase, the `stubby4j` server skips verification of authentication credentials presented by the remote party.
+Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
+allows web clients that do not configure their own `SSLSocketFactory` to connect to `stubby4j` over SSL/TLS. If a web
+client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This trust
+manager must be a _trusts all_, since it is not going to be possible for the web client to validate `stubby4j`'s
+default self-signed certificate against a list of trusted certificates. Please note, trusting _any_ certificate is
+very insecure and should not be used in production environments.
 
 Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
 you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
