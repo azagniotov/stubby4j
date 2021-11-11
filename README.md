@@ -770,14 +770,15 @@ Although as part of continuous improvement of Java security, the industry is mov
 all available versions of the `TLS` protocol. The legacy `TLSv1.0` and `TLSv1.1`, as well as the current
 `TLSv1.2` and `TLSv1.3` protocol versions are supported.
 
-The TLS in `stubby4j` is enabled by default using an internal self-signed (`stubby4j` is behaving as
-its own certificate authority, a "CA" hereafter) certificate in `PKCS12` format. During TLS configuration,
+The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
+its own certificate authority) certificate in `PKCS12` format. During the TLS configuration,
 a custom implementation of `X509TrustManager`__*__ that trusts _any_ certificate set in the default `SSLContext`
-instance (the object that is responsible for setting up SSL connections). This is purely for testing purposes,
-and thus it is very insecure and should not be used in production environment.
+instance (the object that is responsible for setting up SSL connections).
 
-Thus, when a request over TLS is made, during SSL handshake phase, the `stubby4j` server skips verification of
-authentication credentials presented by the remote party.
+To trust _any_ certificate is purely for allowing ease of testing when using `stubby4j`, and thus it is very
+insecure and should not be used in production environments. As a result, when a request over TLS is made,
+during SSL handshake phase, the `stubby4j` server skips verification of authentication credentials presented
+by the remote party.
 
 Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
 you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
