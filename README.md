@@ -768,21 +768,20 @@ The following endpoint only accepts requests with `application/json` post values
 Although as part of continuous improvement of Java security, the industry is moving towards disabling
 `TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` does support the legacy
 protocols in order to provide testing support for legacy applications that still have not or cannot upgrade to
-the current & recommonded protocol versions.
+the more secure & recommended protocol versions.
 
-`stubby4j` can accept requests over all available versions of the SSL (Secure Sockets Layer) and its successor TLS
+`stubby4j` can accept requests over most available versions of the SSL (Secure Sockets Layer) and its successor TLS
 (Transport Layer Security) protocols. Supported versions are the legacy `SSLv3`, `TLSv1.0` and `TLSv1.1`, as well as
 the current `TLSv1.2` and `TLSv1.3`.
 
 The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
-its own certificate authority) certificate in `PKCS12` format. During the TLS configuration,
-a custom implementation of `X509TrustManager`__*__ that trusts _any_ certificate set in the default `SSLContext`
-instance (the object that is responsible for setting up SSL connections).
+its own certificate authority) certificate in `PKCS12` format. During TLS configuration, the server's default 
+`SSLContext` instance (the object that is responsible for setting up SSL connections) is initialized with a custom
+implementation of `X509TrustManager`__*__ that trusts _any_ certificate.
 
-To trust _any_ certificate is purely for allowing ease of testing when using `stubby4j`, and thus it is very
-insecure and should not be used in production environments. As a result, when a request over TLS is made,
-during SSL handshake phase, the `stubby4j` server skips verification of authentication credentials presented
-by the remote party.
+Trusting _any_ certificate allows the ease of testing when using `stubby4j`, but it is very insecure and should not
+be used in production environments. As a result, when a request to `stubby4j` is made over TLS, during the SSL
+handshake phase, the `stubby4j` server skips verification of authentication credentials presented by the remote party.
 
 Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
 you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
