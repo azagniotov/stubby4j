@@ -285,9 +285,11 @@ public final class JettyFactory {
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePassword(password);
         sslContextFactory.setKeyManagerPassword(password);
-        sslContextFactory.setIncludeProtocols(SslUtils.ALL_TLS_VERSIONS);
-        sslContextFactory.setExcludeCipherSuites();
 
+        sslContextFactory.setExcludeProtocols();
+        sslContextFactory.setIncludeProtocols(SslUtils.ALL_TLS_VERSIONS);
+
+        sslContextFactory.setExcludeCipherSuites();
         sslContextFactory.setIncludeCipherSuites(SslUtils.includedCipherSuites());
 
         if (ObjectUtils.isNull(keystorePath)) {

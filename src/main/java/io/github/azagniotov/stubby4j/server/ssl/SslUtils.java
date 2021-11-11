@@ -26,11 +26,12 @@ public final class SslUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SslUtils.class);
 
+    public static final String SSLv3 = "SSLv3";
     public static final String TLS_v1 = "TLSv1";
     public static final String TLS_v1_1 = "TLSv1.1";
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
-    public static final String[] ALL_TLS_VERSIONS = new String[]{TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
+    public static final String[] ALL_TLS_VERSIONS = new String[]{SSLv3, TLS_v1, TLS_v1_1, TLS_v1_2, TLS_v1_3};
 
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
     private static final Set<String> TLS_v13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
@@ -48,13 +49,13 @@ public final class SslUtils {
 
         String overrideDisabledAlgorithms = System.getProperty("overrideDisabledAlgorithms");
         if (overrideDisabledAlgorithms != null && overrideDisabledAlgorithms.equalsIgnoreCase("true")) {
-            final String overrideRequest = "Removing TLSv1 & TLSv1.1 from the JDK's 'jdk.tls.disabledAlgorithms' property..";
+            final String overrideRequest = "Removing SSLv3, TLSv1 and TLSv1.1 from the JDK's 'jdk.tls.disabledAlgorithms' property..";
             ANSITerminal.warn(overrideRequest);
             LOGGER.warn(overrideRequest);
 
             // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
-            // Removed TLSv1, TLSv1.1
-            Security.setProperty("jdk.tls.disabledAlgorithms", "SSLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
+            // Removed SSLv3, TLSv1 and TLSv1.1
+            Security.setProperty("jdk.tls.disabledAlgorithms", "RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
             Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
         }
 
