@@ -28,14 +28,6 @@ public final class FakeX509TrustManager implements X509TrustManager {
         acceptedIssuers.addAll(Arrays.asList(chain));
     }
 
-    public boolean isClientTrusted(final X509Certificate[] chain) {
-        return true;
-    }
-
-    public boolean isServerTrusted(final X509Certificate[] chain) {
-        return true;
-    }
-
     @Override
     public X509Certificate[] getAcceptedIssuers() {
         // it seems to be OK for Java <= 6 to return an empty array but not for Java 7 (at least 1.7.0_04-b20):
