@@ -785,7 +785,7 @@ configuring `stubby4j` command-line arguments. In other words, this allows you t
 from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should be
 have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
-__*__X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
+__*__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
   
 [Back to top](#table-of-contents)
 
