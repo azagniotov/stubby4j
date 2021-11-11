@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.server;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
 import io.github.azagniotov.stubby4j.handlers.AjaxEndpointStatsHandler;
@@ -31,6 +32,8 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,6 +50,8 @@ import java.util.Map;
 @SuppressWarnings("serial")
 @GeneratedCodeCoverageExclusion
 public final class JettyFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettyFactory.class);
 
     public static final int DEFAULT_ADMIN_PORT = 8889;
     public static final int DEFAULT_STUBS_PORT = 8882;
@@ -233,12 +238,18 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
-        String keystorePath = null;
-        String password = "stubby4j";
-        if (commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYSTORE)
-                && commandLineArgs.containsKey(CommandLineInterpreter.OPTION_KEYPASS)) {
-            password = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYPASS);
-            keystorePath = commandLineArgs.get(CommandLineInterpreter.OPTION_KEYSTORE);
+        final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
+        final String keystorePassword = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYPASS, null);
+
+        if ((ObjectUtils.isNull(keystorePath) && ObjectUtils.isNotNull(keystorePassword)) ||
+                (ObjectUtils.isNotNull(keystorePath) && ObjectUtils.isNull(keystorePassword))) {
+            final String misConfigMsg = String.format("When provided, both flags must be set, got: %s=%s and %s=%s",
+                    CommandLineInterpreter.OPTION_KEYSTORE,
+                    keystorePath,
+                    CommandLineInterpreter.OPTION_KEYPASS,
+                    keystorePassword);
+            ANSITerminal.warn(misConfigMsg);
+            LOGGER.warn(misConfigMsg);
         }
 
         HttpConfiguration httpConfiguration = constructHttpConfiguration();
@@ -246,7 +257,7 @@ public final class JettyFactory {
         httpConfiguration.setSecurePort(getStubsSslPort(commandLineArgs));
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
-        final SslContextFactory sslContextFactory = constructSslContextFactory(password, keystorePath);
+        final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
 
         ServerConnector sslConnector = new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1),
@@ -274,7 +285,7 @@ public final class JettyFactory {
         return sslConnector;
     }
 
-    private SslContextFactory constructSslContextFactory(final String password, final String keystorePath) throws IOException {
+    private SslContextFactory constructSslContextFactory(final String keystorePassword, final String keystorePath) throws IOException {
 
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#configuring-ssl
 
@@ -283,8 +294,6 @@ public final class JettyFactory {
         // https://github.com/eclipse/jetty.project/issues/3773
         // https://github.com/eclipse/jetty.project/issues/5039
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
-        sslContextFactory.setKeyStorePassword(password);
-        sslContextFactory.setKeyManagerPassword(password);
 
         sslContextFactory.setExcludeProtocols();
         sslContextFactory.setIncludeProtocols(SslUtils.ALL_TLS_VERSIONS);
@@ -303,11 +312,15 @@ public final class JettyFactory {
                 // keystore and presents its corresponding public key and certificate to the client.
                 sslContextFactory.setKeyStoreResource(keyStoreResource);
                 sslContextFactory.setKeyStoreType("PKCS12");
+                sslContextFactory.setKeyStorePassword("stubby4j");
+                sslContextFactory.setKeyManagerPassword("stubby4j");
 
                 return sslContextFactory;
             }
         }
 
+        sslContextFactory.setKeyStorePassword(keystorePassword);
+        sslContextFactory.setKeyManagerPassword(keystorePassword);
         sslContextFactory.setKeyStorePath(keystorePath);
 
         return sslContextFactory;
