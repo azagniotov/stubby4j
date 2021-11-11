@@ -36,3 +36,8 @@ test.outputs.upToDateWhen { false }
 integrationTest.outputs.upToDateWhen { false }
 functionalTest.outputs.upToDateWhen { false }
 loadTest.outputs.upToDateWhen { false }
+
+functionalTest {
+    systemProperty "overrideDisabledAlgorithms", "true"
+}
+
