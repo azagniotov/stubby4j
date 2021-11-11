@@ -766,9 +766,13 @@ The following endpoint only accepts requests with `application/json` post values
 ### Making requests over TLS
 
 Although as part of continuous improvement of Java security, the industry is moving towards disabling
-`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` can accept requests over
-all available versions of the `TLS` protocol. The legacy `TLSv1.0` and `TLSv1.1`, as well as the current
-`TLSv1.2` and `TLSv1.3` protocol versions are supported.
+`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` does support the legacy
+protocols in order to provide testing support for legacy applications that still have not or cannot upgrade to
+the current & recommonded protocol versions.
+
+`stubby4j` can accept requests over all available versions of the SSL (Secure Sockets Layer) and its successor TLS
+(Transport Layer Security) protocols. Supported versions are the legacy `SSLv3`, `TLSv1.0` and `TLSv1.1`, as well as
+the current `TLSv1.2` and `TLSv1.3`.
 
 The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
 its own certificate authority) certificate in `PKCS12` format. During the TLS configuration,
@@ -783,8 +787,8 @@ by the remote party.
 Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
 you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
 configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates
-from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should be
-have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
+from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12`
+or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
 __*__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
   
