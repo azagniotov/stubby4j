@@ -766,22 +766,27 @@ The following endpoint only accepts requests with `application/json` post values
 ### Making requests over TLS
 
 Although as part of continuous improvement of Java security, the industry is moving towards disabling
-`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` accepts requests made over all
-available versions of `TLS` protocol. `stubby4j` supports the following legacy `TLSv1.0` and `TLSv1.1`, as well
-as the current `TLSv1.2` and `TLSv1.3` versions.
+`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` can accept requests over
+all available versions of the `TLS` protocol. The legacy `TLSv1.0` and `TLSv1.1`, as well as the current
+`TLSv1.2` and `TLSv1.3` protocol versions are supported.
 
-The `TLS` in `stubby4j` is enabled by default using an internal self-signed certificate in `PKCS12` format. Do note
-that as per [Command-line switches](#command-line-switches) it is possible to completely disable `TLS` in `stubby4j` or
-to provide your own keystore file generated from a certificate which is signed by a certificate authority when
-configuring `stubby4j` hostname. The keystore should be with `.PKCS12` or `.JKS` file extensions.
+The TLS in `stubby4j` is enabled by default using an internal self-signed (`stubby4j` is behaving as
+its own certificate authority, a "CA" hereafter) certificate in `PKCS12` format. During TLS configuration,
+a custom implementation of `X509TrustManager`__*__ that trusts _any_ certificate set in the default `SSLContext`
+instance (the object that is responsible for setting up SSL connections). This is purely for testing purposes,
+and thus it is very insecure and should not be used in production environment.
 
-Internally, `stubby4j` uses a _trust all_ implementation of `X509TrustManager` (an `X.509` certificate contains an
-identity which can be a hostname/organization/individual, and a public key) that trusts _any_ certificate. This trust
-manager set in the default `SSLContext` (the object that is responsible for setting up SSL connections).
-
-Thus, when a request over `TLS` is made, during SSL handshake phase, the `stubby4j` server skips verification of
+Thus, when a request over TLS is made, during SSL handshake phase, the `stubby4j` server skips verification of
 authentication credentials presented by the remote party.
 
+Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
+you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
+configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates
+from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should be
+have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
+
+__*__X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
+  
 [Back to top](#table-of-contents)
 
 ### Request proxying
