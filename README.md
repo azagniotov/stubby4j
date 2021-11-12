@@ -772,12 +772,12 @@ the more secure & recommended protocol versions.
 
 `stubby4j` can accept requests over most available versions of the SSL (Secure Sockets Layer) and its successor TLS
 (Transport Layer Security) protocols. Supported versions are the legacy `SSLv3`, `TLSv1.0` and `TLSv1.1`, as well as
-the current `TLSv1.2` and `TLSv1.3`.
+the current `TLSv1.2` and `TLSv1.3` __[1]__.
 
 The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
-its own certificate authority) certificate in `PKCS12` format. During TLS configuration, the server's default 
+its own certificate authority) certificate in `PKCS12` format. During TLS configuration, the server's default
 `SSLContext` instance (the object that is responsible for setting up SSL connections) is initialized with a custom
-implementation of `X509TrustManager`__*__ that trusts _any_ certificate.
+implementation of `X509TrustManager` __[2]__ that trusts _any_ certificate.
 
 Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
 allows web clients that do not configure their own `SSLSocketFactory` to connect to `stubby4j` over SSL/TLS. If a web
@@ -792,8 +792,10 @@ configuring `stubby4j` command-line arguments. In other words, this allows you t
 from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12`
 or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
-__*__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
-  
+__[1]__ When running `stubby4j` as a standalone JAR, if the underlying JDK version & vendor provided support for `TLSv1.3` (e.g.: [earlier versions of Oracle JDK 8 did not support it](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html)), then this protocol version will be supported by `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3` is supported by default
+
+__[2]__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
+
 [Back to top](#table-of-contents)
 
 ### Request proxying
