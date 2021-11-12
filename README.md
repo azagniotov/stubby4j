@@ -792,7 +792,7 @@ configuring `stubby4j` command-line arguments. In other words, this allows you t
 from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12`
 or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
-__[1]__ When running `stubby4j` as a standalone JAR, if the underlying JDK version & vendor provided support for `TLSv1.3` (e.g.: [earlier versions of Oracle JDK 8 did not support it](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html)), then this protocol version will be supported by `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3` is supported by default
+__[1]__ When running `stubby4j` as a standalone JAR, if the underlying JDK version & vendor provided support for `TLSv1.3` (e.g.,: [Oracle JDK 8 added support for TLSv1.3 only in v8u261](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html)), then this protocol version will be supported by `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3` is supported by default
 
 __[2]__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
 

@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
+import static java.util.Arrays.asList;
+
 
 @SuppressWarnings("serial")
 @GeneratedCodeCoverageExclusion
@@ -282,6 +285,13 @@ public final class JettyFactory {
 
         final String tlsStatus = String.format("Stubs portal supports TLS protocol versions: %s", supportedTlsProtocals);
         statuses.add(tlsStatus);
+
+        if (!new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
+            final String noTls13Msg = String.format("TLSv1.3 is not supported in JDK v%s, %s",
+                    System.getProperty("java.runtime.version"),
+                    System.getProperty("java.vendor"));
+            statuses.add(noTls13Msg);
+        }
 
         currentStubsSslPort = sslConnector.getPort();
 
