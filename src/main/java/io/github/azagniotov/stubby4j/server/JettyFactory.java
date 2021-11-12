@@ -51,12 +51,13 @@ import java.util.Map;
 @GeneratedCodeCoverageExclusion
 public final class JettyFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JettyFactory.class);
-
     public static final int DEFAULT_ADMIN_PORT = 8889;
     public static final int DEFAULT_STUBS_PORT = 8882;
     public static final int DEFAULT_SSL_PORT = 7443;
     public static final String DEFAULT_HOST = "localhost";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettyFactory.class);
+
     private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
     private static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
@@ -238,6 +239,8 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
+        SslUtils.configureSslEnvironment();
+
         final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
         final String keystorePassword = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYPASS, null);
 
@@ -296,7 +299,7 @@ public final class JettyFactory {
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
 
         sslContextFactory.setExcludeProtocols();
-        sslContextFactory.setIncludeProtocols(SslUtils.ALL_TLS_VERSIONS);
+        sslContextFactory.setIncludeProtocols(SslUtils.enabledProtocols());
 
         sslContextFactory.setExcludeCipherSuites();
         sslContextFactory.setIncludeCipherSuites(SslUtils.includedCipherSuites());
