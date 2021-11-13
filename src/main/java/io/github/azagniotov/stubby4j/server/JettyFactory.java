@@ -242,8 +242,6 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
-        SslUtils.configureSslEnvironment();
-
         final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
         final String keystorePassword = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYPASS, null);
 

@@ -50,8 +50,9 @@ public final class SslUtils {
     private static final Set<String> DEFAULT_ENABLED_TLS_VERSIONS;
     private static final boolean TLS_v1_3_JDK_SUPPORTED;
     private static final Set<String> ALL_ENABLED_TLS_VERSIONS;
-
-    private static Set<String> supportedCiphers;
+    private static final SSLContext DEFAULT_SSL_CONTEXT;
+    private static final SSLEngine DEFAULT_SSL_ENGINE;
+    private static final Set<String> SUPPORT_CIPHERS;
 
     static {
 
@@ -70,6 +71,10 @@ public final class SslUtils {
         DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(SSLv3, TLS_v1_0, TLS_v1_1, TLS_v1_2));
         TLS_v1_3_JDK_SUPPORTED = isTLSv13SupportedByCurrentJDK();
         ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
+        DEFAULT_SSL_CONTEXT = initAndSetDefaultSSLContext();
+        DEFAULT_SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
+        DEFAULT_SSL_ENGINE.setEnabledProtocols(enabledProtocols());
+        SUPPORT_CIPHERS = supportedCiphers();
     }
 
     private SslUtils() {
@@ -78,8 +83,9 @@ public final class SslUtils {
 
     private static boolean isTLSv13SupportedByCurrentJDK() {
         try {
-            final SSLContext sslContext = initTlsSSLContext();
-            return isContainsTLSv13(sslContext.getSupportedSSLParameters().getProtocols());
+            final SSLContext tlsContext = SSLContext.getInstance(TLS);
+            tlsContext.init(null, new TrustManager[0], null);
+            return isContainsTLSv13(tlsContext.getSupportedSSLParameters().getProtocols());
         } catch (Throwable cause) {
             LOGGER.debug("Unable to detect if JDK SSLEngine supports TLSv1.3, assuming no", cause);
             ANSITerminal.warn("Unable to detect if JDK SSLEngine supports TLSv1.3, assuming no");
@@ -87,26 +93,8 @@ public final class SslUtils {
         }
     }
 
-    private static SSLContext initTlsSSLContext() {
-        try {
-            final SSLContext defaultCandidate = SSLContext.getInstance(TLS);
-            defaultCandidate.init(null, new TrustManager[0], null);
-            return defaultCandidate;
-        } catch (Exception e) {
-            throw new Error("failed to initialize the TLS flavor SSL context", e);
-        }
-    }
-
     private static String getTlsVersion() {
         return TLS_v1_3_JDK_SUPPORTED ? TLS_v1_3 : TLS_v1_2;
-    }
-
-    public static void configureSslEnvironment() {
-        final SSLContext defaultSslContext = initAndSetDefaultSSLContext();
-        final SSLEngine defaultSslEngine = defaultSslContext.createSSLEngine();
-        defaultSslEngine.setEnabledProtocols(enabledProtocols());
-
-        supportedCiphers = supportedCiphers(defaultSslEngine);
     }
 
     private static SSLContext initAndSetDefaultSSLContext() {
@@ -128,16 +116,16 @@ public final class SslUtils {
     }
 
     public static String[] includedCipherSuites() {
-        return supportedCiphers.toArray(new String[0]);
+        return SUPPORT_CIPHERS.toArray(new String[0]);
     }
 
     public static String[] enabledProtocols() {
         return ALL_ENABLED_TLS_VERSIONS.toArray(new String[0]);
     }
 
-    private static Set<String> supportedCiphers(final SSLEngine sslEngine) {
+    private static Set<String> supportedCiphers() {
         // Choose the sensible default list of cipher suites.
-        final String[] supportedCiphers = sslEngine.getSupportedCipherSuites();
+        final String[] supportedCiphers = DEFAULT_SSL_ENGINE.getSupportedCipherSuites();
         Set<String> supportedCiphersSet = new LinkedHashSet<>(supportedCiphers.length);
         for (String supportedCipher : supportedCiphers) {
             supportedCiphersSet.add(supportedCipher);
@@ -153,7 +141,7 @@ public final class SslUtils {
             if (supportedCipher.startsWith("SSL_")) {
                 final String tlsPrefixedCipherName = "TLS_" + supportedCipher.substring("SSL_".length());
                 try {
-                    sslEngine.setEnabledCipherSuites(new String[]{tlsPrefixedCipherName});
+                    DEFAULT_SSL_ENGINE.setEnabledCipherSuites(new String[]{tlsPrefixedCipherName});
                     supportedCiphersSet.add(tlsPrefixedCipherName);
                 } catch (IllegalArgumentException ignored) {
                     // The cipher is not supported ... move on to the next cipher.
