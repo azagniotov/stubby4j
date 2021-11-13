@@ -791,16 +791,23 @@ For example:
 #### Server-side TLS configuration
 
 The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
-its own certificate authority) certificate in `PKCS12` format. During TLS configuration, the server's default
-`SSLContext` instance (the object that is responsible for setting up SSL connections) is initialized with a custom
-implementation of `X509TrustManager` that trusts _any_ certificate. X.509 certificates contain an identity
-(which can be a hostname, organization or individual) and a public key.
+its own certificate authority) certificate in `PKCS12` format.
 
-Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
-allows web clients that do not configure their own `SSLSocketFactory` to connect to `stubby4j` over SSL/TLS. If a web
-client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This trust
-manager must be a _trusts all_, since it is not going to be possible for the web client to validate `stubby4j`'s
-default self-signed certificate against a list of trusted certificates.
+During TLS configuration in `stubby4j`, the following happens:
+
+1. The property `jdk.tls.disabledAlgorithms` (located in `java.security` configuration file) is modified
+   at runtime where the following values `SSLv3`, `TLSv1` and `TLSv1.1` are removed, in order to workaround
+   the [JDK-8254713: Disable TLS 1.0 and 1.1](https://bugs.openjdk.java.net/browse/JDK-8254713)
+   
+2. The `stubby4j` server's default `SSLContext` instance (the object that is responsible for setting up SSL connections)
+   is initialized with a custom implementation of `X509TrustManager` that trusts _any_ certificate (X.509 certificates
+   contain an identity (which can be a hostname, organization or individual) and a public key).
+
+   Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
+   allows web clients that do not configure their own `SSLSocketFactory` to connect to `stubby4j` over SSL/TLS. If a web
+   client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This trust
+   manager must be a _trusts all_, since it is not going to be possible for the web client to validate `stubby4j`'s
+   default self-signed certificate against a list of trusted certificates.
 
 Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
   

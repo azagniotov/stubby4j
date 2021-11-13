@@ -2,6 +2,7 @@ package io.github.azagniotov.stubby4j.server.ssl;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +65,8 @@ public final class SslUtils {
 
             // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
             // Removed SSLv3, TLSv1 and TLSv1.1
-            Security.setProperty("jdk.tls.disabledAlgorithms", "RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL");
-            Security.setProperty("jdk.certpath.disabledAlgorithms", "MD2, MD5, SHA1 jdkCA & usage TLSServer, RSA keySize < 1024, DSA keySize < 1024, EC keySize < 224");
+            removeFromSecurityProperty("jdk.tls.disabledAlgorithms", "SSLv3", "TLSv1", "TLSv1.1");
+
         }
 
         DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(SSLv3, TLS_v1_0, TLS_v1_1, TLS_v1_2));
@@ -161,5 +162,11 @@ public final class SslUtils {
             }
         }
         return false;
+    }
+
+    private static void removeFromSecurityProperty(final String propertyName, final String... protocols) {
+        final String propertyValue = Security.getProperty(propertyName);
+        final String sanitizedValue = StringUtils.removeValueFromCsv(propertyValue, protocols);
+        Security.setProperty(propertyName, sanitizedValue);
     }
 }

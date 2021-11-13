@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public final class StringUtils {
@@ -128,6 +130,24 @@ public final class StringUtils {
                 pkg.getImplementationVersion() : "x.x.xx";
 
         return String.format("stubby4j/%s (HTTP stub client request)", implementationVersion);
+    }
+
+    /**
+     * Inspired by https://github.com/openjdk/jdk/blob/master/test/lib/jdk/test/lib/security/SecurityUtils.java
+     * <p>
+     * Removes constraints that contain the specified constraint from the
+     * specified security property. For example, List.of("SHA1") will remove
+     * any constraint containing "SHA1".
+     */
+    public static String removeValueFromCsv(final String value, final String... constraints) {
+        if (value == null) {
+            return "";
+        }
+        final String delimiter = ",";
+        return Arrays.stream(value.split(delimiter))
+                .map(String::trim)
+                .filter(s -> Arrays.stream(constraints).noneMatch(s::contains))
+                .collect(Collectors.joining(delimiter + " ")); // with one space
     }
 
     public static String encodeBase64(final String toEncode) {
