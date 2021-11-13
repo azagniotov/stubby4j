@@ -809,7 +809,7 @@ During TLS configuration in `stubby4j`, the following happens:
    manager must be a _trusts all_, since it is not going to be possible for the web client to validate `stubby4j`'s
    default self-signed certificate against a list of trusted certificates.
 
-Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
+   Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
   
 #### Supplying your own keystore/certificate
 
