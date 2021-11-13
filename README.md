@@ -765,11 +765,12 @@ The following endpoint only accepts requests with `application/json` post values
 
 ### Making requests over TLS
 
-Although as part of continuous improvement of Java security, the industry is moving towards disabling
-`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` continues to support the legacy
-protocols in order to provide testing support for legacy applications that still have not (or cannot upgrade)
-to the more secure & the recommended TLS protocol versions.
-  
+In March 2021, the [RFC8996](https://datatracker.ietf.org/doc/html/rfc8996) deprecating `TLS 1.0` (introduced in 1999)
+and `TLS 1.1` (introduced in 2006) was approved. Furthermore, while as part of continuous improvement of Java security,
+the industry continues the process of disabling the aforementioned protocols, there are still legacy applications that
+have not (or not able to) upgraded to the more secure & the recommended TLS protocol versions. Therefore, in order to
+acommodate a range of integration testing needs, `stubby4j` continues to support these legacy protocol versions.
+   
 #### Supported protocols
 
 `stubby4j` can accept requests over most available versions of the SSL (Secure Sockets Layer) and its successor TLS
