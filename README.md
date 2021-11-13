@@ -766,35 +766,48 @@ The following endpoint only accepts requests with `application/json` post values
 ### Making requests over TLS
 
 Although as part of continuous improvement of Java security, the industry is moving towards disabling
-`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` does support the legacy
-protocols in order to provide testing support for legacy applications that still have not or cannot upgrade to
-the more secure & recommended protocol versions.
+`TLS 1.0` (introduced in 1999) and `TLS 1.1` (introduced in 2006), `stubby4j` continues to support the legacy
+protocols in order to provide testing support for legacy applications that still have not (or cannot upgrade)
+to the more secure & the recommended TLS protocol versions.
+  
+#### Supported protocols
 
 `stubby4j` can accept requests over most available versions of the SSL (Secure Sockets Layer) and its successor TLS
 (Transport Layer Security) protocols. Supported versions are the legacy `SSLv3`, `TLSv1.0` and `TLSv1.1`, as well as
-the current `TLSv1.2` and `TLSv1.3` __[1]__.
+the current `TLSv1.2` and `TLSv1.3` (the TLS 1.3 standard was released in August 2018 and is a successor to TLS 1.2).
+
+##### TLS v1.3 support
+
+When running `stubby4j` as a standalone JAR, if the underlying JDK version supports `TLSv1.3`, then this protocol version
+will also be supported and enabled in `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3`
+is supported by default.
+  
+Please note, if you are running on JDK 1.8, it does not mean that your JDK build version & vendor necessarily support `TLSv1.3`.
+For example, Oracle JDK 8 [added implementation for TLSv1.3 only in build v8u261](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html) (which was disabled by default anyways), while OpenJDK [released TLSv1.3 only in build v8u272](https://mail.openjdk.java.net/pipermail/jdk8u-dev/2020-October/012817.html)
+
+#### Server-side TLS configuration
 
 The TLS in `stubby4j` is enabled by default using an internal self-signed (i.e.,: `stubby4j` is behaving as
 its own certificate authority) certificate in `PKCS12` format. During TLS configuration, the server's default
 `SSLContext` instance (the object that is responsible for setting up SSL connections) is initialized with a custom
-implementation of `X509TrustManager` __[2]__ that trusts _any_ certificate.
+implementation of `X509TrustManager` that trusts _any_ certificate. X.509 certificates contain an identity
+(which can be a hostname, organization or individual) and a public key.
 
 Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
 allows web clients that do not configure their own `SSLSocketFactory` to connect to `stubby4j` over SSL/TLS. If a web
 client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This trust
 manager must be a _trusts all_, since it is not going to be possible for the web client to validate `stubby4j`'s
-default self-signed certificate against a list of trusted certificates. Please note, trusting _any_ certificate is
-very insecure and should not be used in production environments.
+default self-signed certificate against a list of trusted certificates.
 
-Do note, it is possible (if needed) to completely disable TLS support in `stubby4j`. Also, `stubby4j` allows
-you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) when
-configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates
+Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
+  
+#### Supplying your own keystore/certificate
+
+`stubby4j` allows you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority)
+when configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates
 from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12`
 or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
-__[1]__ When running `stubby4j` as a standalone JAR, if the underlying JDK version & vendor provided support for `TLSv1.3` (e.g.,: [Oracle JDK 8 added support for TLSv1.3 only in v8u261](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html)), then this protocol version will be supported by `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3` is supported by default
-
-__[2]__ X.509 certificate contains an identity (which can be a hostname, organization or individual) and a public key
 
 [Back to top](#table-of-contents)
 
