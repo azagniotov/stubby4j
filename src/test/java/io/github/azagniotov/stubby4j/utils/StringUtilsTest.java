@@ -40,6 +40,23 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void removeValueFromCsv() throws Exception {
+        final String one = StringUtils.removeValueFromCsv("SLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, include jdk.disabled.namedCurves", "SLv3");
+        assertThat(one).isEqualTo("RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, include jdk.disabled.namedCurves");
+
+        final String two = StringUtils.removeValueFromCsv("SLv3", "SLv3");
+        assertThat(two).isEqualTo("");
+
+        final String three = StringUtils.removeValueFromCsv("SLv3, RC4, DES, MD5withRSA, DH keySize < 1024, EC keySize < 224, 3DES_EDE_CBC, anon, NULL, include jdk.disabled.namedCurves", "SLv3", "EC", "non-existent", "DES");
+        assertThat(three).isEqualTo("RC4, MD5withRSA, DH keySize < 1024, anon, NULL, include jdk.disabled.namedCurves");
+
+        final String four = StringUtils.removeValueFromCsv("", "SLv3", "EC", "non-existent", "DES");
+        assertThat(four).isEqualTo("");
+
+        assertThat(StringUtils.removeValueFromCsv(null, "SLv3")).isEqualTo("");
+    }
+
+    @Test
     public void shouldConvertObjectToString_WhenObjectIsNotNull() throws Exception {
 
         final String result = StringUtils.objectToString(888);

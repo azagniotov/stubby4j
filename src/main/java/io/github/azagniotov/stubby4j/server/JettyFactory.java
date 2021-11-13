@@ -242,6 +242,9 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
 
+        // See SslUtils static { ... }
+        System.setProperty("overrideDisabledAlgorithms", "true");
+
         final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
         final String keystorePassword = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYPASS, null);
 
