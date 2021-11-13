@@ -783,7 +783,10 @@ will also be supported and enabled in `stubby4j`. When `stubby4j` is [running in
 is supported by default.
   
 Please note, if you are running on JDK 1.8, it does not mean that your JDK build version & vendor necessarily support `TLSv1.3`.
-For example, Oracle JDK 8 [added implementation for TLSv1.3 only in build v8u261](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html) (which was disabled by default anyways), while OpenJDK [released TLSv1.3 only in build v8u272](https://mail.openjdk.java.net/pipermail/jdk8u-dev/2020-October/012817.html)
+For example:
+- Oracle JDK 8 [added implementation for TLSv1.3 only in build v8u261](https://www.oracle.com/java/technologies/javase/8u261-relnotes.html) (which was disabled by default anyways)
+- OpenJDK [released TLSv1.3 only in build v8u272](https://mail.openjdk.java.net/pipermail/jdk8u-dev/2020-October/012817.html)
+- Azul Zulu included [support for TLSv1.3 through its OpenJSSE provider in Septmeber 2019](https://docs.azul.com/openjsse/Title.htm) (https://github.com/openjsse/openjsse/issues/13)
 
 #### Server-side TLS configuration
 
