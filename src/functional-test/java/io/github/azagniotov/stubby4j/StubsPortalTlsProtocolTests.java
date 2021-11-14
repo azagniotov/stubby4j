@@ -202,6 +202,7 @@ public class StubsPortalTlsProtocolTests {
     private SSLContext buildSSLContextWithRemoteCertificateLoaded(final String tlsVersion) throws Exception {
         //
         // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at localhost:7443
+        //    This opens an SSL connection to the specified hostname and port and prints the SSL certificate.
         // ---------------------------------------------------------------------------------
         // $ echo quit | openssl s_client -showcerts -servername localhost -connect "localhost":7443 > FILE_NAME.pem
         //
