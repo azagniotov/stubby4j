@@ -777,7 +777,7 @@ acommodate a range of integration testing needs, `stubby4j` continues to support
 (Transport Layer Security) protocols. Supported versions are the legacy `SSLv3`, `TLSv1.0` and `TLSv1.1`, as well as
 the current `TLSv1.2` and `TLSv1.3` (the TLS 1.3 standard was released in August 2018 and is a successor to TLS 1.2).
 
-##### TLS v1.3 support
+###### TLS v1.3 support
 
 When running `stubby4j` as a standalone JAR, if the underlying JDK version supports `TLSv1.3`, then this protocol version
 will also be supported and enabled in `stubby4j`. When `stubby4j` is [running in Docker](#running-in-docker), the `TLSv1.3`
@@ -808,16 +808,18 @@ During TLS configuration in `stubby4j`, the following happens:
    Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
    allows web clients that send their client certificates as part of TLS handshake to connect to `stubby4j` over SSL/TLS.
   
-   If a web client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This
-   trust manager must be a _trust all_ manager. Otherwise, it is not going to be possible for the client to validate `stubby4j`'s
-   default self-signed certificate (which is going to be presented to the client by `stubby4j`) against the client's own
-   trust-store containing a list of trusted CA certificates.
+#### Client-side TLS configuration
+  
+If a web client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This
+trust manager must be a _trust all_ manager. Otherwise, it is not going to be possible for the client to validate `stubby4j`'s
+default self-signed certificate (which is going to be presented to the client by `stubby4j`) against the client's own 
+trust-store containing a list of trusted CA certificates. Please note, trusting _any_ certificate is very insecure and
+should not be used in production environments.
 
-   Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
-
-   If you __do not want__ to configure a _trust all_ manager, as an alternative, you can download and save the self-signed
-   certificate from the server and load it to the trust-store of your client when building `SSLContext`. Please
-   see the following [functional test for the example](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) and explanation.
+If you __do not want__ to configure a _trust all_ manager, as an alternative it is possible to configure your client to
+trust `stubby4j`'s default self-signed certificate. In order to do so, you need to download and save the self-signed
+certificate from the server and load it to the trust-store of your client when building `SSLContext`.
+Please see the following [code of a functional test](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) for the openssl commands & Java code examples.
   
 #### Supplying your own keystore/certificate
 
