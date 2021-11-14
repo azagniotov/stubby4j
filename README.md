@@ -809,11 +809,15 @@ During TLS configuration in `stubby4j`, the following happens:
    allows web clients that send their client certificates as part of TLS handshake to connect to `stubby4j` over SSL/TLS.
   
    If a web client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This
-   trust manager must be a _trusts all_. Otherwise, it is not going to be possible for the client to validate `stubby4j`'s
+   trust manager must be a _trust all_ manager. Otherwise, it is not going to be possible for the client to validate `stubby4j`'s
    default self-signed certificate (which is going to be presented to the client by `stubby4j`) against the client's own
-   trust store containing a list of trusted CA certificates.
+   trust-store containing a list of trusted CA certificates.
 
    Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
+
+   If you __do not want__ to configure a _trust all_ manager, as an alternative, you can download and save the self-signed
+   certificate from the server and load it to the trust-store of your client when building `SSLContext`. Please
+   see the following functional test for the example and explanation.
   
 #### Supplying your own keystore/certificate
 
