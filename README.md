@@ -810,23 +810,37 @@ During TLS configuration in `stubby4j`, the following happens:
   
 #### Client-side TLS configuration
   
-If a web client configures its own `SSLSocketFactory`, then the client must also configure its own trust manager. This
-trust manager must be a _trust all_ manager. Otherwise, it is not going to be possible for the client to validate `stubby4j`'s
-default self-signed certificate (which is going to be presented to the client by `stubby4j`) against the client's own 
-trust-store containing a list of trusted CA certificates. Please note, trusting _any_ certificate is very insecure and
-should not be used in production environments.
+In a TLS/SSL handshake, clients and servers exchange SSL certificates, cipher suite requirements, and randomly generated
+data for creating session keys. As part of its "hello" reply to the client's "hello" message, the server sends a message
+containing the server's SSL certificate (among other things like cipher suite and secure random).
 
-If you __do not want__ to configure a _trust all_ manager, as an alternative it is possible to configure your client to
-trust `stubby4j`'s default self-signed certificate. In order to do so, you need to download and save the self-signed
-certificate from the server and load it to the trust-store of your client when building `SSLContext`.
-Please see the following [code of a functional test](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) for the openssl commands & Java code examples.
+Since `stubby4j`'s TLS layer is configured (by default) using a self-signed certificate, it is not going to be possible
+for web clients to validate `stubby4j`'s default self-signed certificate against clients' own trust-store containing a
+list of trusted Certificate Authority (CA) certificates.
   
-#### Supplying your own keystore/certificate
+In other words, somehow, a web client making a request to `stubby4j` server over TLS has to ensure that it can trust
+`stubby4j`'s self-signed certificate. There are a number of options available for web clients to achieve the trust between
+the two parties during TLS/SSL handshake:
 
-`stubby4j` allows you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority)
-when configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates
-from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12`
-or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
+1. Configuring client's trust strategy/manager
+
+   When a web client configures its own `SSLSocketFactory` (or `SSLContext`), then the client must also configure its own
+   trust strategy/manager. This trust strategy/manager must be a _trust all_ (or a strategy that trusts self-signed certificates).
+   Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
+  
+2. Providing self-signed certificate to the client before making requests
+
+   If you __do not want__ to configure a _trust all_ manager/strategy for your web client, as an alternative it is possible
+   to ensure that your client already has `stubby4j`'s default self-signed certificate before making requests. In order to do so,
+   you need to download and save the self-signed certificate from the running `stubby4j` server and then load it to the trust-store
+   of your client when building `SSLSocketFactory` (or `SSLContext`). Please see the following [code of a functional test](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) for the `openssl`, `keytool` commands & Java code examples.
+  
+3. Supplying your own keystore/certificate
+
+   `stubby4j` allows you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) 
+   when configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates 
+   from a root certificate authority. When providing a keystore file to `stubby4j`, the keystore should have `.PKCS12` 
+   or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
 
 [Back to top](#table-of-contents)
