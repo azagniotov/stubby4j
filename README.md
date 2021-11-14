@@ -817,7 +817,7 @@ During TLS configuration in `stubby4j`, the following happens:
 
    If you __do not want__ to configure a _trust all_ manager, as an alternative, you can download and save the self-signed
    certificate from the server and load it to the trust-store of your client when building `SSLContext`. Please
-   see the following functional test for the example and explanation.
+   see the following [functional test for the example](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) and explanation.
   
 #### Supplying your own keystore/certificate
 
