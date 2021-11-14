@@ -822,20 +822,20 @@ In other words, somehow, a web client making a request to `stubby4j` server over
 `stubby4j`'s self-signed certificate. There are a number of options available for web clients to achieve the trust between
 the two parties during TLS/SSL handshake:
 
-1. Configuring client's trust strategy/manager
+1. Configuring web client's trust strategy/manager
 
    When a web client configures its own `SSLSocketFactory` (or `SSLContext`), then the client must also configure its own
    trust strategy/manager. This trust strategy/manager must be a _trust all_ (or a strategy that trusts self-signed certificates).
    Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
   
-2. Providing self-signed certificate to the client before making requests
+2. Providing stubby4j self-signed certificate to the web client before making requests
 
    If you __do not want__ to configure a _trust all_ manager/strategy for your web client, as an alternative it is possible
-   to ensure that your client already has `stubby4j`'s default self-signed certificate before making requests. In order to do so,
+   to ensure that your web client already has `stubby4j`'s default self-signed certificate before making requests. In order to do so,
    you need to download and save the self-signed certificate from the running `stubby4j` server and then load it to the trust-store
    of your client when building `SSLSocketFactory` (or `SSLContext`). Please see the following [code of a functional test](https://github.com/azagniotov/stubby4j/blob/b7192b91df719fb8f188f84a751e400a02df29d7/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L205-L233) for the `openssl`, `keytool` commands & Java code examples.
   
-3. Supplying your own keystore/certificate
+3. Supplying your own keystore/certificate to stubby4j for the server-side TLS configuration 
 
    `stubby4j` allows you to supply your own keystore (e.g.: generated from your own certificate signed by a certificate authority) 
    when configuring `stubby4j` command-line arguments. In other words, this allows you to load top-level certificates 
