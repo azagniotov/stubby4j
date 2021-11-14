@@ -13,9 +13,9 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ProxySelector;
 import java.net.URL;
+import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
@@ -99,44 +100,59 @@ public class StubsPortalTlsProtocolTests {
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithSslVersion_SSLv3() throws Exception {
-        makeRequestAndAssert(buildHttpClient(SSLv3));
+        makeRequestAndAssert(buildHttpClientWithTrustSelfSignedStrategy(SSLv3));
+
+        makeRequestAndAssert(buildHttpClientWithRemoteCertificateLoaded(SSLv3));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_0));
+        makeRequestAndAssert(buildHttpClientWithTrustSelfSignedStrategy(TLS_v1_0));
+
+        makeRequestAndAssert(buildHttpClientWithRemoteCertificateLoaded(TLS_v1_0));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_1));
+        makeRequestAndAssert(buildHttpClientWithTrustSelfSignedStrategy(TLS_v1_1));
+
+        makeRequestAndAssert(buildHttpClientWithRemoteCertificateLoaded(TLS_v1_1));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_2() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_2));
+        makeRequestAndAssert(buildHttpClientWithTrustSelfSignedStrategy(TLS_v1_2));
+
+        makeRequestAndAssert(buildHttpClientWithRemoteCertificateLoaded(TLS_v1_2));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_3() throws Exception {
         // The following is a bad practice: conditionally running this test only if 'TLSv1.3' is supported by the JDK
         if (new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
-            makeRequestAndAssert(buildHttpClient(TLS_v1_3));
+            makeRequestAndAssert(buildHttpClientWithTrustSelfSignedStrategy(TLS_v1_3));
+
+            makeRequestAndAssert(buildHttpClientWithRemoteCertificateLoaded(TLS_v1_3));
         } else {
             assertThat(true).isTrue();
         }
     }
 
-    private CloseableHttpClient buildHttpClient(final String tlsVersion) throws Exception {
+    private CloseableHttpClient buildHttpClientWithTrustSelfSignedStrategy(final String tlsVersion) throws Exception {
+        final SSLContext sslContext = buildSSLContextWithTrustSelfSignedStrategy(tlsVersion);
+
+        return buildHttpClient(tlsVersion, sslContext);
+    }
+
+    private CloseableHttpClient buildHttpClientWithRemoteCertificateLoaded(final String tlsVersion) throws Exception {
+        final SSLContext sslContext = buildSSLContextWithRemoteCertificateLoaded(tlsVersion);
+
+        return buildHttpClient(tlsVersion, sslContext);
+    }
+
+    private CloseableHttpClient buildHttpClient(final String tlsVersion, final SSLContext sslContext) throws Exception {
 
         System.out.println("Running tests using TLS version: " + tlsVersion);
-
-        // https://www.baeldung.com/httpclient-ssl
-        final TrustStrategy acceptingTrustStrategy = (cert, authType) -> true;
-        final SSLContext sslContext = SSLContexts.custom()
-                .setProtocol(tlsVersion)
-                .loadTrustMaterial(null, acceptingTrustStrategy)
-                .build();
 
         SSLEngine engine = sslContext.createSSLEngine();
         engine.setEnabledProtocols(new String[]{tlsVersion});
@@ -147,7 +163,7 @@ public class StubsPortalTlsProtocolTests {
                 sslContext,
                 new String[]{tlsVersion},
                 null,
-                new NoopHostnameVerifier());
+                new DefaultHostnameVerifier());
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
                 RegistryBuilder.<ConnectionSocketFactory>create()
@@ -176,6 +192,43 @@ public class StubsPortalTlsProtocolTests {
                 // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
                 .disableContentCompression()
                 .disableAutomaticRetries()
+                .build();
+    }
+
+    private SSLContext buildSSLContextWithTrustSelfSignedStrategy(final String tlsVersion) throws Exception {
+        return SSLContexts.custom()
+                .setProtocol(tlsVersion)
+                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
+                .build();
+    }
+
+    private SSLContext buildSSLContextWithRemoteCertificateLoaded(final String tlsVersion) throws Exception {
+        //
+        // 1. Download and save the remote self-signed certificate from the stubby4j server
+        // ---------------------------------------------------------------------------------
+        // $ echo quit | openssl s_client -showcerts -servername localhost -connect "localhost":7443 > FILE_NAME.pem
+        //
+        //
+        // 2. Optionally, you can perform verification using cURL. Note: the -k (or --insecure) option is NOT used
+        // ---------------------------------------------------------------------------------
+        // $ curl -X GET --cacert FILE_NAME.pem  --tls-max 1.1  https://localhost:7443/hello -v
+        //
+        //
+        // 3. Finally, load the saved self-signed certificate to a keystore
+        // ---------------------------------------------------------------------------------
+        // $ keytool -import -trustcacerts -alias stubby4j -file FILE_NAME.pem -keystore FILE_NAME.jks
+        //
+        //
+        // 4. Load the .JKS file into the trust store of your client
+        // ---------------------------------------------------------------------------------
+        final KeyStore trustStore = KeyStore.getInstance("jks");
+        trustStore.load(
+                getClass().getResourceAsStream("/ssl/openssl.extracted.stubby4j.remote.jks"),
+                "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
+
+        return SSLContexts.custom()
+                .setProtocol(tlsVersion)
+                .loadTrustMaterial(trustStore, null)
                 .build();
     }
 
