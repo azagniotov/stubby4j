@@ -7,9 +7,12 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.ssl.SSLContexts;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.ProxySelector;
 import java.util.concurrent.TimeUnit;
@@ -18,15 +21,19 @@ import java.util.concurrent.TimeUnit;
 final class HttpUtils {
 
     private static final HttpRequestFactory WEB_CLIENT;
+    private static final SSLContext TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT;
 
     static {
+        try {
+            TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT = buildSSLContextWithTrustSelfSignedStrategy();
+        } catch (Exception e) {
+            throw new Error("failed to initialize the default SSL context", e);
+        }
         /**
          * @see ApacheHttpTransport#newDefaultHttpClient()
          */
         final HttpClient apacheHttpClient = HttpClientBuilder.create()
-                .useSystemProperties()
-                //.setSSLSocketFactory(SSLConnectionSocketFactory.getSocketFactory())
-                .setSSLHostnameVerifier((hostname, session) -> true)
+                .setSSLContext(TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT)
                 .setMaxConnTotal(200)
                 .setMaxConnPerRoute(20)
                 .setConnectionTimeToLive(-1, TimeUnit.MILLISECONDS)
@@ -50,6 +57,12 @@ final class HttpUtils {
 
     private HttpUtils() {
 
+    }
+
+    private static SSLContext buildSSLContextWithTrustSelfSignedStrategy() throws Exception {
+        return SSLContexts.custom()
+                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
+                .build();
     }
 
     static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
