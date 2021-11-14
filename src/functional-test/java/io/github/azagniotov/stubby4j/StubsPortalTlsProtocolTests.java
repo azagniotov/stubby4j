@@ -201,7 +201,7 @@ public class StubsPortalTlsProtocolTests {
 
     private SSLContext buildSSLContextWithRemoteCertificateLoaded(final String tlsVersion) throws Exception {
         //
-        // 1. Download and save the remote self-signed certificate from the stubby4j server
+        // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at localhost:7443
         // ---------------------------------------------------------------------------------
         // $ echo quit | openssl s_client -showcerts -servername localhost -connect "localhost":7443 > FILE_NAME.pem
         //
@@ -216,7 +216,7 @@ public class StubsPortalTlsProtocolTests {
         // $ keytool -import -trustcacerts -alias stubby4j -file FILE_NAME.pem -keystore FILE_NAME.jks
         //
         //
-        // 4. Load the .JKS file into the trust store of your client
+        // 4. Load the generated FILE_NAME.jks file into the trust store of your client
         // ---------------------------------------------------------------------------------
         final KeyStore trustStore = KeyStore.getInstance("jks");
         trustStore.load(
