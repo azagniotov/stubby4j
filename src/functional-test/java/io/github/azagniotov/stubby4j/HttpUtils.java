@@ -6,65 +6,35 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.http.impl.client.CloseableHttpClient;
 
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.net.ProxySelector;
-import java.util.concurrent.TimeUnit;
+
+import static io.github.azagniotov.stubby4j.HttpClientUtils.SslContextFlavor.SERVER_SELF_SIGNED_CERTIFICATE_LOADED;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.buildHttpClient;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 
 
 final class HttpUtils {
 
     private static final HttpRequestFactory WEB_CLIENT;
-    private static final SSLContext TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT;
 
     static {
+        CloseableHttpClient apacheHttpClient = null;
         try {
-            TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT = buildSSLContextWithTrustSelfSignedStrategy();
+            apacheHttpClient = buildHttpClient(TLS_v1_2, SERVER_SELF_SIGNED_CERTIFICATE_LOADED);
         } catch (Exception e) {
-            throw new Error("failed to initialize the default SSL context", e);
+            e.printStackTrace();
         }
-        /**
-         * @see ApacheHttpTransport#newDefaultHttpClient()
-         */
-        final HttpClient apacheHttpClient = HttpClientBuilder.create()
-                // When .useSystemProperties(), the FakeX509TrustManager gets exercised
-                //.useSystemProperties()
-                .setSSLContext(TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT)
-                .setMaxConnTotal(200)
-                .setMaxConnPerRoute(20)
-                .setConnectionTimeToLive(-1, TimeUnit.MILLISECONDS)
-                .setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()))
-                .disableRedirectHandling()
-
-                // In ProxyConfigWithStubsTest.shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched():
-                //
-                // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
-                // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
-                .disableContentCompression()
-                .disableAutomaticRetries()
-                .build();
 
         WEB_CLIENT = new ApacheHttpTransport(apacheHttpClient, false).createRequestFactory(request -> {
+            // This is dumb. Google client throws exception if response code is not 200
             request.setThrowExceptionOnExecuteError(false);
-            request.setReadTimeout(45000);
-            request.setConnectTimeout(45000);
         });
     }
 
     private HttpUtils() {
 
-    }
-
-    private static SSLContext buildSSLContextWithTrustSelfSignedStrategy() throws Exception {
-        return SSLContexts.custom()
-                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
-                .build();
     }
 
     static HttpRequest constructHttpRequest(final String method, final String targetUrl) throws IOException {
