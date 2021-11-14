@@ -161,8 +161,6 @@ public class StubsPortalTlsProtocolTests {
 
         final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                 sslContext,
-                new String[]{tlsVersion},
-                null,
                 new DefaultHostnameVerifier());
 
         final Registry<ConnectionSocketFactory> socketFactoryRegistry =
@@ -177,7 +175,6 @@ public class StubsPortalTlsProtocolTests {
                         .setSocketTimeout(45000)
                         .setConnectTimeout(45000)
                         .build())
-                .setSSLContext(sslContext)
                 .setSSLSocketFactory(sslSocketFactory)
                 .setConnectionManager(new BasicHttpClientConnectionManager(socketFactoryRegistry))
                 .setMaxConnTotal(200)
