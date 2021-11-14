@@ -33,6 +33,8 @@ final class HttpUtils {
          * @see ApacheHttpTransport#newDefaultHttpClient()
          */
         final HttpClient apacheHttpClient = HttpClientBuilder.create()
+                // When .useSystemProperties(), the FakeX509TrustManager gets exercised
+                //.useSystemProperties()
                 .setSSLContext(TRUST_SELF_SIGNED_STRATEGY_SSL_CONTEXT)
                 .setMaxConnTotal(200)
                 .setMaxConnPerRoute(20)
