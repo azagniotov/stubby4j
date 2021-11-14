@@ -822,9 +822,9 @@ In other words, somehow, a web client making a request to `stubby4j` server over
 `stubby4j`'s self-signed certificate. There are a number of options available for web clients to achieve the trust between
 the two parties during TLS/SSL handshake:
 
-1. Configuring web client's trust strategy/manager
+1. Configuring web client's X.509 trust strategy/manager
 
-   When a web client configures its own `SSLSocketFactory` (or `SSLContext`), then the client must also configure its own
+   When a web client configures its own `SSLSocketFactory` (or `SSLContext`), then the client must also configure its own X.509
    trust strategy/manager. This trust strategy/manager must be a _trust all_ (or a strategy that trusts self-signed certificates).
    Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
   
