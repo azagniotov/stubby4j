@@ -95,7 +95,10 @@ public final class HttpClientUtils {
         // $ keytool -import -trustcacerts -alias stubby4j -file FILE_NAME.pem -keystore FILE_NAME.jks
         //
         //
-        // 4. Load the generated FILE_NAME.jks file into the trust store of your client client by creating a KeyStore
+        // 4. Load the generated FILE_NAME.jks file into the trust store of SSLContext, which then can be
+        //    used to create an SSL socket factory for your web client. The STUBBY_SELF_SIGNED_TRUST_STORE
+        //    was created using the following code:
+        //    https://github.com/azagniotov/stubby4j/blob/737f1f16650ce78a9a63f8f3e23c60ba2769cdb4/src/main/java/io/github/azagniotov/stubby4j/server/ssl/SslUtils.java#L168-L172
         // ---------------------------------------------------------------------------------
         return SSLContexts.custom()
                 .setProtocol(tlsVersion)
