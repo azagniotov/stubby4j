@@ -5,6 +5,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
+import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
@@ -42,10 +43,11 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        // See SslUtils static { ... }
+        System.setProperty("overrideDisabledAlgorithms", "true");
+
         commandLineInterpreter = new CommandLineInterpreter();
 
-        //String[] args2 = new String[]{"--data", "/Users/alexanderzagniotov/yaml/stubs.yaml"};
-        //parseCommandLineArgs(args2);
         parseCommandLineArgs(args);
         if (printHelpIfRequested() || printVersionIfRequested()) {
             return;

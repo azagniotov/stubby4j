@@ -6,13 +6,18 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -36,9 +41,12 @@ public final class SslUtils {
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
 
+    public static final KeyStore STUBBY_SELF_SIGNED_TRUST_STORE;
+    public static final SSLSocketFactory SSL_SOCKET_FACTORY;
+
+    private static final String SELF_SIGNED_CERTIFICATE_VERSION = "v3"; // there is also v1 under main/resources
     private static final String TLS = "TLS";
     private static final Logger LOGGER = LoggerFactory.getLogger(SslUtils.class);
-
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
     private static final Set<String> TLS_v13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
             Arrays.asList(
@@ -47,7 +55,6 @@ public final class SslUtils {
                     "TLS_AES_128_GCM_SHA256",
                     "TLS_AES_128_CCM_8_SHA256",
                     "TLS_AES_128_CCM_SHA256")));
-
     private static final Set<String> DEFAULT_ENABLED_TLS_VERSIONS;
     private static final boolean TLS_v1_3_JDK_SUPPORTED;
     private static final Set<String> ALL_ENABLED_TLS_VERSIONS;
@@ -68,18 +75,23 @@ public final class SslUtils {
             removeFromSecurityProperty("jdk.tls.disabledAlgorithms", "SSLv3", "TLSv1", "TLSv1.1");
 
         }
-
+        STUBBY_SELF_SIGNED_TRUST_STORE = loadStubby4jSelfSignedTrustStore();
         DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(SSLv3, TLS_v1_0, TLS_v1_1, TLS_v1_2));
         TLS_v1_3_JDK_SUPPORTED = isTLSv13SupportedByCurrentJDK();
         ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
         DEFAULT_SSL_CONTEXT = initAndSetDefaultSSLContext();
         DEFAULT_SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
+        SSL_SOCKET_FACTORY = DEFAULT_SSL_CONTEXT.getSocketFactory();
         DEFAULT_SSL_ENGINE.setEnabledProtocols(enabledProtocols());
         SUPPORT_CIPHERS = supportedCiphers();
     }
 
     private SslUtils() {
 
+    }
+
+    public static void initStatic() {
+        // init static { ... }
     }
 
     private static boolean isTLSv13SupportedByCurrentJDK() {
@@ -101,7 +113,15 @@ public final class SslUtils {
     private static SSLContext initAndSetDefaultSSLContext() {
         try {
             final SSLContext defaultCandidate = SSLContext.getInstance(getTlsVersion());
-            defaultCandidate.init(new KeyManager[]{}, new TrustManager[]{new FakeX509TrustManager()}, null);
+            // Setting DefaultExtendedX509TrustManager as we need to ensure that TLS
+            // requests made using stubby4j's self-signed certificate are trusted.
+            //
+            // If the trust manager is not set here, then the self-signed certificate must be added
+            // to the client trust store when creating the client's SSL Context during TLS connection config.
+            //
+            // Basically, some how somewhere someone needs to be able to validate self-signed certificate.
+            // https://github.com/azagniotov/stubby4j#client-side-tls-configuration
+            defaultCandidate.init(null, new TrustManager[]{new DefaultExtendedX509TrustManager()}, null);
             SSLContext.setDefault(defaultCandidate);
 
             return defaultCandidate;
@@ -122,6 +142,78 @@ public final class SslUtils {
 
     public static String[] enabledProtocols() {
         return ALL_ENABLED_TLS_VERSIONS.toArray(new String[0]);
+    }
+
+    private static KeyStore loadStubby4jSelfSignedTrustStore() {
+        try {
+            //
+            // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at localhost:7443
+            //    This opens an SSL connection to the specified hostname and port and prints the SSL certificate.
+            // ---------------------------------------------------------------------------------
+            // $ echo quit | openssl s_client -showcerts -servername localhost -connect "localhost":7443 > FILE_NAME.pem
+            //
+            //
+            // 2. Optionally, you can perform verification using cURL. Note: the -k (or --insecure) option is NOT used
+            // ---------------------------------------------------------------------------------
+            // $ curl -X GET --cacert FILE_NAME.pem  --tls-max 1.1  https://localhost:7443/hello -v
+            //
+            //
+            // 3. Finally, load the saved self-signed certificate to a keystore
+            // ---------------------------------------------------------------------------------
+            // $ keytool -import -trustcacerts -alias stubby4j -file FILE_NAME.pem -keystore FILE_NAME.jks
+            //
+            //
+            // 4. Load the generated FILE_NAME.jks file into the trust store of your client by creating a KeyStore
+            // ---------------------------------------------------------------------------------
+            final KeyStore trustStore = KeyStore.getInstance("jks");
+            trustStore.load(SslUtils.class.getResourceAsStream(getSelfSignedTrustStorePath()),
+                    "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
+
+            return trustStore;
+        } catch (Exception e) {
+            throw new Error("Could not load stubby4j self-signed certificate", e);
+        }
+    }
+
+    public static String getSelfSignedTrustStorePath() {
+        return String.format("/ssl/openssl.downloaded.stubby4j.self.signed.%s.jks", SELF_SIGNED_CERTIFICATE_VERSION);
+    }
+
+    public static String getSelfSignedKeyStorePath() {
+        return String.format("/ssl/stubby4j.self.signed.%s.pkcs12", SELF_SIGNED_CERTIFICATE_VERSION);
+    }
+
+    /**
+     * Return an unmodifiable Set with all trusted X509Certificates contained
+     * in the specified KeyStore.
+     * <p>
+     * From sun.security.validator.TrustStoreUtil
+     */
+    public static Set<X509Certificate> keyStoreAsX509Certificates() {
+        final KeyStore keyStore = STUBBY_SELF_SIGNED_TRUST_STORE;
+        Set<X509Certificate> set = new HashSet<>();
+        try {
+            for (Enumeration<String> e = keyStore.aliases(); e.hasMoreElements(); ) {
+                String alias = e.nextElement();
+                if (keyStore.isCertificateEntry(alias)) {
+                    Certificate cert = keyStore.getCertificate(alias);
+                    if (cert instanceof X509Certificate) {
+                        set.add((X509Certificate) cert);
+                    }
+                } else if (keyStore.isKeyEntry(alias)) {
+                    Certificate[] certs = keyStore.getCertificateChain(alias);
+                    if ((certs != null) && (certs.length > 0) && (certs[0] instanceof X509Certificate)) {
+                        set.add((X509Certificate) certs[0]);
+                    }
+                }
+            }
+        } catch (KeyStoreException e) {
+            // ignore
+            //
+            // This should be rare, but better to log this in the future.
+        }
+
+        return Collections.unmodifiableSet(set);
     }
 
     private static Set<String> supportedCiphers() {

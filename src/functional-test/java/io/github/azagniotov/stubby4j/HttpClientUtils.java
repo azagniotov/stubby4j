@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j;
 
+import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -12,7 +13,6 @@ import org.apache.http.ssl.SSLContexts;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import java.net.ProxySelector;
-import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
@@ -95,15 +95,11 @@ public final class HttpClientUtils {
         // $ keytool -import -trustcacerts -alias stubby4j -file FILE_NAME.pem -keystore FILE_NAME.jks
         //
         //
-        // 4. Load the generated FILE_NAME.jks file into the trust store of your client
+        // 4. Load the generated FILE_NAME.jks file into the trust store of your client client by creating a KeyStore
         // ---------------------------------------------------------------------------------
-        final KeyStore trustStore = KeyStore.getInstance("jks");
-        trustStore.load(HttpClientUtils.class.getResourceAsStream("/ssl/openssl.extracted.stubby4j.remote.jks"),
-                "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
-
         return SSLContexts.custom()
                 .setProtocol(tlsVersion)
-                .loadTrustMaterial(trustStore, null)
+                .loadTrustMaterial(SslUtils.STUBBY_SELF_SIGNED_TRUST_STORE, null)
                 .build();
     }
 

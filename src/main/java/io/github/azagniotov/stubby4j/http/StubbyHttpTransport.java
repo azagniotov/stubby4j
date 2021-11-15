@@ -6,10 +6,12 @@ import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.github.azagniotov.stubby4j.common.Common.POSTING_METHODS;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.SSL_SOCKET_FACTORY;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.charsetUTF8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static java.lang.String.valueOf;
@@ -51,7 +54,7 @@ public class StubbyHttpTransport {
 
     }
 
-    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws IOException {
+    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws Exception {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
             final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getLocalDateTime(), method, recordingSource);
@@ -69,14 +72,13 @@ public class StubbyHttpTransport {
                                   final String fullUrl,
                                   final String post,
                                   final Map<String, String> headers,
-                                  final int postLength) throws IOException {
+                                  final int postLength) throws Exception {
 
         if (!SUPPORTED_METHODS.contains(method)) {
             throw new UnsupportedOperationException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));
         }
 
-        final URL url = new URL(fullUrl);
-        final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        final HttpURLConnection connection = getHttpURLConnection(fullUrl);
 
         connection.setRequestMethod(method);
         connection.setUseCaches(false);
@@ -88,6 +90,21 @@ public class StubbyHttpTransport {
         }
 
         return buildStubbyResponse(connection);
+    }
+
+    private HttpURLConnection getHttpURLConnection(final String fullUrl) throws Exception {
+        final URL url = new URL(fullUrl);
+        if (url.getProtocol().equalsIgnoreCase(HttpScheme.HTTPS.asString())) {
+            final HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+            // As part of this SSL socket factory, providing a way for the web client to validate stubby4j self-signed
+            // certificate, as well as making requests to the outside world using the default trust store.
+            // The requests outside are made as part of StubRepository class behavior when proxying requests
+            httpsURLConnection.setSSLSocketFactory(SSL_SOCKET_FACTORY);
+
+            return httpsURLConnection;
+        } else {
+            return (HttpURLConnection) url.openConnection();
+        }
     }
 
     private StubbyResponse buildStubbyResponse(final HttpURLConnection connection) throws IOException {
