@@ -850,7 +850,7 @@ the two parties during TLS/SSL handshake:
    possible to ensure that your web client already has `stubby4j`'s default self-signed certificate before making requests. In order
    to make web client to be aware of the self-signed certificate, you need to download and save the certificate from the running
    `stubby4j` server and then load it to the trust-store of your client when building `SSLSocketFactory` (or `SSLContext`). Please see
-   the following [code of a functional test](https://github.com/azagniotov/stubby4j/blob/e006abcce46c71adf8c719ebb65853f34b8714ff/src/functional-test/java/io/github/azagniotov/stubby4j/StubsPortalTlsProtocolTests.java#L202-L231) for the `openssl`, `keytool` commands & Java code examples.
+   the following [code of the HttpClientUtils in functional tests](https://github.com/azagniotov/stubby4j/blob/3319577b486ac691bd66841f100e0cfeb5dc3956/src/functional-test/java/io/github/azagniotov/stubby4j/HttpClientUtils.java#L80-L107) for the `openssl`, `keytool` commands & Java code examples.
 
 [Back to top](#table-of-contents)
 
