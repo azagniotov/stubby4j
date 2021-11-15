@@ -825,7 +825,11 @@ the two parties during TLS/SSL handshake:
 1. Configuring web client's X.509 trust strategy/manager to trust all certificates
 
    This is analogous to supplying the `-k` (or `--insecure`) option to cURL, which turns off cURL's verification of the server's
-   certificate.
+   certificate, e.g.:
+
+   ```shell script
+   $ curl -X GET --tls-max 1.0  https://localhost:7443/hello -v -k
+   ```
    
    When a web client configures its own `SSLSocketFactory` (or `SSLContext`), the client can also configure its own
    X.509 certificate trust strategy/manager. This trust strategy/manager must be a _trust all_ (or a strategy/manager that trusts
@@ -835,7 +839,12 @@ the two parties during TLS/SSL handshake:
 2. Providing stubby4j self-signed certificate to the web client before making requests over TLS
 
    This is analogous to supplying the `--cacert` option to cURL, which tells cURL to use the specified certificate file to verify
-   the peer.
+   the peer, e.g.:
+
+   ```shell script
+   $ curl -X GET --tls-max 1.0 https://localhost:7443/hello -v \
+     --cacert src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem
+   ```
    
    If you __do not want__ to configure a _trust all_ X.509 manager/strategy for your web client, as an alternative it is
    possible to ensure that your web client already has `stubby4j`'s default self-signed certificate before making requests. In order
