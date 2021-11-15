@@ -794,27 +794,19 @@ For example:
 
 #### Server-side TLS configuration
 
-The TLS in `stubby4j` is enabled by default using an internal self-signed certificate (i.e.,: `stubby4j` is behaving as
-its own certificate authority) in `PKCS12` format.
-  
-The default TLS configuration behavior can be overriden by supplying your own keystore/certificate (e.g.: generated from
-your own certificate signed by a certificate authority) when configuring `stubby4j` command-line arguments. In other words,
-this allows you to load top-level certificates from a root certificate authority. When providing a keystore file to `stubby4j`,
-the keystore should have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information. 
-
 During TLS configuration in `stubby4j`, the following happens:
 
 1. The property `jdk.tls.disabledAlgorithms` (located in `java.security` configuration file) is modified
    at runtime where the following values `SSLv3`, `TLSv1` and `TLSv1.1` are removed, in order to workaround
    the [JDK-8254713: Disable TLS 1.0 and 1.1](https://bugs.openjdk.java.net/browse/JDK-8254713)
-   
-2. The `stubby4j` server's default `SSLContext` instance (the object that contains SSL/TLS settings for setting up SSL connections)
-   is initialized with a custom implementation of `X509TrustManager` that trusts _any_ remote authentication credentials
-   and thus the connection, i.e.: trusts _any_ certificate (the `X.509` certificates contain an identity (which can be a hostname,
-   organization or individual) and a public key).
 
-   Trusting _any_ certificate allows the ease of testing when using `stubby4j`. The provided _trust all_ `X509TrustManager`
-   allows web clients that send their client certificates as part of TLS handshake to connect to `stubby4j` over SSL/TLS.
+2. The TLS in `stubby4j` is enabled by default using an internal, self-signed certificate [version 3](https://www.w3.org/PICS/DSig/X509_1_0.html)
+   (i.e.,: `stubby4j` is behaving as its own certificate authority) in `PKCS12` format.
+  
+   The default self-signed certificate can be overriden by supplying your own keystore/certificate (e.g.: generated from
+   your own certificate signed by a certificate authority) when configuring `stubby4j` command-line arguments. In other words,
+   this allows you to load top-level certificates from a root certificate authority. When providing a keystore file to `stubby4j`,
+   the keystore should have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
   
 #### Client-side TLS configuration
 
@@ -833,15 +825,19 @@ the two parties during TLS/SSL handshake:
 1. Configuring web client's X.509 trust strategy/manager to trust all certificates
 
    This is analogous to supplying the `-k` (or `--insecure`) option to cURL, which turns off cURL's verification of the server's
-   certificate. When a web client configures its own `SSLSocketFactory` (or `SSLContext`), the client can also configure its own
+   certificate.
+   
+   When a web client configures its own `SSLSocketFactory` (or `SSLContext`), the client can also configure its own
    X.509 certificate trust strategy/manager. This trust strategy/manager must be a _trust all_ (or a strategy/manager that trusts
-   self-signed) certificates. In this case, even when server responds with a self-signed certificate, the server's identity will
+   self-signed certificates). In this case, even when server responds with a self-signed certificate, the server's identity will
    be verified as valid. Please note, trusting _any_ certificate is very insecure and should not be used in production environments.
 
 2. Providing stubby4j self-signed certificate to the web client before making requests over TLS
 
    This is analogous to supplying the `--cacert` option to cURL, which tells cURL to use the specified certificate file to verify
-   the peer. If you __do not want__ to configure a _trust all_ X.509 manager/strategy for your web client, as an alternative it is
+   the peer.
+   
+   If you __do not want__ to configure a _trust all_ X.509 manager/strategy for your web client, as an alternative it is
    possible to ensure that your web client already has `stubby4j`'s default self-signed certificate before making requests. In order
    to make web client to be aware of the self-signed certificate, you need to download and save the certificate from the running
    `stubby4j` server and then load it to the trust-store of your client when building `SSLSocketFactory` (or `SSLContext`). Please see
