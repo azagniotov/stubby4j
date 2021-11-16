@@ -800,8 +800,7 @@ During TLS configuration in `stubby4j`, the following happens:
    at runtime where the following values `SSLv3`, `TLSv1` and `TLSv1.1` are removed, in order to workaround
    the [JDK-8254713: Disable TLS 1.0 and 1.1](https://bugs.openjdk.java.net/browse/JDK-8254713)
 
-2. The TLS in `stubby4j` is enabled by default using an internal, self-signed certificate [version 3](https://www.w3.org/PICS/DSig/X509_1_0.html)
-   (i.e.,: `stubby4j` is behaving as its own certificate authority) in `PKCS12` format.
+2. The TLS in `stubby4j` is enabled by default using an internal, self-signed certificate in `PKCS12` format. [See OpenSSL config file](https://github.com/azagniotov/stubby4j/blob/38ec50844689a539dcdbe059edd4f1f7364801c3/src/main/resources/ssl/stubby4j.self.signed.v3.conf) used for the certificate generation, i.e.,: `stubby4j` is behaving as its own certificate authority.
   
    The default self-signed certificate can be overriden by supplying your own keystore/certificate (e.g.: generated from
    your own certificate signed by a certificate authority) when configuring `stubby4j` command-line arguments. In other words,
@@ -852,8 +851,19 @@ the two parties during TLS/SSL handshake:
    `stubby4j` server and then load it to the trust-store of your client when building `SSLSocketFactory` (or `SSLContext`).
   
    Please see the following [code of the HttpClientUtils in functional tests](https://github.com/azagniotov/stubby4j/blob/3319577b486ac691bd66841f100e0cfeb5dc3956/src/functional-test/java/io/github/azagniotov/stubby4j/HttpClientUtils.java#L80-L107) for the `openssl`, `keytool` commands & Java code examples.
-   You can use an already downloaded via the `openssl s_client` command and converted to JKS format [stubby4j self-signed certificate](https://github.com/azagniotov/stubby4j/blob/master/src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks) to load into
-   your web client trust store.
+  
+   If you use a non-Java web client, you can use an already downloaded via the `openssl s_client` command [stubby4j self-signed certificate in PEM format](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem) to load into
+   your web client trust store. If your web client is a Java-based app, then you can use the aforementioned PEM which was converted into JKS (Java Key Store) format [stubby4j self-signed certificate in JKS format](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks).
+  
+###### Server hostname verification by the client
+
+During an SSL handshake, hostname verification establishes that the hostname in the URL matches the hostname in the server's identification; this verification is necessary to prevent man-in-the-middle attacks.
+  
+If you are running the `stubby4j` app on [one of the following addresses or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L60), then your web client _does not_ need to relax its hostname verification behavior. If you are running the `stubby4j` app on some other address, then there are a number of options available for web clients:
+  
+1. Skip the hostname verification check or relax it (Please note, skipping the hostname verification check is very insecure and should not be used in production environments.)
+2. Make a pull request or raise an issue with a request asking me to add a new hostname/IP into the SAN (Subject Alternative Name) list of the `stubby4j` self-signed certificate ;)
+  
 
 [Back to top](#table-of-contents)
 
