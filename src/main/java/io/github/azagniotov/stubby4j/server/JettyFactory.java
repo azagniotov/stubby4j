@@ -316,11 +316,7 @@ public final class JettyFactory {
 
         if (ObjectUtils.isNull(keystorePath)) {
             // Commands used to generate the following self-signed certificate:
-            // 1. openssl req -x509 -newkey rsa:4096 -keyout stubby4j.v1.key.pem -out stubby4j.v1.crt.pem -sha256 -subj "/C=AU/ST=Victoria/L=Melbourne/O=stubby4j/OU=Org/CN=localhost" -days 10950
-            //    Alternatively, it is possible to add '-config openssl.cnf' as per https://serverfault.com/questions/979094/openssl-keeps-creating-v1-certificate-instead-of-v3
-            //    if we want to generate v3 of self-signed certificate
-            //
-            // 2. openssl pkcs12 -inkey stubby4j.v1.key.pem -in stubby4j.v1.crt.pem -export -out stubby4j.self.signed.v1.pkcs12
+            // See src/main/resources/ssl/stubby4j.self.signed.v3.commands.txt
             final URL keyURL = this.getClass().getResource(getSelfSignedKeyStorePath());
             try (final Resource keyStoreResource = Resource.newResource(keyURL)) {
                 // Usually, we'll use a keystore when we are a server and want to use HTTPS.

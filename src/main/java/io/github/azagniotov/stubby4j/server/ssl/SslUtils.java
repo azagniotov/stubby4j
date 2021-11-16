@@ -44,7 +44,7 @@ public final class SslUtils {
     public static final KeyStore STUBBY_SELF_SIGNED_TRUST_STORE;
     public static final SSLSocketFactory SSL_SOCKET_FACTORY;
 
-    private static final String SELF_SIGNED_CERTIFICATE_VERSION = "v3"; // there is also v1 under main/resources
+    private static final String SELF_SIGNED_CERTIFICATE_VERSION = "v3";
     private static final String TLS = "TLS";
     private static final Logger LOGGER = LoggerFactory.getLogger(SslUtils.class);
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
