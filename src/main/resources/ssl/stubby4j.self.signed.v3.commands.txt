@@ -25,3 +25,12 @@ curl -X GET --cacert openssl.downloaded.stubby4j.self.signed.v3.pem  --tls-max 1
 
 # 6. Finally, load the saved self-signed certificate to a keystore. The Java web clients should use this file to add to their trust-store
 keytool -import -trustcacerts -alias stubby4j -file openssl.downloaded.stubby4j.self.signed.v3.pem -keystore openssl.downloaded.stubby4j.self.signed.v3.jks
+
+# 7. Optionally, you can display the contents of a JKS store
+keytool -list -v -keystore openssl.downloaded.stubby4j.self.signed.v3.jks -storetype JKS
+
+# 8. Optionally, you can convert JKS store to the PKCS12 type
+keytool -importkeystore -srckeystore openssl.downloaded.stubby4j.self.signed.v3.jks -destkeystore openssl.downloaded.stubby4j.self.signed.v3.pkcs12 -srcstoretype JKS -deststoretype PKCS12 -deststorepass stubby4j
+
+# 9. Optionally, you can display the contents of a PKCS12 store
+keytool -list -v -keystore openssl.downloaded.stubby4j.self.signed.v3.pkcs12 -storetype PKCS12
