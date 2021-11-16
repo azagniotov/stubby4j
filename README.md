@@ -861,9 +861,12 @@ During an SSL handshake, hostname verification establishes that the hostname in 
   
 If you are running the `stubby4j` app on [one of the following addresses or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L60), then your web client _does not_ need to relax its hostname verification behavior. If you are running the `stubby4j` app on some other address, then there are a number of options available for web clients:
   
-1. Skip the hostname verification check or relax it (Please note, skipping the hostname verification check is very insecure and should not be used in production environments.)
+1. Skip the hostname verification check or relax it (please note, skipping the hostname verification check is very insecure and should not be used in production environments)
 2. Make a pull request or raise an issue with a request asking me to add a new hostname/IP into the SAN (Subject Alternative Name) list of the `stubby4j` self-signed certificate ;)
+
   
+If you have any further questions or suggestions about the TLS configuration in `stubby4j`, please feel free to [raise an issue](https://github.com/azagniotov/stubby4j/issues/new/choose).
+
 
 [Back to top](#table-of-contents)
 
