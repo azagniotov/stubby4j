@@ -10,6 +10,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
@@ -41,7 +42,7 @@ public final class SslUtils {
     public static final String TLS_v1_2 = "TLSv1.2";
     public static final String TLS_v1_3 = "TLSv1.3";
 
-    public static final KeyStore STUBBY_SELF_SIGNED_TRUST_STORE;
+    public static final KeyStore SELF_SIGNED_CERTIFICATE_TRUST_STORE;
     public static final SSLSocketFactory SSL_SOCKET_FACTORY;
 
     private static final String SELF_SIGNED_CERTIFICATE_VERSION = "v3";
@@ -75,7 +76,7 @@ public final class SslUtils {
             removeFromSecurityProperty("jdk.tls.disabledAlgorithms", "SSLv3", "TLSv1", "TLSv1.1");
 
         }
-        STUBBY_SELF_SIGNED_TRUST_STORE = loadStubby4jSelfSignedTrustStore();
+        SELF_SIGNED_CERTIFICATE_TRUST_STORE = loadStubby4jSelfSignedTrustStore();
         DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(SSLv3, TLS_v1_0, TLS_v1_1, TLS_v1_2));
         TLS_v1_3_JDK_SUPPORTED = isTLSv13SupportedByCurrentJDK();
         ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
@@ -165,9 +166,13 @@ public final class SslUtils {
             //
             // 4. Load the generated FILE_NAME.jks file into the trust store of your client by creating a KeyStore
             // ---------------------------------------------------------------------------------
-            final KeyStore trustStore = KeyStore.getInstance("jks");
-            trustStore.load(SslUtils.class.getResourceAsStream(getSelfSignedTrustStorePath()),
-                    "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
+            final String selfSignedTrustStorePath = getSelfSignedTrustStorePath();
+            final InputStream inputStream = SslUtils.class.getResourceAsStream(selfSignedTrustStorePath);
+            if (inputStream == null) {
+                throw new IllegalStateException(String.format("Could not get resource %s as stream", selfSignedTrustStorePath));
+            }
+            final KeyStore trustStore = KeyStore.getInstance("PKCS12");
+            trustStore.load(inputStream, "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
 
             return trustStore;
         } catch (Exception e) {
@@ -176,7 +181,7 @@ public final class SslUtils {
     }
 
     public static String getSelfSignedTrustStorePath() {
-        return String.format("/ssl/openssl.downloaded.stubby4j.self.signed.%s.jks", SELF_SIGNED_CERTIFICATE_VERSION);
+        return String.format("/ssl/openssl.downloaded.stubby4j.self.signed.%s.pkcs12", SELF_SIGNED_CERTIFICATE_VERSION);
     }
 
     public static String getSelfSignedKeyStorePath() {
@@ -190,7 +195,7 @@ public final class SslUtils {
      * From sun.security.validator.TrustStoreUtil
      */
     public static Set<X509Certificate> keyStoreAsX509Certificates() {
-        final KeyStore keyStore = STUBBY_SELF_SIGNED_TRUST_STORE;
+        final KeyStore keyStore = SELF_SIGNED_CERTIFICATE_TRUST_STORE;
         Set<X509Certificate> set = new HashSet<>();
         try {
             for (Enumeration<String> e = keyStore.aliases(); e.hasMoreElements(); ) {

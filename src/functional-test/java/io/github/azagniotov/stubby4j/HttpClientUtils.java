@@ -4,7 +4,6 @@ import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
@@ -16,7 +15,6 @@ import java.net.ProxySelector;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
-import static io.github.azagniotov.stubby4j.HttpClientUtils.SslContextFlavor.SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY;
 import static java.util.Arrays.asList;
 
 public final class HttpClientUtils {
@@ -25,12 +23,8 @@ public final class HttpClientUtils {
 
     }
 
-    static CloseableHttpClient buildHttpClient(final String tlsVersion, final SslContextFlavor flavor) throws Exception {
-        if (flavor == SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY) {
-            return buildHttpClient(tlsVersion, buildSSLContextWithTrustSelfSignedStrategy(tlsVersion));
-        } else {
-            return buildHttpClient(tlsVersion, buildSSLContextWithRemoteCertificateLoaded(tlsVersion));
-        }
+    static CloseableHttpClient buildHttpClient(final String tlsVersion) throws Exception {
+        return buildHttpClient(tlsVersion, buildSSLContextWithRemoteCertificateLoaded(tlsVersion));
     }
 
     private static CloseableHttpClient buildHttpClient(final String tlsVersion, final SSLContext sslContext) throws Exception {
@@ -70,13 +64,6 @@ public final class HttpClientUtils {
                 .build();
     }
 
-    static SSLContext buildSSLContextWithTrustSelfSignedStrategy(final String tlsVersion) throws Exception {
-        return SSLContexts.custom()
-                .setProtocol(tlsVersion)
-                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
-                .build();
-    }
-
     static SSLContext buildSSLContextWithRemoteCertificateLoaded(final String tlsVersion) throws Exception {
         //
         // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at localhost:7443
@@ -102,12 +89,7 @@ public final class HttpClientUtils {
         // ---------------------------------------------------------------------------------
         return SSLContexts.custom()
                 .setProtocol(tlsVersion)
-                .loadTrustMaterial(SslUtils.STUBBY_SELF_SIGNED_TRUST_STORE, null)
+                .loadTrustMaterial(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE, null)
                 .build();
-    }
-
-    enum SslContextFlavor {
-        SERVER_SELF_SIGNED_CERTIFICATE_LOADED,
-        SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY
     }
 }

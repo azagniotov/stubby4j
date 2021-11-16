@@ -23,8 +23,6 @@ import java.net.URL;
 import java.util.HashSet;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.SslContextFlavor.SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.SslContextFlavor.SERVER_SELF_SIGNED_CERTIFICATE_LOADED;
 import static io.github.azagniotov.stubby4j.HttpClientUtils.buildHttpClient;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.SSLv3;
@@ -86,39 +84,29 @@ public class StubsPortalTlsProtocolTests {
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithSslVersion_SSLv3() throws Exception {
-        makeRequestAndAssert(buildHttpClient(SSLv3, SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY));
-
-        makeRequestAndAssert(buildHttpClient(SSLv3, SERVER_SELF_SIGNED_CERTIFICATE_LOADED));
+        makeRequestAndAssert(buildHttpClient(SSLv3));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_0() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_0, SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY));
-
-        makeRequestAndAssert(buildHttpClient(TLS_v1_0, SERVER_SELF_SIGNED_CERTIFICATE_LOADED));
+        makeRequestAndAssert(buildHttpClient(TLS_v1_0));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_1() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_1, SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY));
-
-        makeRequestAndAssert(buildHttpClient(TLS_v1_1, SERVER_SELF_SIGNED_CERTIFICATE_LOADED));
+        makeRequestAndAssert(buildHttpClient(TLS_v1_1));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_2() throws Exception {
-        makeRequestAndAssert(buildHttpClient(TLS_v1_2, SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY));
-
-        makeRequestAndAssert(buildHttpClient(TLS_v1_2, SERVER_SELF_SIGNED_CERTIFICATE_LOADED));
+        makeRequestAndAssert(buildHttpClient(TLS_v1_2));
     }
 
     @Test
     public void shouldReturnExpectedResponseWhenGetRequestMadeOverSslWithTlsVersion_1_3() throws Exception {
         // The following is a bad practice: conditionally running this test only if 'TLSv1.3' is supported by the JDK
         if (new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
-            makeRequestAndAssert(buildHttpClient(TLS_v1_3, SELF_SIGNED_CERTIFICATE_TRUST_STRATEGY));
-
-            makeRequestAndAssert(buildHttpClient(TLS_v1_3, SERVER_SELF_SIGNED_CERTIFICATE_LOADED));
+            makeRequestAndAssert(buildHttpClient(TLS_v1_3));
         } else {
             assertThat(true).isTrue();
         }

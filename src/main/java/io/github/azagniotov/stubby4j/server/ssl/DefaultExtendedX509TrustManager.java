@@ -32,23 +32,6 @@ public final class DefaultExtendedX509TrustManager implements X509TrustManager {
 
     }
 
-    @Override
-    public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-        DEFAULT_TRUST_MANAGER.checkClientTrusted(chain, authType);
-    }
-
-    @Override
-    public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-        if (!isSelfSignedCertificate(chain)) {
-            DEFAULT_TRUST_MANAGER.checkServerTrusted(chain, authType);
-        }
-    }
-
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        return DEFAULT_TRUST_MANAGER.getAcceptedIssuers();
-    }
-
     private static X509TrustManager loadDefaultX509TrustManager() {
         try {
             final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -65,6 +48,23 @@ public final class DefaultExtendedX509TrustManager implements X509TrustManager {
         } catch (Exception e) {
             throw new Error("Could not init default X509TrustManager", e);
         }
+    }
+
+    @Override
+    public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
+        DEFAULT_TRUST_MANAGER.checkClientTrusted(chain, authType);
+    }
+
+    @Override
+    public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
+        if (!isSelfSignedCertificate(chain)) {
+            DEFAULT_TRUST_MANAGER.checkServerTrusted(chain, authType);
+        }
+    }
+
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return DEFAULT_TRUST_MANAGER.getAcceptedIssuers();
     }
 
     private boolean isSelfSignedCertificate(final X509Certificate[] chain) {

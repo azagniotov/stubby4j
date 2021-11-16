@@ -10,7 +10,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;
 
-import static io.github.azagniotov.stubby4j.HttpClientUtils.SslContextFlavor.SERVER_SELF_SIGNED_CERTIFICATE_LOADED;
 import static io.github.azagniotov.stubby4j.HttpClientUtils.buildHttpClient;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 
@@ -22,7 +21,7 @@ final class HttpUtils {
     static {
         CloseableHttpClient apacheHttpClient = null;
         try {
-            apacheHttpClient = buildHttpClient(TLS_v1_2, SERVER_SELF_SIGNED_CERTIFICATE_LOADED);
+            apacheHttpClient = buildHttpClient(TLS_v1_2);
         } catch (Exception e) {
             e.printStackTrace();
         }

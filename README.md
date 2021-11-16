@@ -852,8 +852,11 @@ the two parties during TLS/SSL handshake:
   
    Please see the following [code of the HttpClientUtils in functional tests](https://github.com/azagniotov/stubby4j/blob/3319577b486ac691bd66841f100e0cfeb5dc3956/src/functional-test/java/io/github/azagniotov/stubby4j/HttpClientUtils.java#L80-L107) for the `openssl`, `keytool` commands & Java code examples.
   
-   If you use a non-Java web client, you can use an already downloaded via the `openssl s_client` command [stubby4j self-signed certificate in PEM format](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem) to load into
-   your web client trust store. If your web client is a Java-based app, then you can use the aforementioned PEM which was converted into JKS (Java Key Store) format [stubby4j self-signed certificate in JKS format](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks).
+   If you use a non-Java web client, you can use an already downloaded (via the `openssl s_client` command) stubby4j self-signed certificate in [PEM](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem) format to load into
+   your web client trust store.
+
+   If your web client is a Java-based app, then you can load the aforementioned PEM certificate which was already converted in to two [JKS](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks) and [PKCS12](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pkcs12) formats. You
+   can use `JKS` or `PKCS12` certificate to load into your Java web client trust store.
   
    ##### Server hostname verification by the client
 
