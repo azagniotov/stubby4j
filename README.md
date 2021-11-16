@@ -860,13 +860,12 @@ the two parties during TLS/SSL handshake:
    During an SSL handshake, hostname verification establishes that the hostname in the URL matches the hostname in the server's identification; this
    verificatiois necessary to prevent man-in-the-middle attacks.
   
-   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L60), then your web client will be able to successfully verify hostname of the request against the contents of the `stubby4j` imported certificate.
+   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L60), then your web client will be able to successfully verify URL hostname of the request against the imported `stubby4j` certificate's SAN (subject alternative names) list.
 
    If you are running the `stubby4j` app on some other hostname/IP, then the hostname verification by your client will fail because the imported `stubby4j` self-signed certificate does not contain that hostname/IP. There are a number of options available for web clients to workaround the the hostname verification:
   
    1. Skip the hostname verification check or relax it (please note, skipping the hostname verification check is very insecure and should not be used in production environments)
-   2. Make a pull request or raise an issue with a request asking me to add the hostname/IP into the SAN (Subject Alternative Name) list of the `stubby4j`
-   self-signed certificate ;)
+   2. Make a pull request or raise an issue with a request asking me to add the hostname/IP into the SAN list of the `stubby4j` self-signed certificate ;)
 
   
 If you have any questions about the TLS configuration in `stubby4j`, please feel free to [raise an issue](https://github.com/azagniotov/stubby4j/issues/new/choose).
