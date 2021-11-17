@@ -68,10 +68,14 @@ public final class DefaultExtendedX509TrustManager implements X509TrustManager {
     }
 
     private boolean isSelfSignedCertificate(final X509Certificate[] chain) {
+        // self-signed certificates have X.509 certificate chains of size 1
         return chain.length == 1 &&
                 (
                         STUBBY_SELF_SIGNED_CERT.contains(chain[0]) ||
-                                chain[0].getIssuerX500Principal().getName("canonical").contains("localhost")
+                                CustomHostnameVerifier.isX500PrincipalNameLocalhost(chain[0]) ||
+                                CustomHostnameVerifier.isSubjectAltName("localhost", chain[0]) ||
+                                CustomHostnameVerifier.isSubjectAltName("127.0.0.1", chain[0]) ||
+                                CustomHostnameVerifier.isSubjectAltName("::1", chain[0])
                 );
     }
 }
