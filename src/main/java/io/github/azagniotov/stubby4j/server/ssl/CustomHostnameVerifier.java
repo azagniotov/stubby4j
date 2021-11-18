@@ -14,16 +14,36 @@ import java.util.Set;
  */
 final class CustomHostnameVerifier {
 
-    private CustomHostnameVerifier() {
+    private final X509Certificate x509;
+    private final Set<String> subjectAltIps;
+    private final Set<String> subjectAltNames;
 
+    CustomHostnameVerifier(final X509Certificate x509) {
+        this.x509 = x509;
+        this.subjectAltIps = getSubjectAltNames(7);
+        this.subjectAltNames = getSubjectAltNames(2);
+    }
+
+    public boolean isSubjectAltNamesContainPrivateIp() {
+        for (final String altNameAsIp : this.subjectAltIps) {
+            if (LanIPv4Validator.isPrivateIp(altNameAsIp)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    boolean isX500PrincipalNameLocalhost() {
+        return x509.getIssuerX500Principal().getName("canonical").contains("localhost");
     }
 
     /**
      * Types of subject names: DNS = 2, IP = 7
      */
-    static Set<String> getSubjectAltNames(final X509Certificate cert, final int subjectType) {
+    Set<String> getSubjectAltNames(final int subjectType) {
         try {
-            final Collection<List<?>> entries = cert.getSubjectAlternativeNames();
+            final Collection<List<?>> entries = this.x509.getSubjectAlternativeNames();
             if (entries == null) {
                 return Collections.emptySet();
             }
@@ -46,15 +66,8 @@ final class CustomHostnameVerifier {
         }
     }
 
-    static boolean isSubjectAltName(final String host, final X509Certificate cert) {
+    boolean isSubjectAltNamesContain(final String host) {
         // Types of subject names: DNS = 2, IP = 7
-        final Set<String> subjectAltIps = getSubjectAltNames(cert, 7);
-        final Set<String> subjectAltNames = getSubjectAltNames(cert, 2);
-
-        return subjectAltIps.contains(host) || subjectAltNames.contains(host);
-    }
-
-    static boolean isX500PrincipalNameLocalhost(final X509Certificate cert) {
-        return cert.getIssuerX500Principal().getName("canonical").contains("localhost");
+        return this.subjectAltIps.contains(host) || this.subjectAltNames.contains(host);
     }
 }

@@ -800,16 +800,17 @@ During TLS configuration in `stubby4j`, the following happens:
    at runtime where the following values `SSLv3`, `TLSv1` and `TLSv1.1` are removed, in order to workaround
    the [JDK-8254713: Disable TLS 1.0 and 1.1](https://bugs.openjdk.java.net/browse/JDK-8254713)
 
-2. The TLS in `stubby4j` is enabled by default using an internal, self-signed certificate in `PKCS12` format imported into the server's KeyStore. [See OpenSSL config file](https://github.com/azagniotov/stubby4j/blob/38ec50844689a539dcdbe059edd4f1f7364801c3/src/main/resources/ssl/stubby4j.self.signed.v3.conf) used for the certificate generation, i.e.,: `stubby4j` is behaving as its own certificate authority.
+2. The TLS in `stubby4j` is enabled by default using an internal, multi-hostname/IP self-signed certificate in `PKCS12` format
+   imported into the server's key-store. See [OpenSSL config file](https://github.com/azagniotov/stubby4j/blob/38ec50844689a539dcdbe059edd4f1f7364801c3/src/main/resources/ssl/stubby4j.self.signed.v3.conf) used for the certificate generation, i.e.,: `stubby4j` is behaving as its own certificate authority.
   
-   The default self-signed certificate can be overriden by supplying your own keystore/certificate (e.g.: generated from
+   The default self-signed certificate can be overridden by supplying your own keystore/certificate (e.g.: generated from
    your own certificate signed by a certificate authority) when configuring `stubby4j` command-line arguments. In other words,
    this allows you to load top-level certificates from a root certificate authority. When providing a keystore file to `stubby4j`,
    the keystore should have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
   
 #### Client-side TLS configuration
 
-Since `stubby4j`'s TLS layer is configured (by default) using a self-signed certificate, it is not going to be possible
+Since `stubby4j`'s TLS layer configured (by default) using a self-signed certificate, it is not going to be possible
 for web clients to validate `stubby4j`'s default self-signed certificate against clients' own trust-store containing a
 list of trusted Certificate Authority (CA) certificates.
 
