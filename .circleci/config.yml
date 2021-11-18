@@ -363,6 +363,14 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_ignore_master
 
+  master-smoke-test:
+    jobs:
+      - smoke_openjdk_openjdk_8u111:
+          <<: *filter_only_master
+      - smoke_azul_zulu_openjdk_8u282:
+          <<: *filter_only_master
+      - smoke_adoptopenjdk_openjdk_8u312_b07:
+          <<: *filter_only_master
 
   branch-jdk8:
     jobs:
