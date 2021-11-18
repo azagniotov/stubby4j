@@ -864,7 +864,7 @@ the two parties during TLS/SSL handshake:
    During an SSL handshake, hostname verification establishes that the hostname in the URL matches the hostname in the server's identification; this
    verification is necessary to prevent man-in-the-middle attacks.
   
-   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L60), then your web client will be able to successfully verify URL hostname of the request against the imported `stubby4j` certificate's SAN (subject alternative names) list.
+   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L81), then your web client will be able to successfully verify URL hostname of the request against the imported `stubby4j` certificate's SAN (subject alternative names) list.
 
    If you are running the `stubby4j` app on some other hostname/IP, then the hostname verification by your client will fail because the imported `stubby4j` self-signed certificate does not contain that hostname/IP. There are a number of options available for web clients to workaround the the hostname verification:
   
