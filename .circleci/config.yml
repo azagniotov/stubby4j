@@ -40,6 +40,27 @@ docker_in_docker_environment: &docker_in_docker_environment
   docker:
     - image: docker:20.10.8-alpine3.14@sha256:6ac2f3862aa1353a5fe6bf12439f3e56e695e56d7c3098898c96ef33eae78bf9
 
+###########################################################################################
+### START: Different JDK images
+###########################################################################################
+openjdk_alpine_jdk_8u111_environment: &openjdk_alpine_jdk_8u111_environment
+  <<: *base_environment
+  docker:
+    - image: openjdk:8u111-jdk-alpine@sha256:d49bf8c44670834d3dade17f8b84d709e7db47f1887f671a0e098bafa9bae49f
+
+azul_zulu_openjdk_alpine_jdk_8u282_environment: &azul_zulu_openjdk_alpine_jdk_8u282_environment
+  <<: *base_environment
+  docker:
+    - image: azul/zulu-openjdk-alpine:8u282-8.52.0.23@sha256:2b5f8470ce568c0630e5caaf1ad9be47c8d51ef950c79d33b5853df4ec1cdcd3
+
+adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment: &adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
+  <<: *base_environment
+  docker:
+    - image: adoptopenjdk/openjdk8:jdk8u312-b07-alpine-slim@sha256:da6bb7b3d1bc1a23653c60f88902be9ca15b4a62f537970d37b65dd374be3221
+###########################################################################################
+### END: Different JDK images
+###########################################################################################
+
 
 gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
   <<: *base_environment
@@ -223,54 +244,54 @@ build_push_image_steps: &build_push_image_steps
         command: docker push azagniotov/stubby4j:latest-jre<< parameters.jdk_version >>
 
 
-smoke_test_in_docker_compose_steps: &smoke_test_in_docker_compose_steps
+smoke_test_steps: &smoke_test_steps
   steps:
     - checkout
     - run:
-        name: Pre-download Docker image 'appropriate/curl'
-        command: docker run appropriate/curl --version
+        name: Install cURL on Alpine Linux
+        command: |
+          apk --no-cache add curl && curl --version
 
     - run:
-        name: Docker Compose is starting stubby4j JRE 16 container
-        # The `docker-compose up` command aggregates the output of each container. When
-        # the command exits, all containers are stopped. Running `docker-compose up -d`
-        # starts the containers in the background and leaves them running.
-        command: |
-          cd /home/circleci/project/docker/smoke-test && docker-compose up -d
+        name: Build stubby4j uber JAR
+        command: ./gradlew -PciRun clean build
 
     - run:
-        # ubuntu-2004:202107-02 uses 'ash' shell, not 'bash'
-        name: Make cURL request to the stubby4j JRE 16 container
+        when: on_success
+        name: Make requests to the stubby4j over TLSv1, TLSv1.1 & TLSv1.2
         command: |
-          sleep 1
-          smoke_test_response=$(docker run \
-            --network container:stubby4j_jre16 appropriate/curl \
-            --retry 10 --retry-delay 1 --retry-connrefused --silent  \
-            -X GET -H "Content-Type: application/json" \
-            http://localhost:8884/tests/smoke-test/1)
+          java -jar build/libs/stubby4j-*.jar \
+            --location 127.0.0.1 \
+            --tls 7445 \
+            --data smoke-test/yaml/smoke-tests-stubs.yaml &
 
-          if [ "$smoke_test_response" != "OK" ]
-          then
-            echo "Got response $smoke_test_response from stubby4j JRE 16 container, failing ... "
-            exit 1
-          else
-            echo "stubby4j JRE 16 smoke tests passed!"
-            exit 0
-          fi
+          echo "stubby4j started!"
+          sleep 5
+
+          sh smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
+          sh smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
+          sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
+
 
 #############################################################################################
 ## Jobs definition
 #############################################################################################
 jobs:
 
-  smoke_test_in_docker:
-    # When using docker-compose with volumes (i.e.: sharing of local directories with a container),
-    # a 'machine' executor type is required: https://circleci.com/docs/2.0/executor-types/#docker-benefits-and-limitations
-    machine:
-      # https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
-      image: ubuntu-2004:202107-02
-    resource_class: medium
-    <<: *smoke_test_in_docker_compose_steps
+  smoke_openjdk_openjdk_8u111:
+    <<: *openjdk_alpine_jdk_8u111_environment
+    <<: *smoke_test_steps
+
+
+  smoke_azul_zulu_openjdk_8u282:
+    <<: *azul_zulu_openjdk_alpine_jdk_8u282_environment
+    <<: *smoke_test_steps
+
+
+  smoke_adoptopenjdk_openjdk_8u312_b07:
+    <<: *adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
+    <<: *smoke_test_steps
+
 
   gradle_7_2_0_jdk8:
     <<: *gradle_7_2_0_jdk8_environment
@@ -333,10 +354,14 @@ workflows:
           <<: *filter_only_master
 
 
-  smoke-test:
+  branch-smoke-test:
     jobs:
-      - smoke_test_in_docker:
-          <<: *filter_only_master
+      - smoke_openjdk_openjdk_8u111:
+          <<: *filter_ignore_master
+      - smoke_azul_zulu_openjdk_8u282:
+          <<: *filter_ignore_master
+      - smoke_adoptopenjdk_openjdk_8u312_b07:
+          <<: *filter_ignore_master
 
 
   branch-jdk8:
@@ -367,7 +392,9 @@ workflows:
           cron: "5 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - smoke_test_in_docker
+      - smoke_openjdk_openjdk_8u111
+      - smoke_azul_zulu_openjdk_8u282
+      - smoke_adoptopenjdk_openjdk_8u312_b07
 
 
   master-twelve-hour-jdk8:
