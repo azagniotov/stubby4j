@@ -14,27 +14,19 @@ echo "#####################################################################"
 echo "## Request is being made to $2:$3 over TLS v$1"
 echo "#####################################################################"
 
-if [[ "$1" != "1.3" ]] || [[ "$1" == "1.3" && "$4" == "yes" ]]
+smoke_test_response=$(curl \
+  -X GET -H "Content-Type: application/json" \
+  --tls-max $1 \
+  --tlsv$1 \
+  --cacert src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem \
+  --verbose \
+  https://$2:$3/tests/smoke-test/1)
+
+if [ "$smoke_test_response" != "OK" ]
 then
-  smoke_test_response=$(curl \
-    -X GET -H "Content-Type: application/json" \
-    --tls-max $1 \
-    --tlsv$1 \
-    --cacert src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem \
-    --verbose \
-    https://$2:$3/tests/smoke-test/1)
-
-  echo "$smoke_test_response"
-
-  if [ "$smoke_test_response" != "OK" ]
-  then
-    echo "TLS $1 request to $2:$3 failed, exiting with 1 ... "
-    exit 1
-  else
-    exit 0
-  fi
-
+  echo "TLS $1 request to $2:$3 failed, exiting with status 1 ... "
+  exit 1
 else
-  echo "Test for TLS v$1 is skipped on the current JDK version"
+  echo "$smoke_test_response"
   exit 0
 fi
