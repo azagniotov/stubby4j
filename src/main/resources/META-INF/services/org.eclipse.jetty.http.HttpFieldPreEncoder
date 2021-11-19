@@ -1,0 +1,3 @@
+# https://www.eclipse.org/lists/jetty-users/msg09127.html
+org.eclipse.jetty.http.Http1FieldPreEncoder
+org.eclipse.jetty.http2.hpack.HpackFieldPreEncoder
