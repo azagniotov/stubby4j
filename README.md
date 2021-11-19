@@ -35,6 +35,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Command-line switches](#command-line-switches)
 * [Making requests over TLS](#making-requests-over-tls)
    * [Supported protocol versions](#supported-protocol-versions)
+      * [TLS v1.3 support](#tls-v13-support)
    * [Server-side TLS configuration](#server-side-tls-configuration)
    * [Client-side TLS configuration](#client-side-tls-configuration)
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
