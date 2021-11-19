@@ -48,10 +48,10 @@ openjdk_alpine_jdk_8u111_environment: &openjdk_alpine_jdk_8u111_environment
   docker:
     - image: openjdk:8u111-jdk-alpine@sha256:d49bf8c44670834d3dade17f8b84d709e7db47f1887f671a0e098bafa9bae49f
 
-azul_zulu_openjdk_alpine_jdk_8u282_environment: &azul_zulu_openjdk_alpine_jdk_8u282_environment
+azul_zulu_openjdk_alpine_jdk_8u232_environment: &azul_zulu_openjdk_alpine_jdk_8u232_environment
   <<: *base_environment
   docker:
-    - image: azul/zulu-openjdk-alpine:8u282-8.52.0.23@sha256:2b5f8470ce568c0630e5caaf1ad9be47c8d51ef950c79d33b5853df4ec1cdcd3
+    - image: azul/zulu-openjdk-alpine:8u232@sha256:b0c2420393353be6aaeb77e4498271f46edc5c3dbc39957482f3ef6828628f53
 
 adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment: &adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
   <<: *base_environment
@@ -62,6 +62,12 @@ azul_zulu_openjdk_alpine_jdk_11_48_environment: &azul_zulu_openjdk_alpine_jdk_11
   <<: *base_environment
   docker:
     - image: azul/zulu-openjdk-alpine:11.0.11-11.48.21@sha256:c860f15777f40676bb3fb4eb3c2f362d0b32a40260b9d06c4d645a633efe5739
+
+adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
+  <<: *base_environment
+  docker:
+    - image: adoptopenjdk/openjdk16-openj9:jdk-16.0.2_7_openj9-0.27.0-alpine-slim@sha256:67a54da8ad9ea681aaaae990f517a91892f8fbee73f1dce4b10ac5d04b3842e2
+
 ###########################################################################################
 ### END: Different JDK images
 ###########################################################################################
@@ -273,10 +279,14 @@ smoke_test_steps: &smoke_test_steps
           echo "stubby4j started!"
           sleep 5
 
-          sh smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445 "<< parameters.tls_13 >>"
-          sh smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445 "<< parameters.tls_13 >>"
-          sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445 "<< parameters.tls_13 >>"
-          sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445 "<< parameters.tls_13 >>"
+          sh smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
+          sh smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
+          sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
+
+          if [[ "<< parameters.tls_13 >>" == "yes" ]]
+          then
+            sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+          fi
 
 
 #############################################################################################
@@ -293,12 +303,12 @@ jobs:
     <<: *smoke_test_steps
 
 
-  smoke_azul_zulu_openjdk_8u282:
+  smoke_azul_zulu_openjdk_8u232:
     parameters:
       tls_13:
         type: string
-        default: "yes"
-    <<: *azul_zulu_openjdk_alpine_jdk_8u282_environment
+        default: "no" # https://github.com/openjsse/openjsse/issues/13
+    <<: *azul_zulu_openjdk_alpine_jdk_8u232_environment
     <<: *smoke_test_steps
 
 
@@ -317,6 +327,15 @@ jobs:
         type: string
         default: "yes"
     <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
+    <<: *smoke_test_steps
+
+
+  smoke_adoptopenjdk_openjdk_16_openj9:
+    parameters:
+      tls_13:
+        type: string
+        default: "yes"
+    <<: *adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
     <<: *smoke_test_steps
 
 
@@ -385,22 +404,26 @@ workflows:
     jobs:
       - smoke_openjdk_openjdk_8u111:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_8u282:
+      - smoke_azul_zulu_openjdk_8u232:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_ignore_master
       - smoke_azul_zulu_openjdk_11_48:
+          <<: *filter_ignore_master
+      - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_ignore_master
 
   master-smoke-test:
     jobs:
       - smoke_openjdk_openjdk_8u111:
           <<: *filter_only_master
-      - smoke_azul_zulu_openjdk_8u282:
+      - smoke_azul_zulu_openjdk_8u232:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_only_master
       - smoke_azul_zulu_openjdk_11_48:
+          <<: *filter_only_master
+      - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_only_master
 
   branch-jdk8:
@@ -432,8 +455,10 @@ workflows:
           <<: *filter_only_master
     jobs:
       - smoke_openjdk_openjdk_8u111
-      - smoke_azul_zulu_openjdk_8u282
+      - smoke_azul_zulu_openjdk_8u232
       - smoke_adoptopenjdk_openjdk_8u312_b07
+      - smoke_azul_zulu_openjdk_11_48
+      - smoke_adoptopenjdk_openjdk_16_openj9
 
 
   master-twelve-hour-jdk8:
