@@ -1,5 +1,6 @@
 dependencies {
-    api "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    api "org.eclipse.jetty:jetty-alpn-openjdk8-server:${jettyVersion}"
+    api "org.eclipse.jetty.http2:http2-server:${jettyVersion}"
     api "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
     api "org.ehcache:ehcache:3.9.1"
     api "commons-cli:commons-cli:1.4"

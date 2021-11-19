@@ -15,8 +15,11 @@ import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.http2.HTTP2Cipher;
+import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -64,6 +67,8 @@ public final class JettyFactory {
 
     private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
+    private static final String PROTOCOL_HTTP_2 = "h2";
+
     private static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
     private static final String STUBS_CONNECTOR_NAME = "StubsConnector";
     private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
@@ -242,6 +247,9 @@ public final class JettyFactory {
     }
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
+        // TODO (azagniotov) replace by a flag, i.e.: --enable_alpn_tls_and_http_2
+        final boolean enableAlpnAndHttp2 = false;
+
         SslUtils.initStatic();
 
         final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
@@ -264,12 +272,11 @@ public final class JettyFactory {
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
         final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
+        final ServerConnector sslConnector = enableAlpnAndHttp2 ?
+                buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory) :
+                buildSslConnectorWithHttp1(server, httpConfiguration, sslContextFactory);
 
-        ServerConnector sslConnector = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1),
-                new HttpConnectionFactory(httpConfiguration));
         sslConnector.setPort(getStubsSslPort(commandLineArgs));
-
         sslConnector.setHost(DEFAULT_HOST);
         sslConnector.setName(SSL_CONNECTOR_NAME);
         sslConnector.setIdleTimeout(SERVER_CONNECTOR_IDLETIME_MILLIS);
@@ -347,6 +354,30 @@ public final class JettyFactory {
         httpConfiguration.setResponseHeaderSize(8192);
 
         return httpConfiguration;
+    }
+
+    private ServerConnector buildSslConnectorWithHttp1(final Server server,
+                                                       final HttpConfiguration httpConfiguration,
+                                                       final SslContextFactory sslContextFactory) {
+        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
+        return new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
+    }
+
+    private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
+                                                           final HttpConfiguration httpConfiguration,
+                                                           final SslContextFactory sslContextFactory) {
+        SslUtils.sanityCheckOpenJDK8ServerALPNProcessor();
+
+        sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
+        sslContextFactory.setProvider("Conscrypt");
+
+        final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
+
+        return new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol()),
+                alpnServerConnectionFactory,
+                new HTTP2ServerConnectionFactory(httpConfiguration),
+                new HttpConnectionFactory(httpConfiguration));
     }
 
     private int getStubsPort(final Map<String, String> commandLineArgs) {

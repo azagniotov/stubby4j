@@ -3,6 +3,7 @@ package io.github.azagniotov.stubby4j.server.ssl;
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import org.eclipse.jetty.alpn.openjdk8.server.OpenJDK8ServerALPNProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +94,12 @@ public final class SslUtils {
 
     public static void initStatic() {
         // init static { ... }
+    }
+
+    public static void sanityCheckOpenJDK8ServerALPNProcessor() {
+        final OpenJDK8ServerALPNProcessor openJDK8ServerALPNProcessor = new OpenJDK8ServerALPNProcessor();
+        openJDK8ServerALPNProcessor.appliesTo(DEFAULT_SSL_ENGINE);
+        openJDK8ServerALPNProcessor.init();
     }
 
     private static boolean isTLSv13SupportedByCurrentJDK() {
