@@ -278,6 +278,9 @@ smoke_test_steps: &smoke_test_steps
         when: on_success
         name: Make requests to the stubby4j over TLSv1, TLSv1.1, TLSv1.2 & optionally TLSv1.3
         command: |
+          echo ""
+          java -version
+          echo ""
           java -jar build/libs/stubby4j-*.jar \
             --location 127.0.0.1 \
             --tls 7445 \
