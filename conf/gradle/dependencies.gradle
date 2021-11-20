@@ -1,5 +1,11 @@
 dependencies {
-    api "org.eclipse.jetty:jetty-alpn-openjdk8-server:${jettyVersion}"
+    if (project.hasProperty("useNativeJdkAlpnProcessor")) {
+        println "> Building with native JDK ALPN processor in default dependencies"
+        api "org.eclipse.jetty:jetty-alpn-java-server:${jettyVersion}"
+    } else {
+        println "> Building with Jetty JDK ALPN OpenJDK 1.8 processor in default dependencies"
+        api "org.eclipse.jetty:jetty-alpn-openjdk8-server:${jettyVersion}"
+    }
     api "org.eclipse.jetty.http2:http2-server:${jettyVersion}"
     api "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
     api "org.ehcache:ehcache:3.9.1"
@@ -25,7 +31,12 @@ dependencies {
     testImplementation "com.google.truth:truth:1.1.2"
     testImplementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
     testImplementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
-    testImplementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
+
+    if (project.hasProperty("useNativeJdkAlpnProcessor")) {
+        testImplementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
+    } else {
+        testImplementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
+    }
 
     // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
     testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"

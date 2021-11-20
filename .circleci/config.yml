@@ -184,7 +184,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: gradle -PciRun clean test integrationTest functionalTest
+        command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
 
     - when:
@@ -221,7 +221,7 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
-        command: gradle -PciRun clean jacocoTestReport
+        command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean jacocoTestReport
 
     - run:
         name: Upload code coverage data to Codecov
@@ -265,7 +265,7 @@ smoke_test_steps: &smoke_test_steps
 
     - run:
         name: Build stubby4j uber JAR
-        command: ./gradlew -PciRun clean build
+        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean build
 
     - run:
         when: on_success
@@ -279,6 +279,8 @@ smoke_test_steps: &smoke_test_steps
             --tls 7445 \
             --data smoke-test/yaml/smoke-tests-stubs.yaml &
 
+          STUBBY4J_HTTP_1_PID=$!
+
           echo "stubby4j started!"
           sleep 5
 
@@ -290,6 +292,8 @@ smoke_test_steps: &smoke_test_steps
           then
             sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
           fi
+
+          kill $STUBBY4J_HTTP_1_PID
 
 
 #############################################################################################
@@ -303,6 +307,9 @@ jobs:
       tls_13:
         type: string
         default: "no"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *openjdk_alpine_jdk_8u092_environment
     <<: *smoke_test_steps
  
@@ -313,6 +320,9 @@ jobs:
       tls_13:
         type: string
         default: "no"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *openjdk_alpine_jdk_8u111_environment
     <<: *smoke_test_steps
 
@@ -322,6 +332,9 @@ jobs:
       tls_13:
         type: string
         default: "no" # https://github.com/openjsse/openjsse/issues/13
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *azul_zulu_openjdk_alpine_jdk_8u232_environment
     <<: *smoke_test_steps
 
@@ -331,6 +344,9 @@ jobs:
       tls_13:
         type: string
         default: "yes"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
     <<: *smoke_test_steps
 
@@ -340,6 +356,9 @@ jobs:
       tls_13:
         type: string
         default: "yes"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
     <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
     <<: *smoke_test_steps
 
@@ -349,26 +368,45 @@ jobs:
       tls_13:
         type: string
         default: "yes"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
     <<: *adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
     <<: *smoke_test_steps
 
 
   gradle_7_2_0_jdk8:
+    parameters:
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *gradle_7_2_0_jdk8_environment
     <<: *default_steps
 
 
   gradle_7_2_0_jdk8_code_coverage:
+    parameters:
+      use_native_jdk_alpn_processor:
+        type: string
+        default: ""
     <<: *gradle_7_2_0_jdk8_environment
     <<: *code_coverage_steps
 
 
   gradle_7_2_0_jdk11:
+    parameters:
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
     <<: *gradle_7_2_0_jdk11_environment
     <<: *default_steps
 
 
   gradle_7_2_0_jdk16:
+    parameters:
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
     <<: *gradle_7_2_0_jdk16_environment
     <<: *default_steps
 
