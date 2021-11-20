@@ -247,8 +247,11 @@ public final class JettyFactory {
     }
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
-        // TODO (azagniotov) replace by a flag, i.e.: --enable_alpn_tls_and_http_2
-        final boolean enableAlpnAndHttp2 = false;
+        final boolean enableAlpnAndHttp2 = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+        if (enableAlpnAndHttp2) {
+            // See SslUtils static { ... }
+            System.setProperty("overrideDisabledAlgorithms", "false");
+        }
 
         SslUtils.initStatic();
 
@@ -291,7 +294,7 @@ public final class JettyFactory {
         statuses.add(status);
 
         final String tlsStatus = String.format("Stubs portal supports TLS protocol versions: %s", supportedTlsProtocals);
-        statuses.add(tlsStatus);
+        statuses.add(tlsStatus + (enableAlpnAndHttp2 ? " with ALPN extension on HTTP/2" : ""));
 
         if (!new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
             final String noTls13Msg = String.format("TLSv1.3 is not supported in JDK v%s, %s",
