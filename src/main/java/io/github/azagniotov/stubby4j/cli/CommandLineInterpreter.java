@@ -36,6 +36,7 @@ public final class CommandLineInterpreter {
     public static final String OPTION_DISABLE_ADMIN = "disable_admin_portal";
     public static final String OPTION_DISABLE_SSL = "disable_ssl";
     public static final String OPTION_DISABLE_STUB_CACHING = "disable_stub_caching";
+    public static final String OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2 = "enable_tls_with_alpn_and_http_2";
     private static final String OPTION_VERSION = "version";
     private static final String OPTION_DEBUG = "debug";
     private static final CommandLineParser POSIX_PARSER = new DefaultParser();
@@ -55,7 +56,8 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("o", OPTION_DEBUG, false, "Dumps raw HTTP request to the console (if console is not muted!).");
         OPTIONS.addOption("da", OPTION_DISABLE_ADMIN, false, "Does not start Admin portal");
         OPTIONS.addOption("dc", OPTION_DISABLE_STUB_CACHING, false, "Disables stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests");
-        OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Does not enable TLS connections");
+        OPTIONS.addOption("ta", OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2, false, "Enables HTTP/2 for HTTPS URIs over TLS (on TLS v1.2 or newer) using ALPN extension");
+        OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Disables TLS support (enabled by default) and disables the '--enable_tls_with_alpn_and_http_2' flag, if the latter was provided");
         @SuppressWarnings("static-access")
         Option watch =
                 Option.builder("w")
@@ -149,12 +151,22 @@ public final class CommandLineInterpreter {
 
         final Option[] options = line.getOptions();
 
-        return new HashMap<String, String>() {{
+        final Map<String, String> providedOptions = new HashMap<String, String>() {{
             for (final Option option : options) {
                 put(option.getLongOpt(), option.getValue());
                 final String argValue = ObjectUtils.isNull(option.getValue()) ? "" : "=" + option.getValue();
                 PROVIDED_OPTIONS.add("--" + option.getLongOpt() + argValue);
             }
         }};
+
+        if (providedOptions.containsKey(OPTION_DISABLE_SSL)) {
+            providedOptions.remove(OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+        }
+
+        if (PROVIDED_OPTIONS.contains("--" + OPTION_DISABLE_SSL)) {
+            PROVIDED_OPTIONS.removeIf(element -> element.equalsIgnoreCase("--" + OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2));
+        }
+
+        return new HashMap<>(providedOptions);
     }
 }
