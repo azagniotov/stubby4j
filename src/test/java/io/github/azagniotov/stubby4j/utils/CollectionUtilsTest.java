@@ -118,4 +118,26 @@ public class CollectionUtilsTest {
 
         assertThat(expectedParams).isEqualTo(actualParams);
     }
+
+    @Test
+    public void givenTwoStringArrays_whenConcatWithCopy_thenGetExpectedResult() {
+        final String[] args = new String[]{"-m", "-l", "127.0.0.1", "-s", "8882", "-a", "8889", "-t", "7443"};
+        final String[] flags = new String[]{"enable_tls_with_alpn_and_http_2"};
+
+        final String[] expected = new String[]{"-m", "-l", "127.0.0.1", "-s", "8882", "-a", "8889", "-t", "7443", "enable_tls_with_alpn_and_http_2"};
+        final String[] actual = CollectionUtils.concatWithArrayCopy(args, flags);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void givenTwoStringArraysWithOneEmpty_whenConcatWithCopy_thenGetExpectedResult() {
+        final String[] args = new String[]{"-m", "-l", "127.0.0.1", "-s", "8882", "-a", "8889", "-t", "7443"};
+        final String[] flags = new String[]{};
+
+        final String[] expected = new String[]{"-m", "-l", "127.0.0.1", "-s", "8882", "-a", "8889", "-t", "7443"};
+        final String[] actual = CollectionUtils.concatWithArrayCopy(args, flags);
+
+        assertThat(actual).isEqualTo(expected);
+    }
 }
