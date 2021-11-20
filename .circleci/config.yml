@@ -294,6 +294,28 @@ smoke_test_steps: &smoke_test_steps
           fi
 
           kill $STUBBY4J_HTTP_1_PID
+          echo ""
+          echo "Killed original stubby4j process!"
+          echo ""
+
+          if [[ "<< parameters.run_tls_with_alpn_http_2_tests >>" == "yes" ]]
+          then
+            echo "Will restart stubby4j for TLS with ALPN on HTTP/2 requests!"
+            echo ""
+            java -jar build/libs/stubby4j-*.jar \
+                        --location 127.0.0.1 \
+                        --tls 7445 \
+                        --enable_tls_with_alpn_and_http_2 \
+                        --data smoke-test/yaml/smoke-tests-stubs.yaml &
+
+            echo "stubby4j re-started!"
+            echo ""
+            sleep 5
+
+            sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
+            sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+          fi
+
 
 
 #############################################################################################
@@ -310,6 +332,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "no"
     <<: *openjdk_alpine_jdk_8u092_environment
     <<: *smoke_test_steps
  
@@ -323,6 +348,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "no"
     <<: *openjdk_alpine_jdk_8u111_environment
     <<: *smoke_test_steps
 
@@ -335,6 +363,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "no"
     <<: *azul_zulu_openjdk_alpine_jdk_8u232_environment
     <<: *smoke_test_steps
 
@@ -347,6 +378,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "yes"
     <<: *adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
     <<: *smoke_test_steps
 
@@ -359,6 +393,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: "-PuseNativeJdkAlpnProcessor"
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "yes"
     <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
     <<: *smoke_test_steps
 
@@ -371,6 +408,9 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: "-PuseNativeJdkAlpnProcessor"
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "yes"
     <<: *adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
     <<: *smoke_test_steps
 
