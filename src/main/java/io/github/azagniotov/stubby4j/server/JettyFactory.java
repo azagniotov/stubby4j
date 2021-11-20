@@ -369,8 +369,6 @@ public final class JettyFactory {
     private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
                                                            final HttpConfiguration httpConfiguration,
                                                            final SslContextFactory sslContextFactory) {
-        SslUtils.sanityCheckOpenJDK8ServerALPNProcessor();
-
         sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
         sslContextFactory.setProvider("Conscrypt");
 
