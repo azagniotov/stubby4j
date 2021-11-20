@@ -78,13 +78,13 @@ public final class SslUtils {
 
         }
         SELF_SIGNED_CERTIFICATE_TRUST_STORE = loadStubby4jSelfSignedTrustStore();
-        DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(SSLv3, TLS_v1_0, TLS_v1_1, TLS_v1_2));
         TLS_v1_3_JDK_SUPPORTED = isTLSv13SupportedByCurrentJDK();
-        ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
         DEFAULT_SSL_CONTEXT = initAndSetDefaultSSLContext();
+        DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols()));
+        ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
         DEFAULT_SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
-        SSL_SOCKET_FACTORY = DEFAULT_SSL_CONTEXT.getSocketFactory();
         DEFAULT_SSL_ENGINE.setEnabledProtocols(enabledProtocols());
+        SSL_SOCKET_FACTORY = DEFAULT_SSL_CONTEXT.getSocketFactory();
         SUPPORT_CIPHERS = supportedCiphers();
     }
 
