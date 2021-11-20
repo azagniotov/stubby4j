@@ -29,39 +29,58 @@ public class CommandLineInterpreterTest {
         final String expectedConsoleOutput = "usage:" + BR +
                 "java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]" + BR +
                 "       [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>]" + BR +
-                "       [-v] [-w <arg>]" + BR +
-                " -a,--admin <arg>             Port for admin portal. Defaults to 8889." + BR +
-                " -d,--data <arg>              Data file to pre-load endpoints. Data file" + BR +
-                "                              to pre-load endpoints. Optional valid YAML" + BR +
-                "                              1.1 is expected. If YAML is not provided," + BR +
-                "                              you will be expected to configure stubs via" + BR +
-                "                              the stubby4j HTTP POST API." + BR +
-                " -da,--disable_admin_portal   Does not start Admin portal" + BR +
-                " -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs" + BR +
-                "                              are successfully matched to the incoming" + BR +
-                "                              HTTP requests" + BR +
-                " -ds,--disable_ssl            Does not enable TLS connections" + BR +
-                " -h,--help                    This help text." + BR +
-                " -k,--keystore <arg>          Keystore file for custom TLS. By default TLS" + BR +
-                "                              is enabled using internal self-signed" + BR +
-                "                              certificate." + BR +
-                " -l,--location <arg>          Hostname at which to bind stubby." + BR +
-                " -m,--mute                    Mute console output." + BR +
-                " -o,--debug                   Dumps raw HTTP request to the console (if" + BR +
-                "                              console is not muted!)." + BR +
-                " -p,--password <arg>          Password for the provided keystore file." + BR +
-                " -s,--stubs <arg>             Port for stub portal. Defaults to 8882." + BR +
-                " -t,--tls <arg>               Port for TLS connection. Defaults to 7443." + BR +
-                " -v,--version                 Prints out to console stubby version." + BR +
-                " -w,--watch <arg>             Periodically scans for changes in last" + BR +
-                "                              modification date of the main YAML and" + BR +
-                "                              referenced external files (if any). The flag" + BR +
-                "                              can accept an optional arg value which is" + BR +
-                "                              the watch scan time in milliseconds. If" + BR +
-                "                              milliseconds is not provided, the watch" + BR +
-                "                              scans every 100ms. If last modification date" + BR +
-                "                              changed since the last scan period, the stub" + BR +
-                "                              configuration is reloaded";
+                "       [-ta] [-v] [-w <arg>]" + BR +
+                " -a,--admin <arg>                        Port for admin portal. Defaults" + BR +
+                "                                         to 8889." + BR +
+                " -d,--data <arg>                         Data file to pre-load endpoints." + BR +
+                "                                         Data file to pre-load endpoints." + BR +
+                "                                         Optional valid YAML 1.1 is" + BR +
+                "                                         expected. If YAML is not" + BR +
+                "                                         provided, you will be expected to" + BR +
+                "                                         configure stubs via the stubby4j" + BR +
+                "                                         HTTP POST API." + BR +
+                " -da,--disable_admin_portal              Does not start Admin portal" + BR +
+                " -dc,--disable_stub_caching              Disables stubs in-memory caching" + BR +
+                "                                         when stubs are successfully" + BR +
+                "                                         matched to the incoming HTTP" + BR +
+                "                                         requests" + BR +
+                " -ds,--disable_ssl                       Disables TLS support (enabled by" + BR +
+                "                                         default) and disables the" + BR +
+                "                                         '--enable_tls_with_alpn_and_http_" + BR +
+                "                                         2' flag, if the latter was" + BR +
+                "                                         provided" + BR +
+                " -h,--help                               This help text." + BR +
+                " -k,--keystore <arg>                     Keystore file for custom TLS. By" + BR +
+                "                                         default TLS is enabled using" + BR +
+                "                                         internal self-signed certificate." + BR +
+                " -l,--location <arg>                     Hostname at which to bind stubby." + BR +
+                " -m,--mute                               Mute console output." + BR +
+                " -o,--debug                              Dumps raw HTTP request to the" + BR +
+                "                                         console (if console is not" + BR +
+                "                                         muted!)." + BR +
+                " -p,--password <arg>                     Password for the provided" + BR +
+                "                                         keystore file." + BR +
+                " -s,--stubs <arg>                        Port for stub portal. Defaults to" + BR +
+                "                                         8882." + BR +
+                " -t,--tls <arg>                          Port for TLS connection. Defaults" + BR +
+                "                                         to 7443." + BR +
+                " -ta,--enable_tls_with_alpn_and_http_2   Enables HTTP/2 for HTTPS URIs" + BR +
+                "                                         over TLS (on TLS v1.2 or newer)" + BR +
+                "                                         using ALPN extension" + BR +
+                " -v,--version                            Prints out to console stubby" + BR +
+                "                                         version." + BR +
+                " -w,--watch <arg>                        Periodically scans for changes in" + BR +
+                "                                         last modification date of the" + BR +
+                "                                         main YAML and referenced external" + BR +
+                "                                         files (if any). The flag can" + BR +
+                "                                         accept an optional arg value" + BR +
+                "                                         which is the watch scan time in" + BR +
+                "                                         milliseconds. If milliseconds is" + BR +
+                "                                         not provided, the watch scans" + BR +
+                "                                         every 100ms. If last modification" + BR +
+                "                                         date changed since the last scan" + BR +
+                "                                         period, the stub configuration is" + BR +
+                "                                         reloaded";
 
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 

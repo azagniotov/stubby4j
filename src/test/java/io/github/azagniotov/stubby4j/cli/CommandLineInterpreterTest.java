@@ -287,6 +287,34 @@ public class CommandLineInterpreterTest {
         assertThat(isSslGiven).isTrue();
     }
 
+    @Test
+    public void enabledTlsWithAlpnHttp2WhenShortOptionGiven() throws Exception {
+        final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+        commandLineInterpreter.parseCommandLine(new String[]{"-ta"});
+        final boolean isTlsWithAlpnEnabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+
+        assertThat(isTlsWithAlpnEnabled).isTrue();
+    }
+
+    @Test
+    public void enabledTlsWithAlpnHttp2WhenLongOptionGiven() throws Exception {
+        final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+        commandLineInterpreter.parseCommandLine(new String[]{"--enable_tls_with_alpn_and_http_2"});
+        final boolean isTlsWithAlpnEnabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+
+        assertThat(isTlsWithAlpnEnabled).isTrue();
+    }
+
+    @Test
+    public void shouldRemoveOptionTlsWithAlpnHttp2WhenDisableSslGiven() throws Exception {
+        final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
+        commandLineInterpreter.parseCommandLine(new String[]{"--enable_tls_with_alpn_and_http_2", "--disable_ssl"});
+        final boolean isTlsWithAlpnEnabled = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+        assertThat(isTlsWithAlpnEnabled).isFalse();
+
+        final boolean disableSsl = commandLineInterpreter.getCommandlineParams().containsKey(CommandLineInterpreter.OPTION_DISABLE_SSL);
+        assertThat(disableSsl).isTrue();
+    }
 
     @Test
     public void shouldBeFalseThatYamlIsNotProvided() throws Exception {

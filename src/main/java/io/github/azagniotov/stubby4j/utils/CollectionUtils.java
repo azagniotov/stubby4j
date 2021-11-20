@@ -53,4 +53,10 @@ public final class CollectionUtils {
         }
         return queryStringBuilder.toString();
     }
+
+    public static <T> T[] concatWithArrayCopy(T[] one, T[] two) {
+        final T[] result = Arrays.copyOf(one, one.length + two.length);
+        System.arraycopy(two, 0, result, one.length, two.length);
+        return result;
+    }
 }

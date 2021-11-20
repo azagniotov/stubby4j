@@ -2,7 +2,8 @@
 
 #### 7.3.4-SNAPSHOT
 
-* Completely revisited TLS configuration in stuby4j, which enables support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3`. See [Making requests over TLS](../README.md#making-requests-over-tls) section 
+* Completely revisited TLS configuration in stubby4j, which enables support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3`. See [Making requests over TLS](../README.md#making-requests-over-tls) section
+* Added support for HTTP/2 over TLS using ALPN extension. See [Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension](../README.md#support-for-http2-on-https-uris-over-tls-using-alpn-extension) section
 * PR [#284](https://github.com/azagniotov/stubby4j/pull/284) - During YAML parsing, checking if configured properties belong in their respective top-level objects (https://github.com/azagniotov)
 * PR [#286](https://github.com/azagniotov/stubby4j/pull/286) - Upgraded jetty to `9.4.43.v20210629` and SnakeYAML to `v1.29` (https://github.com/azagniotov)
 * PR [#295](https://github.com/azagniotov/stubby4j/pull/295), [#325](https://github.com/azagniotov/stubby4j/pull/325), [#327](https://github.com/azagniotov/stubby4j/pull/327) - When matching stubs, the log output is now clearer what has been matched (https://github.com/azagniotov)

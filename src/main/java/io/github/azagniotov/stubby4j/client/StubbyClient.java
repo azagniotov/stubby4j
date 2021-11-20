@@ -6,6 +6,7 @@ import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
+import io.github.azagniotov.stubby4j.utils.CollectionUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
@@ -109,8 +110,10 @@ public final class StubbyClient {
      * @throws Exception
      */
 
-    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename) throws Exception {
-        final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
+    public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename, final String... flags) throws Exception {
+        final String[] defaultFlags = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
+        final String[] args = CollectionUtils.concatWithArrayCopy(defaultFlags, flags);
+
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(args);
 

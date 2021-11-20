@@ -37,6 +37,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Supported protocol versions](#supported-protocol-versions)
       * [TLS v1.3 support](#tls-v13-support)
    * [Server-side TLS configuration](#server-side-tls-configuration)
+      * [Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension](#support-for-http2-on-https-uris-over-tls-using-alpn-extension)
    * [Client-side TLS configuration](#client-side-tls-configuration)
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
@@ -341,38 +342,58 @@ api("io.github.azagniotov:stubby4j:7.3.4-SNAPSHOT:no-jetty")
 usage:
 java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
        [-k <arg>] [-l <arg>] [-m] [-o] [-p <arg>] [-s <arg>] [-t <arg>]
-       [-v] [-w <arg>]
- -a,--admin <arg>             Port for admin portal. Defaults to 8889.
- -d,--data <arg>              Data file to pre-load endpoints. Data file
-                              to pre-load endpoints. Optional valid YAML
-                              1.1 is expected. If YAML is not provided,
-                              you will be expected to configure stubs via
-                              the stubby4j HTTP POST API.
- -da,--disable_admin_portal   Does not start Admin portal
- -dc,--disable_stub_caching   Disables stubs in-memory caching when stubs
-                              are successfully matched to the incoming
-                              HTTP requests
- -ds,--disable_ssl            Does not enable TLS connections
- -h,--help                    This help text.
- -k,--keystore <arg>          Keystore file for custom TLS. By default TLS
-                              is enabled using internal self-signed certificate.
- -l,--location <arg>          Hostname at which to bind stubby.
- -m,--mute                    Mute console output.
- -o,--debug                   Dumps raw HTTP request to the console (if
-                              console is not muted!).
- -p,--password <arg>          Password for the provided keystore file.
- -s,--stubs <arg>             Port for stub portal. Defaults to 8882.
- -t,--tls <arg>               Port for TLS connection. Defaults to 7443.
- -v,--version                 Prints out to console stubby version.
- -w,--watch <arg>             Periodically scans for changes in last
-                              modification date of the main YAML and
-                              referenced external files (if any). The flag
-                              can accept an optional arg value which is
-                              the watch scan time in milliseconds. If
-                              milliseconds is not provided, the watch
-                              scans every 100ms. If last modification date
-                              changed since the last scan period, the stub
-                              configuration is reloaded
+       [-ta] [-v] [-w <arg>]
+ -a,--admin <arg>                        Port for admin portal. Defaults
+                                         to 8889.
+ -d,--data <arg>                         Data file to pre-load endpoints.
+                                         Data file to pre-load endpoints.
+                                         Optional valid YAML 1.1 is
+                                         expected. If YAML is not
+                                         provided, you will be expected to
+                                         configure stubs via the stubby4j
+                                         HTTP POST API.
+ -da,--disable_admin_portal              Does not start Admin portal
+ -dc,--disable_stub_caching              Disables stubs in-memory caching
+                                         when stubs are successfully
+                                         matched to the incoming HTTP
+                                         requests
+ -ds,--disable_ssl                       Disables TLS support (enabled by
+                                         default) and disables the
+                                         '--enable_tls_with_alpn_and_http_
+                                         2' flag, if the latter was
+                                         provided
+ -h,--help                               This help text.
+ -k,--keystore <arg>                     Keystore file for custom TLS. By
+                                         default TLS is enabled using
+                                         internal self-signed certificate.
+ -l,--location <arg>                     Hostname at which to bind stubby.
+ -m,--mute                               Mute console output.
+ -o,--debug                              Dumps raw HTTP request to the
+                                         console (if console is not
+                                         muted!).
+ -p,--password <arg>                     Password for the provided
+                                         keystore file.
+ -s,--stubs <arg>                        Port for stub portal. Defaults to
+                                         8882.
+ -t,--tls <arg>                          Port for TLS connection. Defaults
+                                         to 7443.
+ -ta,--enable_tls_with_alpn_and_http_2   Enables HTTP/2 for HTTPS URIs
+                                         over TLS (on TLS v1.2 or newer)
+                                         using ALPN extension
+ -v,--version                            Prints out to console stubby
+                                         version.
+ -w,--watch <arg>                        Periodically scans for changes in
+                                         last modification date of the
+                                         main YAML and referenced external
+                                         files (if any). The flag can
+                                         accept an optional arg value
+                                         which is the watch scan time in
+                                         milliseconds. If milliseconds is
+                                         not provided, the watch scans
+                                         every 100ms. If last modification
+                                         date changed since the last scan
+                                         period, the stub configuration is
+                                         reloaded
 ```
 
 [Back to top](#table-of-contents)
@@ -421,6 +442,10 @@ During TLS configuration in `stubby4j`, the following happens:
    your own certificate signed by a certificate authority) when configuring `stubby4j` command-line arguments. In other words,
    this allows you to load top-level certificates from a root certificate authority. When providing a keystore file to `stubby4j`,
    the keystore should have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
+
+#### Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension
+
+TBD
 
 ### Client-side TLS configuration
 
