@@ -6,6 +6,7 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpMethod;
@@ -22,6 +23,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.security.Security;
 import java.util.HashSet;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -97,6 +99,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
         sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
         sslContextFactory.setProtocol(tlsProtocol);
         sslContextFactory.setTrustStore(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE);
+        Security.insertProviderAt(new OpenSSLProvider(), 1);
 
         final HTTP2Client http2Client = new HTTP2Client();
         http2Client.addBean(sslContextFactory);
