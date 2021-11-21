@@ -23,7 +23,6 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
@@ -95,6 +94,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
 
     private void makeRequestAndAssert(final String tlsProtocol) throws Exception {
         final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+        sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
         sslContextFactory.setProtocol(tlsProtocol);
         sslContextFactory.setTrustStore(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE);
 
@@ -105,13 +105,14 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
         transport.setUseALPN(true);
 
         final HttpClient httpClient = new HttpClient(transport, sslContextFactory);
+        httpClient.setMaxConnectionsPerDestination(4);
         httpClient.start();
 
         ContentResponse response = httpClient.newRequest("localhost", STUBS_SSL_PORT)
                 .path("/invoice?status=active&type=full")
                 .method(HttpMethod.GET)
                 .scheme(HttpScheme.HTTPS.asString())
-                .timeout(5, TimeUnit.SECONDS)
+                //.timeout(5, TimeUnit.SECONDS)
                 .send();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
