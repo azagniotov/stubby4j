@@ -58,10 +58,10 @@ adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment: &adoptopenjdk_openjdk_alp
   docker:
     - image: adoptopenjdk/openjdk8:jdk8u312-b07-alpine-slim@sha256:da6bb7b3d1bc1a23653c60f88902be9ca15b4a62f537970d37b65dd374be3221
 
-azul_zulu_openjdk_alpine_jdk_11_48_environment: &azul_zulu_openjdk_alpine_jdk_11_48_environment
+adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment
   <<: *base_environment
   docker:
-    - image: azul/zulu-openjdk-alpine:11.0.11-11.48.21@sha256:c860f15777f40676bb3fb4eb3c2f362d0b32a40260b9d06c4d645a633efe5739
+    - image: adoptopenjdk/openjdk11-openj9:jdk-11.0.13_8_openj9-0.29.0-alpine-slim@sha256:db1f6fb1d8e61b2df4ca5e7e82b4aac27222af9fc9d21ee04151d6a58d8effc4
 
 adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
   <<: *base_environment
@@ -261,6 +261,7 @@ smoke_test_steps: &smoke_test_steps
     - run:
         name: Install cURL on Alpine Linux
         command: |
+          echo ""
           apk --no-cache add curl && curl --version
 
     - run:
@@ -385,7 +386,7 @@ jobs:
     <<: *smoke_test_steps
 
 
-  smoke_azul_zulu_openjdk_11_48:
+  smoke_adoptopenjdk_openjdk_11_openj9:
     parameters:
       tls_13:
         type: string
@@ -396,7 +397,7 @@ jobs:
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
-    <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
+    <<: *adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment
     <<: *smoke_test_steps
 
 
@@ -502,7 +503,7 @@ workflows:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_11_48:
+      - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_ignore_master
@@ -518,7 +519,7 @@ workflows:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_only_master
-      - smoke_azul_zulu_openjdk_11_48:
+      - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_only_master
@@ -555,7 +556,7 @@ workflows:
       - smoke_openjdk_openjdk_8u111
       - smoke_azul_zulu_openjdk_8u232
       - smoke_adoptopenjdk_openjdk_8u312_b07
-      - smoke_azul_zulu_openjdk_11_48
+      - smoke_adoptopenjdk_openjdk_11_openj9
       - smoke_adoptopenjdk_openjdk_16_openj9
 
 

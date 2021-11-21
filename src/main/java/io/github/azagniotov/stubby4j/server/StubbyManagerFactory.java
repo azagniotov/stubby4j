@@ -25,8 +25,10 @@ public class StubbyManagerFactory {
                                                 final Map<String, String> commandLineArgs,
                                                 final CompletableFuture<YamlParseResultSet> stubLoadComputation) throws Exception {
 
-        // Commenting out the following line will configure Jetty for StdErrLog DEBUG level logging
-        Log.setLog(new EmptyLogger());
+        final String enableJettyDebug = System.getProperty("enableJettyDebug");
+        if (enableJettyDebug == null) {
+            Log.setLog(new EmptyLogger());
+        }
 
         final boolean shouldDisableStubCache = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
         final Cache<String, StubHttpLifecycle> stubCache = Cache.stubHttpLifecycleCache(shouldDisableStubCache);
