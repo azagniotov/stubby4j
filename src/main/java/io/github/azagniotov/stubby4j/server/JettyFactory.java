@@ -15,7 +15,6 @@ import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.conscrypt.OpenSSLProvider;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -371,20 +369,9 @@ public final class JettyFactory {
     private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
                                                            final HttpConfiguration httpConfiguration,
                                                            final SslContextFactory sslContextFactory) {
+        // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#alpn-chapter
+
         sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
-
-        // Also, do not forget about src/main/resources/META-INF/services/org.eclipse.jetty.io.ssl.ALPNProcessor$Server
-        // due to DuplicateStrategy.EXCLUDE in conf/gradle/artifacts.gradle
-        //
-        // 2021-11-21 12:21:27.854:DBUG:oejus.SslContextFactory:main:
-        // java.security.NoSuchAlgorithmException: no such algorithm: SunX509 for provider Conscrypt
-        // This is because I am using Conscrypt and not the Java Crypto module. Java security setting will have no impact on conscrypt.
-        // https://www.eclipse.org/lists/jetty-users/msg09163.html
-        // https://github.com/eclipse/jetty.project/issues/1894
-        // https://github.com/eclipse/jetty.project/issues/2950
-        // sslContextFactory.setProvider("Conscrypt");
-        Security.insertProviderAt(new OpenSSLProvider(), 1);
-
         final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
 
         return new ServerConnector(server,
