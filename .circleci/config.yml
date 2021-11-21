@@ -63,6 +63,11 @@ adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment: &adoptopenjdk_open
   docker:
     - image: adoptopenjdk/openjdk11-openj9:jdk-11.0.13_8_openj9-0.29.0-alpine-slim@sha256:db1f6fb1d8e61b2df4ca5e7e82b4aac27222af9fc9d21ee04151d6a58d8effc4
 
+azul_zulu_openjdk_alpine_jdk_11_48_environment: &azul_zulu_openjdk_alpine_jdk_11_48_environment
+  <<: *base_environment
+  docker:
+    - image: azul/zulu-openjdk-alpine:11.0.11-11.48.21@sha256:c860f15777f40676bb3fb4eb3c2f362d0b32a40260b9d06c4d645a633efe5739
+
 adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
   <<: *base_environment
   docker:
@@ -401,6 +406,21 @@ jobs:
     <<: *smoke_test_steps
 
 
+  smoke_azul_zulu_openjdk_11_48:
+    parameters:
+      tls_13:
+        type: string
+        default: "yes"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "yes"
+    <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
+    <<: *smoke_test_steps
+
+
   smoke_adoptopenjdk_openjdk_16_openj9:
     parameters:
       tls_13:
@@ -505,6 +525,8 @@ workflows:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_ignore_master
+      - smoke_azul_zulu_openjdk_11_48:
+          <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_ignore_master
           
@@ -520,6 +542,8 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
+          <<: *filter_only_master
+      - smoke_azul_zulu_openjdk_11_48:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_only_master
@@ -557,6 +581,7 @@ workflows:
       - smoke_azul_zulu_openjdk_8u232
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
+      - smoke_azul_zulu_openjdk_11_48
       - smoke_adoptopenjdk_openjdk_16_openj9
 
 
