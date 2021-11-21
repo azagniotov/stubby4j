@@ -264,7 +264,10 @@ smoke_test_steps: &smoke_test_steps
           echo ""
           echo "Installing libstdc++. See https://github.com/kohlschutter/junixsocket/issues/33#issuecomment-273255073"
           echo ""
-          apk --no-cache add libstdc++ curl && curl --version
+          apk --no-cache add \
+              libstdc++ \
+              libc6-compat \
+              curl && curl --version
 
     - run:
         name: Build stubby4j uber JAR
