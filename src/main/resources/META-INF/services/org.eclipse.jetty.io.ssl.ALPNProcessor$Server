@@ -1,6 +1,0 @@
-# https://github.com/eclipse/jetty.project/issues/1894
-# https://github.com/eclipse/jetty.project/issues/2950
-#
-# Also, do not forget DuplicateStrategy.EXCLUDE in conf/gradle/artifacts.gradle,
-# that's why I created this service definition here explicitly as a result of debugging
-org.eclipse.jetty.alpn.conscrypt.server.ConscryptServerALPNProcessor
