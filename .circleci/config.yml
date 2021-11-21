@@ -61,7 +61,7 @@ adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment: &adoptopenjdk_openjdk_alp
 azul_zulu_openjdk_alpine_jdk_11_48_environment: &azul_zulu_openjdk_alpine_jdk_11_48_environment
   <<: *base_environment
   docker:
-    - image: azul/zulu-openjdk-alpine:11.0.11-11.48.21@sha256:c860f15777f40676bb3fb4eb3c2f362d0b32a40260b9d06c4d645a633efe5739
+    - image: azul/zulu-openjdk-alpine:11.0.12-11.50.19@sha256:a50624dc2bd0d5fc25af1cb3c40f4aaabd17050c99b32761752eafbb30255d75
 
 adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
   <<: *base_environment
@@ -266,7 +266,6 @@ smoke_test_steps: &smoke_test_steps
           echo ""
           apk --no-cache add \
               libstdc++ \
-              libc6-compat \
               curl && curl --version
 
     - run:
