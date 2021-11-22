@@ -37,9 +37,9 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Supported protocol versions](#supported-protocol-versions)
       * [TLS v1.3 support](#tls-v13-support)
    * [Server-side TLS configuration](#server-side-tls-configuration)
-      * [Support for HTTP/2 on HTTPS URIs over TLS](#support-for-http2-on-https-uris-over-tls)
    * [Client-side TLS configuration](#client-side-tls-configuration)
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
+* [Support for HTTP/2 on HTTPS URIs over TLS](#support-for-http2-on-https-uris-over-tls)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
       * [Request object properties](#request-object-properties)
@@ -444,18 +444,6 @@ During TLS configuration in `stubby4j`, the following happens:
    this allows you to load top-level certificates from a root certificate authority. When providing a keystore file to `stubby4j`,
    the keystore should have `.PKCS12` or `.JKS` file extension. See [command-line switches](#command-line-switches) for more information.
 
-#### Support for HTTP/2 on HTTPS URIs over TLS
-
-Support for HTTP/2 on HTTPS URIs can be enabled by providing `--enable_tls_with_alpn_and_http_2` flag to the `stubby4j` JAR. See [command-line switches](#command-line-switches) for more information. The HTTP/2 support will be enabled only for the the TLS layer in stubby4j. In other words, web clients will not be able to make HTTP/2 requests to `http://....` URLs.
-
-When the aforementioned flag is provided, the TLS in stubby4j is enabled with the ALPN ([RFC 7301](https://datatracker.ietf.org/doc/html/rfc7301)) extension. ALPN is the TLS extension that HTTP/2 is expected to use and it helps to negotiate the HTTP/2 without losing valuable time or network packet round-trips.
-
-Please note the following restrictions when enabling HTTP/2 on TLS via the aforementioned flag:
-
-1. As per [HTTP/2 RFC](https://datatracker.ietf.org/doc/html/rfc7540#section-9.2), the HTTP/2 over TLS in `stubby4j` will be enabled only for TLS version 1.2 or higher.
-2. Web clients making HTTP/2 requests over TLS to `stubby4j` should be using ALPN TLS extension in their configuration to negotiate HTTP/2.
-3. In `stubby4j`, the HTTP/2 over TLS will be enabled for JDK 1.8 (versions from 1.8.0_252 included and later) and higher.
-
 ### Client-side TLS configuration
 
 Since `stubby4j`'s TLS layer configured (by default) using a self-signed certificate, it is not going to be possible
@@ -521,6 +509,21 @@ the two parties during TLS/SSL handshake:
 
 
 If you have any questions about the TLS configuration in `stubby4j`, please feel free to [raise an issue](https://github.com/azagniotov/stubby4j/issues/new/choose).
+
+[Back to top](#table-of-contents)
+
+
+## Support for HTTP/2 on HTTPS URIs over TLS
+
+Support for HTTP/2 on HTTPS URIs can be enabled by providing `--enable_tls_with_alpn_and_http_2` flag to the `stubby4j` JAR. See [command-line switches](#command-line-switches) for more information. The HTTP/2 support will be enabled only for the the TLS layer in stubby4j. In other words, web clients will not be able to make HTTP/2 requests to `http://....` URLs.
+
+When the aforementioned flag is provided, the TLS in `stubby4j` is enabled with the ALPN ([RFC 7301](https://datatracker.ietf.org/doc/html/rfc7301)) extension. ALPN is the TLS extension that HTTP/2 is expected to use and the ALPN helps to negotiate the HTTP/2 between client & server without losing valuable time or network packet round-trips.
+
+Please note the following restrictions when enabling HTTP/2 via the aforementioned flag:
+
+1. As per [HTTP/2 RFC](https://datatracker.ietf.org/doc/html/rfc7540#section-9.2), the HTTP/2 over TLS in `stubby4j` will be enabled only for `TLSv1.2` or higher.
+2. Web clients making HTTP/2 requests over TLS to `stubby4j` should be using ALPN TLS extension in their configuration to negotiate HTTP/2.
+3. In `stubby4j`, the HTTP/2 over TLS will be enabled for JDK 1.8 (versions from 1.8.0_252 included and later) and higher.
 
 [Back to top](#table-of-contents)
 
