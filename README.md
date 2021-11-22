@@ -23,6 +23,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 * [Advantages of using stubby4j HTTP stub server](#advantages-of-using-stubby4j-http-stub-server)
 * [In the Press](#in-the-press)
 * [Key features](#key-features)
+* [Minimal system requirements](#minimal-system-requirements)
 * [Quick start example](#quick-start-example)
 * [Running in Docker](#running-in-docker)
    * [Docker Compose](#docker-compose)
@@ -115,14 +116,28 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 
 [Back to top](#table-of-contents)
 
+## Minimal system requirements
+
+### Running stubby4j as a standalone JAR
+
+To run stubby4j standalone JARs which are hosted on [Maven Central][maven-link], the following are the minimal JRE requirements. Please note, there is no vendor specific requirement, anyone of the Oracle, OpenJDK, AdoptOpenJDK or Azul Zulu OpenJDK, will do.
+
+| stubby4j version  | Minimal JRE version   | Notes                                     |
+| ----------------- | --------------------- | ----------------------------------------- |
+| `11.x.x`          | `11`                  | Coming soon...                            |
+| `7.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
+| `6.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
+| `5.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
+| `4.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
+
+
+### Running stubby4j as a pre-built Docker container
+
+See [Running in Docker](#running-in-docker) for more information.
 
 ## Quick start example
 
 This section explains how to get stubby4j up and running using a very simple example `Hello, World`, without building `stubby4j` from locally using `Gradle`.
-
-#### Minimum system requirements to run stubby4j archives hosted on [Maven Central][maven-link]
-
-* JRE >= `v1.8`
 
 #### Setup
 
