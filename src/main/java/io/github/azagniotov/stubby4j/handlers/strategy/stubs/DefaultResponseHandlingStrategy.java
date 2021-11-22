@@ -67,9 +67,6 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
     }
 
     private void writeOutputStream(final HttpServletResponse response, final byte[] responseBody) throws IOException {
-        try (final OutputStream outputStream = response.getOutputStream()) {
-            outputStream.write(responseBody);
-            outputStream.flush();
-        }
+        response.getOutputStream().write(responseBody);
     }
 }
