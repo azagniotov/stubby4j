@@ -37,7 +37,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Supported protocol versions](#supported-protocol-versions)
       * [TLS v1.3 support](#tls-v13-support)
    * [Server-side TLS configuration](#server-side-tls-configuration)
-      * [Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension](#support-for-http2-on-https-uris-over-tls-using-alpn-extension)
+      * [Support for HTTP/2 on HTTPS URIs over TLS](#support-for-http2-on-https-uris-over-tls)
    * [Client-side TLS configuration](#client-side-tls-configuration)
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
