@@ -10,7 +10,7 @@ An HTTP server for stubbing external systems in both Docker and non-containerize
 
 [![stubb4j][logo-badge]][logo-link]
 
-It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over HTTP(s) protocol.
+It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over HTTP/1.1 & HTTP/2 protocols.
 
 Please refer to [Key features](#key-features) for more information
 
@@ -108,6 +108,7 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Support for delayed responses for performance and stability testing
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
+* Support for HTTP/2 on HTTPS URIs over TLS (`1.2` and `1.3`) using ALPN extension
 * Support for HTTP `30x` redirects verification
 * Support for different types of HTTP Authorizations: `Basic`, `Bearer Token` & others
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
@@ -445,7 +446,10 @@ During TLS configuration in `stubby4j`, the following happens:
 
 #### Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension
 
-TBD
+Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension can be enabled by providing `--enable_tls_with_alpn_and_http_2` flag to `stubby4j` JAR. See [command-line switches](#command-line-switches) for more information. Please note the following restrictions when enabling HTTP/2 on TLS via the aforementioned flag:
+
+1. As per [HTTP/2 RFC](https://datatracker.ietf.org/doc/html/rfc7540#section-9.2), the HTTP/2 over TLS in `stubby4j` will be enabled only for TLS version 1.2 or higher.
+2. HTTP/2 over TLS will be enabled for JDK 1.8 (versions from 1.8.0_252 included and later) and higher.
 
 ### Client-side TLS configuration
 
