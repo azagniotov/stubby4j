@@ -276,8 +276,8 @@ public final class JettyFactory {
 
         final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
         final ServerConnector sslConnector = enableAlpnAndHttp2 ?
-                buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory) :
-                buildSslConnectorWithHttp1(server, httpConfiguration, sslContextFactory);
+                buildSslConnectorForHttp20onTlsWithAlpn(server, httpConfiguration, sslContextFactory) :
+                buildSslConnectorForHttp11onTlsWithAlpn(server, httpConfiguration, sslContextFactory);
 
         sslConnector.setPort(getStubsSslPort(commandLineArgs));
         sslConnector.setHost(DEFAULT_HOST);
@@ -359,25 +359,35 @@ public final class JettyFactory {
         return httpConfiguration;
     }
 
-    private ServerConnector buildSslConnectorWithHttp1(final Server server,
-                                                       final HttpConfiguration httpConfiguration,
-                                                       final SslContextFactory sslContextFactory) {
-        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
-        return new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
+    private ServerConnector buildSslConnectorForHttp11onTlsWithAlpn(final Server server,
+                                                                    final HttpConfiguration httpConfiguration,
+                                                                    final SslContextFactory sslContextFactory) {
+        final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory();
+        final HttpConnectionFactory http11ConnectionFactory = new HttpConnectionFactory(httpConfiguration);
+        alpnServerConnectionFactory.setDefaultProtocol(http11ConnectionFactory.getProtocol());
+        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol());
+
+        return new ServerConnector(server,
+                sslConnectionFactory,
+                alpnServerConnectionFactory,
+                http11ConnectionFactory);
     }
 
-    private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
-                                                           final HttpConfiguration httpConfiguration,
-                                                           final SslContextFactory sslContextFactory) {
+    private ServerConnector buildSslConnectorForHttp20onTlsWithAlpn(final Server server,
+                                                                    final HttpConfiguration httpConfiguration,
+                                                                    final SslContextFactory sslContextFactory) {
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#alpn-chapter
 
         sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
+
         final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
+        final HTTP2ServerConnectionFactory http2ServerConnectionFactory = new HTTP2ServerConnectionFactory(httpConfiguration);
+        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol());
 
         return new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol()),
+                sslConnectionFactory,
                 alpnServerConnectionFactory,
-                new HTTP2ServerConnectionFactory(httpConfiguration));
+                http2ServerConnectionFactory);
     }
 
     private int getStubsPort(final Map<String, String> commandLineArgs) {
