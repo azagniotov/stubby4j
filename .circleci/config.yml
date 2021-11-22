@@ -63,10 +63,10 @@ adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment: &adoptopenjdk_open
   docker:
     - image: adoptopenjdk/openjdk11-openj9:jdk-11.0.13_8_openj9-0.29.0-alpine-slim@sha256:db1f6fb1d8e61b2df4ca5e7e82b4aac27222af9fc9d21ee04151d6a58d8effc4
 
-azul_zulu_openjdk_alpine_jdk_11_48_environment: &azul_zulu_openjdk_alpine_jdk_11_48_environment
+azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment: &azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment
   <<: *base_environment
   docker:
-    - image: azul/zulu-openjdk-alpine:11.0.11-11.48.21@sha256:c860f15777f40676bb3fb4eb3c2f362d0b32a40260b9d06c4d645a633efe5739
+    - image: azul/zulu-openjdk-alpine:15.0.3-15.32.15@sha256:8d4ea19e67dae1dbecbb4a5d1237fc1cf87a796d0c1f22c6254c3b926432087d
 
 adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
   <<: *base_environment
@@ -406,7 +406,7 @@ jobs:
     <<: *smoke_test_steps
 
 
-  smoke_azul_zulu_openjdk_11_48:
+  smoke_azul_zulu_openjdk_15:
     parameters:
       tls_13:
         type: string
@@ -417,7 +417,7 @@ jobs:
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
-    <<: *azul_zulu_openjdk_alpine_jdk_11_48_environment
+    <<: *azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment
     <<: *smoke_test_steps
 
 
@@ -525,7 +525,7 @@ workflows:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_11_48:
+      - smoke_azul_zulu_openjdk_15:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_ignore_master
@@ -543,7 +543,7 @@ workflows:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_only_master
-      - smoke_azul_zulu_openjdk_11_48:
+      - smoke_azul_zulu_openjdk_15:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_only_master
@@ -581,7 +581,7 @@ workflows:
       - smoke_azul_zulu_openjdk_8u232
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
-      - smoke_azul_zulu_openjdk_11_48
+      - smoke_azul_zulu_openjdk_15
       - smoke_adoptopenjdk_openjdk_16_openj9
 
 
