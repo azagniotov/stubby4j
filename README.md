@@ -1,4 +1,4 @@
-An HTTP server for stubbing external systems in both Docker and non-containerized environments for integration, contract and behavior testing.
+An HTTP/1.1 & HTTP/2 server for stubbing external systems in both Docker and non-containerized domains for integration and contract testing.
 
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
@@ -76,14 +76,14 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 
 ## Advantages of using stubby4j HTTP stub server
 
-There are a number of use cases where you'd want to use HTTP stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
+There are a number of use cases where you'd want to use HTTP/1.1 & HTTP/2 stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
 
 * Simulate responses from a real server and don't care (or cannot) to send requests over the network
 * Stub out external web services (when developing & testing locally) in a Docker based micro-service architecture
 * Avoid negative productivity impact when an external API you depend on doesn't exist or isn't complete
 * Simulate edge cases and/or failure modes for your web service that the real remote API won't reliably produce
 * Fault injection, where after X good responses on the same URI your web service gets a bad one
-* Verify that your code makes HTTP requests with all the required parameters and/or headers
+* Verify that your code makes HTTP/1.1 or HTTP/2 (over TLS) requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP response error codes
 
 [Back to top](#table-of-contents)
@@ -99,17 +99,17 @@ There are a number of use cases where you'd want to use HTTP stub server in your
 ## Key features
 
 * Dockerzied. Stub out external services in a Docker based micro-service architecture
+* Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
+* Support for HTTP/2 on HTTPS URIs over TLS (`1.2` and `1.3`) using ALPN extension
 * Fault injection, where after X good responses on the same URI you get a bad one
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
 * Request proxying. Ability to configure a proxy/intercept where requests are proxied to another service
-* Record & Replay. The HTTP response is recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
-* HTTP request verification and HTTP response stubbing
+* Record & Replay. The HTTP response recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
+* HTTP/1.1 or HTTP/2 request verification and HTTP response stubbing
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Serve binary files as stubbed response content (images, PDFs. etc.)
 * Support for delayed responses for performance and stability testing
-* Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
-* Support for HTTP/2 on HTTPS URIs over TLS (`1.2` and `1.3`) using ALPN extension
 * Support for HTTP `30x` redirects verification
 * Support for different types of HTTP Authorizations: `Basic`, `Bearer Token` & others
 * Embed stubby4j to create a web service SANDBOX for your integration test suite
