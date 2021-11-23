@@ -1,0 +1,12 @@
+- uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
+  description: stubby4j sanity smoke test when running in Docker
+  request:
+    method: GET
+    url: /hello
+
+  response:
+    headers:
+      content-type: application/json
+    status: 200
+    body: >
+      world!
