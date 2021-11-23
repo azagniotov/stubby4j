@@ -16,9 +16,9 @@ services:
       - 7445:7445
     environment:
       YAML_CONFIG: smoke-tests-stubs.yaml
+      LOCATION: 0.0.0.0
       STUBS_PORT: 8884
       ADMIN_PORT: 8891
       STUBS_TLS_PORT: 7445
-      WITH_DEBUG: --debug
-      WITH_WATCH: --watch
-      WITH_HTTP_2_SUPPORT_OVER_TLS: --enable_tls_with_alpn_and_http_2
+      # https://github.com/azagniotov/stubby4j#command-line-switches
+      WITH_ARGS: --enable_tls_with_alpn_and_http_2 --debug --watch

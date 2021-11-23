@@ -202,25 +202,25 @@ Alternatively you can add stubby4j image to your stack using Docker Compose:
 # See "Environment variables" section at https://hub.docker.com/r/azagniotov/stubby4j
 version: '3.5'
 services:
-  stubby4j-jre8:
+  stubby4j-jre11:
     # 'root' - so that stubby4j can write 'logs' into host machine's directory mapped to container volume
     user: root
-    image: azagniotov/stubby4j:latest-jre8
+    image: azagniotov/stubby4j:latest-jre11
     volumes:
       - "./yaml:/home/stubby4j/data"
-    container_name: stubby4j_jre8
+    container_name: stubby4j_jre11
     ports:
       - 8884:8884
       - 8891:8891
       - 7445:7445
     environment:
       YAML_CONFIG: smoke-tests-stubs.yaml
+      LOCATION: 0.0.0.0
       STUBS_PORT: 8884
       ADMIN_PORT: 8891
       STUBS_TLS_PORT: 7445
-      WITH_DEBUG: --debug
-      WITH_WATCH: --watch
-      WITH_HTTP_2_SUPPORT_OVER_TLS: --enable_tls_with_alpn_and_http_2
+      # https://github.com/azagniotov/stubby4j#command-line-switches
+      WITH_ARGS: --enable_tls_with_alpn_and_http_2 --debug --watch
 ```
 
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var under [Environment variables](https://hub.docker.com/r/azagniotov/stubby4j)) that you want to map to the container volume `/home/stubby4j/data`
