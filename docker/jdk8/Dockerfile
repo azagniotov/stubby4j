@@ -39,10 +39,7 @@ ENV LOCATION=0.0.0.0 \
     STUBS_PORT=8882 \
     STUBS_TLS_PORT=7443 \
     ADMIN_PORT=8889 \
-    WITH_DEBUG="" \
-    WITH_WATCH="" \
-    WITH_HTTP_2_SUPPORT_OVER_TLS="" \
-    WITH_STUB_CACHE_DISABLED="" \
+    WITH_ARGS="" \
     YAML_CONFIG="main.yaml" \
     STUBBY4J_USER_HOME=/home/stubby4j
 
@@ -83,7 +80,4 @@ ENTRYPOINT java -DoverrideDisabledAlgorithms=true -Dlog4j2.configurationFile=log
       --tls ${STUBS_TLS_PORT} \
       --data data/${YAML_CONFIG} \
       --mute \
-      ${WITH_HTTP_2_SUPPORT_OVER_TLS} \
-      ${WITH_STUB_CACHE_DISABLED} \
-      ${WITH_DEBUG} \
-      ${WITH_WATCH}
+      ${WITH_ARGS}
