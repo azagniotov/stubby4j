@@ -281,7 +281,7 @@ smoke_test_steps: &smoke_test_steps
 
     - run:
         when: on_success
-        name: Make requests to the stubby4j over TLSv1, TLSv1.1, TLSv1.2 & optionally TLSv1.3
+        name: Make HTTP/1.1 requests to stubby4j JAR over TLSv1, TLSv1.1, TLSv1.2 & optionally TLSv1.3
         command: |
           echo ""
           java -version
@@ -289,25 +289,33 @@ smoke_test_steps: &smoke_test_steps
           java -jar build/libs/stubby4j-*.jar \
             --location 127.0.0.1 \
             --tls 7445 \
-            --data smoke-test/yaml/smoke-tests-stubs.yaml &
+            --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
 
           STUBBY4J_HTTP_1_PID=$!
 
           echo "stubby4j started!"
           sleep 5
 
-          sh smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
-          sh smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
-          sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
+          sh src/smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
+          sh src/smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
+          sh src/smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
 
           if [[ "<< parameters.tls_13 >>" == "yes" ]]
           then
-            sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+            sh src/smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
           fi
 
           kill $STUBBY4J_HTTP_1_PID
           echo ""
           echo "Killed original stubby4j process!"
+          echo ""
+
+    - run:
+        when: on_success
+        name: Make HTTP/2 requests to stubby4j JAR over TLSv1.2 and TLSv1.3
+        command: |
+          echo ""
+          java -version
           echo ""
 
           if [[ "<< parameters.run_tls_with_alpn_http_2_tests >>" == "yes" ]]
@@ -318,14 +326,18 @@ smoke_test_steps: &smoke_test_steps
                         --location 127.0.0.1 \
                         --tls 7445 \
                         --enable_tls_with_alpn_and_http_2 \
-                        --data smoke-test/yaml/smoke-tests-stubs.yaml &
+                        --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
 
             echo "stubby4j re-started!"
             echo ""
             sleep 5
 
-            sh smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
-            sh smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+            sh src/smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
+            sh src/smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+          else
+            echo ""
+            echo "Attention: HTTP/2 over TLS is not enabled for this JDK version, skipping..."
+            echo ""
           fi
 
 
