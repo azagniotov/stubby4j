@@ -220,7 +220,7 @@ services:
       ADMIN_PORT: 8891
       STUBS_TLS_PORT: 7445
       # https://github.com/azagniotov/stubby4j#command-line-switches
-      WITH_ARGS: --enable_tls_with_alpn_and_http_2 --debug --watch
+      WITH_ARGS: "--enable_tls_with_alpn_and_http_2 --debug --watch"
 ```
 
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var under [Environment variables](https://hub.docker.com/r/azagniotov/stubby4j)) that you want to map to the container volume `/home/stubby4j/data`

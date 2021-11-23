@@ -44,10 +44,13 @@ See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for mor
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />
 
-A highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL etc.) over HTTP(s) protocol, in both containerized (i.e.: Docker) and non-containerized environments.
+An `HTTP/1.1` & `HTTP/2` server for stubbing external systems in both Docker and non-containerized domains for integration, contract & behavior testing in micro-services architectures (REST, SOAP, WSDL etc.).
 
 ### Some of the `stubby4j` key features
 ```
+* HTTP/1.1 or HTTP/2 request verification and HTTP response stubbing
+* Support for TLS protocol versions 1.0, 1.1, 1.2 and 1.3
+* Support for HTTP/2 over TLS (1.2 and higher) using ALPN extension
 * Stub out external services in a Docker based micro-service architecture
 * Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
 * Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
@@ -68,16 +71,9 @@ A highly flexible and configurable tool for testing interactions of service-orie
 |`STUBS_PORT`    | `8882`|Port for stub portal|
 |`ADMIN_PORT` |`8889`|Port for admin portal |
 |`STUBS_TLS_PORT`   | `7443` |Port for stub portal over SSL|
-|`WITH_DEBUG`     | no default |Dumps raw HTTP request to the console |
-|`WITH_WATCH`     | no default |Periodically scans for changes & reloads YAML configs |
+|`WITH_ARGS`     | no default |`WITH_ARGS="--<ARG> .. --<ARG>"` See [available args](https://github.com/azagniotov/stubby4j#command-line-switches) |
 
-As of `v7.2.0` (incl.), there is an additional environment variable available:
 
-|Available variables     |Default value        |Description                                         |
-|------------------------|------------------------|----------------------------------------------------|
-|`WITH_STUB_CACHE_DISABLED`| no default |Disables matched stubs in-memory caching  |
-
-See https://github.com/azagniotov/stubby4j#command-line-switches for more information.
 
 ## Starting a `stubby4j` instance
 
@@ -110,7 +106,7 @@ $ docker run --rm \
 
 ### Full command
 
-The following command uses all environment variables when starting a `stubby4j` instance:
+The following command example uses all environment variables when starting a `stubby4j` instance. See [available args](https://github.com/azagniotov/stubby4j#command-line-switches) for more information about all the args that can be used in `--env WITH_ARGS="..."` variable. Also, do note that the `WITH_ARGS` value must be enquoted:
 
 ```
 docker run --rm \
@@ -118,12 +114,10 @@ docker run --rm \
     --env STUBS_PORT=9991 \
     --env ADMIN_PORT=8889 \
     --env STUBS_TLS_PORT=8443 \
-    --env WITH_STUB_CACHE_DISABLED=--disable_stub_caching \
-    --env WITH_DEBUG=--debug \
-    --env WITH_WATCH=--watch \
+    --env WITH_ARGS="--enable_tls_with_alpn_and_http_2 --disable_stub_caching --debug --watch" \
     --volume /Users/zaggy/docker-playground/yaml:/home/stubby4j/data \
     -p 9991:9991 -p 8889:8889 -p 8443:8443 \
-    azagniotov/stubby4j:7.3.3-jre8
+    azagniotov/stubby4j:latest-jre8
 ```
 
 ... where the command:
@@ -131,13 +125,12 @@ docker run --rm \
 * Passes `9991` to `STUBS_PORT` env var as the port for stubs portal
 * Passes `8889` to `ADMIN_PORT` env var as the port for admin portal
 * Passes `8443` to `STUBS_TLS_PORT` env var as the port for stubs portal on SSL
-* Passes `--disable_stub_caching ` to `WITH_STUB_CACHE_DISABLED` env var to disable stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests. If the `WITH_STUB_CACHE_DISABLED` is not set, then the in-memory cache is enabled by default.
-* Passes `--debug ` to `WITH_DEBUG` env var to make `stubby4j` to dump raw incoming HTTP requests to the console. If the `WITH_DEBUG` is not set, then the dumping incoming HTTP requests is disabled by default.
-* Passes `--watch ` to `WITH_WATCH` env var to make `stubby4j` to periodically scan for changes in last modification date of the YAML configs and referenced external files (if any). The watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded. If the `WITH_WATCH` is not set, then the periodic scan is disabled by default.
+* Passes `--enable_tls_with_alpn_and_http_2` to `WITH_ARGS` env var to enable `HTTP/2` for `https://..` URIs over TLS (on TLS v1.2 or newer) using ALPN extension. If the `--enable_tls_with_alpn_and_http_2` is not set, then `HTTP/2` is not enabled.
+* Passes `--disable_stub_caching` to `WITH_ARGS` env var to disable stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests. If the `--disable_stub_caching` is not set, then the in-memory cache enabled by default.
+* Passes `--debug` to `WITH_ARGS` env var to make `stubby4j` to dump raw incoming HTTP requests to the console. If the `--debug` is not set, then the dumping incoming HTTP requests is disabled by default.
+* Passes `--watch` to `WITH_ARGS` env var to make `stubby4j` to periodically scan for changes in last modification date of the YAML configs and referenced external files (if any). The watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded. If the `--watch` is not set, then the periodic scan is disabled by default.
 * `-p` publishes/exposes set container's ports `9991`, `8889` & `8443` for stubs, admin & stubs on SSL portals respectively to the host.
-* `7.3.3-jre8` is the tag specifying the `stubby4j` version. See the list above for relevant tags
-
-See https://github.com/azagniotov/stubby4j#command-line-switches for more information
+* `latest-jre8` is the tag specifying the `stubby4j` version. See the list above for relevant tags
 
 ## Running in Docker Compose
 
@@ -162,8 +155,7 @@ services:
       STUBS_PORT: 8882
       ADMIN_PORT: 8889
       STUBS_TLS_PORT: 7443
-      WITH_DEBUG: --debug
-      WITH_WATCH: --watch
+      WITH_ARGS: "--enable_tls_with_alpn_and_http_2 --debug --watch"
 ```
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var) that you want to map to the container volume `/home/stubby4j/data`
 
