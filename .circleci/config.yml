@@ -336,7 +336,7 @@ smoke_test_steps: &smoke_test_steps
             sh src/smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
           else
             echo ""
-            "Attention: HTTP/2 over TLS is not enabled for this JDK version, skipping..."
+            echo "Attention: HTTP/2 over TLS is not enabled for this JDK version, skipping..."
             echo ""
           fi
 
