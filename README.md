@@ -373,10 +373,10 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
                                          configure stubs via the stubby4j
                                          HTTP POST API.
  -da,--disable_admin_portal              Does not start Admin portal
- -dc,--disable_stub_caching              Disables stubs in-memory caching
-                                         when stubs are successfully
-                                         matched to the incoming HTTP
-                                         requests
+ -dc,--disable_stub_caching              Since v7.2.0. Disables stubs
+                                         in-memory caching when stubs are
+                                         successfully matched to the
+                                         incoming HTTP requests
  -ds,--disable_ssl                       Disables TLS support (enabled by
                                          default) and disables the
                                          '--enable_tls_with_alpn_and_http_
@@ -397,23 +397,24 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
                                          8882.
  -t,--tls <arg>                          Port for TLS connection. Defaults
                                          to 7443.
- -ta,--enable_tls_with_alpn_and_http_2   Enables HTTP/2 for HTTPS URIs
-                                         over TLS (on TLS v1.2 or newer)
-                                         using ALPN extension
+ -ta,--enable_tls_with_alpn_and_http_2   Since v7.3.4-SNAPSHOT. Enables
+                                         HTTP/2 for HTTPS URIs over TLS
+                                         (on TLS v1.2 or newer) using ALPN
+                                         extension
  -v,--version                            Prints out to console stubby
                                          version.
- -w,--watch <arg>                        Periodically scans for changes in
-                                         last modification date of the
-                                         main YAML and referenced external
-                                         files (if any). The flag can
-                                         accept an optional arg value
-                                         which is the watch scan time in
-                                         milliseconds. If milliseconds is
-                                         not provided, the watch scans
-                                         every 100ms. If last modification
-                                         date changed since the last scan
-                                         period, the stub configuration is
-                                         reloaded
+ -w,--watch <arg>                        Since v2.0.11. Periodically scans
+                                         for changes in last modification
+                                         date of the main YAML and
+                                         referenced external files (if
+                                         any). The flag can accept an
+                                         optional arg value which is the
+                                         watch scan time in milliseconds.
+                                         If milliseconds is not provided,
+                                         the watch scans every 100ms. If
+                                         last modification date changed
+                                         since the last scan period, the
+                                         stub configuration is reloaded
 ```
 
 [Back to top](#table-of-contents)
