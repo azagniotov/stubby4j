@@ -40,10 +40,10 @@ public class CommandLineInterpreterTest {
                 "                                         configure stubs via the stubby4j" + BR +
                 "                                         HTTP POST API." + BR +
                 " -da,--disable_admin_portal              Does not start Admin portal" + BR +
-                " -dc,--disable_stub_caching              Disables stubs in-memory caching" + BR +
-                "                                         when stubs are successfully" + BR +
-                "                                         matched to the incoming HTTP" + BR +
-                "                                         requests" + BR +
+                " -dc,--disable_stub_caching              Since v7.2.0. Disables stubs" + BR +
+                "                                         in-memory caching when stubs are" + BR +
+                "                                         successfully matched to the" + BR +
+                "                                         incoming HTTP requests" + BR +
                 " -ds,--disable_ssl                       Disables TLS support (enabled by" + BR +
                 "                                         default) and disables the" + BR +
                 "                                         '--enable_tls_with_alpn_and_http_" + BR +
@@ -64,23 +64,24 @@ public class CommandLineInterpreterTest {
                 "                                         8882." + BR +
                 " -t,--tls <arg>                          Port for TLS connection. Defaults" + BR +
                 "                                         to 7443." + BR +
-                " -ta,--enable_tls_with_alpn_and_http_2   Enables HTTP/2 for HTTPS URIs" + BR +
-                "                                         over TLS (on TLS v1.2 or newer)" + BR +
-                "                                         using ALPN extension" + BR +
+                " -ta,--enable_tls_with_alpn_and_http_2   Since v7.3.4-SNAPSHOT. Enables" + BR +
+                "                                         HTTP/2 for HTTPS URIs over TLS" + BR +
+                "                                         (on TLS v1.2 or newer) using ALPN" + BR +
+                "                                         extension" + BR +
                 " -v,--version                            Prints out to console stubby" + BR +
                 "                                         version." + BR +
-                " -w,--watch <arg>                        Periodically scans for changes in" + BR +
-                "                                         last modification date of the" + BR +
-                "                                         main YAML and referenced external" + BR +
-                "                                         files (if any). The flag can" + BR +
-                "                                         accept an optional arg value" + BR +
-                "                                         which is the watch scan time in" + BR +
-                "                                         milliseconds. If milliseconds is" + BR +
-                "                                         not provided, the watch scans" + BR +
-                "                                         every 100ms. If last modification" + BR +
-                "                                         date changed since the last scan" + BR +
-                "                                         period, the stub configuration is" + BR +
-                "                                         reloaded";
+                " -w,--watch <arg>                        Since v2.0.11. Periodically scans" + BR +
+                "                                         for changes in last modification" + BR +
+                "                                         date of the main YAML and" + BR +
+                "                                         referenced external files (if" + BR +
+                "                                         any). The flag can accept an" + BR +
+                "                                         optional arg value which is the" + BR +
+                "                                         watch scan time in milliseconds." + BR +
+                "                                         If milliseconds is not provided," + BR +
+                "                                         the watch scans every 100ms. If" + BR +
+                "                                         last modification date changed" + BR +
+                "                                         since the last scan period, the" + BR +
+                "                                         stub configuration is reloaded";
 
         final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
 

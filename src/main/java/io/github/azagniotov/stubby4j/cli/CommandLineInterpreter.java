@@ -55,13 +55,13 @@ public final class CommandLineInterpreter {
         OPTIONS.addOption("v", OPTION_VERSION, false, "Prints out to console stubby version.");
         OPTIONS.addOption("o", OPTION_DEBUG, false, "Dumps raw HTTP request to the console (if console is not muted!).");
         OPTIONS.addOption("da", OPTION_DISABLE_ADMIN, false, "Does not start Admin portal");
-        OPTIONS.addOption("dc", OPTION_DISABLE_STUB_CACHING, false, "Disables stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests");
-        OPTIONS.addOption("ta", OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2, false, "Enables HTTP/2 for HTTPS URIs over TLS (on TLS v1.2 or newer) using ALPN extension");
+        OPTIONS.addOption("dc", OPTION_DISABLE_STUB_CACHING, false, "Since v7.2.0. Disables stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests");
+        OPTIONS.addOption("ta", OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2, false, "Since v7.3.4-SNAPSHOT. Enables HTTP/2 for HTTPS URIs over TLS (on TLS v1.2 or newer) using ALPN extension");
         OPTIONS.addOption("ds", OPTION_DISABLE_SSL, false, "Disables TLS support (enabled by default) and disables the '--enable_tls_with_alpn_and_http_2' flag, if the latter was provided");
         @SuppressWarnings("static-access")
         Option watch =
                 Option.builder("w")
-                        .desc("Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
+                        .desc("Since v2.0.11. Periodically scans for changes in last modification date of the main YAML and referenced external files (if any). The flag can accept an optional arg value which is the watch scan time in milliseconds. If milliseconds is not provided, the watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded")
                         .longOpt(OPTION_WATCH)
                         .hasArg(true)
                         .optionalArg(true)
