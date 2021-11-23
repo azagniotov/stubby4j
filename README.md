@@ -123,13 +123,13 @@ There are a number of use cases where you'd want to use `HTTP/1.1` & `HTTP/2` st
 
 To run stubby4j standalone JARs which are hosted on [Maven Central][maven-link], the following are the minimal JRE requirements. Please note, there is no vendor specific requirement, anyone of the Oracle, OpenJDK, AdoptOpenJDK or Azul Zulu OpenJDK, will do.
 
-| stubby4j version  | Version status        | Minimal JRE version   | Notes                                              |
-| ----------------- | --------------------- | --------------------- | -------------------------------------------------- |
-| `11.x.x`          | Work in progress      | `11`                  | Coming soon...                                     |
-| `7.x.x`           | Current & recommended | `1.8`                 | [v7.x.x on Maven Central][stubby4j-7-x-maven-link] |
-| `6.x.x`           | Legacy                | `1.8`                 | [v6.x.x on Maven Central][stubby4j-6-x-maven-link] |
-| `5.x.x`           | Legacy                | `1.8`                 | [v5.x.x on Maven Central][stubby4j-5-x-maven-link] |
-| `4.x.x`           | Legacy                | `1.8`                 | [v4.x.x on Maven Central][stubby4j-4-x-maven-link] |
+| stubby4j version  | Version status            | Minimal JRE version   | Notes                                              |
+| :---------------- | :------------------------ | :-------------------- | :------------------------------------------------- |
+| `11.x.x`          | Work in progress          | `11`                  | Coming soon...                                     |
+| `7.x.x`           | __Current & recommended__ | `1.8`                 | [v7.x.x on Maven Central][stubby4j-7-x-maven-link] |
+| `6.x.x`           | Legacy                    | `1.8`                 | [v6.x.x on Maven Central][stubby4j-6-x-maven-link] |
+| `5.x.x`           | Legacy                    | `1.8`                 | [v5.x.x on Maven Central][stubby4j-5-x-maven-link] |
+| `4.x.x`           | Legacy                    | `1.8`                 | [v4.x.x on Maven Central][stubby4j-4-x-maven-link] |
 
 
 ### Running stubby4j as a pre-built Docker container
