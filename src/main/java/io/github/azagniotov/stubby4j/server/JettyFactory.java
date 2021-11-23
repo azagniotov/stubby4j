@@ -374,10 +374,15 @@ public final class JettyFactory {
         sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
         final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
 
+        final HTTP2ServerConnectionFactory http2ServerConnectionFactory = new HTTP2ServerConnectionFactory(httpConfiguration);
+
+        // Annoying cURL notice in response: Connection state changed (MAX_CONCURRENT_STREAMS == N)!
+        // https://github.com/curl/curl/blob/63c76681827b5ae9017f6c981003cd75e5f127de/lib/http2.h#L32
+        http2ServerConnectionFactory.setMaxConcurrentStreams(100);
         return new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol()),
                 alpnServerConnectionFactory,
-                new HTTP2ServerConnectionFactory(httpConfiguration));
+                http2ServerConnectionFactory);
     }
 
     private int getStubsPort(final Map<String, String> commandLineArgs) {
