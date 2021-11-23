@@ -191,7 +191,7 @@ Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this im
 
 ### Docker Compose
 
-stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
+stubby4j Docker images hosted on https://hub.docker.com/r/azagniotov/stubby4j.
 
 Alternatively you can add stubby4j image to your stack using Docker Compose:
 
@@ -201,27 +201,30 @@ Alternatively you can add stubby4j image to your stack using Docker Compose:
 # See "Environment variables" section at https://hub.docker.com/r/azagniotov/stubby4j
 version: '3.5'
 services:
-  stubby4j:
-    image: azagniotov/stubby4j:latest-jre8 # you can also use other tags: latest-jre11, latest-jre15
+  stubby4j-jre8:
+    # 'root' - so that stubby4j can write 'logs' into host machine's directory mapped to container volume
+    user: root
+    image: azagniotov/stubby4j:latest-jre8
     volumes:
-      - "<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>:/home/stubby4j/data"
-    container_name: stubby4j
+      - "./yaml:/home/stubby4j/data"
+    container_name: stubby4j_jre8
     ports:
-      - 8882:8882
-      - 8889:8889
-      - 7443:7443
+      - 8884:8884
+      - 8891:8891
+      - 7445:7445
     environment:
-      YAML_CONFIG: stubs.yaml
-      STUBS_PORT: 8882
-      ADMIN_PORT: 8889
-      STUBS_TLS_PORT: 7443
+      YAML_CONFIG: smoke-tests-stubs.yaml
+      STUBS_PORT: 8884
+      ADMIN_PORT: 8891
+      STUBS_TLS_PORT: 7445
       WITH_DEBUG: --debug
       WITH_WATCH: --watch
+      WITH_HTTP_2_SUPPORT_OVER_TLS: --enable_tls_with_alpn_and_http_2
 ```
 
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var under [Environment variables](https://hub.docker.com/r/azagniotov/stubby4j)) that you want to map to the container volume `/home/stubby4j/data`
 
-See smoke test [docker/smoke-test/docker-compose.yml](https://github.com/azagniotov/stubby4j/blob/1f343cf031ec291b1ee42fcfce38a14355cbc5e5/docker/smoke-test/docker-compose.yml) as a working example.
+See smoke test [docker/smoke-test/docker-compose.yml](docker/smoke-test/docker-compose.yml) as a working example.
 
 
 [Back to top](#table-of-contents)
