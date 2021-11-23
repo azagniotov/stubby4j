@@ -10,7 +10,7 @@ An HTTP/1.1 & HTTP/2 server for stubbing external systems in both Docker and non
 
 [![stubb4j][logo-badge]][logo-link]
 
-It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over HTTP/1.1 & HTTP/2 protocols.
+It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over `HTTP/1.1` & `HTTP/2` protocols.
 
 Please refer to [Key features](#key-features) for more information
 
@@ -18,6 +18,7 @@ Please refer to [Key features](#key-features) for more information
 It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
 ## User manual for stubby4j v7.3.4-SNAPSHOT
+
 ### Table of contents
 
 * [Advantages of using stubby4j HTTP stub server](#advantages-of-using-stubby4j-http-stub-server)
@@ -76,7 +77,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 
 ## Advantages of using stubby4j HTTP stub server
 
-There are a number of use cases where you'd want to use HTTP/1.1 & HTTP/2 stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
+There are a number of use cases where you'd want to use `HTTP/1.1` & `HTTP/2` stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
 
 * Simulate responses from a real server and don't care (or cannot) to send requests over the network
 * Stub out external web services (when developing & testing locally) in a Docker based micro-service architecture
@@ -100,12 +101,12 @@ There are a number of use cases where you'd want to use HTTP/1.1 & HTTP/2 stub s
 
 * Dockerzied. Stub out external services in a Docker based micro-service architecture
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
-* Support for HTTP/2 on HTTPS URIs over TLS (`1.2` and `1.3`) using ALPN extension
+* Support for `HTTP/2` over `TLS` (`1.2` and higher) using `ALPN` extension
 * Fault injection, where after X good responses on the same URI you get a bad one
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
 * Request proxying. Ability to configure a proxy/intercept where requests are proxied to another service
 * Record & Replay. The HTTP response recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
-* HTTP/1.1 or HTTP/2 request verification and HTTP response stubbing
+* `HTTP/1.1` or `HTTP/2` request verification and HTTP response stubbing
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Serve binary files as stubbed response content (images, PDFs. etc.)
@@ -122,13 +123,13 @@ There are a number of use cases where you'd want to use HTTP/1.1 & HTTP/2 stub s
 
 To run stubby4j standalone JARs which are hosted on [Maven Central][maven-link], the following are the minimal JRE requirements. Please note, there is no vendor specific requirement, anyone of the Oracle, OpenJDK, AdoptOpenJDK or Azul Zulu OpenJDK, will do.
 
-| stubby4j version  | Minimal JRE version   | Notes                                     |
-| ----------------- | --------------------- | ----------------------------------------- |
-| `11.x.x`          | `11`                  | Coming soon...                            |
-| `7.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
-| `6.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
-| `5.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
-| `4.x.x`           | `1.8`                 | [published on Maven Central][maven-link]  |
+| stubby4j version  | Version status        | Minimal JRE version   | Notes                                              |
+| ----------------- | --------------------- | --------------------- | -------------------------------------------------- |
+| `11.x.x`          | Work in progress      | `11`                  | Coming soon...                                     |
+| `7.x.x`           | Current & recommended | `1.8`                 | [v7.x.x on Maven Central][stubby4j-7-x-maven-link] |
+| `6.x.x`           | Legacy                | `1.8`                 | [v6.x.x on Maven Central][stubby4j-6-x-maven-link] |
+| `5.x.x`           | Legacy                | `1.8`                 | [v5.x.x on Maven Central][stubby4j-5-x-maven-link] |
+| `4.x.x`           | Legacy                | `1.8`                 | [v4.x.x on Maven Central][stubby4j-4-x-maven-link] |
 
 
 ### Running stubby4j as a pre-built Docker container
@@ -1706,6 +1707,11 @@ MIT. See [LICENSE](LICENSE) for details
 
 [maven-badge]: https://img.shields.io/maven-central/v/io.github.azagniotov/stubby4j.svg?style=flat&label=maven-central
 [maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%22
+  
+[stubby4j-7-x-maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%20AND%20v%3A%227.*
+[stubby4j-6-x-maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%20AND%20v%3A%226.*
+[stubby4j-5-x-maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%20AND%20v%3A%225.*
+[stubby4j-4-x-maven-link]: http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.github.azagniotov%22%20AND%20a%3A%22stubby4j%20AND%20v%3A%224.*
 
 [stackoverflow-badge]: https://img.shields.io/badge/stackoverflow-stubby4j-brightgreen.svg?style=flat
 [stackoverflow-link]: http://stackoverflow.com/questions/tagged/stubby4j
