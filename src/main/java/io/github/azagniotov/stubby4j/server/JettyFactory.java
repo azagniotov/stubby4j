@@ -33,11 +33,15 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.server.NativeWebSocketServletContainerInitializer;
+import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -87,19 +91,38 @@ public final class JettyFactory {
         this.statuses = new LinkedList<>();
     }
 
-    Server construct() throws IOException {
+    Server construct() throws IOException, ServletException {
         final Server server = new Server();
         server.setDumpAfterStart(false);
         server.setDumpBeforeStop(false);
         server.setStopAtShutdown(true);
-
         server.setConnectors(buildConnectors(server));
-        server.setHandler(constructHandlers());
+
+        // The WebSocketServerContainerInitializer.configureContext() requires knowledge about the Server that it will be run under.
+        // Add the ServletContextHandler to the Server instance via its Server.setHandler(Handler) call before you attempt to configure the context.
+        // https://stackoverflow.com/a/34044984
+        // https://stackoverflow.com/questions/34007087/jetty-9-add-websockets-handler-to-handler-list
+        final ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        servletContextHandler.setContextPath("/ws");
+        server.setHandler(constructHandlers(servletContextHandler));
+
+        // Configure specific websocket behavior
+        NativeWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, nativeWebSocketConfiguration) ->
+        {
+            // Configure default max size
+            nativeWebSocketConfiguration.getPolicy().setMaxTextMessageBufferSize(65535);
+
+            // Add websockets
+            nativeWebSocketConfiguration.addMapping("/*", StubsJettyNativeWebSocket.class);
+        });
+
+        // Add generic filter that will accept WebSocket upgrade.
+        WebSocketUpgradeFilter.configure(servletContextHandler);
 
         return server;
     }
 
-    private ContextHandlerCollection constructHandlers() {
+    private ContextHandlerCollection constructHandlers(final ServletContextHandler webSocketServletContextHandler) {
 
         final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
         final ContextHandlerCollection handlers = new ContextHandlerCollection();
@@ -107,10 +130,9 @@ public final class JettyFactory {
                 {
                         constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
                         constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
-
                         constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
                         constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
-
+                        webSocketServletContextHandler,
                         constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubRepository))),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(stubRepository)),
                         constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
