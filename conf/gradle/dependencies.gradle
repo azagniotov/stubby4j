@@ -6,6 +6,10 @@ dependencies {
         println "> Building with Jetty JDK ALPN OpenJDK 1.8 processor in default dependencies"
         api "org.eclipse.jetty:jetty-alpn-openjdk8-server:${jettyVersion}"
     }
+    api "org.eclipse.jetty.websocket:websocket-api:${jettyVersion}"
+    api "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
+    api "org.eclipse.jetty.websocket:websocket-client:${jettyVersion}"
+
     // https://github.com/eclipse/jetty.project/issues/1894
     // https://github.com/eclipse/jetty.project/issues/2950
     api "org.eclipse.jetty.http2:http2-server:${jettyVersion}"
