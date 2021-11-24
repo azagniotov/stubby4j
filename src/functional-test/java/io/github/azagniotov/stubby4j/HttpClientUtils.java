@@ -8,6 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
