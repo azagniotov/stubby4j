@@ -7,9 +7,11 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -148,6 +150,16 @@ public final class StringUtils {
                 .map(String::trim)
                 .filter(s -> Arrays.stream(constraints).noneMatch(s::contains))
                 .collect(Collectors.joining(delimiter + " ")); // with one space
+    }
+
+    public static Set<String> splitCsv(final String value) {
+        if (value == null || value.trim().equals("")) {
+            return new HashSet<>();
+        }
+        final String delimiter = ",";
+        return Arrays.stream(value.split(delimiter))
+                .map(String::trim)
+                .collect(Collectors.toSet());
     }
 
     public static String encodeBase64(final String toEncode) {

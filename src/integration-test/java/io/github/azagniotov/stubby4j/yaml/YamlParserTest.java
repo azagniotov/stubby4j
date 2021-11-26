@@ -7,6 +7,12 @@ import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
@@ -29,6 +35,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BAS
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static org.junit.Assert.assertThrows;
 
@@ -1140,6 +1147,98 @@ public class YamlParserTest {
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigs() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(2);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().size()).isEqualTo(3);
+
+        final StubWebSocketServerResponse onOpenServerResponse = stubWebSocketConfig.getOnOpenServerResponse();
+        assertThat(onOpenServerResponse.getBodyAsString()).isEqualTo("You have been successfully connected");
+        assertThat(onOpenServerResponse.getDelay()).isEqualTo(2000L);
+        assertThat(onOpenServerResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(onOpenServerResponse.getStrategy()).isEqualTo(StubWebSocketServerResponsePolicy.ONCE);
+
+        final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle = stubWebSocketConfig.getOnMessage().get(0);
+        assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML()).isEqualTo(
+                "- client-request:\n" +
+                        "    message-type: text\n" +
+                        "    body: Hey, server, say apple\n" +
+                        "  server-response:\n" +
+                        "    policy: push\n" +
+                        "    message-type: text\n" +
+                        "    body: apple\n" +
+                        "    delay: 500\n"
+        );
+
+        final StubWebSocketClientRequest clientRequest = stubWebSocketOnMessageLifeCycle.getClientRequest();
+        assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
+
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
+        assertThat(serverResponse.getDelay()).isEqualTo(500L);
+        assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(serverResponse.getStrategy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
+
+        final StubWebSocketServerResponse lastServerResponse = stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+        final String actualFileContent = "This is response 1 content";
+        assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
+        assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
+
+        final String expectedWebSocketConfigAsYAML =
+                "- web-socket:\n" +
+                        "    description: this is a web-socket config\n" +
+                        "    url: /items/furniture\n" +
+                        "    sub-protocols: echo, mamba, zumba\n" +
+                        "    on-open:\n" +
+                        "      policy: once\n" +
+                        "      message-type: text\n" +
+                        "      body: You have been successfully connected\n" +
+                        "      delay: 2000\n" +
+                        "    on-message:\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, say apple\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: apple\n" +
+                        "        delay: 500\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, send me a huge JSON file\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: no files for you\n" +
+                        "        delay: 250\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, send me a huge JSON file\n" +
+                        "      server-response:\n" +
+                        "        policy: disconnect\n" +
+                        "        message-type: text\n" +
+                        "        file: ../json/response.1.external.file.json\n";
+        assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
     }
 
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {

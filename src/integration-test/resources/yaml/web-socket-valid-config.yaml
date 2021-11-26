@@ -1,0 +1,56 @@
+- web-socket:
+    description: this is a web-socket config
+    url: /items/furniture
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+      delay: 2000
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hey, server, say apple
+        server-response:
+          policy: push
+          message-type: text
+          body: apple
+          delay: 500
+
+      - client-request:
+          message-type: text
+          body: Hey, server, send me a huge JSON file
+        server-response:
+          policy: push
+          message-type: text
+          body: no files for you
+          delay: 250
+
+      - client-request:
+          message-type: text
+          body: Hey, server, send me a huge JSON file
+        server-response:
+          policy: disconnect
+          message-type: text
+          file: ../json/response.1.external.file.json
+
+- web-socket:
+    url: /items/furniture/8
+    sub-protocols: echo
+
+    on-open:
+      policy: push
+      message-type: text
+      body: You have been successfully connected
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hey, server, send me a huge JSON file
+        server-response:
+          policy: disconnect
+          message-type: text
+          file: ../json/response.1.external.file.json
+          delay: 250

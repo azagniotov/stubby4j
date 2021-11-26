@@ -5,7 +5,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -54,6 +57,15 @@ public class StringUtilsTest {
         assertThat(four).isEqualTo("");
 
         assertThat(StringUtils.removeValueFromCsv(null, "SLv3")).isEqualTo("");
+    }
+
+    @Test
+    public void splitCsv() throws Exception {
+        assertThat(StringUtils.splitCsv(null)).isEqualTo(new HashSet<>());
+        assertThat(StringUtils.splitCsv("")).isEqualTo(new HashSet<>());
+        assertThat(StringUtils.splitCsv(" ")).isEqualTo(new HashSet<>());
+        assertThat(StringUtils.splitCsv("SLv3")).isEqualTo(new HashSet<>(Collections.singletonList("SLv3")));
+        assertThat(StringUtils.splitCsv("SLv3, RC4")).isEqualTo(new HashSet<>(Arrays.asList("SLv3", "RC4")));
     }
 
     @Test
