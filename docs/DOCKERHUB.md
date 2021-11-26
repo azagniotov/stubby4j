@@ -115,7 +115,7 @@ docker run --rm \
     --env WITH_ARGS="--enable_tls_with_alpn_and_http_2 --disable_stub_caching --debug --watch" \
     --volume /Users/zaggy/docker-playground/yaml:/home/stubby4j/data \
     -p 9991:9991 -p 8889:8889 -p 8443:8443 \
-    azagniotov/stubby4j:latest-jre8
+    azagniotov/stubby4j:7.4.0-jre8
 ```
 
 ... where the command:
