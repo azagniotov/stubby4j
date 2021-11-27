@@ -2,6 +2,8 @@ package io.github.azagniotov.stubby4j.stubs.websocket;
 
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 
+import java.util.Objects;
+
 public class StubWebSocketOnMessageLifeCycle implements ReflectableStub {
 
     private final StubWebSocketClientRequest clientRequest;
@@ -27,5 +29,18 @@ public class StubWebSocketOnMessageLifeCycle implements ReflectableStub {
 
     public String getCompleteYAML() {
         return completeYAML;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StubWebSocketOnMessageLifeCycle that = (StubWebSocketOnMessageLifeCycle) o;
+        return clientRequest.equals(that.clientRequest) && serverResponse.equals(that.serverResponse);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientRequest, serverResponse);
     }
 }

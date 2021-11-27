@@ -1157,11 +1157,15 @@ public class YamlParserTest {
 
         final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
 
-        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
         assertThat(webSocketConfigs.isEmpty()).isFalse();
         assertThat(webSocketConfigs.size()).isEqualTo(2);
 
-        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
         assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
         assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
         assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
@@ -1249,11 +1253,15 @@ public class YamlParserTest {
 
         final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
 
-        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
         assertThat(webSocketConfigs.isEmpty()).isFalse();
         assertThat(webSocketConfigs.size()).isEqualTo(1);
 
-        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
         assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
         assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
         assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
@@ -1270,11 +1278,15 @@ public class YamlParserTest {
 
         final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
 
-        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
         assertThat(webSocketConfigs.isEmpty()).isFalse();
         assertThat(webSocketConfigs.size()).isEqualTo(1);
 
-        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
         assertThat(stubWebSocketConfig.getUuid()).isEqualTo("123-567-90");
         assertThat(stubWebSocketConfig.getDescription()).isEqualTo("hello, web socket");
         assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
@@ -1296,6 +1308,23 @@ public class YamlParserTest {
         });
 
         String expectedMessage = "invalid-policy-name";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebProxyConfigWithDuplicateURL() throws Exception {
+
+        Exception exception = assertThrows(IOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-url.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket config YAML contains duplicate URL: /this/is/duplicate/uri/path";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);

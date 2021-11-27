@@ -7,6 +7,7 @@ import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.splitCsv;
@@ -68,6 +69,24 @@ public class StubWebSocketConfig implements ReflectableStub {
 
     public String getWebSocketConfigAsYAML() {
         return webSocketConfigAsYAML;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StubWebSocketConfig that = (StubWebSocketConfig) o;
+        return uuid.equals(that.uuid) &&
+                description.equals(that.description) &&
+                subProtocols.equals(that.subProtocols) &&
+                url.equals(that.url) &&
+                onOpenServerResponse.equals(that.onOpenServerResponse) &&
+                onMessageLifeCycles.equals(that.onMessageLifeCycles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, description, subProtocols, url, onOpenServerResponse, onMessageLifeCycles);
     }
 
     public static final class Builder extends AbstractBuilder<StubWebSocketConfig> {
@@ -157,8 +176,8 @@ public class StubWebSocketConfig implements ReflectableStub {
         }
 
         private void reset() {
-            this.uuid = null;
-            this.description = null;
+            this.uuid = "";
+            this.description = "";
             this.webSocketConfigAsYAML = null;
             this.url = null;
             this.subProtocols = null;

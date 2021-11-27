@@ -7,6 +7,8 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
@@ -62,6 +64,24 @@ public class StubWebSocketClientRequest implements ReflectableStub {
         } catch (Exception e) {
             return new byte[]{};
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StubWebSocketClientRequest that = (StubWebSocketClientRequest) o;
+        return messageType == that.messageType &&
+                body.equals(that.body) &&
+                file.equals(that.file) &&
+                Arrays.equals(fileBytes, that.fileBytes);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(messageType, body, file);
+        result = 31 * result + Arrays.hashCode(fileBytes);
+        return result;
     }
 
     public static final class Builder extends AbstractBuilder<StubWebSocketClientRequest> {

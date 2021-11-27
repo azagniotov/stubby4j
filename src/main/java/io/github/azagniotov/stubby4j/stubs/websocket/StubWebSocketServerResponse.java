@@ -7,6 +7,8 @@ import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
@@ -79,6 +81,26 @@ public class StubWebSocketServerResponse implements ReflectableStub {
 
     public long getDelay() {
         return delay;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StubWebSocketServerResponse that = (StubWebSocketServerResponse) o;
+        return delay == that.delay &&
+                messageType == that.messageType &&
+                policy == that.policy &&
+                body.equals(that.body) &&
+                file.equals(that.file) &&
+                Arrays.equals(fileBytes, that.fileBytes);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(messageType, policy, body, file, delay);
+        result = 31 * result + Arrays.hashCode(fileBytes);
+        return result;
     }
 
     public static final class Builder extends AbstractBuilder<StubWebSocketServerResponse> {

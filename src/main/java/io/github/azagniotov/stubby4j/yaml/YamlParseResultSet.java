@@ -4,8 +4,8 @@ import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +15,14 @@ public class YamlParseResultSet {
     private final List<StubHttpLifecycle> stubs;
     private final Map<String, StubHttpLifecycle> uuidToStubs;
     private final Map<String, StubProxyConfig> proxyConfigs;
-    private final List<StubWebSocketConfig> webSocketConfigs;
+    private final Map<String, StubWebSocketConfig> webSocketConfigs;
 
     public YamlParseResultSet(final List<StubHttpLifecycle> stubs,
                               final Map<String, StubHttpLifecycle> uuidToStubs) {
         this.stubs = stubs;
         this.uuidToStubs = uuidToStubs;
         this.proxyConfigs = new HashMap<>();
-        this.webSocketConfigs = new ArrayList<>();
+        this.webSocketConfigs = new LinkedHashMap<>();
     }
 
     public YamlParseResultSet(final List<StubHttpLifecycle> stubs,
@@ -31,13 +31,13 @@ public class YamlParseResultSet {
         this.stubs = stubs;
         this.uuidToStubs = uuidToStubs;
         this.proxyConfigs = proxyConfigs;
-        this.webSocketConfigs = new ArrayList<>();
+        this.webSocketConfigs = new LinkedHashMap<>();
     }
 
     public YamlParseResultSet(final List<StubHttpLifecycle> stubs,
                               final Map<String, StubHttpLifecycle> uuidToStubs,
                               final Map<String, StubProxyConfig> proxyConfigs,
-                              final List<StubWebSocketConfig> webSocketConfigs) {
+                              final Map<String, StubWebSocketConfig> webSocketConfigs) {
         this.stubs = stubs;
         this.uuidToStubs = uuidToStubs;
         this.proxyConfigs = proxyConfigs;
@@ -56,7 +56,7 @@ public class YamlParseResultSet {
         return new HashMap<>(proxyConfigs);
     }
 
-    public List<StubWebSocketConfig> getWebSocketConfigs() {
-        return new ArrayList<>(webSocketConfigs);
+    public Map<String, StubWebSocketConfig> getWebSocketConfigs() {
+        return new HashMap<>(webSocketConfigs);
     }
 }

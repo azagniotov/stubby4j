@@ -5,6 +5,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -59,6 +60,7 @@ public class StubRepository {
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
     private final ConcurrentHashMap<String, StubHttpLifecycle> uuidToStub;
     private final ConcurrentHashMap<String, StubProxyConfig> proxyConfigs;
+    private final List<StubWebSocketConfig> webSocketConfigs;
 
     private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
     private final StubbyHttpTransport stubbyHttpTransport;
@@ -70,6 +72,7 @@ public class StubRepository {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
         this.proxyConfigs = new ConcurrentHashMap<>();
+        this.webSocketConfigs = new ArrayList<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = stubbyHttpTransport;
@@ -531,6 +534,7 @@ public class StubRepository {
         this.stubs.clear();
         this.uuidToStub.clear();
         this.proxyConfigs.clear();
+        this.webSocketConfigs.clear();
     }
 
     private void updateResourceIDHeaders() {

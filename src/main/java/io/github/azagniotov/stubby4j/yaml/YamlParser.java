@@ -112,7 +112,7 @@ public class YamlParser {
         final List<StubHttpLifecycle> stubs = new LinkedList<>();
         final Map<String, StubHttpLifecycle> uuidToStubs = new HashMap<>();
         final Map<String, StubProxyConfig> proxyConfigs = new HashMap<>();
-        final List<StubWebSocketConfig> webSocketConfig = new LinkedList<>();
+        final Map<String, StubWebSocketConfig> webSocketConfigs = new LinkedHashMap<>();
 
         final List<Map> yamlMappings = asCheckedArrayList(loadedConfig, Map.class);
 
@@ -131,7 +131,10 @@ public class YamlParser {
                 // the YAML config file contains a top-level:
                 // - web-socket
                 final StubWebSocketConfig stubWebSocketConfig = parseStubWebSocketConfig(yamlMappingProperties);
-                webSocketConfig.add(stubWebSocketConfig);
+                if (webSocketConfigs.containsKey(stubWebSocketConfig.getUrl())) {
+                    throw new IOException("Web socket config YAML contains duplicate URL: " + stubWebSocketConfig.getUrl());
+                }
+                webSocketConfigs.put(stubWebSocketConfig.getUrl(), stubWebSocketConfig);
             } else {
                 // the YAML config file contains a top-level:
                 // - request
@@ -147,7 +150,7 @@ public class YamlParser {
             }
         }
 
-        return new YamlParseResultSet(stubs, uuidToStubs, proxyConfigs, webSocketConfig);
+        return new YamlParseResultSet(stubs, uuidToStubs, proxyConfigs, webSocketConfigs);
     }
 
     private Object loadYamlFromInputStream(final InputStream configAsStream) throws IOException {
