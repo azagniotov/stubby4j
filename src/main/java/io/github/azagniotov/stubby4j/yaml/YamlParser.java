@@ -22,14 +22,18 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
@@ -227,11 +231,14 @@ public class YamlParser {
                         serverResponseStubBuilder.withWebSocketServerResponseAsYAML(toYaml(webSocketProperties, ON_OPEN_SERVER_RESPONSE));
                         webSocketConfigBuilder.withOnOpenServerResponse(serverResponseStubBuilder.build());
                     } else if (ON_MESSAGE.isA(webSocketPropertyKey)) {
+
+                        final Set<Integer> clientRequestBodyTextHashCodeCache = new HashSet<>();
+                        final Set<Integer> clientRequestBodyBytesHashCodeCache = new HashSet<>();
+
                         final List<StubWebSocketOnMessageLifeCycle> lifeCycles = new LinkedList<>();
 
                         final List<Map> onMessageLifeCycles = asCheckedArrayList(webSocketPropertyValue, Map.class);
                         for (Map onMessageLifeCycle : onMessageLifeCycles) {
-                            //final Map<String, LinkedHashMap> onMessageLifeCycleObjects = asCheckedLinkedHashMap(onMessageLifeCycle, String.class, LinkedHashMap.class);
                             final Map<String, Object> onMessageLifeCycleObjects = asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class);
 
                             final Object rawClientRequest = onMessageLifeCycleObjects.get(CLIENT_REQUEST.toString());
@@ -240,6 +247,8 @@ public class YamlParser {
                                     new StubWebSocketClientRequest.Builder())
                                     .withWebSocketClientRequestAsYAML(toYaml(onMessageLifeCycleObjects, CLIENT_REQUEST))
                                     .build();
+
+                            checkAndThrowWhenClientRequestDuplicateBodies(clientRequestBodyTextHashCodeCache, clientRequestBodyBytesHashCodeCache, clientRequest);
 
                             final Object rawServerResponse = onMessageLifeCycleObjects.get(SERVER_RESPONSE.toString());
                             final StubWebSocketServerResponse serverResponse = buildReflectableStub(
@@ -264,6 +273,26 @@ public class YamlParser {
         }
 
         return webSocketConfigBuilder.build();
+    }
+
+    private void checkAndThrowWhenClientRequestDuplicateBodies(final Set<Integer> clientRequestBodyTextHashCodeCache,
+                                                               final Set<Integer> clientRequestBodyBytesHashCodeCache,
+                                                               final StubWebSocketClientRequest clientRequest) {
+        if (clientRequest.getMessageType() == StubWebSocketMessageType.TEXT) {
+            final int clientRequestBodyTextHashCode = clientRequest.getBodyAsString().hashCode();
+            if (clientRequestBodyTextHashCodeCache.contains(clientRequestBodyTextHashCode)) {
+                throw new UncheckedIOException(new IOException("Web socket on-message contains multiple client-request with the same body text"));
+            } else {
+                clientRequestBodyTextHashCodeCache.add(clientRequestBodyTextHashCode);
+            }
+        } else {
+            final int clientRequestBodyBytesHashCode = Arrays.hashCode(clientRequest.getBodyAsBytes());
+            if (clientRequestBodyBytesHashCodeCache.contains(clientRequestBodyBytesHashCode)) {
+                throw new UncheckedIOException(new IOException("Web socket on-message contains multiple client-request with the same body bytes"));
+            } else {
+                clientRequestBodyBytesHashCodeCache.add(clientRequestBodyBytesHashCode);
+            }
+        }
     }
 
     private StubHttpLifecycle parseStubbedHttpLifecycleConfig(final Map<String, Object> yamlMappingProperties) {

@@ -21,7 +21,7 @@
 
       - client-request:
           message-type: text
-          body: Hey, server, send me a huge JSON file
+          body: JSON file
         server-response:
           policy: push
           message-type: text
@@ -30,7 +30,7 @@
 
       - client-request:
           message-type: text
-          body: Hey, server, send me a huge JSON file
+          body: JSON file, please
         server-response:
           policy: disconnect
           message-type: text

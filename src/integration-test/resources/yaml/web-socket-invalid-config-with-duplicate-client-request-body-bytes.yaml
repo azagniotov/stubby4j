@@ -1,0 +1,39 @@
+- uuid: 123-567-90
+  description: hello, web socket
+  web-socket:
+    url: /this/is/uri/path
+    sub-protocols: echo
+
+    on-open:
+      policy: push
+      message-type: text
+      body: You have been successfully connected
+      delay: 2000
+
+- description: hello, another web socket
+  web-socket:
+    url: /this/is/another/uri/path
+    sub-protocols: mamba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+      delay: 100
+
+    on-message:
+      - client-request:
+          message-type: binary
+          file: ../json/response.1.external.file.json
+        server-response:
+          policy: disconnect
+          message-type: text
+          body: bye
+
+      - client-request:
+          message-type: binary
+          file: ../json/response.1.external.file.json
+        server-response:
+          policy: disconnect
+          message-type: text
+          body: bye

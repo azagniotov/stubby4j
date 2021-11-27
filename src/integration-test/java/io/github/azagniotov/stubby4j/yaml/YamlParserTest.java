@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -1229,7 +1230,7 @@ public class YamlParserTest {
                         "        delay: 500\n" +
                         "    - client-request:\n" +
                         "        message-type: text\n" +
-                        "        body: Hey, server, send me a huge JSON file\n" +
+                        "        body: JSON file\n" +
                         "      server-response:\n" +
                         "        policy: push\n" +
                         "        message-type: text\n" +
@@ -1237,7 +1238,7 @@ public class YamlParserTest {
                         "        delay: 250\n" +
                         "    - client-request:\n" +
                         "        message-type: text\n" +
-                        "        body: Hey, server, send me a huge JSON file\n" +
+                        "        body: JSON file, please\n" +
                         "      server-response:\n" +
                         "        policy: disconnect\n" +
                         "        message-type: text\n" +
@@ -1330,7 +1331,42 @@ public class YamlParserTest {
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
+    @Test
+    public void shouldThrowWhenWebProxyConfigWithDuplicateClientRequestBodyText() throws Exception {
+
+        Exception exception = assertThrows(UncheckedIOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-text.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket on-message contains multiple client-request with the same body text";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebProxyConfigWithDuplicateClientRequestBodyBytes() throws Exception {
+
+        Exception exception = assertThrows(UncheckedIOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-bytes.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket on-message contains multiple client-request with the same body bytes";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {
         return new YamlParser().parse(".", yaml);
     }
 }
+//web-socket-invalid-config-with-duplicate-client-request-body-text.yaml
