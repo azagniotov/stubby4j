@@ -1,5 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

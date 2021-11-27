@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 
 import java.util.ArrayList;

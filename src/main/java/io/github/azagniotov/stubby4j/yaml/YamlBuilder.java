@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
-import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import org.eclipse.jetty.http.HttpMethod;

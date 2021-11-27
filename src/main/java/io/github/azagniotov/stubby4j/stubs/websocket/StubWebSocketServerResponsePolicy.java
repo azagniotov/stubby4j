@@ -28,12 +28,12 @@ public enum StubWebSocketServerResponsePolicy {
         this.value = value;
     }
 
-    public static boolean isUnknownProperty(final String stubbedProperty) {
-        return !PROPERTY_NAME_TO_ENUM_MEMBER.containsKey(toLower(stubbedProperty));
-    }
-
     public static Optional<StubWebSocketServerResponsePolicy> ofNullableProperty(final String stubbedProperty) {
         return Optional.ofNullable(PROPERTY_NAME_TO_ENUM_MEMBER.get(toLower(stubbedProperty)));
+    }
+
+    public static boolean isUnknownProperty(final String stubbedProperty) {
+        return !PROPERTY_NAME_TO_ENUM_MEMBER.containsKey(toLower(stubbedProperty));
     }
 
     @Override

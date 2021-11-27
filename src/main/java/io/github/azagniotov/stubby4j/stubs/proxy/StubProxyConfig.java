@@ -1,5 +1,7 @@
-package io.github.azagniotov.stubby4j.stubs;
+package io.github.azagniotov.stubby4j.stubs.proxy;
 
+import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
+import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
