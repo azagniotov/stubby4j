@@ -1263,6 +1263,28 @@ public class YamlParserTest {
     }
 
     @Test
+    public void shouldUnmarshall_toWebSocketConfigsWithUuidAndDescription() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-uuid-and-description-on-top.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(1);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        assertThat(stubWebSocketConfig.getUuid()).isEqualTo("123-567-90");
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("hello, web socket");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().isEmpty()).isTrue();
+    }
+
+    @Test
     public void shouldThrowWhenWebSocketConfigWithInvalidServerResponsePolicyName() throws Exception {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
