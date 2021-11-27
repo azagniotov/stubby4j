@@ -61,7 +61,7 @@ public final class StringUtils {
     }
 
     public static Charset charsetUTF8() {
-        return Charset.forName(StringUtils.UTF_8);
+        return StandardCharsets.UTF_8;
     }
 
     public static String newStringUtf8(final byte[] bytes) {

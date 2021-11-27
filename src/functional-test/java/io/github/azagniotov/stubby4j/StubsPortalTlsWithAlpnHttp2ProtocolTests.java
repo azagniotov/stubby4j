@@ -46,6 +46,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyClientSslContextFactory;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
 import static java.util.Arrays.asList;
@@ -115,7 +116,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
 
     @Test
     public void shouldReturnExpectedResponseUsingLowLevelHttp2ClientApiOverTlsWithAlpn_TlsVersion_1_3() throws Exception {
-        final SslContextFactory sslContextFactory = buildClientSslContextFactory(TLS_v1_3);
+        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(TLS_v1_3);
 
         final HTTP2Client http2Client = new HTTP2Client();
         http2Client.addBean(sslContextFactory);
@@ -193,7 +194,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
     }
 
     private void makeRequestAndAssert(final String tlsProtocol) throws Exception {
-        final SslContextFactory sslContextFactory = buildClientSslContextFactory(tlsProtocol);
+        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(tlsProtocol);
 
         final HTTP2Client http2Client = new HTTP2Client();
         http2Client.addBean(sslContextFactory);
@@ -214,15 +215,5 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
         assertThat(expectedContent).isEqualTo(response.getContentAsString());
-    }
-
-    private SslContextFactory buildClientSslContextFactory(final String tlsProtocol) {
-        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
-
-        sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
-        sslContextFactory.setProtocol(tlsProtocol);
-        sslContextFactory.setTrustStore(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE);
-
-        return sslContextFactory;
     }
 }
