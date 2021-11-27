@@ -1,0 +1,56 @@
+- web-socket:
+    description: this is a web-socket config
+    url: /article/websocket/demo/hello/1
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+      delay: 500
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: foo
+        server-response:
+          policy: push
+          message-type: text
+          body: bar
+          delay: 100
+
+      - client-request:
+          message-type: text
+          body: hello
+        server-response:
+          policy: once
+          message-type: text
+          body: bye-bye
+          delay: 250
+
+      - client-request:
+          message-type: text
+          body: JSON
+        server-response:
+          policy: disconnect
+          message-type: text
+          file: ../json/response.1.external.file.json
+
+- web-socket:
+    url: /article/websocket/demo/hello/2
+    sub-protocols: echo
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: JSON
+        server-response:
+          policy: once
+          message-type: text
+          file: ../json/response.1.external.file.json
+          delay: 250
