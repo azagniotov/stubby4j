@@ -18,7 +18,7 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.SERVER
 public class StubWebSocketServerResponse implements ReflectableStub {
 
     private final StubWebSocketMessageType messageType;
-    private final StubWebSocketServerResponsePolicy strategy;
+    private final StubWebSocketServerResponsePolicy policy;
     private final String body;
     private final File file;
     private final long delay;
@@ -27,13 +27,13 @@ public class StubWebSocketServerResponse implements ReflectableStub {
 
     private StubWebSocketServerResponse(
             final StubWebSocketMessageType messageType,
-            final StubWebSocketServerResponsePolicy strategy,
+            final StubWebSocketServerResponsePolicy policy,
             final String body,
             final File file,
             final long delay,
             final String webSocketServerResponseAsYAML) {
         this.messageType = messageType;
-        this.strategy = strategy;
+        this.policy = policy;
         this.body = body;
         this.file = file;
         this.delay = delay;
@@ -45,8 +45,8 @@ public class StubWebSocketServerResponse implements ReflectableStub {
         return messageType;
     }
 
-    public StubWebSocketServerResponsePolicy getStrategy() {
-        return strategy;
+    public StubWebSocketServerResponsePolicy getPolicy() {
+        return policy;
     }
 
     public String getBodyAsString() {

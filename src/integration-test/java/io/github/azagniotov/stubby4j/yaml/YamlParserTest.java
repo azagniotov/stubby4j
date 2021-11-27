@@ -3,10 +3,10 @@ package io.github.azagniotov.stubby4j.yaml;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
@@ -1173,7 +1173,7 @@ public class YamlParserTest {
         assertThat(onOpenServerResponse.getBodyAsString()).isEqualTo("You have been successfully connected");
         assertThat(onOpenServerResponse.getDelay()).isEqualTo(2000L);
         assertThat(onOpenServerResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
-        assertThat(onOpenServerResponse.getStrategy()).isEqualTo(StubWebSocketServerResponsePolicy.ONCE);
+        assertThat(onOpenServerResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.ONCE);
 
         final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle = stubWebSocketConfig.getOnMessage().get(0);
         assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
@@ -1197,7 +1197,7 @@ public class YamlParserTest {
         assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
         assertThat(serverResponse.getDelay()).isEqualTo(500L);
         assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
-        assertThat(serverResponse.getStrategy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
+        assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
 
         final StubWebSocketServerResponse lastServerResponse = stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
         final String actualFileContent = "This is response 1 content";
@@ -1239,6 +1239,44 @@ public class YamlParserTest {
                         "        message-type: text\n" +
                         "        file: ../json/response.1.external.file.json\n";
         assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
+    }
+
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigsWithoutOnMessage() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-without-on-message.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final List<StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(1);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.get(0);
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithInvalidServerResponsePolicyName() throws Exception {
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "invalid-policy-name";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {
