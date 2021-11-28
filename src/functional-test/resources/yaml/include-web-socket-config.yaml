@@ -77,3 +77,26 @@
       delay: 200
 
 
+- web-socket:
+    url: /demo/hello/4
+
+    on-message:
+      - client-request:
+          message-type: binary
+          file: ../binary/hello-world.pdf
+        server-response:
+          policy: once
+          message-type: binary
+          file: ../binary/hello-world.pdf
+          delay: 500
+
+      - client-request:
+          message-type: binary
+          file: ../json/response/json_response_6.json
+        server-response:
+          policy: once
+          message-type: binary
+          file: ../binary/hello-world.pdf
+          delay: 500
+
+

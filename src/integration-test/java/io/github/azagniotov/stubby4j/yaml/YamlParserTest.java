@@ -1247,6 +1247,92 @@ public class YamlParserTest {
     }
 
     @Test
+    public void shouldUnmarshall_toWebSocketConfigs_withoutOnOpenSection() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-no-on-open.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(2);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnMessage().size()).isEqualTo(3);
+
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNull();
+
+        final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle = stubWebSocketConfig.getOnMessage().get(0);
+        assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML()).isEqualTo(
+                "- client-request:\n" +
+                        "    message-type: text\n" +
+                        "    body: Hey, server, say apple\n" +
+                        "  server-response:\n" +
+                        "    policy: push\n" +
+                        "    message-type: text\n" +
+                        "    body: apple\n" +
+                        "    delay: 500\n"
+        );
+
+        final StubWebSocketClientRequest clientRequest = stubWebSocketOnMessageLifeCycle.getClientRequest();
+        assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
+
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
+        assertThat(serverResponse.getDelay()).isEqualTo(500L);
+        assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
+
+        final StubWebSocketServerResponse lastServerResponse = stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+        final String actualFileContent = "This is response 1 content";
+        assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
+        assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
+
+        final String expectedWebSocketConfigAsYAML =
+                "- web-socket:\n" +
+                        "    description: this is a web-socket config\n" +
+                        "    url: /items/furniture\n" +
+                        "    sub-protocols: echo, mamba, zumba\n" +
+                        "    on-message:\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, say apple\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: apple\n" +
+                        "        delay: 500\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: no files for you\n" +
+                        "        delay: 250\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file, please\n" +
+                        "      server-response:\n" +
+                        "        policy: disconnect\n" +
+                        "        message-type: text\n" +
+                        "        file: ../json/response.1.external.file.json\n";
+        assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
+    }
+
+    @Test
     public void shouldUnmarshall_toWebSocketConfigsWithoutOnMessage() throws Exception {
         final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-without-on-message.yaml");
         final InputStream stubsConfigStream = yamlUrl.openStream();
@@ -1301,7 +1387,7 @@ public class YamlParserTest {
     public void shouldThrowWhenWebSocketConfigWithInvalidServerResponsePolicyName() throws Exception {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config.yaml");
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-invalid-policy-name.yaml");
             final InputStream stubsConfigStream = yamlUrl.openStream();
             final String parentDirectory = new File(yamlUrl.getPath()).getParent();
 

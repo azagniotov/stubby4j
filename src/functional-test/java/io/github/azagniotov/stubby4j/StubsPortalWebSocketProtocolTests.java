@@ -3,6 +3,7 @@ package io.github.azagniotov.stubby4j;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.api.Session;
@@ -25,6 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -50,6 +54,7 @@ public class StubsPortalWebSocketProtocolTests {
     private static final URI REQUEST_URL_HELLO_1 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/1"));
     private static final URI REQUEST_URL_HELLO_2 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/2"));
     private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/3"));
+    private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/4"));
     private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
@@ -61,7 +66,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
+        final URL url = StubsPortalWebSocketProtocolTests.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
         assert url != null;
 
         final InputStream stubsDataInputStream = url.openStream();
@@ -81,7 +86,7 @@ public class StubsPortalWebSocketProtocolTests {
     }
 
     private static InputStream readResourceAsInputStream(final String testResource) throws IOException {
-        final URL url = StubsPortalTest.class.getResource(testResource);
+        final URL url = StubsPortalWebSocketProtocolTests.class.getResource(testResource);
         assert url != null;
 
         return url.openStream();
@@ -159,6 +164,62 @@ public class StubsPortalWebSocketProtocolTests {
         final byte[] expectedBytes = new byte[binaryDataInputStream.available()];
         binaryDataInputStream.read(expectedBytes);
 
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
+    }
+
+    @Test
+    public void serverOnMessage_ReactsToClient_RealBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly() throws Exception {
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        final InputStream payloadBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
+        final byte[] payloadBytes = new byte[payloadBytesInputStream.available()];
+        payloadBytesInputStream.read(payloadBytes);
+
+        session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
+
+        // Wait for client to get all the messages from teh server
+        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
+        final byte[] expectedBytes = new byte[expectedBytesInputStream.available()];
+        expectedBytesInputStream.read(expectedBytes);
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
+    }
+
+    @Test
+    public void serverOnMessage_ReactsToClient_TextBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly() throws Exception {
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        final URL resource = StubsPortalWebSocketProtocolTests.class.getResource("/json/response/json_response_6.json");
+        final Path path = Paths.get(resource.toURI());
+        final byte[] payloadBytes = FileUtils.fileToBytes(path.toFile());
+
+        session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
+
+        // Wait for client to get all the messages from teh server
+        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
+        final byte[] expectedBytes = new byte[expectedBytesInputStream.available()];
+        expectedBytesInputStream.read(expectedBytes);
         assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
     }
 

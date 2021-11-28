@@ -14,6 +14,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,16 +46,29 @@ public class StubsServerWebSocket {
         this.session = session;
         this.remote = this.session.getRemote();
 
-        dispatchServerResponse(stubWebSocketConfig.getOnOpenServerResponse());
+        if (stubWebSocketConfig.getOnOpenServerResponse() != null) {
+            dispatchServerResponse(stubWebSocketConfig.getOnOpenServerResponse());
+        }
     }
 
     @OnWebSocketMessage
-    public void onWebSocketBinary(final byte[] array, final int offset, final int length) {
-//        final String message = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(array, offset, length)).toString();
-//        if (message.toLowerCase(Locale.US).trim().contains("bye")) {
-//            this.remote.sendStringByFuture("Client requested to close socket via binary message!");
-//            this.session.close(StatusCode.NORMAL, "Thanks");
-//        }
+    public void onWebSocketBinary(final byte[] incoming, final int offset, final int length) {
+        boolean found = false;
+        final List<StubWebSocketOnMessageLifeCycle> onMessage = stubWebSocketConfig.getOnMessage();
+        for (final StubWebSocketOnMessageLifeCycle lifeCycle : onMessage) {
+            final StubWebSocketClientRequest clientRequest = lifeCycle.getClientRequest();
+            final StubWebSocketServerResponse serverResponse = lifeCycle.getServerResponse();
+
+            if (Arrays.equals(clientRequest.getBodyAsBytes(), incoming)) {
+                found = true;
+                dispatchServerResponse(serverResponse);
+                break;
+            }
+        }
+
+        if (!found) {
+            this.remote.sendStringByFuture(String.format("404 Not Found: client request %s", incoming));
+        }
     }
 
     @OnWebSocketMessage
@@ -69,6 +83,7 @@ public class StubsServerWebSocket {
             if (clientRequest.getBodyAsString().equals(message.trim())) {
                 found = true;
                 dispatchServerResponse(serverResponse);
+                break;
             }
         }
 
