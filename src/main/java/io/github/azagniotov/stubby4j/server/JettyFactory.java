@@ -109,6 +109,8 @@ public final class JettyFactory {
         final ContextHandlerCollection contextHandlerCollection = constructHandlers();
         final ServletContextHandler servletContextHandler =
                 new ServletContextHandler(contextHandlerCollection, WS_ROOT_PATH_INFO, ServletContextHandler.SESSIONS);
+        servletContextHandler.setErrorHandler(new JsonErrorHandler());
+
         server.setHandler(contextHandlerCollection);
 
         // Configure specific websocket behavior
@@ -120,6 +122,7 @@ public final class JettyFactory {
             // Add websockets
             nativeWebSocketConfiguration.addMapping("/*", new StubsWebSocketCreator(stubRepository));
         });
+
 
         // Add generic filter that will accept WebSocket upgrade.
         WebSocketUpgradeFilter.configure(servletContextHandler);

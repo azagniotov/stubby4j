@@ -43,7 +43,6 @@ public class StubsWebSocketCreator implements WebSocketCreator {
                 servletUpgradeResponse.setHeader(HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON, notFoundMessage);
 
                 servletUpgradeResponse.sendError(HttpStatus.NOT_FOUND_404, HttpStatus.Code.NOT_FOUND.getMessage());
-
                 ANSITerminal.error(notFoundMessage);
                 LOGGER.error(notFoundMessage);
             } catch (IOException e) {
