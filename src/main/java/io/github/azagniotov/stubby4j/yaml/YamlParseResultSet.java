@@ -57,6 +57,6 @@ public class YamlParseResultSet {
     }
 
     public Map<String, StubWebSocketConfig> getWebSocketConfigs() {
-        return new HashMap<>(webSocketConfigs);
+        return new LinkedHashMap<>(webSocketConfigs);
     }
 }

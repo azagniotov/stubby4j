@@ -99,4 +99,15 @@
           file: ../binary/hello-world.pdf
           delay: 500
 
+- web-socket:
+    url: /demo/hello/5
 
+    on-message:
+      - client-request:
+          message-type: text
+          body: send-partial-pls
+        server-response:
+          policy: partial
+          message-type: binary
+          file: ../binary/hello-world.pdf
+          delay: 50

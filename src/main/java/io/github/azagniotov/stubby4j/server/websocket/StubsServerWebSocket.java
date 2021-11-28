@@ -13,6 +13,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +25,15 @@ import java.util.concurrent.TimeUnit;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PARTIAL;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
+import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArray;
 
 @WebSocket
 public class StubsServerWebSocket {
 
     private static final String NORMAL_CLOSE_REASON = "bye";
+    private static final int PARTIAL_FRAMES = 100;
 
     private final StubWebSocketConfig stubWebSocketConfig;
     private final ScheduledExecutorService scheduledExecutorService;
@@ -105,18 +110,47 @@ public class StubsServerWebSocket {
     private void dispatchServerResponse(final StubWebSocketServerResponse serverResponse) {
         final long delay = serverResponse.getDelay();
         if (serverResponse.getPolicy() == ONCE || serverResponse.getPolicy() == DISCONNECT) {
-            scheduledExecutorService.schedule(() -> {
 
+            scheduledExecutorService.schedule(() -> {
                 if (serverResponse.getMessageType() == TEXT) {
+                    // Send response in a UTF-8 text form as a whole
                     this.remote.sendStringByFuture(serverResponse.getBodyAsString());
                 } else {
+                    // Send response in a binary form as a whole blob
                     this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
                 }
 
             }, delay, TimeUnit.MILLISECONDS);
         }
 
+        if (serverResponse.getPolicy() == PARTIAL) {
+            // Send response in a binary form as sequential partial frames one after another
+            final List<byte[]> byteChunks = chunkifyByteArray(serverResponse.getBodyAsBytes(), PARTIAL_FRAMES);
+            for (int idx = 0; idx < byteChunks.size(); idx++) {
+                final ByteBuffer byteBufferChunk = ByteBuffer.wrap(byteChunks.get(idx));
+                final boolean isLast = idx + 1 == byteChunks.size();
+                try {
+                    this.remote.sendPartialBytes(byteBufferChunk, isLast);
+                    Thread.sleep(delay);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+//                scheduledExecutorService.schedule(() -> {
+//                    try {
+//                        synchronized(this.remote) {
+//                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
+//                        }
+//                    } catch (IOException e) {
+//                        throw new UncheckedIOException(e);
+//                    }
+//                }, delay, TimeUnit.MILLISECONDS);
+            }
+        }
+
         if (serverResponse.getPolicy() == PUSH) {
+            // Send response to the client in periodic pushes one after another. The content will be sent as a whole
             scheduledExecutorService.scheduleAtFixedRate(() -> {
                 if (serverResponse.getMessageType() == TEXT) {
                     this.remote.sendStringByFuture(serverResponse.getBodyAsString());

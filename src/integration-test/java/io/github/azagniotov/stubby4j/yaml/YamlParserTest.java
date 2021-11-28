@@ -1160,7 +1160,7 @@ public class YamlParserTest {
 
         final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
         assertThat(webSocketConfigs.isEmpty()).isFalse();
-        assertThat(webSocketConfigs.size()).isEqualTo(2);
+        assertThat(webSocketConfigs.size()).isEqualTo(3);
 
         final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
         final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());

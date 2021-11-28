@@ -1,8 +1,10 @@
 package io.github.azagniotov.stubby4j.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +59,20 @@ public final class CollectionUtils {
     public static <T> T[] concatWithArrayCopy(T[] one, T[] two) {
         final T[] result = Arrays.copyOf(one, one.length + two.length);
         System.arraycopy(two, 0, result, one.length, two.length);
+        return result;
+    }
+
+    public static List<byte[]> chunkifyByteArray(final byte[] source, final int numberOfChunks) {
+        final int byteSizePerFrame = (source.length / numberOfChunks);
+        final List<byte[]> result = new ArrayList<>();
+
+        int start = 0;
+        while (start < source.length) {
+            int end = Math.min(source.length, start + byteSizePerFrame);
+            result.add(Arrays.copyOfRange(source, start, end));
+            start += byteSizePerFrame;
+        }
+
         return result;
     }
 }

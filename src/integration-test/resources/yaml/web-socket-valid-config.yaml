@@ -54,3 +54,17 @@
           message-type: text
           file: ../json/response.1.external.file.json
           delay: 250
+
+- web-socket:
+    url: /items/furniture/10
+    sub-protocols: echo
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: partial-start
+        server-response:
+          policy: partial
+          message-type: binary
+          file: ../json/response.1.external.file.json
+          delay: 250

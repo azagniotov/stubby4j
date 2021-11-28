@@ -55,6 +55,7 @@ public class StubsPortalWebSocketProtocolTests {
     private static final URI REQUEST_URL_HELLO_2 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/2"));
     private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/3"));
     private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/4"));
+    private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/5"));
     private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
@@ -137,7 +138,7 @@ public class StubsPortalWebSocketProtocolTests {
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -156,7 +157,7 @@ public class StubsPortalWebSocketProtocolTests {
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_3, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
@@ -185,7 +186,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
@@ -213,7 +214,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
@@ -237,7 +238,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendString("hello");
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -258,7 +259,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendString("do push");
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(5);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -284,7 +285,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendString("JSON");
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -313,7 +314,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendString("push PDF");
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(3, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -342,7 +343,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         session.getRemote().sendString("disconnect with a message");
 
-        // Wait for client to get all the messages from teh server
+        // Wait for client to get all the messages from the server
         assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
@@ -353,6 +354,30 @@ public class StubsPortalWebSocketProtocolTests {
 
         assertThat(socket.receivedOnCloseStatus.size()).isEqualTo(1);
         assertThat(socket.receivedOnCloseStatus.contains(StatusCode.NORMAL)).isTrue();
+    }
+
+    @Test
+    public void serverOnMessage_RespondsWithExpected_BinaryMessage_PartialFrames() throws Exception {
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        session.getRemote().sendString("send-partial-pls");
+
+        // Wait for client to get all the messages from the server
+        assertThat(socket.countDownLatch.await(10, TimeUnit.SECONDS)).isTrue();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
+        final byte[] expectedBytes = new byte[expectedBytesInputStream.available()];
+        expectedBytesInputStream.read(expectedBytes);
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
     }
 
     @Test
