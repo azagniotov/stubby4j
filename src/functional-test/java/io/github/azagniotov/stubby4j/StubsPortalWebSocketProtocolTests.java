@@ -106,6 +106,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -114,6 +115,8 @@ public class StubsPortalWebSocketProtocolTests {
         assertThat(session.isOpen()).isTrue();
         assertThat(session.isSecure()).isTrue();
         assertThat(session.getPolicy().getBehavior()).isEqualTo(WebSocketBehavior.CLIENT);
+
+        assertThat(session.getUpgradeResponse().getAcceptedSubProtocol()).isEqualTo("mamba,echo");
     }
 
     @Test
@@ -124,6 +127,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -142,6 +146,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_3);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_3, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -164,6 +169,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -184,6 +190,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -209,6 +216,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -237,6 +245,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -265,6 +274,7 @@ public class StubsPortalWebSocketProtocolTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -285,11 +295,12 @@ public class StubsPortalWebSocketProtocolTests {
     }
 
     @Test
-    public void serverShouldThrow_WhenConnectingClientRequestedWrongUrl() throws Exception {
+    public void serverShouldThrow_WhenConnectingClient_RequestedWrongUrl() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(NON_STUBBED_REQUEST_URL);
         clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, NON_STUBBED_REQUEST_URL, clientUpgradeRequest);
 
@@ -298,6 +309,48 @@ public class StubsPortalWebSocketProtocolTests {
         });
 
         String expectedMessage = "Failed to upgrade to websocket: Unexpected HTTP Response Status Code: 404 Not Found";
+        String actualMessage = exception.getCause().getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedWrongSubProtocol() throws Exception {
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("non-existent-among-stubbed-ones");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
+
+        Exception exception = assertThrows(ExecutionException.class, () -> {
+            sessionFuture.get(500, TimeUnit.MILLISECONDS);
+        });
+
+        String expectedMessage = "Failed to upgrade to websocket: Unexpected HTTP Response Status Code: 403 Forbidden";
+        String actualMessage = exception.getCause().getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedNoSubProtocol() throws Exception {
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+
+        // Not calling the following
+        // clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
+
+        Exception exception = assertThrows(ExecutionException.class, () -> {
+            sessionFuture.get(500, TimeUnit.MILLISECONDS);
+        });
+
+        String expectedMessage = "Failed to upgrade to websocket: Unexpected HTTP Response Status Code: 403 Forbidden";
         String actualMessage = exception.getCause().getMessage();
 
         assertThat(actualMessage).contains(expectedMessage);

@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON;
+import java.util.HashSet;
+import java.util.Set;
 
 public class StubsWebSocketCreator implements WebSocketCreator {
 
@@ -30,28 +30,54 @@ public class StubsWebSocketCreator implements WebSocketCreator {
                                   final ServletUpgradeResponse servletUpgradeResponse) {
 
         final StubWebSocketConfig stubWebSocketConfig = this.stubRepository.matchWebSocketConfigByUrl(servletUpgradeRequest.getRequestPath());
+
+        // Renders HTTP error response if client requested an invalid URL
+        checkAndHandleNotFound(stubWebSocketConfig, servletUpgradeRequest, servletUpgradeResponse);
+        // Renders HTTP error response if client requested sub-protocol does not match the stubbed ones
+        checkAndSetAcceptedProtocols(stubWebSocketConfig, servletUpgradeRequest, servletUpgradeResponse);
+
+        return new StubsServerWebSocket(stubWebSocketConfig);
+    }
+
+    private void checkAndHandleNotFound(final StubWebSocketConfig stubWebSocketConfig, ServletUpgradeRequest servletUpgradeRequest, ServletUpgradeResponse servletUpgradeResponse) {
         // The client made request to a non-existent URL
         if (stubWebSocketConfig == null) {
             try {
                 servletUpgradeResponse.setStatusCode(HttpStatus.NOT_FOUND_404);
-                // Setting custom error message will no longer work in Jetty versions > 9.4.20, see:
-                // https://github.com/eclipse/jetty.project/issues/4154
-                // response.sendError(httpStatus, message);
-                //
-                // using header as a medium to pass an error message to JsonErrorHandler. This is a workaround as a result of the above
-                final String notFoundMessage = "Not found " + servletUpgradeRequest.getRequestPath();
-                servletUpgradeResponse.setHeader(HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON, notFoundMessage);
-
                 servletUpgradeResponse.sendError(HttpStatus.NOT_FOUND_404, HttpStatus.Code.NOT_FOUND.getMessage());
+                final String notFoundMessage = "Not found " + servletUpgradeRequest.getRequestPath();
                 ANSITerminal.error(notFoundMessage);
                 LOGGER.error(notFoundMessage);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
         }
+    }
 
-        final StubsServerWebSocket stubsServerWebSocket = new StubsServerWebSocket(stubWebSocketConfig);
-        stubsServerWebSocket.checkAndSetAcceptedProtocols(servletUpgradeRequest, servletUpgradeResponse);
-        return stubsServerWebSocket;
+    private void checkAndSetAcceptedProtocols(final StubWebSocketConfig stubWebSocketConfig,
+                                              final ServletUpgradeRequest servletUpgradeRequest,
+                                              final ServletUpgradeResponse servletUpgradeResponse) {
+
+        // We have configured sub-protocols, so the client must conform to contract
+        if (!stubWebSocketConfig.getSubProtocols().isEmpty()) {
+
+            final Set<String> requestClientSubProtocolsCopy = new HashSet<>(servletUpgradeRequest.getSubProtocols());
+            requestClientSubProtocolsCopy.retainAll(stubWebSocketConfig.getSubProtocols());
+
+            if (requestClientSubProtocolsCopy.isEmpty()) {
+                try {
+                    servletUpgradeResponse.setStatusCode(HttpStatus.FORBIDDEN_403);
+                    servletUpgradeResponse.sendError(HttpStatus.FORBIDDEN_403, HttpStatus.Code.FORBIDDEN.getMessage());
+                    final String forbiddenMessage = "Forbidden due to sub-protocol mismatch. Stubbed: " + stubWebSocketConfig.getSubProtocols();
+                    ANSITerminal.error(forbiddenMessage);
+                    LOGGER.error(forbiddenMessage);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            } else {
+                final String acceptedSubProtocol = String.join(",", requestClientSubProtocolsCopy);
+                servletUpgradeResponse.setAcceptedSubProtocol(acceptedSubProtocol);
+            }
+        }
     }
 }

@@ -12,15 +12,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +27,6 @@ import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerR
 @WebSocket
 public class StubsServerWebSocket {
 
-    private final static Set<String> SUB_PROTOCOLS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("chat", "echo")));
     private static final String NORMAL_CLOSE_REASON = "bye";
 
     private final StubWebSocketConfig stubWebSocketConfig;
@@ -92,16 +85,6 @@ public class StubsServerWebSocket {
     @OnWebSocketError
     public void onWebSocketError(Throwable cause) {
         cause.printStackTrace(System.err);
-    }
-
-    public void checkAndSetAcceptedProtocols(final ServletUpgradeRequest servletUpgradeRequest,
-                                             final ServletUpgradeResponse servletUpgradeResponse) {
-        if (servletUpgradeRequest.getSubProtocols() != null && !servletUpgradeRequest.getSubProtocols().isEmpty()) {
-            final String clientSubProtocol = servletUpgradeRequest.getSubProtocols().get(0);
-            if (!clientSubProtocol.trim().equals("") && SUB_PROTOCOLS.contains(clientSubProtocol)) {
-                servletUpgradeResponse.setAcceptedSubProtocol(clientSubProtocol);
-            }
-        }
     }
 
     private void dispatchServerResponse(final StubWebSocketServerResponse serverResponse) {

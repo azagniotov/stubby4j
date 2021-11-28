@@ -39,7 +39,7 @@
 
 - web-socket:
     url: /demo/hello/2
-    sub-protocols: echo
+    sub-protocols: echo, mamba, zumba
 
     on-open:
       policy: once
@@ -68,7 +68,7 @@
 
 - web-socket:
     url: /demo/hello/3
-    sub-protocols: echo
+    sub-protocols: echo, mamba, zumba
 
     on-open:
       policy: once
