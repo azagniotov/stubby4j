@@ -215,7 +215,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        assertThat(socket.countDownLatch.await(2, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
         final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");

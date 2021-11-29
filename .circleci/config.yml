@@ -276,6 +276,12 @@ smoke_test_steps: &smoke_test_steps
           apk --no-cache add curl && curl --version
 
     - run:
+        name: Install WebSocat on Alpine Linux
+        command: |
+          echo ""
+          apk --no-cache add websocat --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && websocat --version
+
+    - run:
         name: Build stubby4j uber JAR
         command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean build
 
@@ -328,17 +334,50 @@ smoke_test_steps: &smoke_test_steps
                         --enable_tls_with_alpn_and_http_2 \
                         --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
 
+            STUBBY4J_HTTP_1_PID=$!
+
             echo "stubby4j re-started!"
             echo ""
             sleep 5
 
             sh src/smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
             sh src/smoke-test/shell/make_request_using_curl.sh 1.3 127.0.0.1 7445
+
+            kill $STUBBY4J_HTTP_1_PID
+            echo ""
+            echo "Killed original stubby4j process!"
+            echo ""
+
           else
             echo ""
             echo "Attention: HTTP/2 over TLS is not enabled for this JDK version, skipping..."
             echo ""
           fi
+
+    - run:
+        when: on_success
+        name: Make WebSocket requests to stubby4j JAR over ws:// scheme
+        command: |
+          echo ""
+          java -version
+          echo ""
+          java -jar build/libs/stubby4j-*.jar \
+            --location 127.0.0.1 \
+            --tls 7445 \
+            --mute \
+            --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
+
+          STUBBY4J_HTTP_1_PID=$!
+
+          echo "stubby4j started!"
+          sleep 5
+
+          sh src/smoke-test/shell/make_request_using_websocat.sh ws 127.0.0.1 8882
+
+          kill $STUBBY4J_HTTP_1_PID
+          echo ""
+          echo "Killed original stubby4j process!"
+          echo ""
 
 
 
