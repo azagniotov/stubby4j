@@ -18,6 +18,7 @@ import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,7 @@ import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerR
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PARTIAL;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
-import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArray;
+import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
 
 @WebSocket
 public class StubsServerWebSocket {
@@ -124,29 +125,29 @@ public class StubsServerWebSocket {
         }
 
         if (serverResponse.getPolicy() == PARTIAL) {
-            // Send response in a binary form as sequential partial frames one after another
-            final List<byte[]> byteChunks = chunkifyByteArray(serverResponse.getBodyAsBytes(), PARTIAL_FRAMES);
-            for (int idx = 0; idx < byteChunks.size(); idx++) {
-                final ByteBuffer byteBufferChunk = ByteBuffer.wrap(byteChunks.get(idx));
-                final boolean isLast = idx + 1 == byteChunks.size();
-                try {
-                    this.remote.sendPartialBytes(byteBufferChunk, isLast);
-                    Thread.sleep(delay);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            // Send response in a binary form as sequential partial frames one after another in a blocking manner.
+
+            // Scheduling an async execution of the whole thing in order not to block the current thread
+
+            final BlockingQueue<ByteBuffer> queue = chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), PARTIAL_FRAMES);
+            scheduledExecutorService.schedule(() -> {
+                while (!queue.isEmpty()) {
+                    try {
+                        final ByteBuffer byteBufferChunk = queue.poll();
+                        if (byteBufferChunk != null) {
+                            final boolean isLast = queue.isEmpty();
+                            // This must be a blocking call, i.e.: we cannot send each chunk in an async manner
+                            // using a Future, as this can produce un-deterministic behavior.
+                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
+                            Thread.sleep(delay);
+                        }
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-//                scheduledExecutorService.schedule(() -> {
-//                    try {
-//                        synchronized(this.remote) {
-//                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
-//                        }
-//                    } catch (IOException e) {
-//                        throw new UncheckedIOException(e);
-//                    }
-//                }, delay, TimeUnit.MILLISECONDS);
-            }
+            }, delay, TimeUnit.MILLISECONDS);
         }
 
         if (serverResponse.getPolicy() == PUSH) {

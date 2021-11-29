@@ -73,7 +73,7 @@ public final class StubbyManager {
         server.join();
     }
 
-    public List<String> statuses() {
+    public StringBuilder statuses() {
         return jettyFactory.getStatuses();
     }
 

@@ -371,10 +371,10 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("send-partial-pls");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(10, TimeUnit.SECONDS)).isTrue();
+        assertThat(socket.countDownLatch.await(2, TimeUnit.SECONDS)).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
-        final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
+        final InputStream expectedBytesInputStream = readResourceAsInputStream("/json/response/json_response_1.json");
         final byte[] expectedBytes = new byte[expectedBytesInputStream.available()];
         expectedBytesInputStream.read(expectedBytes);
         assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);

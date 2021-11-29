@@ -1,12 +1,13 @@
 package io.github.azagniotov.stubby4j.utils;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 
 public final class CollectionUtils {
@@ -62,17 +63,17 @@ public final class CollectionUtils {
         return result;
     }
 
-    public static List<byte[]> chunkifyByteArray(final byte[] source, final int numberOfChunks) {
-        final int byteSizePerFrame = (source.length / numberOfChunks);
-        final List<byte[]> result = new ArrayList<>();
+    public static BlockingQueue<ByteBuffer> chunkifyByteArrayAndQueue(final byte[] source, final int numberOfChunks) {
+        final int byteSizePerFrame = source.length <= numberOfChunks ? 1 : (source.length / numberOfChunks);
+        final BlockingQueue<ByteBuffer> queue = new ArrayBlockingQueue<>(numberOfChunks * 2);
 
         int start = 0;
         while (start < source.length) {
             int end = Math.min(source.length, start + byteSizePerFrame);
-            result.add(Arrays.copyOfRange(source, start, end));
+            queue.add(ByteBuffer.wrap(Arrays.copyOfRange(source, start, end)));
             start += byteSizePerFrame;
         }
 
-        return result;
+        return queue;
     }
 }

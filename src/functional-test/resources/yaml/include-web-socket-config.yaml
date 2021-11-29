@@ -109,5 +109,5 @@
         server-response:
           policy: partial
           message-type: binary
-          file: ../binary/hello-world.pdf
-          delay: 50
+          file: ../json/response/json_response_1.json
+          delay: 10

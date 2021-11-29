@@ -14,6 +14,7 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
+import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +139,11 @@ public class YamlParser {
                 if (webSocketConfigs.containsKey(stubWebSocketConfig.getUrl())) {
                     throw new IOException("Web socket config YAML contains duplicate URL: " + stubWebSocketConfig.getUrl());
                 }
+
+                if (ObjectUtils.isNull(stubWebSocketConfig.getOnOpenServerResponse()) && stubWebSocketConfig.getOnMessage().isEmpty()) {
+                    throw new IOException("Web socket config must have at least one of the two 'on-open' or 'on-message' defined");
+                }
+
                 webSocketConfigs.put(stubWebSocketConfig.getUrl(), stubWebSocketConfig);
             } else {
                 // the YAML config file contains a top-level:

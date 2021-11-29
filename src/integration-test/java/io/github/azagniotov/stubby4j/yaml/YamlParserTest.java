@@ -1401,7 +1401,7 @@ public class YamlParserTest {
     }
 
     @Test
-    public void shouldThrowWhenWebProxyConfigWithDuplicateURL() throws Exception {
+    public void shouldThrowWhenWebSocketConfigWithDuplicateURL() throws Exception {
 
         Exception exception = assertThrows(IOException.class, () -> {
             final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-url.yaml");
@@ -1418,7 +1418,7 @@ public class YamlParserTest {
     }
 
     @Test
-    public void shouldThrowWhenWebProxyConfigWithDuplicateClientRequestBodyText() throws Exception {
+    public void shouldThrowWhenWebSocketConfigWithDuplicateClientRequestBodyText() throws Exception {
 
         Exception exception = assertThrows(UncheckedIOException.class, () -> {
             final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-text.yaml");
@@ -1435,7 +1435,7 @@ public class YamlParserTest {
     }
 
     @Test
-    public void shouldThrowWhenWebProxyConfigWithDuplicateClientRequestBodyBytes() throws Exception {
+    public void shouldThrowWhenWebSocketConfigWithDuplicateClientRequestBodyBytes() throws Exception {
 
         Exception exception = assertThrows(UncheckedIOException.class, () -> {
             final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-bytes.yaml");
@@ -1446,6 +1446,23 @@ public class YamlParserTest {
         });
 
         String expectedMessage = "Web socket on-message contains multiple client-request with the same body bytes";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithoutOnOpenNorOnMessage() throws Exception {
+
+        Exception exception = assertThrows(IOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-no-on-open-no-on-message.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket config must have at least one of the two 'on-open' or 'on-message' defined";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).contains(expectedMessage);

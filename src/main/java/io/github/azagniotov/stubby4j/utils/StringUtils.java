@@ -166,6 +166,16 @@ public final class StringUtils {
         return BASE_64_ENCODER.encodeToString(StringUtils.getBytesUtf8(toEncode));
     }
 
+    public static String encodeBase16(byte[] bytes) {
+        final char[] hexDigits = "0123456789abcdef".toCharArray();
+
+        final StringBuilder sb = new StringBuilder(2 * bytes.length);
+        for (byte b : bytes) {
+            sb.append(hexDigits[(b >> 4) & 0xf]).append(hexDigits[b & 0xf]);
+        }
+        return sb.toString();
+    }
+
     public static int calculateStringLength(final String post) {
         if (StringUtils.isSet(post)) {
             return StringUtils.getBytesUtf8(post).length;
