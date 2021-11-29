@@ -3,9 +3,11 @@ package io.github.azagniotov.stubby4j.utils;
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +94,19 @@ public final class ConsoleUtils {
         }
     }
 
+    public static void logIncomingWebSocketTextRequest(final ServletUpgradeRequest request, final String message) {
+
+        final String logMessage = String.format("[%s] => %s %s on [%s]: %s",
+                getLocalDateTime(),
+                StringUtils.toUpper(request.isSecure() ? "wss" : "ws"),
+                request.getMethod(),
+                request.getRequestURI(),
+                message
+        );
+        ANSITerminal.incoming(logMessage);
+        LOGGER.info(logMessage);
+    }
+
 
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
         if (debug) {
@@ -131,6 +146,24 @@ public final class ConsoleUtils {
             ANSITerminal.log(logMessage);
             LOGGER.debug(logMessage);
         }
+    }
+
+    public static void logUnmarshalledWebSocketConfig(final StubWebSocketConfig stubWebSocketConfig) {
+        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded web socket config metadata: ")
+                .append(stubWebSocketConfig.getUrl());
+        if (!stubWebSocketConfig.getSubProtocols().isEmpty()) {
+            loadedMsgBuilder.append(String.format(" %s", stubWebSocketConfig.getSubProtocols()));
+        }
+        if (isSet(stubWebSocketConfig.getUuid())) {
+            loadedMsgBuilder.append(String.format(" [%s]", stubWebSocketConfig.getUuid()));
+        }
+        if (isSet(stubWebSocketConfig.getDescription())) {
+            loadedMsgBuilder.append(String.format(" [%s]", stubWebSocketConfig.getDescription()));
+        }
+
+        final String logMessage = loadedMsgBuilder.toString();
+        ANSITerminal.loaded(logMessage);
+        LOGGER.info(logMessage);
     }
 
     public static void logUnmarshalledProxyConfig(final StubProxyConfig stubProxyConfig) {

@@ -391,7 +391,7 @@ public class StubsPortalWebSocketProtocolTests {
         final Future<Session> sessionFuture = client.connect(socket, NON_STUBBED_REQUEST_URL, clientUpgradeRequest);
 
         Exception exception = assertThrows(ExecutionException.class, () -> {
-            sessionFuture.get(500, TimeUnit.MILLISECONDS);
+            sessionFuture.get(1000, TimeUnit.MILLISECONDS);
         });
 
         String expectedMessage = "Failed to upgrade to websocket: Unexpected HTTP Response Status Code: 404 Not Found";

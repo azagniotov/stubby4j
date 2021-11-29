@@ -281,7 +281,7 @@ public final class JettyFactory {
                 stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusHttp);
 
-        final String statusWs = String.format(" > ws://%s:%s/ws\t\tWebSocket HTTP/1.1 stubs portal\n",
+        final String statusWs = String.format(" > ws://%s:%s/ws\t\tHTTP/1.1 WebSockets stubs portal\n",
                 stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusWs);
         statusBuilder.append("\n");
@@ -361,7 +361,7 @@ public final class JettyFactory {
                 sslConnector.getHost(), sslConnector.getPort(), protocol);
         statusBuilder.append(tlsPortalStatus);
 
-        final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\tWebSocket %s on TLS stubs portal\n",
+        final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\t%s WebSockets on TLS stubs portal\n",
                 sslConnector.getHost(), sslConnector.getPort(), protocol);
         statusBuilder.append(wssPortalStatus);
 

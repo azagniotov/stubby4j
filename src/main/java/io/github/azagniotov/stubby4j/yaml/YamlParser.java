@@ -44,6 +44,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEA
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledProxyConfig;
 import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledStub;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.logUnmarshalledWebSocketConfig;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.constructInputStream;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.isFilePathContainTemplateTokens;
@@ -278,7 +279,10 @@ public class YamlParser {
             webSocketConfigBuilder.withWebSocketConfigAsYAML(toCompleteYamlListString(yamlMappingProperties));
         }
 
-        return webSocketConfigBuilder.build();
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigBuilder.build();
+        logUnmarshalledWebSocketConfig(stubWebSocketConfig);
+
+        return stubWebSocketConfig;
     }
 
     private void checkAndThrowWhenClientRequestDuplicateBodies(final Set<Integer> clientRequestBodyTextHashCodeCache,

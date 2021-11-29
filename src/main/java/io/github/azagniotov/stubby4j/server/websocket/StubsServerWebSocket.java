@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
+import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
@@ -12,6 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -59,6 +61,9 @@ public class StubsServerWebSocket {
 
     @OnWebSocketMessage
     public void onWebSocketBinary(final byte[] incoming, final int offset, final int length) {
+        final ServletUpgradeRequest upgradeRequest = (ServletUpgradeRequest) this.session.getUpgradeRequest();
+        ConsoleUtils.logIncomingWebSocketTextRequest(upgradeRequest, "binary payload");
+
         boolean found = false;
         final List<StubWebSocketOnMessageLifeCycle> onMessage = stubWebSocketConfig.getOnMessage();
         for (final StubWebSocketOnMessageLifeCycle lifeCycle : onMessage) {
@@ -79,6 +84,8 @@ public class StubsServerWebSocket {
 
     @OnWebSocketMessage
     public void onWebSocketText(final String message) {
+        final ServletUpgradeRequest upgradeRequest = (ServletUpgradeRequest) this.session.getUpgradeRequest();
+        ConsoleUtils.logIncomingWebSocketTextRequest(upgradeRequest, message);
 
         boolean found = false;
         final List<StubWebSocketOnMessageLifeCycle> onMessage = stubWebSocketConfig.getOnMessage();
@@ -125,10 +132,6 @@ public class StubsServerWebSocket {
         }
 
         if (serverResponse.getPolicy() == PARTIAL) {
-            // Send response in a binary form as sequential partial frames one after another in a blocking manner.
-
-            // Scheduling an async execution of the whole thing in order not to block the current thread
-
             final BlockingQueue<ByteBuffer> queue = chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), PARTIAL_FRAMES);
             scheduledExecutorService.schedule(() -> {
                 while (!queue.isEmpty()) {
@@ -136,8 +139,9 @@ public class StubsServerWebSocket {
                         final ByteBuffer byteBufferChunk = queue.poll();
                         if (byteBufferChunk != null) {
                             final boolean isLast = queue.isEmpty();
-                            // This must be a blocking call, i.e.: we cannot send each chunk in an async manner
-                            // using a Future, as this can produce un-deterministic behavior.
+                            // Send response in a binary form as sequential partial frames one after another in
+                            // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
+                            // in an async manner using a Future, as this can produce un-deterministic behavior.
                             this.remote.sendPartialBytes(byteBufferChunk, isLast);
                             Thread.sleep(delay);
                         }
