@@ -2,11 +2,15 @@ package io.github.azagniotov.stubby4j.utils;
 
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.encodeBase16;
 
 
 @SuppressWarnings("serial")
@@ -139,5 +143,43 @@ public class CollectionUtilsTest {
         final String[] actual = CollectionUtils.concatWithArrayCopy(args, flags);
 
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void chunkifyByteArrayAndQueue() {
+        final String originalString = "The Japanese raccoon dog is mainly nocturnal, but they are known to be active" +
+                "during daylight. They vocalize by growling or with groans that have pitches resembling those of" +
+                "domesticated cats. Like cats, the Japanese raccoon dog arches its back when it is trying to intimidate" +
+                "other animals; however, they assume a defensive posture similar to that of other canids, lowering their" +
+                "bodies and showing their bellies to submit.";
+        final byte[] originalStringBytes = originalString.getBytes(StandardCharsets.UTF_8);
+        final BlockingQueue<ByteBuffer> byteArrayQueue = CollectionUtils.chunkifyByteArrayAndQueue(originalStringBytes, 100);
+
+        ByteBuffer allocatedByteBuffer = ByteBuffer.allocate(originalStringBytes.length);
+        while (!byteArrayQueue.isEmpty()) {
+            allocatedByteBuffer = allocatedByteBuffer.put(byteArrayQueue.poll());
+        }
+        final byte[] actualStringBytes = allocatedByteBuffer.array();
+
+        assertThat(encodeBase16(originalStringBytes)).isEqualTo(encodeBase16(actualStringBytes));
+        assertThat(originalStringBytes).isEqualTo(actualStringBytes);
+        assertThat(originalString).isEqualTo(new String(actualStringBytes, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void chunkifyTinyByteArrayAndQueue() {
+        final String originalString = "The Japanese raccoon dog.";
+        final byte[] originalStringBytes = originalString.getBytes(StandardCharsets.UTF_8);
+        final BlockingQueue<ByteBuffer> byteArrayQueue = CollectionUtils.chunkifyByteArrayAndQueue(originalStringBytes, 100);
+
+        ByteBuffer allocatedByteBuffer = ByteBuffer.allocate(originalStringBytes.length);
+        while (!byteArrayQueue.isEmpty()) {
+            allocatedByteBuffer = allocatedByteBuffer.put(byteArrayQueue.poll());
+        }
+        final byte[] actualStringBytes = allocatedByteBuffer.array();
+
+        assertThat(encodeBase16(originalStringBytes)).isEqualTo(encodeBase16(actualStringBytes));
+        assertThat(originalStringBytes).isEqualTo(actualStringBytes);
+        assertThat(originalString).isEqualTo(new String(actualStringBytes, StandardCharsets.UTF_8));
     }
 }

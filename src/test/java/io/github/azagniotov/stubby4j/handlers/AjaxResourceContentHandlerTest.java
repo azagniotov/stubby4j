@@ -2,7 +2,7 @@ package io.github.azagniotov.stubby4j.handlers;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.StubTypes;
 import org.eclipse.jetty.http.HttpMethod;

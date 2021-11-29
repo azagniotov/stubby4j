@@ -4,6 +4,8 @@ import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -58,6 +60,7 @@ public class StubRepository {
     private final ConcurrentHashMap<String, AtomicLong> resourceStats;
     private final ConcurrentHashMap<String, StubHttpLifecycle> uuidToStub;
     private final ConcurrentHashMap<String, StubProxyConfig> proxyConfigs;
+    private final ConcurrentHashMap<String, StubWebSocketConfig> webSocketConfigs;
 
     private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
     private final StubbyHttpTransport stubbyHttpTransport;
@@ -69,6 +72,7 @@ public class StubRepository {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
         this.proxyConfigs = new ConcurrentHashMap<>();
+        this.webSocketConfigs = new ConcurrentHashMap<>();
         this.configFile = configFile;
         this.stubLoadComputation = stubLoadComputation;
         this.stubbyHttpTransport = stubbyHttpTransport;
@@ -312,11 +316,16 @@ public class StubRepository {
         return proxyConfigs.get(proxyConfigUniqueName);
     }
 
+    public synchronized StubWebSocketConfig matchWebSocketConfigByUrl(final String webSocketConfigUniqueUrl) {
+        return webSocketConfigs.get(webSocketConfigUniqueUrl);
+    }
+
     synchronized boolean resetStubsCache(final YamlParseResultSet yamlParseResultSet) {
         this.stubMatchesCache.clear();
         this.stubs.clear();
         this.uuidToStub.clear();
         this.proxyConfigs.clear();
+        this.webSocketConfigs.clear();
 
         final boolean addedStubs = this.stubs.addAll(yamlParseResultSet.getStubs());
         if (addedStubs) {
@@ -326,6 +335,8 @@ public class StubRepository {
         }
 
         loadProxyConfigsWithOptionalThrow(yamlParseResultSet);
+
+        this.webSocketConfigs.putAll(yamlParseResultSet.getWebSocketConfigs());
 
         return addedStubs;
     }
@@ -530,6 +541,7 @@ public class StubRepository {
         this.stubs.clear();
         this.uuidToStub.clear();
         this.proxyConfigs.clear();
+        this.webSocketConfigs.clear();
     }
 
     private void updateResourceIDHeaders() {
@@ -541,10 +553,12 @@ public class StubRepository {
     public void retrieveLoadedStubs() {
         try {
             final YamlParseResultSet yamlParseResultSet = stubLoadComputation.get();
-            stubs.addAll(yamlParseResultSet.getStubs());
-            uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
+            this.stubs.addAll(yamlParseResultSet.getStubs());
+            this.uuidToStub.putAll(yamlParseResultSet.getUuidToStubs());
 
             loadProxyConfigsWithOptionalThrow(yamlParseResultSet);
+
+            this.webSocketConfigs.putAll(yamlParseResultSet.getWebSocketConfigs());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

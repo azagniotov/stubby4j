@@ -3,10 +3,16 @@ package io.github.azagniotov.stubby4j.yaml;
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
-import io.github.azagniotov.stubby4j.stubs.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
@@ -20,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +36,7 @@ import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BAS
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.BEARER;
 import static io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType.CUSTOM;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.inputStreamToString;
 import static org.junit.Assert.assertThrows;
 
@@ -1142,7 +1150,326 @@ public class YamlParserTest {
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigs() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(3);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().size()).isEqualTo(3);
+
+        final StubWebSocketServerResponse onOpenServerResponse = stubWebSocketConfig.getOnOpenServerResponse();
+        assertThat(onOpenServerResponse.getBodyAsString()).isEqualTo("You have been successfully connected");
+        assertThat(onOpenServerResponse.getDelay()).isEqualTo(2000L);
+        assertThat(onOpenServerResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(onOpenServerResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.ONCE);
+
+        final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle = stubWebSocketConfig.getOnMessage().get(0);
+        assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML()).isEqualTo(
+                "- client-request:\n" +
+                        "    message-type: text\n" +
+                        "    body: Hey, server, say apple\n" +
+                        "  server-response:\n" +
+                        "    policy: push\n" +
+                        "    message-type: text\n" +
+                        "    body: apple\n" +
+                        "    delay: 500\n"
+        );
+
+        final StubWebSocketClientRequest clientRequest = stubWebSocketOnMessageLifeCycle.getClientRequest();
+        assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
+
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
+        assertThat(serverResponse.getDelay()).isEqualTo(500L);
+        assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
+
+        final StubWebSocketServerResponse lastServerResponse = stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+        final String actualFileContent = "This is response 1 content";
+        assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
+        assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
+
+        final String expectedWebSocketConfigAsYAML =
+                "- web-socket:\n" +
+                        "    description: this is a web-socket config\n" +
+                        "    url: /items/furniture\n" +
+                        "    sub-protocols: echo, mamba, zumba\n" +
+                        "    on-open:\n" +
+                        "      policy: once\n" +
+                        "      message-type: text\n" +
+                        "      body: You have been successfully connected\n" +
+                        "      delay: 2000\n" +
+                        "    on-message:\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, say apple\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: apple\n" +
+                        "        delay: 500\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: no files for you\n" +
+                        "        delay: 250\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file, please\n" +
+                        "      server-response:\n" +
+                        "        policy: disconnect\n" +
+                        "        message-type: text\n" +
+                        "        file: ../json/response.1.external.file.json\n";
+        assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
+    }
+
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigs_withoutOnOpenSection() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-no-on-open.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(2);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnMessage().size()).isEqualTo(3);
+
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNull();
+
+        final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle = stubWebSocketConfig.getOnMessage().get(0);
+        assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML()).isEqualTo(
+                "- client-request:\n" +
+                        "    message-type: text\n" +
+                        "    body: Hey, server, say apple\n" +
+                        "  server-response:\n" +
+                        "    policy: push\n" +
+                        "    message-type: text\n" +
+                        "    body: apple\n" +
+                        "    delay: 500\n"
+        );
+
+        final StubWebSocketClientRequest clientRequest = stubWebSocketOnMessageLifeCycle.getClientRequest();
+        assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
+
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
+        assertThat(serverResponse.getDelay()).isEqualTo(500L);
+        assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
+        assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
+
+        final StubWebSocketServerResponse lastServerResponse = stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+        final String actualFileContent = "This is response 1 content";
+        assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
+        assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
+
+        final String expectedWebSocketConfigAsYAML =
+                "- web-socket:\n" +
+                        "    description: this is a web-socket config\n" +
+                        "    url: /items/furniture\n" +
+                        "    sub-protocols: echo, mamba, zumba\n" +
+                        "    on-message:\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: Hey, server, say apple\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: apple\n" +
+                        "        delay: 500\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file\n" +
+                        "      server-response:\n" +
+                        "        policy: push\n" +
+                        "        message-type: text\n" +
+                        "        body: no files for you\n" +
+                        "        delay: 250\n" +
+                        "    - client-request:\n" +
+                        "        message-type: text\n" +
+                        "        body: JSON file, please\n" +
+                        "      server-response:\n" +
+                        "        policy: disconnect\n" +
+                        "        message-type: text\n" +
+                        "        file: ../json/response.1.external.file.json\n";
+        assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
+    }
+
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigsWithoutOnMessage() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-without-on-message.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(1);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("this is a web-socket config");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void shouldUnmarshall_toWebSocketConfigsWithUuidAndDescription() throws Exception {
+        final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-uuid-and-description-on-top.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet = new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(1);
+
+        final StubWebSocketConfig stubWebSocketConfig = webSocketConfigs.values().iterator().next();
+        final StubWebSocketConfig stubWebSocketConfigCopy = webSocketConfigs.get(stubWebSocketConfig.getUrl());
+        assertThat(stubWebSocketConfig).isSameInstanceAs(stubWebSocketConfigCopy);
+        assertThat(stubWebSocketConfig).isEqualTo(stubWebSocketConfigCopy);
+
+        assertThat(stubWebSocketConfig.getUuid()).isEqualTo("123-567-90");
+        assertThat(stubWebSocketConfig.getDescription()).isEqualTo("hello, web socket");
+        assertThat(stubWebSocketConfig.getUrl()).isEqualTo("/items/furniture");
+        assertThat(stubWebSocketConfig.getSubProtocols().size()).isEqualTo(3);
+        assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
+        assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
+        assertThat(stubWebSocketConfig.getOnMessage().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithInvalidServerResponsePolicyName() throws Exception {
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-invalid-policy-name.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "invalid-policy-name";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithDuplicateURL() throws Exception {
+
+        Exception exception = assertThrows(IOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-url.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket config YAML contains duplicate URL: /this/is/duplicate/uri/path";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithDuplicateClientRequestBodyText() throws Exception {
+
+        Exception exception = assertThrows(UncheckedIOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-text.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket on-message contains multiple client-request with the same body text";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithDuplicateClientRequestBodyBytes() throws Exception {
+
+        Exception exception = assertThrows(UncheckedIOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-invalid-config-with-duplicate-client-request-body-bytes.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket on-message contains multiple client-request with the same body bytes";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void shouldThrowWhenWebSocketConfigWithoutOnOpenNorOnMessage() throws Exception {
+
+        Exception exception = assertThrows(IOException.class, () -> {
+            final URL yamlUrl = YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-no-on-open-no-on-message.yaml");
+            final InputStream stubsConfigStream = yamlUrl.openStream();
+            final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+            new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+        });
+
+        String expectedMessage = "Web socket config must have at least one of the two 'on-open' or 'on-message' defined";
+        String actualMessage = exception.getMessage();
+
+        assertThat(actualMessage).contains(expectedMessage);
+    }
+
     private YamlParseResultSet unmarshall(final String yaml) throws Exception {
         return new YamlParser().parse(".", yaml);
     }
 }
+//web-socket-invalid-config-with-duplicate-client-request-body-text.yaml

@@ -1,8 +1,8 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
-import io.github.azagniotov.stubby4j.stubs.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;

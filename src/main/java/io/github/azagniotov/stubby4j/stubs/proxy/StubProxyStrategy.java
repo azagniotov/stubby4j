@@ -1,4 +1,4 @@
-package io.github.azagniotov.stubby4j.stubs;
+package io.github.azagniotov.stubby4j.stubs.proxy;
 
 import java.util.EnumSet;
 import java.util.HashMap;

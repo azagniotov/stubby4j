@@ -7,9 +7,11 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,7 +61,7 @@ public final class StringUtils {
     }
 
     public static Charset charsetUTF8() {
-        return Charset.forName(StringUtils.UTF_8);
+        return StandardCharsets.UTF_8;
     }
 
     public static String newStringUtf8(final byte[] bytes) {
@@ -150,8 +152,28 @@ public final class StringUtils {
                 .collect(Collectors.joining(delimiter + " ")); // with one space
     }
 
+    public static Set<String> splitCsv(final String value) {
+        if (value == null || value.trim().equals("")) {
+            return new HashSet<>();
+        }
+        final String delimiter = ",";
+        return Arrays.stream(value.split(delimiter))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+    }
+
     public static String encodeBase64(final String toEncode) {
         return BASE_64_ENCODER.encodeToString(StringUtils.getBytesUtf8(toEncode));
+    }
+
+    public static String encodeBase16(byte[] bytes) {
+        final char[] hexDigits = "0123456789abcdef".toCharArray();
+
+        final StringBuilder sb = new StringBuilder(2 * bytes.length);
+        for (byte b : bytes) {
+            sb.append(hexDigits[(b >> 4) & 0xf]).append(hexDigits[b & 0xf]);
+        }
+        return sb.toString();
     }
 
     public static int calculateStringLength(final String post) {

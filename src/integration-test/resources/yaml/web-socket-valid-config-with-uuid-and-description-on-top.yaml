@@ -1,0 +1,11 @@
+- uuid: 123-567-90
+  description: hello, web socket
+  web-socket:
+    url: /items/furniture
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+      delay: 2000

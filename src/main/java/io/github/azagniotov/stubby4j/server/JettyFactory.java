@@ -12,6 +12,7 @@ import io.github.azagniotov.stubby4j.handlers.StatusPageHandler;
 import io.github.azagniotov.stubby4j.handlers.StubDataRefreshActionHandler;
 import io.github.azagniotov.stubby4j.handlers.StubsPortalHandler;
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
+import io.github.azagniotov.stubby4j.server.websocket.StubsWebSocketCreator;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
@@ -33,18 +34,21 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.server.NativeWebSocketServletContainerInitializer;
+import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -73,9 +77,11 @@ public final class JettyFactory {
     private static final String STUBS_CONNECTOR_NAME = "StubsConnector";
     private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
     private static final String ROOT_PATH_INFO = "/";
+    private static final String WS_ROOT_PATH_INFO = "/ws";
+    public static final String DASHED_STATUS_LINE = "--------------------------------------------------------------------------------------------------------\n";
     private final Map<String, String> commandLineArgs;
     private final StubRepository stubRepository;
-    private final List<String> statuses;
+    private final StringBuilder statusBuilder;
     private String currentHost;
     private int currentStubsPort;
     private int currentAdminPort;
@@ -84,10 +90,10 @@ public final class JettyFactory {
     JettyFactory(final Map<String, String> commandLineArgs, final StubRepository stubRepository) {
         this.commandLineArgs = commandLineArgs;
         this.stubRepository = stubRepository;
-        this.statuses = new LinkedList<>();
+        this.statusBuilder = new StringBuilder();
     }
 
-    Server construct() throws IOException {
+    Server construct() throws IOException, ServletException {
         final Server server = new Server();
         server.setDumpAfterStart(false);
         server.setDumpBeforeStop(false);
@@ -95,6 +101,31 @@ public final class JettyFactory {
 
         server.setConnectors(buildConnectors(server));
         server.setHandler(constructHandlers());
+
+        // The WebSocketServerContainerInitializer.configureContext() requires knowledge about the Server that it will be run under.
+        // Add the ServletContextHandler to the Server instance via its Server.setHandler(Handler) call before you attempt to configure the context.
+        // https://stackoverflow.com/a/34044984
+        // https://stackoverflow.com/questions/34007087/jetty-9-add-websockets-handler-to-handler-list
+        final ContextHandlerCollection contextHandlerCollection = constructHandlers();
+        final ServletContextHandler servletContextHandler =
+                new ServletContextHandler(contextHandlerCollection, WS_ROOT_PATH_INFO, ServletContextHandler.SESSIONS);
+        servletContextHandler.setErrorHandler(new JsonErrorHandler());
+
+        server.setHandler(contextHandlerCollection);
+
+        // Configure specific websocket behavior
+        NativeWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, nativeWebSocketConfiguration) ->
+        {
+            // Configure default max size
+            nativeWebSocketConfiguration.getPolicy().setMaxTextMessageBufferSize(65535);
+
+            // Add websockets
+            nativeWebSocketConfiguration.addMapping("/*", new StubsWebSocketCreator(stubRepository));
+        });
+
+
+        // Add generic filter that will accept WebSocket upgrade.
+        WebSocketUpgradeFilter.configure(servletContextHandler);
 
         return server;
     }
@@ -210,12 +241,17 @@ public final class JettyFactory {
             adminChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final String configured = String.format("Admin portal configured at http://%s:%s",
+        statusBuilder.append("Admin portal:\n");
+        statusBuilder.append(DASHED_STATUS_LINE);
+
+        final String configured = String.format(" > http://%s:%s\t\tAdmin portal\n",
                 adminChannel.getHost(), adminChannel.getPort());
-        statuses.add(configured);
-        final String status = String.format("Admin portal status enabled at http://%s:%s/status",
+        statusBuilder.append(configured);
+
+        final String status = String.format(" > http://%s:%s/status\t\tAdmin portal status\n",
                 adminChannel.getHost(), adminChannel.getPort());
-        statuses.add(status);
+        statusBuilder.append(status);
+        statusBuilder.append("\n");
 
         currentHost = adminChannel.getHost();
         currentAdminPort = adminChannel.getPort();
@@ -237,9 +273,18 @@ public final class JettyFactory {
             stubsChannel.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final String status = String.format("Stubs portal configured at http://%s:%s",
+        statusBuilder.append("\n");
+        statusBuilder.append("Available insecure endpoints:\n");
+        statusBuilder.append(DASHED_STATUS_LINE);
+
+        final String statusHttp = String.format(" > http://%s:%s\t\tHTTP/1.1 stubs portal\n",
                 stubsChannel.getHost(), stubsChannel.getPort());
-        statuses.add(status);
+        statusBuilder.append(statusHttp);
+
+        final String statusWs = String.format(" > ws://%s:%s/ws\t\tHTTP/1.1 WebSockets stubs portal\n",
+                stubsChannel.getHost(), stubsChannel.getPort());
+        statusBuilder.append(statusWs);
+        statusBuilder.append("\n");
 
         currentStubsPort = stubsChannel.getPort();
 
@@ -289,19 +334,36 @@ public final class JettyFactory {
         }
 
         final HashSet<String> supportedTlsProtocals = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
-        final String status = String.format("Stubs portal configured with TLS at https://%s:%s using %s",
-                sslConnector.getHost(), sslConnector.getPort(), (ObjectUtils.isNull(keystorePath) ? "internal self-signed certificate" : "provided " + keystorePath));
-        statuses.add(status);
 
-        final String tlsStatus = String.format("Stubs portal supports TLS protocol versions: %s", supportedTlsProtocals);
-        statuses.add(tlsStatus + (enableAlpnAndHttp2 ? " with ALPN extension on HTTP/2" : ""));
+        statusBuilder.append("\n");
 
+        statusBuilder.append("TLS layer configuration:\n");
+        statusBuilder.append(DASHED_STATUS_LINE);
+        final String tlsStatus = String.format(" > Supported TLS protocol versions: %s", supportedTlsProtocals);
+        statusBuilder.append(tlsStatus).append(enableAlpnAndHttp2 ? " with ALPN extension on HTTP/2\n" : "\n");
         if (!new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
-            final String noTls13Msg = String.format("TLSv1.3 is not supported in JDK v%s, %s",
+            final String noTls13Msg = String.format(" > TLSv1.3 is not supported in JDK v%s, %s\n",
                     System.getProperty("java.runtime.version"),
                     System.getProperty("java.vendor"));
-            statuses.add(noTls13Msg);
+            statusBuilder.append(noTls13Msg).append("\n");
         }
+
+        final String keystoreStatus = " > TLS layer configured using " + (ObjectUtils.isNull(keystorePath) ? "internal self-signed certificate" : "provided " + keystorePath);
+        statusBuilder.append(keystoreStatus).append("\n");
+        statusBuilder.append("\n");
+
+        statusBuilder.append("\n");
+        statusBuilder.append("Available secure endpoints:\n");
+        statusBuilder.append(DASHED_STATUS_LINE);
+
+        final String protocol = enableAlpnAndHttp2 ? "HTTP/2" : "HTTP/1.1";
+        final String tlsPortalStatus = String.format(" > https://%s:%s\t\t%s on TLS stubs portal\n",
+                sslConnector.getHost(), sslConnector.getPort(), protocol);
+        statusBuilder.append(tlsPortalStatus);
+
+        final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\t%s WebSockets on TLS stubs portal\n",
+                sslConnector.getHost(), sslConnector.getPort(), protocol);
+        statusBuilder.append(wssPortalStatus);
 
         currentStubsSslPort = sslConnector.getPort();
 
@@ -406,7 +468,7 @@ public final class JettyFactory {
         return DEFAULT_ADMIN_PORT;
     }
 
-    List<String> getStatuses() {
-        return statuses;
+    StringBuilder getStatuses() {
+        return statusBuilder;
     }
 }

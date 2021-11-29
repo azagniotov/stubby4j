@@ -113,8 +113,8 @@ public final class Main {
             ANSITerminal.status(String.format(BR + "stubby4j successfully started after %s milliseconds at %s", (totalEnd - initialStart), DateTimeUtils.systemDefault()) + BR);
             LOGGER.debug("stubby4j successfully started after {} milliseconds.", totalEnd - initialStart);
 
-            stubbyManager.statuses().forEach(ANSITerminal::status);
-            stubbyManager.statuses().forEach(LOGGER::debug);
+            ANSITerminal.status(stubbyManager.statuses().toString());
+            LOGGER.debug(stubbyManager.statuses().toString());
 
             ANSITerminal.info(BR + "Quit: ctrl-c" + BR);
             LOGGER.info("Quit: ctrl-c");

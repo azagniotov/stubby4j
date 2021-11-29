@@ -13,7 +13,6 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 
 @GeneratedCodeCoverageExclusion
@@ -73,7 +72,7 @@ public final class StubbyManager {
         server.join();
     }
 
-    public List<String> statuses() {
+    public StringBuilder statuses() {
         return jettyFactory.getStatuses();
     }
 

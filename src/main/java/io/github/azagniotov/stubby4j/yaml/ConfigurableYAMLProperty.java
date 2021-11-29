@@ -14,9 +14,20 @@ public enum ConfigurableYAMLProperty {
     // allows for YAML sub-configs
     INCLUDES("includes"),
 
-    // proxy-config & http lifecycle properties
+    // web-socket, proxy-config & http lifecycle properties
     DESCRIPTION("description"),
     UUID("uuid"),
+
+    // web-socket properties
+    WEB_SOCKET("web-socket"),
+    SUB_PROTOCOLS("sub-protocols"),
+    ON_OPEN_SERVER_RESPONSE("on-open"),
+    ON_MESSAGE("on-message"),
+    CLIENT_REQUEST("client-request"),
+    SERVER_RESPONSE("server-response"),
+    SERVER_RESPONSE_POLICY("policy"),
+    MESSAGE_TYPE("message-type"),
+    DELAY("delay"),
 
     // proxy-config properties
     PROXY_CONFIG("proxy-config"),
@@ -29,18 +40,18 @@ public enum ConfigurableYAMLProperty {
     RESPONSE("response"),
 
     // stub request specific
-    URL("url"),
+    URL("url"), // web-socket properties
     METHOD("method"),
     POST("post"),
     QUERY("query"),
 
     // stub response specific
-    BODY("body"),
+    BODY("body"), // web-socket properties
     LATENCY("latency"),
     STATUS("status"),
 
     // stub request & response properties
-    FILE("file"), // request, response properties
+    FILE("file"), // request, response, web-socket properties
     HEADERS("headers"); // request, response, proxy-config properties
 
 
@@ -89,6 +100,34 @@ public enum ConfigurableYAMLProperty {
         proxyConfigProperties.add(ENDPOINT.toString());
         proxyConfigProperties.add(HEADERS.toString());
         PROPERTY_NAME_TO_FAMILY.put(PROXY_CONFIG.toString(), proxyConfigProperties);
+
+        final Set<String> webSocketProperties = new HashSet<>();
+        webSocketProperties.add(UUID.toString());
+        webSocketProperties.add(DESCRIPTION.toString());
+        webSocketProperties.add(URL.toString());
+        webSocketProperties.add(SUB_PROTOCOLS.toString());
+        webSocketProperties.add(ON_OPEN_SERVER_RESPONSE.toString());
+        webSocketProperties.add(ON_MESSAGE.toString());
+        PROPERTY_NAME_TO_FAMILY.put(WEB_SOCKET.toString(), webSocketProperties);
+
+        final Set<String> webSocketClientRequestProperties = new HashSet<>();
+        webSocketClientRequestProperties.add(MESSAGE_TYPE.toString());
+        webSocketClientRequestProperties.add(BODY.toString());
+        webSocketClientRequestProperties.add(FILE.toString());
+        PROPERTY_NAME_TO_FAMILY.put(CLIENT_REQUEST.toString(), webSocketClientRequestProperties);
+
+        final Set<String> webSocketServerResponseProperties = new HashSet<>();
+        webSocketServerResponseProperties.add(MESSAGE_TYPE.toString());
+        webSocketServerResponseProperties.add(SERVER_RESPONSE_POLICY.toString());
+        webSocketServerResponseProperties.add(BODY.toString());
+        webSocketServerResponseProperties.add(FILE.toString());
+        webSocketServerResponseProperties.add(DELAY.toString());
+        PROPERTY_NAME_TO_FAMILY.put(SERVER_RESPONSE.toString(), webSocketServerResponseProperties);
+
+        final Set<String> webSocketOnMessageProperties = new HashSet<>();
+        webSocketOnMessageProperties.add(CLIENT_REQUEST.toString());
+        webSocketOnMessageProperties.add(SERVER_RESPONSE.toString());
+        PROPERTY_NAME_TO_FAMILY.put(ON_MESSAGE.toString(), webSocketOnMessageProperties);
     }
 
     private final String value;

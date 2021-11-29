@@ -8,6 +8,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -91,5 +93,19 @@ public final class HttpClientUtils {
                 .setProtocol(tlsVersion)
                 .loadTrustMaterial(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE, null)
                 .build();
+    }
+
+    static SslContextFactory jettyClientSslContextFactory(final String tlsProtocol) {
+        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+
+        sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
+        sslContextFactory.setProtocol(tlsProtocol);
+        sslContextFactory.setTrustStore(SslUtils.SELF_SIGNED_CERTIFICATE_TRUST_STORE);
+
+        return sslContextFactory;
+    }
+
+    static HttpClient jettyHttpClientWithClientSsl(final String tlsProtocol) {
+        return new HttpClient(jettyClientSslContextFactory(tlsProtocol));
     }
 }

@@ -11,13 +11,13 @@ import static io.github.azagniotov.generics.TypeSafeConverter.as;
 
 public abstract class AbstractBuilder<T extends ReflectableStub> {
 
-    final Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
+    protected final Map<ConfigurableYAMLProperty, Object> fieldNameAndValues;
 
-    AbstractBuilder() {
+    public AbstractBuilder() {
         this.fieldNameAndValues = new HashMap<>();
     }
 
-    <E> E getStaged(final Class<E> clazzor, final ConfigurableYAMLProperty property, E defaultValue) {
+    public <E> E getStaged(final Class<E> clazzor, final ConfigurableYAMLProperty property, E defaultValue) {
         return fieldNameAndValues.containsKey(property) ? as(clazzor, fieldNameAndValues.get(property)) : defaultValue;
     }
 
