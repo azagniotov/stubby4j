@@ -1,0 +1,11 @@
+- web-socket:
+    description: this is a web-socket config
+    url: /hello-world/1
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: Connected via WebSocket
+      delay: 10
+
