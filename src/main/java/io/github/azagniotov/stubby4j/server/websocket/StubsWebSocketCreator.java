@@ -1,8 +1,8 @@
 package io.github.azagniotov.stubby4j.server.websocket;
 
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
@@ -45,9 +45,8 @@ public class StubsWebSocketCreator implements WebSocketCreator {
             try {
                 servletUpgradeResponse.setStatusCode(HttpStatus.NOT_FOUND_404);
                 servletUpgradeResponse.sendError(HttpStatus.NOT_FOUND_404, HttpStatus.Code.NOT_FOUND.getMessage());
-                final String notFoundMessage = "Not found " + servletUpgradeRequest.getRequestPath();
-                ANSITerminal.error(notFoundMessage);
-                LOGGER.error(notFoundMessage);
+
+                ConsoleUtils.logOutgoingWebSocketResponse(servletUpgradeResponse);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -68,9 +67,8 @@ public class StubsWebSocketCreator implements WebSocketCreator {
                 try {
                     servletUpgradeResponse.setStatusCode(HttpStatus.FORBIDDEN_403);
                     servletUpgradeResponse.sendError(HttpStatus.FORBIDDEN_403, HttpStatus.Code.FORBIDDEN.getMessage());
-                    final String forbiddenMessage = "Forbidden due to sub-protocol mismatch. Stubbed: " + stubWebSocketConfig.getSubProtocols();
-                    ANSITerminal.error(forbiddenMessage);
-                    LOGGER.error(forbiddenMessage);
+
+                    ConsoleUtils.logOutgoingWebSocketResponse(servletUpgradeResponse);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

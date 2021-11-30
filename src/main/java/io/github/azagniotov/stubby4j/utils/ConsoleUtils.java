@@ -8,6 +8,7 @@ import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,32 +121,12 @@ public final class ConsoleUtils {
         }
     }
 
+    public static void logOutgoingWebSocketResponse(final ServletUpgradeResponse servletUpgradeResponse) {
+        lorFormattedResponse(servletUpgradeResponse.getStatusCode());
+    }
 
     public static void logOutgoingResponse(final String url, final HttpServletResponse response) {
-        final int status = response.getStatus();
-
-        final String logMessage = String.format("[%s] <= %s %s\n",
-                getLocalDateTime(),
-                status,
-                HttpStatus.getMessage(status)
-        );
-
-        if (HttpStatus.isServerError(status) || HttpStatus.isClientError(status)) {
-            ANSITerminal.error(logMessage);
-            LOGGER.error(logMessage);
-        } else if (HttpStatus.isRedirection(status)) {
-            ANSITerminal.warn(logMessage);
-            LOGGER.warn(logMessage);
-        } else if (HttpStatus.isSuccess(status)) {
-            ANSITerminal.ok(logMessage);
-            LOGGER.info(logMessage);
-        } else if (HttpStatus.isInformational(status)) {
-            ANSITerminal.info(logMessage);
-            LOGGER.info(logMessage);
-        } else {
-            ANSITerminal.log(logMessage);
-            LOGGER.debug(logMessage);
-        }
+        lorFormattedResponse(response.getStatus());
     }
 
     public static void logUnmarshalledWebSocketConfig(final StubWebSocketConfig stubWebSocketConfig) {
@@ -206,5 +187,31 @@ public final class ConsoleUtils {
 
     public static void enableDebug(final boolean isDebug) {
         debug = isDebug;
+    }
+
+
+    private static void lorFormattedResponse(int status) {
+        final String logMessage = String.format("[%s] <= %s %s\n",
+                getLocalDateTime(),
+                status,
+                HttpStatus.getMessage(status)
+        );
+
+        if (HttpStatus.isServerError(status) || HttpStatus.isClientError(status)) {
+            ANSITerminal.error(logMessage);
+            LOGGER.error(logMessage);
+        } else if (HttpStatus.isRedirection(status)) {
+            ANSITerminal.warn(logMessage);
+            LOGGER.warn(logMessage);
+        } else if (HttpStatus.isSuccess(status)) {
+            ANSITerminal.ok(logMessage);
+            LOGGER.info(logMessage);
+        } else if (HttpStatus.isInformational(status)) {
+            ANSITerminal.info(logMessage);
+            LOGGER.info(logMessage);
+        } else {
+            ANSITerminal.log(logMessage);
+            LOGGER.debug(logMessage);
+        }
     }
 }
