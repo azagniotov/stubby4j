@@ -14,6 +14,7 @@ echo "#####################################################################"
 echo "## WebSocket request is being made to $1://$2:$3"
 echo "#####################################################################"
 
+# https://gist.github.com/htp/fbce19069187ec1cc486b594104f01d0#gistcomment-2638079
 smoke_test_response=$(websocat \
   -q -uU \
   --protocol "zumba" \
