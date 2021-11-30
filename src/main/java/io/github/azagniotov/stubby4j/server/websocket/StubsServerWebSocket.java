@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.FRAGMENTATION;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
 
@@ -78,7 +78,7 @@ public class StubsServerWebSocket {
         }
 
         if (!found) {
-            this.remote.sendStringByFuture(String.format("404 Not Found: client request %s", incoming));
+            this.remote.sendStringByFuture(String.format("404 Not Found: client sent [%s]", incoming));
         }
     }
 
