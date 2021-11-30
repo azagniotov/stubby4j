@@ -12,10 +12,13 @@ import org.eclipse.jetty.websocket.api.WebSocketBehavior;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.eclipse.jetty.websocket.common.frames.PongFrame;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,6 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -381,6 +385,66 @@ public class StubsPortalWebSocketProtocolTests {
     }
 
     @Test
+    public void jettySanityCheck_RespondsWithExpected_PongMessage() throws Exception {
+        // This test makes sure that stubby4j did not mess up default Jetty
+        // behavior that conforms to the RFC of the Web Socket protocol:
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        session.getRemote().sendPing(ByteBuffer.wrap(new byte[0]));
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        // Checking that stubby4j web sockets behavior conforms to:
+        // A Pong frame sent in response to a Ping frame
+        // must have identical "Application data" as found
+        // the message body of the Ping frame being replied to
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(new byte[0]);
+    }
+
+    @Test
+    public void jettySanityCheck_RespondsWithExpected_PongWithDataMessage() throws Exception {
+        // This test makes sure that stubby4j did not mess up default Jetty
+        // behavior that conforms to the RFC of the Web Socket protocol:
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        session.getRemote().sendPing(ByteBuffer.wrap("ping".getBytes(StandardCharsets.UTF_8)));
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        // Checking that stubby4j web sockets behavior conforms to:
+        // A Pong frame sent in response to a Ping frame
+        // must have identical "Application data" as found
+        // the message body of the Ping frame being replied to
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo("ping".getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
     public void serverShouldThrow_WhenConnectingClient_RequestedWrongUrl() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
@@ -464,6 +528,23 @@ public class StubsPortalWebSocketProtocolTests {
         @OnWebSocketConnect
         public void onWebSocketConnect(final Session session) {
 
+        }
+
+        @OnWebSocketFrame
+        public void onOnWebSocketFrame(final Frame frame) throws IOException {
+            if (frame instanceof PongFrame) {
+                final PongFrame pongFrame = (PongFrame) frame;
+                final ByteBuffer payload = pongFrame.getPayload();
+
+                if (!payload.hasArray()) {
+                    byte[] to = new byte[payload.remaining()];
+                    payload.slice().get(to);
+                    receivedOnMessageBytes.add(to);
+                } else {
+                    receivedOnMessageBytes.add(payload.array());
+                }
+                countDownLatch.countDown();
+            }
         }
 
         @OnWebSocketMessage
