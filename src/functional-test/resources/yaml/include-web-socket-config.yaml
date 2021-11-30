@@ -105,9 +105,9 @@
     on-message:
       - client-request:
           message-type: text
-          body: send-partial-pls
+          body: send-fragmentation-pls
         server-response:
-          policy: partial
+          policy: fragmentation
           message-type: binary
           file: ../json/response/json_response_1.json
           delay: 10

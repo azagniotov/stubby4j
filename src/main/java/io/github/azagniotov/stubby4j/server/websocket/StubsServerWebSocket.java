@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PARTIAL;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.FRAGMENTATION;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
 
@@ -36,7 +36,7 @@ import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteAr
 public class StubsServerWebSocket {
 
     private static final String NORMAL_CLOSE_REASON = "bye";
-    private static final int PARTIAL_FRAMES = 100;
+    private static final int FRAGMENTATION_FRAMES = 100;
 
     private final StubWebSocketConfig stubWebSocketConfig;
     private final ScheduledExecutorService scheduledExecutorService;
@@ -131,15 +131,15 @@ public class StubsServerWebSocket {
             }, delay, TimeUnit.MILLISECONDS);
         }
 
-        if (serverResponse.getPolicy() == PARTIAL) {
-            final BlockingQueue<ByteBuffer> queue = chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), PARTIAL_FRAMES);
+        if (serverResponse.getPolicy() == FRAGMENTATION) {
+            final BlockingQueue<ByteBuffer> queue = chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), FRAGMENTATION_FRAMES);
             scheduledExecutorService.schedule(() -> {
                 while (!queue.isEmpty()) {
                     try {
                         final ByteBuffer byteBufferChunk = queue.poll();
                         if (byteBufferChunk != null) {
                             final boolean isLast = queue.isEmpty();
-                            // Send response in a binary form as sequential partial frames one after another in
+                            // Send response in a binary form as sequential fragmented frames one after another in
                             // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
                             // in an async manner using a Future, as this can produce un-deterministic behavior.
                             this.remote.sendPartialBytes(byteBufferChunk, isLast);

@@ -62,9 +62,9 @@
     on-message:
       - client-request:
           message-type: text
-          body: partial-start
+          body: fragmentation-start
         server-response:
-          policy: partial
+          policy: fragmentation
           message-type: binary
           file: ../json/response.1.external.file.json
           delay: 250
