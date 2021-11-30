@@ -1,4 +1,4 @@
-An HTTP/1.1 & HTTP/2 server for stubbing external systems in both Docker and non-containerized domains for integration and contract testing.
+An HTTP/1.1 and HTTP/2 server for stubbing external systems in Docker and non-containerized environment for integration and contract testing.
 
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
