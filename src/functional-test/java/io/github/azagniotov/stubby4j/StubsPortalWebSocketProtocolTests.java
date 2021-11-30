@@ -139,7 +139,7 @@ public class StubsPortalWebSocketProtocolTests {
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
     }
@@ -158,7 +158,7 @@ public class StubsPortalWebSocketProtocolTests {
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
         final InputStream binaryDataInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
@@ -187,7 +187,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
         final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
@@ -215,7 +215,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendBytes(ByteBuffer.wrap(payloadBytes));
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(2, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
         final InputStream expectedBytesInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
@@ -239,7 +239,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("hello");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
         assertThat(socket.receivedOnMessageText.contains("bye-bye")).isTrue();
@@ -260,7 +260,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("do push");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(5);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
         socket.receivedOnMessageText.remove("You have been successfully connected");
@@ -286,7 +286,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("JSON");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
 
@@ -315,7 +315,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("push PDF");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(3, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(4);
@@ -344,7 +344,7 @@ public class StubsPortalWebSocketProtocolTests {
         session.getRemote().sendString("disconnect with a message");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(1, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
         assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
         assertThat(socket.receivedOnMessageText.contains("bon-voyage")).isTrue();
@@ -357,7 +357,7 @@ public class StubsPortalWebSocketProtocolTests {
     }
 
     @Test
-    public void serverOnMessage_RespondsWithExpected_BinaryMessage_PartialFrames() throws Exception {
+    public void serverOnMessage_RespondsWithExpected_BinaryMessage_FragmentedFrames() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
@@ -368,10 +368,10 @@ public class StubsPortalWebSocketProtocolTests {
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
-        session.getRemote().sendString("send-partial-pls");
+        session.getRemote().sendString("send-fragmentation-pls");
 
         // Wait for client to get all the messages from the server
-        assertThat(socket.countDownLatch.await(2, TimeUnit.SECONDS)).isTrue();
+        socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
         final InputStream expectedBytesInputStream = readResourceAsInputStream("/json/response/json_response_1.json");
@@ -490,6 +490,10 @@ public class StubsPortalWebSocketProtocolTests {
         @OnWebSocketError
         public void onWebSocketError(Throwable cause) {
 
+        }
+
+        public void awaitCountDownLatchWithAssertion() throws InterruptedException {
+            assertThat(this.countDownLatch.await(3, TimeUnit.SECONDS)).isTrue();
         }
     }
 }
