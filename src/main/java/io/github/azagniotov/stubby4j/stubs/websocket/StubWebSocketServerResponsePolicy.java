@@ -12,6 +12,7 @@ public enum StubWebSocketServerResponsePolicy {
     ONCE("once"),
     PUSH("push"),
     FRAGMENTATION("fragmentation"),
+    PING("ping"),
     DISCONNECT("disconnect");
 
     private static final Map<String, StubWebSocketServerResponsePolicy> PROPERTY_NAME_TO_ENUM_MEMBER;

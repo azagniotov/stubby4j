@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.server.websocket;
 
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
@@ -14,6 +15,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,12 +32,16 @@ import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessage
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.FRAGMENTATION;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PING;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
 import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.getLocalDateTime;
 
 @WebSocket
 public class StubsServerWebSocket {
 
+    public static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.wrap(new byte[0]);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StubsServerWebSocket.class);
     private static final String NORMAL_CLOSE_REASON = "bye";
     private static final int FRAGMENTATION_FRAMES = 100;
 
@@ -107,12 +114,26 @@ public class StubsServerWebSocket {
 
     @OnWebSocketClose
     public void onWebSocketClose(final int statusCode, final String reason) {
-//        System.out.println("Socket Closed: [" + statusCode + "] " + reason);
+        final String logMessage = String.format("[%s] <= %s %s\n",
+                getLocalDateTime(),
+                statusCode,
+                String.format("Socket Closed: [%s] %s", statusCode, reason)
+        );
+
+        ANSITerminal.info(logMessage);
+        LOGGER.info(logMessage);
     }
 
     @OnWebSocketError
     public void onWebSocketError(Throwable cause) {
-        cause.printStackTrace(System.err);
+        final String logMessage = String.format("[%s] <= %s %s\n",
+                getLocalDateTime(),
+                500,
+                cause.getMessage()
+        );
+
+        ANSITerminal.error(logMessage);
+        LOGGER.error(logMessage);
     }
 
     private void dispatchServerResponse(final StubWebSocketServerResponse serverResponse) {
@@ -161,6 +182,19 @@ public class StubsServerWebSocket {
                     this.remote.sendStringByFuture(serverResponse.getBodyAsString());
                 } else {
                     this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
+                }
+            }, delay, delay, TimeUnit.MILLISECONDS);
+        }
+
+        if (serverResponse.getPolicy() == PING) {
+            // Send Ping (without application data) to the connected
+            // client upon on-open or on-message config in periodic manner.
+            // WebSocket Ping spec: https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2
+            scheduledExecutorService.scheduleAtFixedRate(() -> {
+                try {
+                    this.remote.sendPing(EMPTY_BYTE_BUFFER);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
                 }
             }, delay, delay, TimeUnit.MILLISECONDS);
         }

@@ -7,8 +7,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -16,8 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class StubsWebSocketCreator implements WebSocketCreator {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(StubsWebSocketCreator.class);
 
     private final StubRepository stubRepository;
 
