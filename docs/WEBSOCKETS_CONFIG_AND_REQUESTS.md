@@ -6,6 +6,7 @@
 ### Table of contents
 
 * [Summary](#summary)
+* [Available WebSockets endpoints](#available-websockets-endpoints)
 * [WebSockets configuration HOWTO](#websockets-configuration-howto)
    * [Supported YAML properties](#supported-yaml-properties)
 
@@ -18,6 +19,16 @@ As of `v7.5.0` (incl.) of `stubby4j`, you can stub a WebSocket with a `stubby4j`
 
 Keep on reading to understand how to add websocket configurations to your `stubby4j` YAML config.
 
+## Available WebSockets endpoints 
+
+When `stubby4j` starts, it exposes two WebSockets endpoints - secure (i.e.: over TLS) & insecure. When making websocket requests to the stubbed websocket configuration, the request should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), __plus__ the stubbed request URI path. For example:
+
+* Insecure: `ws://<STUBS_HOSTNAME>:<STUBS_PORT>/ws/<URI_PATH>` => `ws://localhost:8882/ws/demo/web-socket/1`
+* Secure: `wss://<STUBS_HOSTNAME>:<STUBS_TLS_PORT>/ws/<URI_PATH>` => `wss://localhost:7443/ws/demo/web-socket/1`
+
+To note, if you want to make secure websocket requests , you have to add to your client certificate trust-store stubby4j's self-signed certificate (if you have not provided your own), see [Client-side TLS configuration](../README.md#client-side-tls-configuration) and [Making requests over TLS](../README.md#making-requests-over-tls) for more information 
+
+Now let's understand how to declare a websocket configuration. 
 
 ## WebSockets configuration HOWTO
 
@@ -35,15 +46,7 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
     ...
 ```
 
-Requests to the stubbed websocket should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), plus the stubbed request URI path. For example:
-
-* Insecure (`ws://`), e.g.: `ws://localhost:8882/ws/demo/web-socket/1`
-* Secure (`wss://`), e.g.: `wss://localhost:7443/ws/demo/web-socket/1`
-
-To note, if you want to make secure websocket requests (i.e.: over TLS), you have to add to your client certificate trust store stubby4j's self-signed certificate (if you have not provided your own), see [Client-side TLS configuration](../README.md#client-side-tls-configuration) and [Making requests over TLS](../README.md#making-requests-over-tls) for more information 
-
-
-First, let's understand how to declare a websocket configuration. The following is a fully-populated example with multiple `web-socket` objects:
+The following is a fully-populated example with multiple `web-socket` objects:
 
 <details>
   <summary><code>Click to expand</code></summary>
