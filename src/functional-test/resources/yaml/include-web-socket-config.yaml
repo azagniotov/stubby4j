@@ -111,3 +111,11 @@
           message-type: binary
           file: ../json/response/json_response_1.json
           delay: 10
+
+- web-socket:
+    url: /demo/hello/6
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: ping
+      delay: 100

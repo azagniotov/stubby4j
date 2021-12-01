@@ -18,6 +18,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.eclipse.jetty.websocket.common.frames.PingFrame;
 import org.eclipse.jetty.websocket.common.frames.PongFrame;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientWithClientSsl;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
 import static org.junit.Assert.assertThrows;
 
 public class StubsPortalWebSocketProtocolTests {
@@ -60,6 +62,7 @@ public class StubsPortalWebSocketProtocolTests {
     private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/3"));
     private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/4"));
     private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/5"));
+    private static final URI REQUEST_URL_HELLO_6 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/6"));
     private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
@@ -170,6 +173,31 @@ public class StubsPortalWebSocketProtocolTests {
         binaryDataInputStream.read(expectedBytes);
 
         assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
+    }
+
+    @Test
+    public void serverOnOpen_RespondsWithExpected_ContinuousPing() throws Exception {
+        // The socket that receives server events
+        final StubsClientWebSocket socket = new StubsClientWebSocket(5);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_6);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_6, clientUpgradeRequest);
+        sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(5);
+
+        final byte[] emptyArray = EMPTY_BYTE_BUFFER.array();
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(emptyArray);
+        assertThat(socket.receivedOnMessageBytes.get(1)).isEqualTo(emptyArray);
+        assertThat(socket.receivedOnMessageBytes.get(2)).isEqualTo(emptyArray);
+        assertThat(socket.receivedOnMessageBytes.get(3)).isEqualTo(emptyArray);
+        assertThat(socket.receivedOnMessageBytes.get(4)).isEqualTo(emptyArray);
     }
 
     @Test
@@ -411,7 +439,7 @@ public class StubsPortalWebSocketProtocolTests {
         // must have identical "Application data" as found
         // the message body of the Ping frame being replied to
         // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
-        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(new byte[0]);
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(EMPTY_BYTE_BUFFER.array());
     }
 
     @Test
@@ -532,16 +560,23 @@ public class StubsPortalWebSocketProtocolTests {
 
         @OnWebSocketFrame
         public void onOnWebSocketFrame(final Frame frame) throws IOException {
+            if (frame instanceof PingFrame) {
+                final PingFrame pingFrame = (PingFrame) frame;
+                final ByteBuffer pingPayload = pingFrame.getPayload();
+                receivedOnMessageBytes.add(pingPayload.array());
+                countDownLatch.countDown();
+            }
+
             if (frame instanceof PongFrame) {
                 final PongFrame pongFrame = (PongFrame) frame;
-                final ByteBuffer payload = pongFrame.getPayload();
+                final ByteBuffer pongPayload = pongFrame.getPayload();
 
-                if (!payload.hasArray()) {
-                    byte[] to = new byte[payload.remaining()];
-                    payload.slice().get(to);
+                if (!pongPayload.hasArray()) {
+                    byte[] to = new byte[pongPayload.remaining()];
+                    pongPayload.slice().get(to);
                     receivedOnMessageBytes.add(to);
                 } else {
-                    receivedOnMessageBytes.add(payload.array());
+                    receivedOnMessageBytes.add(pongPayload.array());
                 }
                 countDownLatch.countDown();
             }
