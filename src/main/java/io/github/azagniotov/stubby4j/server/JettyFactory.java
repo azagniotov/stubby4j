@@ -66,19 +66,16 @@ public final class JettyFactory {
     public static final int DEFAULT_STUBS_PORT = 8882;
     public static final int DEFAULT_SSL_PORT = 7443;
     public static final String DEFAULT_HOST = "localhost";
-
+    public static final String DASHED_STATUS_LINE = "--------------------------------------------------------------------------------------------------------\n";
     private static final Logger LOGGER = LoggerFactory.getLogger(JettyFactory.class);
-
     private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
     private static final String PROTOCOL_HTTP_2 = "h2";
-
     private static final String ADMIN_CONNECTOR_NAME = "AdminConnector";
     private static final String STUBS_CONNECTOR_NAME = "StubsConnector";
     private static final String SSL_CONNECTOR_NAME = "SslStubsConnector";
     private static final String ROOT_PATH_INFO = "/";
     private static final String WS_ROOT_PATH_INFO = "/ws";
-    public static final String DASHED_STATUS_LINE = "--------------------------------------------------------------------------------------------------------\n";
     private final Map<String, String> commandLineArgs;
     private final StubRepository stubRepository;
     private final StringBuilder statusBuilder;
@@ -322,7 +319,7 @@ public final class JettyFactory {
         final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
         final ServerConnector sslConnector = enableAlpnAndHttp2 ?
                 buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory) :
-                buildSslConnectorWithHttp1(server, httpConfiguration, sslContextFactory);
+                buildSslConnectorWithHttp11(server, httpConfiguration, sslContextFactory);
 
         sslConnector.setPort(getStubsSslPort(commandLineArgs));
         sslConnector.setHost(DEFAULT_HOST);
@@ -333,13 +330,13 @@ public final class JettyFactory {
             sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final HashSet<String> supportedTlsProtocals = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
+        final HashSet<String> supportedTlsProtocols = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
 
         statusBuilder.append("\n");
 
         statusBuilder.append("TLS layer configuration:\n");
         statusBuilder.append(DASHED_STATUS_LINE);
-        final String tlsStatus = String.format(" > Supported TLS protocol versions: %s", supportedTlsProtocals);
+        final String tlsStatus = String.format(" > Supported TLS protocol versions: %s", supportedTlsProtocols);
         statusBuilder.append(tlsStatus).append(enableAlpnAndHttp2 ? " with ALPN extension on HTTP/2\n" : "\n");
         if (!new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
             final String noTls13Msg = String.format(" > TLSv1.3 is not supported in JDK v%s, %s\n",
@@ -421,9 +418,9 @@ public final class JettyFactory {
         return httpConfiguration;
     }
 
-    private ServerConnector buildSslConnectorWithHttp1(final Server server,
-                                                       final HttpConfiguration httpConfiguration,
-                                                       final SslContextFactory sslContextFactory) {
+    private ServerConnector buildSslConnectorWithHttp11(final Server server,
+                                                        final HttpConfiguration httpConfiguration,
+                                                        final SslContextFactory sslContextFactory) {
         final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
         return new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
     }
