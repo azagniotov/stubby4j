@@ -19,7 +19,6 @@ import org.eclipse.jetty.http2.api.Session;
 import org.eclipse.jetty.http2.api.Stream;
 import org.eclipse.jetty.http2.api.server.ServerSessionListener;
 import org.eclipse.jetty.http2.client.HTTP2Client;
-import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
 import org.eclipse.jetty.http2.frames.DataFrame;
 import org.eclipse.jetty.http2.frames.HeadersFrame;
 import org.eclipse.jetty.http2.frames.PushPromiseFrame;
@@ -47,11 +46,12 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyClientSslContextFactory;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClient20WithClientSsl;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
 import static java.util.Arrays.asList;
 
-public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
+public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
@@ -77,7 +77,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "--enable_tls_with_alpn_and_http_2");
 
-        final URL jsonContentUrl = StubsPortalTlsWithAlpnHttp2ProtocolTests.class.getResource("/json/response/json_response_1.json");
+        final URL jsonContentUrl = StubsPortalHttp20OverTlsWithAlpnProtocolTests.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
     }
@@ -194,16 +194,7 @@ public class StubsPortalTlsWithAlpnHttp2ProtocolTests {
     }
 
     private void makeRequestAndAssert(final String tlsProtocol) throws Exception {
-        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(tlsProtocol);
-
-        final HTTP2Client http2Client = new HTTP2Client();
-        http2Client.addBean(sslContextFactory);
-
-        final HttpClientTransportOverHTTP2 transport = new HttpClientTransportOverHTTP2(http2Client);
-        transport.setUseALPN(true);
-
-        final HttpClient httpClient = new HttpClient(transport, sslContextFactory);
-        httpClient.setMaxConnectionsPerDestination(4);
+        final HttpClient httpClient = jettyHttpClient20WithClientSsl(tlsProtocol);
         httpClient.start();
 
         ContentResponse response = httpClient.newRequest("localhost", STUBS_SSL_PORT)

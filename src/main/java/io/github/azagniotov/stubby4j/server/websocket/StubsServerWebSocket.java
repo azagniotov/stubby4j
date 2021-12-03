@@ -117,10 +117,10 @@ public class StubsServerWebSocket {
         final String logMessage = String.format("[%s] <= %s %s\n",
                 getLocalDateTime(),
                 statusCode,
-                String.format("Socket Closed: [%s] %s", statusCode, reason)
+                String.format("Socket closed by client: [%s] %s", statusCode, reason.trim())
         );
 
-        ANSITerminal.info(logMessage);
+        ANSITerminal.ok(logMessage);
         LOGGER.info(logMessage);
     }
 

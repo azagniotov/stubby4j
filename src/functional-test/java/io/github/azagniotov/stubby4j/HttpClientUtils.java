@@ -9,6 +9,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.http2.client.HTTP2Client;
+import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.SSLContext;
@@ -105,7 +107,26 @@ public final class HttpClientUtils {
         return sslContextFactory;
     }
 
+    static HttpClient jettyHttpClient() {
+        return new HttpClient();
+    }
+
     static HttpClient jettyHttpClientWithClientSsl(final String tlsProtocol) {
         return new HttpClient(jettyClientSslContextFactory(tlsProtocol));
+    }
+
+    static HttpClient jettyHttpClient20WithClientSsl(final String tlsProtocol) {
+        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(tlsProtocol);
+
+        final HTTP2Client http2Client = new HTTP2Client();
+        http2Client.addBean(sslContextFactory);
+
+        final HttpClientTransportOverHTTP2 transport = new HttpClientTransportOverHTTP2(http2Client);
+        transport.setUseALPN(true);
+
+        final HttpClient httpClient = new HttpClient(transport, sslContextFactory);
+        httpClient.setMaxConnectionsPerDestination(4);
+
+        return httpClient;
     }
 }

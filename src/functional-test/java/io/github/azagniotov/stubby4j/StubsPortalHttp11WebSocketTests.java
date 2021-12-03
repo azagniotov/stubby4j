@@ -3,11 +3,11 @@ package io.github.azagniotov.stubby4j;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
+import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.StatusCode;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -24,7 +24,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,12 +44,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientWithClientSsl;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClient;
 import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
 import static org.junit.Assert.assertThrows;
 
-public class StubsPortalWebSocketProtocolTests {
+// There are jetty specific tests that I want to run last, hence the MethodSorters.NAME_ASCENDING,
+// since one of the tests will close the server websocket and stubby4j will have to be restarted.
+// Normally, it is a bad practice to have some interdependency in tests and should be avoided.
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class StubsPortalHttp11WebSocketTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
@@ -55,15 +60,15 @@ public class StubsPortalWebSocketProtocolTests {
     private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
 
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
-    private static final String WEBSOCKET_SSL_ROOT_PATH_URL = String.format("wss://localhost:%s/ws", STUBS_SSL_PORT);
+    private static final String WEBSOCKET_ROOT_PATH_URL = String.format("ws://localhost:%s/ws", STUBS_PORT);
 
-    private static final URI REQUEST_URL_HELLO_1 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/1"));
-    private static final URI REQUEST_URL_HELLO_2 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/2"));
-    private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/3"));
-    private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/4"));
-    private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/5"));
-    private static final URI REQUEST_URL_HELLO_6 = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/demo/hello/6"));
-    private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_SSL_ROOT_PATH_URL, "/blah"));
+    private static final URI REQUEST_URL_HELLO_1 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/1"));
+    private static final URI REQUEST_URL_HELLO_2 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/2"));
+    private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/3"));
+    private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/4"));
+    private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/5"));
+    private static final URI REQUEST_URL_HELLO_6 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/6"));
+    private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
 
@@ -74,16 +79,22 @@ public class StubsPortalWebSocketProtocolTests {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalWebSocketProtocolTests.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
+        final URL url = StubsPortalHttp11WebSocketTests.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
         assert url != null;
 
         final InputStream stubsDataInputStream = url.openStream();
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
 
-        STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
+        // Do not pass in flag: "--enable_tls_with_alpn_and_http_2"
+        //
+        // WebSocket Bootstrap from HTTP/2 (RFC8441) not supported in Jetty 9.x
+        // https://github.com/eclipse/jetty.project/blob/f86a719bce89844337e4f2bde68e8e147095ed80/jetty-websocket/websocket-server/src/main/java/org/eclipse/jetty/websocket/server/WebSocketServerFactory.java#L585
+        //
+        // Also, they added WebSocket Bootstrap from HTTP/2 (RFC8441) only in Jetty 10.x.x: https://github.com/eclipse/jetty.project/pull/3740
+        STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "");
 
-        client = new WebSocketClient(jettyHttpClientWithClientSsl(TLS_v1_2));
+        client = new WebSocketClient(jettyHttpClient());
         client.start();
     }
 
@@ -94,7 +105,7 @@ public class StubsPortalWebSocketProtocolTests {
     }
 
     private static InputStream readResourceAsInputStream(final String testResource) throws IOException {
-        final URL url = StubsPortalWebSocketProtocolTests.class.getResource(testResource);
+        final URL url = StubsPortalHttp11WebSocketTests.class.getResource(testResource);
         assert url != null;
 
         return url.openStream();
@@ -126,7 +137,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         assertThat(session).isNotNull();
         assertThat(session.isOpen()).isTrue();
-        assertThat(session.isSecure()).isTrue();
+        assertThat(session.isSecure()).isFalse();
         assertThat(session.getPolicy().getBehavior()).isEqualTo(WebSocketBehavior.CLIENT);
 
         assertThat(session.getUpgradeResponse().getAcceptedSubProtocol()).isEqualTo("mamba,echo");
@@ -240,7 +251,7 @@ public class StubsPortalWebSocketProtocolTests {
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
 
-        final URL resource = StubsPortalWebSocketProtocolTests.class.getResource("/json/response/json_response_6.json");
+        final URL resource = StubsPortalHttp11WebSocketTests.class.getResource("/json/response/json_response_6.json");
         final Path path = Paths.get(resource.toURI());
         final byte[] payloadBytes = FileUtils.fileToBytes(path.toFile());
 
@@ -362,31 +373,31 @@ public class StubsPortalWebSocketProtocolTests {
         assertThat(socket.receivedOnMessageBytes.get(3)).isEqualTo(expectedBytes);
     }
 
-    @Test
-    public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(3);
-        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
-
-        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
-        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
-
-        session.getRemote().sendString("disconnect with a message");
-
-        // Wait for client to get all the messages from the server
-        socket.awaitCountDownLatchWithAssertion();
-        assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
-        assertThat(socket.receivedOnMessageText.contains("bon-voyage")).isTrue();
-
-        assertThat(socket.receivedOnCloseText.size()).isEqualTo(1);
-        assertThat(socket.receivedOnCloseText.contains("bye")).isTrue();
-
-        assertThat(socket.receivedOnCloseStatus.size()).isEqualTo(1);
-        assertThat(socket.receivedOnCloseStatus.contains(StatusCode.NORMAL)).isTrue();
-    }
+//    @Test
+//    public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
+//        final StubsClientWebSocket socket = new StubsClientWebSocket(3);
+//        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+//        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
+//        clientUpgradeRequest.setLocalEndpoint(socket);
+//        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+//
+//        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
+//        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+//
+//        session.getRemote().sendString("disconnect with a message");
+//
+//        // Wait for client to get all the messages from the server
+//        socket.awaitCountDownLatchWithAssertion();
+//        assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
+//        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+//        assertThat(socket.receivedOnMessageText.contains("bon-voyage")).isTrue();
+//
+//        assertThat(socket.receivedOnCloseText.size()).isEqualTo(1);
+//        assertThat(socket.receivedOnCloseText.contains("bye")).isTrue();
+//
+//        assertThat(socket.receivedOnCloseStatus.size()).isEqualTo(1);
+//        assertThat(socket.receivedOnCloseStatus.contains(StatusCode.NORMAL)).isTrue();
+//    }
 
     @Test
     public void serverOnMessage_RespondsWithExpected_BinaryMessage_FragmentedFrames() throws Exception {
@@ -410,66 +421,6 @@ public class StubsPortalWebSocketProtocolTests {
         final byte[] expectedBytes = new byte[expectedBytesInputStream.available()];
         expectedBytesInputStream.read(expectedBytes);
         assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
-    }
-
-    @Test
-    public void jettySanityCheck_RespondsWithExpected_PongMessage() throws Exception {
-        // This test makes sure that stubby4j did not mess up default Jetty
-        // behavior that conforms to the RFC of the Web Socket protocol:
-        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
-
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
-
-        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
-
-        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
-        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
-
-        session.getRemote().sendPing(ByteBuffer.wrap(new byte[0]));
-
-        // Wait for client to get all the messages from the server
-        socket.awaitCountDownLatchWithAssertion();
-        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
-
-        // Checking that stubby4j web sockets behavior conforms to:
-        // A Pong frame sent in response to a Ping frame
-        // must have identical "Application data" as found
-        // the message body of the Ping frame being replied to
-        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
-        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(EMPTY_BYTE_BUFFER.array());
-    }
-
-    @Test
-    public void jettySanityCheck_RespondsWithExpected_PongWithDataMessage() throws Exception {
-        // This test makes sure that stubby4j did not mess up default Jetty
-        // behavior that conforms to the RFC of the Web Socket protocol:
-        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
-
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
-
-        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
-
-        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
-        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
-
-        session.getRemote().sendPing(ByteBuffer.wrap("ping".getBytes(StandardCharsets.UTF_8)));
-
-        // Wait for client to get all the messages from the server
-        socket.awaitCountDownLatchWithAssertion();
-        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
-
-        // Checking that stubby4j web sockets behavior conforms to:
-        // A Pong frame sent in response to a Ping frame
-        // must have identical "Application data" as found
-        // the message body of the Ping frame being replied to
-        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
-        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo("ping".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -532,6 +483,66 @@ public class StubsPortalWebSocketProtocolTests {
         String actualMessage = exception.getCause().getMessage();
 
         assertThat(actualMessage).contains(expectedMessage);
+    }
+
+    @Test
+    public void webSocketProtocol_jettySanityCheck_jettyRespondsWithExpected_PongMessage() throws Exception {
+        // This test makes sure that stubby4j did not mess up default Jetty
+        // behavior that conforms to the RFC of the Web Socket protocol:
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        session.getRemote().sendPing(ByteBuffer.wrap(new byte[0]));
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        // Checking that stubby4j web sockets behavior conforms to:
+        // A Pong frame sent in response to a Ping frame
+        // must have identical "Application data" as found
+        // the message body of the Ping frame being replied to
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(EMPTY_BYTE_BUFFER.array());
+    }
+
+    @Test
+    public void webSocketProtocol_jettySanityCheck_jettyRespondsWithExpected_PongWithDataMessage() throws Exception {
+        // This test makes sure that stubby4j did not mess up default Jetty
+        // behavior that conforms to the RFC of the Web Socket protocol:
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
+        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        session.getRemote().sendPing(ByteBuffer.wrap("ping".getBytes(StandardCharsets.UTF_8)));
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        // Checking that stubby4j web sockets behavior conforms to:
+        // A Pong frame sent in response to a Ping frame
+        // must have identical "Application data" as found
+        // the message body of the Ping frame being replied to
+        // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo("ping".getBytes(StandardCharsets.UTF_8));
     }
 
     @WebSocket
@@ -597,7 +608,7 @@ public class StubsPortalWebSocketProtocolTests {
 
         @OnWebSocketClose
         public void onWebSocketClose(int statusCode, String reason) {
-            System.out.printf("Socket closed by server: %s%n %s%n", statusCode, reason);
+            System.out.printf("Socket closed by server: %s %s%n", statusCode, reason);
             receivedOnCloseText.add(reason.trim());
             receivedOnCloseStatus.add(statusCode);
             countDownLatch.countDown();

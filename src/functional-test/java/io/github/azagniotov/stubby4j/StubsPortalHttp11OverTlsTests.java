@@ -32,7 +32,7 @@ import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
 import static java.util.Arrays.asList;
 
-public class StubsPortalTlsProtocolTests {
+public class StubsPortalHttp11OverTlsTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
@@ -61,7 +61,7 @@ public class StubsPortalTlsProtocolTests {
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
 
-        final URL jsonContentUrl = StubsPortalTlsProtocolTests.class.getResource("/json/response/json_response_1.json");
+        final URL jsonContentUrl = StubsPortalHttp11OverTlsTests.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
     }

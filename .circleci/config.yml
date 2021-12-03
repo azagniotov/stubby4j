@@ -279,7 +279,9 @@ smoke_test_steps: &smoke_test_steps
         name: Install WebSocat on Alpine Linux
         command: |
           echo ""
-          apk --no-cache add websocat --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && websocat --version
+          apk --no-cache add \
+            websocat --repository=https://dl-cdn.alpinelinux.org/alpine/v3.15/community --allow-untrusted && \
+          websocat --version
 
     - run:
         name: Build stubby4j uber JAR
