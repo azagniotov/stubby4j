@@ -282,6 +282,12 @@ public final class JettyFactory {
                 stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusHttp);
 
+        if (enableAlpnAndHttp2) {
+            final String tlsPortalStatus = String.format(" > http://%s:%s\t\tHTTP/2 stubs portal\n",
+                    stubsChannel.getHost(), stubsChannel.getPort());
+            statusBuilder.append(tlsPortalStatus);
+        }
+
         final String statusWs = String.format(" > ws://%s:%s/ws\t\tHTTP/1.1 WebSockets stubs portal\n",
                 stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusWs);
@@ -362,9 +368,10 @@ public final class JettyFactory {
                 sslConnector.getHost(), sslConnector.getPort(), protocol);
         statusBuilder.append(tlsPortalStatus);
 
-        final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\t%s WebSockets on TLS stubs portal\n",
-                sslConnector.getHost(), sslConnector.getPort(), protocol);
-        statusBuilder.append(wssPortalStatus);
+        //TODO Move to jetty v11: https://webtide.com/jetty-10-and-11-have-arrived/
+        // final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\t%s WebSockets on TLS stubs portal\n",
+        //        sslConnector.getHost(), sslConnector.getPort(), protocol);
+        // statusBuilder.append(wssPortalStatus);
 
         currentStubsSslPort = sslConnector.getPort();
 
@@ -430,9 +437,13 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsConnectorWithHttp20(final Server server,
                                                           final HttpConfiguration httpConfiguration) {
+        // Annoying cURL notice in response: Connection state changed (MAX_CONCURRENT_STREAMS == N)!
+        // https://github.com/curl/curl/blob/63c76681827b5ae9017f6c981003cd75e5f127de/lib/http2.h#L32
+        final HTTP2CServerConnectionFactory http2CServerConnectionFactory = new HTTP2CServerConnectionFactory(httpConfiguration);
+        http2CServerConnectionFactory.setMaxConcurrentStreams(100);
         return new ServerConnector(server,
                 new HttpConnectionFactory(httpConfiguration),
-                new HTTP2CServerConnectionFactory(httpConfiguration));
+                http2CServerConnectionFactory);
     }
 
     private ServerConnector buildSslConnectorWithHttp11(final Server server,
