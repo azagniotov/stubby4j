@@ -4,7 +4,6 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
-import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -26,7 +25,6 @@ import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.FuturePromise;
 import org.eclipse.jetty.util.Jetty;
 import org.eclipse.jetty.util.Promise;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,19 +37,14 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyClientSslContextFactory;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp20WithClientSsl;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
-import static java.util.Arrays.asList;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp20;
 
-public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
+public class StubsPortalHttp20ClearTextTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
     private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
@@ -77,7 +70,7 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "--enable_tls_with_alpn_and_http_2");
 
-        final URL jsonContentUrl = StubsPortalHttp20OverTlsWithAlpnProtocolTests.class.getResource("/json/response/json_response_1.json");
+        final URL jsonContentUrl = StubsPortalHttp20ClearTextTests.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
     }
@@ -100,33 +93,20 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
     }
 
     @Test
-    public void shouldReturnExpectedResponseWhenHttp2GetRequestMadeOnOverTlsWithAlpn_TlsVersion_1_2() throws Exception {
-        makeRequestAndAssert(TLS_v1_2);
+    public void shouldReturnExpectedResponseWhenGetRequestMadeOver_Http2_Cleartext() throws Exception {
+        makeRequestAndAssert();
     }
 
     @Test
-    public void shouldReturnExpectedResponseWhenHttp2GetRequestMadeOnOverTlsWithAlpn_TlsVersion_1_3() throws Exception {
-        // The following is a bad practice: conditionally running this test only if 'TLSv1.3' is supported by the JDK
-        if (new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
-            makeRequestAndAssert(TLS_v1_3);
-        } else {
-            assertThat(true).isTrue();
-        }
-    }
-
-    @Test
-    public void shouldReturnExpectedResponseUsingLowLevelHttp2ClientApiOverTlsWithAlpn_TlsVersion_1_3() throws Exception {
-        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(TLS_v1_3);
-
+    public void shouldReturnExpectedResponseWhenGetRequestMadeUsingLowLevelApiOver_Http2_Cleartext() throws Exception {
         final HTTP2Client http2Client = new HTTP2Client();
-        http2Client.addBean(sslContextFactory);
         http2Client.start();
 
         final String host = "localhost";
-        final HttpURI httpURI = new HttpURI("https://" + host + ":" + STUBS_SSL_PORT + "/invoice?status=active&type=full");
+        final HttpURI httpURI = new HttpURI("http://" + host + ":" + STUBS_PORT + "/invoice?status=active&type=full");
 
         final FuturePromise<Session> sessionPromise = new FuturePromise<>();
-        http2Client.connect(sslContextFactory, new InetSocketAddress(host, STUBS_SSL_PORT), new ServerSessionListener.Adapter(), sessionPromise);
+        http2Client.connect(new InetSocketAddress(host, STUBS_PORT), new ServerSessionListener.Adapter(), sessionPromise);
         final Session session = sessionPromise.get(5, TimeUnit.SECONDS);
 
         final HttpFields requestFields = new HttpFields();
@@ -193,14 +173,14 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
         assertThat(expectedContent).isEqualTo(byteBufferCompletableFuture.get());
     }
 
-    private void makeRequestAndAssert(final String tlsProtocol) throws Exception {
-        final HttpClient httpClient = jettyHttpClientOnHttp20WithClientSsl(tlsProtocol);
+    private void makeRequestAndAssert() throws Exception {
+        final HttpClient httpClient = jettyHttpClientOnHttp20();
         httpClient.start();
 
-        ContentResponse response = httpClient.newRequest("localhost", STUBS_SSL_PORT)
+        ContentResponse response = httpClient.newRequest("localhost", STUBS_PORT)
                 .path("/invoice?status=active&type=full")
                 .method(HttpMethod.GET)
-                .scheme(HttpScheme.HTTPS.asString())
+                .scheme(HttpScheme.HTTP.asString())
                 //.timeout(5, TimeUnit.SECONDS)
                 .send();
 

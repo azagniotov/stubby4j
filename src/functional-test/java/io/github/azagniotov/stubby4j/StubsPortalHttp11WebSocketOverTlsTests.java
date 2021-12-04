@@ -46,7 +46,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientWithClientSsl;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp11WithClientSsl;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
 import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
 import static org.junit.Assert.assertThrows;
@@ -97,7 +97,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         // Also, they added WebSocket Bootstrap from HTTP/2 (RFC8441) only in Jetty 10.x.x: https://github.com/eclipse/jetty.project/pull/3740
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "");
 
-        client = new WebSocketClient(jettyHttpClientWithClientSsl(TLS_v1_2));
+        client = new WebSocketClient(jettyHttpClientOnHttp11WithClientSsl(TLS_v1_2));
         client.start();
     }
 

@@ -107,15 +107,26 @@ public final class HttpClientUtils {
         return sslContextFactory;
     }
 
-    static HttpClient jettyHttpClient() {
+    static HttpClient jettyHttpClientOnHttp11() {
         return new HttpClient();
     }
 
-    static HttpClient jettyHttpClientWithClientSsl(final String tlsProtocol) {
+    static HttpClient jettyHttpClientOnHttp11WithClientSsl(final String tlsProtocol) {
         return new HttpClient(jettyClientSslContextFactory(tlsProtocol));
     }
 
-    static HttpClient jettyHttpClient20WithClientSsl(final String tlsProtocol) {
+    static HttpClient jettyHttpClientOnHttp20() {
+        final HTTP2Client http2Client = new HTTP2Client();
+
+        final HttpClientTransportOverHTTP2 transport = new HttpClientTransportOverHTTP2(http2Client);
+
+        final HttpClient httpClient = new HttpClient(transport);
+        httpClient.setMaxConnectionsPerDestination(4);
+
+        return httpClient;
+    }
+
+    static HttpClient jettyHttpClientOnHttp20WithClientSsl(final String tlsProtocol) {
         final SslContextFactory sslContextFactory = jettyClientSslContextFactory(tlsProtocol);
 
         final HTTP2Client http2Client = new HTTP2Client();
