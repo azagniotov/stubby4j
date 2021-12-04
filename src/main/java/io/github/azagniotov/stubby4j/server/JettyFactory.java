@@ -20,6 +20,7 @@ import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.http2.HTTP2Cipher;
+import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -258,8 +259,11 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsConnector(final Server server) {
 
+        final boolean enableAlpnAndHttp2 = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
         final HttpConfiguration httpConfiguration = constructHttpConfiguration();
-        final ServerConnector stubsChannel = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
+        final ServerConnector stubsChannel = enableAlpnAndHttp2 ?
+                buildStubsConnectorWithHttp20(server, httpConfiguration) :
+                buildStubsConnectorWithHttp11(server, httpConfiguration);
         stubsChannel.setPort(getStubsPort(commandLineArgs));
 
         stubsChannel.setName(STUBS_CONNECTOR_NAME);
@@ -416,6 +420,19 @@ public final class JettyFactory {
         httpConfiguration.setResponseHeaderSize(8192);
 
         return httpConfiguration;
+    }
+
+    private ServerConnector buildStubsConnectorWithHttp11(final Server server,
+                                                          final HttpConfiguration httpConfiguration) {
+        return new ServerConnector(server,
+                new HttpConnectionFactory(httpConfiguration));
+    }
+
+    private ServerConnector buildStubsConnectorWithHttp20(final Server server,
+                                                          final HttpConfiguration httpConfiguration) {
+        return new ServerConnector(server,
+                new HttpConnectionFactory(httpConfiguration),
+                new HTTP2CServerConnectionFactory(httpConfiguration));
     }
 
     private ServerConnector buildSslConnectorWithHttp11(final Server server,
