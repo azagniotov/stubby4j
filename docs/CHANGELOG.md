@@ -2,7 +2,8 @@
 
 #### 7.4.1-SNAPSHOT
 
-* Added support for HTTP/2 H2C (or `HTTP/2 over cleartext` - HTTP/2 without TLS). This is where a normal transient http connection is upgraded to a persistent connection that uses the HTTP/2 binary protocol
+* Added support for HTTP/2 H2C (or `HTTP/2 over cleartext` - HTTP/2 without TLS). This is where a normal transient HTTP connection upgraded to a persistent connection that uses the HTTP/2 binary protocol
+* Made startup message about available endpoints clearer
 
 #### 7.4.0
 
