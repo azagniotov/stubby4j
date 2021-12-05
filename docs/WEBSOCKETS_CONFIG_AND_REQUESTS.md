@@ -223,6 +223,7 @@ includes:
 ```
 (from: [main-test-stubs-with-web-socket-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-web-socket-config.yaml))
 
+[Back to top](#table-of-contents)
 
 ### Supported YAML properties
 
@@ -255,6 +256,8 @@ The object `on-open` describes the behavior of the `stubby4j` websocket server w
 The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`
 
 Keep on reading to understand their usage, intent and behavior.
+
+[Back to top](#table-of-contents)
 
 ### on-open object properties
   
@@ -289,6 +292,7 @@ Describes the delay in milliseconds between the subsequent server events to the 
 
 If one of the aforementioned policy types is defined and the `delay` is not specified, the delay will be zero, i.e.: no delay between the subsequent server events. The `delay` takes no affect with the policies of type `once` and `disconnect`.
 
+[Back to top](#table-of-contents)
 
 ## Managing websocket configuration via the REST API
 
