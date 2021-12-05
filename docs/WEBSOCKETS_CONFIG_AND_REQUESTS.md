@@ -250,14 +250,31 @@ Keep on reading to understand their usage, intent and behavior.
 Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Currently, the following five types of policies are supported:
 
 * `once`: the server sends an event _once only_
-* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed events.
+* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed events. The server keeps continuously pushing events until the connected client disconnects.
 * `fragmentation`: the server sends an event payload in a form sequential fragmented frames one after another _in a periodic manner_, instead of sending the payload as a whole blob, which is the behavior of policies `once`, `push` and `disconnect`. 
    
    For example, let's say you want to configure `stubby4j` to stream a large file to the connected client. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed frames.
-* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pings. 
+* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pings. The server keeps continuously pinging until the connected client disconnects.
 
-   The behavior of `fragmentation` is similar to the `push` behavior, the difference is that `stubby4j` is sending a special data frame of type `Ping` instead of a text in UTF-8 or a binary message. 
+   The behavior of `ping` is similar to the `push` behavior, the difference here is that `stubby4j` sends a special binary data frame of type `Ping` instead of a text in UTF-8 or any other binary data. 
 * `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
+
+#### message-type (`required`)
+
+Defines the payload type of the event, which the server sends to the connected client using the defined event metadata. 
+
+Currently, the following two types of message types are supported:
+
+* `text`: the event payload sent in a UTF-8 text format
+* `binary`: the event payload sent as bytes
+
+Please note, in case of `policy` of type `ping`, even if you defined `message-type: text`, the event payload will always be a binary data frame of type `Ping`, as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2)
+
+#### delay (`optional`)
+
+Describes the delay in milliseconds between the subsequent server events to the connected client. Should be used in conjunction with defined policies of type `push`, `fragmentation` and `ping`.
+
+If one of the aforementioned policy types is defined and the `delay` is not specified, the delay will be zero, i.e.: no delay between the subsequent server events. The `delay` takes no affect with the policies of type `once` and `disconnect`.
 
 
 ## Managing websocket configuration via the REST API
