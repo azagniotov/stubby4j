@@ -49,7 +49,7 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
     ...
 ```
 
-The following is a fully-populated example with multiple `web-socket` objects:
+### Fully-populated example with multiple `web-socket` objects:
 
 <details>
   <summary><code>Click to expand</code></summary>
@@ -235,6 +235,18 @@ Unique identifier so it would be easier to [manage websocket configuration via t
 
 This can be anything describing your websocket configuration. 
 
+#### url (`required`)
+
+Defines a unique (across all defined `web-scoket` objects)websocket URI path that client should send its websocket requests to. The `url` should not include the websocket context root path `/ws/`. For example, if a client plans to open a webscoket connection to `ws://localhost:8882/ws/demo/web-socket/1`, then the value of the `url` property should be `/demo/web-socket/1`
+
+#### sub-protocols (`optional`)
+
+Defined a comma separated arbitrary sub-protocol names. Defaults to emoty string. 
+
+WebSocket protocol just defines a mechanism to exchange arbitrary messages. What those messages mean, what kind of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
+
+So you need an agreement between the server and client about these things, i.e.: a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. 
+
 ### on-open
 
 The object `on-open` describes the behavior of the `stubby4j` websocket server when the connection between the server and your client is opened. With the `on-open` object you can configure what connection open events your client should receive and in what manner. The `on-open` object is optional __iif__ the object `on-message` (discussed further) has been declared in a `web-socket` config.
@@ -272,7 +284,7 @@ Please note, in case of `policy` of type `ping`, even if you defined `message-ty
 
 #### delay (`optional`)
 
-Describes the delay in milliseconds between the subsequent server events to the connected client. Should be used in conjunction with defined policies of type `push`, `fragmentation` and `ping`.
+Describes the delay in milliseconds between the subsequent server events to the connected client. Defaults to zero milliseconds. This property should be used in conjunction with defined policies of type `push`, `fragmentation` and `ping`.
 
 If one of the aforementioned policy types is defined and the `delay` is not specified, the delay will be zero, i.e.: no delay between the subsequent server events. The `delay` takes no affect with the policies of type `once` and `disconnect`.
 
