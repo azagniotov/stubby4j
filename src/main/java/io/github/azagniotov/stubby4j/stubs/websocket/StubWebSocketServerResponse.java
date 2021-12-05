@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.newStringUtf8;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DELAY;
@@ -105,11 +107,11 @@ public class StubWebSocketServerResponse implements ReflectableStub {
 
     public static final class Builder extends AbstractBuilder<StubWebSocketServerResponse> {
 
-        private StubWebSocketMessageType messageType;
-        private StubWebSocketServerResponsePolicy strategy;
+        private StubWebSocketMessageType messageType = TEXT;
+        private StubWebSocketServerResponsePolicy strategy = ONCE;
         private String body;
         private File file;
-        private String delay;
+        private String delay = "0";
         private String webSocketServerResponseAsYAML;
 
         public Builder() {
@@ -187,9 +189,9 @@ public class StubWebSocketServerResponse implements ReflectableStub {
         private void reset() {
             this.body = null;
             this.file = null;
-            this.delay = "";
-            this.messageType = null;
-            this.strategy = null;
+            this.delay = "0";
+            this.messageType = TEXT;
+            this.strategy = ONCE;
             this.webSocketServerResponseAsYAML = null;
         }
     }
