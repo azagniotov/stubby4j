@@ -16,7 +16,7 @@
 
 The WebSocket protocol provides a way to exchange data between a client and `stubby4j` over a persistent connection. The data can be passed in both directions with low latency and overhead, and without breaking the connection. WebSockets provide a bidirectional, full-duplex communications channel that operates over HTTP through a single TCP socket connection. This means the `stubby4j` can independently send data to the client without the client having to request it, and vice versa.
 
-As of `v7.5.0` (incl.) of `stubby4j`, you can stub a WebSocket with a `stubby4j` server, and use it to send and receive messages across the WebSocket connection. On this page you will learn how to add a websocket configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto).
+As of `v7.5.0` (incl.) of `stubby4j`, you can stub a WebSocket with the `stubby4j` app, and use it to send and receive messages across the WebSocket connection. On this page you will learn how to add a new websocket configuration to `stubby4j` stubs config, described in YAML.
 
 Keep on reading to understand how to add websocket configurations to your `stubby4j` YAML config.
 
