@@ -235,6 +235,31 @@ Unique identifier so it would be easier to [manage websocket configuration via t
 
 This can be anything describing your websocket configuration. 
 
+### on-open
+
+The object `on-open` describes the behavior of the `stubby4j` websocket server when the connection between the server and your client is opened. With the `on-open` object you can configure what connection open events your client should receive and in what manner. The `on-open` object is optional __iif__ the object `on-message` (discussed further) has been declared in a `web-socket` config.
+
+The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`
+
+Keep on reading to understand their usage, intent and behavior.
+
+### on-open object properties
+  
+#### policy (`required`)
+  
+Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Currently, the following five types of policies are supported:
+
+* `once`: the server sends an event _once only_
+* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed events.
+* `fragmentation`: the server sends an event payload in a form sequential fragmented frames one after another _in a periodic manner_, instead of sending the payload as a whole blob, which is the behavior of policies `once`, `push` and `disconnect`. 
+   
+   For example, let's say you want to configure `stubby4j` to stream a large file to the connected client. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed frames.
+* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pings. 
+
+   The behavior of `fragmentation` is similar to the `push` behavior, the difference is that `stubby4j` is sending a special data frame of type `Ping` instead of a text in UTF-8 or a binary message. 
+* `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
+
+
 ## Managing websocket configuration via the REST API
 
 Just like with stubs management, `stubby4j` enables you to manage your `web-socket` definitions via the REST API exposed by the [Admin Portal](ADMIN_PORTAL.md). See the [available REST API summary](ADMIN_PORTAL.md#available-rest-api-summary)
