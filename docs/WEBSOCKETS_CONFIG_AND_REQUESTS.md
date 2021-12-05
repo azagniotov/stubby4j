@@ -8,6 +8,7 @@
 * [Summary](#summary)
 * [Available WebSockets endpoints](#available-websockets-endpoints)
 * [WebSockets configuration HOWTO](#websockets-configuration-howto)
+   * [Fully-populated example with multiple web-socket objects](#fully-populated-example-with-multiple-web-socket-objects)
    * [Supported YAML properties](#supported-yaml-properties)
 * [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
 
@@ -49,7 +50,7 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
     ...
 ```
 
-### Fully-populated example with multiple `web-socket` objects:
+### Fully-populated example with multiple `web-socket` objects
 
 <details>
   <summary><code>Click to expand</code></summary>
