@@ -9,6 +9,7 @@
 * [Available WebSockets endpoints](#available-websockets-endpoints)
 * [WebSockets configuration HOWTO](#websockets-configuration-howto)
    * [Supported YAML properties](#supported-yaml-properties)
+* [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
 
 
 ### Summary
@@ -21,7 +22,9 @@ Keep on reading to understand how to add websocket configurations to your `stubb
 
 ## Available WebSockets endpoints 
 
-When `stubby4j` starts, it exposes two WebSockets endpoints - secure (i.e.: over TLS) & insecure. When making websocket requests to the stubbed websocket configuration, the request should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), __plus__ the stubbed request URI path. For example:
+`stubby4j` versions `v7.5.x` only supports WebSocket protocol over the `HTTP/1.1` by the virtue of relying on jetty `v9.x.x` which does not support bootstrapping WebSockets with `HTTP/2`. Support for [RFC8441](https://datatracker.ietf.org/doc/html/rfc8441) WebSocket over HTTP/2 is available in [jetty v10.x.x and v11.x.x](https://webtide.com/jetty-10-and-11-have-arrived/). In the future versions, `stubby4j` will be powered by jetty `v11.x.x`.   
+
+When `stubby4j` application starts, it exposes two WebSockets endpoints over `HTTP/1.1` - secure (i.e.: over TLS) & insecure. When making websocket requests to the stubbed websocket configuration, the request should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), __plus__ the stubbed request URI path. For example:
 
 * Insecure: `ws://<STUBS_HOSTNAME>:<STUBS_PORT>/ws/<URI_PATH>` => `ws://localhost:8882/ws/demo/web-socket/1`
 * Secure: `wss://<STUBS_HOSTNAME>:<STUBS_TLS_PORT>/ws/<URI_PATH>` => `wss://localhost:7443/ws/demo/web-socket/1`
@@ -172,7 +175,7 @@ The following is a fully-populated example with multiple `web-socket` objects:
 
 [Back to top](#table-of-contents)
 
-YAML proxy configuartion can be in the same YAML config as the HTTP stubs, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
+YAML websocket configuartion can be in the same YAML config as the other HTTP stub types supported by `stubby4j`, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
 
 ```yaml
 - proxy-config:
@@ -217,13 +220,23 @@ includes:
   - include-all-test-stubs.yaml
   - include-web-socket-config.yaml
 ```
-(from: [main-test-stubs-with-proxy-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-web-socket-config.yaml))
+(from: [main-test-stubs-with-web-socket-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-web-socket-config.yaml))
 
 
 ### Supported YAML properties
 
 This section explains the usage, intent and behavior of each YAML property on the `web-socket` object. 
 
-TBD
+#### uuid (`optional`)
+
+Unique identifier so it would be easier to [manage websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api) at runtime 
+
+#### description (`optional`)
+
+This can be anything describing your websocket configuration. 
+
+## Managing websocket configuration via the REST API
+
+Just like with stubs management, `stubby4j` enables you to manage your `web-socket` definitions via the REST API exposed by the [Admin Portal](ADMIN_PORTAL.md). See the [available REST API summary](ADMIN_PORTAL.md#available-rest-api-summary)
 
 [Back to the main README.md](../README.md#websockets-configuration-and-requests)
