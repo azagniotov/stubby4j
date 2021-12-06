@@ -292,9 +292,9 @@ The object [on-message](#on-message) is not declared in this `web-socket` config
 
 The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`. Keep on reading to understand their usage, intent and behavior.
   
-#### policy (`required`)
+#### policy (`optional`)
   
-Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Currently, the following five types of policies are supported:
+Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Defaults to `once`. Currently, the following five types of policies are supported:
 
 * `once`: the server sends an event _once only_
 * `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pushing events to the connected client.
@@ -306,9 +306,9 @@ Defines the behavior of the server, when it sends events to the connected client
    The behavior of `ping` is similar to the `push` behavior, the difference here is that `stubby4j` sends a special binary data frame of type `Ping` instead of a text in UTF-8 or any other binary data. 
 * `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
 
-#### message-type (`required`)
+#### message-type (`optional`)
 
-Defines the payload type of the event, which the server sends to the connected client using the defined event metadata. 
+Defines the payload type of the event, which the server sends to the connected client using the defined event metadata. Defaults to `text`
 
 Currently, the following two types of message types are supported:
 
