@@ -245,27 +245,33 @@ Defines a unique (across all defined `web-scoket` objects)websocket URI path tha
 
 Defines a comma-separated arbitrary sub-protocol names. Defaults to empty string. 
 
-What are the sub-protocols? WebSocket protocol defines a mechanism to exchange arbitrary messages. What those messages mean, what kind of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
+##### What are the sub-protocols?
 
-Sub-protocol can help to reach an agreement between the server and client about these things, i.e.: a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. See [RFC6455#section-1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9) about subprotocols using the WebSocket protocol
+WebSocket protocol defines a mechanism to exchange arbitrary messages. What those messages mean, _what kind_ of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
+
+Sub-protocol can help to reach an agreement between the server and client about these things, i.e.: it is like a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. See [RFC6455#section-1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9) about subprotocols using the WebSocket protocol
+
+[Back to top](#table-of-contents)
 
 ### on-open
 
-### on-open object is `optional` when
+The object `on-open` describes the behavior that `stubby4j` websocket server initiates when the WebSocket connection between the server and a client is opened. With the `on-open` object you can configure _what events_ your client should receive and in _what manner_, upon opened connection. 
 
-The object `on-message` (discussed further) has been declared in this `web-socket` config
+Do note the difference between the `on-open` server behavior VS the [on-message](#on-message) (discussed further) server behavior: with the behavior defined in [on-message](#on-message), the server requires an explicit request (i.e.: a trigger) from the connected client to start sending events.
 
-### on-open object is `required` when
+#### on-open object is `optional` when
 
-The object `on-message` is not declared in this `web-socket` config
+The object [on-message](#on-message) has been declared in this `web-socket` config
 
-The object `on-open` describes the behavior of the `stubby4j` websocket server when the connection between the server and your client is opened. With the `on-open` object you can configure what connection open events your client should receive and in what manner. The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`
+#### on-open object is `required` when
 
-Keep on reading to understand their usage, intent and behavior.
+The object [on-message](#on-message) is not declared in this `web-socket` config
 
 [Back to top](#table-of-contents)
 
 ### on-open object properties
+
+The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`. Keep on reading to understand their usage, intent and behavior.
   
 #### policy (`required`)
   
@@ -297,6 +303,103 @@ Please note, in case of `policy` of type `ping`, even if you defined `message-ty
 Describes the delay (in milliseconds) between the subsequent server events to the connected client. Defaults to zero. This property should be used in conjunction with defined `policy` of type `push`, `fragmentation` or `ping`.
 
 If one of the aforementioned policy types is defined and the `delay` is not specified, there will be no delay between the subsequent server events to the connected client. The `delay` takes no affect with the policies of type `once` and `disconnect`.
+
+#### body (`optional`)
+
+Contains contents of the server event payload to the connected client. Defaults to empty string. Depending on the defined `message-type`, the payload will be sent as text in UTF-8 format or bytes.
+
+```yaml
+- web-socket:
+    ...
+    ...
+
+    on-open:
+      ...
+      message-type: binary
+      body: >
+         [{
+            "name":"John",
+            "email":"john@example.com"
+         },{
+            "name":"Jane",
+            "email":"jane@example.com"
+         }]
+      ...
+ ```
+
+
+#### file (`optional`)
+
+
+Holds a path to a local file (it can be an absolute or relative path to the main YAML specified in `-d` or `--data`). This property allows you to split up your config across multiple files instead of making one huge bloated `web-config` YAML. Depending on the defined `message-type`, the payload will be sent as text in UTF-8 format or bytes.
+
+For example, let's say you want the server to render a large JSON response body to the connected client, so instead of dumping a lot of text under the `body` property, you could specify a local file with the payload content using the `file` property (btw, the `file` property can also refer to binary files):
+
+```yaml
+- web-socket:
+    ...
+    ...
+
+    on-open:
+      ...
+      message-type: binary
+      file: ../json/extremelyLongJsonFile.json
+      ...
+ ```
+
+Please note:
+
+* If both `file` & `body` properties are supplied, the `file` takes precedence & replaces `body` with the contents from the provided file
+* If the local file could not be loaded using the path form `file` property, `stubby4j` falls back to the value stubbed in `body`. If `body` was not stubbed, an empty string is returned by default
+* Local file path specified in `file` it can be ASCII of binary file (PDF, images, etc.). Please keep in mind, that contents of the local file is preloaded upon `stubby4j` startup and its content is kept as a byte array in memory.
+
+
+[Back to top](#table-of-contents)
+
+### on-message
+
+The object `on-message` describes the behavior of the `stubby4j` websocket server upon receiving a request from the connected client. With the `on-message` object you can configure _what events_ your client should receive and in _what manner_, upon receiving a client request.
+
+Do note the difference between the `on-message` server behavior VS the [on-open](#on-open) server behavior: with the behavior defined in `on-open`, the server does not require an explicit request (i.e.: a trigger) from the connected client to start sending events.
+
+#### on-message object is `optional` when
+
+The object [on-open](#on-open) (discussed earlier) has been declared in this `web-socket` config
+
+#### on-message object is `required` when
+
+The object [on-open](#on-open) is not declared in this `web-socket` config
+
+
+[Back to top](#table-of-contents)
+
+### on-message object properties
+
+The `on-message` object supports the following properties: `client-request` and `server-response`. Keep on reading to understand their usage, intent and behavior.
+
+#### client-request (`required`)
+
+TBD. The metadata of the incoming client request must match the stubbed metadata.
+
+#### server-response (`required`)
+
+The `server-response` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`. Those are the same YAML properties as the properties discussed in [on-open object properties](#on-open-object-properties). So please refer to the aforementioned section to understand their usage, intent and behavior.
+
+```yaml
+- web-socket:
+    ...
+    ...
+
+    on-message:
+      - client-request:
+          ...
+          ...
+        server-response:
+          policy: fragmentation
+          message-type: binary
+          file: ../json/response/json_response_1.json
+          delay: 10
+ ```
 
 [Back to top](#table-of-contents)
 
