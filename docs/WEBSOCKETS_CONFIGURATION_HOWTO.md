@@ -7,7 +7,7 @@
 
 * [Summary](#summary)
 * [Available WebSockets endpoints](#available-websockets-endpoints)
-* [WebSockets configuration HOWTO](#websockets-configuration-howto)
+* [WebSockets configuration](#websockets-configuration)
    * [Fully-populated example with multiple web-socket objects](#fully-populated-example-with-multiple-web-socket-objects)
    * [Supported YAML properties](#supported-yaml-properties)
 * [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
@@ -34,7 +34,7 @@ To note, if you want to make secure websocket requests , you have to add to your
 
 Now let's understand how to declare a websocket configuration. 
 
-## WebSockets configuration HOWTO
+## WebSockets configuration
 
 In `stubby4j` YAML config, the websocket configuration metadata is declared using the `web-socket` property. You can have multiple `web-socket` configured, where each `web-socket` must be uniquely identified by a request URI path, used for connecting to the websocket, for example:
 

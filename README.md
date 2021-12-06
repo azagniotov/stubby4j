@@ -553,7 +553,7 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 ## WebSockets configuration HOWTO
 
-See [WebSockets configuration HOWTO](docs/WEBSOCKETS_CONFIG_AND_REQUESTS.md) for details
+See [WebSockets configuration HOWTO](docs/WEBSOCKETS_CONFIGURATION_HOWTO.md) for details
 
 ## HTTP endpoint configuration HOWTO
 
