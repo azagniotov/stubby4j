@@ -7,7 +7,7 @@
 
 * [Summary](#summary)
 * [Available WebSockets endpoints](#available-websockets-endpoints)
-* [WebSockets configuration HOWTO](#websockets-configuration-howto)
+* [WebSockets configuration](#websockets-configuration)
    * [Fully-populated example with multiple web-socket objects](#fully-populated-example-with-multiple-web-socket-objects)
    * [Supported YAML properties](#supported-yaml-properties)
 * [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
@@ -34,7 +34,7 @@ To note, if you want to make secure websocket requests , you have to add to your
 
 Now let's understand how to declare a websocket configuration. 
 
-## WebSockets configuration HOWTO
+## WebSockets configuration
 
 In `stubby4j` YAML config, the websocket configuration metadata is declared using the `web-socket` property. You can have multiple `web-socket` configured, where each `web-socket` must be uniquely identified by a request URI path, used for connecting to the websocket, for example:
 
@@ -176,7 +176,7 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
 
 [Back to top](#table-of-contents)
 
-YAML websocket configuartion can be in the same YAML config as the other HTTP stub types supported by `stubby4j`, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([Endpoint configuration HOWTO](../README.md#endpoint-configuration-howto)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
+YAML websocket configuartion can be in the same YAML config as the other HTTP stub types supported by `stubby4j`, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([HTTP endpoint configuration HOWTO](../README.md#http-endpoint-configuration-howto)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
 
 ```yaml
 - proxy-config:
