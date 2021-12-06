@@ -418,7 +418,7 @@ The `client-request` object describes the metadata of the incoming client reques
 
 After WebSocket connection has been established and the server receives text message `send-me-a-message` from the connected client, the `stubby4j` server will render a response as described by the `server-response` object. 
 
-The `client-request` object supports the following properties: `message-type`, `body` and `file`. Those are the same YAML properties as the properties discussed in [on-open object properties](#on-open-object-properties). So please refer to the aforementioned section to understand their usage, intent and behavior.
+The `client-request` object supports the following properties: `message-type`, `body` and `file`. Those are the same YAML properties as the properties discussed in [on-open object properties](#on-open-object-properties), the difference is here it is the message type and the request payload that the client must send to the server. So please refer to the aforementioned section to understand their usage, intent and behavior.
 
 [Back to top](#table-of-contents)
 
