@@ -239,17 +239,36 @@ This can be anything describing your websocket configuration.
 
 #### url (`required`)
 
-Defines a unique (across all defined `web-scoket` objects)websocket URI path that client should send its websocket requests to. The `url` should not include the websocket context root path `/ws/`. For example, if a client plans to open a webscoket connection to `ws://localhost:8882/ws/demo/web-socket/1`, then the value of the `url` property should be `/demo/web-socket/1`
+Defines a unique (across all defined `web-scoket` objects in the YAML config) websocket URI path that client should connect to. The `url` should not include the websocket context root path `/ws/`. For example, if a client plans to open a webscoket connection to `ws://localhost:8882/ws/demo/web-socket/1`, then the value of the `url` property should be `/demo/web-socket/1`
+
+```yaml
+- web-socket:
+    url: /demo/web-socket/1
+    ...
+    ...
+```
 
 #### sub-protocols (`optional`)
 
-Defines a comma-separated arbitrary sub-protocol names. Defaults to empty string. 
+Defines a comma-separated arbitrary sub-protocol names. Defaults to empty string.
+
+```yaml
+- web-socket:
+    url: /demo/web-socket/`
+    sub-protocols: echo, mamba, zumba
+    ...
+    ...
+```
+If the `sub-protocols` is specified, then each value in the comma-separated value will be matched against the value of `Sec-WebSocket-Protocol` header in the client's request during the handshake with the connecting client. The server will include the same field and one of the matched subprotocol values in its response for the connection to be established. See [RFC6455#section-1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9) about subprotocols using the WebSocket protocol
+
+If the the `sub-protocols` is specified, then the value was not matched against the value of `Sec-WebSocket-Protocol` header in the client's request, the `stubby4j` server will respond with `403` error.
+
 
 ##### What are the sub-protocols?
 
 WebSocket protocol defines a mechanism to exchange arbitrary messages. What those messages mean, _what kind_ of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
 
-Sub-protocol can help to reach an agreement between the server and client about these things, i.e.: it is like a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. See [RFC6455#section-1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9) about subprotocols using the WebSocket protocol
+Sub-protocol can help to reach an agreement between the server and client about these things, i.e.: it is like a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake.
 
 [Back to top](#table-of-contents)
 
@@ -259,11 +278,11 @@ The object `on-open` describes the behavior that `stubby4j` websocket server ini
 
 Do note the difference between the `on-open` server behavior VS the [on-message](#on-message) (discussed further) server behavior: with the behavior defined in [on-message](#on-message), the server requires an explicit request (i.e.: a trigger) from the connected client to start sending events.
 
-#### on-open object is `optional` when
+##### on-open object is `optional` when
 
 The object [on-message](#on-message) has been declared in this `web-socket` config
 
-#### on-open object is `required` when
+##### on-open object is `required` when
 
 The object [on-message](#on-message) is not declared in this `web-socket` config
 
@@ -360,13 +379,13 @@ Please note:
 
 The object `on-message` describes the behavior of the `stubby4j` websocket server upon receiving a request from the connected client. With the `on-message` object you can configure _what events_ your client should receive and in _what manner_, upon receiving a client request.
 
-Do note the difference between the `on-message` server behavior VS the [on-open](#on-open) server behavior: with the behavior defined in `on-open`, the server does not require an explicit request (i.e.: a trigger) from the connected client to start sending events.
+Do note the difference between the `on-message` server behavior VS the [on-open](#on-open) server behavior: with the behavior defined in [on-open](#on-open), the server does not require an explicit request (i.e.: a trigger) from the connected client and starts sending events the moment the connection was established.
 
-#### on-message object is `optional` when
+##### on-message object is `optional` when
 
 The object [on-open](#on-open) (discussed earlier) has been declared in this `web-socket` config
 
-#### on-message object is `required` when
+##### on-message object is `required` when
 
 The object [on-open](#on-open) is not declared in this `web-socket` config
 
