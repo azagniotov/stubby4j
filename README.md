@@ -1,4 +1,4 @@
-An HTTP 1.1 and HTTP 2 server for stubbing external systems in Docker and non-containerized environment for integration and contract testing
+An HTTP/1.1, HTTP/2 and WebSockets server for stubbing external systems in Docker and non-containerized environment for integration and contract testing
 
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
@@ -10,7 +10,7 @@ An HTTP 1.1 and HTTP 2 server for stubbing external systems in Docker and non-co
 
 [![stubb4j][logo-badge]][logo-link]
 
-It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over `HTTP/1.1` & `HTTP/2` protocols.
+It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over `HTTP/1.1`, `HTTP/2` and `WebSockets` protocols.
 
 Please refer to [Key features](#key-features) for more information
 
