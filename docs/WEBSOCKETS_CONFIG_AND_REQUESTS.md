@@ -274,17 +274,14 @@ Sub-protocol can help to reach an agreement between the server and client about 
 
 ### on-open
 
-The object `on-open` describes the behavior that `stubby4j` websocket server initiates when the WebSocket connection between the server and a client is opened. With the `on-open` object you can configure _what events_ your client should receive and in _what manner_, upon opened connection. 
+The object `on-open` describes the behavior that `stubby4j` websocket server initiates first when the WebSocket connection between the server and a client is established. With the `on-open` object you can configure _what events_ your client should receive and in _what manner_, upon established connection without the need for the client to request them first. 
 
 Do note the difference between the `on-open` server behavior VS the [on-message](#on-message) (discussed further) server behavior: with the behavior defined in [on-message](#on-message), the server requires an explicit request (i.e.: a trigger) from the connected client to start sending events.
 
-##### on-open object is `optional` when
+To note:
 
-The object [on-message](#on-message) has been declared in this `web-socket` config
-
-##### on-open object is `required` when
-
-The object [on-message](#on-message) is not declared in this `web-socket` config
+* `on-open` object is __optional__ when the object [on-message](#on-message) (discussed further) has been declared in this `web-socket` config
+* `on-open` object is __required__ when the object [on-message](#on-message) is not declared in this `web-socket` config
 
 [Back to top](#table-of-contents)
 
@@ -306,6 +303,8 @@ Defines the behavior of the server, when it sends events to the connected client
    The behavior of `ping` is similar to the `push` behavior, the difference here is that `stubby4j` sends a special binary data frame of type `Ping` instead of a text in UTF-8 or any other binary data. 
 * `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
 
+[Back to top](#table-of-contents)
+
 #### message-type (`optional`)
 
 Defines the payload type of the event, which the server sends to the connected client using the defined event metadata. Defaults to `text`
@@ -317,11 +316,15 @@ Currently, the following two types of message types are supported:
 
 Please note, in case of `policy` of type `ping`, even if you defined `message-type: text`, the event payload will always be a binary data frame of type `Ping`, as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2)
 
+[Back to top](#table-of-contents)
+
 #### delay (`optional`)
 
 Describes the delay (in milliseconds) between the subsequent server events to the connected client. Defaults to zero. This property should be used in conjunction with defined `policy` of type `push`, `fragmentation` or `ping`.
 
 If one of the aforementioned policy types is defined and the `delay` is not specified, there will be no delay between the subsequent server events to the connected client. The `delay` takes no affect with the policies of type `once` and `disconnect`.
+
+[Back to top](#table-of-contents)
 
 #### body (`optional`)
 
@@ -346,6 +349,7 @@ Contains contents of the server event payload to the connected client. Defaults 
       ...
  ```
 
+[Back to top](#table-of-contents)
 
 #### file (`optional`)
 
@@ -381,13 +385,10 @@ The object `on-message` describes the behavior of the `stubby4j` websocket serve
 
 Do note the difference between the `on-message` server behavior VS the [on-open](#on-open) server behavior: with the behavior defined in [on-open](#on-open), the server does not require an explicit request (i.e.: a trigger) from the connected client and starts sending events the moment the connection was established.
 
-##### on-message object is `optional` when
+To note:
 
-The object [on-open](#on-open) (discussed earlier) has been declared in this `web-socket` config
-
-##### on-message object is `required` when
-
-The object [on-open](#on-open) is not declared in this `web-socket` config
+* `on-message` object is __optional__ when the object [on-open](#on-open) (discussed earlier) has been declared in this `web-socket` config
+* `on-message` object is __required__ when the object [on-open](#on-open) is not declared in this `web-socket` config
 
 
 [Back to top](#table-of-contents)
@@ -398,9 +399,32 @@ The `on-message` object supports the following properties: `client-request` and 
 
 #### client-request (`required`)
 
-TBD. The metadata of the incoming client request must match the stubbed metadata.
+The `client-request` object describes the metadata of the incoming client request, in order to trigger `stubby4j` server websocket response described by the following `server-response` object. For example: 
+
+```yaml
+- web-socket:
+    ...
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: send-me-a-message
+        server-response:
+          ...
+          ...
+          ...
+
+```
+
+After WebSocket connection has been established and the server receives text message `send-me-a-message` from the connected client, the `stubby4j` server will render a response as described by the `server-response` object. 
+
+The `client-request` object supports the following properties: `message-type`, `body` and `file`. Those are the same YAML properties as the properties discussed in [on-open object properties](#on-open-object-properties). So please refer to the aforementioned section to understand their usage, intent and behavior.
+
+[Back to top](#table-of-contents)
 
 #### server-response (`required`)
+
+With the `server-response` object you can configure _what events_ your client should receive and in _what manner_ when the metadata of the incoming client request was matched the stubbed metadata in `client-request`.
 
 The `server-response` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`. Those are the same YAML properties as the properties discussed in [on-open object properties](#on-open-object-properties). So please refer to the aforementioned section to understand their usage, intent and behavior.
 
