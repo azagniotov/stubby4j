@@ -42,6 +42,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
    * [Client-side TLS configuration](#client-side-tls-configuration)
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
 * [Support for HTTP/2 on HTTPS URIs over TLS](#support-for-http2-on-https-uris-over-tls)
+* [WebSockets configuration HOWTO](#websockets-configuration-howto)
 * [Endpoint configuration HOWTO](#endpoint-configuration-howto)
    * [Request](#request)
       * [Request object properties](#request-object-properties)
@@ -77,13 +78,14 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
 
 ## Advantages of using stubby4j HTTP stub server
 
-There are a number of use cases where you'd want to use `HTTP/1.1` & `HTTP/2` stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
+There are a number of use cases where you'd want to use `WebSockets`, `HTTP/1.1`, `HTTP/2` stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
 
 * Simulate responses from a real server and don't care (or cannot) to send requests over the network
 * Stub out external web services (when developing & testing locally) in a Docker based micro-service architecture
 * Avoid negative productivity impact when an external API you depend on doesn't exist or isn't complete
 * Simulate edge cases and/or failure modes for your web service that the real remote API won't reliably produce
 * Fault injection, where after X good responses on the same URI your web service gets a bad one
+* Verify that your application behaves as expected upon WebSocket server pushes
 * Verify that your code makes HTTP/1.1 or HTTP/2 (over TLS) requests with all the required parameters and/or headers
 * Verify that your code correctly handles HTTP response error codes
 
@@ -102,11 +104,13 @@ There are a number of use cases where you'd want to use `HTTP/1.1` & `HTTP/2` st
 * Dockerzied. Stub out external services in a Docker based micro-service architecture
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
 * Support for `HTTP/2` over `TLS` (`1.2` and higher) using `ALPN` extension
+* Support for `WebSocket` protocol over `HTTP/1.1` with `TLS` or not
 * Fault injection, where after X good responses on the same URI you get a bad one
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
 * Request proxying. Ability to configure a proxy/intercept where requests are proxied to another service
 * Record & Replay. The HTTP response recorded on the first call, having the subsequent calls play back the recorded HTTP response, without actually connecting to the external server
 * `HTTP/1.1` or `HTTP/2` request verification and HTTP response stubbing
+* `WebSocket` request verification, response stubbing, server push, and more
 * Regex support for dynamic matching on URI, query params, headers, POST payload (ie:. `mod_rewrite` in Apache)
 * Dynamic token replacement in stubbed response, by leveraging regex capturing groups as token values during HTTP request verification
 * Serve binary files as stubbed response content (images, PDFs. etc.)
@@ -547,6 +551,9 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 [Back to top](#table-of-contents)
 
+## WebSockets configuration HOWTO
+
+See [WebSockets configuration HOWTO](docs/WEBSOCKETS_CONFIG_AND_REQUESTS.md) for details
 
 ## Endpoint configuration HOWTO
 
