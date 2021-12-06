@@ -15,17 +15,17 @@
 
 ### Summary
 
+As of `v7.5.0` (incl.) of `stubby4j`, you can stub a WebSocket with the `stubby4j` app, and use it to send and receive messages across the WebSocket connection. On this page you will learn how to add a new websocket configuration to `stubby4j` stubs config, described in YAML.
+
 The WebSocket protocol provides a way to exchange data between a client and `stubby4j` over a persistent connection. The data can be passed in both directions with low latency and overhead, and without breaking the connection. WebSockets provide a bidirectional, full-duplex communications channel that operates over HTTP through a single TCP socket connection. This means the `stubby4j` can independently send data to the client without the client having to request it, and vice versa.
 
-As of `v7.5.0` (incl.) of `stubby4j`, you can stub a WebSocket with the `stubby4j` app, and use it to send and receive messages across the WebSocket connection. On this page you will learn how to add a new websocket configuration to `stubby4j` stubs config, described in YAML.
+Do note, that `stubby4j` versions `v7.5.x` only supports WebSocket protocol over the `HTTP/1.1`, by the virtue of relying on jetty `v9.x.x` which does not support bootstrapping WebSockets with `HTTP/2`. Support for [RFC8441](https://datatracker.ietf.org/doc/html/rfc8441) WebSocket over HTTP/2 is available in [jetty v10.x.x and v11.x.x](https://webtide.com/jetty-10-and-11-have-arrived/). In the future versions of `stubby4j`, the library will be powered by jetty `v11.x.x`.   
 
 Keep on reading to understand how to add websocket configurations to your `stubby4j` YAML config.
 
 ## Available WebSockets endpoints 
 
-`stubby4j` versions `v7.5.x` only supports WebSocket protocol over the `HTTP/1.1` by the virtue of relying on jetty `v9.x.x` which does not support bootstrapping WebSockets with `HTTP/2`. Support for [RFC8441](https://datatracker.ietf.org/doc/html/rfc8441) WebSocket over HTTP/2 is available in [jetty v10.x.x and v11.x.x](https://webtide.com/jetty-10-and-11-have-arrived/). In the future versions, `stubby4j` will be powered by jetty `v11.x.x`.   
-
-When `stubby4j` application starts, it exposes two WebSockets endpoints over `HTTP/1.1` - secure (i.e.: over TLS) & insecure. When making websocket requests to the stubbed websocket configuration, the request should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), __plus__ the stubbed request URI path. For example:
+When `stubby4j` application starts, it exposes two WebSockets endpoints over `HTTP/1.1`: secure (i.e.: over TLS) & insecure (i.e.: no TLS). When making websocket requests to the stubbed websocket configuration, the request should be sent over to the websocket context root path `/ws/` (i.e.: `protocol_scheme://addreess:port/ws/`), __plus__ the stubbed request URI path. For example:
 
 * Insecure: `ws://<STUBS_HOSTNAME>:<STUBS_PORT>/ws/<URI_PATH>` => `ws://localhost:8882/ws/demo/web-socket/1`
 * Secure: `wss://<STUBS_HOSTNAME>:<STUBS_TLS_PORT>/ws/<URI_PATH>` => `wss://localhost:7443/ws/demo/web-socket/1`
@@ -243,17 +243,23 @@ Defines a unique (across all defined `web-scoket` objects)websocket URI path tha
 
 #### sub-protocols (`optional`)
 
-Defined a comma separated arbitrary sub-protocol names. Defaults to emoty string. 
+Defines a comma-separated arbitrary sub-protocol names. Defaults to empty string. 
 
-WebSocket protocol just defines a mechanism to exchange arbitrary messages. What those messages mean, what kind of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
+What are the sub-protocols? WebSocket protocol defines a mechanism to exchange arbitrary messages. What those messages mean, what kind of messages a client can expect at any particular point in time or what messages they are allowed to send is entirely up to the implementing application.
 
-So you need an agreement between the server and client about these things, i.e.: a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. 
+Sub-protocol can help to reach an agreement between the server and client about these things, i.e.: a protocol specification. The `sub-protocols` property lets clients formally exchange this information. You can just make up any name for any protocol you want. The server can simply check that the client's request appears to adhere to that protocol during the handshake. See [RFC6455#section-1.9](https://datatracker.ietf.org/doc/html/rfc6455#section-1.9) about subprotocols using the WebSocket protocol
 
 ### on-open
 
-The object `on-open` describes the behavior of the `stubby4j` websocket server when the connection between the server and your client is opened. With the `on-open` object you can configure what connection open events your client should receive and in what manner. The `on-open` object is optional __iif__ the object `on-message` (discussed further) has been declared in a `web-socket` config.
+### on-open object is `optional` when
 
-The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`
+The object `on-message` (discussed further) has been declared in this `web-socket` config
+
+### on-open object is `required` when
+
+The object `on-message` is not declared in this `web-socket` config
+
+The object `on-open` describes the behavior of the `stubby4j` websocket server when the connection between the server and your client is opened. With the `on-open` object you can configure what connection open events your client should receive and in what manner. The `on-open` object supports the following properties: `policy`, `message-type`, `body`, `file`, `delay`
 
 Keep on reading to understand their usage, intent and behavior.
 
@@ -266,11 +272,11 @@ Keep on reading to understand their usage, intent and behavior.
 Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Currently, the following five types of policies are supported:
 
 * `once`: the server sends an event _once only_
-* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed events. The server keeps continuously pushing events until the connected client disconnects.
+* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pushing events to the connected client.
 * `fragmentation`: the server sends an event payload in a form sequential fragmented frames one after another _in a periodic manner_, instead of sending the payload as a whole blob, which is the behavior of policies `once`, `push` and `disconnect`. 
    
-   For example, let's say you want to configure `stubby4j` to stream a large file to the connected client. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pushed frames.
-* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined `delay` (discussed further) which describes the delay in milliseconds between the subsequent pings. The server keeps continuously pinging until the connected client disconnects.
+   For example, let's say you want to configure `stubby4j` to stream a large file to the connected client. This property should be used together with the defined [delay](#delay-optional) property.
+* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pinging the connected client.
 
    The behavior of `ping` is similar to the `push` behavior, the difference here is that `stubby4j` sends a special binary data frame of type `Ping` instead of a text in UTF-8 or any other binary data. 
 * `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
@@ -288,9 +294,9 @@ Please note, in case of `policy` of type `ping`, even if you defined `message-ty
 
 #### delay (`optional`)
 
-Describes the delay in milliseconds between the subsequent server events to the connected client. Defaults to zero milliseconds. This property should be used in conjunction with defined policies of type `push`, `fragmentation` and `ping`.
+Describes the delay (in milliseconds) between the subsequent server events to the connected client. Defaults to zero. This property should be used in conjunction with defined `policy` of type `push`, `fragmentation` or `ping`.
 
-If one of the aforementioned policy types is defined and the `delay` is not specified, the delay will be zero, i.e.: no delay between the subsequent server events. The `delay` takes no affect with the policies of type `once` and `disconnect`.
+If one of the aforementioned policy types is defined and the `delay` is not specified, there will be no delay between the subsequent server events to the connected client. The `delay` takes no affect with the policies of type `once` and `disconnect`.
 
 [Back to top](#table-of-contents)
 
