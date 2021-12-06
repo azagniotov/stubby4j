@@ -43,7 +43,7 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Server hostname verification by the client](#server-hostname-verification-by-the-client)
 * [Support for HTTP/2 on HTTPS URIs over TLS](#support-for-http2-on-https-uris-over-tls)
 * [WebSockets configuration HOWTO](#websockets-configuration-howto)
-* [Endpoint configuration HOWTO](#endpoint-configuration-howto)
+* [HTTP endpoint configuration HOWTO](#http-endpoint-configuration-howto)
    * [Request](#request)
       * [Request object properties](#request-object-properties)
       * [Request proxying](#request-proxying)
@@ -165,7 +165,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 That's it!
 
-For more information and more complex examples, please dive into the rest of documentation, especially [Endpoint configuration HOWTO](#endpoint-configuration-howto)
+For more information and more complex examples, please dive into the rest of documentation, especially [HTTP endpoint configuration HOWTO](#http-endpoint-configuration-howto)
 
 [Back to top](#table-of-contents)
 
@@ -555,7 +555,7 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 See [WebSockets configuration HOWTO](docs/WEBSOCKETS_CONFIG_AND_REQUESTS.md) for details
 
-## Endpoint configuration HOWTO
+## HTTP endpoint configuration HOWTO
 
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
