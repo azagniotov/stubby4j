@@ -254,7 +254,7 @@ Defines a comma-separated arbitrary sub-protocol names. Defaults to empty string
 
 ```yaml
 - web-socket:
-    url: /demo/web-socket/`
+    url: /demo/web-socket/1
     sub-protocols: echo, mamba, zumba
     ...
     ...
@@ -274,7 +274,7 @@ Sub-protocol can help to reach an agreement between the server and client about 
 
 ### on-open
 
-The object `on-open` describes the behavior that `stubby4j` websocket server initiates first when the WebSocket connection between the server and a client is established. With the `on-open` object you can configure _what events_ your client should receive and in _what manner_, upon established connection without the need for the client to request them first. 
+The object `on-open` describes the behavior that `stubby4j` websocket server initiates when the WebSocket connection between the server and a client is established. With the `on-open` object you can configure _what events_ the connected client should receive and in _what manner_. The server starts the event sending first, upon established connection, without waiting for the connected client to request them first. 
 
 Do note the difference between the `on-open` server behavior VS the [on-message](#on-message) (discussed further) server behavior: with the behavior defined in [on-message](#on-message), the server requires an explicit request (i.e.: a trigger) from the connected client to start sending events.
 
@@ -291,17 +291,18 @@ The `on-open` object supports the following properties: `policy`, `message-type`
   
 #### policy (`optional`)
   
-Defines the behavior of the server, when it sends events to the connected client using the defined event metadata. Defaults to `once`. Currently, the following five types of policies are supported:
+Defines the behavior of the server, when sending events (i.e.: any text, binary or Ping messages) to the connected client using the defined event metadata. Defaults to `once`. Currently, the following five types of policies are supported and explained as follows:
 
-* `once`: the server sends an event _once only_
-* `push`: the server sends an event _in a periodic manner_. This property should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pushing events to the connected client.
-* `fragmentation`: the server sends an event payload in a form sequential fragmented frames one after another _in a periodic manner_, instead of sending the payload as a whole blob, which is the behavior of policies `once`, `push` and `disconnect`. 
+* `once`: the server sends an event _once only_. 
+* `push`: the server sends the same event _in a periodic manner_. The `push` value should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pushing events to the connected client _in a periodic manner_.
+* `fragmentation`: the server sends an event payload in a form sequential fragmented frames one after another _in a periodic manner_, instead of sending the payload as a whole blob, which is the behavior of policies `once`, `push` and `disconnect`. The `fragmentation` value should be used together with the defined [delay](#delay-optional) property.
+
+   A use-case for the `fragmentation` policy can be as per following: you want to configure `stubby4j` websocket server to stream a large file to the connected client in chunks instead of sending a one whole blob.
    
-   For example, let's say you want to configure `stubby4j` to stream a large file to the connected client. This property should be used together with the defined [delay](#delay-optional) property.
-* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. This property should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pinging the connected client.
+* `ping`: the server sends a `Ping` event (without a payload) as per WebSocket spec [RFC6455#section-5.5.2](https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2) _in a periodic manner_. The `ping` value should be used together with the defined [delay](#delay-optional) property. The `stubby4j` server will keep continuously pinging the connected client _in a periodic manner_.
 
    The behavior of `ping` is similar to the `push` behavior, the difference here is that `stubby4j` sends a special binary data frame of type `Ping` instead of a text in UTF-8 or any other binary data. 
-* `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame wit status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
+* `disconnect`: the server sends an event _once only_, followed by a WebSocket `Close` frame with status code `1000`. In other words, the server gracefully closes the connection to the remote client endpoint
 
 [Back to top](#table-of-contents)
 
@@ -354,7 +355,7 @@ Contains contents of the server event payload to the connected client. Defaults 
 #### file (`optional`)
 
 
-Holds a path to a local file (it can be an absolute or relative path to the main YAML specified in `-d` or `--data`). This property allows you to split up your config across multiple files instead of making one huge bloated `web-config` YAML. Depending on the defined `message-type`, the payload will be sent as text in UTF-8 format or bytes.
+Holds a path to a local file (it can be an absolute or relative path to the main YAML specified in `-d` or `--data`, see [command-line-switches](https://github.com/azagniotov/stubby4j#command-line-switches)). This property allows you to split up your config across multiple files instead of making one huge bloated `web-config` YAML. Depending on the defined `message-type` value (`text` or `binary`), the payload will be sent as text in UTF-8 format or bytes.
 
 For example, let's say you want the server to render a large JSON response body to the connected client, so instead of dumping a lot of text under the `body` property, you could specify a local file with the payload content using the `file` property (btw, the `file` property can also refer to binary files):
 
