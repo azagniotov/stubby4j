@@ -64,10 +64,10 @@ public class CommandLineInterpreterTest {
                 "                                         8882." + BR +
                 " -t,--tls <arg>                          Port for TLS connection. Defaults" + BR +
                 "                                         to 7443." + BR +
-                " -ta,--enable_tls_with_alpn_and_http_2   Since v7.3.4-SNAPSHOT. Enables" + BR +
-                "                                         HTTP/2 for HTTPS URIs over TLS" + BR +
-                "                                         (on TLS v1.2 or newer) using ALPN" + BR +
-                "                                         extension" + BR +
+                " -ta,--enable_tls_with_alpn_and_http_2   Since v7.4.0. Enables HTTP/2 over" + BR +
+                "                                         TCP (h2c) and HTTP/2 over TLS" + BR +
+                "                                         (h2) on TLS v1.2 or newer using" + BR +
+                "                                         ALPN extension" + BR +
                 " -v,--version                            Prints out to console stubby" + BR +
                 "                                         version." + BR +
                 " -w,--watch <arg>                        Since v2.0.11. Periodically scans" + BR +

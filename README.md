@@ -401,10 +401,10 @@ java -jar stubby4j-x.x.xx.jar [-a <arg>] [-d <arg>] [-da] [-dc] [-ds] [-h]
                                          8882.
  -t,--tls <arg>                          Port for TLS connection. Defaults
                                          to 7443.
- -ta,--enable_tls_with_alpn_and_http_2   Since v7.4.0. Enables
-                                         HTTP/2 for HTTPS URIs over TLS
-                                         (on TLS v1.2 or newer) using ALPN
-                                         extension
+ -ta,--enable_tls_with_alpn_and_http_2   Since v7.4.0. Enables HTTP/2 over
+                                         TCP (h2c) and HTTP/2 over TLS
+                                         (h2) on TLS v1.2 or newer using
+                                         ALPN extension
  -v,--version                            Prints out to console stubby
                                          version.
  -w,--watch <arg>                        Since v2.0.11. Periodically scans

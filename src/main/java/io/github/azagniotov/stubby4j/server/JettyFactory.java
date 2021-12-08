@@ -283,7 +283,7 @@ public final class JettyFactory {
         statusBuilder.append(statusHttp);
 
         if (enableAlpnAndHttp2) {
-            final String tlsPortalStatus = String.format(" > http://%s:%s\t\tHTTP/2 stubs portal\n",
+            final String tlsPortalStatus = String.format(" > http://%s:%s\t\tHTTP/2 over TCP (h2c) stubs portal\n",
                     stubsChannel.getHost(), stubsChannel.getPort());
             statusBuilder.append(tlsPortalStatus);
         }
@@ -363,8 +363,8 @@ public final class JettyFactory {
         statusBuilder.append("Available secure endpoints:\n");
         statusBuilder.append(DASHED_STATUS_LINE);
 
-        final String protocol = enableAlpnAndHttp2 ? "HTTP/2" : "HTTP/1.1";
-        final String tlsPortalStatus = String.format(" > https://%s:%s\t\t%s on TLS stubs portal\n",
+        final String protocol = enableAlpnAndHttp2 ? "HTTP/2 over TLS (h2) stubs portal" : "HTTP/1.1 over TLS stubs portal";
+        final String tlsPortalStatus = String.format(" > https://%s:%s\t\t%s\n",
                 sslConnector.getHost(), sslConnector.getPort(), protocol);
         statusBuilder.append(tlsPortalStatus);
 
