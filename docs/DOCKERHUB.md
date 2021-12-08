@@ -123,8 +123,8 @@ docker run --rm \
 * Passes `9991` to `STUBS_PORT` env var as the port for stubs portal
 * Passes `8889` to `ADMIN_PORT` env var as the port for admin portal
 * Passes `8443` to `STUBS_TLS_PORT` env var as the port for stubs portal on SSL
-* Passes `--enable_tls_with_alpn_and_http_2` to `WITH_ARGS` env var to enable `HTTP/2` for `https://..` URIs over TLS (on TLS v1.2 or newer) using ALPN extension. If the `--enable_tls_with_alpn_and_http_2` is not set, then `HTTP/2` is not enabled.
-* Passes `--disable_stub_caching` to `WITH_ARGS` env var to disable stubs in-memory caching when stubs are successfully matched to the incoming HTTP requests. If the `--disable_stub_caching` is not set, then the in-memory cache enabled by default.
+* Passes `--enable_tls_with_alpn_and_http_2` (since v7.4.0) to `WITH_ARGS` env var to enable `HTTP/2` over TCP (`h2c`) and `HTTP/2` over TLS (`h2`) on TLS v1.2 or newer using ALPN extension. If the `--enable_tls_with_alpn_and_http_2` is not set, then `HTTP/2` is not enabled.
+* Passes `--disable_stub_caching` to `WITH_ARGS` env var to disable stubs in-memory caching when stubs successfully matched to the incoming HTTP requests. If the `--disable_stub_caching` is not set, then the in-memory cache enabled by default.
 * Passes `--debug` to `WITH_ARGS` env var to make `stubby4j` to dump raw incoming HTTP requests to the console. If the `--debug` is not set, then the dumping incoming HTTP requests is disabled by default.
 * Passes `--watch` to `WITH_ARGS` env var to make `stubby4j` to periodically scan for changes in last modification date of the YAML configs and referenced external files (if any). The watch scans every 100ms. If last modification date changed since the last scan period, the stub configuration is reloaded. If the `--watch` is not set, then the periodic scan is disabled by default.
 * `-p` publishes/exposes set container's ports `9991`, `8889` & `8443` for stubs, admin & stubs on SSL portals respectively to the host.
