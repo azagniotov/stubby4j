@@ -7,7 +7,7 @@ assignees: azagniotov
 
 ---
 
-**Please provide some basic information about you environemnt**
+**Please provide some basic information about you environment**
 - What is your OS: Windows/Mac/*Nix:
 - What is stubby4j version you are running:
 - Are you running stubby4j in Docker container or as a standalone JAR: 
