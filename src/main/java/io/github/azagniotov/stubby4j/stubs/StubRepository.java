@@ -198,6 +198,12 @@ public class StubRepository {
         final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
         final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestHashCode);
 
+        //TODO BUG: When stubs are cached, upon finding the previously cached match by hashCode,
+        // if stubbed response has template tokens for dynamic token replacement, the tokens are
+        // not replaced with values from the incoming request because the cached stub is not going
+        // through the same matching process like upon the first match. Either fix this bug or just
+        // deprecate the stub caching all together, as it is causing more headaches than not.
+        // Also, deprecate the --disable_stub_caching command line flag if the caching has retired.
         return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
             ANSITerminal.loaded(String.format("Local cache contains a match for hashCode [%s]", incomingRequestHashCode));
             LOGGER.debug("Local cache contains a match for hashCode [{}].", incomingRequestHashCode);

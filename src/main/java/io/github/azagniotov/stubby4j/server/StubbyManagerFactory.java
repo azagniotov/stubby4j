@@ -30,8 +30,14 @@ public class StubbyManagerFactory {
             Log.setLog(new EmptyLogger());
         }
 
+        //TODO BUG: When stubs are cached, upon finding the previously cached match by hashCode,
+        // if stubbed response has template tokens for dynamic token replacement, the tokens are
+        // not replaced with values from the incoming request because the cached stub is not going
+        // through the same matching process like upon the first match. Either fix this bug or just
+        // deprecate the stub caching all together, as it is causing more headaches than not.
+        // Also, deprecate the --disable_stub_caching command line flag if the caching has retired.
         final boolean shouldDisableStubCache = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_DISABLE_STUB_CACHING);
-        final Cache<String, StubHttpLifecycle> stubCache = Cache.stubHttpLifecycleCache(shouldDisableStubCache);
+        final Cache<String, StubHttpLifecycle> stubCache = Cache.stubHttpLifecycleCache(true);
 
         final StubRepository stubRepository = new StubRepository(configFile, stubCache, stubLoadComputation, new StubbyHttpTransport());
         final JettyFactory jettyFactory = new JettyFactory(commandLineArgs, stubRepository);
