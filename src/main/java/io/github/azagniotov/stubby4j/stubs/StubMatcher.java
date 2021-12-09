@@ -82,7 +82,7 @@ class StubMatcher {
 
         // Match stubbed request body payload (POST, PUT & PATCH)
         if (stubbedRequest.isRequestBodyStubbed()) {
-            if (!postBodiesMatch(stubbedRequest.isRequestBodyStubbed(), stubbedRequest.getPostBody(), assertingRequest)) {
+            if (!postBodiesMatch(stubbedRequest, assertingRequest)) {
                 final String bodyMatchFailed = String.format(FAILED_TO_MATCH_ON_STUBBED + MSG_FIELD_POST_BODY + MSG_FIELDS_TEMPLATE, stubbedRequest.getPostBody(), assertingRequest.getPostBody());
                 ANSITerminal.error(bodyMatchFailed);
                 LOGGER.error(bodyMatchFailed);
@@ -127,7 +127,13 @@ class StubMatcher {
     }
 
     @VisibleForTesting
-    boolean postBodiesMatch(final boolean isPostStubbed, final String stubbedPostBody, final StubRequest assertingRequest) {
+    boolean postBodiesMatch(final StubRequest stubbedRequest, final StubRequest assertingRequest) {
+        final boolean isPostStubbed = stubbedRequest.isRequestBodyStubbed();
+        final String stubbedPostBody = stubbedRequest.getPostBody();
+
+        //TODO Get templateTokenName based on whether YAML 'file' or 'post' were stubbed
+        // e.g.: final String templateTokenName = stubbedRequest.getStubbedRequestBodyTokenName()
+
         if (isPostStubbed) {
             final String assertingPostBody = assertingRequest.getPostBody();
             if (isNotSet(assertingPostBody)) {
