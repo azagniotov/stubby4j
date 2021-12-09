@@ -1393,4 +1393,35 @@ public class StubsPortalTest {
         assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat("Still going strong!").isEqualTo(responseTwoContentAsString);
     }
+
+    @Test
+    public void stubby4jIssue399_VanillaRegex() throws Exception {
+
+        // Note:
+        // The '?' in the stubbed XML template are escaped as those are regex characters
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/399/vanilla/regex");
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(HEADER_APPLICATION_XML);
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
+        assertThat(jsonContentUrl).isNotNull();
+        final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        final HttpRequest httpRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+        httpRequest.setHeaders(httpHeaders);
+
+        final HttpResponse httpResponse = httpRequest.execute();
+        final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+
+        final String httpResponseContent = httpResponse.parseAsString().trim();
+
+        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_399_body.xml");
+        assertThat(xmlActualContentResourceOne).isNotNull();
+        final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+
+        assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
+    }
 }
