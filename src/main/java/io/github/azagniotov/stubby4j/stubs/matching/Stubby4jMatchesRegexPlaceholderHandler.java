@@ -13,14 +13,18 @@
 */
 package io.github.azagniotov.stubby4j.stubs.matching;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
 import org.xmlunit.XMLUnitException;
 import org.xmlunit.diff.ComparisonResult;
 import org.xmlunit.placeholder.PlaceholderHandler;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
 import static org.xmlunit.diff.ComparisonResult.DIFFERENT;
 import static org.xmlunit.diff.ComparisonResult.EQUAL;
 
@@ -29,14 +33,17 @@ import static org.xmlunit.diff.ComparisonResult.EQUAL;
  *
  * @since 2.7.0
  */
+@GeneratedCodeCoverageExclusion
 public class Stubby4jMatchesRegexPlaceholderHandler implements PlaceholderHandler {
     private static final String PLACEHOLDER_NAME = "matchesRegex";
-    private final String tokenTemplateName;
+    private final String templateTokenName;
     private final Map<String, String> stubbedRequestRegexGroups;
+    private AtomicInteger contentRegexGroupCounter;
 
-    public Stubby4jMatchesRegexPlaceholderHandler(final String tokenTemplateName, final Map<String, String> stubbedRequestRegexGroups) {
-        this.tokenTemplateName = tokenTemplateName;
+    public Stubby4jMatchesRegexPlaceholderHandler(final String templateTokenName, final Map<String, String> stubbedRequestRegexGroups) {
+        this.templateTokenName = templateTokenName;
         this.stubbedRequestRegexGroups = stubbedRequestRegexGroups;
+        this.contentRegexGroupCounter = new AtomicInteger(1);
     }
 
     @Override
@@ -60,6 +67,12 @@ public class Stubby4jMatchesRegexPlaceholderHandler implements PlaceholderHandle
     }
 
     private boolean evaluate(final String testText, final Pattern pattern) {
-        return pattern.matcher(testText).find();
+        final Matcher matcher = pattern.matcher(testText);
+        final boolean isMatch = matcher.find();
+        if (isMatch) {
+            final int groupId = contentRegexGroupCounter.getAndIncrement();
+            this.stubbedRequestRegexGroups.put(buildToken(templateTokenName, groupId), matcher.group(0));
+        }
+        return isMatch;
     }
 }

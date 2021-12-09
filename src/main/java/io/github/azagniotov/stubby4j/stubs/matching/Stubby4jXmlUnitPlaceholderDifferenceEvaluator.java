@@ -27,7 +27,6 @@ import org.xmlunit.placeholder.PlaceholderHandler;
 import org.xmlunit.util.Nodes;
 
 import javax.xml.namespace.QName;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -82,28 +81,12 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
     public static final String PLACEHOLDER_DEFAULT_ARGS_SEPARATOR_REGEX = Pattern.quote(",");
 
     private static final String PLACEHOLDER_PREFIX_REGEX = Pattern.quote("xmlunit.");
-    private static final Map<String, PlaceholderHandler> KNOWN_HANDLERS;
     private static final String[] NO_ARGS = new String[0];
-
-    static {
-        final Map<String, PlaceholderHandler> m = new HashMap<>();
-
-        final IgnorePlaceholderHandler ignorePlaceholderHandler = new IgnorePlaceholderHandler();
-        final IsDateTimePlaceholderHandler isDateTimePlaceholderHandler = new IsDateTimePlaceholderHandler();
-        final IsNumberPlaceholderHandler isNumberPlaceholderHandler = new IsNumberPlaceholderHandler();
-        final MatchesRegexPlaceholderHandler matchesRegexPlaceholderHandler = new MatchesRegexPlaceholderHandler();
-
-        m.put(ignorePlaceholderHandler.getKeyword(), ignorePlaceholderHandler);
-        m.put(isDateTimePlaceholderHandler.getKeyword(), isDateTimePlaceholderHandler);
-        m.put(isNumberPlaceholderHandler.getKeyword(), isNumberPlaceholderHandler);
-        m.put(matchesRegexPlaceholderHandler.getKeyword(), matchesRegexPlaceholderHandler);
-
-        KNOWN_HANDLERS = Collections.unmodifiableMap(m);
-    }
 
     private final Pattern placeholderRegex;
     private final Pattern argsRegex;
     private final String argsSplitter;
+    private final Map<String, PlaceholderHandler> placeholderHandlers;
 
     /**
      * Creates a PlaceholderDifferenceEvaluator with default
@@ -113,17 +96,15 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
     public Stubby4jXmlUnitPlaceholderDifferenceEvaluator(final PlaceholderHandler placeholderHandler) {
         this(null, null);
 
-        final Map<String, PlaceholderHandler> m = new HashMap<>();
-
         // Default ones
         final IgnorePlaceholderHandler ignorePlaceholderHandler = new IgnorePlaceholderHandler();
         final IsDateTimePlaceholderHandler isDateTimePlaceholderHandler = new IsDateTimePlaceholderHandler();
         final IsNumberPlaceholderHandler isNumberPlaceholderHandler = new IsNumberPlaceholderHandler();
 
-        m.put(ignorePlaceholderHandler.getKeyword(), ignorePlaceholderHandler);
-        m.put(isDateTimePlaceholderHandler.getKeyword(), isDateTimePlaceholderHandler);
-        m.put(isNumberPlaceholderHandler.getKeyword(), isNumberPlaceholderHandler);
-        m.put(placeholderHandler.getKeyword(), placeholderHandler);
+        placeholderHandlers.put(ignorePlaceholderHandler.getKeyword(), ignorePlaceholderHandler);
+        placeholderHandlers.put(isDateTimePlaceholderHandler.getKeyword(), isDateTimePlaceholderHandler);
+        placeholderHandlers.put(isNumberPlaceholderHandler.getKeyword(), isNumberPlaceholderHandler);
+        placeholderHandlers.put(placeholderHandler.getKeyword(), placeholderHandler);
     }
 
     /**
@@ -174,6 +155,9 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
                                                          String placeholderArgsOpeningDelimiterRegex,
                                                          String placeholderArgsClosingDelimiterRegex,
                                                          String placeholderArgsSeparatorRegex) {
+
+        this.placeholderHandlers = new HashMap<>();
+
         if (placeholderOpeningDelimiterRegex == null
                 || placeholderOpeningDelimiterRegex.trim().length() == 0) {
             placeholderOpeningDelimiterRegex = PLACEHOLDER_DEFAULT_OPENING_DELIMITER_REGEX;
@@ -353,10 +337,10 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
     }
 
     private boolean isKnown(final String keyword) {
-        return KNOWN_HANDLERS.containsKey(keyword);
+        return placeholderHandlers.containsKey(keyword);
     }
 
     private ComparisonResult evaluate(final String keyword, final String testText, final String[] args) {
-        return KNOWN_HANDLERS.get(keyword).evaluate(testText, args);
+        return placeholderHandlers.get(keyword).evaluate(testText, args);
     }
 }
