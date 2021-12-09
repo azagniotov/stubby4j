@@ -4,6 +4,8 @@
 
 * Added support for stubbing WebSocket [RFC6455](https://datatracker.ietf.org/doc/html/rfc6455) connections over HTTP/1.1 and HTTP/1.1 with TLS. See [WebSockets configuration HOWTO](WEBSOCKETS_CONFIGURATION_HOWTO.md#websockets-configuration-howto)
 * Added support for HTTP/2 H2C (or `HTTP/2 over cleartext` - HTTP/2 without TLS). This is where a normal transient HTTP connection upgraded to a persistent connection that uses the HTTP/2 binary protocol
+* PR [#403](https://github.com/azagniotov/stubby4j/pull/403) Fixed a bug where template token `post` needed to be used for tokenized content loaded via the `file` property (https://github.com/azagniotov)
+* PR [#404](https://github.com/azagniotov/stubby4j/pull/404) XMLUnit regex matcher placeholders can be used for dynamic token replacement (https://github.com/azagniotov)
 * Made startup message about available endpoints clearer
 
 #### 7.4.0
