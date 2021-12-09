@@ -7,6 +7,12 @@ assignees: azagniotov
 
 ---
 
+**Please provide some basic information about you environemnt**
+- What is your OS: Windows/Mac/*Nix:
+- What is stubby4j version you are running:
+- Are you running stubby4j in Docker container or as a standalone JAR: 
+- If Docker container, what is the image tag:
+
 **Is your question request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
