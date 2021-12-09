@@ -1397,8 +1397,7 @@ public class StubsPortalTest {
     @Test
     public void stubby4jIssue399_VanillaRegex() throws Exception {
 
-        // Note:
-        // The '?' in the stubbed XML template are escaped as those are regex characters
+        // Note: The '?' in <?xml are escaped as these are regex characters
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/399/vanilla/regex");
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
@@ -1421,6 +1420,38 @@ public class StubsPortalTest {
         final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_399_body.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
         final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+
+        assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
+    }
+
+    @Test
+    public void stubby4jIssue399_XmlUnit_Matcher() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/399/xmlunit/matcher");
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(HEADER_APPLICATION_XML);
+
+        final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
+        assertThat(jsonContentUrl).isNotNull();
+        final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        final HttpRequest httpRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+        httpRequest.setHeaders(httpHeaders);
+
+        final HttpResponse httpResponse = httpRequest.execute();
+        final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+
+        final String httpResponseContent = httpResponse.parseAsString().trim();
+
+        // Unfortunately, when XMLUnit Matcher is used in the stubbed XML payload, i.e.: `${xmlunit.matchesRegex(.*)}`,
+        // this only helps with the XML regex matching. But, using XMLUnit Matcher does not capture the value of
+        // the ${xmlunit.matchesRegex(.*)} for token replacement.
+        final URL xmlActualContentResource = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_399_stub_template.xml");
+        assertThat(xmlActualContentResource).isNotNull();
+        final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResource.openStream());
 
         assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
     }
