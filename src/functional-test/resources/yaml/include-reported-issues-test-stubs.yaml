@@ -191,3 +191,14 @@
       content-type: application/json
     status: 200
     file: ../json/response/json_response_<% post.1 %>.json
+
+- request:
+    method: POST
+    url: /azagniotov/stubby4j/issues/399/vanilla/regex
+    file: ../xml/request/xml_request_issue_399_vanilla_regex_stub_template.xml
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    file: ../xml/response/xml_response_issue_399_stub_template.xml
