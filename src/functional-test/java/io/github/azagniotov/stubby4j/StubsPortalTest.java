@@ -1446,10 +1446,7 @@ public class StubsPortalTest {
 
         final String httpResponseContent = httpResponse.parseAsString().trim();
 
-        // Unfortunately, when XMLUnit Matcher is used in the stubbed XML payload, i.e.: `${xmlunit.matchesRegex(.*)}`,
-        // this only helps with the XML regex matching. But, using XMLUnit Matcher does not capture the value of
-        // the ${xmlunit.matchesRegex(.*)} for token replacement.
-        final URL xmlActualContentResource = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_399_stub_template.xml");
+        final URL xmlActualContentResource = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_399_body.xml");
         assertThat(xmlActualContentResource).isNotNull();
         final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResource.openStream());
 

@@ -3,6 +3,8 @@ package io.github.azagniotov.stubby4j.stubs;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.stubs.matching.Stubby4jMatchesRegexPlaceholderHandler;
+import io.github.azagniotov.stubby4j.stubs.matching.Stubby4jXmlUnitPlaceholderDifferenceEvaluator;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -16,7 +18,6 @@ import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.DifferenceEvaluators;
 import org.xmlunit.diff.ElementSelectors;
-import org.xmlunit.placeholder.PlaceholderDifferenceEvaluator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -252,9 +253,11 @@ class StubMatcher {
             // e.g.: ${xmlunit.matchesRegex(..)}, so let's do another comparison pass
             // using PlaceholderDifferenceEvaluator.
             // More info: https://github.com/azagniotov/stubby4j#regex-stubbing-for-xml-content
+            final Stubby4jMatchesRegexPlaceholderHandler matchesRegexPlaceholderHandler =
+                    new Stubby4jMatchesRegexPlaceholderHandler(templateTokenName, this.regexGroups);
             final DifferenceEvaluator differenceEvaluatorChain = DifferenceEvaluators.chain(
                     DifferenceEvaluators.Default,
-                    new PlaceholderDifferenceEvaluator()
+                    new Stubby4jXmlUnitPlaceholderDifferenceEvaluator(matchesRegexPlaceholderHandler)
             );
 
             final DiffBuilder xmlDiffBuilder = DiffBuilder
