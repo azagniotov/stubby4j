@@ -1,2 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ns:SomeOtherElement xmlns:ns="http://www.your.example.com/xml/ns/SomeOtherElement">This is a value!</ns:SomeOtherElement>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://example.com/schema1">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <ns1:ResponseWrapper>
+            <ns1:Response>
+                <ns1:Status>SUCCESS</ns1:Status>
+                <ns1:Messages>
+                    <ns1:Message>
+                        <ns1:MessageKey>A Key</ns1:MessageKey>
+                        <ns1:MessageText>Some text</ns1:MessageText>
+                    </ns1:Message>
+                </ns1:Messages>
+                <ns1:Collection>
+                    <ns1:Data>
+                        <ns1:FieldOne>banana</ns1:FieldOne>
+                        <ns1:FieldTwo>apple</ns1:FieldTwo>
+                        <ns1:FieldThree>strawberry</ns1:FieldThree>
+                        <ns1:FieldFour>melon</ns1:FieldFour>
+                    </ns1:Data>
+                </ns1:Collection>
+            </ns1:Response>
+            <ns1:Snipped/>
+        </ns1:ResponseWrapper>
+    </soapenv:Body>
+</soapenv:Envelope>
