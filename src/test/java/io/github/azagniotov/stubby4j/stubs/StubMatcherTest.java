@@ -1,6 +1,7 @@
 package io.github.azagniotov.stubby4j.stubs;
 
 
+import org.eclipse.jetty.http.HttpMethod;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,99 +172,135 @@ public class StubMatcherTest {
 
     @Test
     public void postBodiesMatch_ShouldReturnTrue_WhenIsPostStubbedFalse() {
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(false, null, null);
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .build();
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, null);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnFalse_WhenAssertingPostBodyNull() {
-        StubRequest request = new StubRequest.Builder().build();
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("stubbed").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, null, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnFalse_WhenAssertingBodyWhitespace() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("stubbed").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("  ")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, null, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnFalse_WhenDifferentJson() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("{\"name\":\"tod\"}").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("{\"name\":\"bob\"}")
                 .withHeaderContentType("application/json")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"name\":\"tod\"}", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentJson() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("{\"c\":\"d\",\"a\":\"b\"}").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("{\"a\":\"b\",\"c\":\"d\"}")
                 .withHeaderContentType("application/json")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"c\":\"d\",\"a\":\"b\"}", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomJson() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentJsonWithCustomContentType() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("{\"c\":\"d\",\"a\":\"b\"}").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("{\"a\":\"b\",\"c\":\"d\"}")
                 .withHeaderContentType("something/vnd.com+json")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"c\":\"d\",\"a\":\"b\"}", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomJsonCharset() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentJsonWithCustomContentTypeAndCharset() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("{\"c\":\"d\",\"a\":\"b\"}").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("{\"a\":\"b\",\"c\":\"d\"}")
                 .withHeaderContentType("something/vnd.com+json;charset=stuff")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "{\"c\":\"d\",\"a\":\"b\"}", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnFalse_WhenDifferentXml() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("<xml>two</xml>").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("<xml>one</xml>")
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml>two</xml>", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentXml() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("<xml><b>b</b><a>a</a></xml>").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("<xml><a>a</a><b>b</b></xml>")
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml><b>b</b><a>a</a></xml>", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
@@ -281,12 +318,16 @@ public class StubMatcherTest {
                         "    <idex:startsWith>ALEX-3</idex:startsWith>\n" +
                         "</idex:type>";
 
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost(stubbedXml).build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost(postedXml)
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
@@ -359,12 +400,16 @@ public class StubMatcherTest {
                         "    </three>" +
                         "</person>";
 
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost(stubbedXml).build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost(postedXml)
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
@@ -433,12 +478,16 @@ public class StubMatcherTest {
                         "    </three>" +
                         "</person>";
 
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost(stubbedXml).build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost(postedXml)
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
@@ -502,12 +551,16 @@ public class StubMatcherTest {
                         "    </VocabularyElement>" +
                         "</person>";
 
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost(stubbedXml).build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost(postedXml)
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
@@ -573,82 +626,110 @@ public class StubMatcherTest {
                         "    </VocabularyElement>" +
                         "</person>";
 
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost(stubbedXml).build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost(postedXml)
                 .withHeaderContentType("application/xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, stubbedXml, request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomXml() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentXmlWithCustomContentType() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("<xml><b>b</b><a>a</a></xml>").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("<xml><a>a</a><b>b</b></xml>")
                 .withHeaderContentType("something/vnd.com+xml")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml><b>b</b><a>a</a></xml>", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentCustomXmlCharset() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentXmlWithCustomContentTypeAndCharset() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("<xml><b>b</b><a>a</a></xml>").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("<xml><a>a</a><b>b</b></xml>")
                 .withHeaderContentType("something/vnd.com+xml;charset=something")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "<xml><b>b</b><a>a</a></xml>", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnTrue_WhenStringMatch() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("wibble").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("wibble")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wibble", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
     public void postBodiesMatch_ShouldReturnFalse_WhenStringNotMatch() {
-        StubRequest request = new StubRequest.Builder()
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("wobble").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("wibble")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wobble", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnTrue_WhenStringMatchWeirdContentType() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnTrue_WhenEquivalentStringWithInvalidContentType() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("wibble").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("wibble")
                 .withHeaderContentType("whut")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wibble", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isTrue();
     }
 
     @Test
-    public void postBodiesMatch_ShouldReturnFalse_WhenStringMatchWeirdContentType() {
-        StubRequest request = new StubRequest.Builder()
+    public void postBodiesMatch_ShouldReturnFalse_WhenNonEquivalentStringWithInvalidContentType() {
+        final StubRequest stubbedRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
+                .withPost("wibble").build();
+        final StubRequest assertingRequest = new StubRequest.Builder()
+                .withMethod(HttpMethod.POST.asString())
                 .withPost("wobble")
                 .withHeaderContentType("whut")
                 .build();
 
-        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(true, "wibble", request);
+        final boolean isBodiesMatch = stubMatcher.postBodiesMatch(stubbedRequest, assertingRequest);
 
         assertThat(isBodiesMatch).isFalse();
     }
