@@ -1177,22 +1177,22 @@ public class StubsPortalTest {
         // Note:
         // 1. the '?' in <?xml are escaped as these are regex characters
         // 2. ths '[' in <![CDATA[(.*)]]> are escaped as these are regex characters
-        final URL jsonContentUrl = StubsPortalTest.class.getResource("/xml/request/xml_payload_5.xml");
-        assertThat(jsonContentUrl).isNotNull();
-        final String contentOne = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+        final URL xmlContentUrl = StubsPortalTest.class.getResource("/xml/request/xml_request_issue_29_payload.xml");
+        assertThat(xmlContentUrl).isNotNull();
+        final String payloadContent = StringUtils.inputStreamToString(xmlContentUrl.openStream());
 
-        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
-        requestOne.setHeaders(httpHeaders);
+        final HttpRequest httpRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, payloadContent);
+        httpRequest.setHeaders(httpHeaders);
 
-        final HttpResponse responseOne = requestOne.execute();
-        final HttpHeaders headersOne = responseOne.getHeaders();
+        final HttpResponse httpResponse = httpRequest.execute();
+        final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
 
-        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(headersOne.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
 
-        final String responseContentOne = responseOne.parseAsString().trim();
+        final String responseContentOne = httpResponse.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_4.xml");
+        final URL xmlActualContentResourceOne = StubsPortalTest.class.getResource("/xml/response/xml_response_issue_29_body.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
         final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 

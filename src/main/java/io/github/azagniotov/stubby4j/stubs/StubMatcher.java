@@ -29,7 +29,6 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isNotSet;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.HEADERS;
-import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.POST;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.QUERY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
 import static org.xmlunit.builder.Input.fromByteArray;
@@ -130,9 +129,7 @@ class StubMatcher {
     boolean postBodiesMatch(final StubRequest stubbedRequest, final StubRequest assertingRequest) {
         final boolean isPostStubbed = stubbedRequest.isRequestBodyStubbed();
         final String stubbedPostBody = stubbedRequest.getPostBody();
-
-        //TODO Get templateTokenName based on whether YAML 'file' or 'post' were stubbed
-        // e.g.: final String templateTokenName = stubbedRequest.getStubbedRequestBodyTokenName()
+        final String templateTokenName = stubbedRequest.getStubbedRequestBodyTokenName();
 
         if (isPostStubbed) {
             final String assertingPostBody = assertingRequest.getPostBody();
@@ -148,14 +145,14 @@ class StubMatcher {
                     final String subType = matcher.group(1);
 
                     if ("json".equals(subType)) {
-                        return jsonMatch(stubbedPostBody, assertingPostBody);
+                        return jsonMatch(stubbedPostBody, assertingPostBody, templateTokenName);
                     } else if ("xml".equals(subType)) {
-                        return xmlMatch(stubbedPostBody, assertingPostBody);
+                        return xmlMatch(stubbedPostBody, assertingPostBody, templateTokenName);
                     }
                 }
             }
 
-            return stringsMatch(stubbedPostBody, assertingPostBody, POST.toString());
+            return stringsMatch(stubbedPostBody, assertingPostBody, templateTokenName);
         }
 
         return true;
@@ -230,22 +227,22 @@ class StubMatcher {
         return false;
     }
 
-    private boolean jsonMatch(final String stubbedJson, final String assertingJson) {
+    private boolean jsonMatch(final String stubbedJson, final String assertingJson, final String templateTokenName) {
         try {
             final boolean passed = JSONCompare.compareJSON(stubbedJson, assertingJson, JSONCompareMode.NON_EXTENSIBLE).passed();
             if (passed) {
                 return true;
             } else {
                 final String escapedStubbedPostBody = escapeSpecialRegexCharacters(stubbedJson);
-                return stringsMatch(escapedStubbedPostBody, assertingJson, POST.toString());
+                return stringsMatch(escapedStubbedPostBody, assertingJson, templateTokenName);
             }
         } catch (final JSONException e) {
             // In a "happy path", this exception happens when stubbed JSON is a RegEx pattern
-            return stringsMatch(stubbedJson, assertingJson, POST.toString());
+            return stringsMatch(stubbedJson, assertingJson, templateTokenName);
         }
     }
 
-    private boolean xmlMatch(final String stubbedXml, final String assertingXml) {
+    private boolean xmlMatch(final String stubbedXml, final String assertingXml, final String templateTokenName) {
         try {
 
             final Input.Builder control = fromByteArray(getBytesUtf8(stubbedXml));
@@ -280,7 +277,7 @@ class StubMatcher {
             ANSITerminal.error(String.format("Failed to parse XML markup: %s, cause: %s", e, e.getCause()));
             LOGGER.error("Failed to parse XML markup: {}, cause: {}", e, e.getCause());
 
-            return regexMatch(stubbedXml, assertingXml, POST.toString());
+            return regexMatch(stubbedXml, assertingXml, templateTokenName);
         }
     }
 }
