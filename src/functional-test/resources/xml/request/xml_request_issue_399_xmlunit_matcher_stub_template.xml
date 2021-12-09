@@ -1,2 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ns:SomeElement xmlns:ns="http://www.your.example.com/xml/ns/SomeElement">${xmlunit.matchesRegex(.*)}</ns:SomeElement>
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://example.com/schema1">
+<soap:Body>
+    <ns1:RequestElement>
+        <ns1:FieldOne>${xmlunit.matchesRegex(.*)}</ns1:FieldOne>
+        <ns1:FieldTwo>${xmlunit.matchesRegex(.*)}</ns1:FieldTwo>
+        <ns1:FieldThree>${xmlunit.matchesRegex(.*)}</ns1:FieldThree>
+        <ns1:FieldFour>${xmlunit.matchesRegex(.*)}</ns1:FieldFour>
+    </ns1:RequestElement>
+</soap:Body>
+</soap:Envelope>
