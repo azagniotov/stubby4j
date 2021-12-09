@@ -169,13 +169,13 @@
     method: POST
     headers:
       content-type: application/xml
-    file: ../xml/request/xml_payload_4.xml
+    file: ../xml/request/xml_request_issue_29_stub_template.xml
 
   response:
     headers:
       content-type: application/xml
     status: 201
-    file: ../xml/response/xml_response_3.xml
+    file: ../xml/response/xml_response_issue_29_stub_template.xml
 
 # https://stackoverflow.com/questions/69025268/using-stubby-multiple-responses-for-the-same-patch-request-endpoint
 - request:

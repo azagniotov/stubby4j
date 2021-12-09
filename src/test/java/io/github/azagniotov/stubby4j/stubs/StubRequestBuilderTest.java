@@ -2248,4 +2248,25 @@ public class StubRequestBuilderTest {
 
         assertThat(stubRequest.isRequestBodyStubbed()).isTrue();
     }
+
+    @Test
+    public void shouldGetStubbedRequestBodyTokenNameAsPost() throws Exception {
+        final StubRequest stubRequest =
+                builder.withUrl("fssefewf")
+                        .withMethod("GET")
+                        .withPost("<stubbed />")
+                        .build();
+
+        assertThat(stubRequest.getStubbedRequestBodyTokenName()).isEqualTo("post");
+    }
+
+    @Test
+    public void shouldGetStubbedRequestBodyTokenNameAsFile() throws Exception {
+        final StubRequest stubRequest =
+                builder.withUrl("fssefewf")
+                        .withMethod("GET")
+                        .withFile(FileUtils.tempFileFromString("hello")).build();
+
+        assertThat(stubRequest.getStubbedRequestBodyTokenName()).isEqualTo("file");
+    }
 }

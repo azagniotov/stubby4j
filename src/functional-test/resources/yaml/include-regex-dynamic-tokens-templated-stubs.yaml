@@ -54,7 +54,7 @@
       content-type: application/json
     status: 200
     body: >
-      {"people#id": "<% post.2 %>"}
+      {"people#id": "<% file.2 %>"}
 
 
 - request:

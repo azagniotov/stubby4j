@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dynamic-token-replacement-in-stubbed-response>
+    <dynamic-token><% file.1 %></dynamic-token>
+    <dynamic-token><% file.2 %></dynamic-token>
+    <dynamic-token><% file.3 %></dynamic-token>
+    <dynamic-token><% file.4 %></dynamic-token>
+    <dynamic-token><% file.5 %></dynamic-token>
+    <dynamic-token><% file.6 %></dynamic-token>
+    <dynamic-token><% file.7 %></dynamic-token>
+    <dynamic-token><% file.8 %></dynamic-token>
+    <dynamic-token><% file.9 %></dynamic-token>
+    <dynamic-token><% file.10 %></dynamic-token>
+    <dynamic-token><% file.11 %></dynamic-token>
+    <dynamic-token><% file.12 %></dynamic-token>
+    <dynamic-token><% file.13 %></dynamic-token>
+    <dynamic-token><% file.14 %></dynamic-token>
+    <dynamic-token><% file.15 %></dynamic-token>
+    <dynamic-token><% file.16 %></dynamic-token>
+    <dynamic-token><% file.17 %></dynamic-token>
+    <dynamic-token><% file.16 %></dynamic-token>
+    <dynamic-token><% file.19 %></dynamic-token>
+    <dynamic-token><% file.20 %></dynamic-token>
+</dynamic-token-replacement-in-stubbed-response>

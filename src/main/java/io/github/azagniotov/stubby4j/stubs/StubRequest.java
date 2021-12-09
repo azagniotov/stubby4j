@@ -184,6 +184,15 @@ public class StubRequest implements ReflectableStub {
                         getMethod().contains(HttpMethodExtended.PATCH.asString()));
     }
 
+    @VisibleForTesting
+    String getStubbedRequestBodyTokenName() {
+        if (fileBytes.length == 0) {
+            return POST.toString();
+        } else {
+            return FILE.toString();
+        }
+    }
+
     public void compileRegexPatternsAndCache() {
         if (isSet(this.url)) {
             RegexParser.INSTANCE.compilePatternAndCache(this.url);

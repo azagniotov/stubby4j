@@ -12,10 +12,10 @@
                 </ns1:Messages>
                 <ns1:Collection>
                     <ns1:Data>
-                        <ns1:FieldOne><% post.1 %></ns1:FieldOne>
-                        <ns1:FieldTwo><% post.2 %></ns1:FieldTwo>
-                        <ns1:FieldThree><% post.3 %></ns1:FieldThree>
-                        <ns1:FieldFour><% post.4 %></ns1:FieldFour>
+                        <ns1:FieldOne><% file.1 %></ns1:FieldOne>
+                        <ns1:FieldTwo><% file.2 %></ns1:FieldTwo>
+                        <ns1:FieldThree><% file.3 %></ns1:FieldThree>
+                        <ns1:FieldFour><% file.4 %></ns1:FieldFour>
                     </ns1:Data>
                 </ns1:Collection>
             </ns1:Response>
