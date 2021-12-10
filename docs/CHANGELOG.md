@@ -1,6 +1,10 @@
 [Back to the main README.md](../README.md#change-log)
 
-#### 7.4.1-SNAPSHOT
+#### 7.5.1-SNAPSHOT
+
+* `master` branch
+
+#### 7.5.0
 
 * Added support for stubbing WebSocket [RFC6455](https://datatracker.ietf.org/doc/html/rfc6455) connections over HTTP/1.1 and HTTP/1.1 with TLS. See [WebSockets configuration HOWTO](WEBSOCKETS_CONFIGURATION_HOWTO.md#websockets-configuration-howto)
 * Added support for HTTP/2 H2C (or `HTTP/2 over cleartext` - HTTP/2 without TLS). This is where a normal transient HTTP connection upgraded to a persistent connection that uses the HTTP/2 binary protocol
