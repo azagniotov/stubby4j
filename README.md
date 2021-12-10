@@ -59,7 +59,6 @@ It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian 
       * [Splitting main YAML config](#splitting-main-yaml-config)
 * [Performance optimization index](#performance-optimization-index)
    * [Regex pattern precompilation](#regex-pattern-pre-compilation)
-   * [Local caching of returning matched requests](#local-caching-of-returning-matched-requests)
 * [The admin portal](#the-admin-portal)
    * The status page
    * Available REST API summary
@@ -980,8 +979,40 @@ XMLUnit enables stubbing of XML content with regular expressions by leveraging X
 
 #### How to stub XML containing regular expressions?
 
-1. Using vanilla regular expressions
-2. Using [XMLUnit](https://github.com/xmlunit/xmlunit) regular expression matcher placeholders
+1. Using [XMLUnit](https://github.com/xmlunit/xmlunit) regular expression matcher placeholders [__recommended__]
+2. Using vanilla regular expressions
+
+##### Using XMLUnit regular expression matcher placeholders [__recommended__]
+
+Using built-in XMLUnit regular expression matchers is a much more elegant, cleaner and less painful way to do XML-based regular expression matching. Also, you can still leverage the [dynamic token replacement in stubbed response](#dynamic-token-replacement-in-stubbed-response) while using XMLUnit matchers! 
+  
+Now, XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue! Let's understand how to use it, consider the following example of stubbed `request` and `response` objects:
+
+```yaml
+- description: rule_1
+  request:
+    url: /some/resource/uri
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
+          <idex:authority>${xmlunit.matchesRegex(.*)}</idex:authority>
+          <idex:name>${xmlunit.matchesRegex(.*)}</idex:name>
+          <idex:startsWith>${xmlunit.matchesRegex(.*)}</idex:startsWith>
+      </idex:type>
+  
+  response:
+      status: 200
+      body: Captured values are, authority: <% post.1 %> with name <% post.2 %> that starts with <% post.3 %>
+```
+In the above example, the regular expressions defined in `post` XML will match any values inside `idex:authority`, `idex:name` and `idex:startsWith` elements, which then will be used to interpolate the template tokens in the stubbed `response`.
+
+Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) guide or/and [their unit tests](https://github.com/xmlunit/xmlunit/blob/1c25e0171123b1a1fc543c87c5a9039d850d9b73/xmlunit-placeholders/src/test/java/org/xmlunit/placeholder/PlaceholderDifferenceEvaluatorTest.java) for more information.
+  
+
+
 
 ##### Using vanilla regular expressions
 
@@ -1042,29 +1073,8 @@ In the above example, do note that the:
 1. `?` in `<?xml .. ?>` are escaped (i.e.: `<\?xml .. \?>`) as these are regex specific characters, and
 2. `[` and `]` in `<![CDATA[ .. ]]>` are escaped (i.e.: `<!\[CDATA\[(.*)\]\]>`) as these are regex specific characters
 
-##### Using XMLUnit regular expression matcher placeholders
-
-XMLUnit placeholder `${xmlunit.matchesRegex( ... )}` to the rescue. Consider the following example of stubbed `request`:
-
-```yaml
-- description: rule_1
-  request:
-    url: /some/resource/uri
-    method: POST
-    headers:
-      content-type: application/xml
-    post: >
-      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
-          <idex:authority>${xmlunit.matchesRegex(.*)}</idex:authority>
-          <idex:name>${xmlunit.matchesRegex(.*)}</idex:name>
-          <idex:startsWith>${xmlunit.matchesRegex(.*)}</idex:startsWith>
-      </idex:type>
-```
-In the above example, the regular expressions defined in `post` XML will match any values inside `idex:authority`, `idex:name` and `idex:startsWith` elements.
-
-Please refer to the following XMLUnit [Placeholders](https://github.com/xmlunit/user-guide/wiki/Placeholders) guide or/and [their unit tests](https://github.com/xmlunit/xmlunit/blob/1c25e0171123b1a1fc543c87c5a9039d850d9b73/xmlunit-placeholders/src/test/java/org/xmlunit/placeholder/PlaceholderDifferenceEvaluatorTest.java) for more information.
-
+As you can see, using vanilla regular expressions in complex XML content is a much more brittle approach.
+        
 </details>
 
 [Back to top](#table-of-contents)
@@ -1616,16 +1626,6 @@ During parsing of stubs config, the `request.url`, `request.query`, `request.hea
 values are checked for presence of regex. If one of the aforementioned properties is a stubbed regex, then a regex pattern
 will be compiled & cached in memory. This way, the pattern(s) are compiled during config parsing, not stub evaluation.
 
-#### Local caching of returning matched requests
-
-On every incoming request, a local cache holding previously matched stubs is checked to see if there is a match for the
-incoming request hashCode. If the incoming request hashCode found in the cache, then the cached matched stub & the
-incoming request are compared to each other to determine a complete equality based on the stubbed `request` properties.
-
-If a complete equality against the cached stub was not achieved, the incoming request is compared to all other stubs
-loaded in memory. If a full match was found, then that match will be cached using the incoming request hashCode as a key.
-
-To disable stub caching pass `--disable_stub_caching` command-line arg to stubby4j jar upon start up (refer to [Command-line switches](#command-line-switches) sectio )
 
 [Back to top](#table-of-contents)
 
