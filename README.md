@@ -102,7 +102,7 @@ There are a number of use cases where you'd want to use `WebSockets`, `HTTP/1.1`
 
 * Dockerzied. Stub out external services in a Docker based micro-service architecture
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
-* Support for `HTTP/2` over `TLS` (`1.2` and higher) using `ALPN` extension
+* Support for `HTTP/2` over TCP (`h2c`) and `HTTP/2` over TLS (`h2`) on TLS v1.2 or newer using ALPN extension
 * Support for `WebSocket` protocol over `HTTP/1.1` with `TLS` or not
 * Fault injection, where after X good responses on the same URI you get a bad one
 * Dynamic flows. Multiple stubbed responses on the same stubbed URI to test multiple application flows
