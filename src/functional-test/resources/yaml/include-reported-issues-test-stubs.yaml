@@ -214,3 +214,22 @@
       content-type: application/xml
     file: ../xml/response/xml_response_issue_399_stub_template.xml
 
+- request:
+    url: /azagniotov/stubby4j/issues/399/xmlunit/matcher
+    method: POST
+    headers:
+      content-type: application/xml
+    post: >
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <idex:type xmlns:idex="http://idex.bbc.co.uk/v1">
+          <idex:authority>${xmlunit.matchesRegex(.*)}</idex:authority>
+          <idex:name>${xmlunit.matchesRegex(.*)}</idex:name>
+          <idex:startsWith>${xmlunit.matchesRegex(.*)}</idex:startsWith>
+      </idex:type>
+
+  response:
+    status: 200
+    headers:
+      content-type: application/xml
+    body: >
+      Captured values are, authority: <% post.1 %> with name <% post.2 %> that starts with <% post.3 %>

@@ -436,4 +436,30 @@ public class StubsPortalRaisedIssueTests {
 
         assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
     }
+
+    @Test
+    public void stubby4jIssue399_XmlUnit_Matcher_WithInlinedPost() throws Exception {
+
+        final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/399/xmlunit/matcher");
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(HEADER_APPLICATION_XML);
+
+        final URL jsonContentUrl = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload_2.xml");
+        assertThat(jsonContentUrl).isNotNull();
+        final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
+
+        final HttpRequest httpRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
+        httpRequest.setHeaders(httpHeaders);
+
+        final HttpResponse httpResponse = httpRequest.execute();
+        final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
+
+        assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+
+        final String httpResponseContent = httpResponse.parseAsString().trim();
+        final String expectedResponseContent = "Captured values are, authority: PIPS with name pid that starts with pid://";
+
+        assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
+    }
 }
