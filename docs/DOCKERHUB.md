@@ -42,13 +42,15 @@ See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for mor
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />
 
-An `HTTP/1.1` & `HTTP/2` server for stubbing external systems in both Docker and non-containerized domains for integration, contract & behavior testing in micro-services architectures (REST, SOAP, WSDL etc.).
+`HTTP/1.1`, `HTTP/2` and `WebSockets` server for stubbing external systems in both Docker and non-containerized domains for integration, contract & behavior testing in micro-services architectures (REST, SOAP, WSDL etc.).
 
 ### Some of the `stubby4j` key features
 ```
 * HTTP/1.1 or HTTP/2 request verification and HTTP response stubbing
 * Support for TLS protocol versions 1.0, 1.1, 1.2 and 1.3
-* Support for HTTP/2 over TLS (1.2 and higher) using ALPN extension
+* Support for HTTP/2 over TCP (h2c) and HTTP/2 over TLS (h2) on TLS v1.2 or newer using ALPN extension
+* Support for WebSocket protocol over HTTP/1.1 with TLS or not
+* WebSocket request verification, response stubbing, server push, and more
 * Stub out external services in a Docker based micro-service architecture
 * Avoid negative productivity impact when an API you depend on doesn't exist or isn't complete
 * Request proxying - ability to configure a proxy/intercept where requests are proxied to another service
