@@ -561,7 +561,7 @@ This section explains the usage, intent and behavior of each property on the `re
 Also, you will learn about request proxying to other hosts, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more.
 
 <details>
-  <summary>
+  <summary markdown='span'>
 
    <code>
      Click to expand
