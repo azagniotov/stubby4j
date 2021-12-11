@@ -166,7 +166,7 @@ summary {
     outline:none;
 }
 
-summary::marker {
+::marker {
     color: #417090;
     unicode-bidi: isolate;
     font-variant-numeric: tabular-nums;
@@ -174,4 +174,12 @@ summary::marker {
     text-indent: 0px !important;
     text-align: start !important;
     text-align-last: start !important;
+}
+
+details::marker {
+    color: #417090;
+}
+
+summary::marker {
+    color: #417090;
 }
