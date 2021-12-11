@@ -165,6 +165,7 @@ tr:last-child td {
     margin: 0px 0px 8px 0px;
     outline:none;
     display: revert;
+    cursor: pointer;
 }
 
 .main-content ::marker {
@@ -175,6 +176,7 @@ tr:last-child td {
     text-indent: 0px !important;
     text-align: start !important;
     text-align-last: start !important;
+    cursor: pointer;
 }
 
 .main-content details::marker {
