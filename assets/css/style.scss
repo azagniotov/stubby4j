@@ -63,7 +63,6 @@ pre code {
 
 table {
   background: #fff6e9;
-  display: table;
   width: 100%;
   border-collapse: separate;
   border-bottom: 2px solid #bdb6ad;
@@ -100,3 +99,45 @@ tr:last-child td {
   border-bottom: none;
 }
 
+.main-content h1 {
+  font-size: 1.85em;
+  border-bottom: .2em double #d3ccc1;
+  color: #7c334f;
+  text-align: center;
+  font-style: italic;
+  margin: 1.1em 0 .38em;
+  line-height: 1.2;
+  padding-bottom: 10px
+}
+
+.main-content h2 {
+  font-size: 1.58em;
+  color: #7c334f;
+  margin: .95em 0 .5em;
+  border-bottom: .1em solid #D3CCC1;
+  line-height: 1.2;
+  padding-bottom: 10px
+}
+
+.main-content h3 {
+  margin: 20px 0 10px;
+  font-size: 1.45em;
+}
+
+.main-content h4 {
+  margin: .6em 0;
+  font-size: 1.2em;
+  color: #cd596b;
+}
+
+.main-content h5 {
+  margin: .7em 0;
+  font-size: 1em;
+  color: #8b786f;
+}
+
+.main-content h6 {
+  margin: .8em 0;
+  font-size: .85em;
+  font-style: italic;
+}
