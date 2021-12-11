@@ -3,7 +3,9 @@
 
 @import "{{ site.theme }}";
 
-@media screen .main-content {
-   max-width: 75rem;
+.main-content {
+  @include large {
+    max-width: 75rem;
+  }
 }
 
