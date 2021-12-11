@@ -62,7 +62,8 @@ pre code {
   padding: 0;
 }
 
-table {
+.main-content table {
+  display: table !important;
   background: #fff6e9;
   width: 100%;
   border-collapse: separate;
@@ -123,6 +124,7 @@ tr:last-child td {
 .main-content h3 {
   margin: 20px 0 10px;
   font-size: 1.45em;
+  color: #544943;
 }
 
 .main-content h4 {
