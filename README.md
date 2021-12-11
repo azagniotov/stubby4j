@@ -561,10 +561,16 @@ This section explains the usage, intent and behavior of each property on the `re
 Also, you will learn about request proxying to other hosts, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more.
 
 <details>
-  <summary><code>Click to expand</code></summary>
- <br />
+  <summary>
+
+   <code>
+     Click to expand
+   </code>
+
+  </summary>
   
 Here is a fully-populated, unrealistic endpoint:
+
 ```yaml
 -  description: Optional description shown in logs
    uuid: fdkfsd8f8ds7f
@@ -674,7 +680,13 @@ Keep on reading to understand their usage, intent and behavior.
 ### Request object properties
 
 <details>
-  <summary><code>Click to expand</code></summary>
+  <summary>
+
+   <code>
+     Click to expand
+   </code>
+
+  </summary>
 
 #### url (`required`)
 
@@ -970,8 +982,13 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
 <details>
- <summary><code>Click to expand</code></summary>
- <br />
+  <summary>
+
+   <code>
+     Click to expand
+   </code>
+
+  </summary>
 
 Therefore, `stubby4j` uses under the hood a full-fledged 3rd party XML parser - [XMLUnit](https://github.com/xmlunit/xmlunit).
 
@@ -1141,8 +1158,13 @@ Keep on reading to understand their usage, intent and behavior.
 
 
 <details>
- <summary><code>Click to expand</code></summary>
- <br />
+  <summary>
+
+   <code>
+     Click to expand
+   </code>
+
+  </summary>
   
 * Response configuration can be a single `response` or a sequence of `response`s under the same `- request` definition.
 * When sequenced responses is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced responses play in a cycle (loop). In other words: after the response sequence plays through, the cycle restarts on the next incoming request.
@@ -1344,8 +1366,13 @@ response:
 During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
 
 <details>
- <summary><code>Click to expand</code></summary>
- <br />
+  <summary>
+
+   <code>
+     Click to expand
+   </code>
+
+  </summary>
 
 stubby supports dynamic token replacement on the following properties:
 - `response` `body`
