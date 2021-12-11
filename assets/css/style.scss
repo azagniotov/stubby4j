@@ -150,3 +150,19 @@ tr:last-child td {
   font-size: .85em;
   font-style: italic;
 }
+
+details {
+    border-radius: 10px;
+    padding: 0px 8px;
+    margin-bottom: 15px;
+}
+
+details[open] {
+    padding: 0px 8px 8px 8px;
+}
+
+summary {
+    margin: 0px 0px 8px 0px;
+    outline:none;
+}
+
