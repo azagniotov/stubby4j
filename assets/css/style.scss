@@ -6,7 +6,7 @@
 
 // Headers
 $header-heading-color: #ece4d8 !default;
-$header-sub-heading-color: #f5d7d4 !default;
+$header-sub-heading-color: #faebe9 !default;
 $header-background-color: #7c334f !default;
 
 body {
@@ -78,6 +78,7 @@ code {
 }
 
 .main-content pre code {
+  background: #fff6e9;
   font: normal normal 1em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
   padding: 0;
 }
