@@ -52,9 +52,14 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
 
 ### Fully-populated example with multiple `web-socket` objects
 
-<details>
-  <summary><code>Click to expand</code></summary>
- <br />
+<details markdown=block>
+  <summary markdown=span>
+
+   <code>
+     Click to expand
+   </code>
+
+ </summary>
 
 ```yaml
 - web-socket:
