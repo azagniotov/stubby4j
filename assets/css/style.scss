@@ -155,9 +155,6 @@ tr:last-child td {
     border-radius: 10px;
     padding: 0px 8px;
     margin-bottom: 15px;
-    list-style-type: square;
-    list-style-position: outside;
-    list-style-image: none;
 }
 
 .main-content details[open] {
@@ -167,9 +164,7 @@ tr:last-child td {
 .main-content summary {
     margin: 0px 0px 8px 0px;
     outline:none;
-    list-style-type: square;
-    list-style-position: outside;
-    list-style-image: none;
+    display: revert;
 }
 
 .main-content ::marker {
