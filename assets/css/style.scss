@@ -25,7 +25,7 @@ body {
   color: $header-heading-color;
   text-align: center;
   background-color: $header-background-color;
-  background-image: none
+  background-image: none;
 
   @include large {
     padding: 1rem 20rem;
