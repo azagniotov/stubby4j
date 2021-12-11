@@ -3,15 +3,30 @@
 
 @import "{{ site.theme }}";
 
+body {
+  background: #ece4d8;
+  font: normal normal 15px/1.5 Georgia, Palatino,” Palatino Linotype”, Times, “Times New Roman”, serif;
+  color: #544943;
+  -webkit-font-smoothing: antialiased;
+}
+
 .main-content {
   @include large {
     max-width: 75rem;
   }
 }
 
-body {
-  background: #ece4d8;
-  font: normal normal 15px/1.5 Georgia, Palatino,” Palatino Linotype”, Times, “Times New Roman”, serif;
-  color: #544943;
-  -webkit-font-smoothing: antialiased;
+.page-header {
+  color: #ece4d8;
+  text-align: center;
+  background-color: #7c334f;
+  background-image: none
+
+  @include large {
+    padding: 1rem 20rem;
+  }
+}
+
+.page-header h2 {
+    color: #e69b95;
 }
