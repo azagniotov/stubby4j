@@ -2,6 +2,7 @@
 ---
 
 @import "{{ site.theme }}";
+@import "rouge-github";
 
 // Headers
 $header-heading-color: #ece4d8 !default;
