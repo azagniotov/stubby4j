@@ -151,35 +151,37 @@ tr:last-child td {
   font-style: italic;
 }
 
-details {
+.main-content details {
     border-radius: 10px;
     padding: 0px 8px;
     margin-bottom: 15px;
 }
 
-details[open] {
+.main-content details[open] {
     padding: 0px 8px 8px 8px;
 }
 
-summary {
+.main-content summary {
     margin: 0px 0px 8px 0px;
     outline:none;
 }
 
-::marker {
+.main-content ::marker {
     content: "🧡 ";
     unicode-bidi: isolate;
     font-variant-numeric: tabular-nums;
+    white-space: pre;
     text-transform: none;
     text-indent: 0px !important;
     text-align: start !important;
     text-align-last: start !important;
 }
 
-details::marker {
+.main-content details::marker {
     color: #417090;
 }
 
-summary::marker {
+.main-content summary::marker {
     color: #417090;
 }
+
