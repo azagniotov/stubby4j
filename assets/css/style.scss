@@ -35,10 +35,11 @@ body {
   border: none;
 
   &:hover {
-    color: none;
-    text-decoration: none;
-    background-color: none;
-    border-color: none;
+    color: $header-background-color  !important;
+    text-decoration: none !important;
+    background-color: $header-background-color  !important;
+    border-color: none  !important;
+    border: none !important;
   }
 
   + .btn {
