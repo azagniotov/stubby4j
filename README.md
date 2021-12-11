@@ -679,8 +679,8 @@ Keep on reading to understand their usage, intent and behavior.
 
 ### Request object properties
 
-<details>
-  <summary>
+<details markdown=block>
+  <summary markdown=span>
 
    <code>
      Click to expand
@@ -981,8 +981,8 @@ The latter would ensure that the stubbed regex pattern actually works, also it i
 
 XML is not a regular language, it can be tricky to parse it using a regular expression (well, sometimes it is not as tricky when XML regex snippet is simple. But, most of the times this will cause you tears), especially when dealing with large XML `POST` payloads. XML is very complex: nested tags, XML comments, CDATA sections, preprocessor directives, namespaces, etc. make it very difficult to create a parse-able & working regular expression.
 
-<details>
-  <summary>
+<details markdown=block>
+  <summary markdown=span>
 
    <code>
      Click to expand
@@ -1157,8 +1157,8 @@ Keep on reading to understand their usage, intent and behavior.
 ### Response object properties
 
 
-<details>
-  <summary>
+<details markdown=block>
+  <summary markdown=span>
 
    <code>
      Click to expand
@@ -1365,8 +1365,8 @@ response:
 
 During HTTP request verification, you can leverage regex capturing groups ([Regex stubbing for dynamic matching](#regex-stubbing-for-dynamic-matching)) as token values for dynamic token replacement in stubbed response.
 
-<details>
-  <summary>
+<details markdown=block>
+  <summary markdown=span>
 
    <code>
      Click to expand
