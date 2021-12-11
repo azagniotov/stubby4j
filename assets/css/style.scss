@@ -48,7 +48,7 @@ code {
   padding: 0 5px 1px;
 }
 
-pre {
+.main-content pre {
   margin: 10px 0 20px;
   padding: .7em;
   background: #fff6e9;
@@ -57,7 +57,7 @@ pre {
   overflow: auto;
 }
 
-pre code {
+.main-content pre code {
   font: normal normal 1em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
   padding: 0;
 }
