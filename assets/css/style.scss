@@ -57,7 +57,7 @@ body {
 }
 
 code {
-  background: #fff6e9;
+  background-color: #fff6e9;
   font: normal normal .8em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
   padding: 0 5px 1px;
 }
@@ -69,7 +69,7 @@ code {
 .main-content pre {
   margin: 10px 0 20px;
   padding: .7em;
-  background: #fff6e9;
+  background-color: #fff6e9;
   border-color: #e5ddd1;
   border-radius: 0.3rem;
   border-bottom: 2px solid #bdb6ad;
@@ -77,8 +77,11 @@ code {
   overflow: auto;
 }
 
+.main-content code {
+  background-color: #fff6e9;
+}
+
 .main-content pre code {
-  background: #fff6e9;
   font: normal normal 1em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
   padding: 0;
 }
