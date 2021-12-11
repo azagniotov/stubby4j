@@ -3,6 +3,11 @@
 
 @import "{{ site.theme }}";
 
+// Headers
+$header-heading-color: #ece4d8 !default;
+$header-sub-heading-color: #e69b95 !default;
+$header-background-color: #7c334f !default;
+
 body {
   background: #ece4d8;
   font: normal normal 15px/1.5 Georgia, Palatino,” Palatino Linotype”, Times, “Times New Roman”, serif;
@@ -17,9 +22,9 @@ body {
 }
 
 .page-header {
-  color: #ece4d8;
+  color: $header-heading-color;
   text-align: center;
-  background-color: #7c334f;
+  background-color: $header-background-color;
   background-image: none
 
   @include large {
@@ -28,5 +33,5 @@ body {
 }
 
 .page-header h2 {
-    color: #e69b95;
+    color: $header-sub-heading-color;
 }
