@@ -3,6 +3,7 @@
 
 @import "{{ site.theme }}";
 @import "rouge-github";
+@import "gh-fork-ribbon";
 
 // Headers
 $header-heading-color: #ece4d8 !default;
