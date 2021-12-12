@@ -14,10 +14,10 @@
   </head>
   <body>
     <a id="skip-to-content" href="#content">Skip to the content.</a>
-    <a class="github-fork-ribbon right-top fixed" href="https://github.com/azagniotov/stubby4j" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+    <a class="github-fork-ribbon right-top fixed" href="{{ site.github.repository_url }}" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
     <header class="page-header" role="banner">
-      <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
+      <h1 class="project-name"><a href="https://stubby4j.com">{{ page.title | default: site.title | default: site.github.repository_name }}</a></h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% if site.github.is_project_page %}
 <!--        <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>-->
