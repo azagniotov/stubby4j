@@ -170,26 +170,26 @@ For more information and more complex examples, please dive into the rest of doc
 
 ## Running in Docker
 
-stubby4j Docker images are hosted on https://hub.docker.com/r/azagniotov/stubby4j.
+stubby4j Docker images hosted on [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docker.com/r/azagniotov/stubby4j).
 
 Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
-* [docker/jdk8](docker/jdk8)
-* [docker/jdk11](docker/jdk11)
-* [docker/jdk16](docker/jdk16)
+* [docker/jdk8/Dockerfile](docker/jdk8/Dockerfile)
+* [docker/jdk11/Dockerfile](docker/jdk11/Dockerfile)
+* [docker/jdk16/Dockerfile](docker/jdk16/Dockerfile)
 
 Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
 
-```shell script
+```bash
 $ docker build --rm --no-cache -t stubby4j:latest .
 ```
 
 or the following command to build from a specific tag, e.g.:
 
-```shell script
+```bash
 $ docker build --build-arg REVISION=v7.5.0 --rm --no-cache -t stubby4j:latest .
 ```
 
-Refer to https://hub.docker.com/r/azagniotov/stubby4j README `How to use this image` section regarding how to use the built image
+Refer to [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docker.com/r/azagniotov/stubby4j) README `How to use this image` section regarding how to use the built image
 
 [Back to top](#table-of-contents)
 
