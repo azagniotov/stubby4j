@@ -1,4 +1,4 @@
-HTTP/1.1, HTTP/2 and WebSockets server for stubbing external systems in Docker and non-containerized environment for integration and contract testing.
+HTTP/1.1, HTTP/2 and WebSockets API stub server for stubbing external systems in Docker and non-containerized environment for integration and contract testing
 
 [![CircleCI build master branch][circleci-badge]][circleci-link]
 [![DockerHub][docker-hub-badge]][docker-hub-link]
