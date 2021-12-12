@@ -79,6 +79,26 @@ body {
     font-weight: bold;
 }
 
+.page-header h1 a {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:link {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:visited {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:hover {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:active {
+  color: $header-heading-color;
+}
+
 .page-header h2 {
     color: $header-sub-heading-color;
 }
