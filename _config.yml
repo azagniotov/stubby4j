@@ -1,8 +1,0 @@
-theme: jekyll-theme-cayman
-
-title: stubby4j
-tagline: HTTP/1.1, HTTP/2 and WebSockets API stub server
-description: HTTP/1.1, HTTP/2 and WebSockets API stub server for stubbing external systems in Docker and non-containerized environment for integration and contract testing
-author:
-  name: Alexander Zagniotov
-  url: https://github.com/azagniotov/stubby4j
