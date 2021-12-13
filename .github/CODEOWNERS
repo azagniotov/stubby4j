@@ -1,0 +1,11 @@
+# Lines starting with '#' are comments.
+# Each line is a file pattern followed by one or more owners.
+# https://help.github.com/articles/about-codeowners/
+#
+# Order is important; the last matching pattern takes the most
+# precedence.
+
+*                   @azagniotov
+*.md                @azagniotov
+.github/CODEOWNERS  @azagniotov
+
