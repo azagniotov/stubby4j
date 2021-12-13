@@ -12,11 +12,9 @@ HTTP/1.1, HTTP/2 and WebSockets API stub server for stubbing external systems in
 
 It is a highly flexible and configurable tool for testing interactions of service-oriented (SoA) or/and micro-services architectures (REST, SOAP, WSDL, etc.) over `HTTP/1.1`, `HTTP/2` and `WebSockets` protocols.
 
+## Full documentation
+
 Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which includes a comprehensive user guide, various HOWTOs and usage examples.
-
-#### Why the word "stubby"?
-
-It is a stub HTTP server after all, hence the "stubby". Fun fact: in Australian slang "stubby" means _beer bottle_
 
 ## Key features
 
