@@ -1709,7 +1709,7 @@ Pseudocode ([StubRepository#matchStub](https://github.com/azagniotov/stubby4j/bl
 
 ## Change log
 
-See [docs/CHANGELOG.md](docs/CHANGELOG.md)
+See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md)
 
 ## Authors
 

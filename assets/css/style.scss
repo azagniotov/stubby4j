@@ -22,47 +22,6 @@ body {
   }
 }
 
-.btn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 138px;
-  height: 138px;
-  display: block;
-  background: transparent url(../images/fork-sprite.png) 0 0 no-repeat;
-  text-indent: -9000px;
-  z-index: 3;
-  border: none;
-
-  &:hover {
-    color: $header-background-color  !important;
-    text-decoration: none !important;
-    background-color: $header-background-color  !important;
-    border-color: none  !important;
-    border: none !important;
-  }
-
-  + .btn {
-    margin: 0;
-  }
-
-  @include large {
-    padding: 0;
-  }
-
-  @include medium {
-    padding: 0;
-  }
-
-  @include small {
-    padding: 0;
-
-    + .btn {
-      margin: 0;
-    }
-  }
-}
-
 .page-header {
   color: $header-heading-color;
   text-align: center;
