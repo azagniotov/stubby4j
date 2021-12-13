@@ -269,7 +269,7 @@ Please refer to [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docke
 
 ## Third-party dependencies
 
-* See the [build.gradle](build.gradle)
+* See the [build.gradle](https://github.com/azagniotov/stubby4j/blob/master/build.gradle) on [https://github.com/azagniotov/stubby4j](https://github.com/azagniotov/stubby4j)
 
 [Back to top](#table-of-contents)
 
