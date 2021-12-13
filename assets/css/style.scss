@@ -1,0 +1,383 @@
+---
+---
+
+@import "{{ site.theme }}";
+@import "rouge-github";
+
+// Headers
+$header-heading-color: #ece4d8 !default;
+$header-sub-heading-color: #ffffff !default;
+$header-background-color: #7c334f !default;
+
+body {
+  background: #ece4d8;
+  font: normal normal 15px/1.5 Georgia, Palatino,” Palatino Linotype”, Times, “Times New Roman”, serif;
+  color: #544943;
+  -webkit-font-smoothing: antialiased;
+}
+
+.main-content {
+  @include large {
+    max-width: 75rem;
+  }
+}
+
+.btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 138px;
+  height: 138px;
+  display: block;
+  background: transparent url(../images/fork-sprite.png) 0 0 no-repeat;
+  text-indent: -9000px;
+  z-index: 3;
+  border: none;
+
+  &:hover {
+    color: $header-background-color  !important;
+    text-decoration: none !important;
+    background-color: $header-background-color  !important;
+    border-color: none  !important;
+    border: none !important;
+  }
+
+  + .btn {
+    margin: 0;
+  }
+
+  @include large {
+    padding: 0;
+  }
+
+  @include medium {
+    padding: 0;
+  }
+
+  @include small {
+    padding: 0;
+
+    + .btn {
+      margin: 0;
+    }
+  }
+}
+
+.page-header {
+  color: $header-heading-color;
+  text-align: center;
+  background-color: $header-background-color;
+  background-image: none;
+
+  @include large {
+    padding: 1rem 20rem;
+  }
+}
+
+.page-header h1 {
+    font-family: 'Open Sans', Myriad, Calibri, sans-serif;
+    font-weight: bold;
+}
+
+.page-header h1 a {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:link {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:visited {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:hover {
+  color: $header-heading-color;
+}
+
+.page-header h1 a:active {
+  color: $header-heading-color;
+}
+
+.page-header h2 {
+    color: $header-sub-heading-color;
+}
+
+code {
+  background-color: #fff6e9;
+  font: normal normal .8em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  padding: 0 5px 1px;
+}
+
+.main-content .highlight {
+  border-radius: 0.3rem !important;
+}
+
+.main-content pre {
+  margin: 10px 0 20px;
+  padding: .7em;
+  background-color: #fff6e9;
+  border-color: #e5ddd1;
+  border-radius: 0.3rem;
+  border-bottom: 2px solid #bdb6ad;
+  font: normal normal .9em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  overflow: auto;
+}
+
+.main-content code {
+  background-color: #fff6e9;
+}
+
+.main-content pre code {
+  font: normal normal 1em/1.7 "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  padding: 0;
+}
+
+.main-content table {
+  display: table !important;
+  background: #fff6e9;
+  width: 100%;
+  border-collapse: separate;
+  border-bottom: 2px solid #bdb6ad;
+  margin: 10px 0;
+}
+
+tr {
+  display: table-row;
+}
+
+th {
+  display: table-cell;
+  padding: 2px 10px;
+  border: solid #ece4d8;
+  border-width: 0 2px 2px 0;
+  color: #cd596b;
+  font-family: 'Open Sans', Myriad, Calibri, sans-serif;
+  font-weight: bold;
+  font-size: .85em;
+}
+
+td {
+  display: table-cell;
+  padding: 0 .7em;
+  border: solid #ece4d8;
+  border-width: 0 2px 2px 0;
+}
+
+td:last-child, th:last-child {
+  border-right: none;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.main-content h1 {
+  font-size: 1.85em;
+  border-bottom: .2em double #d3ccc1;
+  color: #7c334f;
+  text-align: center;
+  font-style: italic;
+  margin: 1.1em 0 .38em;
+  line-height: 1.2;
+  padding-bottom: 10px
+}
+
+.main-content h2 {
+  font-size: 1.58em;
+  color: #7c334f;
+  margin: .95em 0 .5em;
+  border-bottom: .1em solid #D3CCC1;
+  line-height: 1.2;
+  padding-bottom: 10px
+}
+
+.main-content h3 {
+  margin: 20px 0 10px;
+  font-size: 1.45em;
+  color: #544943;
+}
+
+.main-content h4 {
+  margin: .6em 0;
+  font-size: 1.2em;
+  color: #cd596b;
+}
+
+.main-content h5 {
+  margin: .7em 0;
+  font-size: 1em;
+  color: #8b786f;
+}
+
+.main-content h6 {
+  margin: .8em 0;
+  font-size: .85em;
+  font-style: italic;
+}
+
+.main-content details {
+    border-radius: 10px;
+    padding: 0px 8px;
+    margin-bottom: 15px;
+}
+
+.main-content details[open] {
+    padding: 0px 8px 8px 8px;
+}
+
+.main-content summary {
+    margin: 0px 0px 8px 0px;
+    outline:none;
+    display: revert;
+    cursor: pointer;
+}
+
+.main-content ::marker {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+    text-transform: none;
+    text-indent: 0px !important;
+    text-align: start !important;
+    text-align-last: start !important;
+    cursor: pointer;
+}
+
+.main-content details::marker {
+    color: #417090;
+}
+
+.main-content summary::marker {
+    color: #417090;
+}
+
+/*!
+ * "Fork me on GitHub" CSS ribbon v0.2.3 | MIT License
+ * https://github.com/simonwhitaker/github-fork-ribbon-css
+*/
+
+.github-fork-ribbon {
+  width: 12.1em;
+  height: 12.1em;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 13px;
+  text-decoration: none;
+  text-indent: -999999px;
+}
+
+.github-fork-ribbon.fixed {
+  position: fixed;
+}
+
+.github-fork-ribbon:hover, .github-fork-ribbon:active {
+  background-color: rgba(0, 0, 0, 0.0);
+}
+
+.github-fork-ribbon:before, .github-fork-ribbon:after {
+  /* The right and left classes determine the side we attach our banner to */
+  position: absolute;
+  display: block;
+  width: 15.38em;
+  height: 1.54em;
+
+  top: 3.23em;
+  right: -3.23em;
+
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.github-fork-ribbon:before {
+  content: "";
+
+  /* Add a bit of padding to give some substance outside the "stitching" */
+  padding: .38em 0;
+
+  /* Set the base colour */
+  background-color: #a00;
+
+  /* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.15)));
+  background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+
+  /* Add a drop shadow */
+  -webkit-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 .15em .23em 0 rgba(0, 0, 0, 0.5);
+
+  pointer-events: auto;
+}
+
+.github-fork-ribbon:after {
+  /* Set the text from the data-ribbon attribute */
+  content: attr(data-ribbon);
+
+  /* Set the text properties */
+  color: #fff;
+  font: 700 1em "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.54em;
+  text-decoration: none;
+  text-shadow: 0 -.08em rgba(0, 0, 0, 0.5);
+  text-align: center;
+  text-indent: 0;
+
+  /* Set the layout properties */
+  padding: .15em 0;
+  margin: .15em 0;
+
+  /* Add "stitching" effect */
+  border-width: .08em 0;
+  border-style: dotted;
+  border-color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.github-fork-ribbon.left-top, .github-fork-ribbon.left-bottom {
+  right: auto;
+  left: 0;
+}
+
+.github-fork-ribbon.left-bottom, .github-fork-ribbon.right-bottom {
+  top: auto;
+  bottom: 0;
+}
+
+.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after {
+  right: auto;
+  left: -3.23em;
+}
+
+.github-fork-ribbon.left-bottom:before, .github-fork-ribbon.left-bottom:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+  top: auto;
+  bottom: 3.23em;
+}
+
+.github-fork-ribbon.left-top:before, .github-fork-ribbon.left-top:after, .github-fork-ribbon.right-bottom:before, .github-fork-ribbon.right-bottom:after {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.github-fork-ribbon.right-top:before {
+  background-color: #f80;
+}
+
