@@ -44,8 +44,6 @@ Thumbs.db
 *.iml
 *.ipr
 *.iws
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
 
 
 # Ignore Gradle project-specific cache directory
