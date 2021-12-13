@@ -173,9 +173,9 @@ For more information and more complex examples, please dive into the rest of doc
 stubby4j Docker images hosted on [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docker.com/r/azagniotov/stubby4j).
 
 Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
-* [docker/jdk8/Dockerfile](docker/jdk8/Dockerfile)
-* [docker/jdk11/Dockerfile](docker/jdk11/Dockerfile)
-* [docker/jdk16/Dockerfile](docker/jdk16/Dockerfile)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile)
 
 Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
 
@@ -228,7 +228,7 @@ services:
 
 ... where the `<HOST_MACHINE_DIR_WITH_YAML_CONFIG_TO_MAP_VOLUME_TO>` is the host machine directory with the `stubby4j` YAML config file (see the `YAML_CONFIG` env var under [Environment variables](https://hub.docker.com/r/azagniotov/stubby4j)) that you want to map to the container volume `/home/stubby4j/data`
 
-See smoke test [docker/smoke-test/docker-compose.yml](docker/smoke-test/docker-compose.yml) as a working example.
+See smoke test [https://github.com/azagniotov/stubby4j/tree/master/docker/smoke-test/docker-compose.yml](https://github.com/azagniotov/stubby4j/tree/master/docker/smoke-test/docker-compose.yml) as a working example.
 
 
 [Back to top](#table-of-contents)
@@ -512,18 +512,20 @@ the two parties during TLS/SSL handshake:
 
    Please see the following [code of the HttpClientUtils in functional tests](https://github.com/azagniotov/stubby4j/blob/3319577b486ac691bd66841f100e0cfeb5dc3956/src/functional-test/java/io/github/azagniotov/stubby4j/HttpClientUtils.java#L80-L107) for the `openssl`, `keytool` commands & Java code examples.
 
-   If you use a non-Java web client, you can use an already downloaded (via the `openssl s_client` command) stubby4j self-signed certificate in [PEM](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem) format to load into
+   If you use a non-Java web client, you can use an already downloaded (via the `openssl s_client` command) stubby4j self-signed certificate in [PEM](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pem) format to load into
    your web client trust store.
 
-   If your web client is a Java-based app, then you can load the aforementioned PEM certificate which was already converted in to two [JKS](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks) and [PKCS12](src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pkcs12) formats. You
+   If your web client is a Java-based app, then you can load the aforementioned PEM certificate which was already converted in to two [JKS](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.jks) and [PKCS12](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl/openssl.downloaded.stubby4j.self.signed.v3.pkcs12) formats. You
    can use `JKS` or `PKCS12` certificate to load into your Java web client trust store.
+
+   Alternatively, you can check all the certificates on the GitHub [https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl)
 
    #### Server hostname verification by the client
 
    During an SSL handshake, hostname verification establishes that the hostname in the URL matches the hostname in the server's identification; this
    verification is necessary to prevent man-in-the-middle attacks.
 
-   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L81), then your web client will be able to successfully verify URL hostname of the request against the imported `stubby4j` certificate's SAN (subject alternative names) list.
+   If __(1)__ you imported `stubby4j` self-signed certificate into your web client trust store as per above and __(2)__ `stubby4j` app is running on [one of the following IPs or a localhost](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl/stubby4j.self.signed.v3.conf#L45-L81) (alternatively, you can check the SSL conf on the GitHub [https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl](https://github.com/azagniotov/stubby4j/tree/master/src/main/resources/ssl)), then your web client will be able to successfully verify URL hostname of the request against the imported `stubby4j` certificate's SAN (subject alternative names) list.
 
    If you are running the `stubby4j` app on some other hostname/IP, then the hostname verification by your client will fail because the imported `stubby4j` self-signed certificate does not contain that hostname/IP. There are a number of options available for web clients to workaround the the hostname verification:
 
@@ -609,7 +611,7 @@ Here is a fully-populated, unrealistic endpoint:
 #### description (`optional`)
 
 * Description field which can be used to show optional descriptions in the logs
-* Useful when you have a number of stubs loaded for the same endpoint and it starts to get confusing as to which is being matched
+* Useful when you have a number of stubs loaded for the same endpoint, and it starts to get confusing as to which is being matched
 
 ```yaml
 -  description: Stub one
@@ -644,7 +646,7 @@ Here is a fully-populated, unrealistic endpoint:
 
 #### uuid (`optional`)
 
-* Useful when you want to specify unique identifier so it would be easier to update/delete it at runtime
+* Useful when you want to specify unique identifier, so it would be easier to update/delete it at runtime
 
 ```yaml
 -  uuid: 9136d8b7-f7a7-478d-97a5-53292484aaf6
