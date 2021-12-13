@@ -1,12 +1,10 @@
-[Back to the main README.md](../README.md#change-log)
-
 #### 7.5.1-SNAPSHOT
 
 * `master` branch
 
 #### 7.5.0
 
-* Added support for stubbing WebSocket [RFC6455](https://datatracker.ietf.org/doc/html/rfc6455) connections over HTTP/1.1 and HTTP/1.1 with TLS. See [WebSockets configuration HOWTO](WEBSOCKETS_CONFIGURATION_HOWTO.md#websockets-configuration-howto)
+* Added support for stubbing WebSocket [RFC6455](https://datatracker.ietf.org/doc/html/rfc6455) connections over HTTP/1.1 and HTTP/1.1 with TLS. See [https://stubby4j.com/docs/WEBSOCKETS_CONFIGURATION_HOWTO.html](https://stubby4j.com/docs/WEBSOCKETS_CONFIGURATION_HOWTO.html)
 * Added support for HTTP/2 H2C (or `HTTP/2 over cleartext` - HTTP/2 without TLS). This is where a normal transient HTTP connection upgraded to a persistent connection that uses the HTTP/2 binary protocol
 * PR [#403](https://github.com/azagniotov/stubby4j/pull/403) Fixed a bug where template token `post` needed to be used for tokenized content loaded via the `file` property (https://github.com/azagniotov)
 * PR [#404](https://github.com/azagniotov/stubby4j/pull/404) XMLUnit regex matcher placeholders can be used for dynamic token replacement (https://github.com/azagniotov)
@@ -14,8 +12,8 @@
 
 #### 7.4.0
 
-* Completely revisited TLS configuration in stubby4j, which enables support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3`. See [Making requests over TLS](../README.md#making-requests-over-tls) section
-* Added support for HTTP/2 over TLS using ALPN extension. See [Support for HTTP/2 on HTTPS URIs over TLS using ALPN extension](../README.md#support-for-http2-on-https-uris-over-tls) section
+* Completely revisited TLS configuration in stubby4j, which enables support for `TLSv1.0`, `TLSv1.1`, `TLSv1.2` and `TLSv1.3`. See [https://stubby4j.com/#making-requests-over-tls](https://stubby4j.com/#making-requests-over-tls) section
+* Added support for HTTP/2 over TLS using ALPN extension. See [https://stubby4j.com/#support-for-http2-on-https-uris-over-tls](https://stubby4j.com/#support-for-http2-on-https-uris-over-tls) section
 * PR [#284](https://github.com/azagniotov/stubby4j/pull/284) - During YAML parsing, checking if configured properties belong in their respective top-level objects (https://github.com/azagniotov)
 * PR [#286](https://github.com/azagniotov/stubby4j/pull/286) - Upgraded jetty to `9.4.43.v20210629` and SnakeYAML to `v1.29` (https://github.com/azagniotov)
 * PR [#295](https://github.com/azagniotov/stubby4j/pull/295), [#325](https://github.com/azagniotov/stubby4j/pull/325), [#327](https://github.com/azagniotov/stubby4j/pull/327) - When matching stubs, the log output is now clearer what has been matched (https://github.com/azagniotov)
@@ -34,7 +32,7 @@
 
 #### 7.3.0
 
-* New feature: added support for request proxying. See the [REQUEST_PROXYING.md](REQUEST_PROXYING.md) and the original feature request [#232](https://github.com/azagniotov/stubby4j/issues/232) for context
+* New feature: added support for request proxying. See the [https://stubby4j.com/docs/REQUEST_PROXYING.html](https://stubby4j.com/docs/REQUEST_PROXYING.html) and the original feature request [#232](https://github.com/azagniotov/stubby4j/issues/232) for context
 
 #### 7.2.0
 
@@ -352,6 +350,3 @@
 
 #### 1.0.54
 * Previous commit (`v1.0.53`) unintentionally broke use of embedded stubby [BUG]
-
-
-[Back to the main README.md](../README.md#change-log)
