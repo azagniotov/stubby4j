@@ -2,8 +2,8 @@ User-agent: baidu
 crawl-delay: 1
 
 User-Agent: *
+Disallow: /404.html
 Allow: /
 
 Sitemap: https://stubby4j.com/sitemap.xml
 Host: https://stubby4j.com
-
