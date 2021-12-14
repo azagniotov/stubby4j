@@ -554,7 +554,7 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 ## WebSockets configuration HOWTO
 
-See [WebSockets configuration HOWTO](docs/WEBSOCKETS_CONFIGURATION_HOWTO.md) for details
+See [docs/WebSockets configuration HOWTO.html](docs/WEBSOCKETS_CONFIGURATION_HOWTO.md) for details
 
 ## HTTP endpoint configuration HOWTO
 
@@ -960,7 +960,7 @@ The following endpoint only accepts requests with `application/json` post values
 
 ### Request proxying
 
-See [docs/REQUEST_PROXYING.md](docs/REQUEST_PROXYING.md) for details
+See [docs/REQUEST_PROXYING.html](docs/REQUEST_PROXYING.md) for details
 
 ### Regex stubbing for dynamic matching
 
@@ -1660,7 +1660,7 @@ will be compiled & cached in memory. This way, the pattern(s) are compiled durin
 
 ## The admin portal
 
-See [docs/ADMIN_PORTAL.md](docs/ADMIN_PORTAL.md) for details
+See [docs/ADMIN_PORTAL.html](docs/ADMIN_PORTAL.md) for details
 
 
 [Back to top](#table-of-contents)
@@ -1713,11 +1713,11 @@ See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://gi
 
 ## Authors
 
-See [docs/AUTHORS.md](docs/AUTHORS.md)
+See [docs/AUTHORS.html](docs/AUTHORS.md)
 
 ## Contributors
 
-See [docs/CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
+See [docs/CONTRIBUTORS.html](docs/CONTRIBUTORS.md)
 
 ## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
@@ -1726,7 +1726,7 @@ See [docs/CONTRIBUTORS.md](docs/CONTRIBUTORS.md)
 
 ## Copyright
 
-See [docs/COPYRIGHT.md](docs/COPYRIGHT.md) for details
+See [docs/COPYRIGHT.html](docs/COPYRIGHT.md) for details
 
 ## License
 MIT. See [LICENSE](LICENSE) for details

@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md#copyright)
+[Back to Home](../README.md#copyright)
 
 ## COPYRIGHT
 
