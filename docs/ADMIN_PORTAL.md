@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md#the-admin-portal)
+[Back to Home](../README.md#the-admin-portal)
 
 ## stubby4j Admin Portal
 
@@ -30,7 +30,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 >
 > * Stubs can be updated/deleted by either:
 >    * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
->    * unique identifier (See [README.md "HTTP endpoint configuration HOWTO" section](../README.md#http-endpoint-configuration-howto))
+>    * unique identifier (See ["HTTP endpoint configuration HOWTO" section](../README.md#http-endpoint-configuration-howto))
 > * When defining only one proxy config (e.g.: a `catch-all` for all stubs), it must be configured without a `uuid` OR have a `uuid` with a value `default`
 > * The `default` proxy config cannot be deleted via the `DELETE` REST API
 > * Proxy configs can `only` be updated by a unique identifier, `uuid`
@@ -637,13 +637,13 @@ Single stub with multiple proxy configs payload
 
 ### Client programmatic API
 
-You can manage `stubby4j` loaded config with the help of [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java).
+You can manage `stubby4j` loaded config with the help of [StubbyClient](https://github.com/azagniotov/stubby4j/tree/master/src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java).
 
-`stubby4`j has a class `YamlBuilder`, a builder, that enables to build a YAML string, which can be used as a `POST`/`PUT` payload (alternatively, you can always load your payload content from a local file as a resource when making requests). You can then make a requests to the admin portal using [StubbyClient](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java) to manage the stubs programamtically.
+`stubby4`j has a class `YamlBuilder`, a builder, that enables to build a YAML string, which can be used as a `POST`/`PUT` payload (alternatively, you can always load your payload content from a local file as a resource when making requests). You can then make a requests to the admin portal using [StubbyClient](https://github.com/azagniotov/stubby4j/tree/master/src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java) to manage the stubs programamtically.
 
-There is [a test that demonstrates the usage](../src/functional-test/java/io/github/azagniotov/stubby4j/ProxyConfigWithStubsTest.java#L243) of the  [YamlBuilder](../src/main/java/io/github/azagniotov/stubby4j/yaml/YamlBuilder.java) and [StubbyClient#updateStubbedData(...)](../src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java#L433) when updating `proxy-config`  configuration by `uuid`.
+There is [a test that demonstrates the usage](https://github.com/azagniotov/stubby4j/tree/master/src/functional-test/java/io/github/azagniotov/stubby4j/ProxyConfigWithStubsTest.java#L243) of the  [YamlBuilder](https://github.com/azagniotov/stubby4j/tree/master/src/main/java/io/github/azagniotov/stubby4j/yaml/YamlBuilder.java) and [StubbyClient#updateStubbedData(...)](https://github.com/azagniotov/stubby4j/tree/master/src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java#L433) when updating `proxy-config`  configuration by `uuid`.
 
 Although the aforementioned test is about managing an existing `proxy-config` definition, the same builder can be used for building request payloads to create/update stub `request` with its `response`. 
 
 
-[Back to the main README.md](../README.md#the-admin-portal)
+[Back to Home](../README.md#the-admin-portal)

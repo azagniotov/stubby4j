@@ -1,5 +1,5 @@
 
-[Back to the main README.md](../README.md#websockets-configuration-howto)
+[Back to Home](../README.md#websockets-configuration-howto)
 
 ## WebSockets configuration HOWTO
 
@@ -456,4 +456,4 @@ The `server-response` object supports the following properties: `policy`, `messa
 
 Just like with stubs management, `stubby4j` enables you to manage your `web-socket` definitions via the REST API exposed by the [Admin Portal](ADMIN_PORTAL.md). See the [available REST API summary](ADMIN_PORTAL.md#available-rest-api-summary)
 
-[Back to the main README.md](../README.md#websockets-configuration-howto)
+[Back to Home](../README.md#websockets-configuration-howto)

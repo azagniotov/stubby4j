@@ -1,4 +1,4 @@
-[Back to the main README.md](../README.md#request-proxying)
+[Back to Home](../README.md#request-proxying)
 
 ## Request proxying
 
@@ -93,7 +93,7 @@ includes:
   - include-all-test-stubs.yaml
   - include-proxy-config.yaml
 ```
-(from: [main-test-stubs-with-proxy-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
+(from: [main-test-stubs-with-proxy-config.yaml](https://github.com/azagniotov/stubby4j/tree/master/src/functional-test/resources/yaml/main-test-stubs-with-proxy-config.yaml))
 
 
 ### Supported YAML properties
@@ -181,4 +181,4 @@ Just like with stubs management, `stubby4j` enables you to manage your `proxy-co
 
 
 
-[Back to the main README.md](../README.md#request-proxying)
+[Back to Home](../README.md#request-proxying)
