@@ -226,7 +226,7 @@ includes:
   - include-all-test-stubs.yaml
   - include-web-socket-config.yaml
 ```
-(from: [main-test-stubs-with-web-socket-config.yaml](../src/functional-test/resources/yaml/main-test-stubs-with-web-socket-config.yaml))
+(from: [main-test-stubs-with-web-socket-config.yaml](https://github.com/azagniotov/stubby4j/blob/master/src/functional-test/resources/yaml/main-test-stubs-with-web-socket-config.yaml))
 
 [Back to top](#table-of-contents)
 
