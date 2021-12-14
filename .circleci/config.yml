@@ -1,7 +1,23 @@
 # Configuration for CircleCI
 
-version: 2
-jobs:
-  build:
+filter_ignore_gh_pages: &filter_ignore_gh_pages
+  filters:
     branches:
-      ignore: gh-pages
+      ignore:
+        - gh-pages
+
+default_steps: &default_steps
+  steps:
+    - run: echo "Skipping.."
+
+jobs:
+  no_op_job:
+    <<: *default_steps
+
+version: 2.1
+workflows:
+
+  master-jdk8:
+    jobs:
+      - no_op_job:
+          <<: *filter_ignore_gh_pages
