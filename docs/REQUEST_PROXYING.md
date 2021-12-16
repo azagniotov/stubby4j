@@ -1,4 +1,4 @@
-[Back to Home](../README.md#request-proxying)
+[Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)
 
 ## Request proxying
 
@@ -181,4 +181,4 @@ Just like with stubs management, `stubby4j` enables you to manage your `proxy-co
 
 
 
-[Back to Home](../README.md#request-proxying)
+[Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)

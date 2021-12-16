@@ -143,7 +143,7 @@ This section explains how to get stubby4j up and running using a very simple exa
 
 That's it!
 
-For more information and more complex examples, please dive into the rest of documentation, especially [HTTP endpoint configuration HOWTO](#http-endpoint-configuration-howto)
+For more information and more complex examples, please dive into the rest of documentation, especially [docs/HTTP endpoint configuration HOWTO.html](docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)
 
 [Back to top](#table-of-contents)
 
