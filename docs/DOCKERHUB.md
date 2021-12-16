@@ -9,7 +9,10 @@
 
 [![stubb4j][logo-badge]][logo-link]
 
+# Security updates
 
+- ### [2021-12-16] CVE-2021-44228, CVE-2021-45046
+  In regard to recent [Apache Log4j 2 vulnerabilities update](https://logging.apache.org/log4j/2.x/security.html), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/416
 
 
 # Quick reference
@@ -17,7 +20,6 @@
 * __Maintained by__: [Alexander Zagniotov (of the stubby4j project)](https://github.com/azagniotov/stubby4j)
 * __Where to get help__: https://github.com/azagniotov/stubby4j/issues or [StackOverflow](http://stackoverflow.com/questions/tagged/stubby4j)
 * __Changelog__: https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md
-
 
 # Supported tags and respective `Dockerfile` links
 
