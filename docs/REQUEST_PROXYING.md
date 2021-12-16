@@ -16,7 +16,7 @@
 
 As of `v7.3.0` (incl.) of `stubby4j`, it is possible to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
 
-On this page you will learn how to add a proxy configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [HTTP endpoint configuration HOWTO](../README.md#http-endpoint-configuration-howto).
+On this page you will learn how to add a proxy configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md).
 
 Keep on reading to understand how to add proxy configurations to your `stubby4j` YAML config.
 
@@ -55,7 +55,7 @@ First, let's understand how to declare a proxy configuration. The following is a
       endpoint: https://yahoo.com
 ```
 
-YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([HTTP endpoint configuration HOWTO](../README.md#http-endpoint-configuration-howto)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
+YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
 
 ```yaml
 - proxy-config:
@@ -86,7 +86,7 @@ YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it i
       endpoint: https://jsonplaceholder.typicode.com
 ```
 
-Alternatively, you may consider [splitting main YAML config](../README.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
+Alternatively, you may consider [splitting main YAML config](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
 
 ```yaml
 includes:
