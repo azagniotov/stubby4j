@@ -77,7 +77,6 @@ EXPOSE $ADMIN_PORT $STUBS_PORT $STUBS_TLS_PORT
 # https://www.docker.com/blog/apache-log4j-2-cve-2021-44228/
 ENTRYPOINT java \
         -DoverrideDisabledAlgorithms=true \
-        -Dlog4j.formatMsgNoLookups=true \
         -Dlog4j2.configurationFile=log4j2.xml \
         -jar stubby4j.jar \
             --location ${LOCATION} \
