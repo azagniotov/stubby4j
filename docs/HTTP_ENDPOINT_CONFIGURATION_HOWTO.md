@@ -22,7 +22,7 @@
 
 ### Summary
 
-This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
+This page explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
 Also, you will learn about request proxying to other hosts, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more.
 
@@ -424,7 +424,7 @@ The following endpoint only accepts requests with `application/json` post values
 
 ### Request proxying
 
-See [docs/REQUEST_PROXYING.html](docs/REQUEST_PROXYING.md) for details
+See [REQUEST_PROXYING.html](REQUEST_PROXYING.md) for details
 
 ### Regex stubbing for dynamic matching
 
