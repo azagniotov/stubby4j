@@ -181,7 +181,7 @@ In `stubby4j` YAML config, the websocket configuration metadata is declared usin
 
 [Back to top](#table-of-contents)
 
-YAML websocket configuartion can be in the same YAML config as the other HTTP stub types supported by `stubby4j`, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([HTTP endpoint configuration HOWTO](../README.md#http-endpoint-configuration-howto)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
+YAML websocket configuartion can be in the same YAML config as the other HTTP stub types supported by `stubby4j`, i,e.: it is totally OK to mix configs for `request`/`response`/`proxy-config` ([HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) & `web-socket` in the same file. For example, the following is a totally valid YAML configuration:
 
 ```yaml
 - proxy-config:
@@ -219,7 +219,7 @@ YAML websocket configuartion can be in the same YAML config as the other HTTP st
           delay: 10
 ```
 
-Alternatively, you may consider [splitting main YAML config](../README.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between HTTP stubs and websocket configs:
+Alternatively, you may consider [splitting main YAML config](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between HTTP stubs and websocket configs:
 
 ```yaml
 includes:
