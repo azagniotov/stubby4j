@@ -16,10 +16,11 @@
 
 
 # Quick reference
-* __Source repository__: https://github.com/azagniotov/stubby4j
+* __Source repository__: [https://github.com/azagniotov/stubby4j](https://github.com/azagniotov/stubby4j)
+* __Documentation__: [https://stubby4j.com](https://stubby4j.com)
 * __Maintained by__: [Alexander Zagniotov (of the stubby4j project)](https://github.com/azagniotov/stubby4j)
 * __Where to get help__: https://github.com/azagniotov/stubby4j/issues or [StackOverflow](http://stackoverflow.com/questions/tagged/stubby4j)
-* __Changelog__: https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md
+* __Changelog__: [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md)
 
 # Supported tags and respective `Dockerfile` links
 
@@ -27,7 +28,7 @@ The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJD
 * Built from tagged `stubby4j` `v7.x.x` versions (image tag naming convention is `7.x.x-jreXX`)
 * Built from default (i.e.: `master`)  branch (image tag naming convention is `latest-jreXX`)
 
-See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for more information
+See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md) for more information
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
 * [`7.5.0-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.5.0/docker/jdk8/Dockerfile)
@@ -59,7 +60,7 @@ See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for mor
 * Simulate edge cases and/or failure modes that the real API won't reliably produce
 * Fault injection, where after X good responses on the same URI you get a bad one
 ```
-... and much more! Please refer to https://github.com/azagniotov/stubby4j for more information about the features and capabilities.
+... and much more! Please refer to https://stubby4j.com for more information about the features and capabilities.
 
 # How to use this image
 
@@ -73,7 +74,7 @@ See https://github.com/azagniotov/stubby4j/blob/master/docs/CHANGELOG.md for mor
 |`STUBS_PORT`    | `8882`|Port for stub portal|
 |`ADMIN_PORT` |`8889`|Port for admin portal |
 |`STUBS_TLS_PORT`   | `7443` |Port for stub portal over SSL|
-|`WITH_ARGS`     | no default |`WITH_ARGS="--<ARG> .. --<ARG>"` See [available args](https://github.com/azagniotov/stubby4j#command-line-switches) |
+|`WITH_ARGS`     | no default |`WITH_ARGS="--<ARG> .. --<ARG>"` See [available args](https://stubby4j.com#command-line-switches) |
 
 
 
@@ -108,7 +109,7 @@ $ docker run --rm \
 
 ### Full command
 
-The following command example uses all environment variables when starting a `stubby4j` instance. See [available args](https://github.com/azagniotov/stubby4j#command-line-switches) for more information about all the args that can be used in `--env WITH_ARGS="..."` variable. Also, do note that the `WITH_ARGS` value must be enquoted:
+The following command example uses all environment variables when starting a `stubby4j` instance. See [available args](https://stubby4j.com#command-line-switches) for more information about all the args that can be used in `--env WITH_ARGS="..."` variable. Also, do note that the `WITH_ARGS` value must be enquoted:
 
 ```
 docker run --rm \
@@ -186,7 +187,7 @@ $ docker run --rm \
 
 Upon running the `stubby4j` container as per aforementioned examples, the Admin portal runs on `localhost`:`<port>` (e.g.: `localhost`:`8889`) or wherever you described through `stubby4j` image environment variables. The admin portal exposes a set of REST APIs that enable management of the loaded in-memory stubs, which were loaded from the YAML config provided to `stubby4j` during start-up.
 
-See https://github.com/azagniotov/stubby4j/blob/master/docs/ADMIN_PORTAL.md for more information
+See [https://stubby4j.com/docs/ADMIN_PORTAL.html](https://stubby4j.com/docs/ADMIN_PORTAL.html) for more information
 
 # License
 [View license information](https://github.com/azagniotov/stubby4j/blob/master/LICENSE) for the software contained in this image.
