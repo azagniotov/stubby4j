@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "stubby4j"
-subtitle: "Request proxying HOWTO"
+tagline: "Request proxying HOWTO"
 description: "Configuring a proxy/intercept where requests are proxied to another (live) service, when such requests did not match any of the configured stubs"
 ---
 
