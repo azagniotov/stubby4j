@@ -5,8 +5,8 @@
 <meta name="subject" content="{{ site.keywords }}" />
 <meta http-equiv="refresh" content="600" />
 
-{% if page.title? %}
-<title>{{ page.title }}</title>
+{% if page.title %}
+<title>{{ page.title - site.title }}</title>
 {% else %}
 <title>{{ site.title }}</title>
 {% endif %}
@@ -49,7 +49,7 @@
 {% endif %}
 
 <script type="application/ld+json">
-    {"author":{"@type":"Person","name":"Alexander Zagniotov"},"description":"{{ page.description | default: site.description }}","url":"{{ page.url }}","@type":"WebPage","headline":"stubby4j","@context":"https://schema.org"}
+    {"author":{"@type":"Person","name":"Alexander Zagniotov"},"description":"{{ page.description | default: site.description }}","url":"{{ page.url | absolute_url}}","@type":"WebPage","headline":"stubby4j","@context":"https://schema.org"}
 </script>
 
 <!-- Setup Google Analytics -->
