@@ -19,7 +19,7 @@ filter_ignore_gh_pages: &filter_ignore_gh_pages
   filters:
     branches:
       ignore:
-        - gh-pages
+        - not-gh-pages
 
 default_steps: &default_steps
   steps:
