@@ -1,7 +1,8 @@
 ---
 layout: default
-title: "Request proxying HOWTO"
-description: "Configuring a proxy/intercept where requests are proxied to another (live) service, when such requests did not match any of the configured stubs"
+seo_tag:
+  title: "Request proxying HOWTO"
+  description: "Configuring a proxy/intercept where requests are proxied to another (live) service, when such requests did not match any of the configured stubs"
 ---
 
 [Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)
