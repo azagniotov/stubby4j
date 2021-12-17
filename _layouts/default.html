@@ -1,7 +1,40 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="en-US">
   <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="index,follow">
+    <meta name="rating" content="general">
+    <meta name="abstract" content="{{ site.title - site.description }}">
+
+    <!--[if IEMobile]><meta http-equiv="cleartype" content="on"><![endif]-->
+
+    <!-- Custom <head> section -->
     {% include head-custom.html %}
+
+    <!-- Setup Google Analytics -->
+    {%- include head-custom-google-analytics.html %}
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+
+    <!-- Mobile tags -->
+    <meta name="theme-color" content="#7c334f">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
+    <link rel="shortcut icon" type="image/png" sizes="48x48" href="{{ '/favicon-48x48.png' | relative_url }}">
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="{{ '/favicon-32x32.png' | relative_url }}">
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="{{ '/favicon-16x16.png' | relative_url }}">
   </head>
   <body>
     <a id="skip-to-content" href="#content">Skip to the content.</a>
