@@ -3,7 +3,7 @@ theme: jekyll-theme-cayman
 title: stubby4j
 tagline: HTTP/1.1, HTTP/2 and WebSockets API stub server
 description: HTTP/1.1, HTTP/2 and WebSockets API stub server for stubbing external systems in Docker and non-containerized environment for integration and contract testing
-# keywords: HTTP/1.1,HTTP/2,WebSockets,stub server,microservices testing,integration testing,contract testing,websockets server,http2,mock server,TLS,API stubbing
+keywords: HTTP/1.1,HTTP/2,WebSockets,stub server,microservices testing,integration testing,contract testing,websockets server,http2,mock server,TLS,API stubbing
 
 author:
   name: Alexander Zagniotov

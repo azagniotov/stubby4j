@@ -1,14 +1,68 @@
-<!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-<meta name="keywords" content="HTTP/1.1,HTTP/2,WebSockets,stub server,microservices testing,integration testing,contract testing,websockets server,http2,mock server,TLS,API stubbing">
+<meta charset="UTF-8" />
+<meta name="robots" content="index,follow" />
+<meta name="rating" content="General" />
+<meta name="abstract" content="{{ site.title - site.description }}" />
+<meta name="subject" content="{{ site.keywords }}" />
+<meta http-equiv="refresh" content="600" />
+
+{% if page.title? %}
+<title>{{ page.title }}</title>
+{% else %}
+<title>{{ site.title }}</title>
+{% endif %}
+
+{% if page.title %}
+<meta property="og:title" content="{{ page.title }}" />
+{% endif %}
+
+{% if site.author.name %}
+<meta name="author" content="{{ site.author.name }}" />
+{% endif %}
+
+<meta property="og:locale" content="en_US" />
+
+<meta name="keywords" content="{{ page.keywords | default: site.keywords }}">
+<meta name="description" content="{{ page.description | default: site.description }}" />
+<meta property="og:description" content="{{ page.description | default: site.description }}" />
+
+{% if page.url == '/' %}
+<link rel="canonical" href="{{site.url}}" />
+<meta property="og:url" content="{{site.url}}" />
+{% else %}
+<link rel="canonical" href="{{page.url | absolute_url}}" />
+<meta property="og:url" content="{{page.url | absolute_url}}" />
+{% endif %}
+
+{% if site.title %}
+<meta property="og:site_name" content="{{ site.title }}" />
+{% endif %}
+
+{% if page.date %}
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+{% else %}
+<meta property="og:type" content="website" />
+{% endif %}
+
+{% if site.google_site_verification %}
+<meta name="google-site-verification" content="{{ site.google_site_verification }}" />
+{% endif %}
+
+<script type="application/ld+json">
+    {"author":{"@type":"Person","name":"Alexander Zagniotov"},"description":"{{ page.description | default: site.description }}","url":"{{ page.url }}","@type":"WebPage","headline":"stubby4j","@context":"https://schema.org"}
+</script>
 
 <!-- Setup Google Analytics -->
 {% include head-custom-google-analytics.html %}
 
-<!-- You can set your favicon here -->
 <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
 <link rel="shortcut icon" type="image/png" sizes="48x48" href="{{ '/favicon-48x48.png' | relative_url }}">
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="{{ '/favicon-32x32.png' | relative_url }}">
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="{{ '/favicon-16x16.png' | relative_url }}">
-
-<!-- end custom head snippets -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#157878">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
 
