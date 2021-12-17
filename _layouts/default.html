@@ -2,6 +2,9 @@
 <html lang="en-US">
   <head>
     <meta charset="UTF-8">
+
+    {% seo %}
+
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="index,follow">
     <meta name="rating" content="general">
@@ -25,9 +28,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <meta name="build_revision" content="{{ site.github.build_revision }}">
-    <meta name="pages_build_version" content="{{ site.github.pages_build_version }}">
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
