@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page
 title: "stubby4j"
 subtitle: "Copyright notice"
 description: "Copyright notice for the stubby4j software developed by Alexander Zagniotov and Contributors"
