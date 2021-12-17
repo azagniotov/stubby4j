@@ -623,7 +623,7 @@ See [docs/CONTRIBUTORS.html](docs/CONTRIBUTORS.md)
 See [docs/COPYRIGHT.html](docs/COPYRIGHT.md) for details
 
 ## License
-MIT. See [LICENSE](LICENSE) for details
+MIT. See [LICENSE](LICENSE) for details.
 
 
 [Back to top](#table-of-contents)
