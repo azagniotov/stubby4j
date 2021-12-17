@@ -1,7 +1,6 @@
-{% assign dash_tag = "-" %}
-<meta name="subject" content="{{ page.keywords | default: site.keywords }}" />
+    <meta name="subject" content="{{ page.keywords | default: site.keywords }}" />
     {%- if page.title %}
-    <title>{{ page.title dash_tag site.title }}</title>
+    <title>{{ page.title - site.title }}</title>
     {%- else %}
     <title>{{ site.title }}</title>
     {%- endif %}
