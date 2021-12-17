@@ -1,3 +1,10 @@
+---
+layout: default
+title: "Admin portal"
+description: "The admin portal provides a web UI page to view the stubbed data. In addition, the admin portal exposes a set of REST APIs that enable management of loaded in-memory stubs & proxy configs"
+keywords: http stub management,stub REST API,stub status,stub YAML config
+---
+
 [Back to Home](../README.md#the-admin-portal)
 
 ## stubby4j Admin Portal
