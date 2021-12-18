@@ -1,9 +1,5 @@
     <meta name="subject" content="{{ page.keywords | default: site.keywords }}">
-    {%- if page.title %}
-    <title>{{ page.title - site.title }}</title>
-    {%- else %}
-    <title>{{ site.title }}</title>
-    {%- endif %}
+    <title>{% if page.title != site.title %}{{ page.title }} - {% endif -%}{{ site.title }}</title>
     {%- if site.author.name %}
     <meta name="author" content="{{ site.author.name }}">
     {%- endif %}
