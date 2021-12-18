@@ -14,6 +14,8 @@ It is a highly flexible and configurable tool for testing interactions of servic
 
 ## Full documentation
 
+[![pages-build-deployment][gh-pages-badge]][gh-pages-link]
+
 Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which includes a comprehensive user guide, various HOWTOs and usage examples.
 
 ## Key features
@@ -93,3 +95,6 @@ Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which
 
 [forks-badge]: https://img.shields.io/github/forks/azagniotov/stubby4j.svg
 [forks-link]: https://github.com/azagniotov/stubby4j
+
+[gh-pages-badge]: https://github.com/azagniotov/stubby4j/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages
+[gh-pages-link]: https://github.com/azagniotov/stubby4j/actions/workflows/pages/pages-build-deployment
