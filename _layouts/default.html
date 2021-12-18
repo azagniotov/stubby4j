@@ -29,7 +29,8 @@
     <!-- CSS -->
     <!-- Tag site.github.build_revision comes up as empty string -->
     <!-- <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}"> -->
-    <link rel="stylesheet" href="{{ '/assets/css/style.css?built_at=' | append: "now" | date: "%s" }}">
+    {% assign built_at = "now" | date: "%s" %}
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?built_at=' | append: built_at }}">
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
