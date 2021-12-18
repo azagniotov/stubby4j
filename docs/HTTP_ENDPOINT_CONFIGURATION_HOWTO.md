@@ -2,7 +2,7 @@
 layout: default
 title: "HTTP endpoint configuration HOWTO"
 description: "This page explains the usage, intent and behavior of each property on the request and response, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more"
-keywords: http stub configuration,stub endpoint,stub TLS request,stub request,stub response,stub http API
+keywords: request,response,url,post,file,headers,json,regex,http,stub,stubby4j,http stub configuration,stub endpoint,stub TLS request,stub request,stub response,stub http API
 ---
 
 [Back to Home](../README.md#http-endpoint-configuration-howto)
