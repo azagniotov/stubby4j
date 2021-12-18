@@ -2,7 +2,7 @@
 layout: default
 title: "WebSockets configuration HOWTO"
 description: "Stubbing a WebSocket with the stubby4j, described in YAML. Use stubbed WebSocket connection to send and receive messages across the WebSocket connection"
-keywords: web sockets configuration,stub web sockets,web sockets server push,web sockets over TLS
+keywords: websocket,websocket server,stubby4j,onopen,onmessage,subprotocols,web sockets configuration,stub web sockets,web sockets server push,web sockets over TLS
 ---
 
 [Back to Home](../README.md#websockets-configuration-howto)
