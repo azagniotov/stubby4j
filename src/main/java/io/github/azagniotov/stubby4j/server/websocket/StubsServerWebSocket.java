@@ -24,7 +24,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -51,9 +50,10 @@ public class StubsServerWebSocket {
     private volatile Session session;
     private RemoteEndpoint remote;
 
-    public StubsServerWebSocket(final StubWebSocketConfig stubWebSocketConfig) {
+    public StubsServerWebSocket(final StubWebSocketConfig stubWebSocketConfig,
+                                final ScheduledExecutorService scheduledExecutorService) {
         this.stubWebSocketConfig = stubWebSocketConfig;
-        this.scheduledExecutorService = Executors.newScheduledThreadPool(10);
+        this.scheduledExecutorService = scheduledExecutorService;
     }
 
     @OnWebSocketConnect

@@ -68,6 +68,7 @@ public class StubsPortalHttp11WebSocketTests {
     private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/4"));
     private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/5"));
     private static final URI REQUEST_URL_HELLO_6 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/6"));
+    private static final URI REQUEST_URL_HELLO_7 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/7"));
     private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
@@ -164,6 +165,28 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverOnOpen_SendsExpected_BinaryMessage() throws Exception {
+        // The socket that receives server events
+        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+
+        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_7);
+        clientUpgradeRequest.setLocalEndpoint(socket);
+        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+
+        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_7, clientUpgradeRequest);
+        sessionFuture.get(500, TimeUnit.MILLISECONDS);
+
+        // Wait for client to get all the messages from the server
+        socket.awaitCountDownLatchWithAssertion();
+        assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
+
+        final byte[] expectedBytes = StringUtils.getBytesUtf8("E.T., call home");
+
+        assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo(expectedBytes);
+    }
+
+    @Test
+    public void serverOnOpen_SendsExpected_BinaryMessageFromFile() throws Exception {
         // The socket that receives server events
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
