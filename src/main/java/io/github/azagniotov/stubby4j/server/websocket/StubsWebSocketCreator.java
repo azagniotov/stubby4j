@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 public class StubsWebSocketCreator implements WebSocketCreator {
 
@@ -32,7 +33,7 @@ public class StubsWebSocketCreator implements WebSocketCreator {
         // Renders HTTP error response if client requested sub-protocol does not match the stubbed ones
         checkAndSetAcceptedProtocols(stubWebSocketConfig, servletUpgradeRequest, servletUpgradeResponse);
 
-        return new StubsServerWebSocket(stubWebSocketConfig);
+        return new StubsServerWebSocket(stubWebSocketConfig, Executors.newScheduledThreadPool(10));
     }
 
     private void checkAndHandleNotFound(final StubWebSocketConfig stubWebSocketConfig, ServletUpgradeRequest servletUpgradeRequest, ServletUpgradeResponse servletUpgradeResponse) {

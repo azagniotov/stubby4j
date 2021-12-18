@@ -119,3 +119,13 @@
     on-open:
       policy: ping
       delay: 100
+
+- web-socket:
+    url: /demo/hello/7
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: binary
+      body: "E.T., call home"
+      delay: 200

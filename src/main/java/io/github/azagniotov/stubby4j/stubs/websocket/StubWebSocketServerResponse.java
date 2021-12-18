@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.io.File;
@@ -62,6 +63,9 @@ public class StubWebSocketServerResponse implements ReflectableStub {
     }
 
     public byte[] getBodyAsBytes() {
+        if (fileBytes.length == 0) {
+            return StringUtils.getBytesUtf8(body);
+        }
         return fileBytes;
     }
 
