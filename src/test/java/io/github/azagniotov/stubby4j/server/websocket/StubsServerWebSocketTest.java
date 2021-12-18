@@ -9,6 +9,7 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +59,13 @@ public class StubsServerWebSocketTest {
     public void setUp() throws Exception {
         spyScheduledExecutorService = spy(Executors.newScheduledThreadPool(10));
         when(mockSession.getRemote()).thenReturn(mockRemoteEndpoint);
+    }
+
+    @After
+    public void cleanUp() throws Exception {
+        spyScheduledExecutorService.shutdown();
+
+        assertThat(spyScheduledExecutorService.isShutdown()).isTrue();
     }
 
     @Test
