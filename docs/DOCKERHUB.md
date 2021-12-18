@@ -11,7 +11,7 @@
 
 # Security updates
 
-- ### [2021-12-16] CVE-2021-44228, CVE-2021-45046
+- ### [2021-12-16] [CVE-2021-44228](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228) (Critical), [CVE-2021-45046](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45046) (Critical)
   In regard to recent [Apache Log4j 2 vulnerabilities update](https://logging.apache.org/log4j/2.x/security.html), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/416
 
 
