@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
+    <title>{%- if page.title and page.title != site.title %}{{ page.title }} - {% endif -%}{{ site.title }}</title>
+    <link rel="canonical" href="{%- if page.url == '/' %}{{site.url}}{%- else -%}{{page.url | absolute_url}}{%- endif -%}">
     <meta charset="UTF-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="index,follow">
