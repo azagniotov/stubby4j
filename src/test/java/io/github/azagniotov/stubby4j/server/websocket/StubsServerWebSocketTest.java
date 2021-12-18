@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
@@ -27,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,13 +50,13 @@ public class StubsServerWebSocketTest {
     @Captor
     private ArgumentCaptor<Runnable> runnableCaptor;
 
-    @Spy
-    private ScheduledExecutorService spyScheduledExecutorService = Executors.newScheduledThreadPool(10);
+    private ScheduledExecutorService spyScheduledExecutorService;
 
     private StubsServerWebSocket serverWebSocket;
 
     @Before
     public void setUp() throws Exception {
+        spyScheduledExecutorService = spy(Executors.newScheduledThreadPool(10));
         when(mockSession.getRemote()).thenReturn(mockRemoteEndpoint);
     }
 
