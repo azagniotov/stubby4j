@@ -2,7 +2,7 @@
 layout: default
 title: "Request proxying HOWTO"
 description: "Configuring a proxy/intercept where requests are proxied to another (live) service, when such requests did not match any of the configured stubs"
-keywords: request proxying,request intercept,http proxy,request proxy,stub request proxy
+keywords: proxy,proxy config,request proxy,stubby4j,REST,REST API,request proxying,request intercept,http proxy,request proxy,stub request proxy
 ---
 
 [Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)
