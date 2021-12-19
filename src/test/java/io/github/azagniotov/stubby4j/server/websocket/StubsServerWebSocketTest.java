@@ -21,12 +21,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -144,6 +146,46 @@ public class StubsServerWebSocketTest {
 
         verify(mockRemoteEndpoint, times(1)).sendBytesByFuture(byteBufferCaptor.capture());
         assertThat(byteBufferCaptor.getValue()).isEqualTo(ByteBuffer.wrap(StringUtils.getBytesUtf8("hello-from-server")));
+    }
+
+    @Test
+    public void onWebSocketConnect_DispatchesExpectedServerFragmentationResponse() throws Exception {
+        final String tanuki = "The Japanese raccoon dog is known as the tanuki.";
+        final byte[] originalStringBytes = StringUtils.getBytesUtf8(tanuki);
+
+        final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
+                .withDelay("5")
+                .withStrategy(StubWebSocketServerResponsePolicy.FRAGMENTATION.toString())
+                .withBody(tanuki)
+                .build();
+        final StubWebSocketConfig stubWebSocketConfig = buildStubWebSocketConfig(webSocketServerResponse);
+        serverWebSocket = new StubsServerWebSocket(stubWebSocketConfig, spyScheduledExecutorService);
+
+        serverWebSocket.onWebSocketConnect(mockSession);
+
+        verify(spyScheduledExecutorService, times(1)).schedule(
+                runnableCaptor.capture(),
+                eq(5L),
+                eq(TimeUnit.MILLISECONDS));
+
+        // Execute the future in order to invoke the lambda which invokes the RemoteEndpoint
+        runnableCaptor.getValue().run();
+
+        // FYI: tanuki string bytes[] divided by StubsServerWebSocket.FRAGMENTATION_FRAMES produces 48 chunks
+        verify(mockRemoteEndpoint, times(48)).sendPartialBytes(byteBufferCaptor.capture(), anyBoolean());
+        final List<ByteBuffer> allCapturedFragments = byteBufferCaptor.getAllValues();
+        assertThat(allCapturedFragments.size()).isEqualTo(48);
+
+        // Currently I do not see an easy way to enforce the right order of byte frames through
+        // the Argument captor in order to correctly assemble them into a string for assertion.
+        // Normally, the web socket client ensures that all partial frames are assembled correctly
+//        ByteBuffer allocatedByteBuffer = ByteBuffer.allocate(originalStringBytes.length);
+//        for (ByteBuffer allCapturedFragment : allCapturedFragments) {
+//            allocatedByteBuffer = allocatedByteBuffer.put(allCapturedFragment);
+//        }
+//        final byte[] actualStringBytes = allocatedByteBuffer.array();
+//
+//        assertThat(tanuki).isEqualTo(new String(actualStringBytes, StandardCharsets.UTF_8));
     }
 
     private StubWebSocketConfig buildStubWebSocketConfig(final StubWebSocketServerResponse webSocketServerResponse) {
