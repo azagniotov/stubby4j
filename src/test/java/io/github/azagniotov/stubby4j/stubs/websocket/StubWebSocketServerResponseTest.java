@@ -6,13 +6,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.tempFileFromString;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,7 +42,7 @@ public class StubWebSocketServerResponseTest {
     @Test
     public void returnsBodyAsExpectedBytesWhenOnlyFileStubbed() throws Exception {
         final StubWebSocketServerResponse socketServerResponse =
-                builder.withFile(createTempFile("Apple"))
+                builder.withFile(tempFileFromString("Apple"))
                         .build();
         assertThat(socketServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8("Apple"));
     }
@@ -54,7 +51,7 @@ public class StubWebSocketServerResponseTest {
     public void returnsBodyAsExpectedFileBytesWhenBothBodyAndFileStubbed() throws Exception {
         final StubWebSocketServerResponse socketServerResponse =
                 builder.withBody("OK")
-                        .withFile(createTempFile("Banana"))
+                        .withFile(tempFileFromString("Banana"))
                         .build();
         assertThat(socketServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8("Banana"));
     }
@@ -70,7 +67,7 @@ public class StubWebSocketServerResponseTest {
     @Test
     public void returnsBodyAsExpectedStringWhenOnlyFileStubbed() throws Exception {
         final StubWebSocketServerResponse socketServerResponse =
-                builder.withFile(createTempFile("Apple"))
+                builder.withFile(tempFileFromString("Apple"))
                         .build();
         assertThat(socketServerResponse.getBodyAsString()).isEqualTo("Apple");
     }
@@ -79,23 +76,8 @@ public class StubWebSocketServerResponseTest {
     public void returnsBodyAsExpectedStringWhenBothBodyAndFileStubbed() throws Exception {
         final StubWebSocketServerResponse socketServerResponse =
                 builder.withBody("OK")
-                        .withFile(createTempFile("Banana"))
+                        .withFile(tempFileFromString("Banana"))
                         .build();
         assertThat(socketServerResponse.getBodyAsString()).isEqualTo("Banana");
-    }
-
-    private File createTempFile(final String content) throws Exception {
-        // Create temp file.
-        final File temp = File.createTempFile("pattern", ".txt");
-
-        // Delete temp file when program exits.
-        temp.deleteOnExit();
-
-        // Write to temp file
-        final BufferedWriter out = new BufferedWriter(new FileWriter(temp));
-        out.write(content);
-        out.close();
-
-        return temp;
     }
 }
