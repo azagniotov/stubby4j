@@ -9,6 +9,7 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.StatusCode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.tempFileFromString;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -37,6 +39,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StubsServerWebSocketTest {
+
+    private static final ByteBuffer BYTE_BUFFER_HELLO_FROM_SERVER = ByteBuffer.wrap(StringUtils.getBytesUtf8("hello-from-server"));
 
     @Mock
     private Session mockSession;
@@ -71,7 +75,7 @@ public class StubsServerWebSocketTest {
     }
 
     @Test
-    public void onWebSocketConnect_DispatchesExpectedServerTextResponseOnce() throws Exception {
+    public void onWebSocketConnect_DispatchesExpectedServerTextResponseWhenPolicyOnce() throws Exception {
         final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
                 .withDelay("250")
                 .withMessageType(StubWebSocketMessageType.TEXT.toString())
@@ -88,7 +92,8 @@ public class StubsServerWebSocketTest {
                 eq(250L),
                 eq(TimeUnit.MILLISECONDS));
 
-        // Execute the future in order to invoke the lambda which invokes the RemoteEndpoint
+        // Execute the captured future which was passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
         verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
@@ -96,7 +101,71 @@ public class StubsServerWebSocketTest {
     }
 
     @Test
-    public void onWebSocketConnect_DispatchesExpectedServerPeriodicPingResponse() throws Exception {
+    public void onWebSocketConnect_DispatchesExpectedServerTextResponseWhenPolicyDisconnect() throws Exception {
+        final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
+                .withDelay("250")
+                .withMessageType(StubWebSocketMessageType.TEXT.toString())
+                .withStrategy(StubWebSocketServerResponsePolicy.DISCONNECT.toString())
+                .withBody("hello-from-server")
+                .build();
+        final StubWebSocketConfig stubWebSocketConfig = buildStubWebSocketConfig(webSocketServerResponse);
+        serverWebSocket = new StubsServerWebSocket(stubWebSocketConfig, spyScheduledExecutorService);
+
+        serverWebSocket.onWebSocketConnect(mockSession);
+
+        // 1. 1st future is scheduled when sending configured text response
+        // 2. 2nd future is scheduled when session disconnects
+        verify(spyScheduledExecutorService, times(2)).schedule(
+                runnableCaptor.capture(),
+                eq(250L),
+                eq(TimeUnit.MILLISECONDS));
+
+        // Execute the captured futures which were passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
+        for (final Runnable captured : runnableCaptor.getAllValues()) {
+            captured.run();
+        }
+
+        verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
+        assertThat(stringCaptor.getValue()).isEqualTo("hello-from-server");
+
+        verify(mockSession, times(1)).close(eq(StatusCode.NORMAL), eq("bye"));
+    }
+
+    @Test
+    public void onWebSocketConnect_DispatchesExpectedServerBinaryResponseWhenPolicyDisconnect() throws Exception {
+        final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
+                .withDelay("250")
+                .withMessageType(StubWebSocketMessageType.BINARY.toString())
+                .withStrategy(StubWebSocketServerResponsePolicy.DISCONNECT.toString())
+                .withFile(tempFileFromString("hello-from-server"))
+                .build();
+        final StubWebSocketConfig stubWebSocketConfig = buildStubWebSocketConfig(webSocketServerResponse);
+        serverWebSocket = new StubsServerWebSocket(stubWebSocketConfig, spyScheduledExecutorService);
+
+        serverWebSocket.onWebSocketConnect(mockSession);
+
+        // 1. 1st future is scheduled when sending configured text response
+        // 2. 2nd future is scheduled when session disconnects
+        verify(spyScheduledExecutorService, times(2)).schedule(
+                runnableCaptor.capture(),
+                eq(250L),
+                eq(TimeUnit.MILLISECONDS));
+
+        // Execute the captured futures which were passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
+        for (final Runnable captured : runnableCaptor.getAllValues()) {
+            captured.run();
+        }
+
+        verify(mockRemoteEndpoint, times(1)).sendBytesByFuture(byteBufferCaptor.capture());
+        assertThat(byteBufferCaptor.getValue()).isEqualTo(BYTE_BUFFER_HELLO_FROM_SERVER);
+
+        verify(mockSession, times(1)).close(eq(StatusCode.NORMAL), eq("bye"));
+    }
+
+    @Test
+    public void onWebSocketConnect_DispatchesExpectedServerPeriodicPingResponseWhenPolicyPing() throws Exception {
         final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
                 .withDelay("1337")
                 .withMessageType(StubWebSocketMessageType.TEXT.toString())
@@ -115,7 +184,8 @@ public class StubsServerWebSocketTest {
                 eq(1337L),
                 eq(TimeUnit.MILLISECONDS));
 
-        // Execute the future in order to invoke the lambda which invokes the RemoteEndpoint
+        // Execute the captured future which was passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
         verify(mockRemoteEndpoint, times(1)).sendPing(byteBufferCaptor.capture());
@@ -123,7 +193,7 @@ public class StubsServerWebSocketTest {
     }
 
     @Test
-    public void onWebSocketConnect_DispatchesExpectedServerPeriodicBinaryResponse() throws Exception {
+    public void onWebSocketConnect_DispatchesExpectedServerPeriodicBinaryResponseWhenPolicyPush() throws Exception {
         final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
                 .withDelay("18")
                 .withMessageType(StubWebSocketMessageType.BINARY.toString())
@@ -141,15 +211,16 @@ public class StubsServerWebSocketTest {
                 eq(18L),
                 eq(TimeUnit.MILLISECONDS));
 
-        // Execute the future in order to invoke the lambda which invokes the RemoteEndpoint
+        // Execute the captured future which was passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
         verify(mockRemoteEndpoint, times(1)).sendBytesByFuture(byteBufferCaptor.capture());
-        assertThat(byteBufferCaptor.getValue()).isEqualTo(ByteBuffer.wrap(StringUtils.getBytesUtf8("hello-from-server")));
+        assertThat(byteBufferCaptor.getValue()).isEqualTo(BYTE_BUFFER_HELLO_FROM_SERVER);
     }
 
     @Test
-    public void onWebSocketConnect_DispatchesExpectedServerFragmentationResponse() throws Exception {
+    public void onWebSocketConnect_DispatchesExpectedServerBinaryResponseWhenPolicyFragmentation() throws Exception {
         final String tanuki = "The Japanese raccoon dog is known as the tanuki.";
         final byte[] originalStringBytes = StringUtils.getBytesUtf8(tanuki);
 
@@ -168,7 +239,8 @@ public class StubsServerWebSocketTest {
                 eq(5L),
                 eq(TimeUnit.MILLISECONDS));
 
-        // Execute the future in order to invoke the lambda which invokes the RemoteEndpoint
+        // Execute the captured future which was passed in to the
+        // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
         // FYI: tanuki string bytes[] divided by StubsServerWebSocket.FRAGMENTATION_FRAMES produces 48 chunks
