@@ -192,6 +192,41 @@
     status: 200
     file: ../json/response/json_response_<% post.1 %>.json
 
+# https://stackoverflow.com/questions/70417269/stubby-comma-separated-query-string-implementation-issue
+- request:
+    url: ^/stackoverflow/70417269/(.*)/test
+    query:
+      pathid: '1'
+    method: GET
+  response:
+    headers:
+      Content-Type: application/json
+    status: 200
+    body: "matched path id: 1"
+
+- request:
+    url: ^/stackoverflow/70417269/(.*)/test
+    query:
+      pathid: '1,2'
+    method: GET
+  response:
+    headers:
+      Content-Type: application/json
+    status: 200
+    body: "matched path id: 1,2"
+
+- request:
+    url: ^/stackoverflow/70417269/(.*)/test
+    query:
+      pathid: '1,2,5'
+    method: GET
+  response:
+    headers:
+      Content-Type: application/json
+    status: 200
+    body: "matched path id: 1,2,5"
+
+
 - request:
     method: POST
     url: /azagniotov/stubby4j/issues/399/vanilla/regex

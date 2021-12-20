@@ -462,4 +462,29 @@ public class StubsPortalRaisedIssueTests {
 
         assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
     }
+
+    // https://stackoverflow.com/questions/70417269/stubby-comma-separated-query-string-implementation-issue
+    @Test
+    public void stubby4jStackOverFlowQuestion70417269() throws Exception {
+
+        final String requestOneUrl = String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two-five/test?pathid=1,2,5");
+        final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.GET, requestOneUrl);
+
+        final HttpResponse responseOne = requestOne.execute();
+        final String responseOneContentAsString = responseOne.parseAsString().trim();
+
+        assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("matched path id: 1,2,5").isEqualTo(responseOneContentAsString);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        final String requestTwoUrl = String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two/test?pathid=1,2");
+        final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.GET, requestTwoUrl);
+
+        final HttpResponse responseTwo = requestTwo.execute();
+        final String responseTwoContentAsString = responseTwo.parseAsString().trim();
+
+        assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.OK_200);
+        assertThat("matched path id: 1,2").isEqualTo(responseTwoContentAsString);
+    }
 }
