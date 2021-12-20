@@ -2,6 +2,8 @@
 
 * Issue [#416](https://github.com/azagniotov/stubby4j/issues/416) - Addressed critical CVEs found in `log4j2`: [CVE-2021-44228](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228) and [CVE-2021-45046](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45046)
 * PR [#427](https://github.com/azagniotov/stubby4j/pull/427) - Addressed high CVEs found in `log4j2`: [CVE-2021-45105](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45105)
+* Fixed a tiny bug related to `web-socket` stub where getting bytes from `body` in stubbed server response would return null
+* PR [#432](https://github.com/azagniotov/stubby4j/pull/432) - Upgraded XMLUnit `2.8.2` to `2.8.4`
 
 #### 7.5.0
 
