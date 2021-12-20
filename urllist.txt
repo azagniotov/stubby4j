@@ -5,4 +5,5 @@ https://stubby4j.com/docs/ADMIN_PORTAL.html
 https://stubby4j.com/docs/AUTHORS.html
 https://stubby4j.com/docs/CONTRIBUTORS.html
 https://stubby4j.com/docs/COPYRIGHT.html
+https://stubby4j.com/sitemap.html
 https://stubby4j.com/docs/REQUEST_PROXYING.html

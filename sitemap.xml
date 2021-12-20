@@ -9,49 +9,55 @@
 
 <url>
   <loc>https://stubby4j.com/</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/WEBSOCKETS_CONFIGURATION_HOWTO.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/ADMIN_PORTAL.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/AUTHORS.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/CONTRIBUTORS.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/COPYRIGHT.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://stubby4j.com/sitemap.html</loc>
+  <lastmod>2021-12-20T23:30:32+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://stubby4j.com/docs/REQUEST_PROXYING.html</loc>
-  <lastmod>2021-12-20T10:51:06+00:00</lastmod>
+  <lastmod>2021-12-20T23:30:35+00:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.64</priority>
 </url>
