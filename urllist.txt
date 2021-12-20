@@ -1,0 +1,8 @@
+https://stubby4j.com/
+https://stubby4j.com/docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.html
+https://stubby4j.com/docs/WEBSOCKETS_CONFIGURATION_HOWTO.html
+https://stubby4j.com/docs/ADMIN_PORTAL.html
+https://stubby4j.com/docs/AUTHORS.html
+https://stubby4j.com/docs/CONTRIBUTORS.html
+https://stubby4j.com/docs/COPYRIGHT.html
+https://stubby4j.com/docs/REQUEST_PROXYING.html

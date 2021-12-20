@@ -1,3 +1,9 @@
+---
+layout: default
+title: "Project contributors"
+description: "This page presents information about the code contributors of the stubby4j library"
+---
+
 [Back to Home](../README.md#contributors)
 
 * Isa Goksu

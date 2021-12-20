@@ -1,3 +1,9 @@
+---
+layout: default
+title: "Copyright and license"
+description: "This page presents information about the copyright and license of the stubby4j library"
+---
+
 [Back to Home](../README.md#copyright)
 
 ## COPYRIGHT
