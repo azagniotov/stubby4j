@@ -13,7 +13,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.html</link>
+     <link>https://stubby4j.com/docs/http_endpoint_configuration_howto.html</link>
      <title>HTTP endpoint configuration HOWTO - stubby4j</title>
      <description>This page explains the usage, intent and behavior of each property on the request and response, regex stubbing for dynamic matching, stubbing HTTP 30x redirects, record-and-replay and more</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -21,7 +21,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/WEBSOCKETS_CONFIGURATION_HOWTO.html</link>
+     <link>https://stubby4j.com/docs/websockets_configuration_howto.html</link>
      <title>WebSockets configuration HOWTO - stubby4j</title>
      <description>Stubbing a WebSocket with the stubby4j, described in YAML. Use stubbed WebSocket connection to send and receive messages across the WebSocket connection</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -29,7 +29,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/ADMIN_PORTAL.html</link>
+     <link>https://stubby4j.com/docs/admin_portal.html</link>
      <title>Admin portal - stubby4j</title>
      <description>The admin portal provides a web UI page to view the stubbed data. In addition, the admin portal exposes a set of REST APIs that enable management of loaded in-memory stubs &amp; proxy configs</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -37,7 +37,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/AUTHORS.html</link>
+     <link>https://stubby4j.com/docs/authors.html</link>
      <title>Project authors - stubby4j</title>
      <description>This page presents information about the authors of stubby4j library</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -45,7 +45,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/CONTRIBUTORS.html</link>
+     <link>https://stubby4j.com/docs/contributors.html</link>
      <title>Project contributors - stubby4j</title>
      <description>This page presents information about the code contributors of the stubby4j library</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -53,7 +53,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/COPYRIGHT.html</link>
+     <link>https://stubby4j.com/docs/copyright.html</link>
      <title>Copyright and license - stubby4j</title>
      <description>This page presents information about the copyright and license of the stubby4j library</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>
@@ -69,7 +69,7 @@
      <ror:resourceOf>sitemap</ror:resourceOf>
 </item>
 <item>
-     <link>https://stubby4j.com/docs/REQUEST_PROXYING.html</link>
+     <link>https://stubby4j.com/docs/request_proxying.html</link>
      <title>Request proxying HOWTO - stubby4j</title>
      <description>Configuring a proxy/intercept where requests are proxied to another (live) service, when such requests did not match any of the configured stubs</description>
      <ror:updatePeriod>monthly</ror:updatePeriod>

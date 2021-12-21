@@ -430,7 +430,7 @@ The following endpoint only accepts requests with `application/json` post values
 
 ### Request proxying
 
-See [REQUEST_PROXYING.html](request_proxying.md) for details
+See [request_proxying.html](request_proxying.md) for details
 
 ### Regex stubbing for dynamic matching
 
@@ -1036,7 +1036,7 @@ In the above example, stubby will record HTTP response received after submitting
 ## Supplying stubbed endpoints to stubby
 
 There are two ways available (listed in no particular order):
-1. Submit `POST` requests to `localhost:8889` at runtime (check the [ADMIN_PORTAL.html](admin_portal.md))
+1. Submit `POST` requests to `localhost:8889` at runtime (check the [admin_portal.html](admin_portal.md))
 2. Load a YAML config data-file (using `-d` / `--data` flags) with the following structure for each stubbed endpoint:
 
 * `description`: optional description shown in logs

@@ -533,11 +533,11 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 ## WebSockets configuration HOWTO
 
-See [docs/WebSockets configuration HOWTO.html](docs/websockets_configuration_howto.md) for details
+See [docs/websockets_configuration_howto.html](docs/websockets_configuration_howto.md) for details
 
 ## HTTP endpoint configuration HOWTO
 
-See [docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.html](docs/http_endpoint_configuration_howto.md) for details
+See [docs/http_endpoint_configuration_howto.html](docs/http_endpoint_configuration_howto.md) for details
 
 ## Performance optimization index
 
@@ -554,7 +554,7 @@ will be compiled & cached in memory. This way, the pattern(s) are compiled durin
 
 ## The admin portal
 
-See [docs/ADMIN_PORTAL.html](docs/admin_portal.md) for details
+See [docs/admin_portal.html](docs/admin_portal.md) for details
 
 
 [Back to top](#table-of-contents)
@@ -607,11 +607,11 @@ See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://gi
 
 ## Authors
 
-See [docs/AUTHORS.html](docs/authors.md)
+See [docs/authors.html](docs/authors.md)
 
 ## Contributors
 
-See [docs/CONTRIBUTORS.html](docs/contributors.md)
+See [docs/contributors.html](docs/contributors.md)
 
 ## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
@@ -620,7 +620,7 @@ See [docs/CONTRIBUTORS.html](docs/contributors.md)
 
 ## Copyright
 
-See [docs/COPYRIGHT.html](docs/copyright.md) for details
+See [docs/copyright.html](docs/copyright.md) for details
 
 ## License
 MIT. See [LICENSE](LICENSE) for details.

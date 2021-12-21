@@ -203,7 +203,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](request_proxying.md#uuid)) |
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 
 
 ##### Responses
@@ -325,7 +325,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name      |  type      | data type               | description                                          |
 > |-----------|------------|-------------------------|------------------------------------------------------|
-> | `uuid`    |  required  | string                  | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](request_proxying.md#uuid)) |
+> | `uuid`    |  required  | string                  | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 > | None      |  required  | object (JSON or YAML)   | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
@@ -442,7 +442,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](request_proxying.md#uuid)) |
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 
 ##### Responses
 
