@@ -404,7 +404,7 @@ tr:last-child td {
 
 #cont {
   position: relative;
-  border-radius: 6px;
+  border-radius: 5px;
   box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
   background: #f3f3f3;
   margin: -20px 30px 0px 30px;
@@ -426,8 +426,9 @@ tr:last-child td {
 }
 
 .site-map .lhead {
-	background: #ddd;
-	padding: 10px;
+  background-color: #ccc4ba;
+  color: #4c4945;
+  padding: 7px;
   margin: 10px 0px;
 }
 
@@ -436,10 +437,15 @@ tr:last-child td {
 }
 
 .site-map .lpage {
-	border-bottom: #ddd 1px solid;
-	padding: 5px;
+  border-bottom: #ddd 1px solid;
+  padding: 5px;
 }
 
 .site-map .last-page {
   border: none;
+}
+
+.site-map #footer {
+  padding-top: 2rem;
+  text-align: center;
 }
