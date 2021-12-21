@@ -17,6 +17,8 @@
     </li>
   </ul>
 </div>
-<div>
+<div class="site-map">
+  <div id="footer">
   Page created with <a target="_blank" href="https://www.xml-sitemaps.com">Google XML sitemap and html sitemaps generator</a> | Copyright &copy; 2005-2021 XML-Sitemaps.com
+  </div>
 </div>
