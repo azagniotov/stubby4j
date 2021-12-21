@@ -2,7 +2,7 @@
   <ul class="level-0">
     <li class="lhead">/  <span class="lcount">2 pages</span></li>          
     <li class="lpage"><a href="https://stubby4j.com/" title="stubby4j">stubby4j</a></li>
-    <li class="lpage last-page"><a href="https://stubby4j.com/sitemap.html" title="stubby4j.com site Map">https://www.stubby4j.com sitemap</a></li>
+    <li class="lpage last-page"><a href="https://stubby4j.com/sitemap.html" title="https://stubby4j.com sitemap">stubby4j.com sitemap</a></li>
     <li>
       <ul class="level-1">
         <li class="lhead">docs/  <span class="lcount">7 pages</span></li>           
