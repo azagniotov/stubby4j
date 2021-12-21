@@ -397,3 +397,39 @@ tr:last-child td {
   background-color: #f80;
 }
 
+
+/*
+ * Sitemap
+ */
+.site-map ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.site-map li {
+  margin: 0px;
+}
+	
+.site-map li ul {
+  margin-left: 20px;
+}
+
+.site-map .lhead {
+	background: #ddd;
+	padding: 10px;
+  margin: 10px 0px;
+}
+
+.site-map .lcount {
+  padding: 0px 10px;
+}
+
+.site-map .lpage {
+	border-bottom: #ddd 1px solid;
+	padding: 5px;
+}
+
+.site-map .last-page {
+  border: none;
+}
