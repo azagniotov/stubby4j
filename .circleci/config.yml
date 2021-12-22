@@ -230,6 +230,13 @@ code_coverage_steps: &code_coverage_steps
         key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
+        name: Install gnupg2
+        command: |
+          apt-get install -yq --no-install-recommends gnupg2 && \
+            rm -rf /var/lib/apt/lists/* && \
+            rm -rf /var/log/dpkg.log
+
+    - run:
         name: Download CodeCov Uploader with SHA-256 signature check
         command: |
           curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
