@@ -1,8 +1,8 @@
 package io.github.azagniotov.stubby4j.server;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public final class JettyContext {
 
     private final String host;

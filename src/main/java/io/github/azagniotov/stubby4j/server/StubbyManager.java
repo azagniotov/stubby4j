@@ -1,7 +1,7 @@
 package io.github.azagniotov.stubby4j.server;
 
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
 import io.github.azagniotov.stubby4j.filesystem.ExternalFilesScanner;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public final class StubbyManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubbyManager.class);
 

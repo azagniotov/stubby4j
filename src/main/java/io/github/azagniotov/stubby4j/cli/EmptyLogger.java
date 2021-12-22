@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.cli;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import org.eclipse.jetty.util.log.Logger;
 
 /**
@@ -8,7 +8,7 @@ import org.eclipse.jetty.util.log.Logger;
  *
  * @author Eric Mrak
  */
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public final class EmptyLogger implements Logger {
     @Override
     public String getName() {

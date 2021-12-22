@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpMethod;
@@ -19,7 +19,7 @@ import java.io.Writer;
 
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON;
 
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public class JsonErrorHandler extends ErrorHandler {
 
     private static final int BYTE_ARRAY_CAPACITY = 4096;

@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.stubs.websocket;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
@@ -71,6 +72,7 @@ public class StubWebSocketClientRequest implements ReflectableStub {
     }
 
     @Override
+    @GeneratedCodeMethodCoverageExclusion
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -82,6 +84,7 @@ public class StubWebSocketClientRequest implements ReflectableStub {
     }
 
     @Override
+    @GeneratedCodeMethodCoverageExclusion
     public int hashCode() {
         int result = Objects.hash(messageType, body, file);
         result = 31 * result + Arrays.hashCode(fileBytes);

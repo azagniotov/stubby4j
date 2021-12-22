@@ -13,7 +13,7 @@
 */
 package io.github.azagniotov.stubby4j.stubs.matching;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import org.w3c.dom.Node;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
  *
  * @since 2.6.0
  */
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements DifferenceEvaluator {
     public static final String PLACEHOLDER_DEFAULT_OPENING_DELIMITER_REGEX = Pattern.quote("${");
     public static final String PLACEHOLDER_DEFAULT_CLOSING_DELIMITER_REGEX = Pattern.quote("}");
