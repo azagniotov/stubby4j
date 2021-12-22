@@ -230,9 +230,9 @@ code_coverage_steps: &code_coverage_steps
         key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
-        name: Install gnupg2
+        name: Install gpgv
         command: |
-          apt-get install -yq --no-install-recommends gnupg2 && \
+          apt-get install -yq --no-install-recommends gpgv && \
             rm -rf /var/lib/apt/lists/* && \
             rm -rf /var/log/dpkg.log
 
