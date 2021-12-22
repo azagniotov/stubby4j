@@ -10,11 +10,11 @@ coverage:
     patch:
       default:
         target: auto
-        threshold: 2%
+        threshold: 3%
     project:
       default:
         target: auto
-        threshold: 1%
+        threshold: 3%
 
 comment:
   layout: diff, files

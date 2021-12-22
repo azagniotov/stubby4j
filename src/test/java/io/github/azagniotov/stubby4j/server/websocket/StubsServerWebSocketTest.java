@@ -206,7 +206,7 @@ public class StubsServerWebSocketTest {
     @Test
     public void onWebSocketConnect_DispatchesExpectedServerPeriodicTextResponseWhenPolicyPush() throws Exception {
         final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse.Builder()
-                .withDelay("18")
+                .withDelay("5000")
                 .withMessageType(StubWebSocketMessageType.TEXT.toString())
                 .withStrategy(StubWebSocketServerResponsePolicy.PUSH.toString())
                 .withBody(HELLO_FROM_SERVER)
@@ -218,8 +218,8 @@ public class StubsServerWebSocketTest {
 
         verify(spyScheduledExecutorService, times(1)).scheduleAtFixedRate(
                 runnableCaptor.capture(),
-                eq(18L),
-                eq(18L),
+                eq(5000L),
+                eq(5000L),
                 eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
