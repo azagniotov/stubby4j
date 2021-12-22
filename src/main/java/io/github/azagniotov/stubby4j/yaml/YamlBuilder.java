@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.yaml;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
@@ -12,6 +13,7 @@ import java.util.Set;
 /**
  * Please refer to the accompanied unit tests for usage examples.
  */
+@GeneratedCodeClassCoverageExclusion
 public final class YamlBuilder {
 
     private static final String TWO_SPACE = String.format("%1$2s", "");

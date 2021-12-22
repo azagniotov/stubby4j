@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.Request;
@@ -16,7 +16,7 @@ import java.net.URL;
 
 import static io.github.azagniotov.stubby4j.utils.ObjectUtils.isNotNull;
 
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public class FaviconHandler extends AbstractHandler implements AbstractHandlerExtension {
 
     private final long faviconModified = (System.currentTimeMillis() / 1000) * 1000L;

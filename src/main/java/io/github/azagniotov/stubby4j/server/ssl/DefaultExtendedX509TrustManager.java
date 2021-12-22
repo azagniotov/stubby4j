@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.server.ssl;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -17,7 +17,7 @@ import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.keyStoreAsX509Ce
  * default trust store and with added validation for self-signed certificates, including the default one of stubby4j's,
  * thus the "extended" part.
  */
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public final class DefaultExtendedX509TrustManager implements X509TrustManager {
 
     private static final Set<X509Certificate> STUBBY_SELF_SIGNED_CERT;

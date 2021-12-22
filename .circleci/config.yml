@@ -83,6 +83,10 @@ openjdk_alpine_jdk_17_environment: &openjdk_alpine_jdk_17_environment
 ### END: Different JDK images
 ###########################################################################################
 
+circleci_pre_built_openjdk_8_environment: &circleci_pre_built_openjdk_8_environment
+  <<: *base_environment
+  docker:
+    - image: circleci/openjdk:8u292-jdk@sha256:51d82605e7f89fc74437dce7324a33e6a7c9d1941ec8cfd0980f6814d78ae494
 
 gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
   <<: *base_environment
@@ -215,29 +219,39 @@ code_coverage_steps: &code_coverage_steps
 
     - run: java -version
 
-    - run: gradle --version
-
     # Download and cache dependencies
     - restore_cache:
         keys:
-          - v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
+          - v3-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v3-dependencies-
 
     - save_cache:
         paths:
           - ~/.gradle
-        key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
+        key: v3-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
+
+    - run:
+        name: Download CodeCov Uploader with SHA-256 signature check
+        command: |
+          curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+          shasum -a 256 -c codecov.SHA256SUM
 
     - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
-        command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean jacocoTestReport
+        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean jacocoTestReport
 
     - run:
         name: Upload code coverage data to Codecov
         when: on_success
-        command: echo "Skipping CodeCov Skipping CodeCov Bash Uploader"
+        command: |
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
 
 
 
@@ -524,7 +538,7 @@ jobs:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
-    <<: *gradle_7_2_0_jdk8_environment
+    <<: *circleci_pre_built_openjdk_8_environment
     <<: *code_coverage_steps
 
 

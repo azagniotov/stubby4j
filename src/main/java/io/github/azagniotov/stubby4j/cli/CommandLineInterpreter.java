@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.cli;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -132,7 +132,7 @@ public final class CommandLineInterpreter {
     /**
      * Prints current stubby4j version to the console
      */
-    @GeneratedCodeCoverageExclusion
+    @GeneratedCodeMethodCoverageExclusion
     public void printVersion() {
         final HelpFormatter formatter = new HelpFormatter();
         try (final PrintWriter printWriter = new PrintWriter(System.out)) {

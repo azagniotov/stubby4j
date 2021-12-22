@@ -13,7 +13,7 @@
 */
 package io.github.azagniotov.stubby4j.stubs.matching;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeCoverageExclusion;
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import org.xmlunit.XMLUnitException;
 import org.xmlunit.diff.ComparisonResult;
 import org.xmlunit.placeholder.PlaceholderHandler;
@@ -33,7 +33,7 @@ import static org.xmlunit.diff.ComparisonResult.EQUAL;
  *
  * @since 2.7.0
  */
-@GeneratedCodeCoverageExclusion
+@GeneratedCodeClassCoverageExclusion
 public class Stubby4jMatchesRegexPlaceholderHandler implements PlaceholderHandler {
     private static final String PLACEHOLDER_NAME = "matchesRegex";
     private final String templateTokenName;

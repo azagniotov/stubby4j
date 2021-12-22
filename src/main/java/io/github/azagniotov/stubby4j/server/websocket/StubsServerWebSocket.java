@@ -1,5 +1,6 @@
 package io.github.azagniotov.stubby4j.server.websocket;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
@@ -125,6 +126,7 @@ public class StubsServerWebSocket {
     }
 
     @OnWebSocketError
+    @GeneratedCodeMethodCoverageExclusion
     public void onWebSocketError(Throwable cause) {
         final String logMessage = String.format("[%s] <= %s %s\n",
                 getLocalDateTime(),
