@@ -230,6 +230,16 @@ code_coverage_steps: &code_coverage_steps
         key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
+        name: Download CodeCov Uploader with SHA-256 signature check
+        command: |
+          curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+          shasum -a 256 -c codecov.SHA256SUM
+
+    - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
         command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean jacocoTestReport
@@ -237,7 +247,9 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Upload code coverage data to Codecov
         when: on_success
-        command: echo "Skipping CodeCov Skipping CodeCov Bash Uploader"
+        command: |
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
 
 
 
