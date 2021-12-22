@@ -222,14 +222,14 @@ code_coverage_steps: &code_coverage_steps
     # Download and cache dependencies
     - restore_cache:
         keys:
-          - v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
+          - v3-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
           # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+          - v3-dependencies-
 
     - save_cache:
         paths:
           - ~/.gradle
-        key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
+        key: v3-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
         name: Download CodeCov Uploader with SHA-256 signature check
