@@ -35,24 +35,20 @@ public class CustomHostnameVerifierTest {
     }
 
     @Test
-    public void localhostMustBeSubjectAltName() throws Exception {
-        final boolean isSubjectAltName = customHostnameVerifier.isSubjectAltNamesContain("localhost");
-
-        assertThat(isSubjectAltName).isTrue();
+    public void expectedSubjectAltNames() throws Exception {
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("localhost")).isTrue();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("0.0.0.0")).isTrue();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("127.0.0.1")).isTrue();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("::1")).isTrue();
     }
 
     @Test
-    public void ip127_0_0_1MustBeSubjectAltName() throws Exception {
-        final boolean isSubjectAltName = customHostnameVerifier.isSubjectAltNamesContain("127.0.0.1");
-
-        assertThat(isSubjectAltName).isTrue();
-    }
-
-    @Test
-    public void ipv6_colon_colon_one_MustBeSubjectAltName() throws Exception {
-        final boolean isSubjectAltName = customHostnameVerifier.isSubjectAltNamesContain("::1");
-
-        assertThat(isSubjectAltName).isTrue();
+    public void nonSubjectAltNames() throws Exception {
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain(null)).isFalse();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("")).isFalse();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("null")).isFalse();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("203.0.113.42")).isFalse();
+        assertThat(customHostnameVerifier.isSubjectAltNamesContain("2001:0002:14:5:1:2:bf35:2610")).isFalse();
     }
 
     @Test

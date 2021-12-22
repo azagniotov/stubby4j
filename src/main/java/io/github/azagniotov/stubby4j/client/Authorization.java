@@ -1,5 +1,7 @@
 package io.github.azagniotov.stubby4j.client;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
+
 public final class Authorization {
 
     private final AuthorizationType authorizationType;
@@ -20,7 +22,7 @@ public final class Authorization {
     }
 
     @Override
-
+    @GeneratedCodeMethodCoverageExclusion
     public final String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Authorization");
