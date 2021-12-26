@@ -137,13 +137,13 @@ This section explains how to get stubby4j up and running using a very simple exa
          content-type: application/json
       body: Hello World!
 ```
-* Execute the downloaded stubby JAR using command `java -jar stubby4j-x.x.xx.jar -d <PATH_TO_LOCAL_YAML_CONFIG>` (also see [Command-line switches](#command-line-switches) and [Splitting main YAML config in to sub-includes](docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#splitting-main-yaml-config))
+* Execute the downloaded stubby JAR using command `java -jar stubby4j-x.x.xx.jar -d <PATH_TO_LOCAL_YAML_CONFIG>` (also see [Command-line switches](#command-line-switches) and [Splitting main YAML config in to sub-includes](docs/http_endpoint_configuration_howto.md#splitting-main-yaml-config))
 * Navigate to `http://localhost:8882/hello-world` to get the stubbed response `Hello World!`
 * Navigate to stubby4j admin portal at `http://localhost:8889/status` to see what has been stubbed & other useful data
 
 That's it!
 
-For more information and more complex examples, please dive into the rest of documentation, especially [docs/HTTP endpoint configuration HOWTO.html](docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)
+For more information and more complex examples, please dive into the rest of documentation, especially [docs/HTTP endpoint configuration HOWTO.html](docs/http_endpoint_configuration_howto.md)
 
 [Back to top](#table-of-contents)
 
@@ -533,11 +533,11 @@ Please note the following restrictions when enabling HTTP/2 via the aforemention
 
 ## WebSockets configuration HOWTO
 
-See [docs/WebSockets configuration HOWTO.html](docs/WEBSOCKETS_CONFIGURATION_HOWTO.md) for details
+See [docs/websockets_configuration_howto.html](docs/websockets_configuration_howto.md) for details
 
 ## HTTP endpoint configuration HOWTO
 
-See [docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.html](docs/HTTP_ENDPOINT_CONFIGURATION_HOWTO.md) for details
+See [docs/http_endpoint_configuration_howto.html](docs/http_endpoint_configuration_howto.md) for details
 
 ## Performance optimization index
 
@@ -554,7 +554,7 @@ will be compiled & cached in memory. This way, the pattern(s) are compiled durin
 
 ## The admin portal
 
-See [docs/ADMIN_PORTAL.html](docs/ADMIN_PORTAL.md) for details
+See [docs/admin_portal.html](docs/admin_portal.md) for details
 
 
 [Back to top](#table-of-contents)
@@ -607,11 +607,11 @@ See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://gi
 
 ## Authors
 
-See [docs/AUTHORS.html](docs/AUTHORS.md)
+See [docs/authors.html](docs/authors.md)
 
 ## Contributors
 
-See [docs/CONTRIBUTORS.html](docs/CONTRIBUTORS.md)
+See [docs/contributors.html](docs/contributors.md)
 
 ## See also
 * **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
@@ -620,7 +620,7 @@ See [docs/CONTRIBUTORS.html](docs/CONTRIBUTORS.md)
 
 ## Copyright
 
-See [docs/COPYRIGHT.html](docs/COPYRIGHT.md) for details
+See [docs/copyright.html](docs/copyright.md) for details
 
 ## License
 MIT. See [LICENSE](LICENSE) for details.

@@ -5,7 +5,7 @@ description: "Configuring a proxy/intercept where requests are proxied to anothe
 keywords: proxy,proxy config,request proxy,stubby4j,REST,REST API,request proxying,request intercept,http proxy,request proxy,stub request proxy
 ---
 
-[Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)
+[Back to HTTP endpoint configuration HOWTO](http_endpoint_configuration_howto.md#request-proxying)
 
 ## Request proxying
 
@@ -23,7 +23,7 @@ keywords: proxy,proxy config,request proxy,stubby4j,REST,REST API,request proxyi
 
 As of `v7.3.0` (incl.) of `stubby4j`, it is possible to configure a proxy/intercept where requests are proxied to another service (i.e.: a real, live service), when such requests did not match any of the configured stubs. 
 
-On this page you will learn how to add a proxy configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md).
+On this page you will learn how to add a proxy configuration, described in YAML, to an existing stub `request`/`response` YAML configuration that you created as part of [HTTP endpoint configuration HOWTO](http_endpoint_configuration_howto.md).
 
 Keep on reading to understand how to add proxy configurations to your `stubby4j` YAML config.
 
@@ -62,7 +62,7 @@ First, let's understand how to declare a proxy configuration. The following is a
       endpoint: https://yahoo.com
 ```
 
-YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
+YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it is totally OK to mix configs for `request`/`response` ([HTTP endpoint configuration HOWTO](http_endpoint_configuration_howto.md)) & `proxy-config` in the same file. For example, the following is a totally valid YAML configuration:
 
 ```yaml
 - proxy-config:
@@ -93,7 +93,7 @@ YAML proxy configuartion can be in the same YAML config as the stubs, i,e.: it i
       endpoint: https://jsonplaceholder.typicode.com
 ```
 
-Alternatively, you may consider [splitting main YAML config](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
+Alternatively, you may consider [splitting main YAML config](http_endpoint_configuration_howto.md#splitting-main-yaml-config) in order to have logical separation in your YAML configuration between stubs and proxy config:
 
 ```yaml
 includes:
@@ -184,8 +184,8 @@ This makes it easy & convenient to correlate proxy responses from `stubby4j` to 
 
 ## Managing proxy configuration via the REST API
 
-Just like with stubs management, `stubby4j` enables you to manage your `proxy-config` definitions via the REST API exposed by the [Admin Portal](ADMIN_PORTAL.md). See the [available REST API summary](ADMIN_PORTAL.md#available-rest-api-summary)
+Just like with stubs management, `stubby4j` enables you to manage your `proxy-config` definitions via the REST API exposed by the [Admin Portal](admin_portal.md). See the [available REST API summary](admin_portal.md#available-rest-api-summary)
 
 
 
-[Back to HTTP endpoint configuration HOWTO](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md#request-proxying)
+[Back to HTTP endpoint configuration HOWTO](http_endpoint_configuration_howto.md#request-proxying)

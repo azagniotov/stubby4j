@@ -37,7 +37,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 >
 > * Stubs can be updated/deleted by either:
 >    * `stub_numeric_id`. The specific stub `stub_numeric_id` (resource-id-`<id>`) can be found when viewing stubs' YAML at `<admin_portal_host>:<port>/status`. Please note, deleting stubs by `stub_numeric_id` can get rather brittle when dealing with big or/and shared YAML configs. Therefore it is better to configure `uuid` property per stub in order to make the stub management easier & isolated.
->    * unique identifier (See ["HTTP endpoint configuration HOWTO" section](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md))
+>    * unique identifier (See ["HTTP endpoint configuration HOWTO" section](http_endpoint_configuration_howto.md))
 > * When defining only one proxy config (e.g.: a `catch-all` for all stubs), it must be configured without a `uuid` OR have a `uuid` with a value `default`
 > * The `default` proxy config cannot be deleted via the `DELETE` REST API
 > * Proxy configs can `only` be updated by a unique identifier, `uuid`
@@ -147,7 +147,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) |
+> | `uuid` |  required  | string         | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](http_endpoint_configuration_howto.md)) |
 
 ##### Responses
 
@@ -203,7 +203,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 
 
 ##### Responses
@@ -266,7 +266,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name      |  type      | data type                | description                                          |
 > |-----------|------------|--------------------------|------------------------------------------------------|
-> | `uuid`    |  required  | string                   | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) |
+> | `uuid`    |  required  | string                   | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](http_endpoint_configuration_howto.md)) |
 > | None      |  required  | object (JSON or YAML)    | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
@@ -325,7 +325,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name      |  type      | data type               | description                                          |
 > |-----------|------------|-------------------------|------------------------------------------------------|
-> | `uuid`    |  required  | string                  | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+> | `uuid`    |  required  | string                  | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 > | None      |  required  | object (JSON or YAML)   | See [POST / PUT request body format](#post--put-request-body-format)  |
 
 ##### Responses
@@ -413,7 +413,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](HTTP_ENDPOINT_CONFIGURATION_HOWTO.md)) |
+> | `uuid` |  required  | string         | The specific stub unique identifier (See ["uuid" in "HTTP endpoint HOWTO" section](http_endpoint_configuration_howto.md)) |
 
 ##### Responses
 
@@ -442,7 +442,7 @@ You can view the configured stubs & proxy configs by navigating to `<host>:<admi
 
 > | name   |  type      | data type      | description                                          |
 > |--------|------------|----------------|------------------------------------------------------|
-> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [REQUEST_PROXYING.md "uuid"](REQUEST_PROXYING.md#uuid)) |
+> | `uuid` |  required  | string         | The specific proxy config unique idendifier (See [request_proxying.md "uuid"](request_proxying.md#uuid)) |
 
 ##### Responses
 
