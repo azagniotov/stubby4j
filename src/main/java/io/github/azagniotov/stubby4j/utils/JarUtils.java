@@ -1,10 +1,12 @@
 package io.github.azagniotov.stubby4j.utils;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Manifest;
 
-
+@GeneratedCodeClassCoverageExclusion
 public final class JarUtils {
 
     private JarUtils() {

@@ -20,7 +20,7 @@ public final class ReflectionUtils {
 
     // These fields are defined in various Stub* classes, e.g.: StubRequest or StubProxyConfig
     private static List<String> reflectionSkippableProperties =
-            Collections.unmodifiableList(Arrays.asList("proxyConfigAsYAML", "regexGroups", "fileBytes"));
+            Collections.unmodifiableList(Arrays.asList("proxyConfigAsYAML", "webSocketConfigAsYAML", "regexGroups", "fileBytes"));
 
     private ReflectionUtils() {
 

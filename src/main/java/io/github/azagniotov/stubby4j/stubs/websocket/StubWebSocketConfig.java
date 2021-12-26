@@ -3,6 +3,7 @@ package io.github.azagniotov.stubby4j.stubs.websocket;
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
 
 import java.util.ArrayList;
@@ -68,6 +69,10 @@ public class StubWebSocketConfig implements ReflectableStub {
         return onMessageLifeCycles;
     }
 
+    /**
+     * Do not remove this method if your IDE complains that it is unused.
+     * It is used by {@link ReflectionUtils} at runtime when fetching content for Ajax response
+     */
     public String getWebSocketConfigAsYAML() {
         return webSocketConfigAsYAML;
     }
