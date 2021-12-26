@@ -596,7 +596,7 @@ workflows:
 
   master-jdk8:
     jobs:
-      - gradle_7_2_0_jdk8:
+      - gradle_7_2_0_jdk8_code_coverage:
           <<: *context_sonatype
           <<: *filter_only_master
 
