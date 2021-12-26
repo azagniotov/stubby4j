@@ -64,7 +64,7 @@ Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which
 [circleci-badge]: https://circleci.com/gh/azagniotov/stubby4j.svg?style=shield
 [circleci-link]: https://circleci.com/gh/azagniotov/stubby4j
 
-[codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg
+[codecov-badge]: https://codecov.io/gh/azagniotov/stubby4j/branch/master/graph/badge.svg?token=Lp9ajUmLrh
 [codecov-link]: https://codecov.io/gh/azagniotov/stubby4j
 
 [maven-badge]: https://img.shields.io/maven-central/v/io.github.azagniotov/stubby4j.svg?style=flat&label=maven-central
