@@ -189,7 +189,7 @@ $ docker run --rm \
 
 Upon running the `stubby4j` container as per aforementioned examples, the Admin portal runs on `localhost`:`<port>` (e.g.: `localhost`:`8889`) or wherever you described through `stubby4j` image environment variables. The admin portal exposes a set of REST APIs that enable management of the loaded in-memory stubs, which were loaded from the YAML config provided to `stubby4j` during start-up.
 
-See [https://stubby4j.com/docs/ADMIN_PORTAL.html](https://stubby4j.com/docs/ADMIN_PORTAL.html) for more information
+See [https://stubby4j.com/docs/admin_portal.html](https://stubby4j.com/docs/admin_portal.html) for more information
 
 # License
 [View license information](https://github.com/azagniotov/stubby4j/blob/master/LICENSE) for the software contained in this image.
