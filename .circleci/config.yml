@@ -212,10 +212,10 @@ code_coverage_steps: &code_coverage_steps
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
     - checkout
-    - when:
-        <<: *condition_when_not_master
-        # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
-        <<: *pr_to_master_merge_branch_steps
+#     - when:
+#         <<: *condition_when_not_master
+#         # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
+#         <<: *pr_to_master_merge_branch_steps
 
     - run: java -version
 
