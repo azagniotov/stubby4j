@@ -1,5 +1,7 @@
 package io.github.azagniotov.stubby4j.server.ssl;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
+
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -24,6 +26,7 @@ final class CustomHostnameVerifier {
         this.subjectAltNames = getSubjectAltNames(2);
     }
 
+    @GeneratedCodeMethodCoverageExclusion
     public boolean isSubjectAltNamesContainPrivateIp() {
         for (final String altNameAsIp : this.subjectAltIps) {
             if (LanIPv4Validator.isPrivateIp(altNameAsIp)) {
