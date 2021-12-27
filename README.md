@@ -623,7 +623,7 @@ See [docs/contributors.html](docs/contributors.md)
 See [docs/copyright.html](docs/copyright.md) for details
 
 ## License
-MIT. See [LICENSE](LICENSE) for details.
+MIT. See [https://github.com/azagniotov/stubby4j/blob/master/LICENSE](https://github.com/azagniotov/stubby4j/blob/master/LICENSE) for details.
 
 
 [Back to top](#table-of-contents)
