@@ -1,4 +1,6 @@
-#### 7.5.1-SNAPSHOT `master` branch
+#### 7.5.2-SNAPSHOT `master` branch
+
+#### 7.5.1
 
 * PR [#446](https://github.com/azagniotov/stubby4j/pull/446) - Upgrade log4j to `v2.17.1` - addressed CVE found in `log4j2`: [CVE-2021-44832](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44832)
 * PR [#427](https://github.com/azagniotov/stubby4j/pull/427) - Upgrade log4j to `v2.17.0` - addressed CVE found in `log4j2`: [CVE-2021-45105](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45105)
