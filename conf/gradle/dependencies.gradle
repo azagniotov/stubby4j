@@ -24,10 +24,28 @@ dependencies {
     api "io.github.azagniotov:collection-type-safe-converter:1.0.1"
 
     if (project.hasProperty("log4j")) {
+        var becauseMsg = "CVE-2021-44228, CVE-2021-45046, CVE-2021-45105, CVE-2021-44832: Log4j vulnerable to remote code execution and other critical security vulnerabilities"
         println "> Building with log4j included in default dependencies"
-        api "org.apache.logging.log4j:log4j-api:${log4j2Version}"
-        api "org.apache.logging.log4j:log4j-core:${log4j2Version}"
         api "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2Version}"
+
+        constraints {
+            api("org.apache.logging.log4j:log4j-api") {
+                version {
+                    strictly("${log4j2Version}")
+                    prefer("2.17.1")
+                }
+                because(becauseMsg)
+            }
+
+            api("org.apache.logging.log4j:log4j-core") {
+                version {
+                    strictly("${log4j2Version}")
+                    prefer("2.17.1")
+                }
+                because(becauseMsg)
+            }
+        }
+
     } else {
         println "> Building with default dependencies"
         api "org.slf4j:slf4j-api:1.7.30"
