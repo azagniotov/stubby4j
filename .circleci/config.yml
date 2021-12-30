@@ -153,6 +153,7 @@ publish_snapshot_steps: &publish_snapshot_steps
     - run:
         name: Configure Gradle to Sonatype authentication
         command: |
+          mkdir -p /home/gradle/.gradle
           echo "sonatypeUsername=$sonatypeUsername" > /home/gradle/.gradle/gradle.properties
           echo "sonatypePassword=$sonatypePassword" >> /home/gradle/.gradle/gradle.properties
 
