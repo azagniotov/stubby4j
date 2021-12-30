@@ -253,6 +253,10 @@ code_coverage_steps: &code_coverage_steps
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
 
+    - when:
+        <<: *condition_when_master
+        <<: *publish_snapshot_steps
+
 
 
 build_push_image_steps: &build_push_image_steps
