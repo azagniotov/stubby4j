@@ -153,7 +153,6 @@ publish_snapshot_steps: &publish_snapshot_steps
     - run:
         name: Configure Gradle to Sonatype authentication
         command: |
-          mkdir -p /home/gradle/.gradle
           echo "sonatypeUsername=$sonatypeUsername" > /home/gradle/.gradle/gradle.properties
           echo "sonatypePassword=$sonatypePassword" >> /home/gradle/.gradle/gradle.properties
 
@@ -253,10 +252,6 @@ code_coverage_steps: &code_coverage_steps
         command: |
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
-
-    - when:
-        <<: *condition_when_master
-        <<: *publish_snapshot_steps
 
 
 
@@ -599,9 +594,15 @@ jobs:
 version: 2.1
 workflows:
 
-  master-jdk8:
+  master-jdk8-code-coverage:
     jobs:
       - gradle_7_2_0_jdk8_code_coverage:
+          <<: *context_sonatype
+          <<: *filter_only_master
+
+  master-jdk8-publish-snapshot:
+    jobs:
+      - gradle_7_2_0_jdk8:
           <<: *context_sonatype
           <<: *filter_only_master
 
