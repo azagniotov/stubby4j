@@ -14,7 +14,7 @@ It is a highly flexible and configurable tool for testing interactions of servic
 
 ## Full documentation
 
-[![pages-build-deployment][gh-pages-badge]][gh-pages-link]
+[![pages-build-deployment][gh-pages-badge]][gh-pages-link] [![say thanks!](https://img.shields.io/badge/say%20thanks-!-1EAEDB.svg)](https://saythanks.io/to/azagniotov)
 
 Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which includes a comprehensive user guide, various HOWTOs and usage examples.
 
