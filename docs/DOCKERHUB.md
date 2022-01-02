@@ -11,6 +11,9 @@
 
 # Security updates
 
+- ### [2022-01-02] [CVE-2021-44832](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44832) (Moderate)
+  In regard to recent [Apache Log4j 2 vulnerabilities update: log4j-2.17.1](https://logging.apache.org/log4j/2.x/security.html#log4j-2.17.1), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/445
+
 - ### [2021-12-26] [CVE-2021-45105](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45105) (High)
   In regard to recent [Apache Log4j 2 vulnerabilities update: log4j-2.17.0](https://logging.apache.org/log4j/2.x/security.html#log4j-2.17.0), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/433
 
