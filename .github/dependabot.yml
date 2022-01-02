@@ -6,6 +6,6 @@
 version: 2
 updates:
   - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/conf/gradle/dependencies.gradle" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
