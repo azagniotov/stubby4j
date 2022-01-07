@@ -3,8 +3,8 @@ package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import org.eclipse.jetty.http.HttpStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class NullHandlingStrategy implements AdminResponseHandlingStrategy {

@@ -1,6 +1,6 @@
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public final class AdminResponseHandlingStrategyFactory {
 

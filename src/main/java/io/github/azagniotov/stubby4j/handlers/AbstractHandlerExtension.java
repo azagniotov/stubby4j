@@ -3,8 +3,8 @@ package io.github.azagniotov.stubby4j.handlers;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.server.Request;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AbstractHandlerExtension {
 
