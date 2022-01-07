@@ -350,10 +350,9 @@ smoke_test_steps: &smoke_test_steps
           java -version
           echo ""
           java -jar build/libs/stubby4j-*.jar \
-            --location 127.0.0.1 \
-            --tls 7445 \
-            --mute \
-            --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
+                      --location 127.0.0.1 \
+                      --tls 7445 \
+                      --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
 
           STUBBY4J_HTTP_1_PID=$!
 
