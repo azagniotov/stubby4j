@@ -17,11 +17,10 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.eclipse.jetty.websocket.common.frames.PingFrame;
-import org.eclipse.jetty.websocket.common.frames.PongFrame;
+import org.eclipse.jetty.websocket.core.Frame;
+import org.eclipse.jetty.websocket.core.OpCode;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -132,8 +131,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -153,8 +150,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -172,8 +167,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_7);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_7, clientUpgradeRequest);
@@ -194,8 +187,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_3);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_3, clientUpgradeRequest);
@@ -218,8 +209,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_6);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_6, clientUpgradeRequest);
@@ -242,8 +231,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
@@ -270,8 +257,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
@@ -298,8 +283,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -319,8 +302,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -345,8 +326,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
@@ -374,8 +353,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
@@ -403,8 +380,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(3);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -430,8 +405,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
@@ -453,8 +426,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverShouldThrow_WhenConnectingClient_RequestedWrongUrl() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(NON_STUBBED_REQUEST_URL);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, NON_STUBBED_REQUEST_URL, clientUpgradeRequest);
@@ -473,8 +444,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedWrongSubProtocol() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("non-existent-among-stubbed-ones");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
@@ -493,8 +462,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedNoSubProtocol() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-        clientUpgradeRequest.setLocalEndpoint(socket);
 
         // Not calling the following
         // clientUpgradeRequest.setSubProtocols("echo", "mamba");
@@ -520,8 +487,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
@@ -550,8 +515,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
@@ -581,8 +544,6 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
-        clientUpgradeRequest.setLocalEndpoint(socket);
         clientUpgradeRequest.setSubProtocols("echo", "mamba");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
@@ -625,16 +586,14 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
 
         @OnWebSocketFrame
         public void onOnWebSocketFrame(final Frame frame) throws IOException {
-            if (frame instanceof PingFrame) {
-                final PingFrame pingFrame = (PingFrame) frame;
-                final ByteBuffer pingPayload = pingFrame.getPayload();
+            if (frame.getOpCode() == OpCode.PING) {
+                final ByteBuffer pingPayload = frame.getPayload();
                 receivedOnMessageBytes.add(pingPayload.array());
                 countDownLatch.countDown();
             }
 
-            if (frame instanceof PongFrame) {
-                final PongFrame pongFrame = (PongFrame) frame;
-                final ByteBuffer pongPayload = pongFrame.getPayload();
+            if (frame.getOpCode() == OpCode.PONG) {
+                final ByteBuffer pongPayload = frame.getPayload();
 
                 if (!pongPayload.hasArray()) {
                     byte[] to = new byte[pongPayload.remaining()];

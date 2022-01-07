@@ -9,8 +9,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.http2.client.HTTP2Client;
 import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
+import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.net.ssl.SSLContext;
@@ -97,8 +99,8 @@ public final class HttpClientUtils {
                 .build();
     }
 
-    static SslContextFactory jettyClientSslContextFactory(final String tlsProtocol) {
-        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+    static SslContextFactory.Client jettyClientSslContextFactory(final String tlsProtocol) {
+        final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
 
         sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
         sslContextFactory.setProtocol(tlsProtocol);
@@ -112,7 +114,12 @@ public final class HttpClientUtils {
     }
 
     static HttpClient jettyHttpClientOnHttp11WithClientSsl(final String tlsProtocol) {
-        return new HttpClient(jettyClientSslContextFactory(tlsProtocol));
+
+        final ClientConnector clientConnector = new ClientConnector();
+        clientConnector.setSslContextFactory(jettyClientSslContextFactory(tlsProtocol));
+        final HttpClientTransportOverHTTP httpClientTransportOverHTTP = new HttpClientTransportOverHTTP(clientConnector);
+
+        return new HttpClient(httpClientTransportOverHTTP);
     }
 
     static HttpClient jettyHttpClientOnHttp20() {
@@ -127,15 +134,15 @@ public final class HttpClientUtils {
     }
 
     static HttpClient jettyHttpClientOnHttp20WithClientSsl(final String tlsProtocol) {
-        final SslContextFactory sslContextFactory = jettyClientSslContextFactory(tlsProtocol);
+        final ClientConnector clientConnector = new ClientConnector();
+        clientConnector.setSslContextFactory(jettyClientSslContextFactory(tlsProtocol));
 
-        final HTTP2Client http2Client = new HTTP2Client();
-        http2Client.addBean(sslContextFactory);
+        final HTTP2Client http2Client = new HTTP2Client(clientConnector);
 
         final HttpClientTransportOverHTTP2 transport = new HttpClientTransportOverHTTP2(http2Client);
         transport.setUseALPN(true);
 
-        final HttpClient httpClient = new HttpClient(transport, sslContextFactory);
+        final HttpClient httpClient = new HttpClient(transport);
         httpClient.setMaxConnectionsPerDestination(4);
 
         return httpClient;

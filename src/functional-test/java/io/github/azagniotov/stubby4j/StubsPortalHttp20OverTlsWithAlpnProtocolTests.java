@@ -123,14 +123,19 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
         http2Client.start();
 
         final String host = "localhost";
-        final HttpURI httpURI = new HttpURI("https://" + host + ":" + STUBS_SSL_PORT + "/invoice?status=active&type=full");
+        final HttpURI.Immutable httpURI =
+                HttpURI.build()
+                        .uri("http://" + host + ":" + STUBS_SSL_PORT + "/invoice?status=active&type=full")
+                        .asImmutable();
 
         final FuturePromise<Session> sessionPromise = new FuturePromise<>();
         http2Client.connect(sslContextFactory, new InetSocketAddress(host, STUBS_SSL_PORT), new ServerSessionListener.Adapter(), sessionPromise);
         final Session session = sessionPromise.get(5, TimeUnit.SECONDS);
 
-        final HttpFields requestFields = new HttpFields();
-        requestFields.put("User-Agent", http2Client.getClass().getName() + "/" + Jetty.VERSION);
+        final HttpFields.Immutable requestFields =
+                HttpFields.build()
+                        .add("User-Agent", http2Client.getClass().getName() + "/" + Jetty.VERSION)
+                        .asImmutable();
 
         final MetaData.Request metaData = new MetaData.Request(HttpMethod.GET.asString(), httpURI, HttpVersion.HTTP_2, requestFields);
         final HeadersFrame headersFrame = new HeadersFrame(metaData, null, true);
