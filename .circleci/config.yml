@@ -36,28 +36,6 @@ docker_in_docker_environment: &docker_in_docker_environment
 ###########################################################################################
 ### START: Different JDK images
 ###########################################################################################
-openjdk_alpine_jdk_8u092_environment: &openjdk_alpine_jdk_8u092_environment
-  <<: *base_environment
-  docker:
-    # https://www.oracle.com/java/technologies/javase/8u92-relnotes.html
-    - image: openjdk:8u92-jdk-alpine@sha256:63eb1c79f609dbaa2c587ba3eb772e8e453229ce91fffc378725ca16435348e9
-    
-openjdk_alpine_jdk_8u111_environment: &openjdk_alpine_jdk_8u111_environment
-  <<: *base_environment
-  docker:
-    # https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
-    - image: openjdk:8u111-jdk-alpine@sha256:d49bf8c44670834d3dade17f8b84d709e7db47f1887f671a0e098bafa9bae49f
-
-azul_zulu_openjdk_alpine_jdk_8u232_environment: &azul_zulu_openjdk_alpine_jdk_8u232_environment
-  <<: *base_environment
-  docker:
-    - image: azul/zulu-openjdk-alpine:8u232@sha256:b0c2420393353be6aaeb77e4498271f46edc5c3dbc39957482f3ef6828628f53
-
-adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment: &adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
-  <<: *base_environment
-  docker:
-    - image: adoptopenjdk/openjdk8:jdk8u312-b07-alpine-slim@sha256:da6bb7b3d1bc1a23653c60f88902be9ca15b4a62f537970d37b65dd374be3221
-
 adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment
   <<: *base_environment
   docker:
@@ -82,16 +60,10 @@ openjdk_alpine_jdk_17_environment: &openjdk_alpine_jdk_17_environment
 ###########################################################################################
 ### END: Different JDK images
 ###########################################################################################
-
-circleci_pre_built_openjdk_8_environment: &circleci_pre_built_openjdk_8_environment
+circleci_pre_built_openjdk_11_environment: &circleci_pre_built_openjdk_11_environment
   <<: *base_environment
   docker:
-    - image: circleci/openjdk:8u292-jdk@sha256:51d82605e7f89fc74437dce7324a33e6a7c9d1941ec8cfd0980f6814d78ae494
-
-gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
-  <<: *base_environment
-  docker:
-    - image: gradle:7.2.0-jdk8-openj9@sha256:d4128edf5ac579f93e3149a9f89be3af779de1d3d85a9f25f25cb3d4b432b69a
+    - image: circleci/openjdk:11.0.11-9-jdk-buster@sha256:fd85ea86890cd29be510bdb2ad5e09eb494750d16bd3eeac19dabae03ed36b45
 
 
 gradle_7_2_0_jdk11_environment: &gradle_7_2_0_jdk11_environment
@@ -402,56 +374,6 @@ smoke_test_steps: &smoke_test_steps
 #############################################################################################
 jobs:
 
-  # https://www.oracle.com/java/technologies/javase/8u92-relnotes.html
-  smoke_openjdk_openjdk_8u092:
-    parameters:
-      tls_13:
-        type: string
-        default: "no"
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "no"
-    <<: *openjdk_alpine_jdk_8u092_environment
-    <<: *smoke_test_steps
- 
- 
-  # https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
-  smoke_openjdk_openjdk_8u111:
-    parameters:
-      tls_13:
-        type: string
-        default: "no"
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "no"
-    <<: *openjdk_alpine_jdk_8u111_environment
-    <<: *smoke_test_steps
-
-
-  smoke_azul_zulu_openjdk_8u232:
-    parameters:
-      tls_13:
-        type: string
-        default: "no" # https://github.com/openjsse/openjsse/issues/13
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "no"
-    <<: *azul_zulu_openjdk_alpine_jdk_8u232_environment
-    <<: *smoke_test_steps
-
-
-  smoke_adoptopenjdk_openjdk_8u312_b07:
-    parameters:
-      tls_13:
-        type: string
-        default: "yes"
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "yes"
-    <<: *adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
-    <<: *smoke_test_steps
-
-
   smoke_adoptopenjdk_openjdk_11_openj9:
     parameters:
       tls_13:
@@ -500,19 +422,14 @@ jobs:
     <<: *smoke_test_steps
 
 
-  gradle_7_2_0_jdk8:
-    <<: *gradle_7_2_0_jdk8_environment
-    <<: *default_steps
-
-
-  gradle_7_2_0_jdk8_code_coverage:
-    <<: *circleci_pre_built_openjdk_8_environment
-    <<: *code_coverage_steps
-
-
   gradle_7_2_0_jdk11:
     <<: *gradle_7_2_0_jdk11_environment
     <<: *default_steps
+
+
+  gradle_7_2_0_jdk11_code_coverage:
+    <<: *circleci_pre_built_openjdk_11_environment
+    <<: *code_coverage_steps
 
 
   gradle_7_2_0_jdk16:
@@ -554,29 +471,20 @@ jobs:
 version: 2.1
 workflows:
 
-  master-jdk8-code-coverage:
+  master-jdk11-code-coverage:
     jobs:
-      - gradle_7_2_0_jdk8_code_coverage:
+      - gradle_7_2_0_jdk11_code_coverage:
           <<: *context_sonatype
           <<: *filter_only_master
 
-  master-jdk8-publish-snapshot:
+  master-jdk11-publish-snapshot:
     jobs:
-      - gradle_7_2_0_jdk8:
+      - gradle_7_2_0_jdk11:
           <<: *context_sonatype
           <<: *filter_only_master
-
 
   branch-smoke-test:
     jobs:
-      - smoke_openjdk_openjdk_8u092:
-          <<: *filter_ignore_master
-      - smoke_openjdk_openjdk_8u111:
-          <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_8u232:
-          <<: *filter_ignore_master
-      - smoke_adoptopenjdk_openjdk_8u312_b07:
-          <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_ignore_master
       - smoke_azul_zulu_openjdk_15:
@@ -588,14 +496,6 @@ workflows:
 
   master-smoke-test:
     jobs:
-      - smoke_openjdk_openjdk_8u092:
-          <<: *filter_only_master
-      - smoke_openjdk_openjdk_8u111:
-          <<: *filter_only_master
-      - smoke_azul_zulu_openjdk_8u232:
-          <<: *filter_only_master
-      - smoke_adoptopenjdk_openjdk_8u312_b07:
-          <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_only_master
       - smoke_azul_zulu_openjdk_15:
@@ -605,20 +505,15 @@ workflows:
       - smoke_openjdk_openjdk_17:
           <<: *filter_only_master
 
-  branch-jdk8:
-    jobs:
-      - gradle_7_2_0_jdk8:
-          <<: *filter_ignore_master
-      - gradle_7_2_0_jdk8_code_coverage:
-          <<: *filter_ignore_master
-          requires:
-            - gradle_7_2_0_jdk8
-
 
   branch-jdk11:
     jobs:
       - gradle_7_2_0_jdk11:
           <<: *filter_ignore_master
+      - gradle_7_2_0_jdk11_code_coverage:
+          <<: *filter_ignore_master
+          requires:
+            - gradle_7_2_0_jdk11
 
 
   branch-jdk16:
@@ -633,28 +528,10 @@ workflows:
           cron: "5 7,19 * * *"
           <<: *filter_only_master
     jobs:
-      - smoke_openjdk_openjdk_8u092
-      - smoke_openjdk_openjdk_8u111
-      - smoke_azul_zulu_openjdk_8u232
-      - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
       - smoke_azul_zulu_openjdk_15
       - smoke_adoptopenjdk_openjdk_16_openj9
       - smoke_openjdk_openjdk_17
-
-
-  master-twelve-hour-jdk8:
-    triggers:
-      - schedule:
-          cron: "10 7,19 * * *"
-          <<: *filter_only_master
-    jobs:
-      - gradle_7_2_0_jdk8:
-          <<: *context_sonatype
-      - docker_build_latest_jre8:
-          <<: *context_docker_hub
-          requires:
-            - gradle_7_2_0_jdk8
 
 
   master-twelve-hour-jdk11:
