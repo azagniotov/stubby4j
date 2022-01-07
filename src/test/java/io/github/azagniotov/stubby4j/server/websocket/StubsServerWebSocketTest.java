@@ -10,7 +10,8 @@ import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.api.WriteCallback;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class StubsServerWebSocketTest {
     private RemoteEndpoint mockRemoteEndpoint;
 
     @Mock
-    private ServletUpgradeRequest mockServletUpgradeRequest;
+    private JettyServerUpgradeRequest mockServletUpgradeRequest;
 
     @Spy
     private ScheduledExecutorService spyScheduledExecutorService = Executors.newScheduledThreadPool(10);
@@ -107,7 +108,7 @@ public class StubsServerWebSocketTest {
         // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
-        verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendString(stringCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(stringCaptor.getValue()).isEqualTo(HELLO_FROM_SERVER);
     }
 
@@ -137,7 +138,7 @@ public class StubsServerWebSocketTest {
             captured.run();
         }
 
-        verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendString(stringCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(stringCaptor.getValue()).isEqualTo(HELLO_FROM_SERVER);
 
         verify(mockSession, times(1)).close(eq(StatusCode.NORMAL), eq("bye"));
@@ -169,7 +170,7 @@ public class StubsServerWebSocketTest {
             captured.run();
         }
 
-        verify(mockRemoteEndpoint, times(1)).sendBytesByFuture(byteBufferCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendBytes(byteBufferCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(byteBufferCaptor.getValue()).isEqualTo(BYTE_BUFFER_HELLO_FROM_SERVER);
 
         verify(mockSession, times(1)).close(eq(StatusCode.NORMAL), eq("bye"));
@@ -226,7 +227,7 @@ public class StubsServerWebSocketTest {
         // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
-        verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendString(stringCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(stringCaptor.getValue()).isEqualTo(HELLO_FROM_SERVER);
     }
 
@@ -253,7 +254,7 @@ public class StubsServerWebSocketTest {
         // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
-        verify(mockRemoteEndpoint, times(1)).sendBytesByFuture(byteBufferCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendBytes(byteBufferCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(byteBufferCaptor.getValue()).isEqualTo(BYTE_BUFFER_HELLO_FROM_SERVER);
     }
 
@@ -322,7 +323,7 @@ public class StubsServerWebSocketTest {
         // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
-        verify(mockRemoteEndpoint, times(1)).sendStringByFuture(stringCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendString(stringCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(stringCaptor.getValue()).isEqualTo(HELLO_FROM_SERVER);
     }
 
