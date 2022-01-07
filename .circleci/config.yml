@@ -271,7 +271,7 @@ smoke_test_steps: &smoke_test_steps
 
     - run:
         name: Build stubby4j uber JAR with log4j on the classpath
-        command: ./gradlew -Plog4j -PciRun clean build
+        command: ./gradlew -PciRun clean build
 
     - run:
         when: on_success
