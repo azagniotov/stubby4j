@@ -283,7 +283,7 @@ public class StubsServerWebSocketTest {
         runnableCaptor.getValue().run();
 
         // FYI: tanuki string bytes[] divided by StubsServerWebSocket.FRAGMENTATION_FRAMES produces 48 chunks
-        verify(mockRemoteEndpoint, times(48)).sendPartialBytes(byteBufferCaptor.capture(), anyBoolean());
+        verify(mockRemoteEndpoint, times(48)).sendPartialBytes(byteBufferCaptor.capture(), anyBoolean(), eq(WriteCallback.NOOP));
         final List<ByteBuffer> allCapturedFragments = byteBufferCaptor.getAllValues();
         assertThat(allCapturedFragments.size()).isEqualTo(48);
 

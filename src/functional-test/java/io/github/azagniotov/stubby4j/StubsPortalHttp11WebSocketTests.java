@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
+import io.github.azagniotov.stubby4j.utils.ByteUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -559,32 +560,9 @@ public class StubsPortalHttp11WebSocketTests {
 
         @OnWebSocketFrame
         public void onOnWebSocketFrame(final Frame frame) throws IOException {
-            if (frame.getOpCode() == OpCode.PING) {
-                final ByteBuffer pingPayload = frame.getPayload();
-
-                // https://stackoverflow.com/questions/1054020/how-comes-array-doesnt-work-on-bytebuffers-returned-from-maped-filechannels
-                if (!pingPayload.hasArray()) {
-                    byte[] to = new byte[pingPayload.remaining()];
-                    pingPayload.slice().get(to);
-                    receivedOnMessageBytes.add(to);
-                } else {
-                    receivedOnMessageBytes.add(pingPayload.array());
-                }
-
-                countDownLatch.countDown();
-            }
-
-            if (frame.getOpCode() == OpCode.PONG) {
-                final ByteBuffer pongPayload = frame.getPayload();
-
-                // https://stackoverflow.com/questions/1054020/how-comes-array-doesnt-work-on-bytebuffers-returned-from-maped-filechannels
-                if (!pongPayload.hasArray()) {
-                    byte[] to = new byte[pongPayload.remaining()];
-                    pongPayload.slice().get(to);
-                    receivedOnMessageBytes.add(to);
-                } else {
-                    receivedOnMessageBytes.add(pongPayload.array());
-                }
+            if (frame.getOpCode() == OpCode.PING || frame.getOpCode() == OpCode.PONG) {
+                final byte[] bytes = ByteUtils.extractByteArrayFromByteBuffer(frame.getPayload());
+                receivedOnMessageBytes.add(bytes);
                 countDownLatch.countDown();
             }
         }

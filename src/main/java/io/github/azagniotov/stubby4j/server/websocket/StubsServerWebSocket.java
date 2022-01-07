@@ -20,8 +20,6 @@ import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -166,11 +164,9 @@ public class StubsServerWebSocket {
                             // Send response in a binary form as sequential fragmented frames one after another in
                             // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
                             // in an async manner using a Future, as this can produce un-deterministic behavior.
-                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
+                            this.remote.sendPartialBytes(byteBufferChunk, isLast, WriteCallback.NOOP);
                             Thread.sleep(delay);
                         }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
