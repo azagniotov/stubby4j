@@ -199,7 +199,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
+        command: gradle -PciRun clean test integrationTest functionalTest
         when: always
 
     - when:
@@ -244,7 +244,7 @@ code_coverage_steps: &code_coverage_steps
     - run:
         name: Run JaCoCo plugin code coverage
         when: on_success
-        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean jacocoTestReport
+        command: ./gradlew -PciRun clean jacocoTestReport
 
     - run:
         name: Upload code coverage data to Codecov
@@ -299,7 +299,7 @@ smoke_test_steps: &smoke_test_steps
 
     - run:
         name: Build stubby4j uber JAR
-        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean build
+        command: ./gradlew -PciRun clean build
 
     - run:
         when: on_success
@@ -408,9 +408,6 @@ jobs:
       tls_13:
         type: string
         default: "no"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "no"
@@ -424,9 +421,6 @@ jobs:
       tls_13:
         type: string
         default: "no"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "no"
@@ -439,9 +433,6 @@ jobs:
       tls_13:
         type: string
         default: "no" # https://github.com/openjsse/openjsse/issues/13
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "no"
@@ -454,9 +445,6 @@ jobs:
       tls_13:
         type: string
         default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
@@ -469,9 +457,6 @@ jobs:
       tls_13:
         type: string
         default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
@@ -484,9 +469,6 @@ jobs:
       tls_13:
         type: string
         default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
@@ -499,9 +481,6 @@ jobs:
       tls_13:
         type: string
         default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
@@ -514,9 +493,6 @@ jobs:
       tls_13:
         type: string
         default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
       run_tls_with_alpn_http_2_tests:
         type: string
         default: "yes"
@@ -525,37 +501,21 @@ jobs:
 
 
   gradle_7_2_0_jdk8:
-    parameters:
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
     <<: *gradle_7_2_0_jdk8_environment
     <<: *default_steps
 
 
   gradle_7_2_0_jdk8_code_coverage:
-    parameters:
-      use_native_jdk_alpn_processor:
-        type: string
-        default: ""
     <<: *circleci_pre_built_openjdk_8_environment
     <<: *code_coverage_steps
 
 
   gradle_7_2_0_jdk11:
-    parameters:
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
     <<: *gradle_7_2_0_jdk11_environment
     <<: *default_steps
 
 
   gradle_7_2_0_jdk16:
-    parameters:
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
     <<: *gradle_7_2_0_jdk16_environment
     <<: *default_steps
 
