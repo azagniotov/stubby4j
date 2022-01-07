@@ -7,8 +7,8 @@ import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +95,7 @@ public final class ConsoleUtils {
         }
     }
 
-    public static void logIncomingWebSocketTextRequest(final ServletUpgradeRequest request, final String message) {
+    public static void logIncomingWebSocketTextRequest(final JettyServerUpgradeRequest request, final String message) {
 
         final String logMessage = String.format("[%s] => %s %s on [%s]: %s",
                 getLocalDateTime(),
@@ -121,7 +121,7 @@ public final class ConsoleUtils {
         }
     }
 
-    public static void logOutgoingWebSocketResponse(final ServletUpgradeResponse servletUpgradeResponse) {
+    public static void logOutgoingWebSocketResponse(final JettyServerUpgradeResponse servletUpgradeResponse) {
         lorFormattedResponse(servletUpgradeResponse.getStatusCode());
     }
 
