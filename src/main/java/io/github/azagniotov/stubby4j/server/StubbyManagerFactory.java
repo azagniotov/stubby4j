@@ -3,13 +3,11 @@ package io.github.azagniotov.stubby4j.server;
 import io.github.azagniotov.stubby4j.caching.Cache;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.cli.CommandLineInterpreter;
-import io.github.azagniotov.stubby4j.cli.EmptyLogger;
 import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.log.Log;
 
 import java.io.File;
 import java.util.Map;
@@ -24,11 +22,6 @@ public class StubbyManagerFactory {
     public synchronized StubbyManager construct(final File configFile,
                                                 final Map<String, String> commandLineArgs,
                                                 final CompletableFuture<YamlParseResultSet> stubLoadComputation) throws Exception {
-
-        final String enableJettyDebug = System.getProperty("enableJettyDebug");
-        if (enableJettyDebug == null) {
-            Log.setLog(new EmptyLogger());
-        }
 
         //TODO BUG: When stubs are cached, upon finding the previously cached match by hashCode,
         // if stubbed response has template tokens for dynamic token replacement, the tokens are

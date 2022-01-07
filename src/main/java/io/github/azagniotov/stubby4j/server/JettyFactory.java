@@ -16,6 +16,7 @@ import io.github.azagniotov.stubby4j.server.websocket.StubsWebSocketCreator;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import jakarta.servlet.ServletException;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
@@ -38,12 +39,10 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.websocket.server.NativeWebSocketServletContainerInitializer;
-import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
+import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -112,18 +111,14 @@ public final class JettyFactory {
         server.setHandler(contextHandlerCollection);
 
         // Configure specific websocket behavior
-        NativeWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, nativeWebSocketConfiguration) ->
+        JettyWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, jettyWebSocketServerContainer) ->
         {
             // Configure default max size
-            nativeWebSocketConfiguration.getPolicy().setMaxTextMessageBufferSize(65535);
+            jettyWebSocketServerContainer.setMaxTextMessageSize(65535);
 
             // Add websockets
-            nativeWebSocketConfiguration.addMapping("/*", new StubsWebSocketCreator(stubRepository));
+            jettyWebSocketServerContainer.addMapping("/*", new StubsWebSocketCreator(stubRepository));
         });
-
-
-        // Add generic filter that will accept WebSocket upgrade.
-        WebSocketUpgradeFilter.configure(servletContextHandler);
 
         return server;
     }
@@ -326,10 +321,10 @@ public final class JettyFactory {
         httpConfiguration.setSecurePort(getStubsSslPort(commandLineArgs));
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
-        final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
+        final SslContextFactory.Server serverSslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
         final ServerConnector sslConnector = enableAlpnAndHttp2 ?
-                buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory) :
-                buildSslConnectorWithHttp11(server, httpConfiguration, sslContextFactory);
+                buildSslConnectorWithHttp2Alpn(server, httpConfiguration, serverSslContextFactory) :
+                buildSslConnectorWithHttp11(server, httpConfiguration, serverSslContextFactory);
 
         sslConnector.setPort(getStubsSslPort(commandLineArgs));
         sslConnector.setHost(DEFAULT_HOST);
@@ -340,7 +335,7 @@ public final class JettyFactory {
             sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final HashSet<String> supportedTlsProtocols = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
+        final HashSet<String> supportedTlsProtocols = new HashSet<>(Arrays.asList(serverSslContextFactory.getIncludeProtocols()));
 
         statusBuilder.append("\n");
 
@@ -378,7 +373,7 @@ public final class JettyFactory {
         return sslConnector;
     }
 
-    private SslContextFactory constructSslContextFactory(final String keystorePassword, final String keystorePath) throws IOException {
+    private SslContextFactory.Server constructSslContextFactory(final String keystorePassword, final String keystorePath) throws IOException {
 
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#configuring-ssl
 
@@ -386,7 +381,7 @@ public final class JettyFactory {
         // https://github.com/eclipse/jetty.project/issues/2807
         // https://github.com/eclipse/jetty.project/issues/3773
         // https://github.com/eclipse/jetty.project/issues/5039
-        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
 
         sslContextFactory.setExcludeProtocols();
         sslContextFactory.setIncludeProtocols(SslUtils.enabledProtocols());
@@ -431,8 +426,7 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsConnectorWithHttp11(final Server server,
                                                           final HttpConfiguration httpConfiguration) {
-        return new ServerConnector(server,
-                new HttpConnectionFactory(httpConfiguration));
+        return new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
     }
 
     private ServerConnector buildStubsConnectorWithHttp20(final Server server,
@@ -448,17 +442,17 @@ public final class JettyFactory {
 
     private ServerConnector buildSslConnectorWithHttp11(final Server server,
                                                         final HttpConfiguration httpConfiguration,
-                                                        final SslContextFactory sslContextFactory) {
-        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
+                                                        final SslContextFactory.Server serverSslContextFactory) {
+        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(serverSslContextFactory, PROTOCOL_HTTP_1_1);
         return new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
     }
 
     private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
                                                            final HttpConfiguration httpConfiguration,
-                                                           final SslContextFactory sslContextFactory) {
+                                                           final SslContextFactory.Server serverSslContextFactory) {
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#alpn-chapter
 
-        sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
+        serverSslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
         final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
 
         final HTTP2ServerConnectionFactory http2ServerConnectionFactory = new HTTP2ServerConnectionFactory(httpConfiguration);
@@ -467,7 +461,7 @@ public final class JettyFactory {
         // https://github.com/curl/curl/blob/63c76681827b5ae9017f6c981003cd75e5f127de/lib/http2.h#L32
         http2ServerConnectionFactory.setMaxConcurrentStreams(100);
         return new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol()),
+                new SslConnectionFactory(serverSslContextFactory, alpnServerConnectionFactory.getProtocol()),
                 alpnServerConnectionFactory,
                 http2ServerConnectionFactory);
     }

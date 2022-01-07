@@ -4,9 +4,9 @@ import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
-import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
+import org.eclipse.jetty.websocket.server.JettyWebSocketCreator;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-public class StubsWebSocketCreator implements WebSocketCreator {
+public class StubsWebSocketCreator implements JettyWebSocketCreator {
 
     private final StubRepository stubRepository;
 
@@ -23,8 +23,8 @@ public class StubsWebSocketCreator implements WebSocketCreator {
     }
 
     @Override
-    public Object createWebSocket(final ServletUpgradeRequest servletUpgradeRequest,
-                                  final ServletUpgradeResponse servletUpgradeResponse) {
+    public Object createWebSocket(final JettyServerUpgradeRequest servletUpgradeRequest,
+                                  final JettyServerUpgradeResponse servletUpgradeResponse) {
 
         final StubWebSocketConfig stubWebSocketConfig = this.stubRepository.matchWebSocketConfigByUrl(servletUpgradeRequest.getRequestPath());
 
@@ -36,14 +36,16 @@ public class StubsWebSocketCreator implements WebSocketCreator {
         return new StubsServerWebSocket(stubWebSocketConfig, Executors.newScheduledThreadPool(10));
     }
 
-    private void checkAndHandleNotFound(final StubWebSocketConfig stubWebSocketConfig, ServletUpgradeRequest servletUpgradeRequest, ServletUpgradeResponse servletUpgradeResponse) {
+    private void checkAndHandleNotFound(final StubWebSocketConfig stubWebSocketConfig,
+                                        final JettyServerUpgradeRequest jettyServerUpgradeRequest,
+                                        final JettyServerUpgradeResponse jettyServerUpgradeResponse) {
         // The client made request to a non-existent URL
         if (stubWebSocketConfig == null) {
             try {
-                servletUpgradeResponse.setStatusCode(HttpStatus.NOT_FOUND_404);
-                servletUpgradeResponse.sendError(HttpStatus.NOT_FOUND_404, HttpStatus.Code.NOT_FOUND.getMessage());
+                jettyServerUpgradeResponse.setStatusCode(HttpStatus.NOT_FOUND_404);
+                jettyServerUpgradeResponse.sendError(HttpStatus.NOT_FOUND_404, HttpStatus.Code.NOT_FOUND.getMessage());
 
-                ConsoleUtils.logOutgoingWebSocketResponse(servletUpgradeResponse);
+                ConsoleUtils.logOutgoingWebSocketResponse(jettyServerUpgradeResponse);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -51,27 +53,27 @@ public class StubsWebSocketCreator implements WebSocketCreator {
     }
 
     private void checkAndSetAcceptedProtocols(final StubWebSocketConfig stubWebSocketConfig,
-                                              final ServletUpgradeRequest servletUpgradeRequest,
-                                              final ServletUpgradeResponse servletUpgradeResponse) {
+                                              final JettyServerUpgradeRequest jettyServerUpgradeRequest,
+                                              final JettyServerUpgradeResponse jettyServerUpgradeResponse) {
 
         // We have configured sub-protocols, so the client must conform to contract
         if (!stubWebSocketConfig.getSubProtocols().isEmpty()) {
 
-            final Set<String> requestClientSubProtocolsCopy = new HashSet<>(servletUpgradeRequest.getSubProtocols());
+            final Set<String> requestClientSubProtocolsCopy = new HashSet<>(jettyServerUpgradeRequest.getSubProtocols());
             requestClientSubProtocolsCopy.retainAll(stubWebSocketConfig.getSubProtocols());
 
             if (requestClientSubProtocolsCopy.isEmpty()) {
                 try {
-                    servletUpgradeResponse.setStatusCode(HttpStatus.FORBIDDEN_403);
-                    servletUpgradeResponse.sendError(HttpStatus.FORBIDDEN_403, HttpStatus.Code.FORBIDDEN.getMessage());
+                    jettyServerUpgradeResponse.setStatusCode(HttpStatus.FORBIDDEN_403);
+                    jettyServerUpgradeResponse.sendError(HttpStatus.FORBIDDEN_403, HttpStatus.Code.FORBIDDEN.getMessage());
 
-                    ConsoleUtils.logOutgoingWebSocketResponse(servletUpgradeResponse);
+                    ConsoleUtils.logOutgoingWebSocketResponse(jettyServerUpgradeResponse);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
             } else {
-                final String acceptedSubProtocol = String.join(",", requestClientSubProtocolsCopy);
-                servletUpgradeResponse.setAcceptedSubProtocol(acceptedSubProtocol);
+                // Set a protocol by picking the first one from the intersection result
+                jettyServerUpgradeResponse.setAcceptedSubProtocol(requestClientSubProtocolsCopy.iterator().next());
             }
         }
     }

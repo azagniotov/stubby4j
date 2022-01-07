@@ -5,7 +5,7 @@ import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public final class NotFoundResponseHandlingStrategy implements StubResponseHandlingStrategy {
 

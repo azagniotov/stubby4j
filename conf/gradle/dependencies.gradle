@@ -1,15 +1,10 @@
 dependencies {
-    if (project.hasProperty("useNativeJdkAlpnProcessor")) {
-        println "> Building with native JDK ALPN processor in default dependencies"
-        api "org.eclipse.jetty:jetty-alpn-java-server:${jettyVersion}"
-    } else {
-        println "> Building with Jetty JDK ALPN OpenJDK 1.8 processor in default dependencies"
-        api "org.eclipse.jetty:jetty-alpn-openjdk8-server:${jettyVersion}"
-    }
+    println "> Building with native JDK ALPN processor in default dependencies"
+    api "org.eclipse.jetty:jetty-alpn-java-server:${jettyVersion}"
 
-    api "org.eclipse.jetty.websocket:websocket-api:${jettyVersion}"
-    api "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
-    api "org.eclipse.jetty.websocket:websocket-client:${jettyVersion}"
+    api "org.eclipse.jetty.websocket:websocket-jetty-api:${jettyVersion}"
+    api "org.eclipse.jetty.websocket:websocket-jetty-server:${jettyVersion}"
+    api "org.eclipse.jetty.websocket:websocket-jetty-client:${jettyVersion}"
 
     // https://github.com/eclipse/jetty.project/issues/1894
     // https://github.com/eclipse/jetty.project/issues/2950
@@ -26,29 +21,23 @@ dependencies {
     if (project.hasProperty("log4j")) {
         var becauseMsg = "CVE-2021-44228, CVE-2021-45046, CVE-2021-45105, CVE-2021-44832: Log4j vulnerable to remote code execution and other critical security vulnerabilities"
         println "> Building with log4j included in default dependencies"
-        api "org.apache.logging.log4j:log4j-slf4j-impl:${log4j2Version}"
-
-        constraints {
-            api("org.apache.logging.log4j:log4j-api") {
-                version {
-                    strictly("${log4j2Version}")
-                    prefer("2.17.1")
-                }
-                because(becauseMsg)
-            }
-
-            api("org.apache.logging.log4j:log4j-core") {
-                version {
-                    strictly("${log4j2Version}")
-                    prefer("2.17.1")
-                }
-                because(becauseMsg)
+        // https://issues.apache.org/jira/browse/LOG4J2-3139
+        api ("org.slf4j:slf4j-api") {
+            version {
+                strictly '1.8.0-beta4'
             }
         }
+        api "org.apache.logging.log4j:log4j-slf4j18-impl:${log4j2Version}"
+        api "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+        api "org.apache.logging.log4j:log4j-api:${log4j2Version}"
 
     } else {
         println "> Building with default dependencies"
-        api "org.slf4j:slf4j-api:1.7.30"
+        api ("org.slf4j:slf4j-api") {
+            version {
+                strictly '1.8.0-beta4'
+            }
+        }
     }
 
     testImplementation "junit:junit:4.13.1"
@@ -58,12 +47,7 @@ dependencies {
     testImplementation "com.google.truth:truth:1.1.2"
     testImplementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
     testImplementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
-
-    if (project.hasProperty("useNativeJdkAlpnProcessor")) {
-        testImplementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
-    } else {
-        testImplementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
-    }
+    testImplementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
 
     // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
     testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"

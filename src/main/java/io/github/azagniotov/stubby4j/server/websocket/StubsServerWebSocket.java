@@ -10,17 +10,16 @@ import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
+import org.eclipse.jetty.websocket.api.WriteCallback;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +68,7 @@ public class StubsServerWebSocket {
 
     @OnWebSocketMessage
     public void onWebSocketBinary(final byte[] incoming, final int offset, final int length) {
-        final ServletUpgradeRequest upgradeRequest = (ServletUpgradeRequest) this.session.getUpgradeRequest();
+        final JettyServerUpgradeRequest upgradeRequest = (JettyServerUpgradeRequest) this.session.getUpgradeRequest();
         ConsoleUtils.logIncomingWebSocketTextRequest(upgradeRequest, "binary payload");
 
         boolean found = false;
@@ -86,13 +85,13 @@ public class StubsServerWebSocket {
         }
 
         if (!found) {
-            this.remote.sendStringByFuture(String.format("404 Not Found: client sent [%s]", incoming));
+            this.remote.sendString(String.format("404 Not Found: client sent [%s]", incoming), WriteCallback.NOOP);
         }
     }
 
     @OnWebSocketMessage
     public void onWebSocketText(final String message) {
-        final ServletUpgradeRequest upgradeRequest = (ServletUpgradeRequest) this.session.getUpgradeRequest();
+        final JettyServerUpgradeRequest upgradeRequest = (JettyServerUpgradeRequest) this.session.getUpgradeRequest();
         ConsoleUtils.logIncomingWebSocketTextRequest(upgradeRequest, message);
 
         boolean found = false;
@@ -109,7 +108,7 @@ public class StubsServerWebSocket {
         }
 
         if (!found) {
-            this.remote.sendStringByFuture(String.format("404 Not Found: client request %s", message));
+            this.remote.sendString(String.format("404 Not Found: client request %s", message), WriteCallback.NOOP);
         }
     }
 
@@ -145,10 +144,10 @@ public class StubsServerWebSocket {
             scheduledExecutorService.schedule(() -> {
                 if (serverResponse.getMessageType() == TEXT) {
                     // Send response in a UTF-8 text form as a whole
-                    this.remote.sendStringByFuture(serverResponse.getBodyAsString());
+                    this.remote.sendString(serverResponse.getBodyAsString(), WriteCallback.NOOP);
                 } else {
                     // Send response in a binary form as a whole blob
-                    this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
+                    this.remote.sendBytes(ByteBuffer.wrap(serverResponse.getBodyAsBytes()), WriteCallback.NOOP);
                 }
 
             }, delay, TimeUnit.MILLISECONDS);
@@ -165,11 +164,9 @@ public class StubsServerWebSocket {
                             // Send response in a binary form as sequential fragmented frames one after another in
                             // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
                             // in an async manner using a Future, as this can produce un-deterministic behavior.
-                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
+                            this.remote.sendPartialBytes(byteBufferChunk, isLast, WriteCallback.NOOP);
                             Thread.sleep(delay);
                         }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -181,9 +178,9 @@ public class StubsServerWebSocket {
             // Send response to the client in periodic pushes one after another. The content will be sent as a whole
             scheduledExecutorService.scheduleAtFixedRate(() -> {
                 if (serverResponse.getMessageType() == TEXT) {
-                    this.remote.sendStringByFuture(serverResponse.getBodyAsString());
+                    this.remote.sendString(serverResponse.getBodyAsString(), WriteCallback.NOOP);
                 } else {
-                    this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
+                    this.remote.sendBytes(ByteBuffer.wrap(serverResponse.getBodyAsBytes()), WriteCallback.NOOP);
                 }
             }, delay, delay, TimeUnit.MILLISECONDS);
         }
@@ -193,11 +190,7 @@ public class StubsServerWebSocket {
             // client upon on-open or on-message config in periodic manner.
             // WebSocket Ping spec: https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2
             scheduledExecutorService.scheduleAtFixedRate(() -> {
-                try {
-                    this.remote.sendPing(EMPTY_BYTE_BUFFER);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
+                this.remote.sendPing(EMPTY_BYTE_BUFFER, WriteCallback.NOOP);
             }, delay, delay, TimeUnit.MILLISECONDS);
         }
 

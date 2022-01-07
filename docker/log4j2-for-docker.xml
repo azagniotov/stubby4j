@@ -36,6 +36,10 @@
             <AppenderRef ref="LogToConsole"/>
         </Logger>
 
+<!--        <Logger name="org.eclipse.jetty" level="DEBUG" additivity="false">-->
+<!--            <AppenderRef ref="LogToConsole"/>-->
+<!--        </Logger>-->
+
         <Root level="INFO"/>
     </Loggers>
 

@@ -21,7 +21,7 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch -f --tags && \
       git checkout $REVISION && \
-      gradle -Plog4j -PuseNativeJdkAlpnProcessor clean jar
+      gradle -Plog4j clean jar
 
 ########################################################################################
 # Stage 2 : create the Docker final image
