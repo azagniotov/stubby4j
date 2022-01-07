@@ -349,7 +349,8 @@ smoke_test_steps: &smoke_test_steps
           echo ""
           java -version
           echo ""
-          java -jar build/libs/stubby4j-*.jar \
+          java -Dlog4j2.configurationFile=docker/log4j2-for-docker.xml \
+                -jar build/libs/stubby4j-*.jar \
                       --location 127.0.0.1 \
                       --tls 7445 \
                       --data src/smoke-test/yaml/smoke-tests-stubs.yaml &
