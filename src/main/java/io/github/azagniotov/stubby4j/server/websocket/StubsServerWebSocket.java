@@ -194,11 +194,7 @@ public class StubsServerWebSocket {
             // client upon on-open or on-message config in periodic manner.
             // WebSocket Ping spec: https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2
             scheduledExecutorService.scheduleAtFixedRate(() -> {
-                try {
-                    this.remote.sendPing(EMPTY_BYTE_BUFFER);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
+                this.remote.sendPing(EMPTY_BYTE_BUFFER, WriteCallback.NOOP);
             }, delay, delay, TimeUnit.MILLISECONDS);
         }
 

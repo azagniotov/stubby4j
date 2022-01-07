@@ -131,7 +131,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -141,7 +141,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         assertThat(session.isSecure()).isTrue();
         assertThat(session.getPolicy().getBehavior()).isEqualTo(WebSocketBehavior.CLIENT);
 
-        assertThat(session.getUpgradeResponse().getAcceptedSubProtocol()).isEqualTo("mamba,echo");
+        assertThat(session.getUpgradeResponse().getAcceptedSubProtocol()).isEqualTo("echo");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -167,7 +167,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_7, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -187,7 +187,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_3, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -209,7 +209,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_6, clientUpgradeRequest);
         sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -231,7 +231,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -257,7 +257,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_4, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -283,7 +283,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -302,7 +302,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -326,7 +326,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -353,7 +353,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_2, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -380,7 +380,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(3);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -405,7 +405,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -426,7 +426,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
     public void serverShouldThrow_WhenConnectingClient_RequestedWrongUrl() throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, NON_STUBBED_REQUEST_URL, clientUpgradeRequest);
 
@@ -464,7 +464,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
 
         // Not calling the following
-        // clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        // clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
 
@@ -487,7 +487,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -515,7 +515,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -544,7 +544,7 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+        clientUpgradeRequest.setSubProtocols("echo");
 
         final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_5, clientUpgradeRequest);
         final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
@@ -588,13 +588,23 @@ public class StubsPortalHttp11WebSocketOverTlsTests {
         public void onOnWebSocketFrame(final Frame frame) throws IOException {
             if (frame.getOpCode() == OpCode.PING) {
                 final ByteBuffer pingPayload = frame.getPayload();
-                receivedOnMessageBytes.add(pingPayload.array());
+
+                // https://stackoverflow.com/questions/1054020/how-comes-array-doesnt-work-on-bytebuffers-returned-from-maped-filechannels
+                if (!pingPayload.hasArray()) {
+                    byte[] to = new byte[pingPayload.remaining()];
+                    pingPayload.slice().get(to);
+                    receivedOnMessageBytes.add(to);
+                } else {
+                    receivedOnMessageBytes.add(pingPayload.array());
+                }
+
                 countDownLatch.countDown();
             }
 
             if (frame.getOpCode() == OpCode.PONG) {
                 final ByteBuffer pongPayload = frame.getPayload();
 
+                // https://stackoverflow.com/questions/1054020/how-comes-array-doesnt-work-on-bytebuffers-returned-from-maped-filechannels
                 if (!pongPayload.hasArray()) {
                     byte[] to = new byte[pongPayload.remaining()];
                     pongPayload.slice().get(to);

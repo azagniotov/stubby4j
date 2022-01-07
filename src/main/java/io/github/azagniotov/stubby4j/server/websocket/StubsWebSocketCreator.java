@@ -73,7 +73,7 @@ public class StubsWebSocketCreator implements JettyWebSocketCreator {
                 }
             } else {
                 final String acceptedSubProtocol = String.join(",", requestClientSubProtocolsCopy);
-                jettyServerUpgradeResponse.setAcceptedSubProtocol(acceptedSubProtocol);
+                jettyServerUpgradeResponse.setAcceptedSubProtocol("echo");
             }
         }
     }

@@ -200,7 +200,7 @@ public class StubsServerWebSocketTest {
         // ScheduledExecutorService, in order to trigger the behavior
         runnableCaptor.getValue().run();
 
-        verify(mockRemoteEndpoint, times(1)).sendPing(byteBufferCaptor.capture());
+        verify(mockRemoteEndpoint, times(1)).sendPing(byteBufferCaptor.capture(), eq(WriteCallback.NOOP));
         assertThat(byteBufferCaptor.getValue()).isEqualTo(EMPTY_BYTE_BUFFER);
     }
 
