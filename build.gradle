@@ -26,6 +26,11 @@ apply plugin: "org.unbroken-dome.test-sets"
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-parameters' << '-Xlint:deprecation'
@@ -33,12 +38,6 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
-}
-
-javadoc {
-    if (JavaVersion.current().isJava8Compatible()) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
 }
 
 repositories {
