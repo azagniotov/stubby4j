@@ -437,15 +437,6 @@ jobs:
     <<: *default_steps
 
 
-  docker_build_latest_jre8:
-    parameters:
-      jdk_version:
-        type: string
-        default: "8"
-    <<: *docker_in_docker_environment
-    <<: *build_push_image_steps
-
-
   docker_build_latest_jre11:
     parameters:
       jdk_version:
