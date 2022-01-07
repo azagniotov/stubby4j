@@ -201,7 +201,7 @@ services:
       STUBS_PORT: 8884
       ADMIN_PORT: 8891
       STUBS_TLS_PORT: 7445
-      # https://github.com/azagniotov/stubby4j#command-line-switches
+      # https://stubby4j.com/#command-line-switches
       WITH_ARGS: "--enable_tls_with_alpn_and_http_2 --debug --watch"
 ```
 
