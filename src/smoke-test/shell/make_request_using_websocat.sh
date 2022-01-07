@@ -22,7 +22,7 @@ smoke_test_response=$(websocat \
 
 if [ "$smoke_test_response" != "0" ]
 then
-  echo "WebSocket request to $2:$3 failed, exiting with status 1 ... "
+  echo "WebSocket request to $2:$3 failed. Received response: '$smoke_test_response', thus exiting with status 1 ... "
   exit 1
 else
   echo "$smoke_test_response"
