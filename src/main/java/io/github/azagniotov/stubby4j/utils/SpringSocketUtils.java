@@ -18,6 +18,8 @@ package io.github.azagniotov.stubby4j.utils;
  * limitations under the License.
  */
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
+
 import javax.net.ServerSocketFactory;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -38,6 +40,7 @@ import java.util.Random;
  * @author Gary Russell
  * @since 4.0
  */
+@GeneratedCodeClassCoverageExclusion
 class SpringSocketUtils {
 
     /**
