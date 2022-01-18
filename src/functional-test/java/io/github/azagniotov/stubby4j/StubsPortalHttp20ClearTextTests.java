@@ -62,7 +62,7 @@ public class StubsPortalHttp20ClearTextTests {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
+        final URL url = StubsPortalHttp20ClearTextTests.class.getResource("/yaml/main-test-stubs.yaml");
         assert url != null;
 
         final InputStream stubsDataInputStream = url.openStream();
