@@ -5,6 +5,7 @@ import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.api.Session;
@@ -55,9 +56,9 @@ import static org.junit.Assert.assertThrows;
 public class StubsPortalHttp11WebSocketTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
-    private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
+    private static final int STUBS_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int STUBS_SSL_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int ADMIN_PORT = NetworkPortUtils.findAvailableTcpPort();
 
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
     private static final String WEBSOCKET_ROOT_PATH_URL = String.format("ws://localhost:%s/ws", STUBS_PORT);

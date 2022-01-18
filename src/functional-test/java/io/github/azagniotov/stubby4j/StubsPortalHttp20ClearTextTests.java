@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.JettyFactory;
+import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -47,9 +48,9 @@ import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHtt
 public class StubsPortalHttp20ClearTextTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
-    private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
+    private static final int STUBS_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int STUBS_SSL_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int ADMIN_PORT = NetworkPortUtils.findAvailableTcpPort();
 
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
 
