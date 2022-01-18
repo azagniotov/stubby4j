@@ -608,7 +608,7 @@ When running stubby4j as an embedded JAR, you can start-up and manage stubby4j s
 
 In addition, it is possible to manage embedded stubby4j using the `StubbyClient` without pointing it to an actual local physical YAML config file. Instead, consumers can provide stubs YAML configuration payload of type String, when calling the [StubbyClient#startJettyYamless(..)](https://github.com/azagniotov/stubby4j/blob/a1a341b70db92766cd17b4fb90e0a69cea7f31e6/src/main/java/io/github/azagniotov/stubby4j/client/StubbyClient.java#L134-L191). The following [StubbyClient functional test](https://github.com/azagniotov/stubby4j/blob/a1a341b70db92766cd17b4fb90e0a69cea7f31e6/src/functional-test/java/io/github/azagniotov/stubby4j/client/StubbyClientYamlessTest.java#L25-L39) demonstrates the API usage.
 
-`StubbyClient` also enables consumers to manage stubby4j stubs via the Admin portal. Check the https://stubby4j.com/docs/admin_portal.html#client-programmatic-api for more information.
+`StubbyClient` also enables consumers to manage stubby4j stubs via the Admin portal. Check the [https://stubby4j.com/docs/admin_portal.html#client-programmatic-api](https://stubby4j.com/docs/admin_portal.html#client-programmatic-api) for more information.
 
 [Back to top](#table-of-contents)
 
