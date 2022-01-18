@@ -35,6 +35,7 @@ public class StubbyClientTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         final URL url = StubbyClientTest.class.getResource(MAIN_TEST_STUBS_YAML);
+        assert url != null;
         STUBBY_CLIENT.startJetty(JettyFactory.DEFAULT_STUBS_PORT, SSL_PORT, JettyFactory.DEFAULT_ADMIN_PORT, url.getFile());
     }
 

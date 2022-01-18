@@ -138,7 +138,7 @@ public final class StubbyClient {
      * It is the responsibility of consumers of this API to provide stubs YAML configuration payload of type String.
      * <p>
      * Please note: the provided stubs YAML string payload, must be a standalone YAML. Stubs YAML config payload in the
-     * splitted format (see https://stubby4j.com/docs/http_endpoint_configuration_howto.html#splitting-main-yaml-config)
+     * split format (see https://stubby4j.com/docs/http_endpoint_configuration_howto.html#splitting-main-yaml-config)
      * is NOT supported by this API.
      * <p>
      * Consumers can leverage the {@link NetworkPortUtils#findAvailableTcpPort()} class to start stubby4j
