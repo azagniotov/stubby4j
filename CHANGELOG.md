@@ -1,4 +1,8 @@
-#### 7.5.2-SNAPSHOT `master` branch
+#### 7.5.3-SNAPSHOT `master` branch
+
+#### 7.5.2
+
+* PR [#453](https://github.com/azagniotov/stubby4j/pull/453) - Revisited `StubbyClient` when starting without a local YAML config (https://github.com/azagniotov)
 
 #### 7.5.1
 

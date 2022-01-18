@@ -4,6 +4,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
+import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -35,9 +36,9 @@ import static java.util.Arrays.asList;
 public class StubsPortalHttp11OverTlsTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
-    private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
+    private static final int STUBS_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int STUBS_SSL_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int ADMIN_PORT = NetworkPortUtils.findAvailableTcpPort();
 
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
     private static final String STUBS_SSL_URL = String.format("https://localhost:%s", STUBS_SSL_PORT);
@@ -52,7 +53,7 @@ public class StubsPortalHttp11OverTlsTests {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalTest.class.getResource("/yaml/main-test-stubs.yaml");
+        final URL url = StubsPortalHttp11OverTlsTests.class.getResource("/yaml/main-test-stubs.yaml");
         assert url != null;
 
         final InputStream stubsDataInputStream = url.openStream();

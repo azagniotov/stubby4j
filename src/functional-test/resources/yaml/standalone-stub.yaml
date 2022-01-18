@@ -1,0 +1,9 @@
+- request:
+    method: GET
+    url: /standalone/stub/uri
+
+  response:
+    status: 200
+    body: This is working!
+    headers:
+      content-type: application/json

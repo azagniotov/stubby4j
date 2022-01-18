@@ -8,6 +8,7 @@ import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
 import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
+import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
@@ -27,9 +28,9 @@ import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML
 
 public class StubsPortalRaisedIssueTests {
 
-    private static final int STUBS_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int STUBS_SSL_PORT = PortTestUtils.findAvailableTcpPort();
-    private static final int ADMIN_PORT = PortTestUtils.findAvailableTcpPort();
+    private static final int STUBS_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int STUBS_SSL_PORT = NetworkPortUtils.findAvailableTcpPort();
+    private static final int ADMIN_PORT = NetworkPortUtils.findAvailableTcpPort();
 
     private static final String STUBS_URL = String.format("http://localhost:%s", STUBS_PORT);
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);

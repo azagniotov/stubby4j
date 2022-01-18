@@ -1,6 +1,8 @@
-package io.github.azagniotov.stubby4j;
+package io.github.azagniotov.stubby4j.utils;
 
 /*
+ * This class is borrowed from the awesome Spring Framework by stubby4j
+ *
  * Copyright 2002-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +17,8 @@ package io.github.azagniotov.stubby4j;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 
 import javax.net.ServerSocketFactory;
 import java.net.DatagramSocket;
@@ -36,7 +40,8 @@ import java.util.Random;
  * @author Gary Russell
  * @since 4.0
  */
-public class SpringSocketUtils {
+@GeneratedCodeClassCoverageExclusion
+class SpringSocketUtils {
 
     /**
      * The default minimum value for port ranges used when finding an available
@@ -70,7 +75,7 @@ public class SpringSocketUtils {
      * &lt;bean id="bean1" ... p:port="#{socketUtils.findAvailableTcpPort(12000)}" /&gt;
      * &lt;bean id="bean2" ... p:port="#{socketUtils.findAvailableTcpPort(30000)}" /&gt;</code></pre>
      */
-    public SpringSocketUtils() {
+    private SpringSocketUtils() {
     }
 
     /**
