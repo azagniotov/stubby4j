@@ -7,16 +7,24 @@ import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.StubbyManager;
 import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
 import io.github.azagniotov.stubby4j.utils.CollectionUtils;
+import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpScheme;
+import org.eclipse.jetty.http.HttpStatus;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -106,10 +114,10 @@ public final class StubbyClient {
      * @param tlsPort                   TLS Stubs portal port
      * @param adminPort                 Admin portal port
      * @param addressToBind             Address to bind Jetty
-     * @param yamlConfigurationFilename an absolute or relative file path for YAML stubs configuration file.
+     * @param yamlConfigurationFilename An absolute or relative file path for YAML stubs configuration file.
+     * @param flags                     Optional additional stubby4j command line arguments.
      * @throws Exception
      */
-
     public void startJetty(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind, final String yamlConfigurationFilename, final String... flags) throws Exception {
         final String[] defaultFlags = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
         final String[] args = CollectionUtils.concatWithArrayCopy(defaultFlags, flags);
@@ -125,26 +133,62 @@ public final class StubbyClient {
     }
 
     /**
-     * Starts stubby using given Stubs, TlsStubs, Admin portals ports and host address without YAML configuration file.
+     * Binds stubby4j to the provided address and Stubs, Stubs on TLD & Admin portal ports.
+     * <p>
+     * This convenience method allows to start stubby4j without providing a path to YAML in the local filesystem.
+     * It is the responsibility of consumers of this API to provide stubs YAML configuration payload of type String.
+     * <p>
+     * Please note: the provided stubs YAML string payload, must be a standalone YAML. Stubs YAML config payload in the
+     * splitted format (see https://stubby4j.com/docs/http_endpoint_configuration_howto.html#splitting-main-yaml-config)
+     * is NOT supported by this API.
+     * <p>
+     * Consumers can leverage the {@link NetworkPortUtils#findAvailableTcpPort()} class to start stubby4j
+     * on a random port and get the port number at runtime.
      *
-     * @param stubsPort     Stubs portal port
-     * @param tlsPort       TLS Stubs portal port
-     * @param adminPort     Admin portal port
-     * @param addressToBind Address to bind Jetty
+     * @param stubsYamlConfigurationData Stubs YAML configuration as a string.
+     * @param stubsPort                  Stubs portal port, e.g.: 8882
+     * @param tlsPort                    TLS Stubs portal port, e.g.: 7443
+     * @param adminPort                  Admin portal port, e.g.: 8889
+     * @param addressToBind              Address to bind Jetty, e.g.: 127.0.0.1, localhost or 192.168.0.2
+     * @param additionalFlags            Optional additional stubby4j command line arguments. See https://stubby4j.com/#command-line-switches
      * @throws Exception
+     * @see io.github.azagniotov.stubby4j.utils.NetworkPortUtils
      */
+    public void startJettyYamless(final String stubsYamlConfigurationData,
+                                  final int stubsPort,
+                                  final int tlsPort,
+                                  final int adminPort,
+                                  final String addressToBind,
+                                  final String... additionalFlags) throws Exception {
+        final String[] defaultFlags = new String[]{"-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
+        final String[] args = CollectionUtils.concatWithArrayCopy(defaultFlags, additionalFlags);
 
-    public void startJettyYamless(final int stubsPort, final int tlsPort, final int adminPort, final String addressToBind) throws Exception {
-        final String[] args = new String[]{"-m", "-l", addressToBind, "-s", String.valueOf(stubsPort), "-a", String.valueOf(adminPort), "-t", String.valueOf(tlsPort)};
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
         commandLineInterpreter.parseCommandLine(args);
-        final URL url = StubbyClient.class.getResource("/yaml/empty-stub.yaml");
 
-        final File configFile = new File(url.getFile());
-        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(configFile);
+        final String emptyYaml =
+                "- request:\n" +
+                        "    method: [GET]\n" +
+                        "    url: /stubby4j/default/placeholder/stub\n" +
+                        "\n" +
+                        "  response:\n" +
+                        "    status: 302";
 
-        stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
+        final File tempTargetFile = Files.createFile(Paths.get("./empty.yaml")).toFile();
+        try (final InputStream inputStream = new ByteArrayInputStream(StringUtils.getBytesUtf8(emptyYaml))) {
+            Files.copy(inputStream, tempTargetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        tempTargetFile.deleteOnExit();
+
+        final CompletableFuture<YamlParseResultSet> stubLoadComputation = parseYamlAsync(tempTargetFile);
+
+        stubbyManager = new StubbyManagerFactory().construct(tempTargetFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
+
+        final String adminUrl = String.format("http://%s:%s", addressToBind, adminPort);
+        final StubbyResponse adminPortalResponse = updateStubbedData(adminUrl, stubsYamlConfigurationData);
+
+        assert adminPortalResponse.statusCode() == HttpStatus.CREATED_201;
     }
 
     /**
