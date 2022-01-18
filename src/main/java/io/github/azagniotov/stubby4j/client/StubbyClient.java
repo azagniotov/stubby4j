@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Locale;
@@ -174,7 +173,7 @@ public final class StubbyClient {
                         "  response:\n" +
                         "    status: 302";
 
-        final File tempTargetFile = Files.createFile(Paths.get("./empty.yaml")).toFile();
+        final File tempTargetFile = Files.createTempFile("stubby4jTempYamlConfig_", ".yaml").toFile();
         try (final InputStream inputStream = new ByteArrayInputStream(StringUtils.getBytesUtf8(emptyYaml))) {
             Files.copy(inputStream, tempTargetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
