@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:4.0.0"
+        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:4.1.0"
     }
 }
 
