@@ -266,7 +266,11 @@ build_push_image_steps: &build_push_image_steps
     - run:
         name: Building Docker image
         working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
-        command: docker build --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> .
+        # https://support.circleci.com/hc/en-us/articles/360058095471-How-To-Use-Docker-Buildx-in-Remote-Docker-
+        command: |
+          docker context create buildx-build
+          docker buildx create --use buildx-build
+          docker buildx build --platform linux/amd64,linux/arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> .
 
     - run:
         name: Authenticating to Docker Hub
@@ -277,8 +281,9 @@ build_push_image_steps: &build_push_image_steps
     - run:
         name: Pushing Docker image to Docker Hub
         working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
-        command: docker push azagniotov/stubby4j:latest-jre<< parameters.jdk_version >>
-
+        command: |
+          docker push azagniotov/stubby4j:latest-jre<< parameters.jdk_version >>
+          docker buildx rm buildx-build
 
 smoke_test_steps: &smoke_test_steps
   steps:
