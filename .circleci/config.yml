@@ -269,6 +269,7 @@ build_push_image_steps: &build_push_image_steps
         # https://support.circleci.com/hc/en-us/articles/360058095471-How-To-Use-Docker-Buildx-in-Remote-Docker-
         # https://microservices.io/post/microservices/2022/01/18/build-multi-arch-docker-images-circleci.html
         command: |
+          export DOCKER_CLI_EXPERIMENTAL=enabled
           # echo "Creating a Docker context"
           # docker context create tls-environment
           docker version
