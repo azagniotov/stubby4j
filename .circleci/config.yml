@@ -262,11 +262,16 @@ build_push_image_steps: &build_push_image_steps
     - setup_remote_docker:
         version: 20.10.11
 
+    - run:
+        name: Install cURL on Alpine Linux
+        command: |
+          echo ""
+          apk --no-cache add curl && curl --version
+          
     # build the application image
     - run:
         name: Install Docker Buildx
         command: |
-          curl -V
           mkdir -vp ~/.docker/cli-plugins/
           curl --silent -L "https://github.com/docker/buildx/releases/download/v0.12.0/buildx-v0.12.0.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
           chmod a+x ~/.docker/cli-plugins/docker-buildx
