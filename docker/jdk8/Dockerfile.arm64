@@ -10,7 +10,7 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:7.2.0-jdk11-openj9@sha256:6c628ab1edc7b733b4880804fcd27dc360fc350f333546924e64e3a34a009fa2 AS BUILD_JAR_STAGE
+FROM gradle:7.2.0-jdk8-openj9@sha256:18fdc03987ce333918cf2badfcb677d27ac1ca667b014eef32ba77b48e58ab83 AS BUILD_JAR_STAGE
 
 ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
@@ -21,13 +21,13 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       git fetch -f --tags && \
       git checkout $REVISION && \
-      gradle -Plog4j -PuseNativeJdkAlpnProcessor clean jar
+      gradle -Plog4j clean jar
 
 ########################################################################################
 # Stage 2 : create the Docker final image
 ########################################################################################
 # https://hub.docker.com/r/azul/zulu-openjdk-alpine
-FROM azul/zulu-openjdk-alpine:11.0.10-11.45.27-jre-headless@sha256:6cf54cbe8eef8a65eee89524dc9fcac4069425e87115ba908901f97c933703e8
+FROM azul/zulu-openjdk-alpine:8u362-8.68.0.21-jre-arm64@sha256:460ae0fb1205fdca85d909d58a31c4691c9d52764391031e387854c48ba7c6d8
 
 ARG USER_ID=1001
 ARG GROUP_ID=1001
@@ -86,3 +86,4 @@ ENTRYPOINT java \
             --data data/${YAML_CONFIG} \
             --mute \
             ${WITH_ARGS}
+
