@@ -36,16 +36,19 @@ The following `stubby4j` Docker images are available ([Alpine-Native Zulu OpenJD
 See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md) for more information
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
-* [`7.5.2-jre8`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk8/Dockerfile)
-* [`latest-jre8`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile)
+* [`7.5.2-jre8 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk8/Dockerfile)
+* [`latest-jre8 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile.arm64)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
-* [`7.5.2-jre11`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk11/Dockerfile)
-* [`latest-jre11`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile)
+* [`7.5.2-jre11 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk11/Dockerfile)
+* [`latest-jre11 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile.arm64)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 16
-* [`7.5.2-jre16`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk16/Dockerfile)
-* [`latest-jre16`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk16/Dockerfile)
+* [`7.5.2-jre16 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk16/Dockerfile)
+* [`latest-jre16 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk16/Dockerfile)
+
+#### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 17
+* [`latest-jre17 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk17/Dockerfile.arm64)
 
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />
