@@ -22,7 +22,7 @@ Full documentation hosted at [https://stubby4j.com](https://stubby4j.com), which
 
 There are a number of use cases where you'd want to use `WebSockets`, `HTTP/1.1`, `HTTP/2` stub server in your development/QA environment. If you are a `Software Engineer`/`Test Engneer`/`QA`, then it should hit close to home with you. As an example, some of these use cases are outlined below (this is by no means an exhaustive list). Use `stubby4j` when you want to:
 
-* Dockerzied. Stub out external services in a Docker based micro-service architecture
+* Dockerzied. Stub out external services in a Docker based micro-service architecture (ARM64 Docker images are also available!)
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
 * Support for `HTTP/2` over TCP (`h2c`) and `HTTP/2` over TLS (`h2`) on TLS v1.2 or newer using ALPN extension
 * Verify that your code makes `HTTP/1.1` or `HTTP/2` (over TLS) requests with all the required parameters and/or headers
