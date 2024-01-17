@@ -684,10 +684,10 @@ workflows:
 
 
   master-twelve-hour-jdk8:
-    triggers:
-      - schedule:
-          cron: "10 7,19 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "10 7,19 * * *"
+    #       <<: *filter_only_master
     jobs:
       - gradle_7_2_0_jdk8:
           <<: *context_sonatype
@@ -698,10 +698,10 @@ workflows:
 
 
   master-twelve-hour-jdk11:
-    triggers:
-      - schedule:
-          cron: "15 7,19 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "15 7,19 * * *"
+    #       <<: *filter_only_master
     jobs:
       - gradle_7_2_0_jdk11:
           <<: *context_sonatype
@@ -712,10 +712,10 @@ workflows:
 
 
   master-twelve-hour-jdk16:
-    triggers:
-      - schedule:
-          cron: "20 7,19 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "20 7,19 * * *"
+    #       <<: *filter_only_master
     jobs:
       - gradle_7_2_0_jdk16:
           <<: *context_sonatype
