@@ -80,7 +80,7 @@ There are a number of use cases where you'd want to use `WebSockets`, `HTTP/1.1`
 
 ## Key features
 
-* Dockerzied. Stub out external services in a Docker based micro-service architecture
+* Dockerzied. Stub out external services in a Docker based micro-service architecture (ARM64 Docker images are also available!)
 * Support for `TLS` protocol versions `1.0`, `1.1`, `1.2` and `1.3`
 * Support for `HTTP/2` over TCP (`h2c`) and `HTTP/2` over TLS (`h2`) on TLS v1.2 or newer using ALPN extension
 * Support for `WebSocket` protocol over `HTTP/1.1` with `TLS` or not
@@ -153,9 +153,10 @@ For more information and more complex examples, please dive into the rest of doc
 stubby4j Docker images hosted on [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docker.com/r/azagniotov/stubby4j).
 
 Alternatively you can build your own image locally using one of the project's `Dockerfile` under:
-* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile)
-* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk8/Dockerfile.arm64)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile.arm64)
 * [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk17/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk17/Dockerfile.arm64)
 
 Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
 
