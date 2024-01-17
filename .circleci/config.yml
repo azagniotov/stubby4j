@@ -706,10 +706,10 @@ workflows:
 
 
   master-twelve-hour-jdk8:
-    triggers:
-      - schedule:
-          cron: "10 4,16 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "10 4,16 * * *"
+    #       <<: *filter_only_master
     jobs:
       - gradle_7_2_0_jdk8:
           <<: *context_sonatype
