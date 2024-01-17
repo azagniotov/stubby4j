@@ -14,8 +14,9 @@ base_environment: &base_environment
   <<: *circle_working_directory
   environment:
     # Customize the JVM maximum heap limit
-    JVM_OPTS: -Xmx3200m
+    JVM_OPTS: -Xmx4096m
     TERM: dumb
+  resource_class: large
 
 
 context_docker_hub: &context_docker_hub
