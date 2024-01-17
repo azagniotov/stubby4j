@@ -262,6 +262,12 @@ build_push_image_steps: &build_push_image_steps
     - setup_remote_docker:
         version: 20.10.11
 
+    # - run:
+    #     name: Install QEMU User Static on Alpine Linux
+    #     command: |
+    #       echo ""
+    #       apk --no-cache add qemu-user-static
+
     - run:
         name: Install cURL on Alpine Linux
         command: |
@@ -295,6 +301,7 @@ build_push_image_steps: &build_push_image_steps
         name: Building and Pushing Docker ARM64 JDK 11 image
         working_directory: ~/repo/docker/jdk11
         command: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker context create tls-environment-arm64
           docker buildx create tls-environment-arm64 --use
           docker buildx build --platform linux/arm64,linux/amd64 -f Dockerfile.arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre11 --push .
