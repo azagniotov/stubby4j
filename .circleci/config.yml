@@ -260,22 +260,16 @@ build_push_image_steps: &build_push_image_steps
     - checkout
 
     - setup_remote_docker:
-        version: 20.10.11
+        version: 20.10.7
 
     # build the application image
     - run:
         name: Building Docker image
         working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
         # https://support.circleci.com/hc/en-us/articles/360058095471-How-To-Use-Docker-Buildx-in-Remote-Docker-
-        # https://microservices.io/post/microservices/2022/01/18/build-multi-arch-docker-images-circleci.html
         command: |
-          echo "Creating a Docker context"
-          docker context create tls-environment
-
-          echo "BuildX creates and uses the Docker context"
-          docker buildx create tls-environment --use
-
-          echo "Starting Docker BuildX process .."
+          docker context create buildx-build
+          docker buildx create --use buildx-build
           docker buildx build --platform linux/amd64,linux/arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> .
 
     - run:
