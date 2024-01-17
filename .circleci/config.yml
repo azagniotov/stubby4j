@@ -31,7 +31,7 @@ context_sonatype: &context_sonatype
 docker_in_docker_environment: &docker_in_docker_environment
   <<: *base_environment
   docker:
-    - image: docker:20.10.8-alpine3.14@sha256:6ac2f3862aa1353a5fe6bf12439f3e56e695e56d7c3098898c96ef33eae78bf9
+    - image: docker:20.10.24-alpine3.18@sha256:3776b167618263227352cd939e260bb94941ef3dbedd27da85715ca0a1bdac45
 
 ###########################################################################################
 ### START: Different JDK images
