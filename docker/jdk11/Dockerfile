@@ -1,5 +1,3 @@
-# Dockerfile for ARM64 images
-# 
 # A few useful Docker commands to build an image and run the stubby4j container.
 #
 # Build (run with '--no-cache' to ensure that Git repo new tags will be pulled down, as Docker caches RUNs):
