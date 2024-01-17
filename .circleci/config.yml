@@ -262,12 +262,6 @@ build_push_image_steps: &build_push_image_steps
     - setup_remote_docker:
         version: 20.10.11
 
-    # - run:
-    #     name: Install QEMU User Static on Alpine Linux
-    #     command: |
-    #       echo ""
-    #       apk --no-cache add qemu-user-static
-
     - run:
         name: Install cURL on Alpine Linux
         command: |
