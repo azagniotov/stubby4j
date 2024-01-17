@@ -10,7 +10,7 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:7.2.0-jdk16-openj9@sha256:9620865af4f35026abfc9680603449296f832ea79da9a7f4e79d00989ccddcee AS BUILD_JAR_STAGE
+FROM gradle:7.2.0-jdk17@sha256:e9e90cc97b29423dda5a2ff5ed7787a31ab7f43660bd83993a880e33e1504c7b AS BUILD_JAR_STAGE
 
 ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
@@ -27,7 +27,7 @@ RUN git clone https://github.com/azagniotov/stubby4j.git && \
 # Stage 2 : create the Docker final image
 ########################################################################################
 # https://hub.docker.com/r/azul/zulu-openjdk-alpine
-FROM azul/zulu-openjdk-alpine:16.0.2-16.32.15-jre@sha256:d323c348f27b9458ec88fd69947560314df0fe059ff7acb3055f96b28f466a4d
+FROM azul/zulu-openjdk-alpine:17-jre@sha256:1d30a12d48c20c02dbcfe9e01c5a41878066c4ddaf1e5cd768ea87f2ba212973
 
 ARG USER_ID=1001
 ARG GROUP_ID=1001
