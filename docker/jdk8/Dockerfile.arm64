@@ -13,6 +13,7 @@
 FROM gradle:7.2.0-jdk8-openj9@sha256:18fdc03987ce333918cf2badfcb677d27ac1ca667b014eef32ba77b48e58ab83 AS BUILD_JAR_STAGE
 
 ARG REVISION=master
+ENV GRADLE_OPTS=-Dorg.gradle.daemon=false
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
 
