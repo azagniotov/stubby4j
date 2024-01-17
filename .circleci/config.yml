@@ -722,10 +722,10 @@ workflows:
 
 
   master-twelve-hour-jdk11:
-    # triggers:
-    #   - schedule:
-    #       cron: "15 6,18 * * *"
-    #       <<: *filter_only_master
+    triggers:
+      - schedule:
+          cron: "15 6,18 * * *"
+          <<: *filter_only_master
     jobs:
       - gradle_7_2_0_jdk11:
           <<: *context_sonatype
