@@ -266,10 +266,10 @@ build_push_image_steps: &build_push_image_steps
         version: 20.10.24
 
     - run:
-        name: Install cURL and Git on Alpine Linux
+        name: Install cURL on Alpine Linux
         command: |
           echo ""
-          apk --no-cache add curl git && curl --version && git --version
+          apk --no-cache add curl && curl --version
 
     - run:
         name: Install Docker Buildx
