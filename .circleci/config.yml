@@ -710,10 +710,10 @@ workflows:
     jobs:
       - gradle_7_2_0_jdk8:
           <<: *context_sonatype
-          #<<: *filter_only_master
+          <<: *filter_only_master
       - docker_build_latest_jre8:
           <<: *context_docker_hub
-          #<<: *filter_only_master
+          <<: *filter_only_master
           requires:
             - gradle_7_2_0_jdk8
 
@@ -722,10 +722,10 @@ workflows:
     jobs:
       - gradle_7_2_0_jdk11:
           <<: *context_sonatype
-          #<<: *filter_only_master
+          <<: *filter_only_master
       - docker_build_latest_jre11:
           <<: *context_docker_hub
-          #<<: *filter_only_master
+          <<: *filter_only_master
           requires:
             - gradle_7_2_0_jdk11
 
@@ -734,9 +734,9 @@ workflows:
     jobs:
       - gradle_7_2_0_jdk16:
           <<: *context_sonatype
-          #<<: *filter_only_master
+          <<: *filter_only_master
       - docker_build_latest_jre17:
           <<: *context_docker_hub
-          #<<: *filter_only_master
+          <<: *filter_only_master
           requires:
             - gradle_7_2_0_jdk16
