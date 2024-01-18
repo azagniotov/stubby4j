@@ -10,14 +10,18 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM azul/zulu-openjdk-alpine:17-jre@sha256:1d30a12d48c20c02dbcfe9e01c5a41878066c4ddaf1e5cd768ea87f2ba212973 AS BUILD_JAR_STAGE
+FROM azul/zulu-openjdk-alpine:17@sha256:80ba9a499e493d8cde618eafbe3fc8ef83f66494f02cdb1b9a91fcf38dd57f60 AS BUILD_JAR_STAGE
 
 ARG REVISION=master
 WORKDIR /tmp/
 
+RUN apk --no-cache add git && \
+      git --version
+
+RUN git clone https://github.com/azagniotov/stubby4j.git
+
 # Build from the latest tag
-RUN git clone https://github.com/azagniotov/stubby4j.git && \
-      cd stubby4j && \
+RUN cd stubby4j && \
       git fetch -f --tags && \
       git checkout $REVISION && \
       ./gradlew -Plog4j -PuseNativeJdkAlpnProcessor clean jar
