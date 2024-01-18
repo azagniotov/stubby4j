@@ -12,6 +12,11 @@
 ########################################################################################
 FROM gradle:7.2.0-jdk17@sha256:e9e90cc97b29423dda5a2ff5ed7787a31ab7f43660bd83993a880e33e1504c7b AS BUILD_JAR_STAGE
 
+# https://stackoverflow.com/questions/72435016/docker-build-stuck-in-gradle-task
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
+ENTRYPOINT ["sleep"]
+CMD ["3000"]
+
 ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
