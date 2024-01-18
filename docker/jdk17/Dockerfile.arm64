@@ -18,13 +18,10 @@ WORKDIR /tmp/
 RUN apk --no-cache add git && \
       git --version
 
-RUN git clone https://github.com/azagniotov/stubby4j.git
+RUN git clone --branch $REVISION --depth 1 https://github.com/azagniotov/stubby4j.git
 
 # Build from the latest tag
-RUN cd stubby4j && \
-      git fetch -f --tags && \
-      git checkout $REVISION && \
-      ./gradlew -Plog4j -PuseNativeJdkAlpnProcessor clean jar
+RUN cd stubby4j && ./gradlew -Plog4j -PuseNativeJdkAlpnProcessor clean jar
 
 ########################################################################################
 # Stage 2 : create the Docker final image
