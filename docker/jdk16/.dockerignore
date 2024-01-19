@@ -1,0 +1,6 @@
+.gradle
+.git/
+.gradle/
+bin/
+build/
+gradle/
