@@ -291,7 +291,7 @@ build_push_image_steps: &build_push_image_steps
           docker run --rm --privileged tonistiigi/binfmt --install all
           docker context create tls-environment
           docker buildx create tls-environment --use
-          DOCKER_BUILDKIT=1 docker buildx build --build-arg REVISION=master --platform linux/amd64,linux/arm64 -f Dockerfile.arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> --push .
+          docker buildx build --build-arg REVISION=master --platform linux/amd64,linux/arm64 -f Dockerfile.arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> --push .
           docker context rm tls-environment
 
 smoke_test_steps: &smoke_test_steps
