@@ -266,10 +266,10 @@ build_push_image_steps: &build_push_image_steps
         version: 20.10.24
 
     - run:
-        name: Install cURL on Alpine Linux
+        name: Install cURL and Docker 20.10.24 on Alpine Linux
         command: |
           echo ""
-          apk --no-cache add curl && curl --version
+          apk --no-cache add curl && curl --version && docker --version
 
     - run:
         name: Install Docker Buildx
@@ -287,11 +287,46 @@ build_push_image_steps: &build_push_image_steps
     - run:
         name: Building and Pushing Multi Arch Docker images
         working_directory: ~/repo/docker/jdk<< parameters.jdk_version >>
+
+        # Best way to cache multi-stage + multi-platform image builds
+        # https://github.com/docker/buildx/discussions/1382#discussioncomment-4159926
         command: |
           docker run --rm --privileged tonistiigi/binfmt --install all
           docker context create tls-environment
           docker buildx create tls-environment --use
-          docker buildx build --build-arg REVISION=master --platform linux/amd64,linux/arm64 -f Dockerfile.arm64 --rm --no-cache -t azagniotov/stubby4j:latest-jre<< parameters.jdk_version >> --push .
+
+          echo ""
+          echo "Building or restoring from remote Docker BuildX cache"
+          docker buildx build \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
+              --build-arg REVISION=<< parameters.git_revision >> \
+              -f << parameters.dockerfile >> \
+              --platform linux/amd64,linux/arm64 \
+              -t << parameters.image_tag >> \
+              --output=type=image \
+              --push .
+
+          echo ""
+          echo "Caching remotely Docker BuildX build for linux/arm64"
+          docker buildx build \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
+              --cache-to=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
+              --build-arg REVISION=<< parameters.git_revision >> \
+              -f << parameters.dockerfile >> \
+              --platform linux/arm64 \
+              --load .
+
+          echo ""
+          echo "Caching remotely Docker BuildX build for linux/amd64" 
+          docker buildx build \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
+              --cache-to=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
+              --build-arg REVISION=<< parameters.git_revision >> \
+              -f << parameters.dockerfile >> \
+              --platform linux/amd64 \
+              --load . 
+          
           docker context rm tls-environment
 
 smoke_test_steps: &smoke_test_steps
@@ -576,6 +611,21 @@ jobs:
 
   docker_build_latest_jre8:
     parameters:
+      dockerfile:
+        type: string
+        default: "Dockerfile.arm64"
+      image_tag_buildcache_arm64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-arm64-jre8"
+      image_tag_buildcache_amd64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-amd64-jre8"
+      image_tag:
+        type: string
+        default: "azagniotov/stubby4j:latest-jre8"
+      git_revision:
+        type: string
+        default: "master"
       jdk_version:
         type: string
         default: "8"
@@ -585,6 +635,21 @@ jobs:
 
   docker_build_latest_jre11:
     parameters:
+      dockerfile:
+        type: string
+        default: "Dockerfile.arm64"
+      image_tag_buildcache_arm64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-arm64-jre11"
+      image_tag_buildcache_amd64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-amd64-jre11"
+      image_tag:
+        type: string
+        default: "azagniotov/stubby4j:latest-jre11"
+      git_revision:
+        type: string
+        default: "master"
       jdk_version:
         type: string
         default: "11"
@@ -603,6 +668,21 @@ jobs:
 
   docker_build_latest_jre17:
     parameters:
+      dockerfile:
+        type: string
+        default: "Dockerfile.arm64"
+      image_tag_buildcache_arm64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-arm64-jre17"
+      image_tag_buildcache_amd64:
+        type: string
+        default: "azagniotov/stubby4j:buildcache-amd64-jre17"
+      image_tag:
+        type: string
+        default: "azagniotov/stubby4j:latest-jre17"
+      git_revision:
+        type: string
+        default: "master"
       jdk_version:
         type: string
         default: "17"
@@ -746,4 +826,5 @@ workflows:
           <<: *context_docker_hub
           requires:
             - gradle_7_2_0_jdk16
+
 
