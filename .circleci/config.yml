@@ -148,6 +148,11 @@ default_steps: &default_steps
   # https://discuss.circleci.com/t/show-test-results-for-prospective-merge-of-a-github-pr/1662/14
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
+    - run:
+        name: Install Git on Alpine Linux
+        command: |
+          echo ""
+          apk --no-cache add git && git --version
     - checkout
     - when:
         <<: *condition_when_not_master
