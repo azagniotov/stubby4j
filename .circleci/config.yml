@@ -154,14 +154,6 @@ default_steps: &default_steps
           echo ""
           apk --no-cache add openssh-client git && git --version
     - checkout
-    - run:
-        name: Make gradlew to run with Root privileges 
-        command: chmod +x gradlew
-    - run:
-        name: Who Am I 
-        command: |
-          whoami
-          pwd
     - when:
         <<: *condition_when_not_master
         # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
@@ -177,13 +169,17 @@ default_steps: &default_steps
           - v2-dependencies-
 
     - save_cache:
+        environment:
+          GRADLE_USER_HOME: ~/repo/.gradle_user_home
         paths:
-          - ~/.gradle
+          - ~/repo/.gradle_user_home
         key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
         name: Run all test suits
-        command: sudo ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
+        environment:
+          GRADLE_USER_HOME: ~/repo/.gradle_user_home
+        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
 
     - when:
