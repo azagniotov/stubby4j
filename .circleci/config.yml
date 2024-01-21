@@ -154,6 +154,9 @@ default_steps: &default_steps
           echo ""
           apk --no-cache add openssh-client git && git --version
     - checkout
+    - run:
+        name: Make gradlew to run with Root privileges 
+        command: chmod +x gradlew
     - when:
         <<: *condition_when_not_master
         # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
