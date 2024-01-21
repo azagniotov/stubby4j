@@ -183,7 +183,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
+        command: sudo ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
 
     - when:
