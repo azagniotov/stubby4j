@@ -528,36 +528,6 @@ jobs:
     <<: *smoke_test_steps
 
 
-  smoke_azul_zulu_openjdk_15:
-    parameters:
-      tls_13:
-        type: string
-        default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "yes"
-    <<: *azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment
-    <<: *smoke_test_steps
-
-
-  smoke_adoptopenjdk_openjdk_16_openj9:
-    parameters:
-      tls_13:
-        type: string
-        default: "yes"
-      use_native_jdk_alpn_processor:
-        type: string
-        default: "-PuseNativeJdkAlpnProcessor"
-      run_tls_with_alpn_http_2_tests:
-        type: string
-        default: "yes"
-    <<: *adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
-    <<: *smoke_test_steps
-
-
   smoke_openjdk_openjdk_17:
     parameters:
       tls_13:
@@ -722,10 +692,6 @@ workflows:
           <<: *filter_ignore_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_15:
-          <<: *filter_ignore_master
-      - smoke_adoptopenjdk_openjdk_16_openj9:
-          <<: *filter_ignore_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_ignore_master
 
@@ -740,10 +706,6 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07:
           <<: *filter_only_master
       - smoke_adoptopenjdk_openjdk_11_openj9:
-          <<: *filter_only_master
-      - smoke_azul_zulu_openjdk_15:
-          <<: *filter_only_master
-      - smoke_adoptopenjdk_openjdk_16_openj9:
           <<: *filter_only_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_only_master
@@ -781,8 +743,6 @@ workflows:
       - smoke_azul_zulu_openjdk_8u232
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
-      - smoke_azul_zulu_openjdk_15
-      - smoke_adoptopenjdk_openjdk_16_openj9
       - smoke_openjdk_openjdk_17
 
 
