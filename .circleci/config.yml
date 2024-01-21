@@ -216,10 +216,12 @@ default_steps: &default_steps
           # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
           GRADLE_USER_HOME: ~/repo/.gradle_user_home
         command: |
+          echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
+          echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
           echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-          ./gradlew publish
+          ./gradlew -PciRun build publish
         when: on_success
 
     # - when:
@@ -737,6 +739,7 @@ workflows:
   branch-jdk8:
     jobs:
       - jdk_8_environment:
+          <<: *context_sonatype
           <<: *filter_ignore_master
       - jdk_8_environment_code_coverage:
           <<: *filter_ignore_master
