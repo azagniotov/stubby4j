@@ -17,11 +17,9 @@ ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
 
 # Build from the latest tag
-RUN git clone https://github.com/azagniotov/stubby4j.git && \
+RUN git clone --depth 1 --branch $REVISION https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
-      git fetch -f --tags && \
-      git checkout $REVISION && \
-      gradle -Plog4j -PuseNativeJdkAlpnProcessor clean jar
+      ./gradlew -Plog4j -PuseNativeJdkAlpnProcessor clean jar
 
 ########################################################################################
 # Stage 2 : create the Docker final image
