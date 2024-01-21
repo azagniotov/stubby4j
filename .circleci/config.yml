@@ -792,12 +792,8 @@ workflows:
           cron: "10 4,16 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_2_0_jdk8:
-          <<: *context_sonatype
       - docker_build_latest_jre8:
           <<: *context_docker_hub
-          requires:
-            - gradle_7_2_0_jdk8
 
 
   master-twelve-hour-jdk11:
@@ -806,12 +802,8 @@ workflows:
           cron: "15 6,18 * * *"
           <<: *filter_only_master
     jobs:
-      - gradle_7_2_0_jdk11:
-          <<: *context_sonatype
       - docker_build_latest_jre11:
           <<: *context_docker_hub
-          requires:
-            - gradle_7_2_0_jdk11
 
 
   master-twelve-hour-jdk17:
@@ -820,11 +812,6 @@ workflows:
          cron: "20 8,20 * * *"
          <<: *filter_only_master
     jobs:
-      - gradle_7_2_0_jdk16:
-          <<: *context_sonatype
       - docker_build_latest_jre17:
           <<: *context_docker_hub
-          requires:
-            - gradle_7_2_0_jdk16
-
 
