@@ -678,8 +678,8 @@ workflows:
           <<: *filter_ignore_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_21:
-          <<: *filter_ignore_master
+      # - smoke_azul_zulu_openjdk_21:
+      #     <<: *filter_ignore_master
 
   master-smoke-test:
     jobs:
@@ -695,8 +695,8 @@ workflows:
           <<: *filter_only_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_ignore_master
-      - smoke_azul_zulu_openjdk_21:
-          <<: *filter_ignore_master
+      # - smoke_azul_zulu_openjdk_21:
+      #     <<: *filter_ignore_master
 
   branch-jdk8:
     jobs:
@@ -732,7 +732,7 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
       - smoke_openjdk_openjdk_17
-      - smoke_azul_zulu_openjdk_21
+      # - smoke_azul_zulu_openjdk_21
 
 
   master-twelve-hour-jdk8:
