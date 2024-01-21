@@ -70,6 +70,11 @@ openjdk_alpine_jdk_17_environment: &openjdk_alpine_jdk_17_environment
     # https://www.oracle.com/java/technologies/javase/17-relnote-issues.html
     - image: openjdk:17-jdk-alpine3.14@sha256:a996cdcc040704ec6badaf5fecf1e144c096e00231a29188596c784bcf858d05
 
+azul_zulu_openjdk_alpine_jdk_21_0_1_21_30_environment: &azul_zulu_openjdk_alpine_jdk_21_0_1_21_30_environment
+  <<: *base_environment
+  docker:
+    - image: azul/zulu-openjdk-alpine:21.0.1-21.30@sha256:a60205c768924a609072c1f9e6fb1e075da987b580dd3474f632a4db250dde45
+
 ###########################################################################################
 ### END: Different JDK images
 ###########################################################################################
@@ -516,6 +521,21 @@ jobs:
     <<: *smoke_test_steps
 
 
+  smoke_azul_zulu_openjdk_21:
+    parameters:
+      tls_13:
+        type: string
+        default: "yes"
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
+      run_tls_with_alpn_http_2_tests:
+        type: string
+        default: "yes"
+    <<: *azul_zulu_openjdk_alpine_jdk_21_0_1_21_30_environment
+    <<: *smoke_test_steps
+
+
   jdk_8_environment:
     parameters:
       use_native_jdk_alpn_processor:
@@ -658,6 +678,8 @@ workflows:
           <<: *filter_ignore_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_ignore_master
+      - smoke_azul_zulu_openjdk_21:
+          <<: *filter_ignore_master
 
   master-smoke-test:
     jobs:
@@ -672,7 +694,9 @@ workflows:
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_only_master
       - smoke_openjdk_openjdk_17:
-          <<: *filter_only_master
+          <<: *filter_ignore_master
+      - smoke_azul_zulu_openjdk_21:
+          <<: *filter_ignore_master
 
   branch-jdk8:
     jobs:
@@ -708,6 +732,7 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
       - smoke_openjdk_openjdk_17
+      - smoke_azul_zulu_openjdk_21
 
 
   master-twelve-hour-jdk8:
