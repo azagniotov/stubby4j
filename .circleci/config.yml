@@ -131,12 +131,8 @@ publish_snapshot_steps: &publish_snapshot_steps
     - run:
         name: Configure Gradle to Sonatype authentication
         command: |
-          mkdir -p ~/repo/.gradle_user_home
-          mkdir -p ~/.gradle
-          echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
-          echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
-          echo "sonatypeUsername=$sonatypeUsername" > ~/.gradle/gradle.properties
-          echo "sonatypePassword=$sonatypePassword" >> ~/.gradle/gradle.properties
+          echo "sonatypeUsername=$sonatypeUsername" >> ~/repo/gradle.properties
+          echo "sonatypePassword=$sonatypePassword" >> ~/repo/gradle.properties
 
     - run:
         name: Building artifacts
@@ -205,25 +201,21 @@ default_steps: &default_steps
         when: on_success
 
     - run:
+        name: Configure Gradle to Sonatype authentication
+        command: |
+          echo "sonatypeUsername=$sonatypeUsername" >> ~/repo/gradle.properties
+          echo "sonatypePassword=$sonatypePassword" >> ~/repo/gradle.properties
+
+    - run:
         name: Publish SNAPSHOT artifacts to OSS Sonatype snapshots repository
         environment:
           # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
           GRADLE_USER_HOME: ~/repo/.gradle_user_home
         command: |
-          echo ""
-          ls -al
-          echo "aaaaaaaa"
-          mkdir -p ~/repo/.gradle_user_home
-          echo "aaaaaaaa"
-          ls -al ~/repo/.gradle_user_home
-          echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
-          echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
-          echo "aaaaaaaa"
-          ls -al ~/repo/.gradle_user_home
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
           echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-          ./gradlew -PciRun build publish
+          ./gradlew publish
         when: on_success
 
     # - when:
