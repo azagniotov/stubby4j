@@ -82,7 +82,7 @@ azul_zulu_openjdk_alpine_jdk_21_0_1_21_30_environment: &azul_zulu_openjdk_alpine
 circleci_pre_built_openjdk_8_environment: &circleci_pre_built_openjdk_8_environment
   <<: *base_environment
   docker:
-    - image: circleci/openjdk:8u292-jdk@sha256:51d82605e7f89fc74437dce7324a33e6a7c9d1941ec8cfd0980f6814d78ae494
+    - image: cimg/openjdk:8.0.392@sha256:b31757efc460d0786df32cc947d6816cc7c89743e19e641d141c8b67a1106fec
 
 filter_only_master: &filter_only_master
   filters:
