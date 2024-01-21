@@ -192,35 +192,9 @@ default_steps: &default_steps
         command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
 
-    - run:
-        name: Building artifacts
-        environment:
-          # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
-          GRADLE_USER_HOME: ~/repo/.gradle_user_home
-        command: ./gradlew -PciRun clean build
-        when: on_success
-
-    - run:
-        name: Configure Gradle to Sonatype authentication
-        command: |
-          echo "sonatypeUsername=$sonatypeUsername" >> ~/repo/gradle.properties
-          echo "sonatypePassword=$sonatypePassword" >> ~/repo/gradle.properties
-
-    - run:
-        name: Publish SNAPSHOT artifacts to OSS Sonatype snapshots repository
-        environment:
-          # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
-          GRADLE_USER_HOME: ~/repo/.gradle_user_home
-        command: |
-          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-          echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
-          echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-          ./gradlew publish
-        when: on_success
-
-    # - when:
-    #     <<: *condition_when_master
-    #     <<: *publish_snapshot_steps
+    - when:
+        <<: *condition_when_master
+        <<: *publish_snapshot_steps
 
 
 code_coverage_steps: &code_coverage_steps
@@ -733,7 +707,6 @@ workflows:
   branch-jdk8:
     jobs:
       - jdk_8_environment:
-          <<: *context_sonatype
           <<: *filter_ignore_master
       - jdk_8_environment_code_coverage:
           <<: *filter_ignore_master
