@@ -216,6 +216,11 @@ default_steps: &default_steps
           # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
           GRADLE_USER_HOME: ~/repo/.gradle_user_home
         command: |
+          echo ""
+          ls -al
+          echo "aaaaaaaa"
+          mkdir -p ~/repo/.gradle_user_home
+          echo "aaaaaaaa"
           echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
           echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
