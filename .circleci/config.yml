@@ -132,8 +132,11 @@ publish_snapshot_steps: &publish_snapshot_steps
         name: Configure Gradle to Sonatype authentication
         command: |
           mkdir -p ~/repo/.gradle_user_home
+          mkdir -p ~/.gradle
           echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
           echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
+          echo "sonatypeUsername=$sonatypeUsername" > ~/.gradle/gradle.properties
+          echo "sonatypePassword=$sonatypePassword" >> ~/.gradle/gradle.properties
 
     - run:
         name: Building artifacts
@@ -194,7 +197,7 @@ default_steps: &default_steps
         when: always
 
     - when:
-        <<: *condition_when_master
+        #<<: *condition_when_master
         <<: *publish_snapshot_steps
 
 
