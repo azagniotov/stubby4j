@@ -152,7 +152,7 @@ default_steps: &default_steps
         name: Install Git on Alpine Linux
         command: |
           echo ""
-          apk --no-cache add git && git --version
+          apk --no-cache add openssh-client git && git --version
     - checkout
     - when:
         <<: *condition_when_not_master
