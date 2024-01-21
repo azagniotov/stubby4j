@@ -700,9 +700,9 @@ workflows:
       - smoke_adoptopenjdk_openjdk_11_openj9:
           <<: *filter_only_master
       - smoke_openjdk_openjdk_17:
-          <<: *filter_ignore_master
+          <<: *filter_only_master
       # - smoke_azul_zulu_openjdk_21:
-      #     <<: *filter_ignore_master
+      #     <<: *filter_only_master
 
   branch-jdk8:
     jobs:
