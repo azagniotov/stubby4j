@@ -64,16 +64,6 @@ adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment: &adoptopenjdk_open
   docker:
     - image: adoptopenjdk/openjdk11-openj9:jdk-11.0.13_8_openj9-0.29.0-alpine-slim@sha256:db1f6fb1d8e61b2df4ca5e7e82b4aac27222af9fc9d21ee04151d6a58d8effc4
 
-azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment: &azul_zulu_openjdk_alpine_jdk_15_0_3_15_32_15_environment
-  <<: *base_environment
-  docker:
-    - image: azul/zulu-openjdk-alpine:15.0.3-15.32.15@sha256:8d4ea19e67dae1dbecbb4a5d1237fc1cf87a796d0c1f22c6254c3b926432087d
-
-adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment: &adoptopenjdk_openjdk_alpine_jdk_16_0_2_7_openj9_environment
-  <<: *base_environment
-  docker:
-    - image: adoptopenjdk/openjdk16-openj9:jdk-16.0.2_7_openj9-0.27.0-alpine-slim@sha256:67a54da8ad9ea681aaaae990f517a91892f8fbee73f1dce4b10ac5d04b3842e2
-
 openjdk_alpine_jdk_17_environment: &openjdk_alpine_jdk_17_environment
   <<: *base_environment
   docker:
@@ -88,24 +78,6 @@ circleci_pre_built_openjdk_8_environment: &circleci_pre_built_openjdk_8_environm
   <<: *base_environment
   docker:
     - image: circleci/openjdk:8u292-jdk@sha256:51d82605e7f89fc74437dce7324a33e6a7c9d1941ec8cfd0980f6814d78ae494
-
-gradle_7_2_0_jdk8_environment: &gradle_7_2_0_jdk8_environment
-  <<: *base_environment
-  docker:
-    - image: gradle:7.2.0-jdk8-openj9@sha256:d4128edf5ac579f93e3149a9f89be3af779de1d3d85a9f25f25cb3d4b432b69a
-
-
-gradle_7_2_0_jdk11_environment: &gradle_7_2_0_jdk11_environment
-  <<: *base_environment
-  docker:
-    - image: gradle:7.2.0-jdk11-openj9@sha256:6c628ab1edc7b733b4880804fcd27dc360fc350f333546924e64e3a34a009fa2
-
-
-gradle_7_2_0_jdk16_environment: &gradle_7_2_0_jdk16_environment
-  <<: *base_environment
-  docker:
-    - image: gradle:7.2.0-jdk16-openj9@sha256:9620865af4f35026abfc9680603449296f832ea79da9a7f4e79d00989ccddcee
-
 
 filter_only_master: &filter_only_master
   filters:
@@ -159,7 +131,7 @@ publish_snapshot_steps: &publish_snapshot_steps
 
     - run:
         name: Building artifacts
-        command: gradle -PciRun clean build
+        command: ./gradlew -PciRun clean build
         when: on_success
 
     - run:
@@ -168,7 +140,7 @@ publish_snapshot_steps: &publish_snapshot_steps
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
           echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-          gradle publish
+          ./gradlew publish
         when: on_success
 
 
@@ -184,8 +156,6 @@ default_steps: &default_steps
 
     - run: java -version
 
-    - run: gradle --version
-
     # Download and cache dependencies
     - restore_cache:
         keys:
@@ -200,7 +170,7 @@ default_steps: &default_steps
 
     - run:
         name: Run all test suits
-        command: gradle -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
+        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
 
     - when:
@@ -328,6 +298,7 @@ build_push_image_steps: &build_push_image_steps
               --load . 
           
           docker context rm tls-environment
+
 
 smoke_test_steps: &smoke_test_steps
   steps:
@@ -543,16 +514,16 @@ jobs:
     <<: *smoke_test_steps
 
 
-  gradle_7_2_0_jdk8:
+  jdk_8_environment:
     parameters:
       use_native_jdk_alpn_processor:
         type: string
         default: ""
-    <<: *gradle_7_2_0_jdk8_environment
+    <<: *adoptopenjdk_openjdk_alpine_jdk_8u312_b07_environment
     <<: *default_steps
 
 
-  gradle_7_2_0_jdk8_code_coverage:
+  jdk_8_environment_code_coverage:
     parameters:
       use_native_jdk_alpn_processor:
         type: string
@@ -561,21 +532,21 @@ jobs:
     <<: *code_coverage_steps
 
 
-  gradle_7_2_0_jdk11:
+  jdk_11_environment:
     parameters:
       use_native_jdk_alpn_processor:
         type: string
         default: "-PuseNativeJdkAlpnProcessor"
-    <<: *gradle_7_2_0_jdk11_environment
+    <<: *adoptopenjdk_openjdk_alpine_jdk_11_0_13_8_openj9_environment
     <<: *default_steps
 
 
-  gradle_7_2_0_jdk16:
+  jdk_17_environment:
     parameters:
       use_native_jdk_alpn_processor:
         type: string
         default: "-PuseNativeJdkAlpnProcessor"
-    <<: *gradle_7_2_0_jdk16_environment
+    <<: *openjdk_alpine_jdk_17_environment
     <<: *default_steps
 
 
@@ -627,15 +598,6 @@ jobs:
     <<: *build_push_image_steps
 
 
- # docker_build_latest_jre16:
- #   parameters:
- #     jdk_version:
- #       type: string
- #       default: "16"
- #   <<: *docker_in_docker_environment
- #   <<: *build_push_image_steps
-
-
   docker_build_latest_jre17:
     parameters:
       dockerfile:
@@ -669,13 +631,13 @@ workflows:
 
   master-jdk8-code-coverage:
     jobs:
-      - gradle_7_2_0_jdk8_code_coverage:
+      - jdk_8_environment_code_coverage:
           <<: *context_sonatype
           <<: *filter_only_master
 
   master-jdk8-publish-snapshot:
     jobs:
-      - gradle_7_2_0_jdk8:
+      - jdk_8_environment:
           <<: *context_sonatype
           <<: *filter_only_master
 
@@ -712,23 +674,23 @@ workflows:
 
   branch-jdk8:
     jobs:
-      - gradle_7_2_0_jdk8:
+      - jdk_8_environment:
           <<: *filter_ignore_master
-      - gradle_7_2_0_jdk8_code_coverage:
+      - jdk_8_environment_code_coverage:
           <<: *filter_ignore_master
           requires:
-            - gradle_7_2_0_jdk8
+            - jdk_8_environment
 
 
   branch-jdk11:
     jobs:
-      - gradle_7_2_0_jdk11:
+      - jdk_11_environment:
           <<: *filter_ignore_master
 
 
-  branch-jdk16:
+  branch-jdk17:
     jobs:
-      - gradle_7_2_0_jdk16:
+      - jdk_17_environment:
           <<: *filter_ignore_master
 
 
