@@ -149,7 +149,7 @@ default_steps: &default_steps
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
     - run:
-        name: Install Git on Alpine Linux
+        name: Install Git and OpenSSH client on Alpine Linux
         command: |
           echo ""
           apk --no-cache add openssh-client git && git --version
@@ -169,15 +169,14 @@ default_steps: &default_steps
           - v2-dependencies-
 
     - save_cache:
-        environment:
-          GRADLE_USER_HOME: ~/repo/.gradle_user_home
         paths:
-          - ~/repo/.gradle_user_home
+          - ~/.gradle
         key: v2-dependencies-{{ checksum "conf/gradle/dependencies.gradle" }}
 
     - run:
         name: Run all test suits
         environment:
+          # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
           GRADLE_USER_HOME: ~/repo/.gradle_user_home
         command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean test integrationTest functionalTest
         when: always
@@ -192,11 +191,6 @@ code_coverage_steps: &code_coverage_steps
   # https://support.circleci.com/hc/en-us/articles/360047521451-Why-is-CIRCLE-PR-NUMBER-empty-
   steps:
     - checkout
-#     - when:
-#         <<: *condition_when_not_master
-#         # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
-#         <<: *pr_to_master_merge_branch_steps
-
     - run: java -version
 
     # Download and cache dependencies
@@ -232,7 +226,6 @@ code_coverage_steps: &code_coverage_steps
         command: |
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
-
 
 
 build_push_image_steps: &build_push_image_steps
