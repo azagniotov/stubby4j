@@ -197,12 +197,6 @@ default_steps: &default_steps
         when: always
 
     - run:
-        name: Configure Gradle to Sonatype authentication
-        command: |
-          echo "sonatypeUsername=$sonatypeUsername" >> ~/repo/gradle.properties
-          echo "sonatypePassword=$sonatypePassword" >> ~/repo/gradle.properties
-
-    - run:
         name: Building artifacts
         environment:
           # Exception in thread "main" java.lang.RuntimeException: Could not create parent directory for lock file /root/.gradle/wrapper ..
@@ -221,8 +215,11 @@ default_steps: &default_steps
           echo "aaaaaaaa"
           mkdir -p ~/repo/.gradle_user_home
           echo "aaaaaaaa"
+          ls -al ~/repo/.gradle_user_home
           echo "sonatypeUsername=$sonatypeUsername" > ~/repo/.gradle_user_home/gradle.properties
           echo "sonatypePassword=$sonatypePassword" >> ~/repo/.gradle_user_home/gradle.properties
+          echo "aaaaaaaa"
+          ls -al ~/repo/.gradle_user_home
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
           echo -e ":::     ATTENTION:\tThe SNAPSHOT artifacts are not signed by GPG"
           echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
