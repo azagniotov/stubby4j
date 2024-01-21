@@ -157,6 +157,11 @@ default_steps: &default_steps
     - run:
         name: Make gradlew to run with Root privileges 
         command: chmod +x gradlew
+    - run:
+        name: Who Am I 
+        command: |
+          whoami
+          pwd
     - when:
         <<: *condition_when_not_master
         # https://support.circleci.com/hc/en-us/articles/360006357533--CIRCLE-PULL-REQUEST-is-missing-from-my-Pull-Request
