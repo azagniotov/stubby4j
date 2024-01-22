@@ -273,10 +273,16 @@ build_push_image_steps: &build_push_image_steps
 
         # Best way to cache multi-stage + multi-platform image builds
         # https://github.com/docker/buildx/discussions/1382#discussioncomment-4159926
+        environment:
+          # Get SHA-256 of Gradle project dependencies
+          SHA256SUM: $(sha256sum ~/repo/conf/gradle/dependencies.gradle | awk '{ print $1; }')
         command: |
           docker run --rm --privileged tonistiigi/binfmt --install all
           docker context create tls-environment
           docker buildx create tls-environment --use
+
+          echo ""
+          echo "SHA256SUM of dependencies.gradle: $SHA256SUM"
 
           echo ""
           echo "Building or restoring from remote Docker BuildX cache"
@@ -284,6 +290,7 @@ build_push_image_steps: &build_push_image_steps
               --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
               --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
               --build-arg REVISION=<< parameters.git_revision >> \
+              --build-arg CACHE_BUSTER=$SHA256SUM \
               -f << parameters.dockerfile >> \
               --platform linux/amd64,linux/arm64 \
               -t << parameters.image_tag >> \
@@ -296,6 +303,7 @@ build_push_image_steps: &build_push_image_steps
               --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
               --cache-to=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
               --build-arg REVISION=<< parameters.git_revision >> \
+              --build-arg CACHE_BUSTER=$SHA256SUM \
               -f << parameters.dockerfile >> \
               --platform linux/arm64 \
               --load .
@@ -306,6 +314,7 @@ build_push_image_steps: &build_push_image_steps
               --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
               --cache-to=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
               --build-arg REVISION=<< parameters.git_revision >> \
+              --build-arg CACHE_BUSTER=$SHA256SUM \
               -f << parameters.dockerfile >> \
               --platform linux/amd64 \
               --load . 
