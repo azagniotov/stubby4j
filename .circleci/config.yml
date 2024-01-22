@@ -193,7 +193,7 @@ default_steps: &default_steps
         when: always
 
     - when:
-        <<: *condition_when_not_master
+        <<: *condition_when_master
         <<: *publish_snapshot_steps
 
 
