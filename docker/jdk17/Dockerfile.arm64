@@ -17,7 +17,7 @@ WORKDIR $GRADLE_USER_HOME
 
 ARG REVISION=master
 
-# Used to prune Docker layer cache if the sha256 of conf/gradle/dependencies.gradle has changed
+# Used to prune Docker cascaded layer cache if the sha256 of 'conf/gradle/dependencies.gradle' has changed
 ARG CACHE_BUSTER=1
 
 # Build from the latest tag
