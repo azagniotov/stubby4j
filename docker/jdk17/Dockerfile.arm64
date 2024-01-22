@@ -12,9 +12,13 @@
 ########################################################################################
 FROM gradle:7.2.0-jdk17@sha256:e9e90cc97b29423dda5a2ff5ed7787a31ab7f43660bd83993a880e33e1504c7b AS BUILD_JAR_STAGE
 
-ARG REVISION=master
 ENV GRADLE_USER_HOME=/home/gradle
 WORKDIR $GRADLE_USER_HOME
+
+ARG REVISION=master
+
+# Used to prune Docker layer cache if the sha256 of conf/gradle/dependencies.gradle has changed
+ARG CACHE_BUSTER=1
 
 # Build from the latest tag
 RUN git clone --depth 1 --branch $REVISION https://github.com/azagniotov/stubby4j.git && \
