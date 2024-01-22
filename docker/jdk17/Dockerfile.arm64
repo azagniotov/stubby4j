@@ -21,8 +21,10 @@ ARG REVISION=master
 ARG CACHE_BUSTER=1
 
 # Build from the latest tag
-RUN git clone --depth 1 --branch $REVISION https://github.com/azagniotov/stubby4j.git && \
+RUN git clone https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
+      git fetch -f --tags && \
+      git checkout $REVISION && \
       ./gradlew -Plog4j -PuseNativeJdkAlpnProcessor clean jar
 
 ########################################################################################
