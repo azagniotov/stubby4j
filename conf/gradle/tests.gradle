@@ -1,0 +1,170 @@
+/*
+ * Copyright (c) 2023 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+testing {
+    suites {
+        test {
+            useJUnit()
+            dependencies {
+                implementation "junit:junit:4.13.1"
+                implementation "org.mockito:mockito-core:${mockitoVersion}"
+                // https://github.com/mockito/mockito/issues/2231
+                implementation "org.mockito:mockito-inline:${mockitoVersion}"
+                implementation "com.google.truth:truth:1.1.5"
+                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+            }
+        }
+
+        integrationTest(JvmTestSuite) {
+            sources {
+                resources {
+                    srcDirs += [
+                            "src/main/resources"
+                    ]
+                }
+            }
+            useJUnit()
+            dependencies {
+                implementation project()
+                implementation "junit:junit:4.13.1"
+                implementation "org.mockito:mockito-core:${mockitoVersion}"
+                // https://github.com/mockito/mockito/issues/2231
+                implementation "org.mockito:mockito-inline:${mockitoVersion}"
+                implementation "com.google.truth:truth:1.1.5"
+
+                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+            
+                if (project.hasProperty("useNativeJdkAlpnProcessor")) {
+                    implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
+                } else {
+                    implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
+                }
+            
+                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+
+        functionalTest(JvmTestSuite) {
+            sources {
+                resources {
+                    srcDirs += [
+                            "src/main/resources"
+                    ]
+                }
+            }
+            useJUnit()
+            dependencies {
+                implementation project()
+                implementation "junit:junit:4.13.1"
+                implementation "org.mockito:mockito-core:${mockitoVersion}"
+                // https://github.com/mockito/mockito/issues/2231
+                implementation "org.mockito:mockito-inline:${mockitoVersion}"
+                implementation "com.google.truth:truth:1.1.5"
+
+                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+            
+                if (project.hasProperty("useNativeJdkAlpnProcessor")) {
+                    implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
+                } else {
+                    implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
+                }
+            
+                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        systemProperty "overrideDisabledAlgorithms", "true"
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+
+        loadTest(JvmTestSuite) {
+            sources {
+                resources {
+                    srcDirs += [
+                            "src/main/resources"
+                    ]
+                }
+            }
+            useJUnit()
+            dependencies {
+                implementation project()
+                implementation "junit:junit:4.13.1"
+                implementation "org.mockito:mockito-core:${mockitoVersion}"
+                // https://github.com/mockito/mockito/issues/2231
+                implementation "org.mockito:mockito-inline:${mockitoVersion}"
+                implementation "com.google.truth:truth:1.1.5"
+
+                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+            
+                if (project.hasProperty("useNativeJdkAlpnProcessor")) {
+                    implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
+                } else {
+                    implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
+                }
+            
+                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(Test).configureEach {
+    reports.html.required = false
+    reports.junitXml.required = false
+    ignoreFailures = false
+    testLogging {
+        // showStandardStreams true
+        events /*"passed", */ "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+
+    filter {
+        if (project.hasProperty("ciRun")) {
+            excludeTestsMatching "*Flaky*"
+        }
+    }
+}
+

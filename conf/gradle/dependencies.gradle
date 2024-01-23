@@ -34,21 +34,5 @@ dependencies {
         println "> Building with default dependencies"
         api "org.slf4j:slf4j-api:1.7.30"
     }
-
-    testImplementation "junit:junit:4.13.1"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    // https://github.com/mockito/mockito/issues/2231
-    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
-    testImplementation "com.google.truth:truth:1.1.2"
-    testImplementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
-    testImplementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
-
-    if (project.hasProperty("useNativeJdkAlpnProcessor")) {
-        testImplementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
-    } else {
-        testImplementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
-    }
-
-    // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
-    testImplementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
 }
+

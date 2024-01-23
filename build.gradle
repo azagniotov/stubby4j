@@ -9,9 +9,6 @@ buildscript {
             }
         }
     }
-    dependencies {
-        classpath "org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:4.0.0"
-    }
 }
 
 apply plugin: "java-library"
@@ -20,8 +17,7 @@ apply plugin: "signing"
 apply plugin: "idea"
 apply plugin: "eclipse"
 apply plugin: "jacoco"
-apply plugin: "org.unbroken-dome.test-sets"
-
+apply plugin: "jvm-test-suite"
 
 defaultTasks 'clean', 'test', 'integrationTest', 'functionalTest', 'build'
 description = 'Gradle configuration for stubby4j'
@@ -48,7 +44,7 @@ repositories {
 
 apply from: "$rootDir/conf/gradle/dependencies.gradle"
 apply from: "$rootDir/conf/gradle/ide.gradle"
-apply from: "$rootDir/conf/gradle/multi-test-source-sets.gradle"
+apply from: "$rootDir/conf/gradle/tests.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"
