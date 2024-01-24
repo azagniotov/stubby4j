@@ -14,17 +14,36 @@
  * limitations under the License.
  */
 
+configurations.all {
+    resolutionStrategy {
+        force "junit:junit:${junitVersion}"
+        force "com.google.truth:truth:${googleTruthVersion}"
+
+        // https://github.com/mockito/mockito/issues/2231
+        force "org.mockito:mockito-inline:${mockitoVersion}"
+        force "org.mockito:mockito-core:${mockitoVersion}"
+        // Explicitly adding a recent Byte Buddy to Mockito for the compatibility with JDK 21 and Mockito 4.x.x
+        force "net.bytebuddy:byte-buddy:${byteBuddyVersion}"
+
+        // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
+        force "com.google.http-client:google-http-client-apache-v2:${googleHttpClient}"
+
+        force "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
+        force "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+    }
+}
+
 testing {
     suites {
         test {
             useJUnit()
             dependencies {
-                implementation "junit:junit:4.13.1"
-                implementation "org.mockito:mockito-core:${mockitoVersion}"
-                // https://github.com/mockito/mockito/issues/2231
-                implementation "org.mockito:mockito-inline:${mockitoVersion}"
-                implementation "com.google.truth:truth:1.1.5"
-                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
+                implementation "junit:junit"
+                implementation "org.mockito:mockito-core"
+                implementation "org.mockito:mockito-inline"
+                implementation "net.bytebuddy:byte-buddy"
+                implementation "com.google.truth:truth"
+                implementation "com.google.http-client:google-http-client-apache-v2"
             }
         }
 
@@ -39,23 +58,21 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit:4.13.1"
-                implementation "org.mockito:mockito-core:${mockitoVersion}"
-                // https://github.com/mockito/mockito/issues/2231
-                implementation "org.mockito:mockito-inline:${mockitoVersion}"
-                implementation "com.google.truth:truth:1.1.5"
+                implementation "junit:junit"
+                implementation "org.mockito:mockito-core"
+                implementation "org.mockito:mockito-inline"
+                implementation "net.bytebuddy:byte-buddy"
+                implementation "com.google.truth:truth"
+                implementation "com.google.http-client:google-http-client-apache-v2"
 
-                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
-                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+                implementation "org.eclipse.jetty.http2:http2-client"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport"
             
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
                     implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
                 }
-            
-                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
-                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
             }
 
             targets {
@@ -78,23 +95,21 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit:4.13.1"
-                implementation "org.mockito:mockito-core:${mockitoVersion}"
-                // https://github.com/mockito/mockito/issues/2231
-                implementation "org.mockito:mockito-inline:${mockitoVersion}"
-                implementation "com.google.truth:truth:1.1.5"
+                implementation "junit:junit"
+                implementation "org.mockito:mockito-core"
+                implementation "org.mockito:mockito-inline"
+                implementation "net.bytebuddy:byte-buddy"
+                implementation "com.google.truth:truth"
+                implementation "com.google.http-client:google-http-client-apache-v2"
 
-                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
-                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+                implementation "org.eclipse.jetty.http2:http2-client"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport"
             
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
                     implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
                 }
-            
-                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
-                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
             }
 
             targets {
@@ -118,23 +133,18 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit:4.13.1"
-                implementation "org.mockito:mockito-core:${mockitoVersion}"
-                // https://github.com/mockito/mockito/issues/2231
-                implementation "org.mockito:mockito-inline:${mockitoVersion}"
-                implementation "com.google.truth:truth:1.1.5"
-
-                implementation "org.eclipse.jetty.http2:http2-client:${jettyVersion}"
-                implementation "org.eclipse.jetty.http2:http2-http-client-transport:${jettyVersion}"
+                implementation "junit:junit"
+                implementation "org.mockito:mockito-core"
+                implementation "org.mockito:mockito-inline"
+                implementation "net.bytebuddy:byte-buddy"
+                implementation "com.google.truth:truth"
+                implementation "com.google.http-client:google-http-client-apache-v2"
             
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
                     implementation "org.eclipse.jetty:jetty-alpn-openjdk8-client:${jettyVersion}"
                 }
-            
-                // https://github.com/googleapis/google-http-java-client/issues/167#issuecomment-571987053
-                implementation "com.google.http-client:google-http-client-apache-v2:1.38.1"
             }
 
             targets {
