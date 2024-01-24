@@ -827,10 +827,10 @@ workflows:
           <<: *context_docker_hub
 
   master-twelve-hour-jdk21:
-    # triggers:
-    #  - schedule:
-    #      cron: "5 2,14 * * *"
-    #      <<: *filter_only_master
+    triggers:
+     - schedule:
+         cron: "5 2,14 * * *"
+         <<: *filter_only_master
     jobs:
       - docker_build_latest_jre21:
           <<: *context_docker_hub
