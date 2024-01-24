@@ -1,4 +1,25 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -11,6 +32,13 @@ import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,19 +47,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
 public class StubsPortalTest {
 
@@ -83,13 +98,15 @@ public class StubsPortalTest {
     @Test
     public void shouldMatchRequest_WhenStubbedUrlRegexBeginsWith_ButGoodAssertionSent() throws Exception {
 
-        //^/resources/asn/.*$
+        // ^/resources/asn/.*$
 
-        final List<String> assertingRequests = new LinkedList<String>() {{
-            add("/resources/asn/");
-            add("/resources/asn/123");
-            add("/resources/asn/eew97we9");
-        }};
+        final List<String> assertingRequests = new LinkedList<String>() {
+            {
+                add("/resources/asn/");
+                add("/resources/asn/123");
+                add("/resources/asn/eew97we9");
+            }
+        };
 
         for (final String assertingRequest : assertingRequests) {
 
@@ -106,13 +123,15 @@ public class StubsPortalTest {
     @Test
     public void shouldMatchRequest_WhenStubbedUrlRegexified_ButGoodAssertionSent() throws Exception {
 
-        //^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+        // ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 
-        final List<String> assertingRequests = new LinkedList<String>() {{
-            add("/abc-efg/12/KM/jhgjkhg234234l2");
-            add("/abc-efg/12/KM/23423");
-            add("/aaa-aaa/00/AA/qwerty");
-        }};
+        final List<String> assertingRequests = new LinkedList<String>() {
+            {
+                add("/abc-efg/12/KM/jhgjkhg234234l2");
+                add("/abc-efg/12/KM/23423");
+                add("/aaa-aaa/00/AA/qwerty");
+            }
+        };
 
         for (final String assertingRequest : assertingRequests) {
 
@@ -131,11 +150,13 @@ public class StubsPortalTest {
 
         // ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}
 
-        final List<String> assertingRequests = new LinkedList<String>() {{
-            add("/abc-efg/12/KM/jhgjkhg234234l2?paramOne=valueOne&paramTwo=valueTwo");
-            add("/abc-efg/12/KM/23423?paramOne=aaaBLaH&paramTwo=QWERTYUI");
-            add("/aaa-aaa/00/AA/qwerty?paramOne=BLAH&paramTwo=Two");
-        }};
+        final List<String> assertingRequests = new LinkedList<String>() {
+            {
+                add("/abc-efg/12/KM/jhgjkhg234234l2?paramOne=valueOne&paramTwo=valueTwo");
+                add("/abc-efg/12/KM/23423?paramOne=aaaBLaH&paramTwo=QWERTYUI");
+                add("/aaa-aaa/00/AA/qwerty?paramOne=BLAH&paramTwo=Two");
+            }
+        };
 
         for (final String assertingRequest : assertingRequests) {
 
@@ -152,16 +173,18 @@ public class StubsPortalTest {
     @Test
     public void shouldNotMatchRequest_WhenStubbedUrlRegexified_ButBadAssertionSent() throws Exception {
 
-        //^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
+        // ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+$
 
-        final List<String> assertingRequests = new LinkedList<String>() {{
-            add("/abca-efg/12/KM/jhgjkhg234234l2");
-            add("/abcefg/12/KM/23423");
-            add("/aaa-aaa/00/Af/qwerty");
-            add("/aaa-aaa/00/AA/qwerTy");
-            add("/aaa-aaa/009/AA/qwerty");
-            add("/AAA-AAA/00/AA/qwerty");
-        }};
+        final List<String> assertingRequests = new LinkedList<String>() {
+            {
+                add("/abca-efg/12/KM/jhgjkhg234234l2");
+                add("/abcefg/12/KM/23423");
+                add("/aaa-aaa/00/Af/qwerty");
+                add("/aaa-aaa/00/AA/qwerTy");
+                add("/aaa-aaa/009/AA/qwerty");
+                add("/AAA-AAA/00/AA/qwerty");
+            }
+        };
 
         for (final String assertingRequest : assertingRequests) {
 
@@ -174,8 +197,12 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
+    public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedSingleQuoteElements()
+            throws Exception {
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.single.quote?type_name=user&client_id=id&client_secret=secret&attributes=[%27id%27,%27uuid%27,%27created%27,%27lastUpdated%27,%27displayName%27,%27email%27,%27givenName%27,%27familyName%27]");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
@@ -187,7 +214,10 @@ public class StubsPortalTest {
 
     @Test
     public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedPlus() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.spaces.within?key=stalin%2B%2B%2Band%2B%2Btruman%2Bare%2B%2B%2Bbest%2B%2B%2Bbuddies");
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.spaces.within?key=stalin%2B%2B%2Band%2B%2Btruman%2Bare%2B%2B%2Bbest%2B%2B%2Bbuddies");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
@@ -198,51 +228,71 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedPlusWithEscapedSingleQuoteElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin%2B%2B%2Band%2B%2B%2Btruman%27,%27are%2B%2B%2Bbest%2B%2B%2Bfriends%27%5D");
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedPlusWithEscapedSingleQuoteElements()
+            throws Exception {
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.single.quote.spaces.within?key=%5B%27stalin%2B%2B%2Band%2B%2B%2Btruman%27,%27are%2B%2B%2Bbest%2B%2B%2Bfriends%27%5D");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
         final String responseContent = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}")
+                .isEqualTo(responseContent);
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithRawPlusWithEscapedSingleQuoteElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin+and+++truman%27,%27are+best++friends%27%5D");
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithRawPlusWithEscapedSingleQuoteElements()
+            throws Exception {
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.single.quote.spaces.within?key=%5B%27stalin+and+++truman%27,%27are+best++friends%27%5D");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
         final String responseContent = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}")
+                .isEqualTo(responseContent);
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEmptySpacesWithEscapedSingleQuoteElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin and   truman%27,%27are best   friends%27%5D");
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEmptySpacesWithEscapedSingleQuoteElements()
+            throws Exception {
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.single.quote.spaces.within?key=%5B%27stalin and   truman%27,%27are best   friends%27%5D");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
         final String responseContent = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}")
+                .isEqualTo(responseContent);
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedSpacesWithEscapedSingleQuoteElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.single.quote.spaces.within?key=%5B%27stalin%20and%20%20truman%27,%27are%20best%20%20friends%27%5D");
+    public void should_MakeSuccessfulRequest_WhenQueryParamValueWithEscapedSpacesWithEscapedSingleQuoteElements()
+            throws Exception {
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.single.quote.spaces.within?key=%5B%27stalin%20and%20%20truman%27,%27are%20best%20%20friends%27%5D");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
         final String responseContent = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"status\": \"hello world with single quote and spaces within\"}").isEqualTo(responseContent);
+        assertThat("{\"status\": \"hello world with single quote and spaces within\"}")
+                .isEqualTo(responseContent);
     }
 
     @Test
@@ -291,7 +341,10 @@ public class StubsPortalTest {
 
     @Test
     public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArrayWithEscapedQuotedElements() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find?type_name=user&client_id=id&client_secret=secret&attributes=[%22id%22,%22uuid%22,%22created%22,%22lastUpdated%22,%22displayName%22,%22email%22,%22givenName%22,%22familyName%22]");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
@@ -303,7 +356,10 @@ public class StubsPortalTest {
 
     @Test
     public void should_MakeSuccessfulRequest_WhenQueryParamsAreAnArray() throws Exception {
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
+        final String requestUrl = String.format(
+                "%s%s",
+                STUBS_URL,
+                "/entity.find.again?type_name=user&client_id=id&client_secret=secret&attributes=[id,uuid,created,lastUpdated,displayName,email,givenName,familyName]");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         final HttpResponse response = request.execute();
@@ -389,7 +445,8 @@ public class StubsPortalTest {
     public void should_ReturnPDF_WhenGetRequestMade() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/pdf/hello-world");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(response.getHeaders()).containsKey("content-type");
@@ -405,7 +462,8 @@ public class StubsPortalTest {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active&type=full");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
         final String contentTypeHeader = response.getContentType();
         final String responseContent = response.parseAsString().trim();
@@ -419,7 +477,8 @@ public class StubsPortalTest {
     public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryString() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/invoice?status=active");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
@@ -432,7 +491,8 @@ public class StubsPortalTest {
         final String expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active&type=full");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
         final String contentTypeHeader = response.getContentType();
 
@@ -445,7 +505,8 @@ public class StubsPortalTest {
     public void should_FailToReturnAllProducts_WhenGetRequestMadeWithoutRequiredQueryStringOverSsl() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_SSL_URL, "/invoice?status=active");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
@@ -466,7 +527,8 @@ public class StubsPortalTest {
         final String contentTypeHeader = response.getContentType();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
+        assertThat("{\"id\": \"123\", \"status\": \"updated\"}")
+                .isEqualTo(response.parseAsString().trim());
         assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
     }
 
@@ -486,7 +548,8 @@ public class StubsPortalTest {
         final String contentTypeHeader = response.getContentType();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat("{\"id\": \"123\", \"status\": \"updated\"}").isEqualTo(response.parseAsString().trim());
+        assertThat("{\"id\": \"123\", \"status\": \"updated\"}")
+                .isEqualTo(response.parseAsString().trim());
         assertThat(contentTypeHeader).contains(HEADER_APPLICATION_JSON);
     }
 
@@ -628,13 +691,15 @@ public class StubsPortalTest {
         assertThat(firstResponseContent).isEqualTo("OK");
 
         final HttpResponse secondSequenceResponse = request.execute();
-        final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+        final String secondResponseContent =
+                secondSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
         assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
         final HttpResponse thridSequenceResponse = request.execute();
-        final String thirdResponseContent = thridSequenceResponse.parseAsString().trim();
+        final String thirdResponseContent =
+                thridSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thridSequenceResponse.getStatusCode());
         assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
@@ -659,13 +724,15 @@ public class StubsPortalTest {
         assertThat(firstResponseContent).isEqualTo("OK");
 
         final HttpResponse secondSequenceResponse = request.execute();
-        final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+        final String secondResponseContent =
+                secondSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
         assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
         final HttpResponse thirdSequenceResponse = request.execute();
-        final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
+        final String thirdResponseContent =
+                thirdSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
         assertThat(thirdResponseContent).isEqualTo("OMFG!!!");
@@ -678,7 +745,8 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile_WithBadUrls() throws Exception {
+    public void should_MakeSuccessfulRequest_AndReturnMultipleSequencedResponses_FromFile_WithBadUrls()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/sequenced/responses/infile/withbadurls");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -690,13 +758,15 @@ public class StubsPortalTest {
         assertThat(firstResponseContent).isEmpty();
 
         final HttpResponse secondSequenceResponse = request.execute();
-        final String secondResponseContent = secondSequenceResponse.parseAsString().trim();
+        final String secondResponseContent =
+                secondSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.CREATED_201).isEqualTo(secondSequenceResponse.getStatusCode());
         assertThat(secondResponseContent).isEqualTo("Still going strong!");
 
         final HttpResponse thirdSequenceResponse = request.execute();
-        final String thirdResponseContent = thirdSequenceResponse.parseAsString().trim();
+        final String thirdResponseContent =
+                thirdSequenceResponse.parseAsString().trim();
 
         assertThat(HttpStatus.INTERNAL_SERVER_ERROR_500).isEqualTo(thirdSequenceResponse.getStatusCode());
         assertThat(thirdResponseContent).isEmpty();
@@ -713,14 +783,13 @@ public class StubsPortalTest {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/uri/with/post/regex");
         final String content =
-                "Here's the story of a lovely lady," + FileUtils.BR +
-                        "Who was bringing up three very lovely girls." + FileUtils.BR +
-                        "All of them had hair of gold, like their mother," + FileUtils.BR +
-                        "The youngest one in curls." + FileUtils.BR +
-                        "Here's the story, of a man named Brady," + FileUtils.BR +
-                        "Who was busy with three boys of his own." + FileUtils.BR +
-                        "They were four men, living all together," + FileUtils.BR +
-                        "Yet they were all alone.";
+                "Here's the story of a lovely lady," + FileUtils.BR + "Who was bringing up three very lovely girls."
+                        + FileUtils.BR + "All of them had hair of gold, like their mother,"
+                        + FileUtils.BR + "The youngest one in curls."
+                        + FileUtils.BR + "Here's the story, of a man named Brady,"
+                        + FileUtils.BR + "Who was busy with three boys of his own."
+                        + FileUtils.BR + "They were four men, living all together,"
+                        + FileUtils.BR + "Yet they were all alone.";
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
         final HttpResponse response = request.execute();
@@ -733,7 +802,8 @@ public class StubsPortalTest {
     public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesPostJson() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/post-body-as-json");
-        final String content = "{\"userId\":\"19\",\"requestId\":\"12345\",\"transactionDate\":\"98765\",\"transactionTime\":\"11111\"}";
+        final String content =
+                "{\"userId\":\"19\",\"requestId\":\"12345\",\"transactionDate\":\"98765\",\"transactionTime\":\"11111\"}";
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
         final HttpHeaders requestHeaders = new HttpHeaders();
@@ -743,14 +813,17 @@ public class StubsPortalTest {
         final HttpResponse response = request.execute();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(response.parseAsString().trim()).isEqualTo("{\"requestId\": \"12345\", \"transactionDate\": \"98765\", \"transactionTime\": \"11111\"}");
+        assertThat(response.parseAsString().trim())
+                .isEqualTo(
+                        "{\"requestId\": \"12345\", \"transactionDate\": \"98765\", \"transactionTime\": \"11111\"}");
     }
 
     @Test
     public void should_MakeSuccessfulRequest_WhenJsonRegexMatchesComplexJsonPost() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/post-body-as-json-2");
-        final String content = "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
+        final String content =
+                "{\"objects\": [{\"key\": \"value\"}, {\"key\": \"value\"}, {\"key\": {\"key\": \"12345\"}}]}";
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
         final HttpHeaders requestHeaders = new HttpHeaders();
@@ -813,7 +886,8 @@ public class StubsPortalTest {
         assertThat(headers.getContentType().contains(HEADER_APPLICATION_JSON)).isTrue();
         assertThat(headers.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
 
-        final List<String> headerValues = asCheckedArrayList(headers.get(Common.HEADER_X_STUBBY_RESOURCE_ID), String.class);
+        final List<String> headerValues =
+                asCheckedArrayList(headers.get(Common.HEADER_X_STUBBY_RESOURCE_ID), String.class);
 
         assertThat(headerValues.get(0)).isEqualTo("1");
     }
@@ -827,7 +901,6 @@ public class StubsPortalTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
         assertThat(responseContent).isEqualTo("Returned invoice number# 12345 in category 'milk'");
-
 
         requestUrl = String.format("%s%s", STUBS_URL, "/resources/invoices/88888/category/army");
         request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -846,8 +919,8 @@ public class StubsPortalTest {
         String responseContent = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).isEqualTo("Returned invoice number# 12345 in category 'milk' on the date 'Saturday'");
-
+        assertThat(responseContent)
+                .isEqualTo("Returned invoice number# 12345 in category 'milk' on the date 'Saturday'");
 
         requestUrl = String.format("%s%s", STUBS_URL, "/account/88888/category/army?date=NOW");
         request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -883,7 +956,9 @@ public class StubsPortalTest {
 
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).isEqualTo("Returned content with URL /no/explicit/groups/22222, query param ABC and custom-header XYZ");
+        assertThat(responseContent)
+                .isEqualTo(
+                        "Returned content with URL /no/explicit/groups/22222, query param ABC and custom-header XYZ");
     }
 
     @Test
@@ -894,7 +969,9 @@ public class StubsPortalTest {
 
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).isEqualTo("Returned content with URL /groups/with/sub/groups/abc-123, parent group abc-123 and two sub-groups abc & 123");
+        assertThat(responseContent)
+                .isEqualTo(
+                        "Returned content with URL /groups/with/sub/groups/abc-123, parent group abc-123 and two sub-groups abc & 123");
     }
 
     @Test
@@ -903,7 +980,8 @@ public class StubsPortalTest {
         expectedException.expect(UnknownHostException.class);
         expectedException.expectMessage("hostDoesNotExist123.com");
 
-        final String requestUrl = String.format("%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://hostDoesNotExist123.com/app/very/cool");
+        final String requestUrl = String.format(
+                "%s%s", STUBS_URL, "/v8/identity/authorize?redirect_uri=https://hostDoesNotExist123.com/app/very/cool");
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
 
         request.execute();
@@ -922,7 +1000,8 @@ public class StubsPortalTest {
         final HttpResponse response = request.execute();
 
         final HttpHeaders headers = response.getHeaders();
-        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
+        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON))
+                .isTrue();
 
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
@@ -962,7 +1041,8 @@ public class StubsPortalTest {
     public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInQueryStringParam() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.param?type_name&client_secret=secret");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
         final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
@@ -970,10 +1050,12 @@ public class StubsPortalTest {
     }
 
     @Test
-    public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInSingleQueryStringParam() throws Exception {
+    public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoEqualSignInSingleQueryStringParam()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.single.param?type_name");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
         final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
@@ -984,7 +1066,8 @@ public class StubsPortalTest {
     public void should_MakeSuccessfulRequest_WhenGetRequestMadeWithNoQueryStringParamValue() throws Exception {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/empty.param?type_name=&client_secret=secret");
-        final HttpResponse response = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
+        final HttpResponse response =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl).execute();
         final String responseContentAsString = response.parseAsString().trim();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
@@ -1007,7 +1090,8 @@ public class StubsPortalTest {
 
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+        assertThat(responseContent)
+                .contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
     }
 
     @Test
@@ -1022,7 +1106,8 @@ public class StubsPortalTest {
         final HttpResponse response = request.execute();
 
         final HttpHeaders headers = response.getHeaders();
-        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON)).isTrue();
+        assertThat(headers.getContentType().contains(Common.HEADER_APPLICATION_JSON))
+                .isTrue();
 
         String responseContent = response.parseAsString().trim();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
@@ -1070,10 +1155,12 @@ public class StubsPortalTest {
         final int LIMIT = 5;
         for (int idx = 1; idx <= LIMIT; idx++) {
             final HttpResponse actualResponse = request.execute();
-            final String actualConsoleOutput = consoleCaptor.toString(StringUtils.UTF_8).trim();
+            final String actualConsoleOutput =
+                    consoleCaptor.toString(StringUtils.UTF_8).trim();
 
             String firstCallResponseContent = actualResponse.parseAsString().trim();
-            assertThat(firstCallResponseContent).contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
+            assertThat(firstCallResponseContent)
+                    .contains("<payment><invoiceTypeLookupCode>STANDARD</invoiceTypeLookupCode></payment>");
             // Make sure we only hitting recordable source once
             assertThat(actualConsoleOutput).contains("HTTP request from stub metadata to");
 

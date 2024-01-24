@@ -1,28 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.http;
-
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.client.StubbyResponse;
-import io.github.azagniotov.stubby4j.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpScheme;
-import org.eclipse.jetty.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static io.github.azagniotov.stubby4j.common.Common.POSTING_METHODS;
 import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.SSL_SOCKET_FACTORY;
@@ -35,47 +27,76 @@ import static org.eclipse.jetty.http.HttpHeader.CONTENT_LANGUAGE;
 import static org.eclipse.jetty.http.HttpHeader.CONTENT_LENGTH;
 import static org.eclipse.jetty.http.HttpHeader.CONTENT_TYPE;
 
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.client.StubbyResponse;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.net.ssl.HttpsURLConnection;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.HttpScheme;
+import org.eclipse.jetty.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StubbyHttpTransport {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubbyHttpTransport.class);
 
-    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {{
-        add(HttpMethod.GET.asString());
-        add(HttpMethod.HEAD.asString());
-        add(HttpMethod.TRACE.asString());
-        add(HttpMethod.OPTIONS.asString());
-        add(HttpMethod.DELETE.asString());
-        add(HttpMethod.POST.asString());
-        add(HttpMethod.PUT.asString());
-        add(HttpMethodExtended.PATCH.asString());
-    }};
+    private static final Set<String> SUPPORTED_METHODS = new HashSet<String>() {
+        {
+            add(HttpMethod.GET.asString());
+            add(HttpMethod.HEAD.asString());
+            add(HttpMethod.TRACE.asString());
+            add(HttpMethod.OPTIONS.asString());
+            add(HttpMethod.DELETE.asString());
+            add(HttpMethod.POST.asString());
+            add(HttpMethod.PUT.asString());
+            add(HttpMethodExtended.PATCH.asString());
+        }
+    };
 
-    public StubbyHttpTransport() {
+    public StubbyHttpTransport() {}
 
-    }
-
-    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource) throws Exception {
+    public StubbyResponse httpRequestFromStub(final StubRequest request, final String recordingSource)
+            throws Exception {
         final String method = request.getMethod().get(0);
         if (!ANSITerminal.isMute()) {
-            final String logMessage = String.format("[%s] -> Making %s HTTP request from stub metadata to: [%s]", ConsoleUtils.getLocalDateTime(), method, recordingSource);
+            final String logMessage = String.format(
+                    "[%s] -> Making %s HTTP request from stub metadata to: [%s]",
+                    ConsoleUtils.getLocalDateTime(), method, recordingSource);
             ANSITerminal.incoming(logMessage);
         }
         LOGGER.debug("Making {} HTTP request from stub metadata to: [{}].", method, recordingSource);
-        return request(method,
+        return request(
+                method,
                 recordingSource,
                 request.getPostBody(),
                 request.getHeaders(),
                 StringUtils.calculateStringLength(request.getPostBody()));
     }
 
-    public StubbyResponse request(final String method,
-                                  final String fullUrl,
-                                  final String post,
-                                  final Map<String, String> headers,
-                                  final int postLength) throws Exception {
+    public StubbyResponse request(
+            final String method,
+            final String fullUrl,
+            final String post,
+            final Map<String, String> headers,
+            final int postLength)
+            throws Exception {
 
         if (!SUPPORTED_METHODS.contains(method)) {
-            throw new UnsupportedOperationException(String.format("HTTP method '%s' not supported when contacting stubby4j", method));
+            throw new UnsupportedOperationException(
+                    String.format("HTTP method '%s' not supported when contacting stubby4j", method));
         }
 
         final HttpURLConnection connection = getHttpURLConnection(fullUrl);
@@ -125,7 +146,8 @@ public class StubbyHttpTransport {
         }
     }
 
-    private void setRequestHeaders(final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
+    private void setRequestHeaders(
+            final HttpURLConnection connection, final Map<String, String> headers, final int postLength) {
         connection.setRequestProperty("User-Agent", StringUtils.constructUserAgentName());
         final String requestMethod = connection.getRequestMethod();
         if (POSTING_METHODS.contains(StringUtils.toUpper(requestMethod))) {
@@ -148,8 +170,9 @@ public class StubbyHttpTransport {
     }
 
     private void writePost(final HttpURLConnection connection, final String post) throws IOException {
-        try (final OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream(), charsetUTF8());
-             final BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+        try (final OutputStreamWriter outputStreamWriter =
+                        new OutputStreamWriter(connection.getOutputStream(), charsetUTF8());
+                final BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
             bufferedWriter.write(post);
         }
     }

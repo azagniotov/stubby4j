@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.handlers;
+
+import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
@@ -9,18 +27,15 @@ import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import static io.github.azagniotov.stubby4j.utils.HandlerUtils.getHtmlResourceByName;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class AjaxResourceContentHandler extends AbstractHandler implements AbstractHandlerExtension {
 
@@ -37,7 +52,12 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
     }
 
     @Override
-    public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+    public void handle(
+            final String target,
+            final Request baseRequest,
+            final HttpServletRequest request,
+            final HttpServletResponse response)
+            throws IOException, ServletException {
         if (logAndCheckIsHandled("ajaxResource", baseRequest, request, response)) {
             return;
         }
@@ -47,7 +67,8 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
         response.setContentType("text/plain;charset=UTF-8");
         response.setStatus(HttpStatus.OK_200);
 
-        // e.g.: http://localhost:8889/ajax/resource/proxy-config/some-unique-name/proxyConfigAsYAML => /proxy-config/some-unique-name/proxyConfigAsYAML
+        // e.g.: http://localhost:8889/ajax/resource/proxy-config/some-unique-name/proxyConfigAsYAML =>
+        // /proxy-config/some-unique-name/proxyConfigAsYAML
         // e.g.: http://localhost:8889/ajax/resource/32/httplifecycle/responseAsYAML => /32/httplifecycle/responseAsYAML
         // e.g.: http://localhost:8889/ajax/resource/0/response/body => /0/response/body
         final String[] uriFragments = request.getRequestURI().split("/");
@@ -79,7 +100,8 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
                 } else if (REGEX_HTTPLIFECYCLE.matcher(stubType).matches()) {
                     renderAjaxResponseContent(response, StubTypes.HTTPLIFECYCLE, targetFieldName, foundStub);
                 } else {
-                    response.getWriter().println(String.format("Could not fetch the content for stub type: %s", stubType));
+                    response.getWriter()
+                            .println(String.format("Could not fetch the content for stub type: %s", stubType));
                 }
             }
             // e.g.: /proxy-config/some-unique-name/proxyConfigAsYAML , the 'proxy-config'
@@ -89,18 +111,22 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
                 final StubProxyConfig foundProxyConfig = stubRepository.matchProxyConfigByName(stubType);
                 renderProxyConfigAjaxResponse(response, targetFieldName, foundProxyConfig);
             } else {
-                response.getWriter().println(String.format("Could not fetch the content for proxy config: %s", resourceIndexAsString));
+                response.getWriter()
+                        .println(String.format(
+                                "Could not fetch the content for proxy config: %s", resourceIndexAsString));
             }
-
         }
 
         ConsoleUtils.logOutgoingResponse(request.getRequestURI(), response);
     }
 
     @VisibleForTesting
-    void renderProxyConfigAjaxResponse(final HttpServletResponse response, final String targetFieldName, final StubProxyConfig foundProxyConfig) throws IOException {
+    void renderProxyConfigAjaxResponse(
+            final HttpServletResponse response, final String targetFieldName, final StubProxyConfig foundProxyConfig)
+            throws IOException {
         try {
-            final String ajaxResponse = StringUtils.objectToString(ReflectionUtils.getPropertyValue(foundProxyConfig, targetFieldName));
+            final String ajaxResponse =
+                    StringUtils.objectToString(ReflectionUtils.getPropertyValue(foundProxyConfig, targetFieldName));
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_proxy_config");
             final String htmlPopup = String.format(popupHtmlTemplate, foundProxyConfig.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
@@ -110,11 +136,17 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
     }
 
     @VisibleForTesting
-    void renderAjaxResponseContent(final HttpServletResponse response, final StubTypes stubType, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
+    void renderAjaxResponseContent(
+            final HttpServletResponse response,
+            final StubTypes stubType,
+            final String targetFieldName,
+            final StubHttpLifecycle foundStub)
+            throws IOException {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(stubType, targetFieldName);
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
-            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
+            final String htmlPopup =
+                    String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -122,11 +154,17 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
     }
 
     @VisibleForTesting
-    void renderAjaxResponseContent(final HttpServletResponse response, final int sequencedResponseId, final String targetFieldName, final StubHttpLifecycle foundStub) throws IOException {
+    void renderAjaxResponseContent(
+            final HttpServletResponse response,
+            final int sequencedResponseId,
+            final String targetFieldName,
+            final StubHttpLifecycle foundStub)
+            throws IOException {
         try {
             final String ajaxResponse = foundStub.getAjaxResponseContent(targetFieldName, sequencedResponseId);
             final String popupHtmlTemplate = getHtmlResourceByName("_popup_generic");
-            final String htmlPopup = String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
+            final String htmlPopup =
+                    String.format(popupHtmlTemplate, foundStub.getResourceId(), foundStub.getUUID(), ajaxResponse);
             response.getWriter().println(htmlPopup);
         } catch (final Exception ex) {
             HandlerUtils.configureErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR_500, ex.toString());
@@ -134,7 +172,8 @@ public class AjaxResourceContentHandler extends AbstractHandler implements Abstr
     }
 
     @VisibleForTesting
-    StubHttpLifecycle throwErrorOnNonExistentResourceIndex(final HttpServletResponse response, final int resourceIndex) throws IOException {
+    StubHttpLifecycle throwErrorOnNonExistentResourceIndex(final HttpServletResponse response, final int resourceIndex)
+            throws IOException {
         final Optional<StubHttpLifecycle> foundStubOptional = stubRepository.matchStubByIndex(resourceIndex);
         if (!foundStubOptional.isPresent()) {
             final String error = "Resource does not exist for ID: " + resourceIndex;

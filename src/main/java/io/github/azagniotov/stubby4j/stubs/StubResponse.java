@@ -1,15 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
-
-import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.common.Common;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
-import org.eclipse.jetty.http.HttpStatus.Code;
-
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
@@ -23,6 +28,15 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.STATUS
 import static java.lang.Integer.parseInt;
 import static org.eclipse.jetty.http.HttpStatus.getCode;
 
+import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
+import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.eclipse.jetty.http.HttpStatus.Code;
 
 public class StubResponse implements ReflectableStub {
 
@@ -33,15 +47,16 @@ public class StubResponse implements ReflectableStub {
     private final String latency;
     private final Map<String, String> headers;
 
-    private StubResponse(final Code httpStatusCode,
-                         final String body,
-                         final File file,
-                         final String latency,
-                         final Map<String, String> headers) {
+    private StubResponse(
+            final Code httpStatusCode,
+            final String body,
+            final File file,
+            final String latency,
+            final Map<String, String> headers) {
         this.httpStatusCode = httpStatusCode;
         this.body = body;
         this.file = file;
-        this.fileBytes = isNull(file) ? new byte[]{} : getFileBytes();
+        this.fileBytes = isNull(file) ? new byte[] {} : getFileBytes();
         this.latency = latency;
         this.headers = isNull(headers) ? new LinkedHashMap<>() : headers;
     }
@@ -117,7 +132,6 @@ public class StubResponse implements ReflectableStub {
         }
     }
 
-
     private boolean isTemplateFile() {
         try {
             return FileUtils.isTemplateFile(file);
@@ -126,12 +140,11 @@ public class StubResponse implements ReflectableStub {
         }
     }
 
-
     private byte[] getFileBytes() {
         try {
             return fileToBytes(file);
         } catch (Exception e) {
-            return new byte[]{};
+            return new byte[] {};
         }
     }
 

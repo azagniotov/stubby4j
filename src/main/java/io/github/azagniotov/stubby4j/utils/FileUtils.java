@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.utils;
 
 import java.io.BufferedInputStream;
@@ -14,37 +30,125 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @SuppressWarnings("serial")
 public final class FileUtils {
 
     public static final String BR = System.lineSeparator();
-    private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(
-            new HashSet<>(
-                    Arrays.asList(
-                            ".ajx", ".am", ".asa", ".asc", ".asp", ".aspx", ".awk", ".bat",
-                            ".c", ".cdf", ".cf", ".cfg", ".cfm", ".cgi", ".cnf", ".conf", ".cpp",
-                            ".css", ".csv", ".ctl", ".dat", ".dhtml", ".diz", ".file", ".forward",
-                            ".grp", ".h", ".hpp", ".hqx", ".hta", ".htaccess", ".htc", ".htm", ".html",
-                            ".htpasswd", ".htt", ".htx", ".in", ".inc", ".info", ".ini", ".ink", ".java",
-                            ".js", ".json", ".jsp", ".log", ".logfile", ".m3u", ".m4", ".m4a", ".mak",
-                            ".map", ".model", ".msg", ".nfo", ".nsi", ".info", ".old", ".pas", ".patch",
-                            ".perl", ".php", ".php2", ".php3", ".php4", ".php5", ".php6", ".phtml", ".pix",
-                            ".pl", ".pm", ".po", ".pwd", ".py", ".qmail", ".rb", ".rbl", ".rbw", ".readme",
-                            ".reg", ".rss", ".rtf", ".ruby", ".session", ".setup", ".sh", ".shtm", ".shtml",
-                            ".sql", ".ssh", ".stm", ".style", ".svg", ".tcl", ".text", ".threads", ".tmpl",
-                            ".tpl", ".txt", ".ubb", ".vbs", ".xhtml", ".xml", ".xrc", ".xsl", ".yaml", ".yml"
-                    )
-            )
-    );
+    private static final Set<String> ASCII_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            ".ajx",
+            ".am",
+            ".asa",
+            ".asc",
+            ".asp",
+            ".aspx",
+            ".awk",
+            ".bat",
+            ".c",
+            ".cdf",
+            ".cf",
+            ".cfg",
+            ".cfm",
+            ".cgi",
+            ".cnf",
+            ".conf",
+            ".cpp",
+            ".css",
+            ".csv",
+            ".ctl",
+            ".dat",
+            ".dhtml",
+            ".diz",
+            ".file",
+            ".forward",
+            ".grp",
+            ".h",
+            ".hpp",
+            ".hqx",
+            ".hta",
+            ".htaccess",
+            ".htc",
+            ".htm",
+            ".html",
+            ".htpasswd",
+            ".htt",
+            ".htx",
+            ".in",
+            ".inc",
+            ".info",
+            ".ini",
+            ".ink",
+            ".java",
+            ".js",
+            ".json",
+            ".jsp",
+            ".log",
+            ".logfile",
+            ".m3u",
+            ".m4",
+            ".m4a",
+            ".mak",
+            ".map",
+            ".model",
+            ".msg",
+            ".nfo",
+            ".nsi",
+            ".info",
+            ".old",
+            ".pas",
+            ".patch",
+            ".perl",
+            ".php",
+            ".php2",
+            ".php3",
+            ".php4",
+            ".php5",
+            ".php6",
+            ".phtml",
+            ".pix",
+            ".pl",
+            ".pm",
+            ".po",
+            ".pwd",
+            ".py",
+            ".qmail",
+            ".rb",
+            ".rbl",
+            ".rbw",
+            ".readme",
+            ".reg",
+            ".rss",
+            ".rtf",
+            ".ruby",
+            ".session",
+            ".setup",
+            ".sh",
+            ".shtm",
+            ".shtml",
+            ".sql",
+            ".ssh",
+            ".stm",
+            ".style",
+            ".svg",
+            ".tcl",
+            ".text",
+            ".threads",
+            ".tmpl",
+            ".tpl",
+            ".txt",
+            ".ubb",
+            ".vbs",
+            ".xhtml",
+            ".xml",
+            ".xrc",
+            ".xsl",
+            ".yaml",
+            ".yml")));
     private static final String LINE_SEPARATOR_UNIX = "\n";
     private static final String LINE_SEPARATOR_MAC_OS_PRE_X = "\r";
     private static final String LINE_SEPARATOR_WINDOWS = "\r\n";
     private static final String LINE_SEPARATOR_TOKEN = "[_T_O_K_E_N_]";
 
-    private FileUtils() {
-
-    }
+    private FileUtils() {}
 
     public static File uriToFile(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
         final File contentFile = new File(dataYamlConfigParentDir, relativePath);
@@ -66,13 +170,12 @@ public final class FileUtils {
         return contentFile;
     }
 
-
     public static File tempFileFromString(final String content) throws IOException {
         final File temp = File.createTempFile("tmp" + System.currentTimeMillis(), ".txt");
         temp.deleteOnExit();
 
         try (final FileWriter fileWriter = new FileWriter(temp);
-             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+                final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(content);
         }
 
@@ -94,8 +197,8 @@ public final class FileUtils {
         return binaryFileToBytes(file);
     }
 
-
-    static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath) throws IOException {
+    static byte[] binaryFileToBytes(final String dataYamlConfigParentDir, final String relativePath)
+            throws IOException {
         final File contentFile = new File(dataYamlConfigParentDir, relativePath);
 
         if (!contentFile.isFile()) {
@@ -105,11 +208,9 @@ public final class FileUtils {
         return Files.readAllBytes(Paths.get(contentFile.toURI()));
     }
 
-
     static byte[] binaryFileToBytes(final File file) throws IOException {
         return Files.readAllBytes(Paths.get(file.toURI()));
     }
-
 
     public static String enforceSystemLineSeparator(final String loadedContent) {
         if (!StringUtils.isSet(loadedContent)) {

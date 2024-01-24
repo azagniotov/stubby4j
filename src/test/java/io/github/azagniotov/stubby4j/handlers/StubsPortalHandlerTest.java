@@ -1,10 +1,42 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.handlers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.StubResponse;
 import io.github.azagniotov.stubby4j.stubs.StubSearchResult;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
@@ -15,24 +47,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-
 @SuppressWarnings("serial")
 @RunWith(MockitoJUnitRunner.class)
 public class StubsPortalHandlerTest {
@@ -41,9 +55,7 @@ public class StubsPortalHandlerTest {
     private static final ServletOutputStream SERVLET_OUTPUT_STREAM = new ServletOutputStream() {
 
         @Override
-        public void write(final int i) throws IOException {
-
-        }
+        public void write(final int i) throws IOException {}
 
         @Override
         public boolean isReady() {
@@ -51,9 +63,7 @@ public class StubsPortalHandlerTest {
         }
 
         @Override
-        public void setWriteListener(final WriteListener writeListener) {
-
-        }
+        public void setWriteListener(final WriteListener writeListener) {}
     };
 
     @Mock
@@ -113,7 +123,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.GET.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[] {});
 
         setUpStubSearchMockExpectations(requestPathInfo);
 
@@ -130,7 +140,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethod.POST.asString());
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.NOT_FOUND);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[] {});
 
         final InputStream inputStream = new ByteArrayInputStream(postData.getBytes());
         when(mockHttpServletRequest.getInputStream()).thenReturn(getServletInputStream(inputStream));
@@ -263,7 +273,7 @@ public class StubsPortalHandlerTest {
         when(mockHttpServletRequest.getPathInfo()).thenReturn(requestPathInfo);
         when(mockStubResponse.getLatency()).thenReturn("50");
         when(mockStubResponse.getHttpStatusCode()).thenReturn(Code.OK);
-        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[]{});
+        when(mockStubResponse.getResponseBodyAsBytes()).thenReturn(new byte[] {});
         when(mockHttpServletResponse.getOutputStream()).thenReturn(SERVLET_OUTPUT_STREAM);
 
         setUpStubSearchMockExpectations(requestPathInfo);
@@ -318,9 +328,7 @@ public class StubsPortalHandlerTest {
             }
 
             @Override
-            public void setReadListener(final ReadListener readListener) {
-
-            }
+            public void setReadListener(final ReadListener readListener) {}
         };
     }
 }

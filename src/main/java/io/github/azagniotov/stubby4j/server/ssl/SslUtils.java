@@ -1,15 +1,28 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.server.ssl;
+
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -22,10 +35,12 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.Stream.concat;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Some of code in the current file has been adopted from the Netty project:
@@ -49,13 +64,12 @@ public final class SslUtils {
     private static final String TLS = "TLS";
     private static final Logger LOGGER = LoggerFactory.getLogger(SslUtils.class);
     // See https://tools.ietf.org/html/rfc8446#appendix-B.4
-    private static final Set<String> TLS_v13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(
-            Arrays.asList(
-                    "TLS_AES_256_GCM_SHA384",
-                    "TLS_CHACHA20_POLY1305_SHA256",
-                    "TLS_AES_128_GCM_SHA256",
-                    "TLS_AES_128_CCM_8_SHA256",
-                    "TLS_AES_128_CCM_SHA256")));
+    private static final Set<String> TLS_v13_CIPHERS = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(
+            "TLS_AES_256_GCM_SHA384",
+            "TLS_CHACHA20_POLY1305_SHA256",
+            "TLS_AES_128_GCM_SHA256",
+            "TLS_AES_128_CCM_8_SHA256",
+            "TLS_AES_128_CCM_SHA256")));
     private static final Set<String> DEFAULT_ENABLED_TLS_VERSIONS;
     private static final boolean TLS_v1_3_JDK_SUPPORTED;
     private static final Set<String> ALL_ENABLED_TLS_VERSIONS;
@@ -64,22 +78,22 @@ public final class SslUtils {
     private static final Set<String> SUPPORT_CIPHERS;
 
     static {
-
         String overrideDisabledAlgorithms = System.getProperty("overrideDisabledAlgorithms");
         if (overrideDisabledAlgorithms != null && overrideDisabledAlgorithms.equalsIgnoreCase("true")) {
-            final String overrideRequest = "Removing SSLv3, TLSv1 and TLSv1.1 from the JDK's 'jdk.tls.disabledAlgorithms' property..";
+            final String overrideRequest =
+                    "Removing SSLv3, TLSv1 and TLSv1.1 from the JDK's 'jdk.tls.disabledAlgorithms' property..";
             ANSITerminal.warn(overrideRequest);
             LOGGER.warn(overrideRequest);
 
             // https://stackoverflow.com/questions/52115699/relaxing-ssl-algorithm-constrains-programmatically
             // Removed SSLv3, TLSv1 and TLSv1.1
             removeFromSecurityProperty("jdk.tls.disabledAlgorithms", "SSLv3", "TLSv1", "TLSv1.1");
-
         }
         SELF_SIGNED_CERTIFICATE_TRUST_STORE = loadStubby4jSelfSignedTrustStore();
         TLS_v1_3_JDK_SUPPORTED = isTLSv13SupportedByCurrentJDK();
         DEFAULT_SSL_CONTEXT = initAndSetDefaultSSLContext();
-        DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(Arrays.asList(DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols()));
+        DEFAULT_ENABLED_TLS_VERSIONS = new HashSet<>(
+                Arrays.asList(DEFAULT_SSL_CONTEXT.getDefaultSSLParameters().getProtocols()));
         ALL_ENABLED_TLS_VERSIONS = narrowDownEnabledProtocols();
         DEFAULT_SSL_ENGINE = DEFAULT_SSL_CONTEXT.createSSLEngine();
         DEFAULT_SSL_ENGINE.setEnabledProtocols(enabledProtocols());
@@ -87,9 +101,7 @@ public final class SslUtils {
         SUPPORT_CIPHERS = supportedCiphers();
     }
 
-    private SslUtils() {
-
-    }
+    private SslUtils() {}
 
     public static void initStatic() {
         // init static { ... }
@@ -122,7 +134,7 @@ public final class SslUtils {
             //
             // Basically, some how somewhere someone needs to be able to validate self-signed certificate.
             // https://github.com/azagniotov/stubby4j#client-side-tls-configuration
-            defaultCandidate.init(null, new TrustManager[]{new DefaultExtendedX509TrustManager()}, null);
+            defaultCandidate.init(null, new TrustManager[] {new DefaultExtendedX509TrustManager()}, null);
             SSLContext.setDefault(defaultCandidate);
 
             return defaultCandidate;
@@ -132,9 +144,10 @@ public final class SslUtils {
     }
 
     private static Set<String> narrowDownEnabledProtocols() {
-        return TLS_v1_3_JDK_SUPPORTED ?
-                concat(new HashSet<>(singletonList(TLS_v1_3)).stream(), DEFAULT_ENABLED_TLS_VERSIONS.stream())
-                        .collect(toSet()) : DEFAULT_ENABLED_TLS_VERSIONS;
+        return TLS_v1_3_JDK_SUPPORTED
+                ? concat(new HashSet<>(singletonList(TLS_v1_3)).stream(), DEFAULT_ENABLED_TLS_VERSIONS.stream())
+                        .collect(toSet())
+                : DEFAULT_ENABLED_TLS_VERSIONS;
     }
 
     public static String[] includedCipherSuites() {
@@ -148,7 +161,8 @@ public final class SslUtils {
     private static KeyStore loadStubby4jSelfSignedTrustStore() {
         try {
             //
-            // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at localhost:7443
+            // 1. Download and save the remote self-signed certificate from the stubby4j server with TLS at
+            // localhost:7443
             //    This opens an SSL connection to the specified hostname and port and prints the SSL certificate.
             // ---------------------------------------------------------------------------------
             // $ echo quit | openssl s_client -showcerts -servername localhost -connect "localhost":7443 > FILE_NAME.pem
@@ -169,10 +183,13 @@ public final class SslUtils {
             final String selfSignedTrustStorePath = getSelfSignedTrustStorePath();
             final InputStream inputStream = SslUtils.class.getResourceAsStream(selfSignedTrustStorePath);
             if (inputStream == null) {
-                throw new IllegalStateException(String.format("Could not get resource %s as stream", selfSignedTrustStorePath));
+                throw new IllegalStateException(
+                        String.format("Could not get resource %s as stream", selfSignedTrustStorePath));
             }
             final KeyStore trustStore = KeyStore.getInstance("PKCS12");
-            trustStore.load(inputStream, "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
+            trustStore.load(
+                    inputStream,
+                    "stubby4j".toCharArray()); // this is the password entered during the 'keytool -import ... ' command
 
             return trustStore;
         } catch (Exception e) {
@@ -231,15 +248,16 @@ public final class SslUtils {
             // prefix instead of the "TLS_" prefix (as defined in the JSSE cipher suite names [1]). According to IBM's
             // documentation [2] the "SSL_" prefix is "interchangeable" with the "TLS_" prefix.
             // See the IBM forum discussion [3] and issue on IBM's JVM [4] for more details.
-            //[1] https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#ciphersuites
-            //[2] https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/
+            // [1] https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#ciphersuites
+            // [2] https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/
             // security-component/jsse2Docs/ciphersuites.html
-            //[3] https://www.ibm.com/developerworks/community/forums/html/topic?id=9b5a56a9-fa46-4031-b33b-df91e28d77c2
-            //[4] https://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=71770
+            // [3]
+            // https://www.ibm.com/developerworks/community/forums/html/topic?id=9b5a56a9-fa46-4031-b33b-df91e28d77c2
+            // [4] https://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=71770
             if (supportedCipher.startsWith("SSL_")) {
                 final String tlsPrefixedCipherName = "TLS_" + supportedCipher.substring("SSL_".length());
                 try {
-                    DEFAULT_SSL_ENGINE.setEnabledCipherSuites(new String[]{tlsPrefixedCipherName});
+                    DEFAULT_SSL_ENGINE.setEnabledCipherSuites(new String[] {tlsPrefixedCipherName});
                     supportedCiphersSet.add(tlsPrefixedCipherName);
                 } catch (IllegalArgumentException ignored) {
                     // The cipher is not supported ... move on to the next cipher.
@@ -247,9 +265,9 @@ public final class SslUtils {
             }
         }
 
-        return TLS_v1_3_JDK_SUPPORTED ?
-                concat(TLS_v13_CIPHERS.stream(), supportedCiphersSet.stream()).collect(toSet()) :
-                supportedCiphersSet;
+        return TLS_v1_3_JDK_SUPPORTED
+                ? concat(TLS_v13_CIPHERS.stream(), supportedCiphersSet.stream()).collect(toSet())
+                : supportedCiphersSet;
     }
 
     private static boolean isContainsTLSv13(final String[] values) {

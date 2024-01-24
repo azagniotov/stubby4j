@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -12,11 +31,6 @@ import io.github.azagniotov.stubby4j.server.StubbyManagerFactory;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpStatus;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -25,9 +39,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import org.eclipse.jetty.http.HttpStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class StubsPortalLoadTest {
 
@@ -48,13 +63,17 @@ public class StubsPortalLoadTest {
         final InputStream stubsDataInputStream = url.openStream();
         stubsDataInputStream.close();
 
-        final String[] args = new String[]{
-                "-m",
-                "-l", JettyFactory.DEFAULT_HOST,
-                "-s", String.valueOf(STUBS_PORT),
-                "-a", String.valueOf(ADMIN_PORT),
-                "-t", String.valueOf(STUBS_SSL_PORT),
-                //"--disable_stub_caching",
+        final String[] args = new String[] {
+            "-m",
+            "-l",
+            JettyFactory.DEFAULT_HOST,
+            "-s",
+            String.valueOf(STUBS_PORT),
+            "-a",
+            String.valueOf(ADMIN_PORT),
+            "-t",
+            String.valueOf(STUBS_SSL_PORT),
+            // "--disable_stub_caching",
         };
 
         final CommandLineInterpreter commandLineInterpreter = new CommandLineInterpreter();
@@ -69,7 +88,8 @@ public class StubsPortalLoadTest {
             }
         });
 
-        stubbyManager = new StubbyManagerFactory().construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
+        stubbyManager = new StubbyManagerFactory()
+                .construct(configFile, commandLineInterpreter.getCommandlineParams(), stubLoadComputation);
         stubbyManager.startJetty();
     }
 
@@ -97,11 +117,10 @@ public class StubsPortalLoadTest {
                     .build();
 
             builder.append(yamlToUpdate).append("\n\n\n");
-
         }
 
         try (final FileWriter fileWriter = new FileWriter(new File("./load_test_data.yaml"));
-             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+                final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write(builder.toString());
             bufferedWriter.flush();
         }
@@ -138,7 +157,6 @@ public class StubsPortalLoadTest {
         System.out.println(String.format("It took %s milliseconds to make a 1st request", firstElapsed));
         System.out.println("**************************************************************\n");
 
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Making repeated requess
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +169,8 @@ public class StubsPortalLoadTest {
             final HttpResponse responseTwo = requestTwo.execute();
             final long secondElapsed = System.currentTimeMillis() - secondStart;
 
-            final String responseTwoContentAsString = responseTwo.parseAsString().trim();
+            final String responseTwoContentAsString =
+                    responseTwo.parseAsString().trim();
 
             assertThat(responseTwo.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
             assertThat("{\"status\":\"CREATED RESOURCE#" + idx + "!\"}").isEqualTo(responseTwoContentAsString);

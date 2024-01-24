@@ -1,4 +1,35 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.google.api.client.http.HttpMethods;
 import io.github.azagniotov.stubby4j.caching.Cache;
@@ -8,18 +39,6 @@ import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,22 +49,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import javax.servlet.http.HttpServletRequest;
+import org.eclipse.jetty.http.HttpStatus;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StubRepositoryTest {
@@ -93,7 +107,8 @@ public class StubRepositoryTest {
         requestBuilder = new StubRequest.Builder();
         responseBuilder = new StubResponse.Builder();
 
-        final StubRepository stubRepository = new StubRepository(CONFIG_FILE,
+        final StubRepository stubRepository = new StubRepository(
+                CONFIG_FILE,
                 Cache.stubHttpLifecycleCache(false),
                 YAML_PARSE_RESULT_SET_FUTURE,
                 mockStubbyHttpTransport);
@@ -149,7 +164,10 @@ public class StubRepositoryTest {
     public void shouldMatchProxyConfig_WhenUniqueProxyNameGiven() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -164,14 +182,23 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
-            put(stubProxyConfigOther.getUUID(), stubProxyConfigOther);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+                        put(stubProxyConfigOther.getUUID(), stubProxyConfigOther);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -237,15 +264,21 @@ public class StubRepositoryTest {
         final YamlParseResultSet yamlParseResultSetThree = parseYaml("/resource/item/3", STUB_UUID_THREE);
 
         // Setting state for the test
-        spyStubRepository.resetStubsCache(new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            addAll(yamlParseResultSetOne.getStubs());
-            addAll(yamlParseResultSetTwo.getStubs());
-            addAll(yamlParseResultSetThree.getStubs());
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            putAll(yamlParseResultSetOne.getUuidToStubs());
-            putAll(yamlParseResultSetTwo.getUuidToStubs());
-            putAll(yamlParseResultSetThree.getUuidToStubs());
-        }}));
+        spyStubRepository.resetStubsCache(new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        addAll(yamlParseResultSetOne.getStubs());
+                        addAll(yamlParseResultSetTwo.getStubs());
+                        addAll(yamlParseResultSetThree.getStubs());
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        putAll(yamlParseResultSetOne.getUuidToStubs());
+                        putAll(yamlParseResultSetTwo.getUuidToStubs());
+                        putAll(yamlParseResultSetThree.getUuidToStubs());
+                    }
+                }));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
@@ -263,9 +296,10 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isTrue();
 
         // Stubs that left, do not contain deleted URI
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/2")).isFalse();
-        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/item/2")).isFalse();
-
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/2"))
+                .isFalse();
+        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/item/2"))
+                .isFalse();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: deleting by third UUID (STUB_UUID_THREE)
@@ -278,9 +312,10 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isFalse();
 
         // Stubs that left, do not contain deleted URI
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/2")).isFalse();
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/3")).isFalse();
-
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/2"))
+                .isFalse();
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/3"))
+                .isFalse();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: deleting by first UUID (STUB_UUID_ONE)
@@ -297,7 +332,10 @@ public class StubRepositoryTest {
     public void shouldUpdateProxyConfigsByUuid() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -324,16 +362,25 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
-            put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
-            put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
-            put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+                        put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
+                        put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
+                        put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -361,7 +408,12 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_TWO).getPropertyEndpoint().equals("http://google.com")).isTrue();
+        assertThat(spyStubRepository
+                        .getProxyConfigs()
+                        .get(STUB_UUID_TWO)
+                        .getPropertyEndpoint()
+                        .equals("http://google.com"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by third UUID (STUB_UUID_THREE)
@@ -379,8 +431,12 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_THREE).getPropertyEndpoint().equals("http://yahoo.com")).isTrue();
-
+        assertThat(spyStubRepository
+                        .getProxyConfigs()
+                        .get(STUB_UUID_THREE)
+                        .getPropertyEndpoint()
+                        .equals("http://yahoo.com"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by third UUID (STUB_UUID_ONE)
@@ -398,8 +454,12 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getProxyConfigs().get(STUB_UUID_ONE).getPropertyEndpoint().equals("http://mail.com")).isTrue();
-
+        assertThat(spyStubRepository
+                        .getProxyConfigs()
+                        .get(STUB_UUID_ONE)
+                        .getPropertyEndpoint()
+                        .equals("http://mail.com"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by 'default' UUID
@@ -417,14 +477,22 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchProxyConfigByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getProxyConfigs().get("default").getPropertyEndpoint().equals("http://rambler.ru")).isTrue();
+        assertThat(spyStubRepository
+                        .getProxyConfigs()
+                        .get("default")
+                        .getPropertyEndpoint()
+                        .equals("http://rambler.ru"))
+                .isTrue();
     }
 
     @Test
     public void shouldFailUpdatingProxyConfigByUuidWhenUuidDoNotMatch() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -433,13 +501,22 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -460,7 +537,8 @@ public class StubRepositoryTest {
             spyStubRepository.updateProxyConfigByUuid("totally-different-uuid", newStubProxyConfigDefault);
         });
 
-        String expectedMessage = "Provided proxy config UUID 'default' does not match the target UUID 'totally-different-uuid'";
+        String expectedMessage =
+                "Provided proxy config UUID 'default' does not match the target UUID 'totally-different-uuid'";
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -470,7 +548,10 @@ public class StubRepositoryTest {
     public void shouldDeleteProxyConfigsByUuid() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -497,16 +578,25 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
-            put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
-            put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
-            put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+                        put(stubProxyConfigOne.getUUID(), stubProxyConfigOne);
+                        put(stubProxyConfigTwo.getUUID(), stubProxyConfigTwo);
+                        put(stubProxyConfigThree.getUUID(), stubProxyConfigThree);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -559,7 +649,10 @@ public class StubRepositoryTest {
     public void shouldFailDeletingDefaultProxyConfigByUuid() throws Exception {
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -568,13 +661,22 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfigDefault.getUUID(), stubProxyConfigDefault);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
         final boolean resetResult = spyStubRepository.resetStubsCache(yamlParseResultSet);
@@ -603,15 +705,21 @@ public class StubRepositoryTest {
         final YamlParseResultSet yamlParseResultSetThree = parseYaml("/resource/item/3", STUB_UUID_THREE);
 
         // Setting state for the test
-        spyStubRepository.resetStubsCache(new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            addAll(yamlParseResultSetOne.getStubs());
-            addAll(yamlParseResultSetTwo.getStubs());
-            addAll(yamlParseResultSetThree.getStubs());
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            putAll(yamlParseResultSetOne.getUuidToStubs());
-            putAll(yamlParseResultSetTwo.getUuidToStubs());
-            putAll(yamlParseResultSetThree.getUuidToStubs());
-        }}));
+        spyStubRepository.resetStubsCache(new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        addAll(yamlParseResultSetOne.getStubs());
+                        addAll(yamlParseResultSetTwo.getStubs());
+                        addAll(yamlParseResultSetThree.getStubs());
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        putAll(yamlParseResultSetOne.getUuidToStubs());
+                        putAll(yamlParseResultSetTwo.getUuidToStubs());
+                        putAll(yamlParseResultSetThree.getUuidToStubs());
+                    }
+                }));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
@@ -625,57 +733,75 @@ public class StubRepositoryTest {
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by second UUID (STUB_UUID_TWO)
         ///////////////////////////////////////////////////////////////////////////////////////
-        spyStubRepository.updateStubByUuid(STUB_UUID_TWO,
-                parseYaml("/resource/completely/new/item/2", STUB_UUID_TWO).getStubs().get(0));
+        spyStubRepository.updateStubByUuid(
+                STUB_UUID_TWO,
+                parseYaml("/resource/completely/new/item/2", STUB_UUID_TWO)
+                        .getStubs()
+                        .get(0));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/1")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/item/3")).isTrue();
-
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/1"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/item/3"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by third UUID (STUB_UUID_THREE)
         ///////////////////////////////////////////////////////////////////////////////////////
-        spyStubRepository.updateStubByUuid(STUB_UUID_THREE,
-                parseYaml("/resource/completely/new/item/3", STUB_UUID_THREE).getStubs().get(0));
+        spyStubRepository.updateStubByUuid(
+                STUB_UUID_THREE,
+                parseYaml("/resource/completely/new/item/3", STUB_UUID_THREE)
+                        .getStubs()
+                        .get(0));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/1")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3")).isTrue();
-
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/item/1"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by third UUID (STUB_UUID_ONE)
         ///////////////////////////////////////////////////////////////////////////////////////
-        spyStubRepository.updateStubByUuid(STUB_UUID_ONE,
-                parseYaml("/resource/completely/new/item/1", STUB_UUID_ONE).getStubs().get(0));
+        spyStubRepository.updateStubByUuid(
+                STUB_UUID_ONE,
+                parseYaml("/resource/completely/new/item/1", STUB_UUID_ONE)
+                        .getStubs()
+                        .get(0));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_TWO)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isTrue();
 
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/completely/new/item/1")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3")).isTrue();
-
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/completely/new/item/1"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/2"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3"))
+                .isTrue();
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: update by second UUID (STUB_UUID_TWO) & override with a new UUID
         ///////////////////////////////////////////////////////////////////////////////////////
         final String newUuid = "new-uuid-abc-123";
-        spyStubRepository.updateStubByUuid(STUB_UUID_TWO,
-                parseYaml("/resource/completely/new/item/with/new/uuid/2", newUuid).getStubs().get(0));
+        spyStubRepository.updateStubByUuid(
+                STUB_UUID_TWO,
+                parseYaml("/resource/completely/new/item/with/new/uuid/2", newUuid)
+                        .getStubs()
+                        .get(0));
 
         assertThat(spyStubRepository.getStubs().size()).isEqualTo(3);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isTrue();
@@ -683,10 +809,19 @@ public class StubRepositoryTest {
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_THREE)).isTrue();
         assertThat(spyStubRepository.canMatchStubByUuid(newUuid)).isTrue();
 
-        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/completely/new/item/1")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(1).getRequest().getUri().equals("/resource/completely/new/item/with/new/uuid/2")).isTrue();
-        assertThat(spyStubRepository.getStubs().get(1).getUUID().equals(newUuid)).isTrue();
-        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3")).isTrue();
+        assertThat(spyStubRepository.getStubs().get(0).getRequest().getUri().equals("/resource/completely/new/item/1"))
+                .isTrue();
+        assertThat(spyStubRepository
+                        .getStubs()
+                        .get(1)
+                        .getRequest()
+                        .getUri()
+                        .equals("/resource/completely/new/item/with/new/uuid/2"))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(1).getUUID().equals(newUuid))
+                .isTrue();
+        assertThat(spyStubRepository.getStubs().get(2).getRequest().getUri().equals("/resource/completely/new/item/3"))
+                .isTrue();
     }
 
     @Test
@@ -738,9 +873,11 @@ public class StubRepositoryTest {
 
         final String expectedNewUrl = "/resource/completely/new";
         final YamlParseResultSet newYamlParseResultSet = parseYaml(expectedNewUrl, STUB_UUID_TWO);
-        final StubHttpLifecycle newStubHttpLifecycle = newYamlParseResultSet.getStubs().get(0);
+        final StubHttpLifecycle newStubHttpLifecycle =
+                newYamlParseResultSet.getStubs().get(0);
         spyStubRepository.updateStubByIndex(0, newStubHttpLifecycle);
-        final StubRequest stubbedNewRequest = spyStubRepository.getStubs().get(0).getRequest();
+        final StubRequest stubbedNewRequest =
+                spyStubRepository.getStubs().get(0).getRequest();
 
         assertThat(stubbedNewRequest.getUrl()).isEqualTo(expectedNewUrl);
         assertThat(spyStubRepository.canMatchStubByUuid(STUB_UUID_ONE)).isFalse();
@@ -761,7 +898,8 @@ public class StubRepositoryTest {
 
         final String expectedNewUrl = "/resource/completely/new";
         final YamlParseResultSet newYamlParseResultSet = parseYaml(expectedNewUrl, STUB_UUID_ONE);
-        final StubHttpLifecycle newStubHttpLifecycle = newYamlParseResultSet.getStubs().get(0);
+        final StubHttpLifecycle newStubHttpLifecycle =
+                newYamlParseResultSet.getStubs().get(0);
         spyStubRepository.updateStubByIndex(10, newStubHttpLifecycle);
     }
 
@@ -769,7 +907,10 @@ public class StubRepositoryTest {
     public void shouldUpdateStubResponseBody_WhenResponseIsRecordable() throws Exception {
         final String sourceToRecord = "http://google.com";
         final String expectedOriginalUrl = "/resource/item/1";
-        final YamlParseResultSet yamlParseResultSet = parseYaml(expectedOriginalUrl, responseBuilder.emptyWithBody(sourceToRecord).build(), STUB_UUID_ONE);
+        final YamlParseResultSet yamlParseResultSet = parseYaml(
+                expectedOriginalUrl,
+                responseBuilder.emptyWithBody(sourceToRecord).build(),
+                STUB_UUID_ONE);
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
@@ -779,7 +920,8 @@ public class StubRepositoryTest {
 
         final String actualResponseText = "OK, this is recorded response text!";
         final StubRequest stubbedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), anyString())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), anyString()))
+                .thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         for (int idx = 0; idx < 5; idx++) {
@@ -797,14 +939,17 @@ public class StubRepositoryTest {
 
     @Test
     public void shouldNotUpdateStubResponseBody_WhenResponseIsNotRecordable() throws Exception {
-        final String recordingSource = "htt://google.com";  //makes it non recordable
+        final String recordingSource = "htt://google.com"; // makes it non recordable
         final String expectedOriginalUrl = "/resource/item/1";
-        final YamlParseResultSet yamlParseResultSet = parseYaml(expectedOriginalUrl,
-                responseBuilder.emptyWithBody(recordingSource).build(), STUB_UUID_ONE);
+        final YamlParseResultSet yamlParseResultSet = parseYaml(
+                expectedOriginalUrl,
+                responseBuilder.emptyWithBody(recordingSource).build(),
+                STUB_UUID_ONE);
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
-        final StubResponse expectedResponse = spyStubRepository.getStubs().get(0).getResponse(true);
+        final StubResponse expectedResponse =
+                spyStubRepository.getStubs().get(0).getResponse(true);
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
@@ -819,30 +964,29 @@ public class StubRepositoryTest {
     @Test
     public void shouldRecordingUsingIncomingRequestQueryStringAndStubbedRecordableUrl() throws Exception {
         final String sourceToRecord = "http://127.0.0.1:8888";
-        final StubRequest stubbedRequest =
-                requestBuilder
-                        .withUrl("/search")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .withQuery("queryOne", "([a-zA-Z]+)")
-                        .withQuery("queryTwo", "([1-9]+)")
-                        .build();
-        final YamlParseResultSet yamlParseResultSet = parseYaml(stubbedRequest,
-                responseBuilder.emptyWithBody(sourceToRecord).build(), STUB_UUID_ONE);
+        final StubRequest stubbedRequest = requestBuilder
+                .withUrl("/search")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .withQuery("queryOne", "([a-zA-Z]+)")
+                .withQuery("queryTwo", "([1-9]+)")
+                .build();
+        final YamlParseResultSet yamlParseResultSet = parseYaml(
+                stubbedRequest, responseBuilder.emptyWithBody(sourceToRecord).build(), STUB_UUID_ONE);
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
         final String actualResponseText = "OK, this is recorded response text!";
-        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), stringCaptor.capture())).thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(stubbedRequest), stringCaptor.capture()))
+                .thenReturn(new StubbyResponse(200, actualResponseText, new HashMap<>()));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/search")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .withQuery("queryTwo", "12345")
-                        .withQuery("queryOne", "arbitraryValue")
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/search")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .withQuery("queryTwo", "12345")
+                .withQuery("queryOne", "arbitraryValue")
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
@@ -856,16 +1000,20 @@ public class StubRepositoryTest {
     public void shouldNotUpdateStubResponseBody_WhenResponseIsRecordableButExceptionThrown() throws Exception {
         final String recordingSource = "http://google.com";
         final String expectedOriginalUrl = "/resource/item/1";
-        final YamlParseResultSet yamlParseResultSet = parseYaml(expectedOriginalUrl,
-                responseBuilder.emptyWithBody(recordingSource).build(), STUB_UUID_ONE);
+        final YamlParseResultSet yamlParseResultSet = parseYaml(
+                expectedOriginalUrl,
+                responseBuilder.emptyWithBody(recordingSource).build(),
+                STUB_UUID_ONE);
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
-        final StubResponse expectedResponse = spyStubRepository.getStubs().get(0).getResponse(true);
+        final StubResponse expectedResponse =
+                spyStubRepository.getStubs().get(0).getResponse(true);
         assertThat(expectedResponse.getBody()).isEqualTo(recordingSource);
 
         final StubRequest matchedRequest = spyStubRepository.getStubs().get(0).getRequest();
-        when(mockStubbyHttpTransport.httpRequestFromStub(eq(matchedRequest), anyString())).thenThrow(IOException.class);
+        when(mockStubbyHttpTransport.httpRequestFromStub(eq(matchedRequest), anyString()))
+                .thenThrow(IOException.class);
 
         final List<StubHttpLifecycle> stubs = yamlParseResultSet.getStubs();
         doReturn(stubs.get(0).getRequest()).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
@@ -877,18 +1025,20 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamArrayHasElementsWithinUrlEncodedQuotes()
+            throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "[\"cheburashka\",\"wendy\"]";
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -900,18 +1050,20 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes() throws Exception {
+    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedQuotes()
+            throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "[\"cheburashka\",\"wendy\"]";
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -923,19 +1075,21 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes() throws Exception {
+    public void
+            stubbedRequestEqualsAssertingRequest_WhenQueryParamUrlEncodedArrayHasElementsWithinUrlEncodedSingleQuotes()
+                    throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "['cheburashka','wendy']";
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -955,11 +1109,11 @@ public class StubRepositoryTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -979,11 +1133,11 @@ public class StubRepositoryTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -1003,11 +1157,11 @@ public class StubRepositoryTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -1019,7 +1173,9 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedSpacesWithinUrlEncodedSingleQuotes() throws Exception {
+    public void
+            stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedSpacesWithinUrlEncodedSingleQuotes()
+                    throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "['stalin and truman','are best friends']";
@@ -1031,12 +1187,12 @@ public class StubRepositoryTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -1048,7 +1204,9 @@ public class StubRepositoryTest {
     }
 
     @Test
-    public void stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedPlusWithinUrlEncodedSingleQuotes() throws Exception {
+    public void
+            stubbedRequestEqualsAssertingRequest_WhenQueryValues_HasArrayElementsWithEncodedPlusWithinUrlEncodedSingleQuotes()
+                    throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "['stalin and truman','are best friends']";
@@ -1060,12 +1218,12 @@ public class StubRepositoryTest {
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -1081,7 +1239,10 @@ public class StubRepositoryTest {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1090,13 +1251,22 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUUID(), stubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfig.getUUID(), stubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
@@ -1107,14 +1277,14 @@ public class StubRepositoryTest {
         httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
         httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
 
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
@@ -1129,21 +1299,29 @@ public class StubRepositoryTest {
         assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
         assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
 
-        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+        verify(mockStubbyHttpTransport, times(1))
+                .httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
 
-        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+        final String proxyRequestUuid =
+                stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isEqualTo(proxyRequestUuid);
     }
 
     @Test
-    public void shouldApplyProxyConfigAdditiveStrategyHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+    public void shouldApplyProxyConfigAdditiveStrategyHeadersToHttpTransport_WhenResponseIsProxiable()
+            throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1154,24 +1332,33 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUUID(), stubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfig.getUUID(), stubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         spyStubRepository.search(mockHttpServletRequest);
@@ -1180,17 +1367,24 @@ public class StubRepositoryTest {
 
         // The 'content-type', HEADER_X_STUBBY_PROXY_REQUEST and two additive headers
         assertThat(stubRequestCaptor.getValue().getHeaders().size()).isEqualTo(4);
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header")).isTrue();
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header-2")).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header"))
+                .isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("x-custom-header-2"))
+                .isTrue();
     }
 
     @Test
-    public void shouldNotApplyProxyConfigAdditiveStrategyEmptyHeadersToHttpTransport_WhenResponseIsProxiable() throws Exception {
+    public void shouldNotApplyProxyConfigAdditiveStrategyEmptyHeadersToHttpTransport_WhenResponseIsProxiable()
+            throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1199,24 +1393,33 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUUID(), stubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfig.getUUID(), stubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenReturn(new StubbyResponse(201, "OK!", new HashMap<>()));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         spyStubRepository.search(mockHttpServletRequest);
@@ -1225,16 +1428,22 @@ public class StubRepositoryTest {
 
         // The 'content-type' header and the HEADER_X_STUBBY_PROXY_REQUEST only
         assertThat(stubRequestCaptor.getValue().getHeaders().size()).isEqualTo(2);
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("content-type")).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey("content-type"))
+                .isTrue();
     }
 
     @Test
-    public void shouldApplyProxyConfigByProxyConfigUuidHeaderToHttpTransport_WhenResponseIsProxiable() throws Exception {
+    public void shouldApplyProxyConfigByProxyConfigUuidHeaderToHttpTransport_WhenResponseIsProxiable()
+            throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1250,14 +1459,23 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://google.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
-            put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
+                        put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
@@ -1268,15 +1486,15 @@ public class StubRepositoryTest {
         httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
         httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
 
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, anotherStubProxyConfig.getUUID())
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, anotherStubProxyConfig.getUUID())
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
@@ -1291,25 +1509,34 @@ public class StubRepositoryTest {
         assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
         assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
 
-        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+        verify(mockStubbyHttpTransport, times(1))
+                .httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         // the non-default proxy config was used to proxy the request because
         // the 'x-stubby4j-proxy-config-uuid' header was set on the asserting incoming HTTP request
         assertThat(stringCaptor.getValue()).isEqualTo("https://google.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
 
-        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+        final String proxyRequestUuid =
+                stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isEqualTo(proxyRequestUuid);
 
-        verify(mockStubbyHttpTransport, never()).httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
+        verify(mockStubbyHttpTransport, never())
+                .httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
     }
 
     @Test
-    public void shouldApplyDefaultProxyConfigWhenProxyConfigUuidHeaderIncorrectToHttpTransport_WhenResponseIsProxiable() throws Exception {
+    public void shouldApplyDefaultProxyConfigWhenProxyConfigUuidHeaderIncorrectToHttpTransport_WhenResponseIsProxiable()
+            throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1325,14 +1552,23 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://google.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
-            put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(defaultStubProxyConfig.getUUID(), defaultStubProxyConfig);
+                        put(anotherStubProxyConfig.getUUID(), anotherStubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
 
@@ -1343,15 +1579,15 @@ public class StubRepositoryTest {
         httpProxyResponseHeaders.put("Expires", Collections.singletonList("12345"));
         httpProxyResponseHeaders.put("SomeHeader", Arrays.asList("one", "two"));
 
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenReturn(new StubbyResponse(201, actualResponseText, httpProxyResponseHeaders));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, "WrongStubProxyConfigHeaderUUID")
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .withHeader(HEADER_X_STUBBY_PROXY_CONFIG, "WrongStubProxyConfigHeaderUUID")
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
@@ -1366,25 +1602,34 @@ public class StubRepositoryTest {
         assertThat(proxiedResponse.getHeaders().get("Expires")).isEqualTo("12345");
         assertThat(proxiedResponse.getHeaders().get("SomeHeader")).isEqualTo("[one, two]");
 
-        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+        verify(mockStubbyHttpTransport, times(1))
+                .httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         // the default proxy config was used to proxy the request because
         // the 'x-stubby4j-proxy-config-uuid' header was set to a value that does not exist in proxyConfigs map
         assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
 
-        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+        final String proxyRequestUuid =
+                stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isEqualTo(proxyRequestUuid);
 
-        verify(mockStubbyHttpTransport, never()).httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
+        verify(mockStubbyHttpTransport, never())
+                .httpRequestFromStub(any(StubRequest.class), eq("https://jsonplaceholder.typicode.com"));
     }
 
     @Test
-    public void shouldPassDefaultProxyConfigStateToHttpTransport_WhenResponseIsProxiableButExceptionThrows() throws Exception {
+    public void shouldPassDefaultProxyConfigStateToHttpTransport_WhenResponseIsProxiableButExceptionThrows()
+            throws Exception {
 
         final StubHttpLifecycle httpLifecycle = new StubHttpLifecycle.Builder()
                 .withUUID("uuid")
-                .withRequest(new StubRequest.Builder().withUrl("/some/uri/path/1").withMethod("GET").build())
+                .withRequest(new StubRequest.Builder()
+                        .withUrl("/some/uri/path/1")
+                        .withMethod("GET")
+                        .build())
                 .withResponse(new StubResponse.Builder().build())
                 .build();
 
@@ -1393,23 +1638,32 @@ public class StubRepositoryTest {
                 .withPropertyEndpoint("https://jsonplaceholder.typicode.com")
                 .build();
 
-        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(httpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(httpLifecycle.getUUID(), httpLifecycle);
-        }}, new HashMap<String, StubProxyConfig>() {{
-            put(stubProxyConfig.getUUID(), stubProxyConfig);
-        }});
+        final YamlParseResultSet yamlParseResultSet = new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(httpLifecycle.getUUID(), httpLifecycle);
+                    }
+                },
+                new HashMap<String, StubProxyConfig>() {
+                    {
+                        put(stubProxyConfig.getUUID(), stubProxyConfig);
+                    }
+                });
 
         spyStubRepository.resetStubsCache(yamlParseResultSet);
-        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString())).thenThrow(new IOException("Boom!"));
+        when(mockStubbyHttpTransport.httpRequestFromStub(any(StubRequest.class), anyString()))
+                .thenThrow(new IOException("Boom!"));
 
-        final StubRequest incomingRequest =
-                requestBuilder
-                        .withUrl("/post/1")
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
+        final StubRequest incomingRequest = requestBuilder
+                .withUrl("/post/1")
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .build();
 
         doReturn(incomingRequest).when(spyStubRepository).toStubRequest(any(HttpServletRequest.class));
         final StubSearchResult stubSearchResult = spyStubRepository.search(mockHttpServletRequest);
@@ -1419,29 +1673,34 @@ public class StubRepositoryTest {
         assertThat(proxiedResponse.getHttpStatusCode()).isEqualTo(HttpStatus.Code.INTERNAL_SERVER_ERROR);
         assertThat(proxiedResponse.getHeaders().size()).isEqualTo(1);
 
-        verify(mockStubbyHttpTransport, times(1)).httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
+        verify(mockStubbyHttpTransport, times(1))
+                .httpRequestFromStub(stubRequestCaptor.capture(), stringCaptor.capture());
 
         assertThat(stringCaptor.getValue()).isEqualTo("https://jsonplaceholder.typicode.com/post/1");
-        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST)).isTrue();
+        assertThat(stubRequestCaptor.getValue().getHeaders().containsKey(HEADER_X_STUBBY_PROXY_REQUEST))
+                .isTrue();
 
-        final String proxyRequestUuid = stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
-        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE)).isEqualTo(proxyRequestUuid);
+        final String proxyRequestUuid =
+                stubRequestCaptor.getValue().getHeaders().get(HEADER_X_STUBBY_PROXY_REQUEST);
+        assertThat(proxiedResponse.getHeaders().get(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isEqualTo(proxyRequestUuid);
     }
 
     @Test
-    public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing() throws Exception {
+    public void stubbedRequestNotEqualsAssertingRequest_WhenQueryParamArrayElementsHaveDifferentSpacing()
+            throws Exception {
 
         final String paramOne = "names";
         final String paramOneValue = "[\"cheburashka\", \"wendy\"]";
 
         final String url = "/invoice/789";
 
-        final StubRequest expectedRequest =
-                requestBuilder.withUrl(url)
-                        .withMethodGet()
-                        .withMethodHead()
-                        .withQuery(paramOne, paramOneValue).build();
-
+        final StubRequest expectedRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withMethodHead()
+                .withQuery(paramOne, paramOneValue)
+                .build();
 
         when(mockHttpServletRequest.getPathInfo()).thenReturn(url);
         when(mockHttpServletRequest.getMethod()).thenReturn(HttpMethods.GET);
@@ -1456,30 +1715,38 @@ public class StubRepositoryTest {
         return parseYaml(url, StubResponse.okResponse(), uuid);
     }
 
-    private YamlParseResultSet parseYaml(final String url, final StubResponse stubResponse, final String uuid) throws Exception {
-        final StubRequest stubRequest =
-                requestBuilder
-                        .withUrl(url)
-                        .withMethodGet()
-                        .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
-                        .build();
+    private YamlParseResultSet parseYaml(final String url, final StubResponse stubResponse, final String uuid)
+            throws Exception {
+        final StubRequest stubRequest = requestBuilder
+                .withUrl(url)
+                .withMethodGet()
+                .withHeader("content-type", Common.HEADER_APPLICATION_JSON)
+                .build();
 
         return parseYaml(stubRequest, stubResponse, uuid);
     }
 
-    private YamlParseResultSet parseYaml(final StubRequest stubRequest, final StubResponse stubResponse, final String uuid) throws Exception {
+    private YamlParseResultSet parseYaml(
+            final StubRequest stubRequest, final StubResponse stubResponse, final String uuid) throws Exception {
         final StubHttpLifecycle.Builder stubBuilder = new StubHttpLifecycle.Builder();
-        stubBuilder.withRequest(stubRequest)
+        stubBuilder
+                .withRequest(stubRequest)
                 .withResponse(stubResponse)
                 .withUUID(uuid)
                 .withCompleteYAML("This is marshalled yaml snippet");
 
         final StubHttpLifecycle stubHttpLifecycle = stubBuilder.build();
 
-        return new YamlParseResultSet(new LinkedList<StubHttpLifecycle>() {{
-            add(stubHttpLifecycle);
-        }}, new HashMap<String, StubHttpLifecycle>() {{
-            put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
-        }});
+        return new YamlParseResultSet(
+                new LinkedList<StubHttpLifecycle>() {
+                    {
+                        add(stubHttpLifecycle);
+                    }
+                },
+                new HashMap<String, StubHttpLifecycle>() {
+                    {
+                        put(stubHttpLifecycle.getUUID(), stubHttpLifecycle);
+                    }
+                });
     }
 }

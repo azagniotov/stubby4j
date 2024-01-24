@@ -1,37 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
-
-import io.github.azagniotov.stubby4j.caching.Cache;
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.client.StubbyResponse;
-import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
-import io.github.azagniotov.stubby4j.yaml.YamlParser;
-import org.eclipse.jetty.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_REQUEST;
@@ -49,6 +32,38 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.BODY;
 import static java.util.Collections.list;
 import static org.eclipse.jetty.http.HttpStatus.getCode;
 
+import io.github.azagniotov.stubby4j.caching.Cache;
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.client.StubbyResponse;
+import io.github.azagniotov.stubby4j.http.StubbyHttpTransport;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.YamlParseResultSet;
+import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.servlet.http.HttpServletRequest;
+import org.eclipse.jetty.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StubRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(StubRepository.class);
 
@@ -65,10 +80,11 @@ public class StubRepository {
     private final CompletableFuture<YamlParseResultSet> stubLoadComputation;
     private final StubbyHttpTransport stubbyHttpTransport;
 
-    public StubRepository(final File configFile,
-                          final Cache<String, StubHttpLifecycle> stubMatchesCache,
-                          final CompletableFuture<YamlParseResultSet> stubLoadComputation,
-                          final StubbyHttpTransport stubbyHttpTransport) {
+    public StubRepository(
+            final File configFile,
+            final Cache<String, StubHttpLifecycle> stubMatchesCache,
+            final CompletableFuture<YamlParseResultSet> stubLoadComputation,
+            final StubbyHttpTransport stubbyHttpTransport) {
         this.stubs = new ArrayList<>();
         this.uuidToStub = new ConcurrentHashMap<>();
         this.proxyConfigs = new ConcurrentHashMap<>();
@@ -80,14 +96,13 @@ public class StubRepository {
         this.stubMatchesCache = stubMatchesCache;
     }
 
-
     private static void logMatch(final String typeDescription, long elapsed, StubHttpLifecycle matched) {
-//        StringBuilder message = new StringBuilder()
-//                .append("Found a match after ")
-//                .append(elapsed)
-//                .append(" milliseconds URL [")
-//                .append(matched.getUrl())
-//                .append("]");
+        //        StringBuilder message = new StringBuilder()
+        //                .append("Found a match after ")
+        //                .append(elapsed)
+        //                .append(" milliseconds URL [")
+        //                .append(matched.getUrl())
+        //                .append("]");
         StringBuilder message = new StringBuilder()
                 .append("Found a ")
                 .append(typeDescription)
@@ -95,9 +110,7 @@ public class StubRepository {
                 .append(elapsed)
                 .append(" milliseconds");
         if (isSet(matched.getDescription())) {
-            message.append(" Description [")
-                    .append(matched.getDescription())
-                    .append("]");
+            message.append(" Description [").append(matched.getDescription()).append("]");
         }
 
         ANSITerminal.status(message.toString());
@@ -108,7 +121,9 @@ public class StubRepository {
         final StubRequest assertionStubRequest = this.toStubRequest(incomingRequest);
         logAssertingRequest(assertionStubRequest);
 
-        final StubResponse match = findMatch(new StubHttpLifecycle.Builder().withRequest(assertionStubRequest).build());
+        final StubResponse match = findMatch(new StubHttpLifecycle.Builder()
+                .withRequest(assertionStubRequest)
+                .build());
 
         return new StubSearchResult(assertionStubRequest, match);
     }
@@ -126,7 +141,8 @@ public class StubRepository {
                 .withMethod(request.getMethod());
 
         final Enumeration<String> headerNamesEnumeration = request.getHeaderNames();
-        final List<String> headerNames = isNotNull(headerNamesEnumeration) ? list(request.getHeaderNames()) : new LinkedList<>();
+        final List<String> headerNames =
+                isNotNull(headerNamesEnumeration) ? list(request.getHeaderNames()) : new LinkedList<>();
         for (final String headerName : headerNames) {
             final String headerValue = request.getHeader(headerName);
 
@@ -198,22 +214,24 @@ public class StubRepository {
         final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
         final Optional<StubHttpLifecycle> cachedMatchCandidateOptional = stubMatchesCache.get(incomingRequestHashCode);
 
-        //TODO BUG: When stubs are cached, upon finding the previously cached match by hashCode,
+        // TODO BUG: When stubs are cached, upon finding the previously cached match by hashCode,
         // if stubbed response has template tokens for dynamic token replacement, the tokens are
         // not replaced with values from the incoming request because the cached stub is not going
         // through the same matching process like upon the first match. Either fix this bug or just
         // deprecate the stub caching all together, as it is causing more headaches than not.
         // Also, deprecate the --disable_stub_caching command line flag if the caching has retired.
-        return cachedMatchCandidateOptional.map(cachedMatchCandidate -> {
-            ANSITerminal.loaded(String.format("Local cache contains a match for hashCode [%s]", incomingRequestHashCode));
-            LOGGER.debug("Local cache contains a match for hashCode [{}].", incomingRequestHashCode);
+        return cachedMatchCandidateOptional
+                .map(cachedMatchCandidate -> {
+                    ANSITerminal.loaded(
+                            String.format("Local cache contains a match for hashCode [%s]", incomingRequestHashCode));
+                    LOGGER.debug("Local cache contains a match for hashCode [{}].", incomingRequestHashCode);
 
-            final long elapsed = System.currentTimeMillis() - initialStart;
-            logMatch("stubbed match in cache (i.e.: repeated request)", elapsed, cachedMatchCandidate);
+                    final long elapsed = System.currentTimeMillis() - initialStart;
+                    logMatch("stubbed match in cache (i.e.: repeated request)", elapsed, cachedMatchCandidate);
 
-            return Optional.of(cachedMatchCandidate);
-
-        }).orElseGet(() -> matchAll(incomingStub, initialStart));
+                    return Optional.of(cachedMatchCandidate);
+                })
+                .orElseGet(() -> matchAll(incomingStub, initialStart));
     }
 
     private StubResponse proxyRequest(final StubHttpLifecycle incomingHttpLifecycle) {
@@ -227,13 +245,16 @@ public class StubRepository {
                 .getOrDefault(HEADER_X_STUBBY_PROXY_CONFIG, StubProxyConfig.Builder.DEFAULT_UUID);
 
         if (!proxyConfigs.containsKey(proxyConfigUuidHeader)) {
-            final String warning = String.format("Could not find proxy config by UUID using header value '%s', falling back to 'default'", proxyConfigUuidHeader);
+            final String warning = String.format(
+                    "Could not find proxy config by UUID using header value '%s', falling back to 'default'",
+                    proxyConfigUuidHeader);
             ANSITerminal.warn(warning);
             LOGGER.warn(warning);
         }
 
         final StubProxyConfig proxyConfig = proxyConfigs.getOrDefault(proxyConfigUuidHeader, catchAllProxyConfig);
-        final String proxyEndpoint = String.format("%s%s", proxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
+        final String proxyEndpoint =
+                String.format("%s%s", proxyConfig.getPropertyEndpoint(), incomingHttpLifecycle.getUrl());
 
         final String proxyRoundTripUuid = UUID.randomUUID().toString();
         final Map<String, String> proxyResponseFlatHeaders = new HashMap<>();
@@ -244,8 +265,10 @@ public class StubRepository {
 
             handleIfAdditiveProxyStrategy(incomingRequest, proxyConfig);
 
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(incomingRequest, proxyEndpoint);
-            for (Map.Entry<String, List<String>> entry : stubbyResponse.headers().entrySet()) {
+            final StubbyResponse stubbyResponse =
+                    stubbyHttpTransport.httpRequestFromStub(incomingRequest, proxyEndpoint);
+            for (Map.Entry<String, List<String>> entry :
+                    stubbyResponse.headers().entrySet()) {
                 final String headerName = ObjectUtils.isNull(entry.getKey()) ? "null" : entry.getKey();
                 if (entry.getValue().size() == 1) {
                     proxyResponseFlatHeaders.put(headerName, entry.getValue().get(0));
@@ -275,17 +298,20 @@ public class StubRepository {
     private void handleIfAdditiveProxyStrategy(final StubRequest incomingRequest, final StubProxyConfig proxyConfig) {
         if (proxyConfig.isAdditiveStrategy()) {
             if (proxyConfig.hasHeaders()) {
-                for (final Map.Entry<String, String> headerEntry : proxyConfig.getHeaders().entrySet()) {
+                for (final Map.Entry<String, String> headerEntry :
+                        proxyConfig.getHeaders().entrySet()) {
                     incomingRequest.getHeaders().put(headerEntry.getKey(), headerEntry.getValue());
                 }
             }
         }
     }
 
-    private void recordResponse(StubHttpLifecycle incomingRequest, StubHttpLifecycle matchedStub, StubResponse matchedStubResponse) {
+    private void recordResponse(
+            StubHttpLifecycle incomingRequest, StubHttpLifecycle matchedStub, StubResponse matchedStubResponse) {
         final String recordingSource = String.format("%s%s", matchedStubResponse.getBody(), incomingRequest.getUrl());
         try {
-            final StubbyResponse stubbyResponse = stubbyHttpTransport.httpRequestFromStub(matchedStub.getRequest(), recordingSource);
+            final StubbyResponse stubbyResponse =
+                    stubbyHttpTransport.httpRequestFromStub(matchedStub.getRequest(), recordingSource);
             injectObjectFields(matchedStubResponse, BODY.toString(), stubbyResponse.body());
         } catch (Exception e) {
             ANSITerminal.error(String.format("Could not record from %s: %s", recordingSource, e.toString()));
@@ -300,7 +326,8 @@ public class StubRepository {
                 logMatch("stubbed match", elapsed, stubbed);
 
                 final String incomingRequestHashCode = String.valueOf(incomingStub.hashCode());
-                // ANSITerminal.status(String.format("Caching the found match for hashCode [%s]", incomingRequestHashCode));
+                // ANSITerminal.status(String.format("Caching the found match for hashCode [%s]",
+                // incomingRequestHashCode));
                 // LOGGER.debug("Caching the found match for hashCode [{}].", incomingRequestHashCode);
                 stubMatchesCache.putIfAbsent(incomingRequestHashCode, stubbed);
 
@@ -351,11 +378,13 @@ public class StubRepository {
         resetStubsCache(yamlParser.parse(this.configFile.getParent(), configFile));
     }
 
-    public synchronized void refreshStubsByPost(final YamlParser yamlParser, final String postPayload) throws Exception {
+    public synchronized void refreshStubsByPost(final YamlParser yamlParser, final String postPayload)
+            throws Exception {
         resetStubsCache(yamlParser.parse(this.configFile.getParent(), postPayload));
     }
 
-    public synchronized String refreshStubByIndex(final YamlParser yamlParser, final String putPayload, final int index) throws Exception {
+    public synchronized String refreshStubByIndex(final YamlParser yamlParser, final String putPayload, final int index)
+            throws Exception {
         final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
         final StubHttpLifecycle newStub = yamlParseResultSet.getStubs().get(0);
         updateStubByIndex(index, newStub);
@@ -363,7 +392,8 @@ public class StubRepository {
         return newStub.getUrl();
     }
 
-    public synchronized String refreshStubByUuid(final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
+    public synchronized String refreshStubByUuid(
+            final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
         final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
         final StubHttpLifecycle newStub = yamlParseResultSet.getStubs().get(0);
         updateStubByUuid(uuid, newStub);
@@ -371,9 +401,11 @@ public class StubRepository {
         return newStub.getUrl();
     }
 
-    public synchronized String refreshProxyConfigByUuid(final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
+    public synchronized String refreshProxyConfigByUuid(
+            final YamlParser yamlParser, final String putPayload, final String uuid) throws Exception {
         final YamlParseResultSet yamlParseResultSet = yamlParser.parse(this.configFile.getParent(), putPayload);
-        final StubProxyConfig newStubProxyConfig = yamlParseResultSet.getProxyConfigs().get(uuid);
+        final StubProxyConfig newStubProxyConfig =
+                yamlParseResultSet.getProxyConfigs().get(uuid);
         updateProxyConfigByUuid(uuid, newStubProxyConfig);
 
         return newStubProxyConfig.getPropertyEndpoint();
@@ -394,7 +426,11 @@ public class StubRepository {
     }
 
     public String getResourceStatsAsCsv() {
-        final String csvNoHeader = resourceStats.toString().replaceAll("\\{|\\}", "").replaceAll(", ", FileUtils.BR).replaceAll("=", ",");
+        final String csvNoHeader = resourceStats
+                .toString()
+                .replaceAll("\\{|\\}", "")
+                .replaceAll(", ", FileUtils.BR)
+                .replaceAll("=", ",");
         return String.format("resourceId,hits%s%s", FileUtils.BR, csvNoHeader);
     }
 
@@ -428,7 +464,6 @@ public class StubRepository {
         }
     }
 
-
     public String getYamlConfigCanonicalPath() {
         try {
             return this.configFile.getCanonicalPath();
@@ -442,7 +477,9 @@ public class StubRepository {
 
         if (!proxyConfigs.isEmpty()) {
             for (final Map.Entry<String, StubProxyConfig> entry : proxyConfigs.entrySet()) {
-                builder.append(entry.getValue().getProxyConfigAsYAML()).append(FileUtils.BR).append(FileUtils.BR);
+                builder.append(entry.getValue().getProxyConfigAsYAML())
+                        .append(FileUtils.BR)
+                        .append(FileUtils.BR);
             }
             builder.append(FileUtils.BR);
         }
@@ -480,7 +517,8 @@ public class StubRepository {
 
     synchronized void updateProxyConfigByUuid(final String uuid, final StubProxyConfig newStubProxyConfig) {
         if (!uuid.equals(newStubProxyConfig.getUUID())) {
-            final String message = String.format("Provided proxy config UUID '%s' does not match the target UUID '%s'",
+            final String message = String.format(
+                    "Provided proxy config UUID '%s' does not match the target UUID '%s'",
                     newStubProxyConfig.getUUID(), uuid);
             throw new IllegalArgumentException(message);
         }
@@ -574,7 +612,8 @@ public class StubRepository {
         final Map<String, StubProxyConfig> loadedProxyConfigs = yamlParseResultSet.getProxyConfigs();
 
         if (!loadedProxyConfigs.isEmpty() && !loadedProxyConfigs.containsKey(StubProxyConfig.Builder.DEFAULT_UUID)) {
-            throw new IllegalStateException("YAML config contains proxy configs, but the 'default' proxy config is not configured, how so?");
+            throw new IllegalStateException(
+                    "YAML config contains proxy configs, but the 'default' proxy config is not configured, how so?");
         }
 
         this.proxyConfigs.putAll(loadedProxyConfigs);

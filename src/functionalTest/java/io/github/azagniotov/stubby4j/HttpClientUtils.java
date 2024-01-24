@@ -1,6 +1,29 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
 
+import static java.util.Arrays.asList;
+
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
+import java.net.ProxySelector;
+import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -13,45 +36,34 @@ import org.eclipse.jetty.http2.client.HTTP2Client;
 import org.eclipse.jetty.http2.client.http.HttpClientTransportOverHTTP2;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import java.net.ProxySelector;
-import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.Arrays.asList;
-
 public final class HttpClientUtils {
 
-    private HttpClientUtils() {
-
-    }
+    private HttpClientUtils() {}
 
     static CloseableHttpClient buildHttpClient(final String tlsVersion) throws Exception {
         return buildHttpClient(tlsVersion, buildSSLContextWithRemoteCertificateLoaded(tlsVersion));
     }
 
-    private static CloseableHttpClient buildHttpClient(final String tlsVersion, final SSLContext sslContext) throws Exception {
+    private static CloseableHttpClient buildHttpClient(final String tlsVersion, final SSLContext sslContext)
+            throws Exception {
 
         System.out.println("Running tests using TLS version: " + tlsVersion);
 
         SSLEngine engine = sslContext.createSSLEngine();
-        engine.setEnabledProtocols(new String[]{tlsVersion});
+        engine.setEnabledProtocols(new String[] {tlsVersion});
         System.out.println("SSLEngine [client] enabled protocols: ");
         System.out.println(new HashSet<>(asList(engine.getEnabledProtocols())));
 
-        final SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext,
-                new DefaultHostnameVerifier());
+        final SSLConnectionSocketFactory sslSocketFactory =
+                new SSLConnectionSocketFactory(sslContext, new DefaultHostnameVerifier());
 
         return HttpClientBuilder.create()
-                .setDefaultRequestConfig(RequestConfig
-                        .custom()
+                .setDefaultRequestConfig(RequestConfig.custom()
                         .setSocketTimeout(45000)
                         .setConnectTimeout(45000)
                         .build())
                 // When .useSystemProperties(), the FakeX509TrustManager gets exercised
-                //.useSystemProperties()
+                // .useSystemProperties()
                 .setSSLSocketFactory(sslSocketFactory)
                 .setMaxConnTotal(200)
                 .setMaxConnPerRoute(20)
@@ -61,8 +73,10 @@ public final class HttpClientUtils {
 
                 // In ProxyConfigWithStubsTest.shouldReturnProxiedRequestResponse_WhenStubsWereNotMatched():
                 //
-                // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format" error:
-                // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
+                // I had to set this header to avoid "Not in GZIP format java.util.zip.ZipException: Not in GZIP format"
+                // error:
+                // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on
+                // WEB_CLIENT
                 .disableContentCompression()
                 .disableAutomaticRetries()
                 .build();
@@ -89,7 +103,8 @@ public final class HttpClientUtils {
         // 4. Load the generated FILE_NAME.jks file into the trust store of SSLContext, which then can be
         //    used to create an SSL socket factory for your web client. The STUBBY_SELF_SIGNED_TRUST_STORE
         //    was created using the following code:
-        //    https://github.com/azagniotov/stubby4j/blob/737f1f16650ce78a9a63f8f3e23c60ba2769cdb4/src/main/java/io/github/azagniotov/stubby4j/server/ssl/SslUtils.java#L168-L172
+        //
+        // https://github.com/azagniotov/stubby4j/blob/737f1f16650ce78a9a63f8f3e23c60ba2769cdb4/src/main/java/io/github/azagniotov/stubby4j/server/ssl/SslUtils.java#L168-L172
         // ---------------------------------------------------------------------------------
         return SSLContexts.custom()
                 .setProtocol(tlsVersion)

@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.utils;
+
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -6,54 +25,47 @@ import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
 import io.github.azagniotov.stubby4j.stubs.StubRequest;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
-import static io.github.azagniotov.stubby4j.utils.StringUtils.isSet;
-
 @GeneratedCodeClassCoverageExclusion
 public final class ConsoleUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
-    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
-    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP_END = " ***** [/DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP =
+            " ***** [DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_ASSERTING_HTTP_REQUEST_DUMP_END =
+            " ***** [/DEBUG INCOMING ASSERTING HTTP REQUEST DUMP] ***** ";
 
-    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP = " ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
-    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END = " ***** [/DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP =
+            " ***** [DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
+    private static final String DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END =
+            " ***** [/DEBUG INCOMING RAW HTTP REQUEST DUMP] ***** ";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static boolean debug = false;
 
-    private ConsoleUtils() {
+    private ConsoleUtils() {}
 
-    }
+    public static void logIncomingRequestError(
+            final HttpServletRequest request, final String source, final String error) {
 
-
-    public static void logIncomingRequestError(final HttpServletRequest request, final String source, final String error) {
-
-        final String logMessage = String.format("[%s] -> %s [%s]%s: %s",
-                getLocalDateTime(),
-                request.getMethod(),
-                source,
-                request.getRequestURI(),
-                error
-        );
+        final String logMessage = String.format(
+                "[%s] -> %s [%s]%s: %s",
+                getLocalDateTime(), request.getMethod(), source, request.getRequestURI(), error);
         ANSITerminal.error(logMessage);
         LOGGER.error(logMessage);
     }
-
 
     private static void logRawIncomingRequest(final HttpServletRequest request) {
         ANSITerminal.warn(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP);
@@ -65,25 +77,26 @@ public final class ConsoleUtils {
         LOGGER.debug(DEBUG_INCOMING_RAW_HTTP_REQUEST_DUMP_END);
     }
 
-
     public static void logIncomingRequest(final HttpServletRequest request) {
 
-        final String logMessage = String.format("[%s] => %s %s on [%s]",
+        final String logMessage = String.format(
+                "[%s] => %s %s on [%s]",
                 getLocalDateTime(),
                 StringUtils.toUpper(request.getScheme()),
                 request.getMethod(),
-                request.getRequestURI()
-        );
+                request.getRequestURI());
         ANSITerminal.incoming(logMessage);
         LOGGER.info(logMessage);
 
         if (debug) {
 
-            final List<String> skipUriPrefix = new LinkedList<String>() {{
-                add("/ajax");
-                add("/status");
-                add("/favicon");
-            }};
+            final List<String> skipUriPrefix = new LinkedList<String>() {
+                {
+                    add("/ajax");
+                    add("/status");
+                    add("/favicon");
+                }
+            };
 
             for (final String prefix : skipUriPrefix) {
                 if (request.getRequestURI().startsWith(prefix)) {
@@ -97,17 +110,16 @@ public final class ConsoleUtils {
 
     public static void logIncomingWebSocketTextRequest(final ServletUpgradeRequest request, final String message) {
 
-        final String logMessage = String.format("[%s] => %s %s on [%s]: %s",
+        final String logMessage = String.format(
+                "[%s] => %s %s on [%s]: %s",
                 getLocalDateTime(),
                 StringUtils.toUpper(request.isSecure() ? "wss" : "ws"),
                 request.getMethod(),
                 request.getRequestURI(),
-                message
-        );
+                message);
         ANSITerminal.incoming(logMessage);
         LOGGER.info(logMessage);
     }
-
 
     public static void logAssertingRequest(final StubRequest assertingStubRequest) {
         if (debug) {
@@ -130,8 +142,8 @@ public final class ConsoleUtils {
     }
 
     public static void logUnmarshalledWebSocketConfig(final StubWebSocketConfig stubWebSocketConfig) {
-        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded web socket config metadata: ")
-                .append(stubWebSocketConfig.getUrl());
+        final StringBuilder loadedMsgBuilder =
+                new StringBuilder("Loaded web socket config metadata: ").append(stubWebSocketConfig.getUrl());
         if (!stubWebSocketConfig.getSubProtocols().isEmpty()) {
             loadedMsgBuilder.append(String.format(" %s", stubWebSocketConfig.getSubProtocols()));
         }
@@ -148,8 +160,8 @@ public final class ConsoleUtils {
     }
 
     public static void logUnmarshalledProxyConfig(final StubProxyConfig stubProxyConfig) {
-        final StringBuilder loadedMsgBuilder = new StringBuilder("Loaded proxy config metadata: ")
-                .append(stubProxyConfig.getUUID());
+        final StringBuilder loadedMsgBuilder =
+                new StringBuilder("Loaded proxy config metadata: ").append(stubProxyConfig.getUUID());
         if (isSet(stubProxyConfig.getDescription())) {
             loadedMsgBuilder.append(String.format(" [%s]", stubProxyConfig.getDescription()));
         }
@@ -184,18 +196,13 @@ public final class ConsoleUtils {
      *
      * @param isDebug if true, the incoming raw HTTP request will be dumped to console
      */
-
     public static void enableDebug(final boolean isDebug) {
         debug = isDebug;
     }
 
-
     private static void lorFormattedResponse(int status) {
-        final String logMessage = String.format("[%s] <= %s %s\n",
-                getLocalDateTime(),
-                status,
-                HttpStatus.getMessage(status)
-        );
+        final String logMessage =
+                String.format("[%s] <= %s %s\n", getLocalDateTime(), status, HttpStatus.getMessage(status));
 
         if (HttpStatus.isServerError(status) || HttpStatus.isClientError(status)) {
             ANSITerminal.error(logMessage);

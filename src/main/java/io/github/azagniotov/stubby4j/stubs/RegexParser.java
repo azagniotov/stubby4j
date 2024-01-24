@@ -1,19 +1,32 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
 
+import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.caching.Cache;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
-
 enum RegexParser {
-
     INSTANCE;
 
     // Pattern.MULTILINE changes the behavior of '^' and '$' characters by telling Java to accept the
@@ -24,7 +37,7 @@ enum RegexParser {
     //
     // You need to make sure that you regex pattern covers both \r (carriage return) and \n (linefeed).
     // It is achievable by using symbol '\s+', which covers both \r (carriage return) and \n (linefeed).
-    static final int[] REGEX_FLAGS = new int[]{Pattern.MULTILINE, Pattern.DOTALL};
+    static final int[] REGEX_FLAGS = new int[] {Pattern.MULTILINE, Pattern.DOTALL};
     /**
      * ASCII character decimal values
      * '$'    - 36
@@ -42,12 +55,13 @@ enum RegexParser {
      * '|'    - 124
      * '}'    - 125
      */
-
     @VisibleForTesting
-    static final char[] REGEX_CHARS = new char[]{'$', '(', ')', '*', '+', '.', '?', '[', ']', '\\', '^', '{', '|', '}'};
+    static final char[] REGEX_CHARS =
+            new char[] {'$', '(', ')', '*', '+', '.', '?', '[', ']', '\\', '^', '{', '|', '}'};
 
     @VisibleForTesting
     static final Cache<Integer, Pattern> REGEX_PATTERN_CACHE = Cache.regexPatternCache();
+
     private static final boolean[] SPECIAL_CHARS;
     private static final int REGEX_CHAR_LENGTH_THRESHOLD = 2;
 
@@ -123,7 +137,11 @@ enum RegexParser {
         }
     }
 
-    boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups) {
+    boolean match(
+            final String patternCandidate,
+            final String subject,
+            final String templateTokenName,
+            final Map<String, String> regexGroups) {
         int currentFlags = 0;
         for (int flag : REGEX_FLAGS) {
             if (match(patternCandidate, subject, templateTokenName, regexGroups, currentFlags |= flag)) {
@@ -133,7 +151,12 @@ enum RegexParser {
         return false;
     }
 
-    private boolean match(final String patternCandidate, final String subject, final String templateTokenName, final Map<String, String> regexGroups, final int flags) {
+    private boolean match(
+            final String patternCandidate,
+            final String subject,
+            final String templateTokenName,
+            final Map<String, String> regexGroups,
+            final int flags) {
         try {
             final Pattern computedPattern = getCachedPatternOrCacheNewCompiled(patternCandidate, flags);
             final Matcher matcher = computedPattern.matcher(subject);
@@ -142,8 +165,10 @@ enum RegexParser {
                 // group(0) holds the full regex matchStubByIndex
                 regexGroups.put(buildToken(templateTokenName, 0), matcher.group(0));
 
-                //Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern regardless
-                // of whether the capturing groups actually participated in the matchStubByIndex. It does not include matcher.group(0)
+                // Matcher.groupCount() returns the number of explicitly defined capturing groups in the pattern
+                // regardless
+                // of whether the capturing groups actually participated in the matchStubByIndex. It does not include
+                // matcher.group(0)
                 final int groupCount = matcher.groupCount();
                 if (groupCount > 0) {
                     for (int idx = 1; idx <= groupCount; idx++) {

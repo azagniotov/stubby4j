@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.client.http.HttpMethods;
 import com.google.api.client.http.HttpRequest;
@@ -9,16 +27,13 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
+import java.io.InputStream;
+import java.net.URL;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.net.URL;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class AdminPortalTest {
 
@@ -134,7 +149,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnSingleStubbedRequestAsYAML_WhenSuccessfulGetMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_ReturnSingleStubbedRequestAsYAML_WhenSuccessfulGetMade_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
         final HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -150,7 +166,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulGetMade_ToAdminPortalRootWithInvalidIndexURI() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulGetMade_ToAdminPortalRootWithInvalidIndexURI()
+            throws Exception {
 
         final int invalidIndex = 88888888;
         final String requestUrl = String.format("%s/%s", ADMIN_URL, invalidIndex);
@@ -161,7 +178,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulGetMade_ToAdminPortalRootWithNonExistentUuid() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulGetMade_ToAdminPortalRootWithNonExistentUuid()
+            throws Exception {
 
         final String nonExistentUuid = "kshdfsdy894kwbkf";
         final String requestUrl = String.format("%s/%s", ADMIN_URL, nonExistentUuid);
@@ -183,11 +201,12 @@ public class AdminPortalTest {
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
         assertThat(statusMessage).isEqualTo("Method Not Allowed");
-        //assertThat(responseMessage).isEqualTo("Method PUT is not allowed on URI /");
+        // assertThat(responseMessage).isEqualTo("Method PUT is not allowed on URI /");
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s/1", ADMIN_URL);
         final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl);
@@ -197,7 +216,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidUuid() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulEmptyPutMade_ToAdminPortalRootWithValidUuid()
+            throws Exception {
 
         final String uuid = "9136d8b7-f7a7-478d-97a5-53292484aaf6";
 
@@ -209,7 +229,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithInvalidIndexURI() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithInvalidIndexURI()
+            throws Exception {
 
         final int invalidIndex = 88888888;
         final String requestUrl = String.format("%s/%s", ADMIN_URL, invalidIndex);
@@ -220,7 +241,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithNonExistentUuid() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulPutMade_ToAdminPortalRootWithNonExistentUuid()
+            throws Exception {
 
         final String nonExistentUuid = "fdsfsdfsd07f9sd7";
         final String requestUrl = String.format("%s/%s", ADMIN_URL, nonExistentUuid);
@@ -232,7 +254,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_UpdateStubbedRequest_WhenSuccessfulPutMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_UpdateStubbedRequest_WhenSuccessfulPutMade_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
         HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -265,7 +288,6 @@ public class AdminPortalTest {
         assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
-
 
         httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
         httpGetResponse = httpGetRequest.execute();
@@ -409,7 +431,6 @@ public class AdminPortalTest {
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
 
-
         httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
         httpGetResponse = httpGetRequest.execute();
         getResponseContent = httpGetResponse.parseAsString().trim();
@@ -426,7 +447,9 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_UpdateStubbedRequest_WithEnquotedForwardSlashesEscapedJsonRequest_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void
+            should_UpdateStubbedRequest_WithEnquotedForwardSlashesEscapedJsonRequest_ToAdminPortalRootWithValidIndexURI()
+                    throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
         HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -443,7 +466,8 @@ public class AdminPortalTest {
         final InputStream jsonInputStream = url.openStream();
         final String escapedJsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
-        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, escapedJsonToUpdate);
+        final HttpRequest httpPutRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, escapedJsonToUpdate);
 
         final HttpResponse httpPutResponse = httpPutRequest.execute();
         final String putResponseContent = httpPutResponse.parseAsString().trim();
@@ -452,7 +476,6 @@ public class AdminPortalTest {
         assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
-
 
         httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
         httpGetResponse = httpGetRequest.execute();
@@ -470,7 +493,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_UpdateStubbedRequest_WithForwardSlashesEscapedJsonRequest_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_UpdateStubbedRequest_WithForwardSlashesEscapedJsonRequest_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/0");
         HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -487,7 +511,8 @@ public class AdminPortalTest {
         final InputStream jsonInputStream = url.openStream();
         final String escapedJsonToUpdate = StringUtils.inputStreamToString(jsonInputStream);
 
-        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, escapedJsonToUpdate);
+        final HttpRequest httpPutRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, escapedJsonToUpdate);
 
         final HttpResponse httpPutResponse = httpPutRequest.execute();
         final String putResponseContent = httpPutResponse.parseAsString().trim();
@@ -496,7 +521,6 @@ public class AdminPortalTest {
         assertThat(HttpStatus.CREATED_201).isEqualTo(httpPutResponse.getStatusCode());
         assertThat(putResponseLocationHeader).isEqualTo("^/resources/something/new?someKey=someValue");
         assertThat(putResponseContent).isEqualTo("Stub request index#0 updated successfully");
-
 
         httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
         httpGetResponse = httpGetRequest.execute();
@@ -514,7 +538,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidIndexURI() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidIndexURI()
+            throws Exception {
 
         final int invalidIndex = 88888888;
         final String requestUrl = String.format("%s/%s", ADMIN_URL, invalidIndex);
@@ -525,7 +550,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_DeleteStubbedRequest_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_DeleteStubbedRequest_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/2");
         HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -534,10 +560,11 @@ public class AdminPortalTest {
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
         assertThat(getResponseContent).contains("request");
-        assertThat(getResponseContent).contains("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+        assertThat(getResponseContent)
+                .contains(
+                        "url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
-
 
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
 
@@ -552,7 +579,9 @@ public class AdminPortalTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).doesNotContain("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+        assertThat(getResponseContent)
+                .doesNotContain(
+                        "url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
     }
 
     @Test
@@ -565,11 +594,13 @@ public class AdminPortalTest {
         final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
-        assertThat(deleteResponseContent).isEqualTo("Stub request uuid#9136d8b7-f7a7-478d-97a5-53292484aaf6 deleted successfully");
+        assertThat(deleteResponseContent)
+                .isEqualTo("Stub request uuid#9136d8b7-f7a7-478d-97a5-53292484aaf6 deleted successfully");
     }
 
     @Test
-    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidUuid() throws Exception {
+    public void should_ReturnExpectedError_WhenSuccessfulDeleteMade_ToAdminPortalRootWithInvalidUuid()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/this-uuid-does-not-exist");
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);
@@ -579,7 +610,8 @@ public class AdminPortalTest {
     }
 
     @Test
-    public void should_DeleteAllStubbedRequests_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI() throws Exception {
+    public void should_DeleteAllStubbedRequests_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidIndexURI()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/2");
         HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl);
@@ -588,10 +620,11 @@ public class AdminPortalTest {
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
         assertThat(getResponseContent).contains("request");
-        assertThat(getResponseContent).contains("url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
+        assertThat(getResponseContent)
+                .contains(
+                        "url: ^/[a-z]{3}-[a-z]{3}/[0-9]{2}/[A-Z]{2}/[a-z0-9]+\\?paramOne=[a-zA-Z]{3,8}&paramTwo=[a-zA-Z]{3,8}");
         assertThat(getResponseContent).contains("response");
         assertThat(getResponseContent).contains("content-type: application/json");
-
 
         final String deleteAllRequestUrl = String.format("%s", ADMIN_URL);
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, deleteAllRequestUrl);
@@ -610,7 +643,6 @@ public class AdminPortalTest {
         assertThat(getResponseContent).isEmpty();
     }
 
-
     @Test
     public void should_ReturnExpectedError_WhenSuccessfulPostMade_ToAdminPortalRootWithAnIndexURI() throws Exception {
 
@@ -624,7 +656,7 @@ public class AdminPortalTest {
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED_405);
         assertThat(statusMessage).isEqualTo("Method Not Allowed");
-        //assertThat(responseMessage).isEqualTo("Method POST is not allowed on URI /5");
+        // assertThat(responseMessage).isEqualTo("Method POST is not allowed on URI /5");
     }
 
     @Test
@@ -641,7 +673,8 @@ public class AdminPortalTest {
     public void should_ReturnExpectedError_WhenSuccessfulInvalidPostMade_ToAdminPortalRoot() throws Exception {
 
         final String requestUrl = String.format("%s/", ADMIN_URL);
-        final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, "unparseable rubbish post content");
+        final HttpRequest httpPuttRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, "unparseable rubbish post content");
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
@@ -656,7 +689,8 @@ public class AdminPortalTest {
         final InputStream jsonInputStream = url.openStream();
         final String jsonToCreate = StringUtils.inputStreamToString(jsonInputStream);
 
-        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
+        final HttpRequest httpDeleteRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
 
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
         assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);

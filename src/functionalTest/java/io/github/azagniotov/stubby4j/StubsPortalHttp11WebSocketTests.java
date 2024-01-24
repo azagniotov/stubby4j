@@ -1,4 +1,25 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp11;
+import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
+import static org.junit.Assert.assertThrows;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
@@ -7,6 +28,20 @@ import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
@@ -29,26 +64,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp11;
-import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
-import static org.junit.Assert.assertThrows;
-
 // There are jetty specific tests that I want to run last, hence the MethodSorters.NAME_ASCENDING,
 // since one of the tests will close the server websocket and stubby4j will have to be restarted.
 // Normally, it is a bad practice to have some interdependency in tests and should be avoided.
@@ -63,14 +78,22 @@ public class StubsPortalHttp11WebSocketTests {
     private static final String ADMIN_URL = String.format("http://localhost:%s", ADMIN_PORT);
     private static final String WEBSOCKET_ROOT_PATH_URL = String.format("ws://localhost:%s/ws", STUBS_PORT);
 
-    private static final URI REQUEST_URL_HELLO_1 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/1"));
-    private static final URI REQUEST_URL_HELLO_2 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/2"));
-    private static final URI REQUEST_URL_HELLO_3 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/3"));
-    private static final URI REQUEST_URL_HELLO_4 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/4"));
-    private static final URI REQUEST_URL_HELLO_5 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/5"));
-    private static final URI REQUEST_URL_HELLO_6 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/6"));
-    private static final URI REQUEST_URL_HELLO_7 = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/7"));
-    private static final URI NON_STUBBED_REQUEST_URL = URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/blah"));
+    private static final URI REQUEST_URL_HELLO_1 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/1"));
+    private static final URI REQUEST_URL_HELLO_2 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/2"));
+    private static final URI REQUEST_URL_HELLO_3 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/3"));
+    private static final URI REQUEST_URL_HELLO_4 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/4"));
+    private static final URI REQUEST_URL_HELLO_5 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/5"));
+    private static final URI REQUEST_URL_HELLO_6 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/6"));
+    private static final URI REQUEST_URL_HELLO_7 =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/demo/hello/7"));
+    private static final URI NON_STUBBED_REQUEST_URL =
+            URI.create(String.format("%s%s", WEBSOCKET_ROOT_PATH_URL, "/blah"));
 
     private static WebSocketClient client;
 
@@ -81,7 +104,8 @@ public class StubsPortalHttp11WebSocketTests {
 
         ANSITerminal.muteConsole(true);
 
-        final URL url = StubsPortalHttp11WebSocketTests.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
+        final URL url =
+                StubsPortalHttp11WebSocketTests.class.getResource("/yaml/main-test-stubs-with-web-socket-config.yaml");
         assert url != null;
 
         final InputStream stubsDataInputStream = url.openStream();
@@ -93,7 +117,8 @@ public class StubsPortalHttp11WebSocketTests {
         // WebSocket Bootstrap from HTTP/2 (RFC8441) not supported in Jetty 9.x
         // https://github.com/eclipse/jetty.project/blob/f86a719bce89844337e4f2bde68e8e147095ed80/jetty-websocket/websocket-server/src/main/java/org/eclipse/jetty/websocket/server/WebSocketServerFactory.java#L585
         //
-        // Also, they added WebSocket Bootstrap from HTTP/2 (RFC8441) only in Jetty 10.x.x: https://github.com/eclipse/jetty.project/pull/3740
+        // Also, they added WebSocket Bootstrap from HTTP/2 (RFC8441) only in Jetty 10.x.x:
+        // https://github.com/eclipse/jetty.project/pull/3740
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "");
 
         client = new WebSocketClient(jettyHttpClientOnHttp11());
@@ -161,7 +186,8 @@ public class StubsPortalHttp11WebSocketTests {
         // Wait for client to get all the messages from the server
         socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected"))
+                .isTrue();
     }
 
     @Test
@@ -236,7 +262,8 @@ public class StubsPortalHttp11WebSocketTests {
     }
 
     @Test
-    public void serverOnMessage_ReactsToClient_RealBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly() throws Exception {
+    public void serverOnMessage_ReactsToClient_RealBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly()
+            throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
@@ -264,7 +291,8 @@ public class StubsPortalHttp11WebSocketTests {
     }
 
     @Test
-    public void serverOnMessage_ReactsToClient_TextBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly() throws Exception {
+    public void serverOnMessage_ReactsToClient_TextBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly()
+            throws Exception {
         final StubsClientWebSocket socket = new StubsClientWebSocket(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
@@ -308,7 +336,8 @@ public class StubsPortalHttp11WebSocketTests {
         // Wait for client to get all the messages from the server
         socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected"))
+                .isTrue();
         assertThat(socket.receivedOnMessageText.contains("bye-bye")).isTrue();
     }
 
@@ -329,7 +358,8 @@ public class StubsPortalHttp11WebSocketTests {
         // Wait for client to get all the messages from the server
         socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(5);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected"))
+                .isTrue();
         socket.receivedOnMessageText.remove("You have been successfully connected");
 
         assertThat(socket.receivedOnMessageText.get(0)).isEqualTo("pushing");
@@ -355,7 +385,8 @@ public class StubsPortalHttp11WebSocketTests {
         // Wait for client to get all the messages from the server
         socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected"))
+                .isTrue();
 
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(1);
 
@@ -384,7 +415,8 @@ public class StubsPortalHttp11WebSocketTests {
         // Wait for client to get all the messages from the server
         socket.awaitCountDownLatchWithAssertion();
         assertThat(socket.receivedOnMessageText.size()).isEqualTo(1);
-        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected"))
+                .isTrue();
         assertThat(socket.receivedOnMessageBytes.size()).isEqualTo(4);
 
         final InputStream binaryDataInputStream = readResourceAsInputStream("/binary/hello-world.pdf");
@@ -397,31 +429,31 @@ public class StubsPortalHttp11WebSocketTests {
         assertThat(socket.receivedOnMessageBytes.get(3)).isEqualTo(expectedBytes);
     }
 
-//    @Test
-//    public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
-//        final StubsClientWebSocket socket = new StubsClientWebSocket(3);
-//        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
-//        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
-//        clientUpgradeRequest.setLocalEndpoint(socket);
-//        clientUpgradeRequest.setSubProtocols("echo", "mamba");
-//
-//        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
-//        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
-//
-//        session.getRemote().sendString("disconnect with a message");
-//
-//        // Wait for client to get all the messages from the server
-//        socket.awaitCountDownLatchWithAssertion();
-//        assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
-//        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
-//        assertThat(socket.receivedOnMessageText.contains("bon-voyage")).isTrue();
-//
-//        assertThat(socket.receivedOnCloseText.size()).isEqualTo(1);
-//        assertThat(socket.receivedOnCloseText.contains("bye")).isTrue();
-//
-//        assertThat(socket.receivedOnCloseStatus.size()).isEqualTo(1);
-//        assertThat(socket.receivedOnCloseStatus.contains(StatusCode.NORMAL)).isTrue();
-//    }
+    //    @Test
+    //    public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly_And_Disconnects() throws Exception {
+    //        final StubsClientWebSocket socket = new StubsClientWebSocket(3);
+    //        final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
+    //        clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
+    //        clientUpgradeRequest.setLocalEndpoint(socket);
+    //        clientUpgradeRequest.setSubProtocols("echo", "mamba");
+    //
+    //        final Future<Session> sessionFuture = client.connect(socket, REQUEST_URL_HELLO_1, clientUpgradeRequest);
+    //        final Session session = sessionFuture.get(500, TimeUnit.MILLISECONDS);
+    //
+    //        session.getRemote().sendString("disconnect with a message");
+    //
+    //        // Wait for client to get all the messages from the server
+    //        socket.awaitCountDownLatchWithAssertion();
+    //        assertThat(socket.receivedOnMessageText.size()).isEqualTo(2);
+    //        assertThat(socket.receivedOnMessageText.contains("You have been successfully connected")).isTrue();
+    //        assertThat(socket.receivedOnMessageText.contains("bon-voyage")).isTrue();
+    //
+    //        assertThat(socket.receivedOnCloseText.size()).isEqualTo(1);
+    //        assertThat(socket.receivedOnCloseText.contains("bye")).isTrue();
+    //
+    //        assertThat(socket.receivedOnCloseStatus.size()).isEqualTo(1);
+    //        assertThat(socket.receivedOnCloseStatus.contains(StatusCode.NORMAL)).isTrue();
+    //    }
 
     @Test
     public void serverOnMessage_RespondsWithExpected_BinaryMessage_FragmentedFrames() throws Exception {
@@ -589,9 +621,7 @@ public class StubsPortalHttp11WebSocketTests {
         }
 
         @OnWebSocketConnect
-        public void onWebSocketConnect(final Session session) {
-
-        }
+        public void onWebSocketConnect(final Session session) {}
 
         @OnWebSocketFrame
         public void onOnWebSocketFrame(final Frame frame) throws IOException {
@@ -639,9 +669,7 @@ public class StubsPortalHttp11WebSocketTests {
         }
 
         @OnWebSocketError
-        public void onWebSocketError(Throwable cause) {
-
-        }
+        public void onWebSocketError(Throwable cause) {}
 
         public void awaitCountDownLatchWithAssertion() throws InterruptedException {
             assertThat(this.countDownLatch.await(3, TimeUnit.SECONDS)).isTrue();

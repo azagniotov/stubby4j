@@ -1,16 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.utils;
-
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.common.Common;
-import org.eclipse.jetty.http.HttpHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
 
 import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.pluralize;
@@ -19,23 +23,33 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.common.Common;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public final class HandlerUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlerUtils.class);
 
-    private HandlerUtils() {
+    private HandlerUtils() {}
 
-    }
-
-    public static void configureErrorResponse(final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
+    public static void configureErrorResponse(
+            final HttpServletResponse response, final int httpStatus, final String message) throws IOException {
         response.setStatus(httpStatus);
         // Setting custom error message will no longer work in Jetty versions > 9.4.20, see:
         // https://github.com/eclipse/jetty.project/issues/4154
         // response.sendError(httpStatus, message);
         //
-        // using header as a medium to pass an error message to JsonErrorHandler. This is a workaround as a result of the above
+        // using header as a medium to pass an error message to JsonErrorHandler. This is a workaround as a result of
+        // the above
         response.setHeader(HEADER_X_STUBBY_HTTP_ERROR_REAL_REASON, message);
         response.sendError(httpStatus);
         response.flushBuffer();
@@ -54,11 +68,10 @@ public final class HandlerUtils {
         }
     }
 
-
     public static String constructHeaderServerName() {
         final Package pkg = HandlerUtils.class.getPackage();
-        final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
-                pkg.getImplementationVersion() : "x.x.xx";
+        final String implementationVersion =
+                StringUtils.isSet(pkg.getImplementationVersion()) ? pkg.getImplementationVersion() : "x.x.xx";
 
         return String.format("stubby4j/%s (HTTP stub server)", implementationVersion);
     }
@@ -83,7 +96,8 @@ public final class HandlerUtils {
         return String.format(getHtmlResourceByName(templateName), params);
     }
 
-    public static String extractPostRequestBody(final HttpServletRequest request, final String source) throws IOException {
+    public static String extractPostRequestBody(final HttpServletRequest request, final String source)
+            throws IOException {
         if (!Common.POSTING_METHODS.contains(request.getMethod().toUpperCase())) {
             return null;
         }
@@ -91,7 +105,7 @@ public final class HandlerUtils {
         try {
             final String requestContent = StringUtils.inputStreamToString(request.getInputStream());
 
-            return requestContent.replaceAll("\\\\/", "/"); //https://code.google.com/p/snakeyaml/issues/detail?id=93
+            return requestContent.replaceAll("\\\\/", "/"); // https://code.google.com/p/snakeyaml/issues/detail?id=93
         } catch (final Exception ex) {
             final String err = String.format("Error when extracting POST body: %s, returning null..", ex.toString());
             ConsoleUtils.logIncomingRequestError(request, source, err);
@@ -105,7 +119,8 @@ public final class HandlerUtils {
         final long mins = MILLISECONDS.toMinutes(timestamp) - HOURS.toMinutes(MILLISECONDS.toHours(timestamp));
         final long secs = MILLISECONDS.toSeconds(timestamp) - MINUTES.toSeconds(MILLISECONDS.toMinutes(timestamp));
 
-        return String.format("%d day%s, %d hour%s, %d min%s, %d sec%s",
+        return String.format(
+                "%d day%s, %d hour%s, %d min%s, %d sec%s",
                 days, pluralize(days), hours, pluralize(hours), mins, pluralize(mins), secs, pluralize(secs));
     }
 }

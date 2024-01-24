@@ -1,19 +1,32 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
 
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedList;
+import static io.github.azagniotov.stubby4j.stubs.StubResponse.okResponse;
 
 import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
 import io.github.azagniotov.stubby4j.utils.ReflectionUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedList;
-import static io.github.azagniotov.stubby4j.stubs.StubResponse.okResponse;
-
 
 public class StubHttpLifecycle implements ReflectableStub {
 
@@ -163,13 +176,11 @@ public class StubHttpLifecycle implements ReflectableStub {
     }
 
     @Override
-
     public int hashCode() {
         return this.request.hashCode();
     }
 
     @Override
-
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -256,15 +267,8 @@ public class StubHttpLifecycle implements ReflectableStub {
         }
 
         public StubHttpLifecycle build() {
-            final StubHttpLifecycle stubHttpLifecycle =
-                    new StubHttpLifecycle(
-                            request,
-                            response,
-                            requestAsYAML,
-                            responseAsYAML,
-                            completeYAML,
-                            description,
-                            uuid);
+            final StubHttpLifecycle stubHttpLifecycle = new StubHttpLifecycle(
+                    request, response, requestAsYAML, responseAsYAML, completeYAML, description, uuid);
 
             this.request = null;
             this.response = okResponse();

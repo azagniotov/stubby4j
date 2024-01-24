@@ -1,32 +1,34 @@
 /*
-  This file is licensed to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
 package io.github.azagniotov.stubby4j.stubs.matching;
 
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
-import org.xmlunit.XMLUnitException;
-import org.xmlunit.diff.ComparisonResult;
-import org.xmlunit.placeholder.PlaceholderHandler;
+import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
+import static org.xmlunit.diff.ComparisonResult.DIFFERENT;
+import static org.xmlunit.diff.ComparisonResult.EQUAL;
 
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import static io.github.azagniotov.stubby4j.utils.StringUtils.buildToken;
-import static org.xmlunit.diff.ComparisonResult.DIFFERENT;
-import static org.xmlunit.diff.ComparisonResult.EQUAL;
+import org.xmlunit.XMLUnitException;
+import org.xmlunit.diff.ComparisonResult;
+import org.xmlunit.placeholder.PlaceholderHandler;
 
 /**
  * Handler for the {@code matchesRegex()} placeholder keyword.
@@ -40,7 +42,8 @@ public class Stubby4jMatchesRegexPlaceholderHandler implements PlaceholderHandle
     private final Map<String, String> stubbedRequestRegexGroups;
     private AtomicInteger contentRegexGroupCounter;
 
-    public Stubby4jMatchesRegexPlaceholderHandler(final String templateTokenName, final Map<String, String> stubbedRequestRegexGroups) {
+    public Stubby4jMatchesRegexPlaceholderHandler(
+            final String templateTokenName, final Map<String, String> stubbedRequestRegexGroups) {
         this.templateTokenName = templateTokenName;
         this.stubbedRequestRegexGroups = stubbedRequestRegexGroups;
         this.contentRegexGroupCounter = new AtomicInteger(1);

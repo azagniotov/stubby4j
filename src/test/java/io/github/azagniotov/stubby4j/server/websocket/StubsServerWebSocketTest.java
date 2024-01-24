@@ -1,4 +1,29 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.server.websocket;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.tempFileFromString;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
@@ -7,6 +32,13 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeC
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.net.URI;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
@@ -21,30 +53,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.net.URI;
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.server.websocket.StubsServerWebSocket.EMPTY_BYTE_BUFFER;
-import static io.github.azagniotov.stubby4j.utils.FileUtils.tempFileFromString;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-
 @RunWith(MockitoJUnitRunner.class)
 public class StubsServerWebSocketTest {
 
     private static final String HELLO_FROM_CLIENT = "hello-from-client";
     private static final String HELLO_FROM_SERVER = "hello-from-server";
-    private static final ByteBuffer BYTE_BUFFER_HELLO_FROM_SERVER = ByteBuffer.wrap(StringUtils.getBytesUtf8(HELLO_FROM_SERVER));
+    private static final ByteBuffer BYTE_BUFFER_HELLO_FROM_SERVER =
+            ByteBuffer.wrap(StringUtils.getBytesUtf8(HELLO_FROM_SERVER));
 
     @Mock
     private Session mockSession;
@@ -98,10 +113,8 @@ public class StubsServerWebSocketTest {
 
         serverWebSocket.onWebSocketConnect(mockSession);
 
-        verify(spyScheduledExecutorService, times(1)).schedule(
-                runnableCaptor.capture(),
-                eq(250L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .schedule(runnableCaptor.capture(), eq(250L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -126,10 +139,8 @@ public class StubsServerWebSocketTest {
 
         // 1. 1st future is scheduled when sending configured text response
         // 2. 2nd future is scheduled when session disconnects
-        verify(spyScheduledExecutorService, times(2)).schedule(
-                runnableCaptor.capture(),
-                eq(250L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(2))
+                .schedule(runnableCaptor.capture(), eq(250L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured futures which were passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -158,10 +169,8 @@ public class StubsServerWebSocketTest {
 
         // 1. 1st future is scheduled when sending configured text response
         // 2. 2nd future is scheduled when session disconnects
-        verify(spyScheduledExecutorService, times(2)).schedule(
-                runnableCaptor.capture(),
-                eq(250L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(2))
+                .schedule(runnableCaptor.capture(), eq(250L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured futures which were passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -189,11 +198,8 @@ public class StubsServerWebSocketTest {
 
         serverWebSocket.onWebSocketConnect(mockSession);
 
-        verify(spyScheduledExecutorService, times(1)).scheduleAtFixedRate(
-                runnableCaptor.capture(),
-                eq(1337L),
-                eq(1337L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .scheduleAtFixedRate(runnableCaptor.capture(), eq(1337L), eq(1337L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -216,11 +222,8 @@ public class StubsServerWebSocketTest {
 
         serverWebSocket.onWebSocketConnect(mockSession);
 
-        verify(spyScheduledExecutorService, times(1)).scheduleAtFixedRate(
-                runnableCaptor.capture(),
-                eq(5000L),
-                eq(5000L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .scheduleAtFixedRate(runnableCaptor.capture(), eq(5000L), eq(5000L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -243,11 +246,8 @@ public class StubsServerWebSocketTest {
 
         serverWebSocket.onWebSocketConnect(mockSession);
 
-        verify(spyScheduledExecutorService, times(1)).scheduleAtFixedRate(
-                runnableCaptor.capture(),
-                eq(3500L),
-                eq(3500L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .scheduleAtFixedRate(runnableCaptor.capture(), eq(3500L), eq(3500L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -272,10 +272,8 @@ public class StubsServerWebSocketTest {
 
         serverWebSocket.onWebSocketConnect(mockSession);
 
-        verify(spyScheduledExecutorService, times(1)).schedule(
-                runnableCaptor.capture(),
-                eq(5L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .schedule(runnableCaptor.capture(), eq(5L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -289,13 +287,13 @@ public class StubsServerWebSocketTest {
         // Currently I do not see an easy way to enforce the right order of byte frames through
         // the Argument captor in order to correctly assemble them into a string for assertion.
         // Normally, the web socket client ensures that all partial frames are assembled correctly
-//        ByteBuffer allocatedByteBuffer = ByteBuffer.allocate(originalStringBytes.length);
-//        for (ByteBuffer allCapturedFragment : allCapturedFragments) {
-//            allocatedByteBuffer = allocatedByteBuffer.put(allCapturedFragment);
-//        }
-//        final byte[] actualStringBytes = allocatedByteBuffer.array();
-//
-//        assertThat(tanuki).isEqualTo(new String(actualStringBytes, StandardCharsets.UTF_8));
+        //        ByteBuffer allocatedByteBuffer = ByteBuffer.allocate(originalStringBytes.length);
+        //        for (ByteBuffer allCapturedFragment : allCapturedFragments) {
+        //            allocatedByteBuffer = allocatedByteBuffer.put(allCapturedFragment);
+        //        }
+        //        final byte[] actualStringBytes = allocatedByteBuffer.array();
+        //
+        //        assertThat(tanuki).isEqualTo(new String(actualStringBytes, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -313,10 +311,8 @@ public class StubsServerWebSocketTest {
         serverWebSocket.onWebSocketConnect(mockSession);
         serverWebSocket.onWebSocketText(HELLO_FROM_CLIENT);
 
-        verify(spyScheduledExecutorService, times(1)).schedule(
-                runnableCaptor.capture(),
-                eq(250L),
-                eq(TimeUnit.MILLISECONDS));
+        verify(spyScheduledExecutorService, times(1))
+                .schedule(runnableCaptor.capture(), eq(250L), eq(TimeUnit.MILLISECONDS));
 
         // Execute the captured future which was passed in to the
         // ScheduledExecutorService, in order to trigger the behavior
@@ -326,8 +322,8 @@ public class StubsServerWebSocketTest {
         assertThat(stringCaptor.getValue()).isEqualTo(HELLO_FROM_SERVER);
     }
 
-    private StubWebSocketConfig buildStubWebSocketConfig(final boolean setOnOpen,
-                                                         final StubWebSocketServerResponse webSocketServerResponse) {
+    private StubWebSocketConfig buildStubWebSocketConfig(
+            final boolean setOnOpen, final StubWebSocketServerResponse webSocketServerResponse) {
         final StubWebSocketClientRequest webSocketClientRequest = new StubWebSocketClientRequest.Builder()
                 .withBody(HELLO_FROM_CLIENT)
                 .withMessageType(StubWebSocketMessageType.TEXT.toString())
