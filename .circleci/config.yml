@@ -784,20 +784,20 @@ workflows:
 
 
   master-twelve-hour-jdk11:
-    triggers:
-      - schedule:
-          cron: "15 6,18 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "15 6,18 * * *"
+    #       <<: *filter_only_master
     jobs:
       - docker_build_latest_jre11:
           <<: *context_docker_hub
 
 
   master-twelve-hour-jdk17:
-    # triggers:
-    #  - schedule:
-    #      cron: "20 8,20 * * *"
-    #      <<: *filter_only_master
+    triggers:
+     - schedule:
+         cron: "20 8,20 * * *"
+         <<: *filter_only_master
     jobs:
       - docker_build_latest_jre17:
           <<: *context_docker_hub
