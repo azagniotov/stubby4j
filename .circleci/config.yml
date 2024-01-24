@@ -283,19 +283,6 @@ build_push_image_steps: &build_push_image_steps
           echo "SHA256SUM of dependencies.gradle: $SHA256SUM"
 
           echo ""
-          echo "Building or restoring from remote Docker BuildX cache"
-          docker buildx build \
-              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
-              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
-              --build-arg REVISION=<< parameters.git_revision >> \
-              --build-arg CACHE_BUSTER=$SHA256SUM \
-              -f << parameters.dockerfile >> \
-              --platform linux/amd64,linux/arm64 \
-              -t << parameters.image_tag >> \
-              --output=type=image \
-              --push .
-
-          echo ""
           echo "Caching remotely Docker BuildX build for linux/arm64"
           docker buildx build \
               --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
@@ -315,7 +302,20 @@ build_push_image_steps: &build_push_image_steps
               --build-arg CACHE_BUSTER=$SHA256SUM \
               -f << parameters.dockerfile >> \
               --platform linux/amd64 \
-              --load . 
+              --load .
+
+          echo ""
+          echo "Building Multi-Arch Docker images or restoring from remote Docker BuildX cache"
+          docker buildx build \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_amd64 >> \
+              --cache-from=type=registry,ref=<< parameters.image_tag_buildcache_arm64 >> \
+              --build-arg REVISION=<< parameters.git_revision >> \
+              --build-arg CACHE_BUSTER=$SHA256SUM \
+              -f << parameters.dockerfile >> \
+              --platform linux/amd64,linux/arm64 \
+              -t << parameters.image_tag >> \
+              --output=type=image \
+              --push .
           
           docker context rm tls-environment
 
@@ -617,10 +617,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-arm64-jre8"
+        default: "azagniotov/cache-stubby4j:arm64-jre8"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-amd64-jre8"
+        default: "azagniotov/cache-stubby4j:amd64-jre8"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre8"
@@ -641,10 +641,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-arm64-jre11"
+        default: "azagniotov/cache-stubby4j:arm64-jre11"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-amd64-jre11"
+        default: "azagniotov/cache-stubby4j:amd64-jre11"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre11"
@@ -665,10 +665,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-arm64-jre17"
+        default: "azagniotov/cache-stubby4j:arm64-jre17"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/stubby4j:buildcache-amd64-jre17"
+        default: "azagniotov/cache-stubby4j:amd64-jre17"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre17"
@@ -794,10 +794,10 @@ workflows:
 
 
   master-twelve-hour-jdk17:
-    triggers:
-     - schedule:
-         cron: "20 8,20 * * *"
-         <<: *filter_only_master
+    # triggers:
+    #  - schedule:
+    #      cron: "20 8,20 * * *"
+    #      <<: *filter_only_master
     jobs:
       - docker_build_latest_jre17:
           <<: *context_docker_hub
