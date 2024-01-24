@@ -1,0 +1,18 @@
+apply plugin: "com.diffplug.spotless"
+
+spotless {
+    java {
+        // ratchetFrom "origin/master" // only format files which have changed since origin/master
+
+        target "src/**/*.java"
+
+        importOrder()
+        removeUnusedImports()
+        palantirJavaFormat()
+
+        licenseHeaderFile(rootProject.file(".spotless/alexander.zagniotov-apache-2.0-license.txt")).
+                named("alexander.zagniotov").
+                updateYearWithLatest(true)
+    }
+}
+

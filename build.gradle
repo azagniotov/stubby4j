@@ -9,6 +9,10 @@ buildscript {
             }
         }
     }
+    dependencies {
+        // From v6.14.0 (inc.) Java 8 support is dropped
+        classpath("com.diffplug.spotless:spotless-plugin-gradle:6.13.0")
+    }
 }
 
 apply plugin: "java-library"
@@ -48,3 +52,4 @@ apply from: "$rootDir/conf/gradle/tests.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"
+apply from: "$rootDir/conf/gradle/spotless.gradle"
