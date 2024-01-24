@@ -1,7 +1,4 @@
-// Disabling the Spotless plugin on Ci due to version incompatability with JDK 21 
-if (!project.hasProperty("ciRun")) {
-    apply plugin: "com.diffplug.spotless"
-}
+apply plugin: "com.diffplug.spotless"
 
 spotless {
     java {
