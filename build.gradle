@@ -52,4 +52,9 @@ apply from: "$rootDir/conf/gradle/tests.gradle"
 apply from: "$rootDir/conf/gradle/jacoco.gradle"
 apply from: "$rootDir/conf/gradle/artifacts.gradle"
 apply from: "$rootDir/conf/gradle/sonatype.gradle"
-apply from: "$rootDir/conf/gradle/spotless.gradle"
+
+// Disabling the Spotless plugin on Ci due to its v6.13.0 incompatability with JDK 21 
+if (!project.hasProperty("ciRun")) {
+    apply from: "$rootDir/conf/gradle/spotless.gradle"
+}
+
