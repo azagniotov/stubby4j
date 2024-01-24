@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         // From v6.14.0 (inc.) Java 8 support is dropped
-        classpath("com.diffplug.spotless:spotless-plugin-gradle:6.13.0")
+        classpath("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
     }
 }
 
