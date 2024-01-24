@@ -1,14 +1,29 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.yaml;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.StubbableAuthorizationType;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
-import org.eclipse.jetty.http.HttpMethod;
-
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.eclipse.jetty.http.HttpMethod;
 
 /**
  * Please refer to the accompanied unit tests for usage examples.
@@ -23,55 +38,61 @@ public final class YamlBuilder {
     private static final String NINE_SPACE = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, THREE_SPACE);
     private static final String TWELVE_SPACE = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, THREE_SPACE);
 
-    private final static String DESCRIPTION_AS_TOP = String.format("-%s%s", TWO_SPACE, "description: ");
-    private final static String DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "description: ");
+    private static final String DESCRIPTION_AS_TOP = String.format("-%s%s", TWO_SPACE, "description: ");
+    private static final String DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "description: ");
 
-    private final static String UUID_AS_TOP = String.format("-%s%s", TWO_SPACE, "uuid: ");
-    private final static String UUID = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "uuid: ");
+    private static final String UUID_AS_TOP = String.format("-%s%s", TWO_SPACE, "uuid: ");
+    private static final String UUID = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "uuid: ");
 
-    private final static String PROXY_CONFIG_AS_TOP = String.format("-%s%s", TWO_SPACE, "proxy-config:");
-    private final static String REQUEST_AS_TOP = String.format("-%s%s", TWO_SPACE, "request:");
-    private final static String REQUEST = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "request:");
-    private final static String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
+    private static final String PROXY_CONFIG_AS_TOP = String.format("-%s%s", TWO_SPACE, "proxy-config:");
+    private static final String REQUEST_AS_TOP = String.format("-%s%s", TWO_SPACE, "request:");
+    private static final String REQUEST = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "request:");
+    private static final String RESPONSE = String.format(TWO_TOKENS_TEMPLATE, THREE_SPACE, "response:");
 
-    private final static String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
-    private final static String PROXY_HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
-    private final static String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "properties:");
-    private final static String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "strategy: ");
-    private final static String PROXY_UUID = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "uuid: ");
-    private final static String PROXY_CONFIG_DESCRIPTION = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "description: ");
-    private final static String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
+    private static final String HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
+    private static final String PROXY_HEADERS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "headers:");
+    private static final String PROXY_PROPERTIES = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "properties:");
+    private static final String PROXY_STRATEGY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "strategy: ");
+    private static final String PROXY_UUID = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "uuid: ");
+    private static final String PROXY_CONFIG_DESCRIPTION =
+            String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "description: ");
+    private static final String SEQUENCE_RESPONSE_HEADERS = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "headers: ");
 
-    private final static String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
-    private final static String METHOD = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "method: ");
-    private final static String TEMP_METHOD_PLACEHOLDER_TOKEN = "METHOD_TOKEN";
+    private static final String QUERY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "query:");
+    private static final String METHOD = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "method: ");
+    private static final String TEMP_METHOD_PLACEHOLDER_TOKEN = "METHOD_TOKEN";
 
-    private final static String STATUS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "status: ");
-    private final static String SEQUENCE_RESPONSE_STATUS = String.format("%s-%s%s", SIX_SPACE, TWO_SPACE, "status: ");
+    private static final String STATUS = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "status: ");
+    private static final String SEQUENCE_RESPONSE_STATUS = String.format("%s-%s%s", SIX_SPACE, TWO_SPACE, "status: ");
 
-    private final static String FILE = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "file: ");
-    private final static String SEQUENCE_RESPONSE_FILE = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "file: ");
+    private static final String FILE = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "file: ");
+    private static final String SEQUENCE_RESPONSE_FILE = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "file: ");
 
-    private final static String URL = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "url: ");
+    private static final String URL = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "url: ");
 
-    private final static String ONELINEPOST = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "post: ");
-    private final static String MULTILINEPOST = String.format("%s%s%s", SIX_SPACE, "post: >", FileUtils.BR);
+    private static final String ONELINEPOST = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "post: ");
+    private static final String MULTILINEPOST = String.format("%s%s%s", SIX_SPACE, "post: >", FileUtils.BR);
 
-    private final static String ONELINEBODY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "body: ");
-    private final static String SEQUENCE_RESPONSE_ONELINEBODY = String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "body: ");
+    private static final String ONELINEBODY = String.format(TWO_TOKENS_TEMPLATE, SIX_SPACE, "body: ");
+    private static final String SEQUENCE_RESPONSE_ONELINEBODY =
+            String.format(TWO_TOKENS_TEMPLATE, NINE_SPACE, "body: ");
 
-    private final static String MULTILINEBODY = String.format("%s%s%s", SIX_SPACE, "body: >", FileUtils.BR);
-    private final static String SEQUENCE_RESPONSE_MULTILINEBODY = String.format("%s%s%s", NINE_SPACE, "body: >", FileUtils.BR);
+    private static final String MULTILINEBODY = String.format("%s%s%s", SIX_SPACE, "body: >", FileUtils.BR);
+    private static final String SEQUENCE_RESPONSE_MULTILINEBODY =
+            String.format("%s%s%s", NINE_SPACE, "body: >", FileUtils.BR);
 
-    private final static String NL = FileUtils.BR;
+    private static final String NL = FileUtils.BR;
 
     private static final String TWO_DASHED_TOKENS_TEMPLATE = "%s-%s";
-    private final static String PROXY_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_HEADERS);
-    private final static String PROXY_PROPERTIES_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_PROPERTIES);
-    private final static String REQUEST_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, HEADERS);
-    private final static String REQUEST_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, QUERY);
-    private final static String RESPONSE_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, HEADERS);
-    private final static String RESPONSE_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, QUERY);
+    private static final String PROXY_HEADERS_KEY =
+            String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_HEADERS);
+    private static final String PROXY_PROPERTIES_KEY =
+            String.format(TWO_DASHED_TOKENS_TEMPLATE, PROXY_CONFIG_AS_TOP, PROXY_PROPERTIES);
+    private static final String REQUEST_HEADERS_KEY =
+            String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, HEADERS);
+    private static final String REQUEST_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, REQUEST_AS_TOP, QUERY);
+    private static final String RESPONSE_HEADERS_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, HEADERS);
+    private static final String RESPONSE_QUERY_KEY = String.format(TWO_DASHED_TOKENS_TEMPLATE, RESPONSE, QUERY);
 
     private static final StringBuilder FEATURE_STRING_BUILDER = new StringBuilder();
     private static final StringBuilder PROXY_CONFIG_STRING_BUILDER = new StringBuilder();
@@ -80,18 +101,18 @@ public final class YamlBuilder {
     private static final String YAML_KEY_SPACE_TEMPLATE = "%s%s: ";
 
     private final Set<String> storedStubbedMethods = new LinkedHashSet<>();
-    private final Set<String> unusedNodes = new HashSet<String>() {{
-        add(PROXY_HEADERS_KEY);
-        add(PROXY_PROPERTIES_KEY);
-        add(REQUEST_HEADERS_KEY);
-        add(REQUEST_QUERY_KEY);
-        add(RESPONSE_HEADERS_KEY);
-        add(RESPONSE_QUERY_KEY);
-    }};
+    private final Set<String> unusedNodes = new HashSet<String>() {
+        {
+            add(PROXY_HEADERS_KEY);
+            add(PROXY_PROPERTIES_KEY);
+            add(REQUEST_HEADERS_KEY);
+            add(REQUEST_QUERY_KEY);
+            add(RESPONSE_HEADERS_KEY);
+            add(RESPONSE_QUERY_KEY);
+        }
+    };
 
-    public YamlBuilder() {
-
-    }
+    public YamlBuilder() {}
 
     public Feature newStubbedFeature() {
         return new Feature();
@@ -132,7 +153,10 @@ public final class YamlBuilder {
 
         public Feature withDescription(final String description) {
             if (!topLevelSet) {
-                FEATURE_STRING_BUILDER.append(DESCRIPTION_AS_TOP).append(description).append(NL);
+                FEATURE_STRING_BUILDER
+                        .append(DESCRIPTION_AS_TOP)
+                        .append(description)
+                        .append(NL);
                 topLevelSet = true;
             } else {
                 FEATURE_STRING_BUILDER.append(DESCRIPTION).append(description).append(NL);
@@ -163,7 +187,10 @@ public final class YamlBuilder {
         }
 
         public ProxyConfig withDescription(final String value) {
-            PROXY_CONFIG_STRING_BUILDER.append(PROXY_CONFIG_DESCRIPTION).append(value).append(NL);
+            PROXY_CONFIG_STRING_BUILDER
+                    .append(PROXY_CONFIG_DESCRIPTION)
+                    .append(value)
+                    .append(NL);
 
             return this;
         }
@@ -175,7 +202,10 @@ public final class YamlBuilder {
         }
 
         public ProxyConfig withProxyStrategyAsIs() {
-            PROXY_CONFIG_STRING_BUILDER.append(PROXY_STRATEGY).append(StubProxyStrategy.AS_IS.toString()).append(NL);
+            PROXY_CONFIG_STRING_BUILDER
+                    .append(PROXY_STRATEGY)
+                    .append(StubProxyStrategy.AS_IS.toString())
+                    .append(NL);
 
             return this;
         }
@@ -204,8 +234,8 @@ public final class YamlBuilder {
 
             checkProxyPropertiesNodeRequired();
 
-            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE,
-                    ConfigurableYAMLProperty.ENDPOINT.toString());
+            final String tabbedKey =
+                    String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, ConfigurableYAMLProperty.ENDPOINT.toString());
             PROXY_CONFIG_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -274,7 +304,10 @@ public final class YamlBuilder {
 
         private Request appendTemporaryMethodPlaceholderStoreMethod(final String methodName) {
             if (REQUEST_STRING_BUILDER.indexOf(METHOD) == -1) {
-                REQUEST_STRING_BUILDER.append(METHOD).append(TEMP_METHOD_PLACEHOLDER_TOKEN).append(NL);
+                REQUEST_STRING_BUILDER
+                        .append(METHOD)
+                        .append(TEMP_METHOD_PLACEHOLDER_TOKEN)
+                        .append(NL);
             }
 
             storedStubbedMethods.add(methodName);
@@ -336,7 +369,8 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BASIC.asYAMLProp());
+            final String tabbedKey =
+                    String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BASIC.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -346,7 +380,8 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BEARER.asYAMLProp());
+            final String tabbedKey =
+                    String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.BEARER.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -356,7 +391,8 @@ public final class YamlBuilder {
 
             checkHeadersNodeRequired();
 
-            final String tabbedKey = String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYAMLProp());
+            final String tabbedKey =
+                    String.format(YAML_KEY_SPACE_TEMPLATE, NINE_SPACE, StubbableAuthorizationType.CUSTOM.asYAMLProp());
             REQUEST_STRING_BUILDER.append(tabbedKey).append(value).append(NL);
 
             return this;
@@ -417,13 +453,11 @@ public final class YamlBuilder {
             RESPONSE_STRING_BUILDER.append(RESPONSE).append(NL);
         }
 
-
         public Response withLineBreak() {
             RESPONSE_STRING_BUILDER.append(NL);
 
             return this;
         }
-
 
         public Response withStatus(final String value) {
             RESPONSE_STRING_BUILDER.append(STATUS).append(value).append(NL);
@@ -432,7 +466,10 @@ public final class YamlBuilder {
         }
 
         public Response withSequenceResponseStatus(final String value) {
-            RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_STATUS).append(value).append(NL);
+            RESPONSE_STRING_BUILDER
+                    .append(SEQUENCE_RESPONSE_STATUS)
+                    .append(value)
+                    .append(NL);
 
             return this;
         }
@@ -456,7 +493,10 @@ public final class YamlBuilder {
         }
 
         public Response withSequenceResponseLiteralBody(final String body) {
-            RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_ONELINEBODY).append(body).append(NL);
+            RESPONSE_STRING_BUILDER
+                    .append(SEQUENCE_RESPONSE_ONELINEBODY)
+                    .append(body)
+                    .append(NL);
 
             return this;
         }
@@ -470,7 +510,10 @@ public final class YamlBuilder {
 
         public Response withSequenceResponseFoldedBody(final String body) {
             final String tabbedBody = String.format(TWO_TOKENS_TEMPLATE, TWELVE_SPACE, body);
-            RESPONSE_STRING_BUILDER.append(SEQUENCE_RESPONSE_MULTILINEBODY).append(tabbedBody).append(NL);
+            RESPONSE_STRING_BUILDER
+                    .append(SEQUENCE_RESPONSE_MULTILINEBODY)
+                    .append(tabbedBody)
+                    .append(NL);
 
             return this;
         }
@@ -569,8 +612,12 @@ public final class YamlBuilder {
 
             final String rawFeatureString = FEATURE_STRING_BUILDER.toString().trim();
             final String rawRequestString = REQUEST_STRING_BUILDER.toString(); // do not trim()!
-            final String cleansedRequestString = rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
-            final String yaml = String.format("%s%s%s%s%s", rawFeatureString, NL, cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString()).trim();
+            final String cleansedRequestString =
+                    rawRequestString.replaceAll(TEMP_METHOD_PLACEHOLDER_TOKEN, storedStubbedMethods.toString());
+            final String yaml = String.format(
+                            "%s%s%s%s%s",
+                            rawFeatureString, NL, cleansedRequestString, NL, RESPONSE_STRING_BUILDER.toString())
+                    .trim();
 
             clear();
 

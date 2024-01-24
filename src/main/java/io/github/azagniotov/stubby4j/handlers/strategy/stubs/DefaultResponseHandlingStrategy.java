@@ -1,16 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.handlers.strategy.stubs;
-
-import io.github.azagniotov.stubby4j.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.stubs.StubResponse;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.eclipse.jetty.http.HttpStatus;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static io.github.azagniotov.stubby4j.utils.FileUtils.fileToBytes;
 import static io.github.azagniotov.stubby4j.utils.HandlerUtils.setResponseMainHeaders;
@@ -18,6 +22,17 @@ import static io.github.azagniotov.stubby4j.utils.StringUtils.getBytesUtf8;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.isTokenized;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokens;
 import static io.github.azagniotov.stubby4j.utils.StringUtils.replaceTokensInString;
+
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.http.HttpStatus;
 
 public final class DefaultResponseHandlingStrategy implements StubResponseHandlingStrategy {
 
@@ -56,8 +71,12 @@ public final class DefaultResponseHandlingStrategy implements StubResponseHandli
         }
     }
 
-    private void setResponseStubbedHeaders(final HttpServletResponse response, final StubResponse stubResponse, final Map<String, String> regexGroups) {
-        for (final Map.Entry<String, String> headerPair : stubResponse.getHeaders().entrySet()) {
+    private void setResponseStubbedHeaders(
+            final HttpServletResponse response,
+            final StubResponse stubResponse,
+            final Map<String, String> regexGroups) {
+        for (final Map.Entry<String, String> headerPair :
+                stubResponse.getHeaders().entrySet()) {
             String responseHeaderValue = headerPair.getValue();
             if (isTokenized(responseHeaderValue)) {
                 responseHeaderValue = replaceTokensInString(headerPair.getValue(), regexGroups);

@@ -1,4 +1,23 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -11,19 +30,15 @@ import io.github.azagniotov.stubby4j.common.Common;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public class StubsAdminPortalsTest {
 
@@ -62,7 +77,8 @@ public class StubsAdminPortalsTest {
     }
 
     @Test
-    public void should_UpdateStubsDataAndGetNewResource_WhenSuccessfulValidPostMade_ToAdminPortalRoot() throws Exception {
+    public void should_UpdateStubsDataAndGetNewResource_WhenSuccessfulValidPostMade_ToAdminPortalRoot()
+            throws Exception {
 
         final String yamlToUpdate = new YamlBuilder()
                 .newStubbedRequest()
@@ -76,7 +92,8 @@ public class StubsAdminPortalsTest {
                 .build();
 
         final String adminRequestUrl = String.format("%s/", ADMIN_URL);
-        final HttpRequest httpPuttRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, adminRequestUrl, yamlToUpdate);
+        final HttpRequest httpPuttRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.POST, adminRequestUrl, yamlToUpdate);
 
         final HttpResponse httpResponse = httpPuttRequest.execute();
         final String statusMessage = httpResponse.getStatusMessage().trim();
@@ -101,14 +118,18 @@ public class StubsAdminPortalsTest {
     @Test
     public void should_AdjustResourceIdHeaderAccordingly_WhenSuccessfulDeleteMade() throws Exception {
 
-        final String stubsRequestUrl = String.format("%s%s", STUBS_URL, "/this/stub/should/always/be/second/in/this/file");
+        final String stubsRequestUrl =
+                String.format("%s%s", STUBS_URL, "/this/stub/should/always/be/second/in/this/file");
         final HttpRequest stubsGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
         final HttpResponse preDeletionStubGetResponse = stubsGetRequest.execute();
         final HttpHeaders preDeletionResponseHeaders = preDeletionStubGetResponse.getHeaders();
-        assertThat(preDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
-        assertThat(preDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo("1");
+        assertThat(preDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID))
+                .isTrue();
+        assertThat(preDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID))
+                .isEqualTo("1");
 
-        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, String.format("%s%s", ADMIN_URL, "/0"));
+        final HttpRequest httpDeleteRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.DELETE, String.format("%s%s", ADMIN_URL, "/0"));
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
         final String deleteResponseContent = httpDeleteResponse.parseAsString().trim();
         assertThat(HttpStatus.OK_200).isEqualTo(httpDeleteResponse.getStatusCode());
@@ -117,8 +138,10 @@ public class StubsAdminPortalsTest {
         final HttpRequest postDeletionStubGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
         final HttpResponse postDeletionStubGetResponse = postDeletionStubGetRequest.execute();
         final HttpHeaders postDeletionResponseHeaders = postDeletionStubGetResponse.getHeaders();
-        assertThat(postDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID)).isTrue();
-        assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID)).isEqualTo("0");
+        assertThat(postDeletionResponseHeaders.containsKey(Common.HEADER_X_STUBBY_RESOURCE_ID))
+                .isTrue();
+        assertThat(postDeletionResponseHeaders.getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID))
+                .isEqualTo("0");
     }
 
     @Test
@@ -137,7 +160,8 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/request/post");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/request/post");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
@@ -162,7 +186,8 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/body");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/body");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
@@ -180,7 +205,8 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/1/file");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/response/1/file");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
@@ -204,26 +230,26 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/completeYAML");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/completeYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
         assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(ajaxResponse.parseAsString().trim()).contains(
-                "- request:" + BR +
-                        "    method: POST" + BR +
-                        "    url: /invoice/new" + BR +
-                        "    headers:" + BR +
-                        "      content-type: " + Common.HEADER_APPLICATION_JSON + BR +
-                        "    post: |" + BR +
-                        "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}" + BR +
-                        "  response:" + BR +
-                        "    headers:" + BR +
-                        "      content-type: " + Common.HEADER_APPLICATION_JSON + BR +
-                        "      pragma: no-cache" + BR +
-                        "    status: 201" + BR +
-                        "    body: |" + BR +
-                        "      {\"id\": \"456\", \"status\": \"created\"}");
+        assertThat(ajaxResponse.parseAsString().trim())
+                .contains("- request:" + BR + "    method: POST"
+                        + BR + "    url: /invoice/new"
+                        + BR + "    headers:"
+                        + BR + "      content-type: "
+                        + Common.HEADER_APPLICATION_JSON + BR + "    post: |"
+                        + BR + "      {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}"
+                        + BR + "  response:"
+                        + BR + "    headers:"
+                        + BR + "      content-type: "
+                        + Common.HEADER_APPLICATION_JSON + BR + "      pragma: no-cache"
+                        + BR + "    status: 201"
+                        + BR + "    body: |"
+                        + BR + "      {\"id\": \"456\", \"status\": \"created\"}");
     }
 
     @Test
@@ -242,19 +268,19 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/requestAsYAML");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/requestAsYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
         assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(ajaxResponse.parseAsString().trim()).contains(
-                "request:" + BR +
-                        "  method: POST" + BR +
-                        "  url: /invoice/new" + BR +
-                        "  headers:" + BR +
-                        "    content-type: application/json" + BR +
-                        "  post: |" + BR +
-                        "    {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}");
+        assertThat(ajaxResponse.parseAsString().trim())
+                .contains("request:" + BR + "  method: POST"
+                        + BR + "  url: /invoice/new"
+                        + BR + "  headers:"
+                        + BR + "    content-type: application/json"
+                        + BR + "  post: |"
+                        + BR + "    {\"name\": \"chocolate\", \"description\": \"full\", \"department\": \"savoury\"}");
     }
 
     @Test
@@ -273,19 +299,19 @@ public class StubsAdminPortalsTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
 
         final String resourceID = response.getHeaders().getFirstHeaderStringValue(Common.HEADER_X_STUBBY_RESOURCE_ID);
-        final String ajaxRequestUrl = String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/responseAsYAML");
+        final String ajaxRequestUrl =
+                String.format("%s%s%s%s", ADMIN_URL, "/ajax/resource/", resourceID, "/httplifecycle/responseAsYAML");
         final HttpRequest ajaxRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, ajaxRequestUrl);
 
         final HttpResponse ajaxResponse = ajaxRequest.execute();
         assertThat(ajaxResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(ajaxResponse.parseAsString().trim()).contains(
-                "response:" + BR +
-                        "  headers:" + BR +
-                        "    content-type: application/json" + BR +
-                        "    pragma: no-cache" + BR +
-                        "  status: 201" + BR +
-                        "  body: |" + BR +
-                        "    {\"id\": \"456\", \"status\": \"created\"}");
+        assertThat(ajaxResponse.parseAsString().trim())
+                .contains("response:" + BR + "  headers:"
+                        + BR + "    content-type: application/json"
+                        + BR + "    pragma: no-cache"
+                        + BR + "  status: 201"
+                        + BR + "  body: |"
+                        + BR + "    {\"id\": \"456\", \"status\": \"created\"}");
     }
 
     @Test
@@ -298,7 +324,8 @@ public class StubsAdminPortalsTest {
         final HttpResponse firstHttpGetResponse = firstHttpGetRequest.execute();
         final String firstResponseContent = firstHttpGetResponse.parseAsString().trim();
 
-        // Sanity check 1st request to Stubs to verify what the original stubbed response body contains for the above URL
+        // Sanity check 1st request to Stubs to verify what the original stubbed response body contains for the above
+        // URL
         assertThat(HttpStatus.OK_200).isEqualTo(firstHttpGetResponse.getStatusCode());
         assertThat(firstResponseContent).contains("OK");
 
@@ -332,8 +359,10 @@ public class StubsAdminPortalsTest {
         // Making a stub update request
         final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, yamlToUpdate);
         final HttpResponse adminHttpPutResponse = httpPutRequest.execute();
-        final String adminPutResponseContent = adminHttpPutResponse.parseAsString().trim();
-        final String adminPutResponseLocationHeader = adminHttpPutResponse.getHeaders().getLocation();
+        final String adminPutResponseContent =
+                adminHttpPutResponse.parseAsString().trim();
+        final String adminPutResponseLocationHeader =
+                adminHttpPutResponse.getHeaders().getLocation();
 
         assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
         assertThat(adminPutResponseLocationHeader).isEqualTo(originalStubbedUrl);
@@ -342,7 +371,8 @@ public class StubsAdminPortalsTest {
         // Sanity check 2nd request to Stubs to verify the updated stubbed response body for the above URL
         final HttpRequest secondHttpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, stubsRequestUrl);
         final HttpResponse secondHttpGetResponse = secondHttpGetRequest.execute();
-        final String secondResponseContent = secondHttpGetResponse.parseAsString().trim();
+        final String secondResponseContent =
+                secondHttpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(secondHttpGetResponse.getStatusCode());
         assertThat(secondResponseContent).contains("OK Updated!");
@@ -353,12 +383,14 @@ public class StubsAdminPortalsTest {
 
         // Warm up the cache in StubRepository by making a request to a stub with URL regex: '^/resources/asn/.*$'
         final String originalStubbedUrl = "^/resources/asn/.*$";
-        final List<String> assertingRequests = new LinkedList<String>() {{
-            add("/resources/asn/1");
-            add("/resources/asn/2");
-            add("/resources/asn/3");
-            add("/resources/asn/eew97we9");
-        }};
+        final List<String> assertingRequests = new LinkedList<String>() {
+            {
+                add("/resources/asn/1");
+                add("/resources/asn/2");
+                add("/resources/asn/3");
+                add("/resources/asn/eew97we9");
+            }
+        };
 
         // Sanity check 1st requests to Stubs to verify what the stubbed response body contains for the above URLs
         for (final String assertingRequest : assertingRequests) {
@@ -400,10 +432,13 @@ public class StubsAdminPortalsTest {
                 .build();
 
         // Making a stub update request
-        final HttpRequest httpPutRequest = HttpUtils.constructHttpRequest(HttpMethods.PUT, stubAdminRequestUrl, yamlToUpdate);
+        final HttpRequest httpPutRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.PUT, stubAdminRequestUrl, yamlToUpdate);
         final HttpResponse adminHttpPutResponse = httpPutRequest.execute();
-        final String adminPutResponseContent = adminHttpPutResponse.parseAsString().trim();
-        final String adminPutResponseLocationHeader = adminHttpPutResponse.getHeaders().getLocation();
+        final String adminPutResponseContent =
+                adminHttpPutResponse.parseAsString().trim();
+        final String adminPutResponseLocationHeader =
+                adminHttpPutResponse.getHeaders().getLocation();
 
         assertThat(HttpStatus.OK_200).isEqualTo(adminHttpGetResponse.getStatusCode());
         assertThat(adminPutResponseLocationHeader).isEqualTo(originalStubbedUrl);

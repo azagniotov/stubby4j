@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.utils;
 
 import java.io.BufferedInputStream;
@@ -16,13 +32,13 @@ import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-
 public final class StringUtils {
 
     public static final String UTF_8 = "UTF-8";
 
     static final String NOT_PROVIDED = "Not provided";
-    static final String FAILED = "Failed to retrieveLoadedStubs response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
+    static final String FAILED =
+            "Failed to retrieveLoadedStubs response content using relative path specified in 'file' during YAML parse time. Check terminal for warnings, and that response content exists in relative path specified in 'file'";
 
     private static final CharsetEncoder US_ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
 
@@ -30,9 +46,7 @@ public final class StringUtils {
     private static final String TEMPLATE_TOKEN_RIGHT = "%>";
     private static final Base64.Encoder BASE_64_ENCODER = Base64.getEncoder();
 
-    private StringUtils() {
-
-    }
+    private StringUtils() {}
 
     public static boolean isSet(final String toTest) {
         return ObjectUtils.isNotNull(toTest) && isNotBlank(toTest);
@@ -79,10 +93,16 @@ public final class StringUtils {
         // Regex \A matches the beginning of input. This effectively tells Scanner to tokenize
         // the entire stream, from beginning to (illogical) next beginning.
         if (inputStream instanceof BufferedInputStream) {
-            return new Scanner(inputStream, StringUtils.UTF_8).useDelimiter("\\A").next().trim();
+            return new Scanner(inputStream, StringUtils.UTF_8)
+                    .useDelimiter("\\A")
+                    .next()
+                    .trim();
         }
 
-        return new Scanner(FileUtils.makeBuffered(inputStream), StringUtils.UTF_8).useDelimiter("\\A").next().trim();
+        return new Scanner(FileUtils.makeBuffered(inputStream), StringUtils.UTF_8)
+                .useDelimiter("\\A")
+                .next()
+                .trim();
     }
 
     public static String buildToken(final String propertyName, final int capturingGroupIdx) {
@@ -95,7 +115,8 @@ public final class StringUtils {
 
     public static String replaceTokensInString(String template, final Map<String, String> tokensAndValues) {
         for (final Map.Entry<String, String> entry : tokensAndValues.entrySet()) {
-            final String regexifiedKey = String.format("%s\\s{0,}%s\\s{0,}%s", TEMPLATE_TOKEN_LEFT, entry.getKey(), TEMPLATE_TOKEN_RIGHT);
+            final String regexifiedKey =
+                    String.format("%s\\s{0,}%s\\s{0,}%s", TEMPLATE_TOKEN_LEFT, entry.getKey(), TEMPLATE_TOKEN_RIGHT);
             template = template.replaceAll(regexifiedKey, entry.getValue());
         }
         return template;
@@ -125,11 +146,10 @@ public final class StringUtils {
                 .replaceAll(Pattern.quote("]"), "\\\\]");
     }
 
-
     public static String constructUserAgentName() {
         final Package pkg = StringUtils.class.getPackage();
-        final String implementationVersion = StringUtils.isSet(pkg.getImplementationVersion()) ?
-                pkg.getImplementationVersion() : "x.x.xx";
+        final String implementationVersion =
+                StringUtils.isSet(pkg.getImplementationVersion()) ? pkg.getImplementationVersion() : "x.x.xx";
 
         return String.format("stubby4j/%s (HTTP stub client request)", implementationVersion);
     }
@@ -157,9 +177,7 @@ public final class StringUtils {
             return new HashSet<>();
         }
         final String delimiter = ",";
-        return Arrays.stream(value.split(delimiter))
-                .map(String::trim)
-                .collect(Collectors.toSet());
+        return Arrays.stream(value.split(delimiter)).map(String::trim).collect(Collectors.toSet());
     }
 
     public static String encodeBase64(final String toEncode) {

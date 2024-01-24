@@ -1,4 +1,30 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.buildHttpClient;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.SSLv3;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_0;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_1;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
+import static java.util.Arrays.asList;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
@@ -6,6 +32,10 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashSet;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,21 +47,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.buildHttpClient;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.SSLv3;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_0;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_1;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
-import static java.util.Arrays.asList;
 
 public class StubsPortalHttp11OverTlsTests {
 
@@ -62,7 +77,8 @@ public class StubsPortalHttp11OverTlsTests {
 
         STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, url.getFile());
 
-        final URL jsonContentUrl = StubsPortalHttp11OverTlsTests.class.getResource("/json/response/json_response_1.json");
+        final URL jsonContentUrl =
+                StubsPortalHttp11OverTlsTests.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
     }

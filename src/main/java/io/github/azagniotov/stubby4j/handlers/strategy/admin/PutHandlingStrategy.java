@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
@@ -5,16 +21,17 @@ import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
-
 public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws Exception {
+    public void handle(
+            final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository)
+            throws Exception {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             response.setStatus(HttpStatus.METHOD_NOT_ALLOWED_405);
@@ -30,33 +47,40 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
                 final int stubIndexToUpdate = Integer.parseInt(lastUriPathSegment);
 
                 if (!stubRepository.canMatchStubByIndex(stubIndexToUpdate)) {
-                    final String errorMessage = String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
+                    final String errorMessage =
+                            String.format("Stub request index#%s does not exist, cannot update", stubIndexToUpdate);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
                 if (payloadOptional.isPresent()) {
-                    final String updatedCycleUrl = stubRepository.refreshStubByIndex(new YamlParser(), payloadOptional.get(), stubIndexToUpdate);
+                    final String updatedCycleUrl = stubRepository.refreshStubByIndex(
+                            new YamlParser(), payloadOptional.get(), stubIndexToUpdate);
                     response.setStatus(HttpStatus.CREATED_201);
                     response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
-                    final String successfulMessage = String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
+                    final String successfulMessage =
+                            String.format("Stub request index#%s updated successfully", stubIndexToUpdate);
                     response.getWriter().println(successfulMessage);
                 }
             } else {
-                // We attempt to update a stub by uuid as a fallback, e.g.: UPDATE localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
+                // We attempt to update a stub by uuid as a fallback, e.g.: UPDATE
+                // localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchStubByUuid(lastUriPathSegment)) {
-                    final String errorMessage = String.format("Stub request uuid#%s does not exist, cannot update", lastUriPathSegment);
+                    final String errorMessage =
+                            String.format("Stub request uuid#%s does not exist, cannot update", lastUriPathSegment);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
                 if (payloadOptional.isPresent()) {
-                    final String updatedCycleUrl = stubRepository.refreshStubByUuid(new YamlParser(), payloadOptional.get(), lastUriPathSegment);
+                    final String updatedCycleUrl = stubRepository.refreshStubByUuid(
+                            new YamlParser(), payloadOptional.get(), lastUriPathSegment);
                     response.setStatus(HttpStatus.CREATED_201);
                     response.addHeader(HttpHeader.LOCATION.asString(), updatedCycleUrl);
-                    final String successfulMessage = String.format("Stub request uuid#%s updated successfully", lastUriPathSegment);
+                    final String successfulMessage =
+                            String.format("Stub request uuid#%s updated successfully", lastUriPathSegment);
                     response.getWriter().println(successfulMessage);
                 }
             }
@@ -67,19 +91,23 @@ public class PutHandlingStrategy implements AdminResponseHandlingStrategy {
             if (REGEX_PROXY_CONFIG.matcher(maybeProxyConfig).matches()) {
                 final String proxyConfigUuid = uriFragments[uriFragments.length - 1];
 
-                // We attempt to update a proxy config by uuid, e.g.: PUT localhost:8889/proxy-config/9136d8b7-f7a7-478d-97a5-53292484aaf6
+                // We attempt to update a proxy config by uuid, e.g.: PUT
+                // localhost:8889/proxy-config/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchProxyConfigByUuid(proxyConfigUuid)) {
-                    final String errorMessage = String.format("Proxy config uuid#%s does not exist, cannot update", proxyConfigUuid);
+                    final String errorMessage =
+                            String.format("Proxy config uuid#%s does not exist, cannot update", proxyConfigUuid);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 final Optional<String> payloadOptional = extractRequestBodyWithOptionalError(request, response);
                 if (payloadOptional.isPresent()) {
-                    final String proxyEndpointUrl = stubRepository.refreshProxyConfigByUuid(new YamlParser(), payloadOptional.get(), proxyConfigUuid);
+                    final String proxyEndpointUrl = stubRepository.refreshProxyConfigByUuid(
+                            new YamlParser(), payloadOptional.get(), proxyConfigUuid);
                     response.setStatus(HttpStatus.CREATED_201);
                     response.addHeader(HttpHeader.LOCATION.asString(), proxyEndpointUrl);
-                    final String successfulMessage = String.format("Proxy config uuid#%s updated successfully", proxyConfigUuid);
+                    final String successfulMessage =
+                            String.format("Proxy config uuid#%s updated successfully", proxyConfigUuid);
                     response.getWriter().println(successfulMessage);
                 }
 

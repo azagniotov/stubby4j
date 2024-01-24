@@ -1,41 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.yaml;
-
-import io.github.azagniotov.stubby4j.cli.ANSITerminal;
-import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
-import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
-import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
-import io.github.azagniotov.stubby4j.stubs.StubRequest;
-import io.github.azagniotov.stubby4j.stubs.StubResponse;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
-import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
-import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
@@ -73,10 +52,47 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
+import io.github.azagniotov.stubby4j.cli.ANSITerminal;
+import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
+import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+import io.github.azagniotov.stubby4j.stubs.StubHttpLifecycle;
+import io.github.azagniotov.stubby4j.stubs.StubRequest;
+import io.github.azagniotov.stubby4j.stubs.StubResponse;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
+import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyStrategy;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketClientRequest;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
+import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy;
+import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
+
 public class YamlParser {
-    static final String FAILED_TO_LOAD_FILE_ERR = "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
+    static final String FAILED_TO_LOAD_FILE_ERR =
+            "Failed to retrieveLoadedStubs response content using relative path specified in 'file'. Check that response content exists in relative path specified in 'file'";
     private static final Logger LOGGER = LoggerFactory.getLogger(YamlParser.class);
-    private final static Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
+    private static final Yaml SNAKE_YAML = SnakeYaml.INSTANCE.getSnakeYaml();
     private final AtomicInteger parsedStubCounter = new AtomicInteger();
     private String dataConfigHomeDirectory;
 
@@ -85,11 +101,12 @@ public class YamlParser {
     }
 
     public boolean isMainYamlHasIncludes(final Object loadedYamlConfig) {
-        return loadedYamlConfig instanceof Map &&
-                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.INCLUDES.toString());
+        return loadedYamlConfig instanceof Map
+                && ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.INCLUDES.toString());
     }
 
-    public List<File> getYamlIncludes(final String dataConfigHomeDirectory, final Object loadedYamlConfig) throws IOException {
+    public List<File> getYamlIncludes(final String dataConfigHomeDirectory, final Object loadedYamlConfig)
+            throws IOException {
         final Object includePathsObject = ((Map) loadedYamlConfig).get(ConfigurableYAMLProperty.INCLUDES.toString());
         final List<String> includePaths = asCheckedArrayList(includePathsObject, String.class);
 
@@ -102,7 +119,8 @@ public class YamlParser {
         return yamlIncludes;
     }
 
-    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent) throws IOException {
+    public YamlParseResultSet parse(final String dataConfigHomeDirectory, final String configContent)
+            throws IOException {
         return parse(dataConfigHomeDirectory, constructInputStream(configContent));
     }
 
@@ -110,7 +128,8 @@ public class YamlParser {
         return parse(dataConfigHomeDirectory, constructInputStream(configFile));
     }
 
-    private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream) throws IOException {
+    private YamlParseResultSet parse(final String dataConfigHomeDirectory, final InputStream configAsStream)
+            throws IOException {
         this.dataConfigHomeDirectory = dataConfigHomeDirectory;
 
         final Object loadedConfig = loadYamlFromInputStream(configAsStream);
@@ -123,7 +142,8 @@ public class YamlParser {
         final List<Map> yamlMappings = asCheckedArrayList(loadedConfig, Map.class);
 
         for (final Map yamlMapping : yamlMappings) {
-            final Map<String, Object> yamlMappingProperties = asCheckedLinkedHashMap(yamlMapping, String.class, Object.class);
+            final Map<String, Object> yamlMappingProperties =
+                    asCheckedLinkedHashMap(yamlMapping, String.class, Object.class);
             if (isProxyConfigMapping(yamlMapping)) {
                 // the YAML config file contains a top-level:
                 // - proxy-config
@@ -138,11 +158,14 @@ public class YamlParser {
                 // - web-socket
                 final StubWebSocketConfig stubWebSocketConfig = parseStubWebSocketConfig(yamlMappingProperties);
                 if (webSocketConfigs.containsKey(stubWebSocketConfig.getUrl())) {
-                    throw new IOException("Web socket config YAML contains duplicate URL: " + stubWebSocketConfig.getUrl());
+                    throw new IOException(
+                            "Web socket config YAML contains duplicate URL: " + stubWebSocketConfig.getUrl());
                 }
 
-                if (ObjectUtils.isNull(stubWebSocketConfig.getOnOpenServerResponse()) && stubWebSocketConfig.getOnMessage().isEmpty()) {
-                    throw new IOException("Web socket config must have at least one of the two 'on-open' or 'on-message' defined");
+                if (ObjectUtils.isNull(stubWebSocketConfig.getOnOpenServerResponse())
+                        && stubWebSocketConfig.getOnMessage().isEmpty()) {
+                    throw new IOException(
+                            "Web socket config must have at least one of the two 'on-open' or 'on-message' defined");
                 }
 
                 webSocketConfigs.put(stubWebSocketConfig.getUrl(), stubWebSocketConfig);
@@ -189,7 +212,8 @@ public class YamlParser {
         }
 
         if (!(loadedConfig instanceof List)) {
-            throw new IOException("Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
+            throw new IOException(
+                    "Loaded YAML root node must be an instance of ArrayList, otherwise something went wrong. Check provided YAML");
         }
         return loadedConfig;
     }
@@ -200,7 +224,8 @@ public class YamlParser {
         for (final Map.Entry<String, Object> stubType : yamlMappingProperties.entrySet()) {
             final Object stubTypeValue = stubType.getValue();
 
-            final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+            final Map<String, Object> stubbedProperties =
+                    asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
             buildReflectableStub(stubbedProperties, proxyConfigBuilder);
             proxyConfigBuilder.withProxyConfigAsYAML(toCompleteYamlListString(yamlMappingProperties));
@@ -224,7 +249,8 @@ public class YamlParser {
             } else if (UUID.isA(stubTypeKey)) {
                 webSocketConfigBuilder.withUuid((String) stubType.getValue());
             } else if (stubTypeValue instanceof Map) {
-                final Map<String, Object> webSocketProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+                final Map<String, Object> webSocketProperties =
+                        asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
                 for (final Map.Entry<String, Object> webSocketPropertyEntries : webSocketProperties.entrySet()) {
                     final String webSocketPropertyKey = webSocketPropertyEntries.getKey();
@@ -232,10 +258,13 @@ public class YamlParser {
 
                     if (ON_OPEN_SERVER_RESPONSE.isA(webSocketPropertyKey)) {
 
-                        final Map<String, Object> onOpenServerResponseProperties = asCheckedLinkedHashMap(webSocketPropertyValue, String.class, Object.class);
+                        final Map<String, Object> onOpenServerResponseProperties =
+                                asCheckedLinkedHashMap(webSocketPropertyValue, String.class, Object.class);
 
-                        final StubWebSocketServerResponse.Builder serverResponseStubBuilder = buildReflectableStub(onOpenServerResponseProperties, new StubWebSocketServerResponse.Builder());
-                        serverResponseStubBuilder.withWebSocketServerResponseAsYAML(toYaml(webSocketProperties, ON_OPEN_SERVER_RESPONSE));
+                        final StubWebSocketServerResponse.Builder serverResponseStubBuilder = buildReflectableStub(
+                                onOpenServerResponseProperties, new StubWebSocketServerResponse.Builder());
+                        serverResponseStubBuilder.withWebSocketServerResponseAsYAML(
+                                toYaml(webSocketProperties, ON_OPEN_SERVER_RESPONSE));
                         webSocketConfigBuilder.withOnOpenServerResponse(serverResponseStubBuilder.build());
                     } else if (ON_MESSAGE.isA(webSocketPropertyKey)) {
 
@@ -246,27 +275,34 @@ public class YamlParser {
 
                         final List<Map> onMessageLifeCycles = asCheckedArrayList(webSocketPropertyValue, Map.class);
                         for (Map onMessageLifeCycle : onMessageLifeCycles) {
-                            final Map<String, Object> onMessageLifeCycleObjects = asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class);
+                            final Map<String, Object> onMessageLifeCycleObjects =
+                                    asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class);
 
                             final Object rawClientRequest = onMessageLifeCycleObjects.get(CLIENT_REQUEST.toString());
                             final StubWebSocketClientRequest clientRequest = buildReflectableStub(
-                                    asCheckedLinkedHashMap(rawClientRequest, String.class, Object.class),
-                                    new StubWebSocketClientRequest.Builder())
+                                            asCheckedLinkedHashMap(rawClientRequest, String.class, Object.class),
+                                            new StubWebSocketClientRequest.Builder())
                                     .withWebSocketClientRequestAsYAML(toYaml(onMessageLifeCycleObjects, CLIENT_REQUEST))
                                     .build();
 
-                            checkAndThrowWhenClientRequestDuplicateBodies(clientRequestBodyTextHashCodeCache, clientRequestBodyBytesHashCodeCache, clientRequest);
+                            checkAndThrowWhenClientRequestDuplicateBodies(
+                                    clientRequestBodyTextHashCodeCache,
+                                    clientRequestBodyBytesHashCodeCache,
+                                    clientRequest);
 
                             final Object rawServerResponse = onMessageLifeCycleObjects.get(SERVER_RESPONSE.toString());
                             final StubWebSocketServerResponse serverResponse = buildReflectableStub(
-                                    asCheckedLinkedHashMap(rawServerResponse, String.class, Object.class),
-                                    new StubWebSocketServerResponse.Builder())
-                                    .withWebSocketServerResponseAsYAML(toYaml(onMessageLifeCycleObjects, SERVER_RESPONSE))
+                                            asCheckedLinkedHashMap(rawServerResponse, String.class, Object.class),
+                                            new StubWebSocketServerResponse.Builder())
+                                    .withWebSocketServerResponseAsYAML(
+                                            toYaml(onMessageLifeCycleObjects, SERVER_RESPONSE))
                                     .build();
 
-                            final String lifeCycleCompleteYAML = toCompleteYamlListString(asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class));
+                            final String lifeCycleCompleteYAML = toCompleteYamlListString(
+                                    asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class));
 
-                            lifeCycles.add(new StubWebSocketOnMessageLifeCycle(clientRequest, serverResponse, lifeCycleCompleteYAML));
+                            lifeCycles.add(new StubWebSocketOnMessageLifeCycle(
+                                    clientRequest, serverResponse, lifeCycleCompleteYAML));
                         }
 
                         webSocketConfigBuilder.withOnMessage(lifeCycles);
@@ -285,20 +321,24 @@ public class YamlParser {
         return stubWebSocketConfig;
     }
 
-    private void checkAndThrowWhenClientRequestDuplicateBodies(final Set<Integer> clientRequestBodyTextHashCodeCache,
-                                                               final Set<Integer> clientRequestBodyBytesHashCodeCache,
-                                                               final StubWebSocketClientRequest clientRequest) {
+    private void checkAndThrowWhenClientRequestDuplicateBodies(
+            final Set<Integer> clientRequestBodyTextHashCodeCache,
+            final Set<Integer> clientRequestBodyBytesHashCodeCache,
+            final StubWebSocketClientRequest clientRequest) {
         if (clientRequest.getMessageType() == StubWebSocketMessageType.TEXT) {
-            final int clientRequestBodyTextHashCode = clientRequest.getBodyAsString().hashCode();
+            final int clientRequestBodyTextHashCode =
+                    clientRequest.getBodyAsString().hashCode();
             if (clientRequestBodyTextHashCodeCache.contains(clientRequestBodyTextHashCode)) {
-                throw new UncheckedIOException(new IOException("Web socket on-message contains multiple client-request with the same body text"));
+                throw new UncheckedIOException(new IOException(
+                        "Web socket on-message contains multiple client-request with the same body text"));
             } else {
                 clientRequestBodyTextHashCodeCache.add(clientRequestBodyTextHashCode);
             }
         } else {
             final int clientRequestBodyBytesHashCode = Arrays.hashCode(clientRequest.getBodyAsBytes());
             if (clientRequestBodyBytesHashCodeCache.contains(clientRequestBodyBytesHashCode)) {
-                throw new UncheckedIOException(new IOException("Web socket on-message contains multiple client-request with the same body bytes"));
+                throw new UncheckedIOException(new IOException(
+                        "Web socket on-message contains multiple client-request with the same body bytes"));
             } else {
                 clientRequestBodyBytesHashCodeCache.add(clientRequestBodyBytesHashCode);
             }
@@ -317,7 +357,8 @@ public class YamlParser {
             } else if (UUID.isA(stubTypeKey)) {
                 stubBuilder.withUUID((String) stubType.getValue());
             } else if (stubTypeValue instanceof Map) {
-                final Map<String, Object> stubbedProperties = asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
+                final Map<String, Object> stubbedProperties =
+                        asCheckedLinkedHashMap(stubTypeValue, String.class, Object.class);
 
                 if (REQUEST.isA(stubTypeKey)) {
                     parseStubbedRequestConfig(stubBuilder, stubbedProperties);
@@ -332,7 +373,8 @@ public class YamlParser {
             }
         }
 
-        StubHttpLifecycle loadedStub = stubBuilder.withCompleteYAML(toCompleteYamlListString(yamlMappingProperties))
+        StubHttpLifecycle loadedStub = stubBuilder
+                .withCompleteYAML(toCompleteYamlListString(yamlMappingProperties))
                 .withRequestAsYAML(toYaml(yamlMappingProperties, REQUEST))
                 .withResponseAsYAML(toYaml(yamlMappingProperties, RESPONSE))
                 .withResourceId(parsedStubCounter.getAndIncrement())
@@ -343,19 +385,24 @@ public class YamlParser {
         return loadedStub;
     }
 
-    private void parseStubbedRequestConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
-        final StubRequest.Builder requestStubBuilder = buildReflectableStub(requestProperties, new StubRequest.Builder());
+    private void parseStubbedRequestConfig(
+            final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> requestProperties) {
+        final StubRequest.Builder requestStubBuilder =
+                buildReflectableStub(requestProperties, new StubRequest.Builder());
         final StubRequest stubRequest = requestStubBuilder.build();
         stubRequest.compileRegexPatternsAndCache();
         stubBuilder.withRequest(stubRequest);
     }
 
-    private void parseStubbedResponseConfig(final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
-        final StubResponse.Builder responseStubBuilder = buildReflectableStub(responseProperties, new StubResponse.Builder());
+    private void parseStubbedResponseConfig(
+            final StubHttpLifecycle.Builder stubBuilder, final Map<String, Object> responseProperties) {
+        final StubResponse.Builder responseStubBuilder =
+                buildReflectableStub(responseProperties, new StubResponse.Builder());
         stubBuilder.withResponse(responseStubBuilder.build());
     }
 
-    private <T extends ReflectableStub, B extends AbstractBuilder<T>> B buildReflectableStub(final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
+    private <T extends ReflectableStub, B extends AbstractBuilder<T>> B buildReflectableStub(
+            final Map<String, Object> stubbedProperties, final B stubTypeBuilder) {
 
         for (final Map.Entry<String, Object> propertyPair : stubbedProperties.entrySet()) {
 
@@ -369,14 +416,16 @@ public class YamlParser {
             }
 
             if (rawFieldNameValue instanceof Map) {
-                final Map<String, String> rawHeaders = asCheckedLinkedHashMap(rawFieldNameValue, String.class, String.class);
+                final Map<String, String> rawHeaders =
+                        asCheckedLinkedHashMap(rawFieldNameValue, String.class, String.class);
                 final Map<String, String> headers = configureAuthorizationHeader(rawHeaders);
                 stubTypeBuilder.stage(fromString(stageableFieldName), of(headers));
                 continue;
             }
 
             if (METHOD.isA(stageableFieldName)) {
-                final ArrayList<String> methods = new ArrayList<>(Collections.singletonList(objectToString(rawFieldNameValue)));
+                final ArrayList<String> methods =
+                        new ArrayList<>(Collections.singletonList(objectToString(rawFieldNameValue)));
                 stubTypeBuilder.stage(fromString(stageableFieldName), of(methods));
                 continue;
             }
@@ -394,8 +443,10 @@ public class YamlParser {
                     throw new IllegalArgumentException(stubbedProperty);
                 }
 
-                final Optional<StubProxyStrategy> stubProxyStrategyOptional = StubProxyStrategy.ofNullableProperty(stubbedProperty);
-                final Optional<Object> stubProxyStrategyObjectOptional = stubProxyStrategyOptional.map(stubProxyStrategy -> stubProxyStrategy);
+                final Optional<StubProxyStrategy> stubProxyStrategyOptional =
+                        StubProxyStrategy.ofNullableProperty(stubbedProperty);
+                final Optional<Object> stubProxyStrategyObjectOptional =
+                        stubProxyStrategyOptional.map(stubProxyStrategy -> stubProxyStrategy);
                 stubTypeBuilder.stage(fromString(stageableFieldName), stubProxyStrategyObjectOptional);
                 continue;
             }
@@ -407,8 +458,10 @@ public class YamlParser {
                     throw new IllegalArgumentException(stubbedProperty);
                 }
 
-                final Optional<StubWebSocketServerResponsePolicy> stubWebSocketServerResponseStrategy = StubWebSocketServerResponsePolicy.ofNullableProperty(stubbedProperty);
-                final Optional<Object> stubWebSocketServerResponseStrategyOptional = stubWebSocketServerResponseStrategy.map(stubProxyStrategy -> stubProxyStrategy);
+                final Optional<StubWebSocketServerResponsePolicy> stubWebSocketServerResponseStrategy =
+                        StubWebSocketServerResponsePolicy.ofNullableProperty(stubbedProperty);
+                final Optional<Object> stubWebSocketServerResponseStrategyOptional =
+                        stubWebSocketServerResponseStrategy.map(stubProxyStrategy -> stubProxyStrategy);
                 stubTypeBuilder.stage(fromString(stageableFieldName), stubWebSocketServerResponseStrategyOptional);
                 continue;
             }
@@ -420,8 +473,10 @@ public class YamlParser {
                     throw new IllegalArgumentException(stubbedProperty);
                 }
 
-                final Optional<StubWebSocketMessageType> stubWebSocketMessageType = StubWebSocketMessageType.ofNullableProperty(stubbedProperty);
-                final Optional<Object> stubWebSocketMessageTypeOptional = stubWebSocketMessageType.map(stubProxyStrategy -> stubProxyStrategy);
+                final Optional<StubWebSocketMessageType> stubWebSocketMessageType =
+                        StubWebSocketMessageType.ofNullableProperty(stubbedProperty);
+                final Optional<Object> stubWebSocketMessageTypeOptional =
+                        stubWebSocketMessageType.map(stubProxyStrategy -> stubProxyStrategy);
                 stubTypeBuilder.stage(fromString(stageableFieldName), stubWebSocketMessageTypeOptional);
                 continue;
             }
@@ -432,17 +487,20 @@ public class YamlParser {
         return stubTypeBuilder;
     }
 
-    private void parseStubbedResponseListConfig(final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) {
+    private void parseStubbedResponseListConfig(
+            final StubHttpLifecycle.Builder stubBuilder, final Map.Entry<String, Object> httpTypeConfig) {
         final List<Map> responseProperties = asCheckedArrayList(httpTypeConfig.getValue(), Map.class);
 
         stubBuilder.withResponse(buildStubResponseList(responseProperties, new StubResponse.Builder()));
     }
 
-    private List<StubResponse> buildStubResponseList(final List<Map> responseProperties, final StubResponse.Builder stubResponseBuilder) {
+    private List<StubResponse> buildStubResponseList(
+            final List<Map> responseProperties, final StubResponse.Builder stubResponseBuilder) {
         final List<StubResponse> stubResponses = new LinkedList<>();
 
         for (final Map rawPropertyPairs : responseProperties) {
-            final Map<String, Object> propertyPairs = asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
+            final Map<String, Object> propertyPairs =
+                    asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
             for (final Map.Entry<String, Object> propertyPair : propertyPairs.entrySet()) {
                 final String stageableFieldName = propertyPair.getKey();
                 checkStubbedProperty(stageableFieldName, RESPONSE.toString());
@@ -478,17 +536,21 @@ public class YamlParser {
     }
 
     private String toCompleteYamlListString(final Map<String, Object> yamlMappingProperties) {
-        final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {{
-            add(yamlMappingProperties);
-        }};
+        final List<Map<String, Object>> root = new ArrayList<Map<String, Object>>() {
+            {
+                add(yamlMappingProperties);
+            }
+        };
 
         return SNAKE_YAML.dumpAs(root, null, FlowStyle.BLOCK);
     }
 
     private String toYaml(final Map<String, Object> yamlMappingProperties, final ConfigurableYAMLProperty stubName) {
-        final Map<String, Object> httpType = new HashMap<String, Object>() {{
-            put(stubName.toString(), yamlMappingProperties.get(stubName.toString()));
-        }};
+        final Map<String, Object> httpType = new HashMap<String, Object>() {
+            {
+                put(stubName.toString(), yamlMappingProperties.get(stubName.toString()));
+            }
+        };
 
         return SNAKE_YAML.dumpAs(httpType, null, FlowStyle.BLOCK);
     }
@@ -503,7 +565,8 @@ public class YamlParser {
             if (headers.containsKey(BASIC.asYAMLProp())) {
                 final String headerValue = headers.get(BASIC.asYAMLProp());
                 final String authorizationHeader = trimIfSet(headerValue);
-                final String encodedAuthorizationHeader = String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
+                final String encodedAuthorizationHeader =
+                        String.format("%s %s", BASIC.asString(), encodeBase64(authorizationHeader));
                 headers.put(BASIC.asYAMLProp(), encodedAuthorizationHeader);
 
             } else if (headers.containsKey(BEARER.asYAMLProp())) {
@@ -520,13 +583,13 @@ public class YamlParser {
     }
 
     private boolean isProxyConfigMapping(final Object loadedYamlConfig) {
-        return loadedYamlConfig instanceof Map &&
-                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
+        return loadedYamlConfig instanceof Map
+                && ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.PROXY_CONFIG.toString());
     }
 
     private boolean isWebSocketConfigMapping(final Object loadedYamlConfig) {
-        return loadedYamlConfig instanceof Map &&
-                ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.WEB_SOCKET.toString());
+        return loadedYamlConfig instanceof Map
+                && ((Map) loadedYamlConfig).containsKey(ConfigurableYAMLProperty.WEB_SOCKET.toString());
     }
 
     private void checkStubbedProperty(final String stageableFieldName, final String propertyFamilyName) {
@@ -534,11 +597,14 @@ public class YamlParser {
             throw new IllegalStateException("An unknown property configured: " + stageableFieldName);
         } else if (isUnknownFamilyProperty(stageableFieldName, propertyFamilyName)) {
             if (propertyFamilyName.equals(HTTPLIFECYCLE.toString())) {
-                throw new IllegalStateException(String.format("Invalid property '%s' configured. This property cannot be configured above the 'request'", stageableFieldName));
+                throw new IllegalStateException(String.format(
+                        "Invalid property '%s' configured. This property cannot be configured above the 'request'",
+                        stageableFieldName));
             } else {
-                throw new IllegalStateException(String.format("Invalid property '%s' configured. This property does not belong in object '%s'", stageableFieldName, propertyFamilyName));
+                throw new IllegalStateException(String.format(
+                        "Invalid property '%s' configured. This property does not belong in object '%s'",
+                        stageableFieldName, propertyFamilyName));
             }
         }
     }
 }
-

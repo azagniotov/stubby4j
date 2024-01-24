@@ -1,4 +1,29 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.server.websocket;
+
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.FRAGMENTATION;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PING;
+import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
+import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
+import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.getLocalDateTime;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -7,6 +32,14 @@ import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketConfig;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketOnMessageLifeCycle;
 import io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponse;
 import io.github.azagniotov.stubby4j.utils.ConsoleUtils;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.StatusCode;
@@ -18,24 +51,6 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.DISCONNECT;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.FRAGMENTATION;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PING;
-import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.PUSH;
-import static io.github.azagniotov.stubby4j.utils.CollectionUtils.chunkifyByteArrayAndQueue;
-import static io.github.azagniotov.stubby4j.utils.ConsoleUtils.getLocalDateTime;
 
 @WebSocket
 public class StubsServerWebSocket {
@@ -51,8 +66,8 @@ public class StubsServerWebSocket {
     private volatile Session session;
     private RemoteEndpoint remote;
 
-    public StubsServerWebSocket(final StubWebSocketConfig stubWebSocketConfig,
-                                final ScheduledExecutorService scheduledExecutorService) {
+    public StubsServerWebSocket(
+            final StubWebSocketConfig stubWebSocketConfig, final ScheduledExecutorService scheduledExecutorService) {
         this.stubWebSocketConfig = stubWebSocketConfig;
         this.scheduledExecutorService = scheduledExecutorService;
     }
@@ -115,11 +130,11 @@ public class StubsServerWebSocket {
 
     @OnWebSocketClose
     public void onWebSocketClose(final int statusCode, final String reason) {
-        final String logMessage = String.format("[%s] <= %s %s\n",
+        final String logMessage = String.format(
+                "[%s] <= %s %s\n",
                 getLocalDateTime(),
                 statusCode,
-                String.format("Socket closed by client: [%s] %s", statusCode, reason.trim())
-        );
+                String.format("Socket closed by client: [%s] %s", statusCode, reason.trim()));
 
         ANSITerminal.ok(logMessage);
         LOGGER.info(logMessage);
@@ -128,11 +143,7 @@ public class StubsServerWebSocket {
     @OnWebSocketError
     @GeneratedCodeMethodCoverageExclusion
     public void onWebSocketError(Throwable cause) {
-        final String logMessage = String.format("[%s] <= %s %s\n",
-                getLocalDateTime(),
-                500,
-                cause.getMessage()
-        );
+        final String logMessage = String.format("[%s] <= %s %s\n", getLocalDateTime(), 500, cause.getMessage());
 
         ANSITerminal.error(logMessage);
         LOGGER.error(logMessage);
@@ -142,70 +153,87 @@ public class StubsServerWebSocket {
         final long delay = serverResponse.getDelay();
         if (serverResponse.getPolicy() == ONCE || serverResponse.getPolicy() == DISCONNECT) {
 
-            scheduledExecutorService.schedule(() -> {
-                if (serverResponse.getMessageType() == TEXT) {
-                    // Send response in a UTF-8 text form as a whole
-                    this.remote.sendStringByFuture(serverResponse.getBodyAsString());
-                } else {
-                    // Send response in a binary form as a whole blob
-                    this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
-                }
-
-            }, delay, TimeUnit.MILLISECONDS);
+            scheduledExecutorService.schedule(
+                    () -> {
+                        if (serverResponse.getMessageType() == TEXT) {
+                            // Send response in a UTF-8 text form as a whole
+                            this.remote.sendStringByFuture(serverResponse.getBodyAsString());
+                        } else {
+                            // Send response in a binary form as a whole blob
+                            this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
+                        }
+                    },
+                    delay,
+                    TimeUnit.MILLISECONDS);
         }
 
         if (serverResponse.getPolicy() == FRAGMENTATION) {
-            final BlockingQueue<ByteBuffer> queue = chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), FRAGMENTATION_FRAMES);
-            scheduledExecutorService.schedule(() -> {
-                while (!queue.isEmpty()) {
-                    try {
-                        final ByteBuffer byteBufferChunk = queue.poll();
-                        if (byteBufferChunk != null) {
-                            final boolean isLast = queue.isEmpty();
-                            // Send response in a binary form as sequential fragmented frames one after another in
-                            // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
-                            // in an async manner using a Future, as this can produce un-deterministic behavior.
-                            this.remote.sendPartialBytes(byteBufferChunk, isLast);
-                            Thread.sleep(delay);
+            final BlockingQueue<ByteBuffer> queue =
+                    chunkifyByteArrayAndQueue(serverResponse.getBodyAsBytes(), FRAGMENTATION_FRAMES);
+            scheduledExecutorService.schedule(
+                    () -> {
+                        while (!queue.isEmpty()) {
+                            try {
+                                final ByteBuffer byteBufferChunk = queue.poll();
+                                if (byteBufferChunk != null) {
+                                    final boolean isLast = queue.isEmpty();
+                                    // Send response in a binary form as sequential fragmented frames one after another
+                                    // in
+                                    // a blocking manner. This must be a blocking call, i.e.: we cannot send each chunk
+                                    // in an async manner using a Future, as this can produce un-deterministic behavior.
+                                    this.remote.sendPartialBytes(byteBufferChunk, isLast);
+                                    Thread.sleep(delay);
+                                }
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }, delay, TimeUnit.MILLISECONDS);
+                    },
+                    delay,
+                    TimeUnit.MILLISECONDS);
         }
 
         if (serverResponse.getPolicy() == PUSH) {
             // Send response to the client in periodic pushes one after another. The content will be sent as a whole
-            scheduledExecutorService.scheduleAtFixedRate(() -> {
-                if (serverResponse.getMessageType() == TEXT) {
-                    this.remote.sendStringByFuture(serverResponse.getBodyAsString());
-                } else {
-                    this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
-                }
-            }, delay, delay, TimeUnit.MILLISECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(
+                    () -> {
+                        if (serverResponse.getMessageType() == TEXT) {
+                            this.remote.sendStringByFuture(serverResponse.getBodyAsString());
+                        } else {
+                            this.remote.sendBytesByFuture(ByteBuffer.wrap(serverResponse.getBodyAsBytes()));
+                        }
+                    },
+                    delay,
+                    delay,
+                    TimeUnit.MILLISECONDS);
         }
 
         if (serverResponse.getPolicy() == PING) {
             // Send Ping (without application data) to the connected
             // client upon on-open or on-message config in periodic manner.
             // WebSocket Ping spec: https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2
-            scheduledExecutorService.scheduleAtFixedRate(() -> {
-                try {
-                    this.remote.sendPing(EMPTY_BYTE_BUFFER);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }, delay, delay, TimeUnit.MILLISECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(
+                    () -> {
+                        try {
+                            this.remote.sendPing(EMPTY_BYTE_BUFFER);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    },
+                    delay,
+                    delay,
+                    TimeUnit.MILLISECONDS);
         }
 
         if (serverResponse.getPolicy() == DISCONNECT) {
-            scheduledExecutorService.schedule(() -> {
-                this.session.close(StatusCode.NORMAL, NORMAL_CLOSE_REASON);
-            }, delay, TimeUnit.MILLISECONDS);
+            scheduledExecutorService.schedule(
+                    () -> {
+                        this.session.close(StatusCode.NORMAL, NORMAL_CLOSE_REASON);
+                    },
+                    delay,
+                    TimeUnit.MILLISECONDS);
         }
     }
 }
-

@@ -1,4 +1,24 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.server;
+
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.getSelfSignedKeyStorePath;
+import static java.util.Arrays.asList;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -16,6 +36,16 @@ import io.github.azagniotov.stubby4j.server.websocket.StubsWebSocketCreator;
 import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.ObjectUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.servlet.ServletException;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.MimeTypes;
@@ -43,22 +73,6 @@ import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.getSelfSignedKeyStorePath;
-import static java.util.Arrays.asList;
-
-
 @SuppressWarnings("serial")
 @GeneratedCodeClassCoverageExclusion
 public final class JettyFactory {
@@ -67,7 +81,8 @@ public final class JettyFactory {
     public static final int DEFAULT_STUBS_PORT = 8882;
     public static final int DEFAULT_SSL_PORT = 7443;
     public static final String DEFAULT_HOST = "localhost";
-    public static final String DASHED_STATUS_LINE = "--------------------------------------------------------------------------------------------------------\n";
+    public static final String DASHED_STATUS_LINE =
+            "--------------------------------------------------------------------------------------------------------\n";
     private static final Logger LOGGER = LoggerFactory.getLogger(JettyFactory.class);
     private static final int SERVER_CONNECTOR_IDLETIME_MILLIS = 45000;
     private static final String PROTOCOL_HTTP_1_1 = "HTTP/1.1";
@@ -100,8 +115,10 @@ public final class JettyFactory {
         server.setConnectors(buildConnectors(server));
         server.setHandler(constructHandlers());
 
-        // The WebSocketServerContainerInitializer.configureContext() requires knowledge about the Server that it will be run under.
-        // Add the ServletContextHandler to the Server instance via its Server.setHandler(Handler) call before you attempt to configure the context.
+        // The WebSocketServerContainerInitializer.configureContext() requires knowledge about the Server that it will
+        // be run under.
+        // Add the ServletContextHandler to the Server instance via its Server.setHandler(Handler) call before you
+        // attempt to configure the context.
         // https://stackoverflow.com/a/34044984
         // https://stackoverflow.com/questions/34007087/jetty-9-add-websockets-handler-to-handler-list
         final ContextHandlerCollection contextHandlerCollection = constructHandlers();
@@ -112,15 +129,14 @@ public final class JettyFactory {
         server.setHandler(contextHandlerCollection);
 
         // Configure specific websocket behavior
-        NativeWebSocketServletContainerInitializer.configure(servletContextHandler, (servletContext, nativeWebSocketConfiguration) ->
-        {
-            // Configure default max size
-            nativeWebSocketConfiguration.getPolicy().setMaxTextMessageBufferSize(65535);
+        NativeWebSocketServletContainerInitializer.configure(
+                servletContextHandler, (servletContext, nativeWebSocketConfiguration) -> {
+                    // Configure default max size
+                    nativeWebSocketConfiguration.getPolicy().setMaxTextMessageBufferSize(65535);
 
-            // Add websockets
-            nativeWebSocketConfiguration.addMapping("/*", new StubsWebSocketCreator(stubRepository));
-        });
-
+                    // Add websockets
+                    nativeWebSocketConfiguration.addMapping("/*", new StubsWebSocketCreator(stubRepository));
+                });
 
         // Add generic filter that will accept WebSocket upgrade.
         WebSocketUpgradeFilter.configure(servletContextHandler);
@@ -130,30 +146,34 @@ public final class JettyFactory {
 
     private ContextHandlerCollection constructHandlers() {
 
-        final JettyContext jettyContext = new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
+        final JettyContext jettyContext =
+                new JettyContext(currentHost, currentStubsPort, currentStubsSslPort, currentAdminPort);
         final ContextHandlerCollection handlers = new ContextHandlerCollection();
-        handlers.setHandlers(new Handler[]
-                {
-                        constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
-
-                        constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
-
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubRepository))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(stubRepository)),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/resource", gzipHandler(new AjaxResourceContentHandler(stubRepository))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubRepository))),
-                        constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
-                        constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubRepository)))
-                }
-        );
+        handlers.setHandlers(new Handler[] {
+            constructHandler(STUBS_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+            constructHandler(STUBS_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
+            constructHandler(SSL_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+            constructHandler(SSL_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new StubsPortalHandler(stubRepository))),
+            constructHandler(
+                    ADMIN_CONNECTOR_NAME, "/status", gzipHandler(new StatusPageHandler(jettyContext, stubRepository))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/refresh", new StubDataRefreshActionHandler(stubRepository)),
+            constructHandler(
+                    ADMIN_CONNECTOR_NAME, "/js/highlight", gzipHandler(staticResourceHandler("ui/js/highlight/"))),
+            constructHandler(
+                    ADMIN_CONNECTOR_NAME, "/js/minified", gzipHandler(staticResourceHandler("ui/js/minified/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/js/d3", gzipHandler(staticResourceHandler("ui/js/d3/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/js", gzipHandler(staticResourceHandler("ui/js/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/css", gzipHandler(staticResourceHandler("ui/css/"))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/images", gzipHandler(staticResourceHandler("ui/images/"))),
+            constructHandler(
+                    ADMIN_CONNECTOR_NAME,
+                    "/ajax/resource",
+                    gzipHandler(new AjaxResourceContentHandler(stubRepository))),
+            constructHandler(
+                    ADMIN_CONNECTOR_NAME, "/ajax/stats", gzipHandler(new AjaxEndpointStatsHandler(stubRepository))),
+            constructHandler(ADMIN_CONNECTOR_NAME, "/favicon.ico", gzipHandler(new FaviconHandler())),
+            constructHandler(ADMIN_CONNECTOR_NAME, ROOT_PATH_INFO, gzipHandler(new AdminPortalHandler(stubRepository)))
+        });
 
         return handlers;
     }
@@ -196,7 +216,7 @@ public final class JettyFactory {
         contextHandler.setContextPath(pathInfo);
         contextHandler.setAllowNullPathInfo(true);
         // We prefix the name with an '@' because this is the way Jetty v9 finds a named connector
-        contextHandler.setVirtualHosts(new String[]{"@" + connectorName});
+        contextHandler.setVirtualHosts(new String[] {"@" + connectorName});
         contextHandler.addLocaleEncoding(Locale.US.getDisplayName(), StringUtils.UTF_8);
         contextHandler.setHandler(handler);
 
@@ -242,12 +262,12 @@ public final class JettyFactory {
         statusBuilder.append("Admin portal:\n");
         statusBuilder.append(DASHED_STATUS_LINE);
 
-        final String configured = String.format(" > http://%s:%s\t\tAdmin portal\n",
-                adminChannel.getHost(), adminChannel.getPort());
+        final String configured =
+                String.format(" > http://%s:%s\t\tAdmin portal\n", adminChannel.getHost(), adminChannel.getPort());
         statusBuilder.append(configured);
 
-        final String status = String.format(" > http://%s:%s/status\t\tAdmin portal status\n",
-                adminChannel.getHost(), adminChannel.getPort());
+        final String status = String.format(
+                " > http://%s:%s/status\t\tAdmin portal status\n", adminChannel.getHost(), adminChannel.getPort());
         statusBuilder.append(status);
         statusBuilder.append("\n");
 
@@ -259,11 +279,12 @@ public final class JettyFactory {
 
     private ServerConnector buildStubsConnector(final Server server) {
 
-        final boolean enableAlpnAndHttp2 = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+        final boolean enableAlpnAndHttp2 =
+                commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
         final HttpConfiguration httpConfiguration = constructHttpConfiguration();
-        final ServerConnector stubsChannel = enableAlpnAndHttp2 ?
-                buildStubsConnectorWithHttp20(server, httpConfiguration) :
-                buildStubsConnectorWithHttp11(server, httpConfiguration);
+        final ServerConnector stubsChannel = enableAlpnAndHttp2
+                ? buildStubsConnectorWithHttp20(server, httpConfiguration)
+                : buildStubsConnectorWithHttp11(server, httpConfiguration);
         stubsChannel.setPort(getStubsPort(commandLineArgs));
 
         stubsChannel.setName(STUBS_CONNECTOR_NAME);
@@ -278,17 +299,19 @@ public final class JettyFactory {
         statusBuilder.append("Available insecure endpoints:\n");
         statusBuilder.append(DASHED_STATUS_LINE);
 
-        final String statusHttp = String.format(" > http://%s:%s\t\tHTTP/1.1 stubs portal\n",
-                stubsChannel.getHost(), stubsChannel.getPort());
+        final String statusHttp = String.format(
+                " > http://%s:%s\t\tHTTP/1.1 stubs portal\n", stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusHttp);
 
         if (enableAlpnAndHttp2) {
-            final String tlsPortalStatus = String.format(" > http://%s:%s\t\tHTTP/2 over TCP (h2c) stubs portal\n",
+            final String tlsPortalStatus = String.format(
+                    " > http://%s:%s\t\tHTTP/2 over TCP (h2c) stubs portal\n",
                     stubsChannel.getHost(), stubsChannel.getPort());
             statusBuilder.append(tlsPortalStatus);
         }
 
-        final String statusWs = String.format(" > ws://%s:%s/ws\t\tHTTP/1.1 WebSockets stubs portal\n",
+        final String statusWs = String.format(
+                " > ws://%s:%s/ws\t\tHTTP/1.1 WebSockets stubs portal\n",
                 stubsChannel.getHost(), stubsChannel.getPort());
         statusBuilder.append(statusWs);
         statusBuilder.append("\n");
@@ -299,7 +322,8 @@ public final class JettyFactory {
     }
 
     private ServerConnector buildStubsSslConnector(final Server server) throws IOException {
-        final boolean enableAlpnAndHttp2 = commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
+        final boolean enableAlpnAndHttp2 =
+                commandLineArgs.containsKey(CommandLineInterpreter.OPTION_ENABLE_TLS_WITH_ALPN_AND_HTTP_2);
         if (enableAlpnAndHttp2) {
             // See SslUtils static { ... }
             System.setProperty("overrideDisabledAlgorithms", "false");
@@ -310,9 +334,10 @@ public final class JettyFactory {
         final String keystorePath = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYSTORE, null);
         final String keystorePassword = commandLineArgs.getOrDefault(CommandLineInterpreter.OPTION_KEYPASS, null);
 
-        if ((ObjectUtils.isNull(keystorePath) && ObjectUtils.isNotNull(keystorePassword)) ||
-                (ObjectUtils.isNotNull(keystorePath) && ObjectUtils.isNull(keystorePassword))) {
-            final String misConfigMsg = String.format("When provided, both flags must be set, got: %s=%s and %s=%s",
+        if ((ObjectUtils.isNull(keystorePath) && ObjectUtils.isNotNull(keystorePassword))
+                || (ObjectUtils.isNotNull(keystorePath) && ObjectUtils.isNull(keystorePassword))) {
+            final String misConfigMsg = String.format(
+                    "When provided, both flags must be set, got: %s=%s and %s=%s",
                     CommandLineInterpreter.OPTION_KEYSTORE,
                     keystorePath,
                     CommandLineInterpreter.OPTION_KEYPASS,
@@ -327,9 +352,9 @@ public final class JettyFactory {
         httpConfiguration.addCustomizer(new SecureRequestCustomizer());
 
         final SslContextFactory sslContextFactory = constructSslContextFactory(keystorePassword, keystorePath);
-        final ServerConnector sslConnector = enableAlpnAndHttp2 ?
-                buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory) :
-                buildSslConnectorWithHttp11(server, httpConfiguration, sslContextFactory);
+        final ServerConnector sslConnector = enableAlpnAndHttp2
+                ? buildSslConnectorWithHttp2Alpn(server, httpConfiguration, sslContextFactory)
+                : buildSslConnectorWithHttp11(server, httpConfiguration, sslContextFactory);
 
         sslConnector.setPort(getStubsSslPort(commandLineArgs));
         sslConnector.setHost(DEFAULT_HOST);
@@ -340,7 +365,8 @@ public final class JettyFactory {
             sslConnector.setHost(commandLineArgs.get(CommandLineInterpreter.OPTION_ADDRESS));
         }
 
-        final HashSet<String> supportedTlsProtocols = new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
+        final HashSet<String> supportedTlsProtocols =
+                new HashSet<>(Arrays.asList(sslContextFactory.getIncludeProtocols()));
 
         statusBuilder.append("\n");
 
@@ -349,13 +375,14 @@ public final class JettyFactory {
         final String tlsStatus = String.format(" > Supported TLS protocol versions: %s", supportedTlsProtocols);
         statusBuilder.append(tlsStatus).append(enableAlpnAndHttp2 ? " with ALPN extension on HTTP/2\n" : "\n");
         if (!new HashSet<>(asList(SslUtils.enabledProtocols())).contains(TLS_v1_3)) {
-            final String noTls13Msg = String.format(" > TLSv1.3 is not supported in JDK v%s, %s\n",
-                    System.getProperty("java.runtime.version"),
-                    System.getProperty("java.vendor"));
+            final String noTls13Msg = String.format(
+                    " > TLSv1.3 is not supported in JDK v%s, %s\n",
+                    System.getProperty("java.runtime.version"), System.getProperty("java.vendor"));
             statusBuilder.append(noTls13Msg).append("\n");
         }
 
-        final String keystoreStatus = " > TLS layer configured using " + (ObjectUtils.isNull(keystorePath) ? "internal self-signed certificate" : "provided " + keystorePath);
+        final String keystoreStatus = " > TLS layer configured using "
+                + (ObjectUtils.isNull(keystorePath) ? "internal self-signed certificate" : "provided " + keystorePath);
         statusBuilder.append(keystoreStatus).append("\n");
         statusBuilder.append("\n");
 
@@ -363,12 +390,13 @@ public final class JettyFactory {
         statusBuilder.append("Available secure endpoints:\n");
         statusBuilder.append(DASHED_STATUS_LINE);
 
-        final String protocol = enableAlpnAndHttp2 ? "HTTP/2 over TLS (h2) stubs portal" : "HTTP/1.1 over TLS stubs portal";
-        final String tlsPortalStatus = String.format(" > https://%s:%s\t\t%s\n",
-                sslConnector.getHost(), sslConnector.getPort(), protocol);
+        final String protocol =
+                enableAlpnAndHttp2 ? "HTTP/2 over TLS (h2) stubs portal" : "HTTP/1.1 over TLS stubs portal";
+        final String tlsPortalStatus =
+                String.format(" > https://%s:%s\t\t%s\n", sslConnector.getHost(), sslConnector.getPort(), protocol);
         statusBuilder.append(tlsPortalStatus);
 
-        //TODO Move to jetty v11: https://webtide.com/jetty-10-and-11-have-arrived/
+        // TODO Move to jetty v11: https://webtide.com/jetty-10-and-11-have-arrived/
         // final String wssPortalStatus = String.format(" > wss://%s:%s/ws\t\t%s WebSockets on TLS stubs portal\n",
         //        sslConnector.getHost(), sslConnector.getPort(), protocol);
         // statusBuilder.append(wssPortalStatus);
@@ -378,7 +406,8 @@ public final class JettyFactory {
         return sslConnector;
     }
 
-    private SslContextFactory constructSslContextFactory(final String keystorePassword, final String keystorePath) throws IOException {
+    private SslContextFactory constructSslContextFactory(final String keystorePassword, final String keystorePath)
+            throws IOException {
 
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#configuring-ssl
 
@@ -429,44 +458,44 @@ public final class JettyFactory {
         return httpConfiguration;
     }
 
-    private ServerConnector buildStubsConnectorWithHttp11(final Server server,
-                                                          final HttpConfiguration httpConfiguration) {
-        return new ServerConnector(server,
-                new HttpConnectionFactory(httpConfiguration));
+    private ServerConnector buildStubsConnectorWithHttp11(
+            final Server server, final HttpConfiguration httpConfiguration) {
+        return new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
     }
 
-    private ServerConnector buildStubsConnectorWithHttp20(final Server server,
-                                                          final HttpConfiguration httpConfiguration) {
+    private ServerConnector buildStubsConnectorWithHttp20(
+            final Server server, final HttpConfiguration httpConfiguration) {
         // Annoying cURL notice in response: Connection state changed (MAX_CONCURRENT_STREAMS == N)!
         // https://github.com/curl/curl/blob/63c76681827b5ae9017f6c981003cd75e5f127de/lib/http2.h#L32
-        final HTTP2CServerConnectionFactory http2CServerConnectionFactory = new HTTP2CServerConnectionFactory(httpConfiguration);
+        final HTTP2CServerConnectionFactory http2CServerConnectionFactory =
+                new HTTP2CServerConnectionFactory(httpConfiguration);
         http2CServerConnectionFactory.setMaxConcurrentStreams(100);
-        return new ServerConnector(server,
-                new HttpConnectionFactory(httpConfiguration),
-                http2CServerConnectionFactory);
+        return new ServerConnector(server, new HttpConnectionFactory(httpConfiguration), http2CServerConnectionFactory);
     }
 
-    private ServerConnector buildSslConnectorWithHttp11(final Server server,
-                                                        final HttpConfiguration httpConfiguration,
-                                                        final SslContextFactory sslContextFactory) {
-        final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
+    private ServerConnector buildSslConnectorWithHttp11(
+            final Server server, final HttpConfiguration httpConfiguration, final SslContextFactory sslContextFactory) {
+        final SslConnectionFactory sslConnectionFactory =
+                new SslConnectionFactory(sslContextFactory, PROTOCOL_HTTP_1_1);
         return new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpConfiguration));
     }
 
-    private ServerConnector buildSslConnectorWithHttp2Alpn(final Server server,
-                                                           final HttpConfiguration httpConfiguration,
-                                                           final SslContextFactory sslContextFactory) {
+    private ServerConnector buildSslConnectorWithHttp2Alpn(
+            final Server server, final HttpConfiguration httpConfiguration, final SslContextFactory sslContextFactory) {
         // https://www.eclipse.org/jetty/documentation/jetty-9/index.html#alpn-chapter
 
         sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
-        final ALPNServerConnectionFactory alpnServerConnectionFactory = new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
+        final ALPNServerConnectionFactory alpnServerConnectionFactory =
+                new ALPNServerConnectionFactory(PROTOCOL_HTTP_2);
 
-        final HTTP2ServerConnectionFactory http2ServerConnectionFactory = new HTTP2ServerConnectionFactory(httpConfiguration);
+        final HTTP2ServerConnectionFactory http2ServerConnectionFactory =
+                new HTTP2ServerConnectionFactory(httpConfiguration);
 
         // Annoying cURL notice in response: Connection state changed (MAX_CONCURRENT_STREAMS == N)!
         // https://github.com/curl/curl/blob/63c76681827b5ae9017f6c981003cd75e5f127de/lib/http2.h#L32
         http2ServerConnectionFactory.setMaxConcurrentStreams(100);
-        return new ServerConnector(server,
+        return new ServerConnector(
+                server,
                 new SslConnectionFactory(sslContextFactory, alpnServerConnectionFactory.getProtocol()),
                 alpnServerConnectionFactory,
                 http2ServerConnectionFactory);

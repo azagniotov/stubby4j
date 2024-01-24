@@ -1,16 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs.websocket;
-
-import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
-import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
-import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketMessageType.TEXT;
 import static io.github.azagniotov.stubby4j.stubs.websocket.StubWebSocketServerResponsePolicy.ONCE;
@@ -20,6 +24,17 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.DELAY;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.FILE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.MESSAGE_TYPE;
 import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.SERVER_RESPONSE_POLICY;
+
+import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
+import io.github.azagniotov.stubby4j.stubs.AbstractBuilder;
+import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class StubWebSocketServerResponse implements ReflectableStub {
 
@@ -43,7 +58,7 @@ public class StubWebSocketServerResponse implements ReflectableStub {
         this.body = body;
         this.file = file;
         this.delay = delay;
-        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
+        this.fileBytes = ObjectUtils.isNull(file) ? new byte[] {} : getFileBytes();
         this.webSocketServerResponseAsYAML = webSocketServerResponseAsYAML;
     }
 
@@ -82,7 +97,7 @@ public class StubWebSocketServerResponse implements ReflectableStub {
         try {
             return FileUtils.fileToBytes(file);
         } catch (Exception e) {
-            return new byte[]{};
+            return new byte[] {};
         }
     }
 
@@ -96,12 +111,12 @@ public class StubWebSocketServerResponse implements ReflectableStub {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StubWebSocketServerResponse that = (StubWebSocketServerResponse) o;
-        return delay == that.delay &&
-                messageType == that.messageType &&
-                policy == that.policy &&
-                body.equals(that.body) &&
-                file.equals(that.file) &&
-                Arrays.equals(fileBytes, that.fileBytes);
+        return delay == that.delay
+                && messageType == that.messageType
+                && policy == that.policy
+                && body.equals(that.body)
+                && file.equals(that.file)
+                && Arrays.equals(fileBytes, that.fileBytes);
     }
 
     @Override
@@ -179,12 +194,7 @@ public class StubWebSocketServerResponse implements ReflectableStub {
 
             final long delayAsLong = this.delay.trim().equals("") ? 0 : Long.parseLong(this.delay);
             final StubWebSocketServerResponse webSocketServerResponse = new StubWebSocketServerResponse(
-                    messageType,
-                    strategy,
-                    body,
-                    file,
-                    delayAsLong,
-                    webSocketServerResponseAsYAML);
+                    messageType, strategy, body, file, delayAsLong, webSocketServerResponseAsYAML);
 
             reset();
 

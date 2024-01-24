@@ -1,4 +1,27 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyClientSslContextFactory;
+import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp20WithClientSsl;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
+import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
+import static java.util.Arrays.asList;
 
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
 import io.github.azagniotov.stubby4j.client.StubbyClient;
@@ -7,6 +30,16 @@ import io.github.azagniotov.stubby4j.server.JettyFactory;
 import io.github.azagniotov.stubby4j.server.ssl.SslUtils;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpFields;
@@ -34,24 +67,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyClientSslContextFactory;
-import static io.github.azagniotov.stubby4j.HttpClientUtils.jettyHttpClientOnHttp20WithClientSsl;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_2;
-import static io.github.azagniotov.stubby4j.server.ssl.SslUtils.TLS_v1_3;
-import static java.util.Arrays.asList;
-
 public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
 
     private static final StubbyClient STUBBY_CLIENT = new StubbyClient();
@@ -76,9 +91,16 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
         stubsData = StringUtils.inputStreamToString(stubsDataInputStream);
         stubsDataInputStream.close();
 
-        STUBBY_CLIENT.startJetty(STUBS_PORT, STUBS_SSL_PORT, ADMIN_PORT, JettyFactory.DEFAULT_HOST, url.getFile(), "--enable_tls_with_alpn_and_http_2");
+        STUBBY_CLIENT.startJetty(
+                STUBS_PORT,
+                STUBS_SSL_PORT,
+                ADMIN_PORT,
+                JettyFactory.DEFAULT_HOST,
+                url.getFile(),
+                "--enable_tls_with_alpn_and_http_2");
 
-        final URL jsonContentUrl = StubsPortalHttp20OverTlsWithAlpnProtocolTests.class.getResource("/json/response/json_response_1.json");
+        final URL jsonContentUrl =
+                StubsPortalHttp20OverTlsWithAlpnProtocolTests.class.getResource("/json/response/json_response_1.json");
         assertThat(jsonContentUrl).isNotNull();
         expectedContent = StringUtils.inputStreamToString(jsonContentUrl.openStream());
     }
@@ -116,7 +138,8 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
     }
 
     @Test
-    public void shouldReturnExpectedResponseUsingLowLevelHttp2ClientApiOverTlsWithAlpn_TlsVersion_1_3() throws Exception {
+    public void shouldReturnExpectedResponseUsingLowLevelHttp2ClientApiOverTlsWithAlpn_TlsVersion_1_3()
+            throws Exception {
         final SslContextFactory sslContextFactory = jettyClientSslContextFactory(TLS_v1_3);
 
         final HTTP2Client http2Client = new HTTP2Client();
@@ -124,16 +147,22 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
         http2Client.start();
 
         final String host = "localhost";
-        final HttpURI httpURI = new HttpURI("https://" + host + ":" + STUBS_SSL_PORT + "/invoice?status=active&type=full");
+        final HttpURI httpURI =
+                new HttpURI("https://" + host + ":" + STUBS_SSL_PORT + "/invoice?status=active&type=full");
 
         final FuturePromise<Session> sessionPromise = new FuturePromise<>();
-        http2Client.connect(sslContextFactory, new InetSocketAddress(host, STUBS_SSL_PORT), new ServerSessionListener.Adapter(), sessionPromise);
+        http2Client.connect(
+                sslContextFactory,
+                new InetSocketAddress(host, STUBS_SSL_PORT),
+                new ServerSessionListener.Adapter(),
+                sessionPromise);
         final Session session = sessionPromise.get(5, TimeUnit.SECONDS);
 
         final HttpFields requestFields = new HttpFields();
         requestFields.put("User-Agent", http2Client.getClass().getName() + "/" + Jetty.VERSION);
 
-        final MetaData.Request metaData = new MetaData.Request(HttpMethod.GET.asString(), httpURI, HttpVersion.HTTP_2, requestFields);
+        final MetaData.Request metaData =
+                new MetaData.Request(HttpMethod.GET.asString(), httpURI, HttpVersion.HTTP_2, requestFields);
         final HeadersFrame headersFrame = new HeadersFrame(metaData, null, true);
 
         // A Phaser may be used instead of a CountDownLatch to control a one-shot action serving a
@@ -164,7 +193,8 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
                 if (!frame.isEndStream()) {
                     // Get the content buffer.
                     final ByteBuffer dataBuffer = frame.getData();
-                    assertThat(ByteBuffer.wrap(expectedContent.getBytes(StandardCharsets.UTF_8))).isEqualTo(dataBuffer);
+                    assertThat(ByteBuffer.wrap(expectedContent.getBytes(StandardCharsets.UTF_8)))
+                            .isEqualTo(dataBuffer);
 
                     // Consume the buffer, here - as an example - just log it.
                     final CharBuffer decodedData = StandardCharsets.UTF_8.decode(dataBuffer);
@@ -198,11 +228,12 @@ public class StubsPortalHttp20OverTlsWithAlpnProtocolTests {
         final HttpClient httpClient = jettyHttpClientOnHttp20WithClientSsl(tlsProtocol);
         httpClient.start();
 
-        ContentResponse response = httpClient.newRequest("localhost", STUBS_SSL_PORT)
+        ContentResponse response = httpClient
+                .newRequest("localhost", STUBS_SSL_PORT)
                 .path("/invoice?status=active&type=full")
                 .method(HttpMethod.GET)
                 .scheme(HttpScheme.HTTPS.asString())
-                //.timeout(5, TimeUnit.SECONDS)
+                // .timeout(5, TimeUnit.SECONDS)
                 .send();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);

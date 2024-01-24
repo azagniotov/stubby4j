@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.handlers.strategy.admin;
 
 import io.github.azagniotov.stubby4j.handlers.AdminPortalHandler;
@@ -5,16 +21,17 @@ import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.stubs.proxy.StubProxyConfig;
 import io.github.azagniotov.stubby4j.utils.HandlerUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
-import org.eclipse.jetty.http.HttpStatus;
-
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.eclipse.jetty.http.HttpStatus;
 
 public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
 
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository) throws IOException {
+    public void handle(
+            final HttpServletRequest request, final HttpServletResponse response, final StubRepository stubRepository)
+            throws IOException {
 
         if (request.getRequestURI().equals(AdminPortalHandler.ADMIN_ROOT)) {
             stubRepository.clear();
@@ -31,25 +48,30 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
                 final int stubIndexToDelete = Integer.parseInt(lastUriPathSegment);
 
                 if (!stubRepository.canMatchStubByIndex(stubIndexToDelete)) {
-                    final String errorMessage = String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
+                    final String errorMessage =
+                            String.format("Stub request index#%s does not exist, cannot delete", stubIndexToDelete);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 stubRepository.deleteStubByIndex(stubIndexToDelete);
                 response.setStatus(HttpStatus.OK_200);
-                response.getWriter().println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
+                response.getWriter()
+                        .println(String.format("Stub request index#%s deleted successfully", stubIndexToDelete));
             } else {
-                // We attempt to delete a stub by uuid as a fallback, e.g.: DELETE localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
+                // We attempt to delete a stub by uuid as a fallback, e.g.: DELETE
+                // localhost:8889/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchStubByUuid(lastUriPathSegment)) {
-                    final String errorMessage = String.format("Stub request uuid#%s does not exist, cannot delete", lastUriPathSegment);
+                    final String errorMessage =
+                            String.format("Stub request uuid#%s does not exist, cannot delete", lastUriPathSegment);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 stubRepository.deleteStubByUuid(lastUriPathSegment);
                 response.setStatus(HttpStatus.OK_200);
-                response.getWriter().println(String.format("Stub request uuid#%s deleted successfully", lastUriPathSegment));
+                response.getWriter()
+                        .println(String.format("Stub request uuid#%s deleted successfully", lastUriPathSegment));
             }
         } else if (uriFragments.length == 2) {
             // e.g.: http://localhost:8889/proxy-config/<ALPHA_NUMERIC_UUID_STRING>
@@ -58,21 +80,25 @@ public class DeleteHandlingStrategy implements AdminResponseHandlingStrategy {
             if (REGEX_PROXY_CONFIG.matcher(maybeProxyConfig).matches()) {
                 final String proxyConfigUuid = uriFragments[uriFragments.length - 1];
 
-                // We attempt to delete a proxy config by uuid, e.g.: DELETE localhost:8889/proxy-config/9136d8b7-f7a7-478d-97a5-53292484aaf6
+                // We attempt to delete a proxy config by uuid, e.g.: DELETE
+                // localhost:8889/proxy-config/9136d8b7-f7a7-478d-97a5-53292484aaf6
                 if (!stubRepository.canMatchProxyConfigByUuid(proxyConfigUuid)) {
-                    final String errorMessage = String.format("Proxy config uuid#%s does not exist, cannot delete", proxyConfigUuid);
+                    final String errorMessage =
+                            String.format("Proxy config uuid#%s does not exist, cannot delete", proxyConfigUuid);
                     HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);
                     return;
                 }
 
                 if (proxyConfigUuid.equals(StubProxyConfig.Builder.DEFAULT_UUID)) {
-                    HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, "Proxy config cannot be deleted");
+                    HandlerUtils.configureErrorResponse(
+                            response, HttpStatus.BAD_REQUEST_400, "Proxy config cannot be deleted");
                     return;
                 }
 
                 stubRepository.deleteProxyConfigByUuid(proxyConfigUuid);
                 response.setStatus(HttpStatus.OK_200);
-                response.getWriter().println(String.format("Proxy config uuid#%s deleted successfully", proxyConfigUuid));
+                response.getWriter()
+                        .println(String.format("Proxy config uuid#%s deleted successfully", proxyConfigUuid));
             } else {
                 final String errorMessage = String.format("Invalid URI path requested: %s", maybeProxyConfig);
                 HandlerUtils.configureErrorResponse(response, HttpStatus.BAD_REQUEST_400, errorMessage);

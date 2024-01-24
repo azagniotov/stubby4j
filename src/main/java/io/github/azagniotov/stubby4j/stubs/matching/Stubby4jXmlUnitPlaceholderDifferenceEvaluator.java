@@ -1,19 +1,27 @@
 /*
-  This file is licensed to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
 package io.github.azagniotov.stubby4j.stubs.matching;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.xml.namespace.QName;
 import org.w3c.dom.Node;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -25,12 +33,6 @@ import org.xmlunit.placeholder.IsNumberPlaceholderHandler;
 import org.xmlunit.placeholder.MatchesRegexPlaceholderHandler;
 import org.xmlunit.placeholder.PlaceholderHandler;
 import org.xmlunit.util.Nodes;
-
-import javax.xml.namespace.QName;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class has been adopted from the awesome library XMLUnit and tweaked in order
@@ -119,8 +121,8 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
      *                                         Stubby4jXmlUnitPlaceholderDifferenceEvaluator#PLACEHOLDER_DEFAULT_CLOSING_DELIMITER_REGEX}
      *                                         if the parameter is null or blank
      */
-    public Stubby4jXmlUnitPlaceholderDifferenceEvaluator(final String placeholderOpeningDelimiterRegex,
-                                                         final String placeholderClosingDelimiterRegex) {
+    public Stubby4jXmlUnitPlaceholderDifferenceEvaluator(
+            final String placeholderOpeningDelimiterRegex, final String placeholderClosingDelimiterRegex) {
         this(placeholderOpeningDelimiterRegex, placeholderClosingDelimiterRegex, null, null, null);
     }
 
@@ -150,11 +152,12 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
      *                                             if the parameter is null or blank
      * @since 2.7.0
      */
-    public Stubby4jXmlUnitPlaceholderDifferenceEvaluator(String placeholderOpeningDelimiterRegex,
-                                                         String placeholderClosingDelimiterRegex,
-                                                         String placeholderArgsOpeningDelimiterRegex,
-                                                         String placeholderArgsClosingDelimiterRegex,
-                                                         String placeholderArgsSeparatorRegex) {
+    public Stubby4jXmlUnitPlaceholderDifferenceEvaluator(
+            String placeholderOpeningDelimiterRegex,
+            String placeholderClosingDelimiterRegex,
+            String placeholderArgsOpeningDelimiterRegex,
+            String placeholderArgsClosingDelimiterRegex,
+            String placeholderArgsSeparatorRegex) {
 
         this.placeholderHandlers = new HashMap<>();
 
@@ -200,8 +203,8 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
 
         // comparing textual content of elements
         if (comparison.getType() == ComparisonType.TEXT_VALUE) {
-            return evaluateConsideringPlaceholders((String) controlDetails.getValue(),
-                    (String) testDetails.getValue(), outcome);
+            return evaluateConsideringPlaceholders(
+                    (String) controlDetails.getValue(), (String) testDetails.getValue(), outcome);
 
             // "test document has no text-like child node but control document has"
         } else if (isMissingTextNodeDifference(comparison)) {
@@ -213,8 +216,8 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
 
             // comparing textual content of attributes
         } else if (comparison.getType() == ComparisonType.ATTR_VALUE) {
-            return evaluateConsideringPlaceholders((String) controlDetails.getValue(),
-                    (String) testDetails.getValue(), outcome);
+            return evaluateConsideringPlaceholders(
+                    (String) controlDetails.getValue(), (String) testDetails.getValue(), outcome);
 
             // "test document has no attribute but control document has"
         } else if (isMissingAttributeDifference(comparison)) {
@@ -227,27 +230,28 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
     }
 
     private boolean isMissingTextNodeDifference(Comparison comparison) {
-        return controlHasOneTextChildAndTestHasNone(comparison)
-                || cantFindControlTextChildInTest(comparison);
+        return controlHasOneTextChildAndTestHasNone(comparison) || cantFindControlTextChildInTest(comparison);
     }
 
     private boolean controlHasOneTextChildAndTestHasNone(Comparison comparison) {
         Comparison.Detail controlDetails = comparison.getControlDetails();
         Node controlTarget = controlDetails.getTarget();
         Comparison.Detail testDetails = comparison.getTestDetails();
-        return comparison.getType() == ComparisonType.CHILD_NODELIST_LENGTH &&
-                Integer.valueOf(1).equals(controlDetails.getValue()) &&
-                Integer.valueOf(0).equals(testDetails.getValue()) &&
-                isTextLikeNode(controlTarget.getFirstChild());
+        return comparison.getType() == ComparisonType.CHILD_NODELIST_LENGTH
+                && Integer.valueOf(1).equals(controlDetails.getValue())
+                && Integer.valueOf(0).equals(testDetails.getValue())
+                && isTextLikeNode(controlTarget.getFirstChild());
     }
 
     private boolean cantFindControlTextChildInTest(Comparison comparison) {
         Node controlTarget = comparison.getControlDetails().getTarget();
         return comparison.getType() == ComparisonType.CHILD_LOOKUP
-                && controlTarget != null && isTextLikeNode(controlTarget);
+                && controlTarget != null
+                && isTextLikeNode(controlTarget);
     }
 
-    private ComparisonResult evaluateMissingTextNodeConsideringPlaceholders(Comparison comparison, ComparisonResult outcome) {
+    private ComparisonResult evaluateMissingTextNodeConsideringPlaceholders(
+            Comparison comparison, ComparisonResult outcome) {
         Node controlTarget = comparison.getControlDetails().getTarget();
         String value;
         if (controlHasOneTextChildAndTestHasNone(comparison)) {
@@ -272,23 +276,27 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
     private boolean isMissingAttributeDifference(Comparison comparison) {
         return comparison.getType() == ComparisonType.ELEMENT_NUM_ATTRIBUTES
                 || (comparison.getType() == ComparisonType.ATTR_NAME_LOOKUP
-                && comparison.getControlDetails().getTarget() != null
-                && comparison.getControlDetails().getValue() != null);
+                        && comparison.getControlDetails().getTarget() != null
+                        && comparison.getControlDetails().getValue() != null);
     }
 
-    private ComparisonResult evaluateMissingAttributeConsideringPlaceholders(Comparison comparison, ComparisonResult outcome) {
+    private ComparisonResult evaluateMissingAttributeConsideringPlaceholders(
+            Comparison comparison, ComparisonResult outcome) {
         if (comparison.getType() == ComparisonType.ELEMENT_NUM_ATTRIBUTES) {
             return evaluateAttributeListLengthConsideringPlaceholders(comparison, outcome);
         }
-        String controlAttrValue = Nodes.getAttributes(comparison.getControlDetails().getTarget())
+        String controlAttrValue = Nodes.getAttributes(
+                        comparison.getControlDetails().getTarget())
                 .get((QName) comparison.getControlDetails().getValue());
         return evaluateConsideringPlaceholders(controlAttrValue, null, outcome);
     }
 
-    private ComparisonResult evaluateAttributeListLengthConsideringPlaceholders(Comparison comparison,
-                                                                                ComparisonResult outcome) {
-        Map<QName, String> controlAttrs = Nodes.getAttributes(comparison.getControlDetails().getTarget());
-        Map<QName, String> testAttrs = Nodes.getAttributes(comparison.getTestDetails().getTarget());
+    private ComparisonResult evaluateAttributeListLengthConsideringPlaceholders(
+            Comparison comparison, ComparisonResult outcome) {
+        Map<QName, String> controlAttrs =
+                Nodes.getAttributes(comparison.getControlDetails().getTarget());
+        Map<QName, String> testAttrs =
+                Nodes.getAttributes(comparison.getTestDetails().getTarget());
 
         int cAttrsMatched = 0;
         for (Map.Entry<QName, String> cAttr : controlAttrs.entrySet()) {
@@ -309,8 +317,8 @@ public class Stubby4jXmlUnitPlaceholderDifferenceEvaluator implements Difference
         return ComparisonResult.EQUAL;
     }
 
-    private ComparisonResult evaluateConsideringPlaceholders(String controlText, String testText,
-                                                             ComparisonResult outcome) {
+    private ComparisonResult evaluateConsideringPlaceholders(
+            String controlText, String testText, ComparisonResult outcome) {
         final Matcher placeholderMatcher = placeholderRegex.matcher(controlText);
         if (placeholderMatcher.find()) {
             final String content = placeholderMatcher.group(2).trim();

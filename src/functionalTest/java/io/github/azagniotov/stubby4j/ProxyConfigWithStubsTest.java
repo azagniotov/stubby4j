@@ -1,4 +1,25 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -11,6 +32,8 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlBuilder;
+import java.io.InputStream;
+import java.net.URL;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
@@ -20,14 +43,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.io.InputStream;
-import java.net.URL;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_CONFIG;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_X_STUBBY_PROXY_RESPONSE;
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 public class ProxyConfigWithStubsTest {
 
@@ -83,18 +98,17 @@ public class ProxyConfigWithStubsTest {
         final String responseContentAsString = httpResponse.parseAsString().trim();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(responseContentAsString).contains(
-                "- proxy-config:\n" +
-                        "    description: this is a catch-all proxy config\n" +
-                        "    strategy: as-is\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://jsonplaceholder.typicode.com"
-        );
+        assertThat(responseContentAsString)
+                .contains("- proxy-config:\n" + "    description: this is a catch-all proxy config\n"
+                        + "    strategy: as-is\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://jsonplaceholder.typicode.com");
     }
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky() throws Exception {
+    public void shouldReturnProxiedResponseUsingDefaultProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky()
+            throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";
@@ -113,21 +127,22 @@ public class ProxyConfigWithStubsTest {
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
 
-        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE)).isTrue();
+        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isTrue();
 
         final String responseContent = response.parseAsString().trim();
-        assertThat(responseContent).isEqualTo(
-                "{" + BR +
-                        "  \"userId\": 1," + BR +
-                        "  \"id\": 1," + BR +
-                        "  \"title\": \"delectus aut autem\"," + BR +
-                        "  \"completed\": false" + BR +
-                        "}");
+        assertThat(responseContent)
+                .isEqualTo("{" + BR + "  \"userId\": 1,"
+                        + BR + "  \"id\": 1,"
+                        + BR + "  \"title\": \"delectus aut autem\","
+                        + BR + "  \"completed\": false"
+                        + BR + "}");
     }
 
     @Test
     @PotentiallyFlaky("This test sending the request over the wire to https://jsonplaceholder.typicode.com")
-    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky() throws Exception {
+    public void shouldReturnProxiedResponseUsingSpecificProxyConfig_WhenStubsWereNotMatched_PotentiallyFlaky()
+            throws Exception {
 
         // https://jsonplaceholder.typicode.com/todos/1
         final String targetUriPath = "/todos/1";
@@ -141,23 +156,24 @@ public class ProxyConfigWithStubsTest {
         // The 'null' overrides the default value "gzip", also I had to .disableContentCompression() on WEB_CLIENT
         httpHeaders.setAcceptEncoding(null);
 
-        // The 'some-unique-name' is actually set in 'proxy-config' object defined in resources/yaml/include-proxy-config.yaml
+        // The 'some-unique-name' is actually set in 'proxy-config' object defined in
+        // resources/yaml/include-proxy-config.yaml
         httpHeaders.set(HEADER_X_STUBBY_PROXY_CONFIG, "some-unique-name");
         request.setHeaders(httpHeaders);
 
         final HttpResponse response = request.execute();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK_200);
 
-        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE)).isTrue();
+        assertThat(response.getHeaders().containsKey(HEADER_X_STUBBY_PROXY_RESPONSE))
+                .isTrue();
 
         final String responseContent = response.parseAsString().trim();
-        assertThat(responseContent).isEqualTo(
-                "{" + BR +
-                        "  \"userId\": 1," + BR +
-                        "  \"id\": 1," + BR +
-                        "  \"title\": \"delectus aut autem\"," + BR +
-                        "  \"completed\": false" + BR +
-                        "}");
+        assertThat(responseContent)
+                .isEqualTo("{" + BR + "  \"userId\": 1,"
+                        + BR + "  \"id\": 1,"
+                        + BR + "  \"title\": \"delectus aut autem\","
+                        + BR + "  \"completed\": false"
+                        + BR + "}");
     }
 
     @Test
@@ -173,15 +189,13 @@ public class ProxyConfigWithStubsTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).isEqualTo(
-                "- proxy-config:\n" +
-                        "    uuid: some-unique-name\n" +
-                        "    strategy: additive\n" +
-                        "    headers:\n" +
-                        "      x-original-stubby4j-custom-header: custom/value\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://jsonplaceholder.typicode.com");
-
+        assertThat(getResponseContent)
+                .isEqualTo("- proxy-config:\n" + "    uuid: some-unique-name\n"
+                        + "    strategy: additive\n"
+                        + "    headers:\n"
+                        + "      x-original-stubby4j-custom-header: custom/value\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://jsonplaceholder.typicode.com");
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: updating by UUID
@@ -208,14 +222,13 @@ public class ProxyConfigWithStubsTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).isEqualTo(
-                "- proxy-config:\n" +
-                        "    uuid: some-unique-name\n" +
-                        "    strategy: additive\n" +
-                        "    headers:\n" +
-                        "      x-custom-header: custom/value\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://UPDATED.com");
+        assertThat(getResponseContent)
+                .isEqualTo("- proxy-config:\n" + "    uuid: some-unique-name\n"
+                        + "    strategy: additive\n"
+                        + "    headers:\n"
+                        + "      x-custom-header: custom/value\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://UPDATED.com");
     }
 
     @Test
@@ -231,12 +244,11 @@ public class ProxyConfigWithStubsTest {
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).isEqualTo(
-                "- proxy-config:\n" +
-                        "    description: this is a catch-all proxy config\n" +
-                        "    strategy: as-is\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://jsonplaceholder.typicode.com");
+        assertThat(getResponseContent)
+                .isEqualTo("- proxy-config:\n" + "    description: this is a catch-all proxy config\n"
+                        + "    strategy: as-is\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://jsonplaceholder.typicode.com");
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: updating the 'default' proxy config by UUID
@@ -265,13 +277,12 @@ public class ProxyConfigWithStubsTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).isEqualTo(
-                "- proxy-config:\n" +
-                        "    description: this is a catch-all proxy config that was updated\n" +
-                        "    strategy: as-is\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://google.com\n" +
-                        "      uniqueKey: arbitraryValue");
+        assertThat(getResponseContent)
+                .isEqualTo("- proxy-config:\n" + "    description: this is a catch-all proxy config that was updated\n"
+                        + "    strategy: as-is\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://google.com\n"
+                        + "      uniqueKey: arbitraryValue");
     }
 
     @Test
@@ -322,18 +333,17 @@ public class ProxyConfigWithStubsTest {
         ///////////////////////////////////////////////////////////////////////////////////////
         // 1st sanity check: verifying the original endpoint URL
         ///////////////////////////////////////////////////////////////////////////////////////
-        HttpRequest httpGetRequest = HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl + "proxy-config/default");
+        HttpRequest httpGetRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.GET, requestUrl + "proxy-config/default");
         HttpResponse httpGetResponse = httpGetRequest.execute();
         String getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).isEqualTo(
-                "- proxy-config:\n" +
-                        "    description: this is a catch-all proxy config\n" +
-                        "    strategy: as-is\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://jsonplaceholder.typicode.com");
-
+        assertThat(getResponseContent)
+                .isEqualTo("- proxy-config:\n" + "    description: this is a catch-all proxy config\n"
+                        + "    strategy: as-is\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://jsonplaceholder.typicode.com");
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // The actual test: Creating a new YAML config by POST request
@@ -358,12 +368,11 @@ public class ProxyConfigWithStubsTest {
         getResponseContent = httpGetResponse.parseAsString().trim();
 
         assertThat(HttpStatus.OK_200).isEqualTo(httpGetResponse.getStatusCode());
-        assertThat(getResponseContent).contains(
-                "- proxy-config:\n" +
-                        "    description: this would be the default proxy config\n" +
-                        "    strategy: as-is\n" +
-                        "    properties:\n" +
-                        "      endpoint: https://google.com");
+        assertThat(getResponseContent)
+                .contains("- proxy-config:\n" + "    description: this would be the default proxy config\n"
+                        + "    strategy: as-is\n"
+                        + "    properties:\n"
+                        + "      endpoint: https://google.com");
     }
 
     @Test
@@ -372,7 +381,8 @@ public class ProxyConfigWithStubsTest {
         final String requestUrl = String.format("%s/", ADMIN_URL);
         final String jsonToCreate = "";
 
-        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
+        final HttpRequest httpDeleteRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
 
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
         assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
@@ -387,14 +397,16 @@ public class ProxyConfigWithStubsTest {
         final InputStream jsonInputStream = url.openStream();
         final String jsonToCreate = StringUtils.inputStreamToString(jsonInputStream);
 
-        final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
+        final HttpRequest httpDeleteRequest =
+                HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, jsonToCreate);
 
         final HttpResponse httpDeleteResponse = httpDeleteRequest.execute();
         assertThat(httpDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test
-    public void should_DeleteStubbedProxyConfig_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidUuid() throws Exception {
+    public void should_DeleteStubbedProxyConfig_WhenSuccessfulDeleteMade_ToAdminPortalRootWithValidUuid()
+            throws Exception {
 
         final String requestUrl = String.format("%s%s", ADMIN_URL, "/proxy-config/some-unique-name-two");
         final HttpRequest httpDeleteRequest = HttpUtils.constructHttpRequest(HttpMethods.DELETE, requestUrl);

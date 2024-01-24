@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.filesystem;
+
+import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
 
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeClassCoverageExclusion;
 import io.github.azagniotov.stubby4j.cli.ANSITerminal;
@@ -6,16 +24,13 @@ import io.github.azagniotov.stubby4j.stubs.StubRepository;
 import io.github.azagniotov.stubby4j.utils.DateTimeUtils;
 import io.github.azagniotov.stubby4j.utils.FileUtils;
 import io.github.azagniotov.stubby4j.yaml.YamlParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.github.azagniotov.stubby4j.utils.FileUtils.BR;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @GeneratedCodeClassCoverageExclusion
 public final class MainIncludedYamlScanner implements Runnable {
@@ -51,8 +66,11 @@ public final class MainIncludedYamlScanner implements Runnable {
                     return;
                 }
 
-                ANSITerminal.status(String.format("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from %s", stubRepository.getYamlConfigCanonicalPath()));
-                LOGGER.debug("Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from {}.",
+                ANSITerminal.status(String.format(
+                        "Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from %s",
+                        stubRepository.getYamlConfigCanonicalPath()));
+                LOGGER.debug(
+                        "Main YAML with included YAMLs scan enabled, watching included YAMLs referenced from {}.",
                         stubRepository.getYamlConfigCanonicalPath());
 
                 final List<File> yamlIncludes = yamlParser.getYamlIncludes(mainYamlParentDirectory, rawYamlConfig);
@@ -84,22 +102,30 @@ public final class MainIncludedYamlScanner implements Runnable {
                         continue;
                     }
 
-                    ANSITerminal.info(String.format("%sMain YAML included YAMLs scan detected change in %s%s", BR, offendingFilename, BR));
+                    ANSITerminal.info(String.format(
+                            "%sMain YAML included YAMLs scan detected change in %s%s", BR, offendingFilename, BR));
                     LOGGER.info("Main YAML included YAMLs scan detected change in {}.", offendingFilename);
 
                     try {
                         stubRepository.refreshStubsFromYamlConfig(yamlParser);
 
-                        ANSITerminal.ok(String.format("%sSuccessfully performed live refresh of main YAML with included YAMLs from: %s on [" + DateTimeUtils.systemDefault() + "]%s",
-                                BR, stubRepository.getYamlConfig(), BR));
-                        LOGGER.info("Successfully performed live refresh of main YAML with included YAMLs from: {}.",
+                        ANSITerminal.ok(String.format(
+                                "%sSuccessfully performed live refresh of main YAML with included YAMLs from: %s on ["
+                                        + DateTimeUtils.systemDefault() + "]%s",
+                                BR,
+                                stubRepository.getYamlConfig(),
+                                BR));
+                        LOGGER.info(
+                                "Successfully performed live refresh of main YAML with included YAMLs from: {}.",
                                 stubRepository.getYamlConfig());
                     } catch (final Exception ex) {
-                        ANSITerminal.error("Could not refresh YAML configuration, previously loaded stubs remain untouched." + ex.toString());
-                        LOGGER.error("Could not refresh YAML configuration, previously loaded stubs remain untouched.", ex);
+                        ANSITerminal.error(
+                                "Could not refresh YAML configuration, previously loaded stubs remain untouched."
+                                        + ex.toString());
+                        LOGGER.error(
+                                "Could not refresh YAML configuration, previously loaded stubs remain untouched.", ex);
                     }
                 }
-
             }
         } catch (final Exception ex) {
             ex.printStackTrace();

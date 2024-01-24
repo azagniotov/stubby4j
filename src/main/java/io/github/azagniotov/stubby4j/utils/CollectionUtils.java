@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.utils;
 
 import java.nio.ByteBuffer;
@@ -9,12 +25,9 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-
 public final class CollectionUtils {
 
-    private CollectionUtils() {
-
-    }
+    private CollectionUtils() {}
 
     public static Map<String, String> constructParamMap(final String requestQueryString) {
         if (!StringUtils.isSet(requestQueryString)) {
@@ -30,8 +43,10 @@ public final class CollectionUtils {
             String splittedPairValue = splittedPair.length > 1 ? splittedPair[1] : "";
 
             if (StringUtils.isWithinSquareBrackets(splittedPairValue)) {
-                final String cleansedValue = StringUtils.decodeUrlEncodedQuotes(StringUtils.removeSquareBrackets(splittedPairValue));
-                final String bracketedQueryValueAsCSV = Arrays.asList(cleansedValue.split(",")).toString();
+                final String cleansedValue =
+                        StringUtils.decodeUrlEncodedQuotes(StringUtils.removeSquareBrackets(splittedPairValue));
+                final String bracketedQueryValueAsCSV =
+                        Arrays.asList(cleansedValue.split(",")).toString();
                 splittedPairValue = StringUtils.trimSpacesBetweenCSVElements(bracketedQueryValueAsCSV);
             }
 
@@ -52,7 +67,6 @@ public final class CollectionUtils {
             if (iterator.hasNext()) {
                 queryStringBuilder.append('&');
             }
-
         }
         return queryStringBuilder.toString();
     }

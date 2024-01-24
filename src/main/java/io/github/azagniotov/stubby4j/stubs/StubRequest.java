@@ -1,23 +1,20 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j.stubs;
-
-import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
-import io.github.azagniotov.stubby4j.common.Common;
-import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
-import io.github.azagniotov.stubby4j.utils.CollectionUtils;
-import io.github.azagniotov.stubby4j.utils.FileUtils;
-import io.github.azagniotov.stubby4j.utils.ObjectUtils;
-import io.github.azagniotov.stubby4j.utils.StringUtils;
-import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
-import org.eclipse.jetty.http.HttpMethod;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedArrayList;
 import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedHashMap;
@@ -37,6 +34,23 @@ import static io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty.URL;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toCollection;
 
+import io.github.azagniotov.stubby4j.annotations.VisibleForTesting;
+import io.github.azagniotov.stubby4j.common.Common;
+import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
+import io.github.azagniotov.stubby4j.utils.CollectionUtils;
+import io.github.azagniotov.stubby4j.utils.FileUtils;
+import io.github.azagniotov.stubby4j.utils.ObjectUtils;
+import io.github.azagniotov.stubby4j.utils.StringUtils;
+import io.github.azagniotov.stubby4j.yaml.ConfigurableYAMLProperty;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import org.eclipse.jetty.http.HttpMethod;
 
 public class StubRequest implements ReflectableStub {
 
@@ -51,16 +65,17 @@ public class StubRequest implements ReflectableStub {
     private final Map<String, String> query;
     private final Map<String, String> regexGroups;
 
-    private StubRequest(final String url,
-                        final String post,
-                        final File file,
-                        final List<String> method,
-                        final Map<String, String> headers,
-                        final Map<String, String> query) {
+    private StubRequest(
+            final String url,
+            final String post,
+            final File file,
+            final List<String> method,
+            final Map<String, String> headers,
+            final Map<String, String> query) {
         this.url = url;
         this.post = post;
         this.file = file;
-        this.fileBytes = ObjectUtils.isNull(file) ? new byte[]{} : getFileBytes();
+        this.fileBytes = ObjectUtils.isNull(file) ? new byte[] {} : getFileBytes();
         this.method = method;
         this.headers = headers;
         this.query = query;
@@ -94,7 +109,7 @@ public class StubRequest implements ReflectableStub {
         try {
             return FileUtils.fileToBytes(file);
         } catch (Exception e) {
-            return new byte[]{};
+            return new byte[] {};
         }
     }
 
@@ -106,7 +121,7 @@ public class StubRequest implements ReflectableStub {
         return FileUtils.enforceSystemLineSeparator(utf8FileContent);
     }
 
-    //Used by reflection when populating stubby admin page with stubbed information
+    // Used by reflection when populating stubby admin page with stubbed information
     public String getPost() {
         return post;
     }
@@ -152,9 +167,9 @@ public class StubRequest implements ReflectableStub {
     }
 
     boolean isSecured() {
-        return getHeaders().containsKey(BASIC.asYAMLProp()) ||
-                getHeaders().containsKey(BEARER.asYAMLProp()) ||
-                getHeaders().containsKey(CUSTOM.asYAMLProp());
+        return getHeaders().containsKey(BASIC.asYAMLProp())
+                || getHeaders().containsKey(BEARER.asYAMLProp())
+                || getHeaders().containsKey(CUSTOM.asYAMLProp());
     }
 
     @VisibleForTesting
@@ -178,10 +193,10 @@ public class StubRequest implements ReflectableStub {
 
     @VisibleForTesting
     boolean isRequestBodyStubbed() {
-        return isSet(this.getPostBody()) &&
-                (getMethod().contains(HttpMethod.POST.asString()) ||
-                        getMethod().contains(HttpMethod.PUT.asString()) ||
-                        getMethod().contains(HttpMethodExtended.PATCH.asString()));
+        return isSet(this.getPostBody())
+                && (getMethod().contains(HttpMethod.POST.asString())
+                        || getMethod().contains(HttpMethod.PUT.asString())
+                        || getMethod().contains(HttpMethodExtended.PATCH.asString()));
     }
 
     @VisibleForTesting
@@ -222,7 +237,6 @@ public class StubRequest implements ReflectableStub {
     }
 
     @Override
-
     public int hashCode() {
         int result = (isNotNull(url) ? url.hashCode() : 0);
         result = 31 * result + method.hashCode();
@@ -235,7 +249,6 @@ public class StubRequest implements ReflectableStub {
     }
 
     @Override
-
     public final String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("StubRequest");

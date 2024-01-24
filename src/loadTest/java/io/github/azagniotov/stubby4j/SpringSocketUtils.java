@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
 
 /*
@@ -16,11 +32,11 @@ package io.github.azagniotov.stubby4j;
  * limitations under the License.
  */
 
-import javax.net.ServerSocketFactory;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Random;
+import javax.net.ServerSocketFactory;
 
 /**
  * Simple utility methods for working with network sockets &mdash; for example,
@@ -50,9 +66,7 @@ public class SpringSocketUtils {
      */
     static final int PORT_RANGE_MAX = 65535;
 
-
     private static final Random random = new Random(System.nanoTime());
-
 
     /**
      * Although {@code SocketUtils} consists solely of static utility methods,
@@ -70,8 +84,7 @@ public class SpringSocketUtils {
      * &lt;bean id="bean1" ... p:port="#{socketUtils.findAvailableTcpPort(12000)}" /&gt;
      * &lt;bean id="bean2" ... p:port="#{socketUtils.findAvailableTcpPort(30000)}" /&gt;</code></pre>
      */
-    public SpringSocketUtils() {
-    }
+    public SpringSocketUtils() {}
 
     /**
      * Find an available TCP port randomly selected from the range
@@ -87,13 +100,12 @@ public class SpringSocketUtils {
     }
 
     private enum SocketType {
-
         TCP {
             @Override
             protected boolean isPortAvailable(int port) {
                 try {
-                    ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(
-                            port, 1, InetAddress.getByName("localhost"));
+                    ServerSocket serverSocket = ServerSocketFactory.getDefault()
+                            .createServerSocket(port, 1, InetAddress.getByName("localhost"));
                     serverSocket.close();
                     return true;
                 } catch (Exception ex) {
@@ -142,11 +154,9 @@ public class SpringSocketUtils {
                 }
                 candidatePort = findRandomPort(minPort, maxPort);
                 searchCounter++;
-            }
-            while (!isPortAvailable(candidatePort));
+            } while (!isPortAvailable(candidatePort));
 
             return candidatePort;
         }
     }
-
 }

@@ -1,4 +1,24 @@
+/*
+ * Copyright (c) 2012-2024 Alexander Zagniotov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.azagniotov.stubby4j;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
+import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpMethods;
@@ -10,6 +30,8 @@ import io.github.azagniotov.stubby4j.client.StubbyResponse;
 import io.github.azagniotov.stubby4j.http.HttpMethodExtended;
 import io.github.azagniotov.stubby4j.utils.NetworkPortUtils;
 import io.github.azagniotov.stubby4j.utils.StringUtils;
+import java.io.InputStream;
+import java.net.URL;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,13 +40,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.io.InputStream;
-import java.net.URL;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_JSON;
-import static io.github.azagniotov.stubby4j.common.Common.HEADER_APPLICATION_XML;
 
 public class StubsPortalRaisedIssueTests {
 
@@ -79,7 +94,8 @@ public class StubsPortalRaisedIssueTests {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Making request#1 which matches rule_2 ONLY, this will cache stub for rule_2 by the above requestUrl
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        final String contentOne = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
+        final String contentOne =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
 
         final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
         requestOne.setHeaders(httpHeaders);
@@ -92,9 +108,11 @@ public class StubsPortalRaisedIssueTests {
 
         final String responseContentOne = responseOne.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_2.xml");
+        final URL xmlActualContentResourceOne =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_2.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
-        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+        final String expectedResponseContentOne =
+                StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 
         assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
 
@@ -102,7 +120,8 @@ public class StubsPortalRaisedIssueTests {
         // Making request#2 which matches rule_1 AND rule_2. But, in this case,
         // we are expecting rule_1 as a response, because the rule_1 is defined earlier than rule_2
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        final URL xmlContentResourceTwo = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_payload_3.xml");
+        final URL xmlContentResourceTwo =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_payload_3.xml");
         assertThat(xmlContentResourceTwo).isNotNull();
         final String contentTwo = StringUtils.inputStreamToString(xmlContentResourceTwo.openStream());
 
@@ -117,9 +136,11 @@ public class StubsPortalRaisedIssueTests {
 
         final String responseContentTwo = responseTwo.parseAsString().trim();
 
-        final URL xmlActualContentResourceTwo = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_1.xml");
+        final URL xmlActualContentResourceTwo =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_1.xml");
         assertThat(xmlActualContentResourceTwo).isNotNull();
-        final String expectedResponseContentTwo = StringUtils.inputStreamToString(xmlActualContentResourceTwo.openStream());
+        final String expectedResponseContentTwo =
+                StringUtils.inputStreamToString(xmlActualContentResourceTwo.openStream());
 
         assertThat(responseContentTwo).isEqualTo(expectedResponseContentTwo);
     }
@@ -132,7 +153,8 @@ public class StubsPortalRaisedIssueTests {
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
 
         // The '?' in <?xml are escaped in YAML as these are regex characters
-        final String contentOne = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
+        final String contentOne =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><idex:type xmlns:idex=\"http://idex.bbc.co.uk/v1\"><idex:authority>ALEX-1</idex:authority><idex:name>ALEX-2</idex:name><idex:startsWith>ALEX-3</idex:startsWith></idex:type>";
 
         final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, contentOne);
         requestOne.setHeaders(httpHeaders);
@@ -145,9 +167,11 @@ public class StubsPortalRaisedIssueTests {
 
         final String responseContentOne = responseOne.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_2.xml");
+        final URL xmlActualContentResourceOne =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_2.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
-        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+        final String expectedResponseContentOne =
+                StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 
         assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
     }
@@ -162,7 +186,8 @@ public class StubsPortalRaisedIssueTests {
         // Note:
         // 1. the '?' in <?xml are escaped as these are regex characters
         // 2. ths '[' in <![CDATA[(.*)]]> are escaped as these are regex characters
-        final URL xmlContentUrl = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_29_payload.xml");
+        final URL xmlContentUrl =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_29_payload.xml");
         assertThat(xmlContentUrl).isNotNull();
         final String payloadContent = StringUtils.inputStreamToString(xmlContentUrl.openStream());
 
@@ -173,13 +198,16 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED_201);
-        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML))
+                .isTrue();
 
         final String responseContentOne = httpResponse.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_29_body.xml");
+        final URL xmlActualContentResourceOne =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_29_body.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
-        final String expectedResponseContentOne = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+        final String expectedResponseContentOne =
+                StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 
         assertThat(responseContentOne).isEqualTo(expectedResponseContentOne);
     }
@@ -194,7 +222,8 @@ public class StubsPortalRaisedIssueTests {
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
+        final HttpRequest request =
+                HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
 
         final HttpResponse response = request.execute();
         final HttpHeaders headers = response.getHeaders();
@@ -211,7 +240,8 @@ public class StubsPortalRaisedIssueTests {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/93");
 
         final String content = "This is a PATCH update";
-        final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
+        final HttpRequest request =
+                HttpUtils.constructHttpRequest(HttpMethodExtended.PATCH.asString(), requestUrl, content);
 
         final HttpResponse response = request.execute();
         final HttpHeaders headers = response.getHeaders();
@@ -257,8 +287,8 @@ public class StubsPortalRaisedIssueTests {
         final HttpResponse responseOne = requestOne.execute();
 
         assertThat(responseOne.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST_400);
-        assertThat("{\"type\": \"BAD_REQUEST\"}").isEqualTo(responseOne.parseAsString().trim());
-
+        assertThat("{\"type\": \"BAD_REQUEST\"}")
+                .isEqualTo(responseOne.parseAsString().trim());
 
         final String contentTwo = "{\"type\": \"HOME\"}";
         final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.PUT, requestUrl, contentTwo);
@@ -274,7 +304,8 @@ public class StubsPortalRaisedIssueTests {
 
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/171");
 
-        final String content = "[{\"application\":{\"Address\":[{\"addressId\":8,\"customerId\":1,\"orderItemId\":3,\"addressType\":\"STMT\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":7,\"customerId\":1,\"addressType\":\"CMAL\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":6,\"customerId\":1,\"addressType\":\"CRES\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"}],\"AppCustRelationship\":[{\"customerId\":1,\"applicationId\":2,\"relationshipType\":\"POW\"}],\"Application\":[{\"applicationId\":2,\"applicationSigned\":false,\"applicationSource\":\"sola\",\"applicationSourceCode\":\"QMV\",\"applicationSourceCountry\":\"AU\",\"applicationVersion\":1,\"basketId\":1,\"bsb\":\"\",\"channel\":\"I\",\"createdDate\":\"2021-01-21T09:57:03+11:00\",\"currencyCode\":\"AUD\",\"modifiedBy\":\"Apply User\",\"orderId\":1000000003}],\"CRNRequest\":[{\"regId\":5,\"customerId\":1,\"orderItemId\":3,\"accessLevel\":\"Full\",\"createNewCRN\":true,\"customerClass\":\"CNE\"}],\"Contact\":[{\"contactId\":4,\"customerId\":1,\"contactType\":\"E\",\"email\":\"test@anz.com\"}],\"CustOrderItemRelationship\":[{\"customerId\":1,\"orderItemId\":3,\"custAcctRelationship\":\"SOL\",\"orderItemFlag\":\"N\"}],\"Customer\":[{\"customerId\":1,\"acceptMarketing\":true,\"AUTaxResidentOnly\":false,\"customerType\":\"IND\",\"depositCustomerType\":\"STD\",\"existingCustomer\":false,\"fullName\":\"Failure Test\",\"ipAddress\":\"\",\"privacyConsent\":true,\"verificationStatus\":\"Verified\"}],\"Deposit\":[{\"orderItemId\":3,\"ATOType\":\"I\",\"numberOfSignatories\":1,\"transactionAccountType\":\"IND\"}],\"Individual\":[{\"customerId\":1,\"dateOfBirth\":\"1981-01-01T00:00:00Z\",\"firstName\":\"Failure\",\"gender\":\"M\",\"lastName\":\"Test\",\"middleName\":\"\",\"title\":\"mr\"}],\"OrderItem\":[{\"orderItemId\":3,\"capProductCode\":\"DDA\",\"capSubProductCode\":\"ED\",\"eStatementEmail\":\"test@anz.com\",\"natureOfProduct\":\"primary\"}]}}]";
+        final String content =
+                "[{\"application\":{\"Address\":[{\"addressId\":8,\"customerId\":1,\"orderItemId\":3,\"addressType\":\"STMT\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":7,\"customerId\":1,\"addressType\":\"CMAL\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":6,\"customerId\":1,\"addressType\":\"CRES\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"}],\"AppCustRelationship\":[{\"customerId\":1,\"applicationId\":2,\"relationshipType\":\"POW\"}],\"Application\":[{\"applicationId\":2,\"applicationSigned\":false,\"applicationSource\":\"sola\",\"applicationSourceCode\":\"QMV\",\"applicationSourceCountry\":\"AU\",\"applicationVersion\":1,\"basketId\":1,\"bsb\":\"\",\"channel\":\"I\",\"createdDate\":\"2021-01-21T09:57:03+11:00\",\"currencyCode\":\"AUD\",\"modifiedBy\":\"Apply User\",\"orderId\":1000000003}],\"CRNRequest\":[{\"regId\":5,\"customerId\":1,\"orderItemId\":3,\"accessLevel\":\"Full\",\"createNewCRN\":true,\"customerClass\":\"CNE\"}],\"Contact\":[{\"contactId\":4,\"customerId\":1,\"contactType\":\"E\",\"email\":\"test@anz.com\"}],\"CustOrderItemRelationship\":[{\"customerId\":1,\"orderItemId\":3,\"custAcctRelationship\":\"SOL\",\"orderItemFlag\":\"N\"}],\"Customer\":[{\"customerId\":1,\"acceptMarketing\":true,\"AUTaxResidentOnly\":false,\"customerType\":\"IND\",\"depositCustomerType\":\"STD\",\"existingCustomer\":false,\"fullName\":\"Failure Test\",\"ipAddress\":\"\",\"privacyConsent\":true,\"verificationStatus\":\"Verified\"}],\"Deposit\":[{\"orderItemId\":3,\"ATOType\":\"I\",\"numberOfSignatories\":1,\"transactionAccountType\":\"IND\"}],\"Individual\":[{\"customerId\":1,\"dateOfBirth\":\"1981-01-01T00:00:00Z\",\"firstName\":\"Failure\",\"gender\":\"M\",\"lastName\":\"Test\",\"middleName\":\"\",\"title\":\"mr\"}],\"OrderItem\":[{\"orderItemId\":3,\"capProductCode\":\"DDA\",\"capSubProductCode\":\"ED\",\"eStatementEmail\":\"test@anz.com\",\"natureOfProduct\":\"primary\"}]}}]";
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
         final HttpHeaders httpHeaders = new HttpHeaders();
@@ -297,7 +328,8 @@ public class StubsPortalRaisedIssueTests {
         final String requestUrl = String.format("%s%s", STUBS_URL, "/azagniotov/stubby4j/issues/171");
 
         // Stubbed RegEx expects JSON key "natureOfProduct" to be present, but it is missing from the POSTed payload
-        final String content = "[{\"application\":{\"Address\":[{\"addressId\":8,\"customerId\":1,\"orderItemId\":3,\"addressType\":\"STMT\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":7,\"customerId\":1,\"addressType\":\"CMAL\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":6,\"customerId\":1,\"addressType\":\"CRES\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"}],\"AppCustRelationship\":[{\"customerId\":1,\"applicationId\":2,\"relationshipType\":\"POW\"}],\"Application\":[{\"applicationId\":2,\"applicationSigned\":false,\"applicationSource\":\"sola\",\"applicationSourceCode\":\"QMV\",\"applicationSourceCountry\":\"AU\",\"applicationVersion\":1,\"basketId\":1,\"bsb\":\"\",\"channel\":\"I\",\"createdDate\":\"2021-01-21T09:57:03+11:00\",\"currencyCode\":\"AUD\",\"modifiedBy\":\"Apply User\",\"orderId\":1000000003}],\"CRNRequest\":[{\"regId\":5,\"customerId\":1,\"orderItemId\":3,\"accessLevel\":\"Full\",\"createNewCRN\":true,\"customerClass\":\"CNE\"}],\"Contact\":[{\"contactId\":4,\"customerId\":1,\"contactType\":\"E\",\"email\":\"test@anz.com\"}],\"CustOrderItemRelationship\":[{\"customerId\":1,\"orderItemId\":3,\"custAcctRelationship\":\"SOL\",\"orderItemFlag\":\"N\"}],\"Customer\":[{\"customerId\":1,\"acceptMarketing\":true,\"AUTaxResidentOnly\":false,\"customerType\":\"IND\",\"depositCustomerType\":\"STD\",\"existingCustomer\":false,\"fullName\":\"Failure Test\",\"ipAddress\":\"\",\"privacyConsent\":true,\"verificationStatus\":\"Verified\"}],\"Deposit\":[{\"orderItemId\":3,\"ATOType\":\"I\",\"numberOfSignatories\":1,\"transactionAccountType\":\"IND\"}],\"Individual\":[{\"customerId\":1,\"dateOfBirth\":\"1981-01-01T00:00:00Z\",\"firstName\":\"Failure\",\"gender\":\"M\",\"lastName\":\"Test\",\"middleName\":\"\",\"title\":\"mr\"}],\"OrderItem\":[{\"orderItemId\":3,\"capProductCode\":\"DDA\",\"capSubProductCode\":\"ED\",\"eStatementEmail\":\"test@anz.com\"}]}}]";
+        final String content =
+                "[{\"application\":{\"Address\":[{\"addressId\":8,\"customerId\":1,\"orderItemId\":3,\"addressType\":\"STMT\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":7,\"customerId\":1,\"addressType\":\"CMAL\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"},{\"addressId\":6,\"customerId\":1,\"addressType\":\"CRES\",\"city\":\"DOCKLANDS\",\"country\":\"AU\",\"postcode\":\"3008\",\"state\":\"VIC\",\"streetName\":\"Collins\",\"streetNumber\":\"691\",\"streetType\":\"ST\"}],\"AppCustRelationship\":[{\"customerId\":1,\"applicationId\":2,\"relationshipType\":\"POW\"}],\"Application\":[{\"applicationId\":2,\"applicationSigned\":false,\"applicationSource\":\"sola\",\"applicationSourceCode\":\"QMV\",\"applicationSourceCountry\":\"AU\",\"applicationVersion\":1,\"basketId\":1,\"bsb\":\"\",\"channel\":\"I\",\"createdDate\":\"2021-01-21T09:57:03+11:00\",\"currencyCode\":\"AUD\",\"modifiedBy\":\"Apply User\",\"orderId\":1000000003}],\"CRNRequest\":[{\"regId\":5,\"customerId\":1,\"orderItemId\":3,\"accessLevel\":\"Full\",\"createNewCRN\":true,\"customerClass\":\"CNE\"}],\"Contact\":[{\"contactId\":4,\"customerId\":1,\"contactType\":\"E\",\"email\":\"test@anz.com\"}],\"CustOrderItemRelationship\":[{\"customerId\":1,\"orderItemId\":3,\"custAcctRelationship\":\"SOL\",\"orderItemFlag\":\"N\"}],\"Customer\":[{\"customerId\":1,\"acceptMarketing\":true,\"AUTaxResidentOnly\":false,\"customerType\":\"IND\",\"depositCustomerType\":\"STD\",\"existingCustomer\":false,\"fullName\":\"Failure Test\",\"ipAddress\":\"\",\"privacyConsent\":true,\"verificationStatus\":\"Verified\"}],\"Deposit\":[{\"orderItemId\":3,\"ATOType\":\"I\",\"numberOfSignatories\":1,\"transactionAccountType\":\"IND\"}],\"Individual\":[{\"customerId\":1,\"dateOfBirth\":\"1981-01-01T00:00:00Z\",\"firstName\":\"Failure\",\"gender\":\"M\",\"lastName\":\"Test\",\"middleName\":\"\",\"title\":\"mr\"}],\"OrderItem\":[{\"orderItemId\":3,\"capProductCode\":\"DDA\",\"capSubProductCode\":\"ED\",\"eStatementEmail\":\"test@anz.com\"}]}}]";
         final HttpRequest request = HttpUtils.constructHttpRequest(HttpMethods.POST, requestUrl, content);
 
         final HttpHeaders httpHeaders = new HttpHeaders();
@@ -387,7 +419,8 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
 
-        final URL jsonContentUrl = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
+        final URL jsonContentUrl =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -398,13 +431,16 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML))
+                .isTrue();
 
         final String httpResponseContent = httpResponse.parseAsString().trim();
 
-        final URL xmlActualContentResourceOne = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_399_body.xml");
+        final URL xmlActualContentResourceOne =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_399_body.xml");
         assertThat(xmlActualContentResourceOne).isNotNull();
-        final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
+        final String expectedResponseContent =
+                StringUtils.inputStreamToString(xmlActualContentResourceOne.openStream());
 
         assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
     }
@@ -416,7 +452,8 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
 
-        final URL jsonContentUrl = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
+        final URL jsonContentUrl =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload.xml");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -427,11 +464,13 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML))
+                .isTrue();
 
         final String httpResponseContent = httpResponse.parseAsString().trim();
 
-        final URL xmlActualContentResource = StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_399_body.xml");
+        final URL xmlActualContentResource =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/response/xml_response_issue_399_body.xml");
         assertThat(xmlActualContentResource).isNotNull();
         final String expectedResponseContent = StringUtils.inputStreamToString(xmlActualContentResource.openStream());
 
@@ -445,7 +484,8 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(HEADER_APPLICATION_XML);
 
-        final URL jsonContentUrl = StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload_2.xml");
+        final URL jsonContentUrl =
+                StubsPortalRaisedIssueTests.class.getResource("/xml/request/xml_request_issue_399_payload_2.xml");
         assertThat(jsonContentUrl).isNotNull();
         final String content = StringUtils.inputStreamToString(jsonContentUrl.openStream());
 
@@ -456,10 +496,12 @@ public class StubsPortalRaisedIssueTests {
         final HttpHeaders httpResponseHeaders = httpResponse.getHeaders();
 
         assertThat(httpResponse.getStatusCode()).isEqualTo(HttpStatus.OK_200);
-        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML)).isTrue();
+        assertThat(httpResponseHeaders.getContentType().contains(HEADER_APPLICATION_XML))
+                .isTrue();
 
         final String httpResponseContent = httpResponse.parseAsString().trim();
-        final String expectedResponseContent = "Captured values are, authority: PIPS with name pid that starts with pid://";
+        final String expectedResponseContent =
+                "Captured values are, authority: PIPS with name pid that starts with pid://";
 
         assertThat(httpResponseContent).isEqualTo(expectedResponseContent);
     }
@@ -468,7 +510,8 @@ public class StubsPortalRaisedIssueTests {
     @Test
     public void stubby4jStackOverFlowQuestion70417269() throws Exception {
 
-        final String requestOneUrl = String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two-five/test?pathid=1,2,5");
+        final String requestOneUrl =
+                String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two-five/test?pathid=1,2,5");
         final HttpRequest requestOne = HttpUtils.constructHttpRequest(HttpMethods.GET, requestOneUrl);
 
         final HttpResponse responseOne = requestOne.execute();
@@ -479,7 +522,8 @@ public class StubsPortalRaisedIssueTests {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        final String requestTwoUrl = String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two/test?pathid=1,2");
+        final String requestTwoUrl =
+                String.format("%s%s", STUBS_URL, "/stackoverflow/70417269/one-two/test?pathid=1,2");
         final HttpRequest requestTwo = HttpUtils.constructHttpRequest(HttpMethods.GET, requestTwoUrl);
 
         final HttpResponse responseTwo = requestTwo.execute();
