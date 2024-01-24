@@ -617,10 +617,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:arm64-jre8"
+        default: "azagniotov/cache-stubby4j:latest-arm64-jre8"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:amd64-jre8"
+        default: "azagniotov/cache-stubby4j:latest-amd64-jre8"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre8"
@@ -641,10 +641,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:arm64-jre11"
+        default: "azagniotov/cache-stubby4j:latest-arm64-jre11"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:amd64-jre11"
+        default: "azagniotov/cache-stubby4j:latest-amd64-jre11"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre11"
@@ -665,10 +665,10 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:arm64-jre17"
+        default: "azagniotov/cache-stubby4j:latest-arm64-jre17"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:amd64-jre17"
+        default: "azagniotov/cache-stubby4j:latest-amd64-jre17"
       image_tag:
         type: string
         default: "azagniotov/stubby4j:latest-jre17"
