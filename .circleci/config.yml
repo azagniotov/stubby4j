@@ -338,9 +338,8 @@ smoke_test_steps: &smoke_test_steps
           websocat --version
 
     - run:
-        # https://github.com/raphw/byte-buddy/issues/1396#issuecomment-1405066509
         name: Build stubby4j uber JAR
-        command: ./gradlew -Dnet.bytebuddy.experimental=true -PciRun << parameters.use_native_jdk_alpn_processor >> clean build
+        command: ./gradlew -PciRun << parameters.use_native_jdk_alpn_processor >> clean build
 
     - run:
         when: on_success
