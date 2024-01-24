@@ -358,8 +358,12 @@ smoke_test_steps: &smoke_test_steps
           echo "stubby4j started!"
           sleep 5
 
-          sh src/smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
-          sh src/smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
+          if [[ "<< parameters.legacy_tls >>" == "yes" ]]
+          then
+            sh src/smoke-test/shell/make_request_using_curl.sh 1.0 127.0.0.1 7445
+            sh src/smoke-test/shell/make_request_using_curl.sh 1.1 127.0.0.1 7445
+          fi
+
           sh src/smoke-test/shell/make_request_using_curl.sh 1.2 127.0.0.1 7445
 
           if [[ "<< parameters.tls_13 >>" == "yes" ]]
@@ -445,6 +449,9 @@ jobs:
   # https://www.oracle.com/java/technologies/javase/8u92-relnotes.html
   smoke_openjdk_openjdk_8u092:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "no"
@@ -461,6 +468,9 @@ jobs:
   # https://www.oracle.com/java/technologies/javase/8u111-relnotes.html
   smoke_openjdk_openjdk_8u111:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "no"
@@ -476,6 +486,9 @@ jobs:
 
   smoke_azul_zulu_openjdk_8u232:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "no" # https://github.com/openjsse/openjsse/issues/13
@@ -491,6 +504,9 @@ jobs:
 
   smoke_adoptopenjdk_openjdk_8u312_b07:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "yes"
@@ -506,6 +522,9 @@ jobs:
 
   smoke_adoptopenjdk_openjdk_11_openj9:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "yes"
@@ -521,6 +540,9 @@ jobs:
 
   smoke_openjdk_openjdk_17:
     parameters:
+      legacy_tls:
+        type: string
+        default: "yes"
       tls_13:
         type: string
         default: "yes"
@@ -536,6 +558,9 @@ jobs:
 
   smoke_azul_zulu_openjdk_21:
     parameters:
+      legacy_tls:
+        type: string
+        default: "no"
       tls_13:
         type: string
         default: "yes"
@@ -691,8 +716,8 @@ workflows:
           <<: *filter_ignore_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_ignore_master
-      # - smoke_azul_zulu_openjdk_21:
-      #     <<: *filter_ignore_master
+      - smoke_azul_zulu_openjdk_21:
+          <<: *filter_ignore_master
 
   master-smoke-test:
     jobs:
@@ -708,8 +733,8 @@ workflows:
           <<: *filter_only_master
       - smoke_openjdk_openjdk_17:
           <<: *filter_only_master
-      # - smoke_azul_zulu_openjdk_21:
-      #     <<: *filter_only_master
+      - smoke_azul_zulu_openjdk_21:
+          <<: *filter_only_master
 
   branch-jdk8:
     jobs:
@@ -745,7 +770,7 @@ workflows:
       - smoke_adoptopenjdk_openjdk_8u312_b07
       - smoke_adoptopenjdk_openjdk_11_openj9
       - smoke_openjdk_openjdk_17
-      # - smoke_azul_zulu_openjdk_21
+      - smoke_azul_zulu_openjdk_21
 
 
   master-twelve-hour-jdk8:
