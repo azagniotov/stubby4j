@@ -596,6 +596,15 @@ jobs:
     <<: *default_steps
 
 
+  jdk_21_environment:
+    parameters:
+      use_native_jdk_alpn_processor:
+        type: string
+        default: "-PuseNativeJdkAlpnProcessor"
+    <<: *azul_zulu_openjdk_alpine_jdk_21_0_1_21_30_environment
+    <<: *default_steps
+
+
   docker_build_latest_jre8:
     parameters:
       dockerfile:
@@ -765,6 +774,12 @@ workflows:
   branch-jdk17:
     jobs:
       - jdk_17_environment:
+          <<: *filter_ignore_master
+
+
+  branch-jdk21:
+    jobs:
+      - jdk_21_environment:
           <<: *filter_ignore_master
 
 
