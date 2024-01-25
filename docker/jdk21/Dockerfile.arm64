@@ -62,8 +62,8 @@ RUN addgroup --system --gid $GROUP_ID stubby4j && \
 
 WORKDIR "$STUBBY4J_USER_HOME"
 
-COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
-COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/docker/log4j2-for-docker.xml ./log4j2.xml
+COPY --from=BUILD_JAR_STAGE /root/app/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
+COPY --from=BUILD_JAR_STAGE /root/app/stubby4j/docker/log4j2-for-docker.xml ./log4j2.xml
 RUN chown $USER_ID:$GROUP_ID stubby4j.jar && \
     chown $USER_ID:$GROUP_ID log4j2.xml && \
     java -version && \
