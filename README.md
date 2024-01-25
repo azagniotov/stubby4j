@@ -157,6 +157,7 @@ Alternatively you can build your own image locally using one of the project's `D
 * [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk11/Dockerfile.arm64)
 * [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk16/Dockerfile)
 * [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk17/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk17/Dockerfile.arm64)
+* [https://github.com/azagniotov/stubby4j/tree/master/docker/jdk21/Dockerfile.arm64](https://github.com/azagniotov/stubby4j/tree/master/docker/jdk21/Dockerfile.arm64)
 
 Navigate to one of the above desired directory and run the following command to build from the `master` branch, e.g.:
 
@@ -169,6 +170,8 @@ or the following command to build from a specific tag, e.g.:
 ```bash
 $ docker build --build-arg REVISION=v7.5.2 --rm --no-cache -t stubby4j:7.5.2 .
 ```
+
+**Please note**:, in order to build a JDK 21 Docker image, the REVISION must be `latest`. The JDK 21 is not supported in prior releases of stubby4j
 
 Refer to [https://hub.docker.com/r/azagniotov/stubby4j](https://hub.docker.com/r/azagniotov/stubby4j) README `How to use this image` section regarding how to use the built image
 
