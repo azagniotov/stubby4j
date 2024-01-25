@@ -1,7 +1,8 @@
 # A few useful Docker commands to build an image and run the stubby4j container.
+# Please note: in order to build a JDK 21 Docker image, the REVISION must be "master". The JDK 21 is not supported in prior releases of stubby4j
 #
 # Build (run with '--no-cache' to ensure that Git repo new tags will be pulled down, as Docker caches RUNs):
-# '$ docker build --build-arg REVISION=v7.2.0 --rm --no-cache -t stubby4j:latest .' or
+# '$ docker build --build-arg REVISION=master --rm --no-cache -t stubby4j:latest .' or
 # '$ docker build --rm --no-cache -t stubby4j:latest .' to build from master
 #
 # Run:
@@ -10,17 +11,20 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:8.5.0-jdk21@sha256:fb2c300486dcbd464f87152a75eb9f4605ae302f1ab7ab836b53f8a1c8f592f9 AS BUILD_JAR_STAGE
+# https://hub.docker.com/r/azul/zulu-openjdk-alpine
+FROM azul/zulu-openjdk-alpine:21.0.1@sha256:06b72cb702413eff2f373d2fb36921f35c193cd756cc13ea10bc49adc8438921 AS BUILD_JAR_STAGE
 
-ENV GRADLE_USER_HOME=/home/gradle
-WORKDIR $GRADLE_USER_HOME
-
-ARG REVISION=master
-
-# Used to prune Docker cascaded layer cache if the sha256 of 'conf/gradle/dependencies.gradle' has changed
+# Used to prune Docker cascaded layer cache if the sha256 of 'conf/gradle/dependencies.gradle' has changed, see .circleci/config.yml
 ARG CACHE_BUSTER=1
+ARG REVISION=master
+ARG APP_BUILD_HOME=/root/app
 
-# Build from the latest tag. The -PciRun will disable Spoteless Gradle plugin for JDK 21
+WORKDIR $APP_BUILD_HOME
+
+# Install Git and OpenSSH client on Alpine Linux
+RUN apk --no-cache add openssh-client git && git --version
+
+# Build from the latest tag. Passing in the -PciRun will disable Spoteless Gradle plugin for JDK 21
 RUN git clone --depth 1 --branch $REVISION https://github.com/azagniotov/stubby4j.git && \
       cd stubby4j && \
       ./gradlew -PciRun -Plog4j -PuseNativeJdkAlpnProcessor clean jar
