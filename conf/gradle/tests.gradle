@@ -35,7 +35,7 @@ configurations.all {
 
 testing {
     suites {
-        test {
+        withType(JvmTestSuite).matching { it.name in ["test", "integrationTest", "functionalTest", "loadTest"] }.configureEach { 
             useJUnit()
             dependencies {
                 implementation "junit:junit"
@@ -44,6 +44,8 @@ testing {
                 implementation "net.bytebuddy:byte-buddy"
                 implementation "com.google.truth:truth"
                 implementation "com.google.http-client:google-http-client-apache-v2"
+                implementation "org.eclipse.jetty.http2:http2-client"
+                implementation "org.eclipse.jetty.http2:http2-http-client-transport"
             }
         }
 
@@ -58,16 +60,6 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit"
-                implementation "org.mockito:mockito-core"
-                implementation "org.mockito:mockito-inline"
-                implementation "net.bytebuddy:byte-buddy"
-                implementation "com.google.truth:truth"
-                implementation "com.google.http-client:google-http-client-apache-v2"
-
-                implementation "org.eclipse.jetty.http2:http2-client"
-                implementation "org.eclipse.jetty.http2:http2-http-client-transport"
-            
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
@@ -95,16 +87,6 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit"
-                implementation "org.mockito:mockito-core"
-                implementation "org.mockito:mockito-inline"
-                implementation "net.bytebuddy:byte-buddy"
-                implementation "com.google.truth:truth"
-                implementation "com.google.http-client:google-http-client-apache-v2"
-
-                implementation "org.eclipse.jetty.http2:http2-client"
-                implementation "org.eclipse.jetty.http2:http2-http-client-transport"
-            
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
@@ -133,13 +115,6 @@ testing {
             useJUnit()
             dependencies {
                 implementation project()
-                implementation "junit:junit"
-                implementation "org.mockito:mockito-core"
-                implementation "org.mockito:mockito-inline"
-                implementation "net.bytebuddy:byte-buddy"
-                implementation "com.google.truth:truth"
-                implementation "com.google.http-client:google-http-client-apache-v2"
-            
                 if (project.hasProperty("useNativeJdkAlpnProcessor")) {
                     implementation "org.eclipse.jetty:jetty-alpn-java-client:${jettyVersion}"
                 } else {
