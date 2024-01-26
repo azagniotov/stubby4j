@@ -19,17 +19,14 @@
             message-type: text
             body: apple
             delay: 500
-
           - policy: push
             message-type: text
             body: banana
             delay: 250
-
           - policy: fragmentation
             message-type: binary
             file: ../json/response.5.external.file.json
             delay: 250
-
           - policy: push
             message-type: text
             body: grapes

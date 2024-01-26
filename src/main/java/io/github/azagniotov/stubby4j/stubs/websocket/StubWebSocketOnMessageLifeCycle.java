@@ -33,9 +33,7 @@ public class StubWebSocketOnMessageLifeCycle implements ReflectableStub {
     private final String completeYAML;
 
     public StubWebSocketOnMessageLifeCycle(
-            final StubWebSocketClientRequest clientRequest,
-            final Object serverResponse,
-            final String completeYAML) {
+            final StubWebSocketClientRequest clientRequest, final Object serverResponse, final String completeYAML) {
         this.clientRequest = clientRequest;
         this.serverResponse = serverResponse;
         this.completeYAML = completeYAML;
