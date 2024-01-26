@@ -51,6 +51,7 @@ import java.util.Map;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpStatus.Code;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -1457,6 +1458,63 @@ public class YamlParserTest {
         assertThat(stubWebSocketConfig.getSubProtocols()).containsExactly("echo", "mamba", "zumba");
         assertThat(stubWebSocketConfig.getOnOpenServerResponse()).isNotNull();
         assertThat(stubWebSocketConfig.getOnMessage().isEmpty()).isTrue();
+    }
+
+    @Test
+    @Ignore
+    public void shouldUnmarshall_toWebSocketConfigWithOnMessageSequencedResponses() throws Exception {
+        final URL yamlUrl =
+                YamlParserTest.class.getResource("/yaml/web-socket-valid-config-with-sequenced-responses.yaml");
+        final InputStream stubsConfigStream = yamlUrl.openStream();
+        final String parentDirectory = new File(yamlUrl.getPath()).getParent();
+
+        final YamlParseResultSet yamlParseResultSet =
+                new YamlParser().parse(parentDirectory, inputStreamToString(stubsConfigStream));
+
+        final Map<String, StubWebSocketConfig> webSocketConfigs = yamlParseResultSet.getWebSocketConfigs();
+        assertThat(webSocketConfigs.isEmpty()).isFalse();
+        assertThat(webSocketConfigs.size()).isEqualTo(1);
+
+        final StubWebSocketConfig stubWebSocketConfig =
+                webSocketConfigs.values().iterator().next();
+
+        final String expectedWebSocketConfigAsYAML =
+                "- web-socket:\n" + "    description: this is a web-socket config\n"
+                        + "    url: /items/fruits\n"
+                        + "    sub-protocols: echo, mamba, zumba\n"
+                        + "\n"
+                        + "    on-open:\n"
+                        + "      policy: once\n"
+                        + "      message-type: text\n"
+                        + "      body: You have been successfully connected\n"
+                        + "      delay: 2000\n"
+                        + "\n"
+                        + "    on-message:\n"
+                        + "      - client-request:\n"
+                        + "          message-type: text\n"
+                        + "          body: Hey, server, give me fruits\n"
+                        + "\n"
+                        + "        server-response:\n"
+                        + "          - policy: push\n"
+                        + "            message-type: text\n"
+                        + "            body: apple\n"
+                        + "            delay: 500\n"
+                        + "\n"
+                        + "          - policy: push\n"
+                        + "            message-type: text\n"
+                        + "            body: banana\n"
+                        + "            delay: 250\n"
+                        + "\n"
+                        + "          - policy: fragmentation\n"
+                        + "            message-type: binary\n"
+                        + "            file: ../json/response.5.external.file.json\n"
+                        + "            delay: 250\n"
+                        + "\n"
+                        + "          - policy: push\n"
+                        + "            message-type: text\n"
+                        + "            body: grapes\n"
+                        + "            delay: 500\n";
+        assertThat(stubWebSocketConfig.getWebSocketConfigAsYAML()).isEqualTo(expectedWebSocketConfigAsYAML);
     }
 
     @Test
