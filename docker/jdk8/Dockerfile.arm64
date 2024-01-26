@@ -10,14 +10,18 @@
 ########################################################################################
 # Stage 1 : build the app
 ########################################################################################
-FROM gradle:7.2.0-jdk8-openj9@sha256:18fdc03987ce333918cf2badfcb677d27ac1ca667b014eef32ba77b48e58ab83 AS BUILD_JAR_STAGE
-
-ENV GRADLE_USER_HOME=/home/gradle
-WORKDIR $GRADLE_USER_HOME
+# https://hub.docker.com/r/azul/zulu-openjdk-alpine
+FROM azul/zulu-openjdk-alpine:8u392-8.74@sha256:29b47f4af641f2a46fc9b1870b5a63dd15ffdb8625e3d7efca33790652d8f5ce AS BUILD_JAR_STAGE
 
 ARG REVISION=master
+ARG APP_BUILD_HOME=/root/app
 
-# Used to prune Docker cascaded layer cache if the sha256 of 'conf/gradle/dependencies.gradle' has changed
+WORKDIR $APP_BUILD_HOME
+
+# Install Git and OpenSSH client on Alpine Linux
+RUN apk --no-cache add openssh-client git && git --version
+
+# Used to prune Docker cascaded layer cache if the sha256 of 'conf/gradle/dependencies.gradle' has changed, see .circleci/config.yml
 ARG CACHE_BUSTER=1
 
 # Build from the latest tag
@@ -58,8 +62,8 @@ RUN addgroup --system --gid $GROUP_ID stubby4j && \
 
 WORKDIR "$STUBBY4J_USER_HOME"
 
-COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
-COPY --from=BUILD_JAR_STAGE /home/gradle/stubby4j/docker/log4j2-for-docker.xml ./log4j2.xml
+COPY --from=BUILD_JAR_STAGE /root/app/stubby4j/build/libs/stubby4j*SNAPSHOT.jar ./stubby4j.jar
+COPY --from=BUILD_JAR_STAGE /root/app/stubby4j/docker/log4j2-for-docker.xml ./log4j2.xml
 RUN chown $USER_ID:$GROUP_ID stubby4j.jar && \
     chown $USER_ID:$GROUP_ID log4j2.xml && \
     java -version && \
