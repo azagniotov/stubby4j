@@ -1255,7 +1255,7 @@ public class YamlParserTest {
         final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle =
                 stubWebSocketConfig.getOnMessage().get(0);
         assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
-        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse(true)).isNotNull();
         assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML())
                 .isEqualTo("- client-request:\n" + "    message-type: text\n"
                         + "    body: Hey, server, say apple\n"
@@ -1269,14 +1269,14 @@ public class YamlParserTest {
         assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
         assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
 
-        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse(true);
         assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
         assertThat(serverResponse.getDelay()).isEqualTo(500L);
         assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
         assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
 
         final StubWebSocketServerResponse lastServerResponse =
-                stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+                stubWebSocketConfig.getOnMessage().get(2).getServerResponse(true);
         final String actualFileContent = "This is response 1 content";
         assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
         assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
@@ -1347,7 +1347,7 @@ public class YamlParserTest {
         final StubWebSocketOnMessageLifeCycle stubWebSocketOnMessageLifeCycle =
                 stubWebSocketConfig.getOnMessage().get(0);
         assertThat(stubWebSocketOnMessageLifeCycle.getClientRequest()).isNotNull();
-        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse()).isNotNull();
+        assertThat(stubWebSocketOnMessageLifeCycle.getServerResponse(true)).isNotNull();
         assertThat(stubWebSocketOnMessageLifeCycle.getCompleteYAML())
                 .isEqualTo("- client-request:\n" + "    message-type: text\n"
                         + "    body: Hey, server, say apple\n"
@@ -1361,14 +1361,14 @@ public class YamlParserTest {
         assertThat(clientRequest.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
         assertThat(clientRequest.getBodyAsString()).isEqualTo("Hey, server, say apple");
 
-        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse();
+        final StubWebSocketServerResponse serverResponse = stubWebSocketOnMessageLifeCycle.getServerResponse(true);
         assertThat(serverResponse.getBodyAsString()).isEqualTo("apple");
         assertThat(serverResponse.getDelay()).isEqualTo(500L);
         assertThat(serverResponse.getMessageType()).isEqualTo(StubWebSocketMessageType.TEXT);
         assertThat(serverResponse.getPolicy()).isEqualTo(StubWebSocketServerResponsePolicy.PUSH);
 
         final StubWebSocketServerResponse lastServerResponse =
-                stubWebSocketConfig.getOnMessage().get(2).getServerResponse();
+                stubWebSocketConfig.getOnMessage().get(2).getServerResponse(true);
         final String actualFileContent = "This is response 1 content";
         assertThat(lastServerResponse.getBodyAsString()).isEqualTo(actualFileContent);
         assertThat(lastServerResponse.getBodyAsBytes()).isEqualTo(getBytesUtf8(actualFileContent));
