@@ -91,7 +91,7 @@ public class StubsServerWebSocket {
         final List<StubWebSocketOnMessageLifeCycle> onMessage = stubWebSocketConfig.getOnMessage();
         for (final StubWebSocketOnMessageLifeCycle lifeCycle : onMessage) {
             final StubWebSocketClientRequest clientRequest = lifeCycle.getClientRequest();
-            final StubWebSocketServerResponse serverResponse = lifeCycle.getServerResponse();
+            final StubWebSocketServerResponse serverResponse = lifeCycle.getServerResponse(true);
 
             if (Arrays.equals(clientRequest.getBodyAsBytes(), incoming)) {
                 found = true;
@@ -114,7 +114,7 @@ public class StubsServerWebSocket {
         final List<StubWebSocketOnMessageLifeCycle> onMessage = stubWebSocketConfig.getOnMessage();
         for (final StubWebSocketOnMessageLifeCycle lifeCycle : onMessage) {
             final StubWebSocketClientRequest clientRequest = lifeCycle.getClientRequest();
-            final StubWebSocketServerResponse serverResponse = lifeCycle.getServerResponse();
+            final StubWebSocketServerResponse serverResponse = lifeCycle.getServerResponse(true);
 
             if (clientRequest.getBodyAsString().equals(message.trim())) {
                 found = true;

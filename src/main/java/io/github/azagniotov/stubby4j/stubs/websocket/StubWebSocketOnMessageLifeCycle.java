@@ -16,20 +16,24 @@
 
 package io.github.azagniotov.stubby4j.stubs.websocket;
 
+import static io.github.azagniotov.generics.TypeSafeConverter.asCheckedLinkedList;
+
 import io.github.azagniotov.stubby4j.annotations.GeneratedCodeMethodCoverageExclusion;
 import io.github.azagniotov.stubby4j.stubs.ReflectableStub;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StubWebSocketOnMessageLifeCycle implements ReflectableStub {
 
+    private final AtomicInteger serverResponseSequencedIdCounter = new AtomicInteger(0);
+
     private final StubWebSocketClientRequest clientRequest;
-    private final StubWebSocketServerResponse serverResponse;
+    private final Object serverResponse;
     private final String completeYAML;
 
     public StubWebSocketOnMessageLifeCycle(
-            final StubWebSocketClientRequest clientRequest,
-            final StubWebSocketServerResponse serverResponse,
-            final String completeYAML) {
+            final StubWebSocketClientRequest clientRequest, final Object serverResponse, final String completeYAML) {
         this.clientRequest = clientRequest;
         this.serverResponse = serverResponse;
         this.completeYAML = completeYAML;
@@ -39,8 +43,20 @@ public class StubWebSocketOnMessageLifeCycle implements ReflectableStub {
         return clientRequest;
     }
 
-    public StubWebSocketServerResponse getServerResponse() {
-        return serverResponse;
+    public StubWebSocketServerResponse getServerResponse(final boolean incrementSequencedResponseId) {
+        if (serverResponse instanceof StubWebSocketServerResponse) {
+            return (StubWebSocketServerResponse) serverResponse;
+        }
+
+        final List<StubWebSocketServerResponse> serverResponses =
+                asCheckedLinkedList(this.serverResponse, StubWebSocketServerResponse.class);
+        if (incrementSequencedResponseId) {
+            final int responseSequencedId = serverResponseSequencedIdCounter.getAndIncrement();
+            serverResponseSequencedIdCounter.compareAndSet(serverResponses.size(), 0);
+            return serverResponses.get(responseSequencedId);
+        }
+
+        return serverResponses.get(serverResponseSequencedIdCounter.get());
     }
 
     public String getCompleteYAML() {

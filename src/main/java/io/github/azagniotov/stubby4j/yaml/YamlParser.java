@@ -291,13 +291,8 @@ public class YamlParser {
                                     clientRequest);
 
                             final Object rawServerResponse = onMessageLifeCycleObjects.get(SERVER_RESPONSE.toString());
-                            final StubWebSocketServerResponse serverResponse = buildReflectableStub(
-                                            asCheckedLinkedHashMap(rawServerResponse, String.class, Object.class),
-                                            new StubWebSocketServerResponse.Builder())
-                                    .withWebSocketServerResponseAsYAML(
-                                            toYaml(onMessageLifeCycleObjects, SERVER_RESPONSE))
-                                    .build();
-
+                            final Object serverResponse =
+                                    buildStubWebSocketServerResponse(rawServerResponse, onMessageLifeCycleObjects);
                             final String lifeCycleCompleteYAML = toCompleteYamlListString(
                                     asCheckedLinkedHashMap(onMessageLifeCycle, String.class, Object.class));
 
@@ -319,6 +314,34 @@ public class YamlParser {
         logUnmarshalledWebSocketConfig(stubWebSocketConfig);
 
         return stubWebSocketConfig;
+    }
+
+    private Object buildStubWebSocketServerResponse(
+            final Object rawServerResponse, final Map<String, Object> onMessageLifeCycleObjects) {
+        if (rawServerResponse instanceof Map) {
+            final Map<String, Object> stubbedProperties =
+                    asCheckedLinkedHashMap(rawServerResponse, String.class, Object.class);
+            return buildReflectableStub(stubbedProperties, new StubWebSocketServerResponse.Builder())
+                    .withWebSocketServerResponseAsYAML(toYaml(onMessageLifeCycleObjects, SERVER_RESPONSE))
+                    .build();
+        } else {
+            final List<Map> serverResponseProperties = asCheckedArrayList(rawServerResponse, Map.class);
+
+            final List<StubWebSocketServerResponse> serverResponses = new LinkedList<>();
+            for (final Map rawPropertyPairs : serverResponseProperties) {
+                final Map<String, Object> stubbedProperties =
+                        asCheckedLinkedHashMap(rawPropertyPairs, String.class, Object.class);
+
+                final StubWebSocketServerResponse serverResponse = buildReflectableStub(
+                                stubbedProperties, new StubWebSocketServerResponse.Builder())
+                        .withWebSocketServerResponseAsYAML(toYaml(stubbedProperties, SERVER_RESPONSE))
+                        .build();
+
+                serverResponses.add(serverResponse);
+            }
+
+            return serverResponses;
+        }
     }
 
     private void checkAndThrowWhenClientRequestDuplicateBodies(

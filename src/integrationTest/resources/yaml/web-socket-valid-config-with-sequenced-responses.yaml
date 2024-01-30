@@ -1,0 +1,33 @@
+- web-socket:
+    description: this is a web-socket config
+    url: /items/fruits
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+      delay: 2000
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hey, server, give me fruits
+
+        server-response:
+          - policy: push
+            message-type: text
+            body: apple
+            delay: 500
+          - policy: push
+            message-type: text
+            body: banana
+            delay: 250
+          - policy: fragmentation
+            message-type: binary
+            file: ../json/response.5.external.file.json
+            delay: 250
+          - policy: push
+            message-type: text
+            body: grapes
+            delay: 500
