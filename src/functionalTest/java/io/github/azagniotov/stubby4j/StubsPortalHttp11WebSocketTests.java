@@ -36,26 +36,14 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketBehavior;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.eclipse.jetty.websocket.common.frames.PingFrame;
-import org.eclipse.jetty.websocket.common.frames.PongFrame;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -152,7 +140,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void webSocketSessionShouldHaveValidState() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
@@ -173,7 +162,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnOpen_SendsExpected_TextMessage() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
@@ -193,7 +183,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnOpen_SendsExpected_BinaryMessage() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_7);
@@ -215,7 +206,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnOpen_SendsExpected_BinaryMessageFromFile() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_3);
@@ -239,7 +231,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnOpen_RespondsWithExpected_ContinuousPing() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(5);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_6);
@@ -264,7 +257,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnMessage_ReactsToClient_RealBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly()
             throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
@@ -293,7 +287,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnMessage_ReactsToClient_TextBinaryMessage_AndRespondsWithExpected_BinaryMessage_OnceOnly()
             throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_4);
@@ -321,7 +316,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverOnMessage_RespondsWithExpected_TextMessage_OnceOnly() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(2);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
@@ -343,7 +339,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverOnMessage_RespondsWithExpected_TextMessage_ContinuousPush() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(5);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
@@ -370,7 +367,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverOnMessage_RespondsWithExpected_BinaryMessage_OnceOnly() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(2);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(2);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
@@ -400,7 +398,8 @@ public class StubsPortalHttp11WebSocketTests {
     @Test
     public void serverOnMessage_RespondsWithExpected_BinaryMessage_ContinuousPush() throws Exception {
         // The socket that receives server events
-        final StubsClientWebSocket socket = new StubsClientWebSocket(5);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(5);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_2);
@@ -457,7 +456,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverOnMessage_RespondsWithExpected_BinaryMessage_FragmentedFrames() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
@@ -481,7 +481,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverShouldThrow_WhenConnectingClient_RequestedWrongUrl() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(NON_STUBBED_REQUEST_URL);
         clientUpgradeRequest.setLocalEndpoint(socket);
@@ -501,7 +502,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedWrongSubProtocol() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
@@ -521,7 +523,8 @@ public class StubsPortalHttp11WebSocketTests {
 
     @Test
     public void serverWithSubProtocolsShouldThrow_WhenConnectingClient_RequestedNoSubProtocol() throws Exception {
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_1);
         clientUpgradeRequest.setLocalEndpoint(socket);
@@ -547,7 +550,8 @@ public class StubsPortalHttp11WebSocketTests {
         // behavior that conforms to the RFC of the Web Socket protocol:
         // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
 
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
@@ -577,7 +581,8 @@ public class StubsPortalHttp11WebSocketTests {
         // behavior that conforms to the RFC of the Web Socket protocol:
         // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
 
-        final StubsClientWebSocket socket = new StubsClientWebSocket(1);
+        final ClientWebSocketHelper socket = new ClientWebSocketHelper();
+        socket.initLatch(1);
 
         final ClientUpgradeRequest clientUpgradeRequest = new ClientUpgradeRequest();
         clientUpgradeRequest.setRequestURI(REQUEST_URL_HELLO_5);
@@ -599,80 +604,5 @@ public class StubsPortalHttp11WebSocketTests {
         // the message body of the Ping frame being replied to
         // https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3
         assertThat(socket.receivedOnMessageBytes.get(0)).isEqualTo("ping".getBytes(StandardCharsets.UTF_8));
-    }
-
-    @WebSocket
-    public static class StubsClientWebSocket {
-
-        private final List<String> receivedOnMessageText;
-        private final List<byte[]> receivedOnMessageBytes;
-
-        private final List<Integer> receivedOnCloseStatus;
-        private final List<String> receivedOnCloseText;
-
-        private final CountDownLatch countDownLatch;
-
-        public StubsClientWebSocket(final int numberOfExpectedMessages) {
-            this.countDownLatch = new CountDownLatch(numberOfExpectedMessages);
-            this.receivedOnMessageText = new LinkedList<>();
-            this.receivedOnMessageBytes = new LinkedList<>();
-            this.receivedOnCloseText = new LinkedList<>();
-            this.receivedOnCloseStatus = new LinkedList<>();
-        }
-
-        @OnWebSocketConnect
-        public void onWebSocketConnect(final Session session) {}
-
-        @OnWebSocketFrame
-        public void onOnWebSocketFrame(final Frame frame) throws IOException {
-            if (frame instanceof PingFrame) {
-                final PingFrame pingFrame = (PingFrame) frame;
-                final ByteBuffer pingPayload = pingFrame.getPayload();
-                receivedOnMessageBytes.add(pingPayload.array());
-                countDownLatch.countDown();
-            }
-
-            if (frame instanceof PongFrame) {
-                final PongFrame pongFrame = (PongFrame) frame;
-                final ByteBuffer pongPayload = pongFrame.getPayload();
-
-                if (!pongPayload.hasArray()) {
-                    byte[] to = new byte[pongPayload.remaining()];
-                    pongPayload.slice().get(to);
-                    receivedOnMessageBytes.add(to);
-                } else {
-                    receivedOnMessageBytes.add(pongPayload.array());
-                }
-                countDownLatch.countDown();
-            }
-        }
-
-        @OnWebSocketMessage
-        public void onWebSocketBinary(final byte[] array, final int offset, final int length) {
-            receivedOnMessageBytes.add(array);
-            countDownLatch.countDown();
-        }
-
-        @OnWebSocketMessage
-        public void onWebSocketText(final String message) {
-            System.out.printf("Received by client: %s%n", message);
-            receivedOnMessageText.add(message.trim());
-            countDownLatch.countDown();
-        }
-
-        @OnWebSocketClose
-        public void onWebSocketClose(int statusCode, String reason) {
-            System.out.printf("Socket closed by server: %s %s%n", statusCode, reason);
-            receivedOnCloseText.add(reason.trim());
-            receivedOnCloseStatus.add(statusCode);
-            countDownLatch.countDown();
-        }
-
-        @OnWebSocketError
-        public void onWebSocketError(Throwable cause) {}
-
-        public void awaitCountDownLatchWithAssertion() throws InterruptedException {
-            assertThat(this.countDownLatch.await(3, TimeUnit.SECONDS)).isTrue();
-        }
     }
 }
