@@ -1,3 +1,4 @@
 includes:
   - include-all-test-stubs.yaml
   - include-web-socket-config.yaml
+  - include-web-socket-sequenced-response-config.yaml

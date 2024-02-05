@@ -1,0 +1,31 @@
+- web-socket:
+    description: this is a web-socket config
+    url: /demo/hello/8
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: You have been successfully connected
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hey, server, give me fruits
+
+        server-response:
+          - policy: once
+            message-type: text
+            body: fruit-0
+
+          - policy: once
+            message-type: text
+            body: fruit-1
+
+          - policy: fragmentation
+            message-type: binary
+            body: fruit-2a,fruit-2b,fruit-2c,fruit-2d,fruit-2e
+
+          - policy: once
+            message-type: text
+            body: fruit-3
