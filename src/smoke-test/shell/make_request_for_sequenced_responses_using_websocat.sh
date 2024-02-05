@@ -28,6 +28,8 @@ else
   echo "Got success status: $smoke_test_connection_response"
 fi
 
+echo "Hello, World!" | websocat -q -uU --protocol "zumba" $1://$2:$3/ws/hello-world/2
+
 websocat --text --exit-on-eof --protocol "zumba" -q -uU tcp-l:127.0.0.1:1234 reuse-raw:$1://$2:$3/ws/hello-world/2 --max-messages-rev 1&
 echo "Hello, World!" | nc 127.0.0.1 1234
 echo "Hello, World!" | nc 127.0.0.1 1234
