@@ -36,7 +36,7 @@ echo "## WebSoCat is TCP listening on 127.0.0.1:1234"
 echo "#####################################################################"
 
 
-smoke_test_sequenced_response=$(echo "Hello, World!" | nc 127.0.0.1 1234 2> /dev/null; echo  $?)
+smoke_test_sequenced_response=$(echo "Hello, World!" | nc 127.0.0.1 1234)
 echo ""
 echo "#####################################################################"
 echo "## Got $smoke_test_sequenced_response" 
