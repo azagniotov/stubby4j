@@ -49,7 +49,9 @@ public class StubsWebSocketCreator implements WebSocketCreator {
         // Renders HTTP error response if client requested sub-protocol does not match the stubbed ones
         checkAndSetAcceptedProtocols(stubWebSocketConfig, servletUpgradeRequest, servletUpgradeResponse);
 
-        return new StubsServerWebSocket(stubWebSocketConfig, Executors.newScheduledThreadPool(10));
+        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=474488 (by Joakim Erdfelt)
+        // Trying to ensure that the messages will be processed by the same thread
+        return new StubsServerWebSocket(stubWebSocketConfig, Executors.newScheduledThreadPool(0));
     }
 
     private void checkAndHandleNotFound(
