@@ -37,7 +37,6 @@ import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +54,6 @@ import org.slf4j.LoggerFactory;
 
 @WebSocket
 public class StubsServerWebSocket {
-    private static final Random RANDOM = new Random();
-
     public static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.wrap(new byte[0]);
     private static final Logger LOGGER = LoggerFactory.getLogger(StubsServerWebSocket.class);
     private static final String NORMAL_CLOSE_REASON = "bye";
@@ -152,13 +149,14 @@ public class StubsServerWebSocket {
     }
 
     private void dispatchServerResponse(final StubWebSocketServerResponse serverResponse) {
-        // Trying to add a small jitter when responding to the client to avoid any issues (potentially) related to:
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=474488 (by Joakim Erdfelt)
         // https://stackoverflow.com/questions/34872692/jetty-websockets-correctly-sending-async-messages-when-handling-unreliable-con
         // https://stackoverflow.com/a/34886880 (by Joakim Erdfelt)
         //
         // Also, the StubsWebSocketCreator.createWebSocket(..) creates ScheduledExecutorService with corePoolSize == 0
-        final long jitter = RANDOM.nextInt(20 - 5) + 5;
+        // Trying to add a small delay when YAML delay is zero when responding to the client to avoid any issues,
+        // which may be (potentially) related to ^
+        final long jitter = 10;
         final long delay = serverResponse.getDelay() == 0 ? jitter : serverResponse.getDelay();
         if (serverResponse.getPolicy() == ONCE || serverResponse.getPolicy() == DISCONNECT) {
             scheduledExecutorService.schedule(
