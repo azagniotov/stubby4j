@@ -31,7 +31,19 @@ fi
 
 websocat --text --exit-on-eof --protocol "zumba" -q -uU tcp-l:127.0.0.1:1234 reuse-raw:$1://$2:$3/ws/hello-world/2 --max-messages-rev 1&
 
+echo ""
+echo "#####################################################################"
+echo "## WebSoCat is TCP listening on 127.0.0.1:1234" 
+echo "#####################################################################"
+
+
 smoke_test_sequenced_response=$(echo "Hello, World!" | nc 127.0.0.1 1234 2> /dev/null; echo  $?)
+echo ""
+echo "#####################################################################"
+echo "## Got $smoke_test_sequenced_response" 
+echo "#####################################################################"
+
+
 if [ "$smoke_test_sequenced_response" != "world-0" ]
 then
   echo "WebSocket request to $2:$3 failed, got: $smoke_test_sequenced_response ... Exiting with status 1 ... "
@@ -40,6 +52,11 @@ else
   echo "$smoke_test_sequenced_response"
   exit 0
 fi
+
+echo ""
+echo "#####################################################################"
+echo "## Got $smoke_test_sequenced_response" 
+echo "#####################################################################"
 
 smoke_test_sequenced_response=$(echo "Hello, World!" | nc 127.0.0.1 1234 2> /dev/null; echo  $?)
 if [ "$smoke_test_sequenced_response" != "world-1" ]
