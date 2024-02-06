@@ -279,6 +279,7 @@ build_push_image_steps: &build_push_image_steps
           docker buildx create tls-environment --use
 
           SHA256SUM=$(sha256sum ~/repo/conf/gradle/dependencies.gradle | awk '{ print $1; }')
+          SHA256SUM=12345
           echo ""
           echo "SHA256SUM of dependencies.gradle: $SHA256SUM"
 
@@ -823,10 +824,10 @@ workflows:
 
 
   master-twelve-hour-jdk8:
-    triggers:
-      - schedule:
-          cron: "20 8,20 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "20 8,20 * * *"
+    #       <<: *filter_only_master
     jobs:
       - docker_build_latest_jre8:
           <<: *context_docker_hub
