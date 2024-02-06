@@ -11,12 +11,33 @@ keywords: websocket,websocket server,stubby4j,onopen,onmessage,subprotocols,web 
 
 ### Table of contents
 
-* [Summary](#summary)
-* [Available WebSockets endpoints](#available-websockets-endpoints)
-* [WebSockets configuration](#websockets-configuration)
-   * [Fully-populated example with multiple web-socket objects](#fully-populated-example-with-multiple-web-socket-objects)
-   * [Supported YAML properties](#supported-yaml-properties)
-* [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
+<!-- TOC -->
+  * [WebSockets configuration HOWTO](#websockets-configuration-howto)
+    * [Table of contents](#table-of-contents)
+    * [Summary](#summary)
+  * [Available WebSockets endpoints](#available-websockets-endpoints-)
+  * [WebSockets configuration](#websockets-configuration)
+    * [Fully-populated example with multiple `web-socket` objects](#fully-populated-example-with-multiple-web-socket-objects)
+    * [Supported YAML properties](#supported-yaml-properties)
+      * [uuid (`optional`)](#uuid-optional)
+      * [description (`optional`)](#description-optional)
+      * [url (`required`)](#url-required)
+      * [sub-protocols (`optional`)](#sub-protocols-optional)
+        * [What are the sub-protocols?](#what-are-the-sub-protocols)
+    * [on-open](#on-open)
+    * [on-open object properties](#on-open-object-properties)
+      * [policy (`optional`)](#policy-optional)
+      * [message-type (`optional`)](#message-type-optional)
+      * [delay (`optional`)](#delay-optional)
+      * [body (`optional`)](#body-optional)
+      * [file (`optional`)](#file-optional)
+    * [on-message](#on-message)
+    * [on-message object properties](#on-message-object-properties)
+      * [client-request (`required`)](#client-request-required)
+      * [server-response (`required`)](#server-response-required)
+  * [Managing websocket configuration via the REST API](#managing-websocket-configuration-via-the-rest-api)
+<!-- TOC -->
+
 
 
 ### Summary
@@ -456,7 +477,9 @@ The `server-response` object supports the following properties: `policy`, `messa
           delay: 10
  ```
 
-When **sequenced** `server-response` is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced `server-response` play in a cycle (loop). In other words: after the response sequence plays through, the response cycle restarts on the next incoming client request.
+As of `v7.6.1` (incl.) or `latest` of `stubby4j`, you can stub a WebSocket with multiple **sequenced** `server-response` for the same stubbed URI.
+
+When sequenced `server-response` is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced `server-response` play in a cycle (loop). In other words: after the response sequence plays through, the response cycle restarts on the next incoming client request.
 
 ```yaml
 - web-socket:
