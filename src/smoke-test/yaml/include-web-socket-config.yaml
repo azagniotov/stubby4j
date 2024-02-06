@@ -9,3 +9,39 @@
       body: Connected via WebSocket
       delay: 10
 
+- web-socket:
+    description: this is a web-socket config
+    url: /hello-world/2
+    sub-protocols: echo, mamba, zumba
+
+    on-open:
+      policy: once
+      message-type: text
+      body: Connected via WebSocket
+      delay: 10
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hello, World!
+
+        server-response:
+          - policy: once
+            message-type: text
+            body: world-0
+            delay: 20
+
+          - policy: once
+            message-type: text
+            body: world-1
+            delay: 30
+
+          - policy: fragmentation
+            message-type: binary
+            body: world-2a,world-2b,world-2c,world-2d,world-2e
+            delay: 40
+
+          - policy: once
+            message-type: text
+            body: world-3
+            delay: 50
