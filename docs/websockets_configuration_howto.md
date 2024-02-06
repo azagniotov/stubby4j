@@ -456,6 +456,44 @@ The `server-response` object supports the following properties: `policy`, `messa
           delay: 10
  ```
 
+When **sequenced** `server-response` is configured, on each incoming request to the same URI, a subsequent response in the list will be sent to the client. The sequenced `server-response` play in a cycle (loop). In other words: after the response sequence plays through, the response cycle restarts on the next incoming client request.
+
+```yaml
+- web-socket:
+    ...
+    ...
+
+    on-open:
+      ...
+      ...
+
+    on-message:
+      - client-request:
+          message-type: text
+          body: Hello, World!
+
+        server-response:
+          - policy: once
+            message-type: text
+            body: hello-world-0
+            delay: 20
+
+          - policy: once
+            message-type: text
+            body: hello-world-1
+            delay: 30
+
+          - policy: fragmentation
+            message-type: binary
+            body: hello-world-2,hello-world-2a and hello-world-2c
+            delay: 40
+
+          - policy: once
+            message-type: text
+            body: hello-world-3
+            delay: 50
+```
+
 [Back to top](#table-of-contents)
 
 ## Managing websocket configuration via the REST API
