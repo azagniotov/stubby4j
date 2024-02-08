@@ -11,7 +11,7 @@
 
 # Security updates
 
-- ### [2022-01-02] [CVE-2022-1471](https://nvd.nist.gov/vuln/detail/CVE-2022-1471) (Critical)
+- ### [2024-01-26] [CVE-2022-1471](https://nvd.nist.gov/vuln/detail/CVE-2022-1471) (Critical)
   In regard to recent NIST update [CVE-2022-1471 Detail: SnakeYAML](https://nvd.nist.gov/vuln/detail/CVE-2022-1471), the `latest`, `7.6.1` and `7.6.0` Docker image tags are now running with SnakeYAML `v2.x.x` as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/460
 
 - ### [2022-01-02] [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/CVE-2021-44832) (Moderate)
