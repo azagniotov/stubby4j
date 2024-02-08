@@ -11,13 +11,16 @@
 
 # Security updates
 
-- ### [2022-01-02] [CVE-2021-44832](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44832) (Moderate)
+- ### [2022-01-02] [CVE-2022-1471](https://nvd.nist.gov/vuln/detail/CVE-2022-1471) (Critical)
+  In regard to recent NIST update [CVE-2022-1471 Detail: SnakeYAML](https://nvd.nist.gov/vuln/detail/CVE-2022-1471), the `latest`, `7.6.1` and `7.6.0` Docker image tags are now running with SnakeYAML `v2.x.x` as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/460
+
+- ### [2022-01-02] [CVE-2021-44832](https://nvd.nist.gov/vuln/detail/CVE-2021-44832) (Moderate)
   In regard to recent [Apache Log4j 2 vulnerabilities update: log4j-2.17.1](https://logging.apache.org/log4j/2.x/security.html#log4j-2.17.1), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/445
 
-- ### [2021-12-26] [CVE-2021-45105](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45105) (High)
+- ### [2021-12-26] [CVE-2021-45105](https://nvd.nist.gov/vuln/detail/CVE-2021-45105) (High)
   In regard to recent [Apache Log4j 2 vulnerabilities update: log4j-2.17.0](https://logging.apache.org/log4j/2.x/security.html#log4j-2.17.0), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/433
 
-- ### [2021-12-16] [CVE-2021-44228](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228) (Critical), [CVE-2021-45046](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45046) (Critical)
+- ### [2021-12-16] [CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228) (Critical), [CVE-2021-45046](https://nvd.nist.gov/vuln/detail/CVE-2021-45046) (Critical)
   In regard to recent [Apache Log4j 2 vulnerabilities update: log4j-2.16.0](https://logging.apache.org/log4j/2.x/security.html#log4j-2.16.0), all `stubby4j` Docker image tags that use `log4j2` library have been re-built as part of the mitigation effort captured by the following ticket: https://github.com/azagniotov/stubby4j/issues/416
 
 # Quick reference
@@ -37,9 +40,11 @@ See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://gi
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 21
 * [`latest-jre21 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk21/Dockerfile.arm64)
+* [`7.6.1-jre21 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.1/docker/jdk21/Dockerfile.arm64)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 17
 * [`latest-jre17 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk17/Dockerfile.arm64)
+* [`7.6.1-jre17 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.1/docker/jdk17/Dockerfile.arm64)
 * [`7.6.0-jre17 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.0/docker/jdk17/Dockerfile.arm64)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 16
@@ -48,13 +53,13 @@ See [https://github.com/azagniotov/stubby4j/blob/master/CHANGELOG.md](https://gi
   
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 11
 * [`latest-jre11 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk11/Dockerfile.arm64)
+* [`7.6.1-jre11 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.1/docker/jdk11/Dockerfile.arm64)
 * [`7.6.0-jre11 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.0/docker/jdk11/Dockerfile.arm64)
-* [`7.5.2-jre11 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk11/Dockerfile)
 
 #### stubby4j versions on Alpine-Native Zulu OpenJDK JRE 8
 * [`latest-jre8 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/master/docker/jdk8/Dockerfile.arm64)
+* [`7.6.1-jre8 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.1/docker/jdk8/Dockerfile.arm64)
 * [`7.6.0-jre8 (linux/amd64, linux/arm64)`](https://github.com/azagniotov/stubby4j/blob/v7.6.0/docker/jdk8/Dockerfile.arm64)
-* [`7.5.2-jre8 (linux/amd64)`](https://github.com/azagniotov/stubby4j/blob/v7.5.2/docker/jdk8/Dockerfile)
 
 
 # What is `stubby4j`? <img src="https://cdn.rawgit.com/azagniotov/stubby4j/master/assets/stubby-logo-duke-hiding.svg" width="65px" height="65px" />
