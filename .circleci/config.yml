@@ -636,16 +636,16 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-arm64-jre8"
+        default: "azagniotov/cache-stubby4j:7.6.1-arm64-jre8"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-amd64-jre8"
+        default: "azagniotov/cache-stubby4j:7.6.1-amd64-jre8"
       image_tag:
         type: string
-        default: "azagniotov/stubby4j:latest-jre8"
+        default: "azagniotov/stubby4j:7.6.1-jre8"
       git_revision:
         type: string
-        default: "master"
+        default: "v7.6.1"
       jdk_version:
         type: string
         default: "8"
@@ -660,16 +660,16 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-arm64-jre11"
+        default: "azagniotov/cache-stubby4j:7.6.1-arm64-jre11"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-amd64-jre11"
+        default: "azagniotov/cache-stubby4j:7.6.1-amd64-jre11"
       image_tag:
         type: string
-        default: "azagniotov/stubby4j:latest-jre11"
+        default: "azagniotov/stubby4j:7.6.1-jre11"
       git_revision:
         type: string
-        default: "master"
+        default: "v7.6.1"
       jdk_version:
         type: string
         default: "11"
@@ -684,16 +684,16 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-arm64-jre17"
+        default: "azagniotov/cache-stubby4j:7.6.1-arm64-jre17"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-amd64-jre17"
+        default: "azagniotov/cache-stubby4j:7.6.1-amd64-jre17"
       image_tag:
         type: string
-        default: "azagniotov/stubby4j:latest-jre17"
+        default: "azagniotov/stubby4j:7.6.1-jre17"
       git_revision:
         type: string
-        default: "master"
+        default: "v7.6.1"
       jdk_version:
         type: string
         default: "17"
@@ -708,16 +708,16 @@ jobs:
         default: "Dockerfile.arm64"
       image_tag_buildcache_arm64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-arm64-jre21"
+        default: "azagniotov/cache-stubby4j:7.6.1-arm64-jre21"
       image_tag_buildcache_amd64:
         type: string
-        default: "azagniotov/cache-stubby4j:latest-amd64-jre21"
+        default: "azagniotov/cache-stubby4j:7.6.1-amd64-jre21"
       image_tag:
         type: string
-        default: "azagniotov/stubby4j:latest-jre21"
+        default: "azagniotov/stubby4j:7.6.1-jre21"
       git_revision:
         type: string
-        default: "master"
+        default: "v7.6.1"
       jdk_version:
         type: string
         default: "21"
@@ -823,10 +823,10 @@ workflows:
 
 
   master-twelve-hour-jdk8:
-    triggers:
-      - schedule:
-          cron: "20 8,20 * * *"
-          <<: *filter_only_master
+    # triggers:
+    #   - schedule:
+    #       cron: "20 8,20 * * *"
+    #       <<: *filter_only_master
     jobs:
       - docker_build_latest_jre8:
           <<: *context_docker_hub
